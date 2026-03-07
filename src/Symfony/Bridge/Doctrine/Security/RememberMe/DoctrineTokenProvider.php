@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,10 +46,10 @@ use Symfony\Component\Security\Core\Exception\TokenNotFoundException;
  *
  * (the `class` column is for BC with tables created with before Symfony 8)
  */
-final class DoctrineTokenProvider implements TokenProviderInterface, TokenVerifierInterface
+final readonly class DoctrineTokenProvider implements TokenProviderInterface, TokenVerifierInterface
 {
     public function __construct(
-        private readonly Connection $conn,
+        private Connection $conn,
     ) {
     }
 

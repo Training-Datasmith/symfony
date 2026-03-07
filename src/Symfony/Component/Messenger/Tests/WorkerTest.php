@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -79,7 +81,7 @@ class WorkerTest extends TestCase
                 return $envelopes[] = $envelope;
             });
 
-        $dispatcher = new class implements EventDispatcherInterface {
+        $dispatcher = new class () implements EventDispatcherInterface {
             private StopWorkerOnMessageLimitListener $listener;
 
             public function __construct()
@@ -412,7 +414,7 @@ class WorkerTest extends TestCase
         $eventDispatcher = new EventDispatcher();
         $eventDispatcher->addSubscriber(new StopWorkerOnMessageLimitListener(1));
 
-        $stamp = new class implements StampInterface {
+        $stamp = new class () implements StampInterface {
         };
         $listener = static function (WorkerMessageReceivedEvent $event) use ($stamp) {
             $event->addStamps($stamp);
@@ -717,7 +719,8 @@ class WorkerTest extends TestCase
 
         $middleware = new HandleMessageMiddleware(new HandlersLocator([
             DummyMessage::class => [new HandlerDescriptor($batchHandler)],
-            SecondHandlerDummyMessage::class => [new HandlerDescriptor(function (SecondHandlerDummyMessage $message) {})],
+            SecondHandlerDummyMessage::class => [new HandlerDescriptor(function (SecondHandlerDummyMessage $message) {
+            })],
         ]));
 
         $bus = new MessageBus([$middleware]);
@@ -764,7 +767,7 @@ class WorkerTest extends TestCase
         $envelope = new Envelope(new DummyMessage('Test'));
         $receiver = new DummyReceiver([[$envelope]]);
 
-        $bus = new class implements MessageBusInterface {
+        $bus = new class () implements MessageBusInterface {
             public function dispatch(object $message, array $stamps = []): Envelope
             {
                 $envelope = Envelope::wrap($message, $stamps);

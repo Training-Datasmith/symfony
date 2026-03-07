@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,7 +38,7 @@ class Form extends Link implements \ArrayAccess
         \DOMElement $node,
         ?string $currentUri = null,
         ?string $method = null,
-        private ?string $baseHref = null,
+        private readonly ?string $baseHref = null,
     ) {
         parent::__construct($node, $currentUri, $method);
 
@@ -125,7 +127,7 @@ class Form extends Link implements \ArrayAccess
             $qs = http_build_query([$name => $value], '', '&');
             if ($qs) {
                 parse_str($qs, $expandedValue);
-                $varName = substr($name, 0, \strlen(key($expandedValue)));
+                $varName = substr((string) $name, 0, \strlen((string) key($expandedValue)));
                 $values[] = [$varName => current($expandedValue)];
             }
         }
@@ -150,12 +152,12 @@ class Form extends Link implements \ArrayAccess
             $qs = http_build_query([$name => $value], '', '&');
             if ($qs) {
                 parse_str($qs, $expandedValue);
-                $varName = substr($name, 0, \strlen(key($expandedValue)));
+                $varName = substr((string) $name, 0, \strlen((string) key($expandedValue)));
 
                 array_walk_recursive(
                     $expandedValue,
-                    static function (&$value, $key) {
-                        if (ctype_digit($value) && ('size' === $key || 'error' === $key)) {
+                    static function (&$value, $key): void {
+                        if (ctype_digit((string) $value) && ('size' === $key || 'error' === $key)) {
                             $value = (int) $value;
                         }
                     }

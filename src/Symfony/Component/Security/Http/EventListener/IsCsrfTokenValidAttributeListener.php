@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,10 +27,10 @@ use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 /**
  * Handles the IsCsrfTokenValid attribute on controllers.
  */
-final class IsCsrfTokenValidAttributeListener implements EventSubscriberInterface
+final readonly class IsCsrfTokenValidAttributeListener implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly CsrfTokenManagerInterface $csrfTokenManager,
+        private CsrfTokenManagerInterface $csrfTokenManager,
         private ?ExpressionLanguage $expressionLanguage = null,
     ) {
     }
@@ -55,7 +57,7 @@ final class IsCsrfTokenValidAttributeListener implements EventSubscriberInterfac
     {
         $request = $event->getRequest();
         $id = $event->evaluate($attribute->id, $this->expressionLanguage);
-        $methods = array_map('strtoupper', (array) $attribute->methods);
+        $methods = array_map(strtoupper(...), (array) $attribute->methods);
 
         if ($methods && !\in_array($request->getMethod(), $methods, true)) {
             return;
@@ -84,9 +86,9 @@ final class IsCsrfTokenValidAttributeListener implements EventSubscriberInterfac
     private function getTokenValue(Request $request, int $tokenSource, string $tokenKey): ?string
     {
         $sources = [
-            IsCsrfTokenValid::SOURCE_PAYLOAD => static fn () => $request->getPayload()->get($tokenKey),
-            IsCsrfTokenValid::SOURCE_QUERY => static fn () => $request->query->get($tokenKey),
-            IsCsrfTokenValid::SOURCE_HEADER => static fn () => $request->headers->get($tokenKey),
+            IsCsrfTokenValid::SOURCE_PAYLOAD => static fn (): bool|float|int|string|null => $request->getPayload()->get($tokenKey),
+            IsCsrfTokenValid::SOURCE_QUERY => static fn (): bool|float|int|string|null => $request->query->get($tokenKey),
+            IsCsrfTokenValid::SOURCE_HEADER => static fn (): ?string => $request->headers->get($tokenKey),
         ];
 
         foreach ($sources as $source => $getter) {

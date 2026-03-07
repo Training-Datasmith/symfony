@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -11,10 +13,10 @@
 
 namespace Symfony\Component\TypeInfo\Tests\Fixtures;
 
-use Symfony\Component\TypeInfo\Type;
-use \DateTimeInterface;
+use DateTimeImmutable as DateTime;
+use DateTimeInterface;
 
-use \DateTimeImmutable as DateTime;
+use Symfony\Component\TypeInfo\Type;
 
 final class DummyWithUses
 {

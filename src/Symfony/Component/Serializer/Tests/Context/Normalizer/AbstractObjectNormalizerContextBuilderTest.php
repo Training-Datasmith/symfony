@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ class AbstractObjectNormalizerContextBuilderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->contextBuilder = new class extends AbstractObjectNormalizerContextBuilder {};
+        $this->contextBuilder = new class () extends AbstractObjectNormalizerContextBuilder {};
     }
 
     /**
@@ -61,7 +63,8 @@ class AbstractObjectNormalizerContextBuilderTest extends TestCase
             AbstractObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => false,
             AbstractObjectNormalizer::SKIP_NULL_VALUES => true,
             AbstractObjectNormalizer::SKIP_UNINITIALIZED_VALUES => false,
-            AbstractObjectNormalizer::MAX_DEPTH_HANDLER => static function (): void {},
+            AbstractObjectNormalizer::MAX_DEPTH_HANDLER => static function (): void {
+            },
             AbstractObjectNormalizer::EXCLUDE_FROM_CACHE_KEY => ['key'],
             AbstractObjectNormalizer::DEEP_OBJECT_TO_POPULATE => true,
             AbstractObjectNormalizer::PRESERVE_EMPTY_OBJECTS => false,

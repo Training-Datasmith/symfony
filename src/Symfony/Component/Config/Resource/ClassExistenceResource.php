@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -67,7 +69,7 @@ class ClassExistenceResource implements SelfCheckingResourceInterface
             }
         } elseif ([false, null] === $exists = [$loaded, null]) {
             if (!self::$autoloadLevel++) {
-                spl_autoload_register(__CLASS__.'::throwOnRequiredClass');
+                spl_autoload_register(self::class.'::throwOnRequiredClass');
             }
             $autoloadedClass = self::$autoloadedClass;
             self::$autoloadedClass = ltrim($this->resource, '\\');
@@ -91,7 +93,7 @@ class ClassExistenceResource implements SelfCheckingResourceInterface
             } finally {
                 self::$autoloadedClass = $autoloadedClass;
                 if (!--self::$autoloadLevel) {
-                    spl_autoload_unregister(__CLASS__.'::throwOnRequiredClass');
+                    spl_autoload_unregister(self::class.'::throwOnRequiredClass');
                 }
             }
         }

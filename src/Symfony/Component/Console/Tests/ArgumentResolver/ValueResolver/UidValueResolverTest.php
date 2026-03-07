@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,7 +39,7 @@ class UidValueResolverTest extends TestCase
             new InputArgument('id'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 Uuid $id,
@@ -64,7 +66,7 @@ class UidValueResolverTest extends TestCase
             new InputArgument('id'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 Ulid $id,
@@ -91,7 +93,7 @@ class UidValueResolverTest extends TestCase
             new InputOption('id', null, InputOption::VALUE_REQUIRED),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Option]
                 ?Uuid $id = null,
@@ -120,7 +122,7 @@ class UidValueResolverTest extends TestCase
             new InputArgument('id'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 Uuid $id,
@@ -145,7 +147,7 @@ class UidValueResolverTest extends TestCase
             new InputOption('id', null, InputOption::VALUE_REQUIRED),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Option]
                 ?Uuid $id = null,
@@ -167,7 +169,7 @@ class UidValueResolverTest extends TestCase
             new InputArgument('id', InputArgument::OPTIONAL),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 ?Uuid $id = null,
@@ -191,7 +193,7 @@ class UidValueResolverTest extends TestCase
             new InputArgument('id'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 string $id,
@@ -234,7 +236,7 @@ class UidValueResolverTest extends TestCase
             new InputArgument('id'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 UuidV4 $id,

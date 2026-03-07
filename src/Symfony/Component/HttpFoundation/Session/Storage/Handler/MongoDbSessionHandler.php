@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,10 +30,10 @@ use MongoDB\Driver\Query;
  */
 class MongoDbSessionHandler extends AbstractSessionHandler
 {
-    private Manager $manager;
-    private string $namespace;
+    private readonly Manager $manager;
+    private readonly string $namespace;
     private array $options;
-    private int|\Closure|null $ttl;
+    private readonly int|\Closure|null $ttl;
 
     /**
      * Constructor.

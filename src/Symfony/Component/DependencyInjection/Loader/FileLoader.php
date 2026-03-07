@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -130,7 +132,7 @@ abstract class FileLoader extends BaseFileLoader
         $autoconfigureAttributes = $autoconfigureAttributes->accept($prototype) ? $autoconfigureAttributes : null;
         $classes = $this->findClasses($namespace, $resource, (array) $exclude, $source);
 
-        $getPrototype = static fn () => clone $prototype;
+        $getPrototype = static fn (): \Symfony\Component\DependencyInjection\Definition => clone $prototype;
         $serialized = serialize($prototype);
 
         // avoid deep cloning if no definitions are nested
@@ -144,7 +146,7 @@ abstract class FileLoader extends BaseFileLoader
                 if (strpos($serialized, 'O:48:"Symfony\Component\DependencyInjection\Definition"')
                     || strpos($serialized, 'O:53:"Symfony\Component\DependencyInjection\ChildDefinition"')
                 ) {
-                    $getPrototype = static fn () => $getPrototype()->{'set'.$key}(unserialize($serialized));
+                    $getPrototype = static fn (): \Symfony\Component\DependencyInjection\Definition => $getPrototype()->{'set'.$key}(unserialize($serialized));
                 }
             }
         }
@@ -364,10 +366,10 @@ abstract class FileLoader extends BaseFileLoader
                 continue;
             }
 
-            if (!str_ends_with($path, '.php')) {
+            if (!str_ends_with((string) $path, '.php')) {
                 continue;
             }
-            $class = $namespace.ltrim(str_replace('/', '\\', substr($path, $prefixLen, -4)), '\\');
+            $class = $namespace.ltrim(str_replace('/', '\\', substr((string) $path, $prefixLen, -4)), '\\');
 
             if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+(?:\\\\[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+)*+$/', $class)) {
                 continue;

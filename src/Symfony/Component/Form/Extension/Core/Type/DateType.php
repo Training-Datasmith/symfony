@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -85,7 +87,7 @@ class DateType extends AbstractType
             $emptyData = $builder->getEmptyData() ?: [];
 
             if ($emptyData instanceof \Closure) {
-                $lazyEmptyData = static fn ($option) => static function (FormInterface $form) use ($emptyData, $option) {
+                $lazyEmptyData = static fn ($option): \Closure => static function (FormInterface $form) use ($emptyData, $option) {
                     $emptyData = $emptyData($form->getParent());
 
                     return $emptyData[$option] ?? '';
@@ -152,7 +154,9 @@ class DateType extends AbstractType
                 ->add('month', self::WIDGETS[$options['widget']], $monthOptions)
                 ->add('day', self::WIDGETS[$options['widget']], $dayOptions)
                 ->addViewTransformer(new DateTimeToArrayTransformer(
-                    $options['model_timezone'], $options['view_timezone'], ['year', 'month', 'day']
+                    $options['model_timezone'],
+                    $options['view_timezone'],
+                    ['year', 'month', 'day']
                 ))
                 ->setAttribute('formatter', $formatter)
             ;
@@ -212,7 +216,7 @@ class DateType extends AbstractType
             // remove special characters unless the format was explicitly specified
             if (!\is_string($options['format'])) {
                 // remove quoted strings first
-                $pattern = preg_replace('/\'[^\']+\'/', '', $pattern);
+                $pattern = preg_replace('/\'[^\']+\'/', '', (string) $pattern);
 
                 // remove remaining special chars
                 $pattern = preg_replace('/[^yMd]+/', '', $pattern);
@@ -220,8 +224,8 @@ class DateType extends AbstractType
 
             // set right order with respect to locale (e.g.: de_DE=dd.MM.yy; en_US=M/d/yy)
             // lookup various formats at http://userguide.icu-project.org/formatparse/datetime
-            if (preg_match('/^([yMd]+)[^yMd]*([yMd]+)[^yMd]*([yMd]+)$/', $pattern)) {
-                $pattern = preg_replace(['/y+/', '/M+/', '/d+/'], ['{{ year }}', '{{ month }}', '{{ day }}'], $pattern);
+            if (preg_match('/^([yMd]+)[^yMd]*([yMd]+)[^yMd]*([yMd]+)$/', (string) $pattern)) {
+                $pattern = preg_replace(['/y+/', '/M+/', '/d+/'], ['{{ year }}', '{{ month }}', '{{ day }}'], (string) $pattern);
             } else {
                 // default fallback
                 $pattern = '{{ year }}{{ month }}{{ day }}';
@@ -233,11 +237,11 @@ class DateType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $compound = static fn (Options $options) => 'single_text' !== $options['widget'];
+        $compound = static fn (Options $options): bool => 'single_text' !== $options['widget'];
 
-        $placeholderDefault = static fn (Options $options) => $options['required'] ? null : '';
+        $placeholderDefault = static fn (Options $options): ?string => $options['required'] ? null : '';
 
-        $placeholderNormalizer = static function (Options $options, $placeholder) use ($placeholderDefault) {
+        $placeholderNormalizer = static function (Options $options, $placeholder) use ($placeholderDefault): array {
             if (\is_array($placeholder)) {
                 $default = $placeholderDefault($options);
 
@@ -254,7 +258,7 @@ class DateType extends AbstractType
             ];
         };
 
-        $choiceTranslationDomainNormalizer = static function (Options $options, $choiceTranslationDomain) {
+        $choiceTranslationDomainNormalizer = static function (Options $options, $choiceTranslationDomain): array {
             if (\is_array($choiceTranslationDomain)) {
                 return array_replace(
                     ['year' => false, 'month' => false, 'day' => false],
@@ -269,7 +273,7 @@ class DateType extends AbstractType
             ];
         };
 
-        $format = static fn (Options $options) => 'single_text' === $options['widget'] ? self::HTML5_FORMAT : self::DEFAULT_FORMAT;
+        $format = static fn (Options $options): string|int => 'single_text' === $options['widget'] ? self::HTML5_FORMAT : self::DEFAULT_FORMAT;
 
         $resolver->setDefaults([
             'years' => range((int) date('Y') - 5, (int) date('Y') + 5),
@@ -293,7 +297,7 @@ class DateType extends AbstractType
             // this option.
             'data_class' => null,
             'compound' => $compound,
-            'empty_data' => static fn (Options $options) => $options['compound'] ? [] : '',
+            'empty_data' => static fn (Options $options): array|string => $options['compound'] ? [] : '',
             'choice_translation_domain' => false,
             'input_format' => 'Y-m-d',
             'invalid_message' => 'Please enter a valid date.',

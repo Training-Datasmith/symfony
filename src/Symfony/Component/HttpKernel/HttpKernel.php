@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -54,19 +56,10 @@ class_exists(KernelEvents::class);
  */
 class HttpKernel implements HttpKernelInterface, TerminableInterface
 {
-    protected RequestStack $requestStack;
-    private ArgumentResolverInterface $argumentResolver;
     private bool $terminating = false;
 
-    public function __construct(
-        protected EventDispatcherInterface $dispatcher,
-        protected ControllerResolverInterface $resolver,
-        ?RequestStack $requestStack = null,
-        ?ArgumentResolverInterface $argumentResolver = null,
-        private bool $handleAllThrowables = false,
-    ) {
-        $this->requestStack = $requestStack ?? new RequestStack();
-        $this->argumentResolver = $argumentResolver ?? new ArgumentResolver();
+    public function __construct(protected EventDispatcherInterface $dispatcher, protected ControllerResolverInterface $resolver, protected ?RequestStack $requestStack = new RequestStack(), private readonly ?ArgumentResolverInterface $argumentResolver = new ArgumentResolver(), private readonly bool $handleAllThrowables = false)
+    {
     }
 
     public function handle(Request $request, int $type = HttpKernelInterface::MAIN_REQUEST, bool $catch = true): Response
@@ -98,7 +91,7 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
             if ($response instanceof StreamedResponse && $callback = $response->getCallback()) {
                 $requestStack = $this->requestStack;
 
-                $response->setCallback(static function () use ($request, $callback, $requestStack) {
+                $response->setCallback(static function () use ($request, $callback, $requestStack): void {
                     $requestStack->push($request);
                     try {
                         $callback();

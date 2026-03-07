@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -11,14 +13,14 @@
 
 namespace Symfony\Bridge\Doctrine\DataCollector;
 
-final class ObjectParameter
+final readonly class ObjectParameter
 {
     private bool $stringable;
     private string $class;
 
     public function __construct(
-        private readonly object $object,
-        private readonly ?\Throwable $error,
+        private object $object,
+        private ?\Throwable $error,
     ) {
         $this->stringable = $this->object instanceof \Stringable;
         $this->class = $object::class;

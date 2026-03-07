@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // Logic inspired from composer/metadata-minifier
 function expandComposerMetadata(array $versions): array
 {

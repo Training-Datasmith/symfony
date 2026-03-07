@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,9 +31,9 @@ final class SinchTransport extends AbstractTransport
     protected const HOST = 'sms.api.sinch.com';
 
     public function __construct(
-        private string $accountSid,
-        #[\SensitiveParameter] private string $authToken,
-        private string $from,
+        private readonly string $accountSid,
+        #[\SensitiveParameter] private readonly string $authToken,
+        private readonly string $from,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -51,7 +53,7 @@ final class SinchTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $endpoint = \sprintf('https://%s/xms/v1/%s/batches', $this->getEndpoint(), $this->accountSid);

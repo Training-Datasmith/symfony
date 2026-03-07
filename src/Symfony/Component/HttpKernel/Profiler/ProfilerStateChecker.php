@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,8 +18,8 @@ use Psr\Container\ContainerInterface;
 class ProfilerStateChecker
 {
     public function __construct(
-        private ContainerInterface $container,
-        private bool $defaultEnabled,
+        private readonly ContainerInterface $container,
+        private readonly bool $defaultEnabled,
     ) {
     }
 

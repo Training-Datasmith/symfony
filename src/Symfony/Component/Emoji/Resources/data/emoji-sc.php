@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'basu: persone, persone, pedde crara e pedde bastante crara',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'basu: persone, persone, pedde crara e pedde de colore mèdiu',

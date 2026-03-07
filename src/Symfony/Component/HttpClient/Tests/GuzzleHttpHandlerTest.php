@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -497,7 +499,9 @@ class GuzzleHttpHandlerTest extends TestCase
         );
 
         $promise = $handler(new Request('GET', 'https://example.com/'), [
-            'on_headers' => static function () { throw new \RuntimeException('Abort!'); },
+            'on_headers' => static function () {
+                throw new \RuntimeException('Abort!');
+            },
         ]);
 
         try {

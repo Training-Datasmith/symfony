@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -54,9 +56,7 @@ class PhpFileLoader extends FileLoader
         }
 
         // the closure forbids access to the private scope in the included file
-        $load = \Closure::bind(static function ($path, $env) use ($container, $loader, $resource, $type) {
-            return include $path;
-        }, null, null);
+        $load = \Closure::bind(static fn ($path, $env) => include $path, null, null);
 
         $instanceof = $this->instanceof;
         $this->instanceof = [];
@@ -82,9 +82,9 @@ class PhpFileLoader extends FileLoader
                         if (\in_array($namespace, ['imports', 'parameters', 'services'], true)) {
                             continue;
                         }
-                        if (str_starts_with($namespace, 'when@')) {
+                        if (str_starts_with((string) $namespace, 'when@')) {
                             $knownEnvs = $this->container->hasParameter('.container.known_envs') ? array_flip($this->container->getParameter('.container.known_envs')) : [];
-                            $this->container->setParameter('.container.known_envs', array_keys($knownEnvs + [substr($namespace, 5) => true]));
+                            $this->container->setParameter('.container.known_envs', array_keys($knownEnvs + [substr((string) $namespace, 5) => true]));
                             continue;
                         }
                         $this->loadExtensionConfig($namespace, $config);
@@ -100,7 +100,7 @@ class PhpFileLoader extends FileLoader
                         $this->loadContent($content, $path);
 
                         foreach ($result[$when] as $namespace => $config) {
-                            if (!\in_array($namespace, ['imports', 'parameters', 'services'], true) && !str_starts_with($namespace, 'when@')) {
+                            if (!\in_array($namespace, ['imports', 'parameters', 'services'], true) && !str_starts_with((string) $namespace, 'when@')) {
                                 $this->loadExtensionConfig($namespace, $config);
                             }
                         }

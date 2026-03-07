@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,9 +31,9 @@ class LogoutUrlGenerator
     private ?string $currentFirewallContext = null;
 
     public function __construct(
-        private ?RequestStack $requestStack = null,
-        private ?UrlGeneratorInterface $router = null,
-        private ?TokenStorageInterface $tokenStorage = null,
+        private readonly ?RequestStack $requestStack = null,
+        private readonly ?UrlGeneratorInterface $router = null,
+        private readonly ?TokenStorageInterface $tokenStorage = null,
     ) {
     }
 

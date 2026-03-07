@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,14 +41,14 @@ class HttpHeaderSerializer
             foreach ($link->getAttributes() as $key => $value) {
                 if (\is_array($value)) {
                     foreach ($value as $v) {
-                        $attributesParts[] = \sprintf('%s="%s"', $key, preg_replace('/(?<!\\\\)"/', '\"', $v));
+                        $attributesParts[] = \sprintf('%s="%s"', $key, preg_replace('/(?<!\\\\)"/', '\"', (string) $v));
                     }
 
                     continue;
                 }
 
                 if (!\is_bool($value)) {
-                    $attributesParts[] = \sprintf('%s="%s"', $key, preg_replace('/(?<!\\\\)"/', '\"', $value));
+                    $attributesParts[] = \sprintf('%s="%s"', $key, preg_replace('/(?<!\\\\)"/', '\"', (string) $value));
 
                     continue;
                 }

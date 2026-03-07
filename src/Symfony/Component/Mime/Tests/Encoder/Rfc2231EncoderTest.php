@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -117,7 +119,8 @@ class Rfc2231EncoderTest extends TestCase
                     $text = file_get_contents($dir.'/'.$encoding.'/'.$sampleFile);
                     $encodedText = $encoder->encodeString($text, $encoding);
                     $this->assertEquals(
-                        urldecode(implode('', explode("\r\n", $encodedText))), $text,
+                        urldecode(implode('', explode("\r\n", $encodedText))),
+                        $text,
                         'Encoded string should decode back to original string for sample '.$dir.'/'.$encoding.'/'.$sampleFile
                     );
                 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,14 +26,14 @@ class ArgumentMetadata
      * @param object[] $attributes
      */
     public function __construct(
-        private string $name,
-        private ?string $type,
-        private bool $isVariadic,
-        private bool $hasDefaultValue,
-        private mixed $defaultValue,
+        private readonly string $name,
+        private readonly ?string $type,
+        private readonly bool $isVariadic,
+        private readonly bool $hasDefaultValue,
+        private readonly mixed $defaultValue,
         private bool $isNullable = false,
-        private array $attributes = [],
-        private string $controllerName = 'n/a',
+        private readonly array $attributes = [],
+        private readonly string $controllerName = 'n/a',
     ) {
         $this->isNullable = $isNullable || null === $type || ($hasDefaultValue && null === $defaultValue);
     }
@@ -86,7 +88,7 @@ class ArgumentMetadata
     public function getDefaultValue(): mixed
     {
         if (!$this->hasDefaultValue) {
-            throw new \LogicException(\sprintf('Argument $%s does not have a default value. Use "%s::hasDefaultValue()" to avoid this exception.', $this->name, __CLASS__));
+            throw new \LogicException(\sprintf('Argument $%s does not have a default value. Use "%s::hasDefaultValue()" to avoid this exception.', $this->name, self::class));
         }
 
         return $this->defaultValue;

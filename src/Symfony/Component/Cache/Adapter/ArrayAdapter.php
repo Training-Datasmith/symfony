@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -58,7 +60,7 @@ class ArrayAdapter implements AdapterInterface, CacheInterface, NamespacedPoolIn
         }
 
         self::$createCacheItem ??= \Closure::bind(
-            static function ($key, $value, $isHit, $tags) {
+            static function ($key, $value, $isHit, $tags): \Symfony\Component\Cache\CacheItem {
                 $item = new CacheItem();
                 $item->key = $key;
                 $item->value = $value;
@@ -83,9 +85,7 @@ class ArrayAdapter implements AdapterInterface, CacheInterface, NamespacedPoolIn
         if (\INF === $beta || !$item->isHit()) {
             $save = true;
             $item->set($callback($item, $save));
-            if ($save) {
-                $this->save($item);
-            }
+            $this->save($item);
         }
 
         return $item->get();
@@ -223,7 +223,7 @@ class ArrayAdapter implements AdapterInterface, CacheInterface, NamespacedPoolIn
             $now = $this->getCurrentTime();
 
             foreach ($this->values as $key => $value) {
-                if (!isset($this->expiries[$key]) || $this->expiries[$key] <= $now || str_starts_with($key, $prefix)) {
+                if (!isset($this->expiries[$key]) || $this->expiries[$key] <= $now || str_starts_with((string) $key, $prefix)) {
                     unset($this->values[$key], $this->tags[$key], $this->expiries[$key]);
                 }
             }
@@ -271,7 +271,10 @@ class ArrayAdapter implements AdapterInterface, CacheInterface, NamespacedPoolIn
 
         $values = $this->values;
         foreach ($values as $k => $v) {
-            if (null === $v || 'N;' === $v) {
+            if (null === $v) {
+                continue;
+            }
+            if ('N;' === $v) {
                 continue;
             }
             if (!\is_string($v) || !isset($v[2]) || ':' !== $v[1]) {

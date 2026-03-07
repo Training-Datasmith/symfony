@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -90,7 +92,7 @@ class MarkdownDescriptor extends Descriptor
         $this->write("Container tags\n==============");
 
         foreach ($this->findDefinitionsByTag($container, $showHidden) as $tag => $definitions) {
-            $this->write("\n\n".$tag."\n".str_repeat('-', \strlen($tag)));
+            $this->write("\n\n".$tag."\n".str_repeat('-', \strlen((string) $tag)));
             foreach ($definitions as $serviceId => $definition) {
                 $this->write("\n\n");
                 $this->describeContainerDefinition($definition, ['omit_tags' => true, 'id' => $serviceId], $container);
@@ -261,7 +263,7 @@ class MarkdownDescriptor extends Descriptor
                 foreach ($tagData as $parameters) {
                     $output .= "\n".'- Tag: `'.$tagName.'`';
                     foreach ($parameters as $name => $value) {
-                        $output .= "\n".'    - '.ucfirst($name).': '.(\is_array($value) ? $this->formatParameter($value) : $value);
+                        $output .= "\n".'    - '.ucfirst((string) $name).': '.(\is_array($value) ? $this->formatParameter($value) : $value);
                     }
                 }
             }
@@ -334,7 +336,7 @@ class MarkdownDescriptor extends Descriptor
             $registeredListeners = $eventDispatcher->getListeners($event);
         } else {
             // Try to see if "events" exists
-            $registeredListeners = \array_key_exists('events', $options) ? array_combine($options['events'], array_map(static fn ($event) => $eventDispatcher->getListeners($event), $options['events'])) : $eventDispatcher->getListeners();
+            $registeredListeners = \array_key_exists('events', $options) ? array_combine($options['events'], array_map($eventDispatcher->getListeners(...), $options['events'])) : $eventDispatcher->getListeners();
         }
 
         $this->write(\sprintf('# %s', $title)."\n");
@@ -371,12 +373,12 @@ class MarkdownDescriptor extends Descriptor
                 $string .= "\n".\sprintf('- Name: `%s`', $callable[1]);
                 $string .= "\n".\sprintf('- Class: `%s`', $callable[0]::class);
             } else {
-                if (!str_starts_with($callable[1], 'parent::')) {
+                if (!str_starts_with((string) $callable[1], 'parent::')) {
                     $string .= "\n".\sprintf('- Name: `%s`', $callable[1]);
                     $string .= "\n".\sprintf('- Class: `%s`', $callable[0]);
                     $string .= "\n- Static: yes";
                 } else {
-                    $string .= "\n".\sprintf('- Name: `%s`', substr($callable[1], 8));
+                    $string .= "\n".\sprintf('- Name: `%s`', substr((string) $callable[1], 8));
                     $string .= "\n".\sprintf('- Class: `%s`', $callable[0]);
                     $string .= "\n- Static: yes";
                     $string .= "\n- Parent: yes";

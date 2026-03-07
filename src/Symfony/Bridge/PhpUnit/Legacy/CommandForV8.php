@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,7 +43,7 @@ class CommandForV8 extends BaseCommand
                 $configuration = Configuration::getInstance($this->arguments['configuration']);
             }
             foreach ($configuration->getListenerConfiguration() as $registeredListener) {
-                if ('Symfony\Bridge\PhpUnit\SymfonyTestsListener' === ltrim($registeredListener['class'], '\\')) {
+                if (\Symfony\Bridge\PhpUnit\SymfonyTestsListener::class === ltrim((string) $registeredListener['class'], '\\')) {
                     $registeredLocally = true;
                     break;
                 }

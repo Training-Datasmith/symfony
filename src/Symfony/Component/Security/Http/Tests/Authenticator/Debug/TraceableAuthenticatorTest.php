@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,8 @@ class TraceableAuthenticatorTest extends TestCase
     public function testGetInfo()
     {
         $request = new Request();
-        $passport = new SelfValidatingPassport(new UserBadge('robin', static function () {}));
+        $passport = new SelfValidatingPassport(new UserBadge('robin', static function () {
+        }));
 
         $authenticator = $this->createMock(AuthenticatorInterface::class);
         $authenticator->expects($this->once())

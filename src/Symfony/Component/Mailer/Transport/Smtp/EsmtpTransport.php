@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -231,9 +233,9 @@ class EsmtpTransport extends SmtpTransport
         $code = null;
         $authNames = [];
         $errors = [];
-        $modes = array_map('strtolower', $modes);
+        $modes = array_map(strtolower(...), $modes);
         foreach ($this->authenticators as $authenticator) {
-            if (!\in_array(strtolower($authenticator->getAuthKeyword()), $modes, true)) {
+            if (!\in_array(strtolower((string) $authenticator->getAuthKeyword()), $modes, true)) {
                 continue;
             }
 

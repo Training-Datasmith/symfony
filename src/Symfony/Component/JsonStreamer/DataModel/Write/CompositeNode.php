@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ use Symfony\Component\TypeInfo\Type\UnionType;
  *
  * @internal
  */
-final class CompositeNode implements DataModelNodeInterface
+final readonly class CompositeNode implements DataModelNodeInterface
 {
     private const NODE_PRECISION = [
         CollectionNode::class => 3,

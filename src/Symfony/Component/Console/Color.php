@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -49,8 +51,8 @@ final class Color
         'conceal' => ['set' => 8, 'unset' => 28],
     ];
 
-    private string $foreground;
-    private string $background;
+    private readonly string $foreground;
+    private readonly string $background;
     private array $options = [];
 
     public function __construct(string $foreground = '', string $background = '', array $options = [])

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -58,7 +60,7 @@ class RouteCompiler implements RouteCompilerInterface
         }
 
         $locale = $route->getDefault('_locale');
-        if (null !== $locale && null !== $route->getDefault('_canonical_route') && preg_quote($locale) === $route->getRequirement('_locale')) {
+        if (null !== $locale && null !== $route->getDefault('_canonical_route') && preg_quote((string) $locale) === $route->getRequirement('_locale')) {
             $requirements = $route->getRequirements();
             unset($requirements['_locale']);
             $route->setRequirements($requirements);
@@ -131,7 +133,7 @@ class RouteCompiler implements RouteCompilerInterface
             } else {
                 $precedingChar = substr($precedingText, -1);
             }
-            $isSeparator = '' !== $precedingChar && str_contains(static::SEPARATORS, $precedingChar);
+            $isSeparator = '' !== $precedingChar && str_contains((string) static::SEPARATORS, $precedingChar);
 
             // A PCRE subpattern name must start with a non-digit. Also a PHP variable cannot start with a digit so the
             // variable would not be usable as a Controller action argument.
@@ -273,10 +275,10 @@ class RouteCompiler implements RouteCompilerInterface
             return '';
         }
         if ($useUtf8) {
-            preg_match('/^./u', $pattern, $pattern);
+            preg_match('/^./u', (string) $pattern, $pattern);
         }
 
-        return str_contains(static::SEPARATORS, $pattern[0]) ? $pattern[0] : '';
+        return str_contains((string) static::SEPARATORS, $pattern[0]) ? $pattern[0] : '';
     }
 
     /**
@@ -291,16 +293,16 @@ class RouteCompiler implements RouteCompilerInterface
         $token = $tokens[$index];
         if ('text' === $token[0]) {
             // Text tokens
-            return preg_quote($token[1]);
+            return preg_quote((string) $token[1]);
         }
 
         // Variable tokens
         if (0 === $index && 0 === $firstOptional) {
             // When the only token is an optional variable token, the separator is required
-            return \sprintf('%s(?P<%s>%s)?', preg_quote($token[1]), $token[3], $token[2]);
+            return \sprintf('%s(?P<%s>%s)?', preg_quote((string) $token[1]), $token[3], $token[2]);
         }
 
-        $regexp = \sprintf('%s(?P<%s>%s)', preg_quote($token[1]), $token[3], $token[2]);
+        $regexp = \sprintf('%s(?P<%s>%s)', preg_quote((string) $token[1]), $token[3], $token[2]);
         if ($index >= $firstOptional) {
             // Enclose each optional token in a subpattern to make it optional.
             // "?:" means it is non-capturing, i.e. the portion of the subject string that
@@ -323,7 +325,10 @@ class RouteCompiler implements RouteCompilerInterface
                 ++$i;
                 continue;
             }
-            if ('(' !== $regexp[$i] || !isset($regexp[$i + 2])) {
+            if ('(' !== $regexp[$i]) {
+                continue;
+            }
+            if (!isset($regexp[$i + 2])) {
                 continue;
             }
             if ('*' === $regexp[++$i] || '?' === $regexp[$i]) {

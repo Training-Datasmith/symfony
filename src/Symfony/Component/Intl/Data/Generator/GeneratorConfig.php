@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,8 +30,8 @@ class GeneratorConfig
     private array $bundleWriters = [];
 
     public function __construct(
-        private string $sourceDir,
-        private string $icuVersion,
+        private readonly string $sourceDir,
+        private readonly string $icuVersion,
     ) {
     }
 

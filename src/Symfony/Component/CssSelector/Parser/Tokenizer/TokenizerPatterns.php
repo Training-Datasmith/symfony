@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,18 +25,18 @@ namespace Symfony\Component\CssSelector\Parser\Tokenizer;
  */
 class TokenizerPatterns
 {
-    private string $unicodeEscapePattern;
-    private string $simpleEscapePattern;
-    private string $newLineEscapePattern;
-    private string $escapePattern;
-    private string $stringEscapePattern;
-    private string $nonAsciiPattern;
-    private string $nmCharPattern;
-    private string $nmStartPattern;
-    private string $identifierPattern;
-    private string $hashPattern;
-    private string $numberPattern;
-    private string $quotedStringPattern;
+    private readonly string $unicodeEscapePattern;
+    private readonly string $simpleEscapePattern;
+    private readonly string $newLineEscapePattern;
+    private readonly string $escapePattern;
+    private readonly string $stringEscapePattern;
+    private readonly string $nonAsciiPattern;
+    private readonly string $nmCharPattern;
+    private readonly string $nmStartPattern;
+    private readonly string $identifierPattern;
+    private readonly string $hashPattern;
+    private readonly string $numberPattern;
+    private readonly string $quotedStringPattern;
 
     public function __construct()
     {

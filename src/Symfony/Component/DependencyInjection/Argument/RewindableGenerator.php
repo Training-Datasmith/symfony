@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ namespace Symfony\Component\DependencyInjection\Argument;
  */
 class RewindableGenerator implements \IteratorAggregate, \Countable
 {
-    private \Closure $generator;
+    private readonly \Closure $generator;
     private \Closure|int $count;
 
     public function __construct(callable $generator, int|callable $count)

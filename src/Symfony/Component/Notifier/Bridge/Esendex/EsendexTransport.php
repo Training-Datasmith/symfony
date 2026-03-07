@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,10 +29,10 @@ final class EsendexTransport extends AbstractTransport
     protected const HOST = 'api.esendex.com';
 
     public function __construct(
-        private string $email,
-        #[\SensitiveParameter] private string $password,
-        private string $accountReference,
-        private string $from,
+        private readonly string $email,
+        #[\SensitiveParameter] private readonly string $password,
+        private readonly string $accountReference,
+        private readonly string $from,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -50,7 +52,7 @@ final class EsendexTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $options = $message->getOptions()?->toArray() ?? [];

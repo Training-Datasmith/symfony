@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -13,13 +15,13 @@ namespace Symfony\Component\Ldap\Security;
 
 use Symfony\Component\Ldap\Entry;
 
-final class AssignDefaultRoles implements RoleFetcherInterface
+final readonly class AssignDefaultRoles implements RoleFetcherInterface
 {
     /**
      * @param string[] $roles
      */
     public function __construct(
-        private readonly array $roles,
+        private array $roles,
     ) {
     }
 

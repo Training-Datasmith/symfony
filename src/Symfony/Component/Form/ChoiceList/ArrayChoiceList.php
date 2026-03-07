@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -55,7 +57,7 @@ class ArrayChoiceList implements ChoiceListInterface
         }
 
         if (null === $value && $this->castableToString($choices)) {
-            $value = static fn ($choice) => false === $choice ? '0' : (string) $choice;
+            $value = static fn ($choice): string => false === $choice ? '0' : (string) $choice;
         }
 
         if (null !== $value) {
@@ -87,7 +89,7 @@ class ArrayChoiceList implements ChoiceListInterface
 
     public function getValues(): array
     {
-        return array_map('strval', array_keys($this->choices));
+        return array_map(strval(...), array_keys($this->choices));
     }
 
     public function getStructuredValues(): array
@@ -189,9 +191,9 @@ class ArrayChoiceList implements ChoiceListInterface
                 if (!$this->castableToString($choice, $cache)) {
                     return false;
                 }
-
                 continue;
-            } elseif (!\is_scalar($choice)) {
+            }
+            if (!\is_scalar($choice)) {
                 return false;
             }
 

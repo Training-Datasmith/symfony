@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,8 +29,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 final class ZendeskTransport extends AbstractTransport
 {
     public function __construct(
-        private string $email,
-        #[\SensitiveParameter] private string $token,
+        private readonly string $email,
+        #[\SensitiveParameter] private readonly string $token,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -48,7 +50,7 @@ final class ZendeskTransport extends AbstractTransport
     protected function doSend(?MessageInterface $message = null): SentMessage
     {
         if (!$message instanceof ChatMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, ChatMessage::class, $message);
         }
 
         $endpoint = \sprintf('https://%s/api/v2/tickets.json', $this->getEndpoint());

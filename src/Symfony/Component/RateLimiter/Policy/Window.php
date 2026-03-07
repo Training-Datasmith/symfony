@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,16 +23,14 @@ use Symfony\Component\RateLimiter\LimiterStateInterface;
 final class Window implements LimiterStateInterface
 {
     private int $hitCount = 0;
-    private int $maxSize;
     private float $timer;
 
     public function __construct(
         private string $id,
         private int $intervalInSeconds,
-        int $windowSize,
+        private int $maxSize,
         ?float $timer = null,
     ) {
-        $this->maxSize = $windowSize;
         $this->timer = $timer ?? microtime(true);
     }
 
@@ -39,7 +39,7 @@ final class Window implements LimiterStateInterface
         return $this->id;
     }
 
-    public function getExpirationTime(): ?int
+    public function getExpirationTime(): int
     {
         return $this->intervalInSeconds;
     }
@@ -106,6 +106,6 @@ final class Window implements LimiterStateInterface
 
         [$this->timer, $this->maxSize] = array_values($data);
         [$this->id, $pack] = array_keys($data);
-        ['a' => $this->hitCount, 'b' => $this->intervalInSeconds] = unpack('Na/Nb', $pack);
+        ['a' => $this->hitCount, 'b' => $this->intervalInSeconds] = unpack('Na/Nb', (string) $pack);
     }
 }

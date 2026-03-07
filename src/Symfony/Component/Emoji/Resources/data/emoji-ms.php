@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'cium: dewasa, dewasa, ton kulit cerah dan ton kulit sederhana cerah',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'cium: dewasa, dewasa, ton kulit cerah dan ton kulit sederhana',

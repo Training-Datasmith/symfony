@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @param Symfony\Component\JsonStreamer\Tests\Fixtures\Model\DummyWithSyntheticProperties $data
  */
@@ -8,7 +10,7 @@ return static function (mixed $data, \Psr\Container\ContainerInterface $valueTra
         $prefix1 = '';
         yield "{{$prefix1}\"synthetic\":";
         yield \json_encode(Symfony\Component\JsonStreamer\Tests\Fixtures\Mapping\SyntheticPropertyMetadataLoader::true(null, ['_current_object' => $data] + $options), \JSON_THROW_ON_ERROR, 511);
-        yield "}";
+        yield '}';
     } catch (\JsonException $e) {
         throw new \Symfony\Component\JsonStreamer\Exception\NotEncodableValueException($e->getMessage(), 0, $e);
     }

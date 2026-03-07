@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ class StaticEnvVarLoaderTest extends TestCase
 {
     public function testLoadEnvVarsCachesInnerLoaderEnvVars()
     {
-        $innerLoader = new class(['FOO' => 'BAR']) implements EnvVarLoaderInterface {
+        $innerLoader = new class (['FOO' => 'BAR']) implements EnvVarLoaderInterface {
             /** @param array<string, string> */
             public function __construct(public array $envVars = [])
             {

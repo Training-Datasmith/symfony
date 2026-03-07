@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,30 +21,30 @@ class OidcUser implements UserInterface
     private array $additionalClaims = [];
 
     public function __construct(
-        private ?string $userIdentifier = null,
-        private array $roles = ['ROLE_USER'],
+        private readonly ?string $userIdentifier = null,
+        private readonly array $roles = ['ROLE_USER'],
 
         // Standard Claims (https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims)
-        private ?string $sub = null,
-        private ?string $name = null,
-        private ?string $givenName = null,
-        private ?string $familyName = null,
-        private ?string $middleName = null,
-        private ?string $nickname = null,
-        private ?string $preferredUsername = null,
-        private ?string $profile = null,
-        private ?string $picture = null,
-        private ?string $website = null,
-        private ?string $email = null,
-        private ?bool $emailVerified = null,
-        private ?string $gender = null,
-        private ?string $birthdate = null,
-        private ?string $zoneinfo = null,
-        private ?string $locale = null,
-        private ?string $phoneNumber = null,
-        private ?bool $phoneNumberVerified = null,
-        private ?array $address = null,
-        private ?\DateTimeInterface $updatedAt = null,
+        private readonly ?string $sub = null,
+        private readonly ?string $name = null,
+        private readonly ?string $givenName = null,
+        private readonly ?string $familyName = null,
+        private readonly ?string $middleName = null,
+        private readonly ?string $nickname = null,
+        private readonly ?string $preferredUsername = null,
+        private readonly ?string $profile = null,
+        private readonly ?string $picture = null,
+        private readonly ?string $website = null,
+        private readonly ?string $email = null,
+        private readonly ?bool $emailVerified = null,
+        private readonly ?string $gender = null,
+        private readonly ?string $birthdate = null,
+        private readonly ?string $zoneinfo = null,
+        private readonly ?string $locale = null,
+        private readonly ?string $phoneNumber = null,
+        private readonly ?bool $phoneNumberVerified = null,
+        private readonly ?array $address = null,
+        private readonly ?\DateTimeInterface $updatedAt = null,
 
         // Additional Claims (https://openid.net/specs/openid-connect-core-1_0.html#AdditionalClaims)
         ...$additionalClaims,

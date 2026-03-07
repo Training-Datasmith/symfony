@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -56,7 +58,7 @@ class StreamedJsonResponse extends StreamedResponse
         private readonly iterable $data,
         int $status = 200,
         array $headers = [],
-        private int $encodingOptions = JsonResponse::DEFAULT_ENCODING_OPTIONS,
+        private readonly int $encodingOptions = JsonResponse::DEFAULT_ENCODING_OPTIONS,
     ) {
         parent::__construct($this->stream(...), $status, $headers);
 
@@ -94,7 +96,7 @@ class StreamedJsonResponse extends StreamedResponse
     {
         $generators = [];
 
-        array_walk_recursive($data, static function (&$item, $key) use (&$generators) {
+        array_walk_recursive($data, static function (&$item, $key) use (&$generators): void {
             if (self::PLACEHOLDER === $key) {
                 // if the placeholder is already in the structure it should be replaced with a new one that explode
                 // works like expected for the structure

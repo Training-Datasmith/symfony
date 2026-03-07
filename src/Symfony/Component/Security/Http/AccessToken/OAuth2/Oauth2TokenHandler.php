@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,11 +30,11 @@ use function Symfony\Component\String\u;
  *
  * @internal
  */
-final class Oauth2TokenHandler implements AccessTokenHandlerInterface
+final readonly class Oauth2TokenHandler implements AccessTokenHandlerInterface
 {
     public function __construct(
-        private readonly HttpClientInterface $client,
-        private readonly ?LoggerInterface $logger = null,
+        private HttpClientInterface $client,
+        private ?LoggerInterface $logger = null,
     ) {
     }
 
@@ -58,7 +60,7 @@ final class Oauth2TokenHandler implements AccessTokenHandlerInterface
                 throw new BadCredentialsException('The claim "active" was not found on the authorization server response or is set to false.');
             }
 
-            return new UserBadge($sub ?? $username, fn () => $this->createUser($claims), $claims);
+            return new UserBadge($sub ?? $username, fn (): \Symfony\Component\Security\Core\User\OAuth2User => $this->createUser($claims), $claims);
         } catch (AuthenticationException $e) {
             $this->logger?->error('An error occurred on the authorization server.', [
                 'error' => $e->getMessage(),
@@ -77,7 +79,10 @@ final class Oauth2TokenHandler implements AccessTokenHandlerInterface
 
         foreach ($claims as $claim => $value) {
             unset($claims[$claim]);
-            if ('' === $value || null === $value) {
+            if ('' === $value) {
+                continue;
+            }
+            if (null === $value) {
                 continue;
             }
             $claims[u($claim)->camel()->toString()] = $value;

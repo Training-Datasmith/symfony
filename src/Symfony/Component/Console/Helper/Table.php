@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -55,7 +57,7 @@ class Table
     private static array $styles;
 
     public function __construct(
-        private OutputInterface $output,
+        private readonly OutputInterface $output,
     ) {
         self::$styles ??= self::initStyles();
 
@@ -312,7 +314,7 @@ class Table
     public function render(): void
     {
         $divider = new TableSeparator();
-        $isCellWithColspan = static fn ($cell) => $cell instanceof TableCell && $cell->getColspan() >= 2;
+        $isCellWithColspan = static fn ($cell): bool => $cell instanceof TableCell && $cell->getColspan() >= 2;
 
         $horizontal = self::DISPLAY_ORIENTATION_HORIZONTAL === $this->displayOrientation;
         $vertical = self::DISPLAY_ORIENTATION_VERTICAL === $this->displayOrientation;
@@ -336,7 +338,7 @@ class Table
             }
         } elseif ($vertical) {
             $formatter = $this->output->getFormatter();
-            $maxHeaderLength = array_reduce($this->headers[0] ?? [], static fn ($max, $header) => max($max, Helper::width(Helper::removeDecoration($formatter, $header))), 0);
+            $maxHeaderLength = array_reduce($this->headers[0] ?? [], static fn ($max, ?string $header) => max($max, Helper::width(Helper::removeDecoration($formatter, $header))), 0);
 
             foreach ($this->rows as $row) {
                 if ($row instanceof TableSeparator) {
@@ -489,7 +491,7 @@ class Table
 
         $markup = $leftChar;
         for ($column = 0; $column < $count; ++$column) {
-            $markup .= str_repeat($horizontal, $this->effectiveColumnWidths[$column]);
+            $markup .= str_repeat((string) $horizontal, $this->effectiveColumnWidths[$column]);
             $markup .= $column === $count - 1 ? $rightChar : $midChar;
         }
 
@@ -503,10 +505,10 @@ class Table
             }
 
             $titleStart = intdiv($markupLength - $titleLength, 2);
-            if (false === mb_detect_encoding($markup, null, true)) {
+            if (false === mb_detect_encoding((string) $markup, null, true)) {
                 $markup = substr_replace($markup, $formattedTitle, $titleStart, $titleLength);
             } else {
-                $markup = mb_substr($markup, 0, $titleStart).$formattedTitle.mb_substr($markup, $titleStart + $titleLength);
+                $markup = mb_substr((string) $markup, 0, $titleStart).$formattedTitle.mb_substr((string) $markup, $titleStart + $titleLength);
             }
         }
 
@@ -565,7 +567,7 @@ class Table
         $style = $this->getColumnStyle($column);
 
         if ($cell instanceof TableSeparator) {
-            return \sprintf($style->getBorderFormat(), str_repeat($style->getBorderChars()[2], $width));
+            return \sprintf($style->getBorderFormat(), str_repeat((string) $style->getBorderChars()[2], $width));
         }
 
         $width += Helper::length($cell) - Helper::length(Helper::removeDecoration($this->output->getFormatter(), $cell));
@@ -673,7 +675,7 @@ class Table
                     continue;
                 }
                 $eol = str_contains($cell ?? '', "\r\n") ? "\r\n" : "\n";
-                $escaped = implode($eol, array_map(OutputFormatter::escapeTrailingBackslash(...), explode($eol, $cell)));
+                $escaped = implode($eol, array_map(OutputFormatter::escapeTrailingBackslash(...), explode($eol, (string) $cell)));
                 $cell = $cell instanceof TableCell ? new TableCell($escaped, ['colspan' => $cell->getColspan()]) : $escaped;
                 $lines = explode($eol, str_replace($eol, '<fg=default;bg=default></>'.$eol, $cell));
                 foreach ($lines as $lineKey => $line) {

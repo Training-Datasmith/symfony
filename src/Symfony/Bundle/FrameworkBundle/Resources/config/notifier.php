@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,7 +38,7 @@ use Symfony\Component\Notifier\TexterInterface;
 use Symfony\Component\Notifier\Transport;
 use Symfony\Component\Notifier\Transport\Transports;
 
-return static function (ContainerConfigurator $container) {
+return static function (ContainerConfigurator $container): void {
     $container->services()
         ->set('notifier', Notifier::class)
             ->args([tagged_locator('notifier.channel', 'channel'), service('notifier.channel_policy')->ignoreOnInvalid()])

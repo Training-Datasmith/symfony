@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,7 @@ class EarlyExpirationMessageTest extends TestCase
         $item = $pool->getItem('foo');
         $item->set(234);
 
-        $computationService = new class {
+        $computationService = new class () {
             public function __invoke(CacheItem $item)
             {
                 return 123;
@@ -64,7 +66,7 @@ class EarlyExpirationMessageTest extends TestCase
         $item = $pool->getItem('foo');
         $item->set(234);
 
-        $computationService = new class {
+        $computationService = new class () {
             public function compute(CacheItem $item)
             {
                 return 123;

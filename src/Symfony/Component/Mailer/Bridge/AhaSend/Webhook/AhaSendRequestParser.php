@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,7 +19,6 @@ use Symfony\Component\HttpFoundation\RequestMatcher\IsJsonRequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcher\MethodRequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\Mailer\Bridge\AhaSend\RemoteEvent\AhaSendPayloadConverter;
-use Symfony\Component\RemoteEvent\Event\Mailer\AbstractMailerEvent;
 use Symfony\Component\RemoteEvent\Exception\ParseException;
 use Symfony\Component\Webhook\Client\AbstractRequestParser;
 use Symfony\Component\Webhook\Exception\RejectWebhookException;
@@ -37,7 +38,7 @@ final class AhaSendRequestParser extends AbstractRequestParser
         ]);
     }
 
-    protected function doParse(Request $request, #[\SensitiveParameter] string $secret): ?AbstractMailerEvent
+    protected function doParse(Request $request, #[\SensitiveParameter] string $secret): \Symfony\Component\RemoteEvent\Event\Mailer\AbstractMailerEvent
     {
         $payload = $request->toArray();
         $eventID = $request->headers->get('webhook-id');
@@ -64,7 +65,7 @@ final class AhaSendRequestParser extends AbstractRequestParser
         }
     }
 
-    private function sign(string $eventID, string $timestamp, string $payload, $secret): string
+    private function sign(string $eventID, string $timestamp, string $payload, string $secret): string
     {
         $signaturePayload = "{$eventID}.{$timestamp}.{$payload}";
         $hash = hash_hmac('sha256', $signaturePayload, $secret);

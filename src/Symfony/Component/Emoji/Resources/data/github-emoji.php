@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     ':couplekiss_man_man:' => '👨‍❤‍💋‍👨',
     ':couplekiss_man_woman:' => '👩‍❤‍💋‍👨',

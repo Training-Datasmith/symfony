@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,13 +31,13 @@ use Symfony\Component\Validator\Mapping\Loader\LoaderInterface;
  *
  * @author Kévin Dunglas <dunglas@gmail.com>
  */
-final class DoctrineLoader implements LoaderInterface
+final readonly class DoctrineLoader implements LoaderInterface
 {
     use AutoMappingTrait;
 
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly ?string $classValidatorRegexp = null,
+        private EntityManagerInterface $entityManager,
+        private ?string $classValidatorRegexp = null,
     ) {
     }
 
@@ -93,13 +95,18 @@ final class DoctrineLoader implements LoaderInterface
                 $metadata->addConstraint(new UniqueEntity(fields: self::getFieldMappingValue($mapping, 'fieldName')));
                 $loaded = true;
             }
-
-            if (null === (self::getFieldMappingValue($mapping, 'length') ?? null) || null !== (self::getFieldMappingValue($mapping, 'enumType') ?? null) || !\in_array(self::getFieldMappingValue($mapping, 'type'), ['string', 'text'], true)) {
+            if (null === (self::getFieldMappingValue($mapping, 'length') ?? null)) {
+                continue;
+            }
+            if (null !== (self::getFieldMappingValue($mapping, 'enumType') ?? null)) {
+                continue;
+            }
+            if (!\in_array(self::getFieldMappingValue($mapping, 'type'), ['string', 'text'], true)) {
                 continue;
             }
 
             if (null === $lengthConstraint) {
-                if (self::getFieldMappingValue($mapping, 'originalClass') && !str_contains(self::getFieldMappingValue($mapping, 'declaredField'), '.')) {
+                if (self::getFieldMappingValue($mapping, 'originalClass') && !str_contains((string) self::getFieldMappingValue($mapping, 'declaredField'), '.')) {
                     $metadata->addPropertyConstraint(self::getFieldMappingValue($mapping, 'declaredField'), new Valid());
                     $loaded = true;
                 } elseif (property_exists($className, self::getFieldMappingValue($mapping, 'fieldName')) && (!$doctrineMetadata->isMappedSuperclass || $metadata->getReflectionClass()->getProperty(self::getFieldMappingValue($mapping, 'fieldName'))->isPrivate())) {

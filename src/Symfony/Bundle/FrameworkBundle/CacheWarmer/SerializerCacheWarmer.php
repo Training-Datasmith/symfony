@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ final class SerializerCacheWarmer extends AbstractPhpFileCacheWarmer
      * @param string            $phpArrayFile The PHP file where metadata are cached
      */
     public function __construct(
-        private array $loaders,
+        private readonly array $loaders,
         string $phpArrayFile,
     ) {
         parent::__construct($phpArrayFile);

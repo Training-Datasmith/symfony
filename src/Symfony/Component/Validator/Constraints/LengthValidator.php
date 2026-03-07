@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -52,9 +54,9 @@ class LengthValidator extends ConstraintValidator
         }
 
         $length = $invalidCharset ? 0 : match ($constraint->countUnit) {
-            Length::COUNT_BYTES => \strlen($stringValue),
-            Length::COUNT_CODEPOINTS => mb_strlen($stringValue, $constraint->charset),
-            Length::COUNT_GRAPHEMES => grapheme_strlen($stringValue),
+            Length::COUNT_BYTES => \strlen((string) $stringValue),
+            Length::COUNT_CODEPOINTS => mb_strlen((string) $stringValue, $constraint->charset),
+            Length::COUNT_GRAPHEMES => grapheme_strlen((string) $stringValue),
         };
 
         if ($invalidCharset || false === ($length ?? false)) {

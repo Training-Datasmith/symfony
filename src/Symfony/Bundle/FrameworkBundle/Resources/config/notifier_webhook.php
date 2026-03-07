@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,7 +19,7 @@ use Symfony\Component\Notifier\Bridge\Sweego\Webhook\SweegoRequestParser;
 use Symfony\Component\Notifier\Bridge\Twilio\Webhook\TwilioRequestParser;
 use Symfony\Component\Notifier\Bridge\Vonage\Webhook\VonageRequestParser;
 
-return static function (ContainerConfigurator $container) {
+return static function (ContainerConfigurator $container): void {
     $container->services()
         ->set('notifier.webhook.request_parser.lox24', Lox24RequestParser::class)
         ->alias(Lox24RequestParser::class, 'notifier.webhook.request_parser.lox24')

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -62,7 +64,7 @@ class CachedMappedAssetFactory implements MappedAssetFactoryInterface
      */
     private function collectResourcesFromAsset(MappedAsset $mappedAsset): array
     {
-        $resources = array_map(static fn (string $path) => is_dir($path) ? new DirectoryResource($path) : new FileResource($path), $mappedAsset->getFileDependencies());
+        $resources = array_map(static fn (string $path): \Symfony\Component\Config\Resource\DirectoryResource|\Symfony\Component\Config\Resource\FileResource => is_dir($path) ? new DirectoryResource($path) : new FileResource($path), $mappedAsset->getFileDependencies());
         $resources[] = new FileResource($mappedAsset->sourcePath);
 
         foreach ($mappedAsset->getDependencies() as $assetDependency) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\PasswordHasher\Tests\Fixtures;
 
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;

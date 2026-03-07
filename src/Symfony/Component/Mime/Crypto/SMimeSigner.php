@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,10 +21,10 @@ use Symfony\Component\Mime\Message;
  */
 final class SMimeSigner extends SMime
 {
-    private string $signCertificate;
+    private readonly string $signCertificate;
     private string|array $signPrivateKey;
-    private int $signOptions;
-    private ?string $extraCerts;
+    private readonly int $signOptions;
+    private readonly ?string $extraCerts;
 
     /**
      * @param string      $certificate          The path of the file containing the signing certificate (in PEM format)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -722,7 +724,8 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         foreach ($container->getAttributeAutoconfigurators() as $attribute => $configurators) {
             $this->autoconfiguredAttributes[$attribute] = array_merge(
                 $this->autoconfiguredAttributes[$attribute] ?? [],
-                $configurators)
+                $configurators
+            )
             ;
         }
     }
@@ -845,7 +848,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
 
     public function getServiceIds(): array
     {
-        return array_map('strval', array_unique(array_merge(array_keys($this->getDefinitions()), array_keys($this->aliasDefinitions), parent::getServiceIds())));
+        return array_map(strval(...), array_unique(array_merge(array_keys($this->getDefinitions()), array_keys($this->aliasDefinitions), parent::getServiceIds())));
     }
 
     /**
@@ -1134,7 +1137,8 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
                 (clone $definition)
                     ->setClass($class)
                     ->setTags(($definition->hasTag('proxy') ? ['proxy' => $parameterBag->resolveValue($definition->getTag('proxy'))] : []) + $definition->getTags()),
-                $id, function ($proxy = false) use ($definition, &$inlineServices, $id) {
+                $id,
+                function (bool|object $proxy = false) use ($definition, &$inlineServices, $id) {
                     return $this->createService($definition, $inlineServices, true, $id, $proxy);
                 }
             );
@@ -1155,7 +1159,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
             } elseif (!\is_string($factory)) {
                 throw new RuntimeException(\sprintf('Cannot create service "%s" because of invalid factory.', $id));
             } elseif (str_starts_with($factory, '@=')) {
-                $factory = fn (ServiceLocator $arguments) => $this->getExpressionLanguage()->evaluate(substr($factory, 2), ['container' => $this, 'args' => $arguments]);
+                $factory = fn (ServiceLocator $arguments): mixed => $this->getExpressionLanguage()->evaluate(substr($factory, 2), ['container' => $this, 'args' => $arguments]);
                 $arguments = [new ServiceLocatorArgument($arguments)];
             }
         }
@@ -1167,7 +1171,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         }
 
         if (!array_is_list($arguments)) {
-            $arguments = array_combine(array_map(static fn ($k) => preg_replace('/^.*\\$/', '', $k), array_keys($arguments)), $arguments);
+            $arguments = array_combine(array_map(static fn (int|string $k): ?string => preg_replace('/^.*\\$/', '', (string) $k), array_keys($arguments)), $arguments);
         }
 
         if (null !== $factory) {
@@ -1264,7 +1268,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
             }
         } elseif ($value instanceof ServiceClosureArgument) {
             $reference = $value->getValues()[0];
-            $value = fn () => $this->resolveServices($reference);
+            $value = fn (): mixed => $this->resolveServices($reference);
         } elseif ($value instanceof IteratorArgument) {
             $value = new RewindableGenerator(function () use ($value, &$inlineServices) {
                 foreach ($value->getValues() as $k => $v) {
@@ -1402,7 +1406,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     public function findTags(): array
     {
         $tags = [];
-        foreach ($this->getDefinitions() as $id => $definition) {
+        foreach ($this->getDefinitions() as $definition) {
             $tags[] = array_keys($definition->getTags());
         }
 
@@ -1662,7 +1666,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     public function removeBindings(string $id): void
     {
         if ($this->hasDefinition($id)) {
-            foreach ($this->getDefinition($id)->getBindings() as $key => $binding) {
+            foreach ($this->getDefinition($id)->getBindings() as $binding) {
                 [, $bindingId] = $binding->getValues();
                 $this->removedBindingIds[(int) $bindingId] = true;
             }
@@ -1808,7 +1812,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         }
 
         foreach ($this->vendors as $vendor) {
-            if (\in_array($path[\strlen($vendor)] ?? '', ['/', \DIRECTORY_SEPARATOR], true) && str_starts_with($path, $vendor)) {
+            if (\in_array($path[\strlen((string) $vendor)] ?? '', ['/', \DIRECTORY_SEPARATOR], true) && str_starts_with($path, (string) $vendor)) {
                 $this->pathsInVendor[$vendor.\DIRECTORY_SEPARATOR.'composer'] = false;
                 $this->addResource(new FileResource($vendor.\DIRECTORY_SEPARATOR.'composer'.\DIRECTORY_SEPARATOR.'installed.json'));
                 $this->pathsInVendor[$vendor.\DIRECTORY_SEPARATOR.'composer'] = true;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,8 +24,8 @@ use Symfony\Component\Form\Util\ServerParams;
  */
 class NativeRequestHandler implements RequestHandlerInterface
 {
-    private ServerParams $serverParams;
-    private MissingDataHandler $missingDataHandler;
+    private readonly ServerParams $serverParams;
+    private readonly MissingDataHandler $missingDataHandler;
 
     /**
      * The allowed keys of the $_FILES array.
@@ -169,11 +171,11 @@ class NativeRequestHandler implements RequestHandlerInterface
     private static function getRequestMethod(): string
     {
         $method = isset($_SERVER['REQUEST_METHOD'])
-            ? strtoupper($_SERVER['REQUEST_METHOD'])
+            ? strtoupper((string) $_SERVER['REQUEST_METHOD'])
             : 'GET';
 
         if ('POST' === $method && isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
-            $method = strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
+            return strtoupper((string) $_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
         }
 
         return $method;

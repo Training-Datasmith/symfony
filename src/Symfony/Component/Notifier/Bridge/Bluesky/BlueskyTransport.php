@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,12 +36,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 final class BlueskyTransport extends AbstractTransport
 {
     private array $authSession = [];
-    private ClockInterface $clock;
+    private readonly ClockInterface $clock;
 
     public function __construct(
-        #[\SensitiveParameter] private string $user,
-        #[\SensitiveParameter] private string $password,
-        private LoggerInterface $logger,
+        #[\SensitiveParameter] private readonly string $user,
+        #[\SensitiveParameter] private readonly string $password,
+        private readonly LoggerInterface $logger,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
         ?ClockInterface $clock = null,
@@ -62,7 +64,7 @@ final class BlueskyTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof ChatMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, ChatMessage::class, $message);
         }
 
         if ([] === $this->authSession) {
@@ -179,7 +181,7 @@ final class BlueskyTransport extends AbstractTransport
         foreach ($this->getMatchAndPosition($text, $regex) as $match) {
             $response = $this->client->request('GET', \sprintf('https://%s/xrpc/com.atproto.identity.resolveHandle', $this->getEndpoint()), [
                 'query' => [
-                    'handle' => ltrim($match['match'], '@'),
+                    'handle' => ltrim((string) $match['match'], '@'),
                 ],
             ]);
             try {

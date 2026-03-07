@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -119,7 +121,7 @@ class DebugClassLoader
      * @var callable
      */
     private $classLoader;
-    private bool $isFinder;
+    private readonly bool $isFinder;
     private array $loaded = [];
     private array $patchTypes = [];
 
@@ -153,7 +155,7 @@ class DebugClassLoader
     {
         $this->classLoader = $classLoader;
         $this->isFinder = \is_array($classLoader) && method_exists($classLoader[0], 'findFile');
-        parse_str($_ENV['SYMFONY_PATCH_TYPE_DECLARATIONS'] ?? $_SERVER['SYMFONY_PATCH_TYPE_DECLARATIONS'] ?? getenv('SYMFONY_PATCH_TYPE_DECLARATIONS') ?: '', $this->patchTypes);
+        parse_str((string) $_ENV['SYMFONY_PATCH_TYPE_DECLARATIONS'] ?? $_SERVER['SYMFONY_PATCH_TYPE_DECLARATIONS'] ?? getenv('SYMFONY_PATCH_TYPE_DECLARATIONS') ?: '', $this->patchTypes);
         $this->patchTypes += [
             'force' => null,
             'php' => \PHP_MAJOR_VERSION.'.'.\PHP_MINOR_VERSION,
@@ -395,7 +397,7 @@ class DebugClassLoader
     public function checkAnnotations(\ReflectionClass $refl, string $class): array
     {
         if (
-            'Symfony\Bridge\PhpUnit\Legacy\SymfonyTestsListenerForV7' === $class
+            \Symfony\Bridge\PhpUnit\Legacy\SymfonyTestsListenerForV7::class === $class
             || 'Symfony\Bridge\PhpUnit\Legacy\SymfonyTestsListenerForV6' === $class
         ) {
             return [];
@@ -417,7 +419,7 @@ class DebugClassLoader
 
             foreach (['final', 'deprecated', 'internal'] as $annotation) {
                 if (null !== $description = $doc[$annotation][0] ?? null) {
-                    self::${$annotation}[$class] = '' !== $description ? ' '.$description.(preg_match('/[.!]$/', $description) ? '' : '.') : '.';
+                    self::${$annotation}[$class] = '' !== $description ? ' '.$description.(preg_match('/[.!]$/', (string) $description) ? '' : '.') : '.';
                 }
             }
 
@@ -481,7 +483,7 @@ class DebugClassLoader
                         if ($static ? $hasStaticCall : $hasCall) {
                             continue;
                         }
-                        $realName = substr($name, 0, strpos($name, '('));
+                        $realName = substr((string) $name, 0, strpos((string) $name, '('));
                         if (!$refl->hasMethod($realName) || !($methodRefl = $refl->getMethod($realName))->isPublic() || ($static && !$methodRefl->isStatic()) || (!$static && $methodRefl->isStatic())) {
                             $deprecations[] = \sprintf('Class "%s" should implement method "%s::%s%s"%s', $className, ($static ? 'static ' : '').$interface, $name, $returnType ? ': '.$returnType : '', null === $description ? '.' : ': '.$description);
                         }
@@ -635,12 +637,20 @@ class DebugClassLoader
 
             foreach (['final', 'internal'] as $annotation) {
                 if (null !== $description = $doc[$annotation][0] ?? null) {
-                    self::${$annotation.'Methods'}[$class][$method->name] = [$class, '' !== $description ? ' '.$description.(preg_match('/[[:punct:]]$/', $description) ? '' : '.') : '.'];
+                    self::${$annotation.'Methods'}[$class][$method->name] = [$class, '' !== $description ? ' '.$description.(preg_match('/[[:punct:]]$/', (string) $description) ? '' : '.') : '.'];
                     $finalOrInternal = true;
                 }
             }
-
-            if ($finalOrInternal || $method->isConstructor() || !isset($doc['param']) || StatelessInvocation::class === $class) {
+            if ($finalOrInternal) {
+                continue;
+            }
+            if ($method->isConstructor()) {
+                continue;
+            }
+            if (!isset($doc['param'])) {
+                continue;
+            }
+            if (StatelessInvocation::class === $class) {
                 continue;
             }
             if (!isset(self::$annotatedParameters[$class][$method->name])) {
@@ -752,9 +762,6 @@ class DebugClassLoader
                 while (!isset(self::$darwinCache[$k])) {
                     self::$darwinCache[$k] = [$dir, []];
                     self::$darwinCache[$dir] = &self::$darwinCache[$k];
-
-                    while ('/' !== $dir[--$i]) {
-                    }
                     $k = substr($k, 0, ++$i);
                     $dir = substr($dir, 0, $i--);
                 }
@@ -1083,8 +1090,10 @@ class DebugClassLoader
             } else {
                 $format = null;
             }
-
-            if (isset(self::SPECIAL_RETURN_TYPES[$type]) || ('\\' === $type[0] && !$p = strrpos($type, '\\', 1))) {
+            if (isset(self::SPECIAL_RETURN_TYPES[$type])) {
+                continue;
+            }
+            if ('\\' === $type[0] && !$p = strrpos($type, '\\', 1)) {
                 continue;
             }
 

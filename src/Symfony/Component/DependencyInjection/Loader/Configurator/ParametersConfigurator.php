@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ class ParametersConfigurator extends AbstractConfigurator
     public const FACTORY = 'parameters';
 
     public function __construct(
-        private ContainerBuilder $container,
+        private readonly ContainerBuilder $container,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,7 +19,7 @@ namespace Symfony\Bridge\PhpUnit;
  */
 class ClockMock
 {
-    private static $now;
+    private static string|float|null $now = null;
 
     public static function withClockMock($enable = null): ?bool
     {
@@ -93,10 +95,7 @@ class ClockMock
         return \gmdate($format, $timestamp);
     }
 
-    /**
-     * @return array|int|float
-     */
-    public static function hrtime($asNumber = false)
+    public static function hrtime($asNumber = false): int|float|array
     {
         $ns = (self::$now - (int) self::$now) * 1000000000;
 
@@ -112,7 +111,7 @@ class ClockMock
     /**
      * @return false|int
      */
-    public static function strtotime(string $datetime, ?int $timestamp = null)
+    public static function strtotime(string $datetime, ?int $timestamp = null): int|false
     {
         if (null === $timestamp) {
             $timestamp = self::time();

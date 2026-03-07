@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,10 +35,10 @@ final class SmsboxTransport extends AbstractTransport
     protected const HOST = 'api.smsbox.pro';
 
     public function __construct(
-        #[\SensitiveParameter] private string $apiKey,
-        private Mode $mode,
-        private Strategy $strategy,
-        private ?string $sender,
+        #[\SensitiveParameter] private readonly string $apiKey,
+        private readonly Mode $mode,
+        private readonly Strategy $strategy,
+        private readonly ?string $sender,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -62,11 +64,11 @@ final class SmsboxTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $phoneCleaned = preg_replace('/[^0-9+]+/', '', $message->getPhone());
-        if (!preg_match('/^(\+|)[0-9]{7,14}$/', $phoneCleaned)) {
+        if (!preg_match('/^(\+|)[0-9]{7,14}$/', (string) $phoneCleaned)) {
             throw new InvalidArgumentException('Invalid phone number.');
         }
 

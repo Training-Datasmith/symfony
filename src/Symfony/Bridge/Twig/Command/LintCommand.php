@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -43,8 +45,8 @@ class LintCommand extends Command
     private string $format;
 
     public function __construct(
-        private Environment $twig,
-        private array $namePatterns = ['*.twig'],
+        private readonly Environment $twig,
+        private readonly array $namePatterns = ['*.twig'],
     ) {
         parent::__construct();
     }
@@ -56,7 +58,8 @@ class LintCommand extends Command
             ->addOption('show-deprecations', null, InputOption::VALUE_NONE, 'Show deprecations as errors')
             ->addArgument('filename', InputArgument::IS_ARRAY, 'A file, a directory or "-" for reading from STDIN')
             ->addOption('excludes', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Excluded directories', [])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command lints a template and outputs to STDOUT
                 the first encountered syntax error.
 
@@ -89,7 +92,7 @@ class LintCommand extends Command
         $this->format = $input->getOption('format') ?? (GithubActionReporter::isGithubActionEnvironment() ? 'github' : 'txt');
 
         if (['-'] === $filenames) {
-            return $this->display($input, $output, $io, [$this->validate(file_get_contents('php://stdin'), 'Standard Input', $showDeprecations)]);
+            return $this->display($output, $io, [$this->validate(file_get_contents('php://stdin'), 'Standard Input', $showDeprecations)]);
         }
 
         if (!$filenames) {
@@ -107,7 +110,7 @@ class LintCommand extends Command
             }
         }
 
-        return $this->display($input, $output, $io, $this->getFilesInfo($filenames, $showDeprecations));
+        return $this->display($output, $io, $this->getFilesInfo($filenames, $showDeprecations));
     }
 
     private function getFilesInfo(array $filenames, bool $showDeprecations): array
@@ -126,7 +129,8 @@ class LintCommand extends Command
     {
         if (is_file($filename)) {
             return [$filename];
-        } elseif (is_dir($filename)) {
+        }
+        if (is_dir($filename)) {
             return Finder::create()->files()->in($filename)->name($this->namePatterns)->exclude($this->excludes);
         }
 
@@ -173,7 +177,7 @@ class LintCommand extends Command
         return ['template' => $template, 'file' => $file, 'deprecations' => $deprecations, 'valid' => true];
     }
 
-    private function display(InputInterface $input, OutputInterface $output, SymfonyStyle $io, array $files): int
+    private function display(OutputInterface $output, SymfonyStyle $io, array $files): int
     {
         return match ($this->format) {
             'txt' => $this->displayTxt($output, $io, $files),
@@ -215,7 +219,7 @@ class LintCommand extends Command
     {
         $errors = 0;
 
-        array_walk($filesInfo, static function (&$v) use (&$errors) {
+        array_walk($filesInfo, static function (array &$v) use (&$errors): void {
             $v['file'] = (string) $v['file'];
             unset($v['template']);
             if (!$v['valid']) {

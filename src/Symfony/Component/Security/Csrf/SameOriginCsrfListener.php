@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,11 +18,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
-final class SameOriginCsrfListener
+final readonly class SameOriginCsrfListener
 {
     public function __construct(
-        private readonly string $cookieName = 'csrf-token')
-    {
+        private string $cookieName = 'csrf-token'
+    ) {
     }
 
     public function onKernelResponse(ResponseEvent $event): void
@@ -60,6 +62,5 @@ final class SameOriginCsrfListener
         $usageIndexValue = $session instanceof Session ? $usageIndexReference = &$session->getUsageIndex() : 0;
         $usageIndexReference = \PHP_INT_MIN;
         $session->set($this->cookieName, $request->attributes->get($this->cookieName));
-        $usageIndexReference = $usageIndexValue;
     }
 }

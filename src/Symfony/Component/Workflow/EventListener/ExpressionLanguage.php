@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,9 +28,9 @@ class ExpressionLanguage extends BaseExpressionLanguage
     {
         parent::registerFunctions();
 
-        $this->register('is_granted', static fn ($attributes, $object = 'null') => \sprintf('$auth_checker->isGranted(%s, %s)', $attributes, $object), static fn (array $variables, $attributes, $object = null) => $variables['auth_checker']->isGranted($attributes, $object));
+        $this->register('is_granted', static fn (string $attributes, $object = 'null'): string => \sprintf('$auth_checker->isGranted(%s, %s)', $attributes, $object), static fn (array $variables, $attributes, $object = null) => $variables['auth_checker']->isGranted($attributes, $object));
 
-        $this->register('is_valid', static fn ($object = 'null', $groups = 'null') => \sprintf('0 === count($validator->validate(%s, null, %s))', $object, $groups), static function (array $variables, $object = null, $groups = null) {
+        $this->register('is_valid', static fn (string $object = 'null', $groups = 'null'): string => \sprintf('0 === count($validator->validate(%s, null, %s))', $object, $groups), static function (array $variables, $object = null, string|\Symfony\Component\Validator\Constraints\GroupSequence|array|null $groups = null): bool {
             if (!$variables['validator'] instanceof ValidatorInterface) {
                 throw new RuntimeException('"is_valid" cannot be used as the Validator component is not installed. Try running "composer require symfony/validator".');
             }

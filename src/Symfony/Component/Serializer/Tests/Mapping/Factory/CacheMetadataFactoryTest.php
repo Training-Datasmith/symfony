@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -69,7 +71,7 @@ class CacheMetadataFactoryTest extends TestCase
 
     public function testAnonymousClass()
     {
-        $anonymousObject = new class {
+        $anonymousObject = new class () {
         };
 
         $metadata = new ClassMetadata($anonymousObject::class);

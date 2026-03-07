@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -54,6 +56,7 @@ class UserProviderListenerTest extends TestCase
 
     public static function provideCompletePassports()
     {
-        yield [new SelfValidatingPassport(new UserBadge('wouter', static function () {}))];
+        yield [new SelfValidatingPassport(new UserBadge('wouter', static function () {
+        }))];
     }
 }

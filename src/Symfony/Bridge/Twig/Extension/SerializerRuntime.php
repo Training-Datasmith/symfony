@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,7 +19,7 @@ use Twig\Extension\RuntimeExtensionInterface;
 /**
  * @author Jesse Rushlow <jr@rushlow.dev>
  */
-final class SerializerRuntime implements RuntimeExtensionInterface
+final readonly class SerializerRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         private SerializerInterface $serializer,

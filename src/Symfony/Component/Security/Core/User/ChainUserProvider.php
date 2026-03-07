@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ class ChainUserProvider implements AttributesBasedUserProviderInterface, Passwor
      * @param iterable<array-key, UserProviderInterface> $providers
      */
     public function __construct(
-        private iterable $providers,
+        private readonly iterable $providers,
     ) {
     }
 

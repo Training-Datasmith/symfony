@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -92,7 +94,7 @@ class AddScheduleMessengerPass implements CompilerPassInterface
                         '$expression' => $tagAttributes['expression'] ?? throw new InvalidArgumentException(\sprintf('Tag "scheduler.task" is missing attribute "expression" on service "%s".', $serviceId)),
                         '$timezone' => $tagAttributes['timezone'] ?? null,
                     ],
-                }, static fn ($value) => null !== $value);
+                }, static fn ($value): bool => null !== $value);
 
                 $tasksPerSchedule[$scheduleName][] = $taskDefinition = (new Definition(RecurringMessage::class))
                     ->setFactory([RecurringMessage::class, $tagAttributes['trigger']])

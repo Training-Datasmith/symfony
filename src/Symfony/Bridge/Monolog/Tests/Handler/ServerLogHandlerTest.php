@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,7 +46,9 @@ class ServerLogHandlerTest extends TestCase
     public function testGetFormatter()
     {
         $handler = new ServerLogHandler('tcp://127.0.0.1:9999');
-        $this->assertInstanceOf(VarDumperFormatter::class, $handler->getFormatter(),
+        $this->assertInstanceOf(
+            VarDumperFormatter::class,
+            $handler->getFormatter(),
             '->getFormatter returns VarDumperFormatter by default'
         );
     }

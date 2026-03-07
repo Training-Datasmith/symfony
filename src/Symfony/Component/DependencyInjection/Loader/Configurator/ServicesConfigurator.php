@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,14 +30,14 @@ class ServicesConfigurator extends AbstractConfigurator
 
     private Definition $defaults;
     private array $instanceof;
-    private string $anonymousHash;
+    private readonly string $anonymousHash;
     private int $anonymousCount;
 
     public function __construct(
-        private ContainerBuilder $container,
-        private PhpFileLoader $loader,
+        private readonly ContainerBuilder $container,
+        private readonly PhpFileLoader $loader,
         array &$instanceof,
-        private ?string $path = null,
+        private readonly ?string $path = null,
         int &$anonymousCount = 0,
     ) {
         $this->defaults = new Definition();

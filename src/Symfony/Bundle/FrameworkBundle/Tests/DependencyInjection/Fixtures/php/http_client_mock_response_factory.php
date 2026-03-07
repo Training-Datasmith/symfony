@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $container->loadFromExtension('framework', [
     'http_client' => [
         'default_options' => null,
@@ -10,12 +12,12 @@ $container->loadFromExtension('framework', [
                 'mock_response_factory' => false,
             ],
             'mocked' => [
-                'base_uri' => 'https://symfony.com'
+                'base_uri' => 'https://symfony.com',
             ],
             'mocked_custom_factory' => [
                 'base_uri' => 'https://symfony.com',
-                'mock_response_factory' => 'my_other_factory'
-            ]
-        ]
+                'mock_response_factory' => 'my_other_factory',
+            ],
+        ],
     ],
 ]);

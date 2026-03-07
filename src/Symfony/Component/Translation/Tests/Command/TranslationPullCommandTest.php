@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -87,7 +89,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
         $tester->execute(['--locales' => ['en', 'fr'], '--domains' => ['messages', 'messages+intl-icu']]);
 
         $this->assertStringContainsString('[OK] New translations from "null" has been written locally (for "en, fr" locale(s), and "messages, messages+intl-icu"', trim($tester->getDisplay()));
-        $this->assertXmlStringEqualsXmlString(<<<XLIFF
+        $this->assertXmlStringEqualsXmlString(
+            <<<XLIFF
             <?xml version="1.0"?>
             <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
                 <file source-language="en" target-language="en" datatype="plaintext" original="file.ext">
@@ -109,7 +112,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
             XLIFF,
             file_get_contents($filenameEn)
         );
-        $this->assertXmlStringEqualsXmlString(<<<XLIFF
+        $this->assertXmlStringEqualsXmlString(
+            <<<XLIFF
             <?xml version="1.0"?>
             <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
                 <file source-language="en" target-language="en" datatype="plaintext" original="file.ext">
@@ -127,7 +131,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
             XLIFF,
             file_get_contents($filenameEnIcu)
         );
-        $this->assertXmlStringEqualsXmlString(<<<XLIFF
+        $this->assertXmlStringEqualsXmlString(
+            <<<XLIFF
             <?xml version="1.0"?>
             <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
                 <file source-language="en" target-language="fr" datatype="plaintext" original="file.ext">
@@ -149,7 +154,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
             XLIFF,
             file_get_contents($filenameFr)
         );
-        $this->assertXmlStringEqualsXmlString(<<<XLIFF
+        $this->assertXmlStringEqualsXmlString(
+            <<<XLIFF
             <?xml version="1.0"?>
             <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
                 <file source-language="en" target-language="fr" datatype="plaintext" original="file.ext">
@@ -201,7 +207,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
         $tester->execute(['--locales' => ['en', 'fr'], '--domains' => ['messages'], '--format' => 'xlf20']);
 
         $this->assertStringContainsString('[OK] New translations from "null" has been written locally (for "en, fr" locale(s), and "messages" domain(s)).', trim($tester->getDisplay()));
-        $this->assertXmlStringEqualsXmlString(<<<XLIFF
+        $this->assertXmlStringEqualsXmlString(
+            <<<XLIFF
             <?xml version="1.0" encoding="utf-8"?>
             <xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="en">
               <file id="messages.en">
@@ -222,7 +229,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
             XLIFF,
             file_get_contents($filenameEn)
         );
-        $this->assertXmlStringEqualsXmlString(<<<XLIFF
+        $this->assertXmlStringEqualsXmlString(
+            <<<XLIFF
             <?xml version="1.0" encoding="utf-8"?>
             <xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="fr">
               <file id="messages.fr">
@@ -277,14 +285,16 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
         $tester->execute(['--locales' => ['en', 'fr'], '--domains' => ['messages'], '--format' => 'yml']);
 
         $this->assertStringContainsString('[OK] New translations from "null" has been written locally (for "en, fr" locale(s), and "messages" domain(s)).', trim($tester->getDisplay()));
-        $this->assertEquals(<<<YAML
+        $this->assertEquals(
+            <<<YAML
             new.foo: newFoo
             note: NOTE
 
             YAML,
             file_get_contents($filenameEn)
         );
-        $this->assertEquals(<<<YAML
+        $this->assertEquals(
+            <<<YAML
             new.foo: nouveauFoo
             note: NOTE
 
@@ -325,7 +335,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
         $tester->execute(['--locales' => ['en', 'fr'], '--domains' => ['messages'], '--format' => 'yml', '--as-tree' => 10]);
 
         $this->assertStringContainsString('[OK] New translations from "null" has been written locally (for "en, fr" locale(s), and "messages" domain(s)).', trim($tester->getDisplay()));
-        $this->assertEquals(<<<YAML
+        $this->assertEquals(
+            <<<YAML
             new:
                 foo: newFoo
             note: NOTE
@@ -333,7 +344,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
             YAML,
             file_get_contents($filenameEn)
         );
-        $this->assertEquals(<<<YAML
+        $this->assertEquals(
+            <<<YAML
             new:
                 foo: nouveauFoo
             note: NOTE
@@ -385,7 +397,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
         $tester->execute(['--locales' => $locales, '--domains' => $domains, '--force' => true]);
 
         $this->assertStringContainsString('[OK] Local translations has been updated from "null" (for "en, fr" locale(s), and "messages, validators" domain(s)).', trim($tester->getDisplay()));
-        $this->assertXmlStringEqualsXmlString(<<<XLIFF
+        $this->assertXmlStringEqualsXmlString(
+            <<<XLIFF
             <?xml version="1.0"?>
             <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
                 <file source-language="en" target-language="en" datatype="plaintext" original="file.ext">
@@ -407,7 +420,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
             XLIFF,
             file_get_contents($filenameMessagesEn)
         );
-        $this->assertXmlStringEqualsXmlString(<<<XLIFF
+        $this->assertXmlStringEqualsXmlString(
+            <<<XLIFF
             <?xml version="1.0"?>
             <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
                 <file source-language="en" target-language="fr" datatype="plaintext" original="file.ext">
@@ -430,7 +444,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
             file_get_contents($filenameMessagesFr)
         );
 
-        $this->assertXmlStringEqualsXmlString(<<<XLIFF
+        $this->assertXmlStringEqualsXmlString(
+            <<<XLIFF
             <?xml version="1.0"?>
             <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
                 <file source-language="en" target-language="en" datatype="plaintext" original="file.ext">
@@ -452,7 +467,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
             XLIFF,
             file_get_contents($filenameValidatorsEn)
         );
-        $this->assertXmlStringEqualsXmlString(<<<XLIFF
+        $this->assertXmlStringEqualsXmlString(
+            <<<XLIFF
             <?xml version="1.0"?>
             <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
                 <file source-language="en" target-language="fr" datatype="plaintext" original="file.ext">
@@ -510,7 +526,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
         $tester->execute(['--locales' => ['en', 'fr'], '--domains' => ['messages'], '--force' => true, '--intl-icu' => true]);
 
         $this->assertStringContainsString('[OK] Local translations has been updated from "null" (for "en, fr" locale(s), and "messages" domain(s)).', trim($tester->getDisplay()));
-        $this->assertXmlStringEqualsXmlString(<<<XLIFF
+        $this->assertXmlStringEqualsXmlString(
+            <<<XLIFF
             <?xml version="1.0"?>
             <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
                 <file source-language="en" target-language="en" datatype="plaintext" original="file.ext">
@@ -532,7 +549,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
             XLIFF,
             file_get_contents($filenameEn)
         );
-        $this->assertXmlStringEqualsXmlString(<<<XLIFF
+        $this->assertXmlStringEqualsXmlString(
+            <<<XLIFF
             <?xml version="1.0"?>
             <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
                 <file source-language="en" target-language="fr" datatype="plaintext" original="file.ext">
@@ -588,7 +606,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
         $tester->execute(['--locales' => ['en', 'fr'], '--domains' => ['messages']]);
 
         $this->assertStringContainsString('[OK] New translations from "null" has been written locally (for "en, fr" locale(s), and "messages" domain(s)).', trim($tester->getDisplay()));
-        $this->assertXmlStringEqualsXmlString(<<<XLIFF
+        $this->assertXmlStringEqualsXmlString(
+            <<<XLIFF
             <?xml version="1.0"?>
             <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
                 <file source-language="fr" target-language="en" datatype="plaintext" original="file.ext">
@@ -610,7 +629,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
             XLIFF,
             file_get_contents($filenameEn)
         );
-        $this->assertXmlStringEqualsXmlString(<<<XLIFF
+        $this->assertXmlStringEqualsXmlString(
+            <<<XLIFF
             <?xml version="1.0"?>
             <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
                 <file source-language="fr" target-language="fr" datatype="plaintext" original="file.ext">
@@ -647,9 +667,11 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
             'new.foo' => 'newFoo',
         ], 'en'));
 
-        $providerReadTranslatorBag->addCatalogue($arrayLoader->load([
+        $providerReadTranslatorBag->addCatalogue($arrayLoader->load(
+            [
             'new.foo' => 'newFoo',
-        ], 'en',
+        ],
+            'en',
             'domain'
         ));
 
@@ -667,7 +689,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
         $tester->execute(['--locales' => ['en'], '--domains' => ['messages', 'domain']]);
 
         $this->assertStringContainsString('[OK] New translations from "null" has been written locally (for "en" locale(s), and "messages, domain" domain(s)).', trim($tester->getDisplay()));
-        $this->assertXmlStringEqualsXmlString(<<<XLIFF
+        $this->assertXmlStringEqualsXmlString(
+            <<<XLIFF
             <?xml version="1.0"?>
             <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
                 <file source-language="en" target-language="en" datatype="plaintext" original="file.ext">
@@ -689,7 +712,8 @@ class TranslationPullCommandTest extends TranslationProviderTestCase
             XLIFF,
             file_get_contents($filenameMessages)
         );
-        $this->assertXmlStringEqualsXmlString(<<<XLIFF
+        $this->assertXmlStringEqualsXmlString(
+            <<<XLIFF
             <?xml version="1.0"?>
             <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
                 <file source-language="en" target-language="en" datatype="plaintext" original="file.ext">

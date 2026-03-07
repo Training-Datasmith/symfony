@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -223,7 +225,7 @@ class BinaryFileResponse extends Response
             if (false === $path) {
                 $path = $this->file->getPathname();
             }
-            if ('x-accel-redirect' === strtolower($type)) {
+            if ('x-accel-redirect' === strtolower((string) $type)) {
                 // Do X-Accel-Mapping substitutions.
                 // @link https://github.com/rack/rack/blob/main/lib/rack/sendfile.rb
                 // @link https://mattbrictson.com/blog/accelerated-rails-downloads
@@ -233,8 +235,8 @@ class BinaryFileResponse extends Response
                 $parts = HeaderUtils::split($request->headers->get('X-Accel-Mapping'), ',=');
                 foreach ($parts as $part) {
                     [$pathPrefix, $location] = $part;
-                    if (str_starts_with($path, $pathPrefix)) {
-                        $path = $location.substr($path, \strlen($pathPrefix));
+                    if (str_starts_with($path, (string) $pathPrefix)) {
+                        $path = $location.substr($path, \strlen((string) $pathPrefix));
                         // Only set X-Accel-Redirect header if a valid URI can be produced
                         // as nginx does not serve arbitrary file paths.
                         $this->headers->set($type, rawurlencode($path));
@@ -251,8 +253,8 @@ class BinaryFileResponse extends Response
             if (!$request->headers->has('If-Range') || $this->hasValidIfRangeHeader($request->headers->get('If-Range'))) {
                 $range = $request->headers->get('Range');
 
-                if (str_starts_with($range, 'bytes=')) {
-                    [$start, $end] = explode('-', substr($range, 6), 2) + [1 => 0];
+                if (str_starts_with((string) $range, 'bytes=')) {
+                    [$start, $end] = explode('-', substr((string) $range, 6), 2) + [1 => 0];
 
                     $end = ('' === $end) ? $fileSize - 1 : (int) $end;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ class_exists(AcceptHeaderItem::class);
  *
  * @author Jean-François Simon <contact@jfsimon.fr>
  */
-class AcceptHeader
+class AcceptHeader implements \Stringable
 {
     /**
      * @var array<string, AcceptHeaderItem>
@@ -88,13 +90,13 @@ class AcceptHeader
         }
 
         // Collect and filter matching candidates
-        if (!$candidates = array_filter($this->items, fn (AcceptHeaderItem $item) => $this->matches($item, $queryItem))) {
+        if (!$candidates = array_filter($this->items, fn (AcceptHeaderItem $item): bool => $this->matches($item, $queryItem))) {
             return null;
         }
 
         usort(
             $candidates,
-            fn ($a, $b) => $this->getSpecificity($b, $queryItem) <=> $this->getSpecificity($a, $queryItem) // Descending specificity
+            fn ($a, $b): int => $this->getSpecificity($b, $queryItem) <=> $this->getSpecificity($a, $queryItem) // Descending specificity
                 ?: $b->getQuality() <=> $a->getQuality() // Descending quality
                 ?: $a->getIndex() <=> $b->getIndex() // Ascending index (stability)
         );
@@ -132,7 +134,7 @@ class AcceptHeader
      */
     public function filter(string $pattern): self
     {
-        return new self(array_filter($this->items, static fn ($item) => preg_match($pattern, $item->getValue())));
+        return new self(array_filter($this->items, static fn (\Symfony\Component\HttpFoundation\AcceptHeaderItem $item): int|false => preg_match($pattern, $item->getValue())));
     }
 
     /**
@@ -151,7 +153,7 @@ class AcceptHeader
     private function sort(): void
     {
         if (!$this->sorted) {
-            uasort($this->items, static fn ($a, $b) => $b->getQuality() <=> $a->getQuality() ?: $a->getIndex() <=> $b->getIndex());
+            uasort($this->items, static fn ($a, $b): int => $b->getQuality() <=> $a->getQuality() ?: $a->getIndex() <=> $b->getIndex());
 
             $this->sorted = true;
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -47,14 +49,14 @@ class AssetMapperRepository
             $localLogicalPath = $logicalPath;
             // if this path has a namespace, only look for files in that namespace
             if ('' !== $namespace) {
-                if (!str_starts_with($logicalPath, rtrim($namespace, '/').'/')) {
+                if (!str_starts_with($logicalPath, rtrim((string) $namespace, '/').'/')) {
                     continue;
                 }
 
-                $localLogicalPath = substr($logicalPath, \strlen($namespace) + 1);
+                $localLogicalPath = substr($logicalPath, \strlen((string) $namespace) + 1);
             }
 
-            $file = rtrim($path, '/').'/'.$localLogicalPath;
+            $file = rtrim((string) $path, '/').'/'.$localLogicalPath;
             if (is_file($file) && !$this->isExcluded($file)) {
                 return realpath($file);
             }
@@ -80,7 +82,7 @@ class AssetMapperRepository
                 continue;
             }
 
-            $logicalPath = substr($filesystemPath, \strlen($path));
+            $logicalPath = substr($filesystemPath, \strlen((string) $path));
 
             if ('' !== $namespace) {
                 $logicalPath = $namespace.'/'.ltrim($logicalPath, '/\\');
@@ -121,7 +123,7 @@ class AssetMapperRepository
 
                 /** @var RecursiveDirectoryIterator $innerIterator */
                 $innerIterator = $iterator->getInnerIterator();
-                $logicalPath = ($namespace ? rtrim($namespace, '/').'/' : '').$innerIterator->getSubPathName();
+                $logicalPath = ($namespace ? rtrim((string) $namespace, '/').'/' : '').$innerIterator->getSubPathName();
                 $logicalPath = $this->normalizeLogicalPath($logicalPath);
                 $paths[$logicalPath] = $file->getPathname();
             }

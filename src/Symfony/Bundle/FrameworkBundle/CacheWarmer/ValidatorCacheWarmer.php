@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ final class ValidatorCacheWarmer extends AbstractPhpFileCacheWarmer
      * @param string $phpArrayFile The PHP file where metadata are cached
      */
     public function __construct(
-        private ValidatorBuilder $validatorBuilder,
+        private readonly ValidatorBuilder $validatorBuilder,
         string $phpArrayFile,
     ) {
         parent::__construct($phpArrayFile);
@@ -68,7 +70,7 @@ final class ValidatorCacheWarmer extends AbstractPhpFileCacheWarmer
     protected function warmUpPhpArrayAdapter(PhpArrayAdapter $phpArrayAdapter, array $values): array
     {
         // make sure we don't cache null values
-        $values = array_filter($values, static fn ($val) => null !== $val);
+        $values = array_filter($values, static fn ($val): bool => null !== $val);
 
         return parent::warmUpPhpArrayAdapter($phpArrayAdapter, $values);
     }

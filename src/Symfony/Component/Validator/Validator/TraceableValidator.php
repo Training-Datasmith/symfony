@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ class TraceableValidator implements ValidatorInterface, ResetInterface
     private array $collectedData = [];
 
     public function __construct(
-        private ValidatorInterface $validator,
+        private readonly ValidatorInterface $validator,
         protected readonly ?\Closure $disabled = null,
     ) {
     }

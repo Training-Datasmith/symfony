@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Alexander M. Turek <me@derrabus.de>
  */
-final class AffirmativeStrategy implements AccessDecisionStrategyInterface, \Stringable
+final readonly class AffirmativeStrategy implements AccessDecisionStrategyInterface, \Stringable
 {
     public function __construct(
         private bool $allowIfAllAbstainDecisions = false,

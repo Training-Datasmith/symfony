@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ class CheckArgumentsValidityPass extends AbstractRecursivePass
     protected bool $skipScalars = true;
 
     public function __construct(
-        private bool $throwExceptions = true,
+        private readonly bool $throwExceptions = true,
     ) {
     }
 
@@ -38,7 +40,7 @@ class CheckArgumentsValidityPass extends AbstractRecursivePass
         $i = 0;
         $hasNamedArgs = false;
         foreach ($value->getArguments() as $k => $v) {
-            if (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $k)) {
+            if (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', (string) $k)) {
                 $hasNamedArgs = true;
                 continue;
             }
@@ -76,7 +78,7 @@ class CheckArgumentsValidityPass extends AbstractRecursivePass
             $i = 0;
             $hasNamedArgs = false;
             foreach ($methodCall[1] as $k => $v) {
-                if (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $k)) {
+                if (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', (string) $k)) {
                     $hasNamedArgs = true;
                     continue;
                 }

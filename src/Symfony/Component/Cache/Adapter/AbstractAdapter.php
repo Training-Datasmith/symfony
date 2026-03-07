@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,7 +41,7 @@ abstract class AbstractAdapter implements AdapterInterface, CacheInterface, Name
     protected function __construct(string $namespace = '', int $defaultLifetime = 0)
     {
         if ('' !== $namespace) {
-            if (str_contains($namespace, static::NS_SEPARATOR)) {
+            if (str_contains($namespace, (string) static::NS_SEPARATOR)) {
                 if (str_contains($namespace, static::NS_SEPARATOR.static::NS_SEPARATOR)) {
                     throw new InvalidArgumentException(\sprintf('Cache namespace "%s" contains empty sub-namespace.', $namespace));
                 }
@@ -56,7 +58,7 @@ abstract class AbstractAdapter implements AdapterInterface, CacheInterface, Name
             throw new InvalidArgumentException(\sprintf('Namespace must be %d chars max, %d given ("%s").', $this->maxIdLength - 24, \strlen($namespace), $namespace));
         }
         self::$createCacheItem ??= \Closure::bind(
-            static function ($key, $value, $isHit) {
+            static function ($key, $value, $isHit): \Symfony\Component\Cache\CacheItem {
                 $item = new CacheItem();
                 $item->key = $key;
                 $item->value = $value;
@@ -69,7 +71,7 @@ abstract class AbstractAdapter implements AdapterInterface, CacheInterface, Name
             CacheItem::class
         );
         self::$mergeByLifetime ??= \Closure::bind(
-            static function ($deferred, $namespace, &$expiredIds, $getId, $defaultLifetime) {
+            static function ($deferred, $namespace, &$expiredIds, $getId, $defaultLifetime): array {
                 $byLifetime = [];
                 $now = microtime(true);
                 $expiredIds = [];
@@ -159,7 +161,10 @@ abstract class AbstractAdapter implements AdapterInterface, CacheInterface, Name
                 $e = $this->doSave($values, $lifetime);
             } catch (\Exception $e) {
             }
-            if (true === $e || [] === $e) {
+            if (true === $e) {
+                continue;
+            }
+            if ([] === $e) {
                 continue;
             }
             if (\is_array($e) || 1 === \count($values)) {
@@ -168,7 +173,7 @@ abstract class AbstractAdapter implements AdapterInterface, CacheInterface, Name
                     $v = $values[$id];
                     $type = get_debug_type($v);
                     $message = \sprintf('Failed to save key "{key}" of type %s%s', $type, $e instanceof \Exception ? ': '.$e->getMessage() : '.');
-                    CacheItem::log($this->logger, $message, ['key' => substr($id, \strlen($this->rootNamespace)), 'exception' => $e instanceof \Exception ? $e : null, 'cache-adapter' => get_debug_type($this)]);
+                    CacheItem::log($this->logger, $message, ['key' => substr((string) $id, \strlen($this->rootNamespace)), 'exception' => $e instanceof \Exception ? $e : null, 'cache-adapter' => get_debug_type($this)]);
                 }
             } else {
                 foreach ($values as $id => $v) {
@@ -185,13 +190,16 @@ abstract class AbstractAdapter implements AdapterInterface, CacheInterface, Name
                     $e = $this->doSave([$id => $v], $lifetime);
                 } catch (\Exception $e) {
                 }
-                if (true === $e || [] === $e) {
+                if (true === $e) {
+                    continue;
+                }
+                if ([] === $e) {
                     continue;
                 }
                 $ok = false;
                 $type = get_debug_type($v);
                 $message = \sprintf('Failed to save key "{key}" of type %s%s', $type, $e instanceof \Exception ? ': '.$e->getMessage() : '.');
-                CacheItem::log($this->logger, $message, ['key' => substr($id, \strlen($this->rootNamespace)), 'exception' => $e instanceof \Exception ? $e : null, 'cache-adapter' => get_debug_type($this)]);
+                CacheItem::log($this->logger, $message, ['key' => substr((string) $id, \strlen($this->rootNamespace)), 'exception' => $e instanceof \Exception ? $e : null, 'cache-adapter' => get_debug_type($this)]);
             }
         }
 

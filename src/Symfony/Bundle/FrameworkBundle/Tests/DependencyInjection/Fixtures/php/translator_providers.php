@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $container->loadFromExtension('framework', [
     'enabled_locales' => ['es'],
     'translator' => [
@@ -9,7 +11,7 @@ $container->loadFromExtension('framework', [
             ],
             'bar_provider' => [
                 'locales' => ['de', 'pl'],
-            ]
-        ]
+            ],
+        ],
     ],
 ]);

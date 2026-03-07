@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,8 +29,8 @@ final class UsageTrackingTokenStorage implements TokenStorageInterface, ServiceS
     private bool $enableUsageTracking = false;
 
     public function __construct(
-        private TokenStorageInterface $storage,
-        private ContainerInterface $container,
+        private readonly TokenStorageInterface $storage,
+        private readonly ContainerInterface $container,
     ) {
     }
 

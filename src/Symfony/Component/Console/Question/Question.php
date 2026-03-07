@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -50,8 +52,8 @@ class Question
      * @param string|bool|int|float|null $default  The default answer to return if the user enters nothing
      */
     public function __construct(
-        private string $question,
-        private string|bool|int|float|null $default = null,
+        private readonly string $question,
+        private readonly string|bool|int|float|null $default = null,
     ) {
     }
 
@@ -180,7 +182,7 @@ class Question
         if (\is_array($values)) {
             $values = $this->isAssoc($values) ? array_merge(array_keys($values), array_values($values)) : array_values($values);
 
-            $callback = static fn () => $values;
+            $callback = static fn (): array => $values;
         } elseif ($values instanceof \Traversable) {
             $callback = static function () use ($values) {
                 static $valueCache;
@@ -304,7 +306,7 @@ class Question
 
     protected function isAssoc(array $array): bool
     {
-        return (bool) \count(array_filter(array_keys($array), 'is_string'));
+        return (bool) \count(array_filter(array_keys($array), is_string(...)));
     }
 
     public function isTrimmable(): bool

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,6 @@ use Symfony\Component\Runtime\SymfonyRuntime;
 class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 {
     private Composer $composer;
-    private IOInterface $io;
 
     private static bool $activated = false;
 
@@ -36,7 +37,6 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
     {
         self::$activated = true;
         $this->composer = $composer;
-        $this->io = $io;
     }
 
     public function deactivate(Composer $composer, IOInterface $io): void
@@ -118,5 +118,3 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
         ];
     }
 }
-
-// @php-cs-fixer-ignore no_useless_concat_operator Disable to not override hack about __DIR__ and Composer pre-processes plugins

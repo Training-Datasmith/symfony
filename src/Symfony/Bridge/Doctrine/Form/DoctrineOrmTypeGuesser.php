@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -144,10 +146,14 @@ class DoctrineOrmTypeGuesser implements FormTypeGuesserInterface
     public function guessPattern(string $class, string $property): ?ValueGuess
     {
         $ret = $this->getMetadata($class);
-        if ($ret && isset($ret[0]->fieldMappings[$property])) {
-            if (\in_array($ret[0]->getTypeOfField($property), [Types::DECIMAL, Types::FLOAT], true)) {
-                return new ValueGuess(null, Guess::MEDIUM_CONFIDENCE);
-            }
+        if (!$ret) {
+            return null;
+        }
+        if (!isset($ret[0]->fieldMappings[$property])) {
+            return null;
+        }
+        if (\in_array($ret[0]->getTypeOfField($property), [Types::DECIMAL, Types::FLOAT], true)) {
+            return new ValueGuess(null, Guess::MEDIUM_CONFIDENCE);
         }
 
         return null;

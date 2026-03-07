@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,11 +39,11 @@ final class MailtrapApiTransport extends AbstractApiTransport
     private const HEADERS_TO_BYPASS = ['from', 'to', 'cc', 'bcc', 'subject', 'content-type', 'sender'];
 
     public function __construct(
-        #[\SensitiveParameter] private string $token,
+        #[\SensitiveParameter] private readonly string $token,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
         ?LoggerInterface $logger = null,
-        private ?int $inboxId = null,
+        private readonly ?int $inboxId = null,
     ) {
         parent::__construct($client, $dispatcher, $logger);
     }

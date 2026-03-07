@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ use Symfony\Component\Console\Formatter\OutputFormatterInterface;
  *
  * @author Théo FIDRY <theo.fidry@gmail.com>
  */
-final class TestOutput implements ConsoleOutputInterface
+final readonly class TestOutput implements ConsoleOutputInterface
 {
     private OutputInterface $innerOutput;
     private OutputInterface $innerErrorOutput;

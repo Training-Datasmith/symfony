@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,8 +18,8 @@ namespace Symfony\Bridge\PhpUnit;
  */
 class DnsMock
 {
-    private static $hosts = [];
-    private static $dnsTypes = [
+    private static array $hosts = [];
+    private static array $dnsTypes = [
         'A' => \DNS_A,
         'MX' => \DNS_MX,
         'NS' => \DNS_NS,
@@ -49,7 +51,7 @@ class DnsMock
             return \checkdnsrr($hostname, $type);
         }
         if (isset(self::$hosts[$hostname])) {
-            $type = strtoupper($type);
+            $type = strtoupper((string) $type);
 
             foreach (self::$hosts[$hostname] as $record) {
                 if ($record['type'] === $type) {

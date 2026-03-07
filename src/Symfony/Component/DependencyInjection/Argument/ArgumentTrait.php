@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,8 +27,8 @@ trait ArgumentTrait
             if (null === $v) {
                 continue;
             }
-            if (false !== $i = strrpos($k, "\0")) {
-                $k = substr($k, 1 + $i);
+            if (false !== $i = strrpos((string) $k, "\0")) {
+                $k = substr((string) $k, 1 + $i);
             }
             $data[$k] = $v;
         }

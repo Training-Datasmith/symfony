@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ final class DiscordBotTransport extends AbstractTransport
     protected const HOST = 'discord.com';
 
     public function __construct(
-        #[\SensitiveParameter] private string $token,
+        #[\SensitiveParameter] private readonly string $token,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -51,7 +53,7 @@ final class DiscordBotTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof ChatMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, ChatMessage::class, $message);
         }
 
         $channelId = $message->getOptions()?->getRecipientId();

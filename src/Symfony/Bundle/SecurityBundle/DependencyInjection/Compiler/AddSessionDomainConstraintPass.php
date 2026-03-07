@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ class AddSessionDomainConstraintPass implements CompilerPassInterface
         }
 
         $sessionOptions = $container->getParameter('session.storage.options');
-        $domainRegexp = empty($sessionOptions['cookie_domain']) ? '%%s' : \sprintf('(?:%%%%s|(?:.+\.)?%s)', preg_quote(trim($sessionOptions['cookie_domain'], '.')));
+        $domainRegexp = empty($sessionOptions['cookie_domain']) ? '%%s' : \sprintf('(?:%%%%s|(?:.+\.)?%s)', preg_quote(trim((string) $sessionOptions['cookie_domain'], '.')));
 
         if ('auto' === ($sessionOptions['cookie_secure'] ?? null)) {
             $secureDomainRegexp = \sprintf('{^https://%s$}i', $domainRegexp);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,8 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
         $view = $form->createView();
         $html = $this->renderRow($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [
         ./label[@for="name"]
@@ -46,7 +49,8 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             'label_attr' => ['class' => 'my&label&class'],
         ]);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [
         ./label[@for="name"][@class="my&label&class required"][.="[trans]foo&bar[/trans]"]
@@ -68,7 +72,8 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
         // on them are mapped to the first child.
         // (see RepeatedTypeValidatorExtension)
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [
         ./label[@for="name_first"]
@@ -89,7 +94,8 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
         $view = $form->createView();
         $html = $this->renderRow($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [
         ./button[@type="button"][@name="name"]
@@ -119,7 +125,8 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
         // Rest should only contain field1 and field4
         $html = $this->renderRest($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [
         ./label[@for="name_field1"]
@@ -165,7 +172,8 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
         // Rest should only contain child1.field2 and child2.field1
         $html = $this->renderRest($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [
         ./label[not(@for)]
@@ -210,7 +218,8 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
 
         $html = $this->renderRest($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [
         ./label[@for="name_first"]
@@ -237,7 +246,8 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
 
         $html = $this->renderRest($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [
         ./label[@for="name_first"]
@@ -267,7 +277,8 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
 
         $html = $this->renderRest($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [
         ./label[@for="name_first"]
@@ -288,7 +299,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             'entry_type' => 'Symfony\Component\Form\Extension\Core\Type\TextType',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div[./input[@type="text"][@value="a"]]
@@ -310,7 +323,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             'entry_type' => 'Symfony\Component\Form\Tests\Fixtures\AlternatingRowType',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div[./div/div/input[@type="text"][@value="a"]]
@@ -328,7 +343,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             'entry_type' => 'Symfony\Component\Form\Extension\Core\Type\TextType',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [./input[@type="hidden"][@id="names__token"]]
     [count(./div)=0]
@@ -349,7 +366,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             ->add($collection)
             ->getForm();
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -391,7 +410,8 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             'attr' => ['class' => 'my&class'],
         ]);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/form
     [
         ./input[@type="hidden"][@name="_method"][@value="PUT"]
@@ -427,7 +447,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             ->add('lastName', 'Symfony\Component\Form\Extension\Core\Type\TextType')
             ->getForm();
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -451,7 +473,8 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
     public function testNestedFormError()
     {
         $form = $this->factory->createNamedBuilder('name', 'Symfony\Component\Form\Extension\Core\Type\FormType')
-            ->add($this->factory
+            ->add(
+                $this->factory
                 ->createNamedBuilder('child', 'Symfony\Component\Form\Extension\Core\Type\FormType', null, ['error_bubbling' => false])
                 ->add('grandChild', 'Symfony\Component\Form\Extension\Core\Type\FormType')
             )
@@ -459,7 +482,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
 
         $form->get('child')->addError(new FormError('[trans]Error![/trans]'));
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div/label
@@ -477,14 +502,17 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             ->willReturn(new CsrfToken('token_id', 'foo&bar'));
 
         $form = $this->factory->createNamedBuilder('name', 'Symfony\Component\Form\Extension\Core\Type\FormType')
-            ->add($this->factory
+            ->add(
+                $this->factory
                 // No CSRF protection on nested forms
                 ->createNamedBuilder('child', 'Symfony\Component\Form\Extension\Core\Type\FormType')
                 ->add($this->factory->createNamedBuilder('grandchild', 'Symfony\Component\Form\Extension\Core\Type\TextType'))
             )
             ->getForm();
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -501,7 +529,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             'type' => 'Symfony\Component\Form\Extension\Core\Type\TextType',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -529,7 +559,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             'second_options' => ['label' => 'Test2'],
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -555,7 +587,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             ->add('name', 'Symfony\Component\Form\Extension\Core\Type\SearchType')
             ->getForm();
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -575,7 +609,8 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\TextType');
         $html = $this->renderRow($form->createView());
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [
         ./label[@for="name"][not(@id)]
@@ -592,7 +627,8 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
         ]);
         $html = $this->renderRow($form->createView());
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [
         ./input[@id="name"]
@@ -641,7 +677,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
         $this->setTheme($view, $parentTheme);
         $this->setTheme($view['child'], $childTheme);
 
-        $this->assertWidgetMatchesXpath($view, [],
+        $this->assertWidgetMatchesXpath(
+            $view,
+            [],
             '/div
     [
         ./div
@@ -684,7 +722,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
         $form = $this->factory->createNamedBuilder('names', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', $collection)
             ->getForm();
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div[./label[.="Custom label: [trans]0[/trans]"]]
@@ -707,7 +747,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
         ])
             ->getForm();
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./label[.="Custom name label: [trans]ChoiceA[/trans]"]
@@ -726,7 +768,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             'expanded' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./input[@type="radio"][@name="name"][@id="name_0"][@value="&a"][@checked]
@@ -754,7 +798,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             'expanded' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./input[@type="radio"][@name="name"][@id="name_0"][@value="&a"][@checked]
@@ -779,7 +825,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             'expanded' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./input[@type="radio"][@name="name"][@id="name_0"][@value="&a"][@checked]
@@ -801,7 +849,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             'expanded' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./input[@type="checkbox"][@name="name[]"][@id="name_0"][@value="&a"][@checked]
@@ -829,7 +879,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             'expanded' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./input[@type="checkbox"][@name="name[]"][@id="name_0"][@value="&a"][@checked]
@@ -854,7 +906,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             'expanded' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./input[@type="checkbox"][@name="name[]"][@id="name_0"][@value="&a"][@checked]
@@ -877,7 +931,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['separator' => '-- sep --'],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['separator' => '-- sep --'],
             '/select
     [@name="name"]
     [
@@ -901,7 +957,9 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['separator' => '-- sep --'],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['separator' => '-- sep --'],
             '/select
     [@name="name"]
     [
@@ -931,7 +989,8 @@ abstract class AbstractDivLayoutTestCase extends AbstractLayoutTestCase
         $html = $this->renderEnd($view);
 
         // Insert the start tag, the end tag should be rendered by the helper
-        $this->assertMatchesXpath('<form>'.$html,
+        $this->assertMatchesXpath(
+            '<form>'.$html,
             '/form
     [
         ./div

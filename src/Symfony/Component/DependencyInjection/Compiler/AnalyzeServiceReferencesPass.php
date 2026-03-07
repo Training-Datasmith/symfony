@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -47,8 +49,8 @@ class AnalyzeServiceReferencesPass extends AbstractRecursivePass
      * @param bool $onlyConstructorArguments Sets this Service Reference pass to ignore method calls
      */
     public function __construct(
-        private bool $onlyConstructorArguments = false,
-        private bool $hasProxyDumper = true,
+        private readonly bool $onlyConstructorArguments = false,
+        private readonly bool $hasProxyDumper = true,
     ) {
         $this->enableExpressionProcessing();
     }
@@ -70,7 +72,7 @@ class AnalyzeServiceReferencesPass extends AbstractRecursivePass
 
         foreach ($this->aliases as $id => $alias) {
             $targetId = $this->getDefinitionId((string) $alias);
-            $this->graph->connect($id, $alias, $targetId, null !== $targetId ? $this->container->getDefinition($targetId) : null, null);
+            $this->graph->connect($id, $alias, $targetId, null !== $targetId ? $this->container->getDefinition($targetId) : null);
         }
 
         try {

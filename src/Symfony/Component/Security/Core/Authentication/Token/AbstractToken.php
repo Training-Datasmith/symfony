@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,15 +25,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
 abstract class AbstractToken implements TokenInterface, \Serializable
 {
     private ?UserInterface $user = null;
-    private array $roleNames;
     private array $attributes = [];
 
     /**
-     * @param string[] $roles An array of roles
+     * @param string[] $roleNames An array of roles
      */
-    public function __construct(array $roles = [])
+    public function __construct(private array $roleNames = [])
     {
-        $this->roleNames = $roles;
     }
 
     public function getRoleNames(): array
@@ -143,7 +143,7 @@ abstract class AbstractToken implements TokenInterface, \Serializable
      */
     final public function serialize(): string
     {
-        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot serialize '.self::class);
     }
 
     /**

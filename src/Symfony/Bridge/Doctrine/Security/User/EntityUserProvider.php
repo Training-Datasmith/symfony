@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -114,7 +116,10 @@ class EntityUserProvider implements AttributesBasedUserProviderInterface, Passwo
 
     public function supportsClass(string $class): bool
     {
-        return $class === $this->getClass() || is_subclass_of($class, $this->getClass());
+        if ($class === $this->getClass()) {
+            return true;
+        }
+        return is_subclass_of($class, $this->getClass());
     }
 
     /**

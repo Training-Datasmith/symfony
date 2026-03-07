@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -63,7 +65,7 @@ final class TraceableCommand extends Command
         parent::__construct($command->getName());
 
         // init below enables calling {@see parent::run()}
-        [$code, $processTitle, $ignoreValidationErrors] = \Closure::bind(fn () => [$this->code, $this->processTitle, $this->ignoreValidationErrors], $command, Command::class)();
+        [$code, $processTitle, $ignoreValidationErrors] = \Closure::bind(fn (): array => [$this->code, $this->processTitle, $this->ignoreValidationErrors], $command, Command::class)();
 
         if (\is_callable($code)) {
             $this->setCode($code);
@@ -167,7 +169,7 @@ final class TraceableCommand extends Command
     public function setCode(callable $code): static
     {
         if ($code instanceof InvokableCommand) {
-            $r = \Closure::bind(fn () => $this->invokable, $code, InvokableCommand::class)();
+            $r = \Closure::bind(fn (): \ReflectionFunction => $this->invokable, $code, InvokableCommand::class)();
 
             $this->invokableCommandInfo = [
                 'class' => $r->getClosureScopeClass()->name,

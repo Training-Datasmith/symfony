@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -87,7 +89,7 @@ class GenericRuntime implements RuntimeInterface
     {
         $callable = $callable(...);
         $parameters = ($reflector ?? new \ReflectionFunction($callable))->getParameters();
-        $arguments = function () use ($parameters) {
+        $arguments = function () use ($parameters): array {
             $arguments = [];
 
             try {
@@ -113,7 +115,7 @@ class GenericRuntime implements RuntimeInterface
 
     public function getRunner(?object $application): RunnerInterface
     {
-        $application ??= static fn () => 0;
+        $application ??= static fn (): int => 0;
 
         if ($application instanceof RunnerInterface) {
             return $application;

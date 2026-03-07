@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,21 +35,19 @@ class SplCaster
 
     public static function castArrayObject(\ArrayObject $c, array $a, Stub $stub, bool $isNested): array
     {
-        return self::castSplArray($c, $a, $stub, $isNested);
+        return self::castSplArray($c, $a, $stub);
     }
 
     public static function castArrayIterator(\ArrayIterator $c, array $a, Stub $stub, bool $isNested): array
     {
-        return self::castSplArray($c, $a, $stub, $isNested);
+        return self::castSplArray($c, $a, $stub);
     }
 
     public static function castHeap(\Iterator $c, array $a, Stub $stub, bool $isNested): array
     {
-        $a += [
+        return $a + [
             Caster::PREFIX_VIRTUAL.'heap' => iterator_to_array(clone $c),
         ];
-
-        return $a;
     }
 
     public static function castDoublyLinkedList(\SplDoublyLinkedList $c, array $a, Stub $stub, bool $isNested): array
@@ -98,15 +98,7 @@ class SplCaster
 
         try {
             $c->isReadable();
-        } catch (\RuntimeException $e) {
-            if ('Object not initialized' !== $e->getMessage()) {
-                throw $e;
-            }
-
-            $a[$prefix.'⚠'] = 'The parent constructor was not called: the object is in an invalid state';
-
-            return $a;
-        } catch (\Error $e) {
+        } catch (\RuntimeException|\Error $e) {
             if ('Object not initialized' !== $e->getMessage()) {
                 throw $e;
             }
@@ -192,11 +184,9 @@ class SplCaster
             ]);
         }
 
-        $a += [
+        return $a + [
             Caster::PREFIX_VIRTUAL.'storage' => $storage,
         ];
-
-        return $a;
     }
 
     public static function castOuterIterator(\OuterIterator $c, array $a, Stub $stub, bool $isNested): array
@@ -224,14 +214,12 @@ class SplCaster
             ]);
         }
 
-        $a += [
+        return $a + [
             Caster::PREFIX_VIRTUAL.'map' => $map,
         ];
-
-        return $a;
     }
 
-    private static function castSplArray(\ArrayObject|\ArrayIterator $c, array $a, Stub $stub, bool $isNested): array
+    private static function castSplArray(\ArrayObject|\ArrayIterator $c, array $a, Stub $stub): array
     {
         $prefix = Caster::PREFIX_VIRTUAL;
         $flags = $c->getFlags();

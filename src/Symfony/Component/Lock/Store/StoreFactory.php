@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,6 +32,7 @@ class StoreFactory
     {
         switch (true) {
             case $connection instanceof DynamoDbClient:
+            case str_starts_with($connection, 'dynamodb://'):
                 self::requireBridgeClass(DynamoDbStore::class, 'symfony/amazon-dynamo-db-lock');
 
                 return new DynamoDbStore($connection);
@@ -45,12 +48,28 @@ class StoreFactory
                 return new MemcachedStore($connection);
 
             case $connection instanceof \MongoDB\Collection:
+            case str_starts_with($connection, 'mongodb'):
                 return new MongoDbStore($connection);
 
             case $connection instanceof \PDO:
+            case str_starts_with($connection, 'mysql:'):
+            case str_starts_with($connection, 'oci:'):
+            case str_starts_with($connection, 'pgsql:'):
+            case str_starts_with($connection, 'sqlsrv:'):
+            case str_starts_with($connection, 'sqlite:'):
                 return new PdoStore($connection);
 
             case $connection instanceof Connection:
+            case str_starts_with($connection, 'mssql://'):
+            case str_starts_with($connection, 'mysql://'):
+            case str_starts_with($connection, 'mysql2://'):
+            case str_starts_with($connection, 'oci8://'):
+            case str_starts_with($connection, 'pdo_oci://'):
+            case str_starts_with($connection, 'pgsql://'):
+            case str_starts_with($connection, 'postgres://'):
+            case str_starts_with($connection, 'postgresql://'):
+            case str_starts_with($connection, 'sqlite://'):
+            case str_starts_with($connection, 'sqlite3://'):
                 return new DoctrineDbalStore($connection);
 
             case $connection instanceof \Zookeeper:
@@ -70,11 +89,6 @@ class StoreFactory
             case str_starts_with($connection, 'semaphore://'):
                 return new SemaphoreStore(substr($connection, 12));
 
-            case str_starts_with($connection, 'dynamodb://'):
-                self::requireBridgeClass(DynamoDbStore::class, 'symfony/amazon-dynamo-db-lock');
-
-                return new DynamoDbStore($connection);
-
             case str_starts_with($connection, 'redis:'):
             case str_starts_with($connection, 'rediss:'):
             case str_starts_with($connection, 'valkey:'):
@@ -87,28 +101,6 @@ class StoreFactory
                 $connection = AbstractAdapter::createConnection($connection, ['lazy' => true]);
 
                 return new $storeClass($connection);
-
-            case str_starts_with($connection, 'mongodb'):
-                return new MongoDbStore($connection);
-
-            case str_starts_with($connection, 'mssql://'):
-            case str_starts_with($connection, 'mysql://'):
-            case str_starts_with($connection, 'mysql2://'):
-            case str_starts_with($connection, 'oci8://'):
-            case str_starts_with($connection, 'pdo_oci://'):
-            case str_starts_with($connection, 'pgsql://'):
-            case str_starts_with($connection, 'postgres://'):
-            case str_starts_with($connection, 'postgresql://'):
-            case str_starts_with($connection, 'sqlite://'):
-            case str_starts_with($connection, 'sqlite3://'):
-                return new DoctrineDbalStore($connection);
-
-            case str_starts_with($connection, 'mysql:'):
-            case str_starts_with($connection, 'oci:'):
-            case str_starts_with($connection, 'pgsql:'):
-            case str_starts_with($connection, 'sqlsrv:'):
-            case str_starts_with($connection, 'sqlite:'):
-                return new PdoStore($connection);
 
             case str_starts_with($connection, 'pgsql+advisory://'):
             case str_starts_with($connection, 'postgres+advisory://'):

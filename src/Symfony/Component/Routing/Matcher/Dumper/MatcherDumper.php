@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ use Symfony\Component\Routing\RouteCollection;
 abstract class MatcherDumper implements MatcherDumperInterface
 {
     public function __construct(
-        private RouteCollection $routes,
+        private readonly RouteCollection $routes,
     ) {
     }
 

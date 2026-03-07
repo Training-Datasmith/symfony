@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -146,7 +148,7 @@ class FormDataExtractor implements FormDataExtractorInterface
         $id = $form->getName();
 
         if (null !== $form->getParent()) {
-            $id = $this->buildId($form->getParent()).'_'.$id;
+            return $this->buildId($form->getParent()).'_'.$id;
         }
 
         return $id;

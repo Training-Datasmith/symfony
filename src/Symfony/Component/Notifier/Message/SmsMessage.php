@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ class SmsMessage implements MessageInterface, FromNotificationInterface
         private ?MessageOptionsInterface $options = null,
     ) {
         if ('' === $phone) {
-            throw new InvalidArgumentException(\sprintf('"%s" needs a phone number, it cannot be empty.', __CLASS__));
+            throw new InvalidArgumentException(\sprintf('"%s" needs a phone number, it cannot be empty.', self::class));
         }
     }
 

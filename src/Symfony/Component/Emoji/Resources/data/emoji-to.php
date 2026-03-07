@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'ʻuma: kakai lalahi, kakai lalahi, kili hinehina mo e kili kelokelo',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'ʻuma: kakai lalahi, kakai lalahi, kili hinehina mo e kili melomelo',

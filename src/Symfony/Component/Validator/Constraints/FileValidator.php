@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -264,8 +266,8 @@ class FileValidator extends ConstraintValidator
                     return;
                 }
 
-                if ($discrete = strstr($mimeType, '/*', true)) {
-                    if (strstr($mime, '/', true) === $discrete) {
+                if ($discrete = strstr((string) $mimeType, '/*', true)) {
+                    if (strstr((string) $mime, '/', true) === $discrete) {
                         return;
                     }
                 }

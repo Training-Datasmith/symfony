@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -82,7 +84,7 @@ class IcuVersion
     {
         $version = preg_replace('/^(\d)\.(\d)/', '$1$2', $version);
 
-        if (1 === \strlen($version)) {
+        if (1 === \strlen((string) $version)) {
             $version .= '0';
         }
 

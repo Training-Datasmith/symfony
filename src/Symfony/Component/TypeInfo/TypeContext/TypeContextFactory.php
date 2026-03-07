@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -310,7 +312,7 @@ final class TypeContextFactory
                 $resolved[$alias] = $this->stringTypeResolver->resolve($type, $typeContext);
                 unset($toResolve[$alias]);
                 $succeeded = true;
-            } catch (UnsupportedException $lastFailure) {
+            } catch (UnsupportedException) {
                 $lastFailingAlias = $alias;
             }
         }

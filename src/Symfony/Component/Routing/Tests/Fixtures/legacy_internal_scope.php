@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Symfony\Component\Routing\RouteCollection;
 
 // access the loader's internal scope to trigger deprecation

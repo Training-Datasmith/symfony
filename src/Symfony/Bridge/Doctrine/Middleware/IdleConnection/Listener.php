@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,13 +19,13 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-final class Listener implements EventSubscriberInterface
+final readonly class Listener implements EventSubscriberInterface
 {
     /**
      * @param \ArrayObject<string, int> $connectionExpiries
      */
     public function __construct(
-        private readonly \ArrayObject $connectionExpiries,
+        private \ArrayObject $connectionExpiries,
         private ContainerInterface $container,
     ) {
     }

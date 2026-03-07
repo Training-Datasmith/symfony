@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 class RoleVoter implements CacheableVoterInterface
 {
     public function __construct(
-        private string $prefix = 'ROLE_',
+        private readonly string $prefix = 'ROLE_',
     ) {
     }
 
@@ -32,10 +34,12 @@ class RoleVoter implements CacheableVoterInterface
         $missingRoles = [];
 
         foreach ($attributes as $attribute) {
-            if (!\is_string($attribute) || !str_starts_with($attribute, $this->prefix)) {
+            if (!\is_string($attribute)) {
                 continue;
             }
-
+            if (!str_starts_with((string) $attribute, $this->prefix)) {
+                continue;
+            }
             $result = VoterInterface::ACCESS_DENIED;
 
             if (\in_array($attribute, $roles, true)) {

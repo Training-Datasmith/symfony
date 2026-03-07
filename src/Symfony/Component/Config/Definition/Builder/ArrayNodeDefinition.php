@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -102,8 +104,8 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
                 ExprBuilder::TYPE_STRING => is_string(...),
                 ExprBuilder::TYPE_BOOL => is_bool(...),
                 ExprBuilder::TYPE_NULL => is_null(...),
-                ExprBuilder::TYPE_BACKED_ENUM => static fn ($v) => $v instanceof \BackedEnum,
-            })->then(static fn ($v) => [$key ?? 0 => $v]);
+                ExprBuilder::TYPE_BACKED_ENUM => static fn ($v): bool => $v instanceof \BackedEnum,
+            })->then(static fn ($v): array => [$key ?? 0 => $v]);
         }
 
         return $this;
@@ -355,7 +357,7 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
             ->treatNullLike(['enabled' => true])
             ->beforeNormalization()
                 ->ifArray()
-                ->then(static function ($v) {
+                ->then(static function (array $v): array {
                     $v['enabled'] ??= true;
 
                     return $v;

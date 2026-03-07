@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,8 +21,8 @@ use Symfony\Component\Messenger\Stamp\NonSendableStampInterface;
 class AmqpReceivedStamp implements NonSendableStampInterface
 {
     public function __construct(
-        private \AMQPEnvelope $amqpEnvelope,
-        private string $queueName,
+        private readonly \AMQPEnvelope $amqpEnvelope,
+        private readonly string $queueName,
     ) {
     }
 

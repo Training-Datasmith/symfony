@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,16 +20,8 @@ namespace Symfony\Component\ErrorHandler\Exception;
  */
 class SilencedErrorContext implements \JsonSerializable
 {
-    public int $count = 1;
-
-    public function __construct(
-        private int $severity,
-        private string $file,
-        private int $line,
-        private array $trace = [],
-        int $count = 1,
-    ) {
-        $this->count = $count;
+    public function __construct(private readonly int $severity, private readonly string $file, private readonly int $line, private readonly array $trace = [], public int $count = 1)
+    {
     }
 
     public function getSeverity(): int

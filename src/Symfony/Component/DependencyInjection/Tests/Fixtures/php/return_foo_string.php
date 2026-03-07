@@ -1,2 +1,4 @@
 <?php
-    return 'foo';
+
+declare(strict_types=1);
+return 'foo';

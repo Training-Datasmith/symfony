@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -47,8 +49,8 @@ class DoctrineExtractor implements PropertyListExtractorInterface, PropertyTypeE
 
         $properties = array_merge($metadata->getFieldNames(), $metadata->getAssociationNames());
 
-        if ($metadata instanceof ClassMetadata && $metadata->embeddedClasses) {
-            $properties = array_filter($properties, static fn ($property) => !str_contains($property, '.'));
+        if ($metadata->embeddedClasses) {
+            $properties = array_filter($properties, static fn ($property): bool => !str_contains((string) $property, '.'));
 
             $properties = array_merge($properties, array_keys($metadata->embeddedClasses));
         }
@@ -77,43 +79,39 @@ class DoctrineExtractor implements PropertyListExtractorInterface, PropertyTypeE
             }
 
             $collectionKeyType = TypeIdentifier::INT;
+            $associationMapping = $metadata->getAssociationMapping($property);
+            if (self::getMappingValue($associationMapping, 'indexBy')) {
+                $subMetadata = $this->entityManager->getClassMetadata(self::getMappingValue($associationMapping, 'targetEntity'));
 
-            if ($metadata instanceof ClassMetadata) {
-                $associationMapping = $metadata->getAssociationMapping($property);
-
-                if (self::getMappingValue($associationMapping, 'indexBy')) {
-                    $subMetadata = $this->entityManager->getClassMetadata(self::getMappingValue($associationMapping, 'targetEntity'));
-
-                    // Check if indexBy value is a property
-                    $fieldName = self::getMappingValue($associationMapping, 'indexBy');
+                // Check if indexBy value is a property
+                $fieldName = self::getMappingValue($associationMapping, 'indexBy');
+                if (null === ($typeOfField = $subMetadata->getTypeOfField($fieldName))) {
+                    $fieldName = $subMetadata->getFieldForColumn(self::getMappingValue($associationMapping, 'indexBy'));
+                    // Not a property, maybe a column name?
                     if (null === ($typeOfField = $subMetadata->getTypeOfField($fieldName))) {
-                        $fieldName = $subMetadata->getFieldForColumn(self::getMappingValue($associationMapping, 'indexBy'));
+                        // Maybe the column name is the association join column?
+                        $associationMapping = $subMetadata->getAssociationMapping($fieldName);
+
+                        $indexProperty = $subMetadata->getSingleAssociationReferencedJoinColumnName($fieldName);
+                        $subMetadata = $this->entityManager->getClassMetadata(self::getMappingValue($associationMapping, 'targetEntity'));
+
                         // Not a property, maybe a column name?
-                        if (null === ($typeOfField = $subMetadata->getTypeOfField($fieldName))) {
-                            // Maybe the column name is the association join column?
-                            $associationMapping = $subMetadata->getAssociationMapping($fieldName);
-
-                            $indexProperty = $subMetadata->getSingleAssociationReferencedJoinColumnName($fieldName);
-                            $subMetadata = $this->entityManager->getClassMetadata(self::getMappingValue($associationMapping, 'targetEntity'));
-
-                            // Not a property, maybe a column name?
-                            if (null === ($typeOfField = $subMetadata->getTypeOfField($indexProperty))) {
-                                $fieldName = $subMetadata->getFieldForColumn($indexProperty);
-                                $typeOfField = $subMetadata->getTypeOfField($fieldName);
-                            }
+                        if (null === ($typeOfField = $subMetadata->getTypeOfField($indexProperty))) {
+                            $fieldName = $subMetadata->getFieldForColumn($indexProperty);
+                            $typeOfField = $subMetadata->getTypeOfField($fieldName);
                         }
                     }
+                }
 
-                    if (!$collectionKeyType = $this->getTypeIdentifier($typeOfField)) {
-                        return null;
-                    }
+                if (!$collectionKeyType = $this->getTypeIdentifier($typeOfField)) {
+                    return null;
                 }
             }
 
             return Type::collection(Type::object(Collection::class), Type::object($class), Type::builtin($collectionKeyType));
         }
 
-        if ($metadata instanceof ClassMetadata && isset($metadata->embeddedClasses[$property])) {
+        if (isset($metadata->embeddedClasses[$property])) {
             return Type::object(self::getMappingValue($metadata->embeddedClasses[$property], 'class'));
         }
 
@@ -153,7 +151,7 @@ class DoctrineExtractor implements PropertyListExtractorInterface, PropertyTypeE
                 Types::SIMPLE_ARRAY => $nullable ? Type::nullable(Type::list($enumType ?? Type::string())) : Type::list($enumType ?? Type::string()),
                 default => $builtinType,
             },
-            TypeIdentifier::INT, TypeIdentifier::STRING => $enumType ? $enumType : $builtinType,
+            TypeIdentifier::INT, TypeIdentifier::STRING => $enumType ?: $builtinType,
             default => $builtinType,
         };
     }

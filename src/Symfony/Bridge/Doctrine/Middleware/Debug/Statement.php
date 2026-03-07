@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
  */
 final class Statement extends AbstractStatementMiddleware
 {
-    private Query $query;
+    private readonly Query $query;
 
     public function __construct(
         StatementInterface $statement,

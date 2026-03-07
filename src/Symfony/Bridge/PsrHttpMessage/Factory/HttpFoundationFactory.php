@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -96,7 +98,7 @@ class HttpFoundationFactory implements HttpFoundationFactoryInterface
      */
     private function createUploadedFile(UploadedFileInterface $psrUploadedFile): UploadedFile
     {
-        return new UploadedFile($psrUploadedFile, fn () => $this->getTemporaryPath());
+        return new UploadedFile($psrUploadedFile, fn (): string => $this->getTemporaryPath());
     }
 
     /**
@@ -137,7 +139,7 @@ class HttpFoundationFactory implements HttpFoundationFactoryInterface
 
     private function createStreamedResponseCallback(StreamInterface $body): callable
     {
-        return function () use ($body) {
+        return function () use ($body): void {
             if ($body->isSeekable()) {
                 $body->rewind();
             }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -151,7 +153,7 @@ class JsonLoginAuthenticatorTest extends TestCase
     {
         $this->setUpAuthenticator();
 
-        $response = $this->authenticator->onAuthenticationFailure(new Request(), new class extends AuthenticationException {
+        $response = $this->authenticator->onAuthenticationFailure(new Request(), new class () extends AuthenticationException {
             public function getMessageData(): array
             {
                 return ['%failed_attempts%' => 3];

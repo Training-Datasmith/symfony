@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,13 +22,13 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @see https://datatracker.ietf.org/doc/html/rfc6750#section-2.1
  */
-final class HeaderAccessTokenExtractor implements AccessTokenExtractorInterface
+final readonly class HeaderAccessTokenExtractor implements AccessTokenExtractorInterface
 {
     private string $regex;
 
     public function __construct(
-        private readonly string $headerParameter = 'Authorization',
-        private readonly string $tokenType = 'Bearer',
+        private string $headerParameter = 'Authorization',
+        private string $tokenType = 'Bearer',
     ) {
         $this->regex = \sprintf(
             '/^%s([a-zA-Z0-9\-_\+~\/\.]+=*)$/',

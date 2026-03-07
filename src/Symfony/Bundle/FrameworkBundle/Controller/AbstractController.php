@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -303,7 +305,7 @@ abstract class AbstractController implements ServiceSubscriberInterface
 
         $twig = $this->container->get('twig');
 
-        $callback = static function () use ($twig, $view, $parameters) {
+        $callback = static function () use ($twig, $view, $parameters): void {
             $twig->display($view, $parameters);
         };
 

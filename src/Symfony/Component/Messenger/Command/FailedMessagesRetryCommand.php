@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -48,11 +50,11 @@ class FailedMessagesRetryCommand extends AbstractFailedMessagesCommand implement
     public function __construct(
         ?string $globalReceiverName,
         ServiceProviderInterface $failureTransports,
-        private MessageBusInterface $messageBus,
-        private EventDispatcherInterface $eventDispatcher,
-        private ?LoggerInterface $logger = null,
+        private readonly MessageBusInterface $messageBus,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly ?LoggerInterface $logger = null,
         ?PhpSerializer $phpSerializer = null,
-        private ?array $signals = null,
+        private readonly ?array $signals = null,
     ) {
         parent::__construct($globalReceiverName, $failureTransports, $phpSerializer);
     }
@@ -66,7 +68,8 @@ class FailedMessagesRetryCommand extends AbstractFailedMessagesCommand implement
                 new InputOption('transport', null, InputOption::VALUE_REQUIRED, 'Use a specific failure transport', self::DEFAULT_TRANSPORT_OPTION),
                 new InputOption('keepalive', null, InputOption::VALUE_REQUIRED, 'Whether to use the transport\'s keepalive mechanism if implemented', self::DEFAULT_KEEPALIVE_INTERVAL),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> retries message in the failure transport.
 
                     <info>php %command.full_name%</info>
@@ -211,7 +214,7 @@ class FailedMessagesRetryCommand extends AbstractFailedMessagesCommand implement
     private function runWorker(string $failureTransportName, ReceiverInterface $receiver, SymfonyStyle $io, SymfonyStyle $errorIo, bool $shouldForce): int
     {
         $count = 0;
-        $listener = function (WorkerMessageReceivedEvent $messageReceivedEvent) use ($io, $errorIo, $receiver, $shouldForce, &$count) {
+        $listener = function (WorkerMessageReceivedEvent $messageReceivedEvent) use ($io, $errorIo, $receiver, $shouldForce, &$count): void {
             ++$count;
             $envelope = $messageReceivedEvent->getEnvelope();
 

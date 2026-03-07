@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,8 +30,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class InlineFragmentRenderer extends RoutableFragmentRenderer
 {
     public function __construct(
-        private HttpKernelInterface $kernel,
-        private ?EventDispatcherInterface $dispatcher = null,
+        private readonly HttpKernelInterface $kernel,
+        private readonly ?EventDispatcherInterface $dispatcher = null,
     ) {
     }
 
@@ -115,7 +117,9 @@ class InlineFragmentRenderer extends RoutableFragmentRenderer
 
         static $setSession;
 
-        $setSession ??= \Closure::bind(static function ($subRequest, $request) { $subRequest->session = $request->session; }, null, Request::class);
+        $setSession ??= \Closure::bind(static function ($subRequest, $request): void {
+            $subRequest->session = $request->session;
+        }, null, Request::class);
         $setSession($subRequest, $request);
 
         if ($request->attributes->has('_format')) {

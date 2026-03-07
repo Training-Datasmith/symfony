@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,9 +30,9 @@ class DependencyInjectionExtension implements FormExtensionInterface
      * @param array<string, iterable<FormTypeExtensionInterface>> $typeExtensionServices
      */
     public function __construct(
-        private ContainerInterface $typeContainer,
+        private readonly ContainerInterface $typeContainer,
         private array $typeExtensionServices,
-        private iterable $guesserServices,
+        private readonly iterable $guesserServices,
     ) {
     }
 
@@ -82,7 +84,7 @@ class DependencyInjectionExtension implements FormExtensionInterface
             $this->guesserLoaded = true;
             $guessers = [];
 
-            foreach ($this->guesserServices as $serviceId => $service) {
+            foreach ($this->guesserServices as $service) {
                 $guessers[] = $service;
             }
 

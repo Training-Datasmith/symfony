@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,10 +23,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  *
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-final class ValidateQuestionInputListener implements EventSubscriberInterface
+final readonly class ValidateQuestionInputListener implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly ValidatorInterface $validator,
+        private ValidatorInterface $validator,
     ) {
     }
 

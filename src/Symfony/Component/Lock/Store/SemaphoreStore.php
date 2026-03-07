@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -53,7 +55,7 @@ class SemaphoreStore implements BlockingStoreInterface
 
     private function lock(Key $key, bool $blocking): void
     {
-        if ($key->hasState(__CLASS__)) {
+        if ($key->hasState(self::class)) {
             return;
         }
 
@@ -70,22 +72,22 @@ class SemaphoreStore implements BlockingStoreInterface
             throw new LockConflictedException();
         }
 
-        $key->setState(__CLASS__, $resource);
+        $key->setState(self::class, $resource);
         $key->markUnserializable();
     }
 
     public function delete(Key $key): void
     {
         // The lock is maybe not acquired.
-        if (!$key->hasState(__CLASS__)) {
+        if (!$key->hasState(self::class)) {
             return;
         }
 
-        $resource = $key->getState(__CLASS__);
+        $resource = $key->getState(self::class);
 
         sem_remove($resource);
 
-        $key->removeState(__CLASS__);
+        $key->removeState(self::class);
     }
 
     public function putOffExpiration(Key $key, float $ttl): void
@@ -95,6 +97,6 @@ class SemaphoreStore implements BlockingStoreInterface
 
     public function exists(Key $key): bool
     {
-        return $key->hasState(__CLASS__);
+        return $key->hasState(self::class);
     }
 }

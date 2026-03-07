@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class DebugCommand extends Command
 {
     public function __construct(
-        private array $mapping,
+        private readonly array $mapping,
     ) {
         parent::__construct();
     }
@@ -39,7 +41,8 @@ class DebugCommand extends Command
     {
         $this
             ->addArgument('bus', InputArgument::OPTIONAL, \sprintf('The bus id (one of "%s")', implode('", "', array_keys($this->mapping))))
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command displays all messages that can be
                 dispatched using the message buses:
 
@@ -122,7 +125,7 @@ class DebugCommand extends Command
             if ($docComment = $r->getDocComment()) {
                 $docComment = preg_split('#\n\s*\*\s*[\n@]#', substr($docComment, 3, -2), 2)[0];
 
-                return trim(preg_replace('#\s*\n\s*\*\s*#', ' ', $docComment));
+                return trim((string) preg_replace('#\s*\n\s*\*\s*#', ' ', $docComment));
             }
         } catch (\ReflectionException) {
         }

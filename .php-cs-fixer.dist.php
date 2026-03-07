@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -51,7 +53,7 @@ return (new PhpCsFixer\Config())
             'fix_lambda' => false,
         ],
     ])
-    ->setRuleCustomisationPolicy(new class implements PhpCsFixer\Config\RuleCustomisationPolicyInterface {
+    ->setRuleCustomisationPolicy(new class () implements PhpCsFixer\Config\RuleCustomisationPolicyInterface {
         public function getPolicyVersionForCache(): string
         {
             return hash_file('xxh128', __FILE__);

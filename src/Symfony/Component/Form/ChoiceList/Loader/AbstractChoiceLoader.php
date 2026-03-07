@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
  */
 abstract class AbstractChoiceLoader implements ChoiceLoaderInterface
 {
-    private ?iterable $choices;
+    private ?iterable $choices = null;
 
     /**
      * @final
@@ -46,7 +48,7 @@ abstract class AbstractChoiceLoader implements ChoiceLoaderInterface
 
         if ($value) {
             // if a value callback exists, use it
-            return array_map(static fn ($item) => (string) $value($item), $choices);
+            return array_map(static fn ($item): string => (string) $value($item), $choices);
         }
 
         return $this->doLoadValuesForChoices($choices);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -51,7 +53,8 @@ class TreeHelperTest extends TestCase
         $tree = TreeHelper::createTree($output, $rootNode);
 
         $tree->render();
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             Root
             ├── Child 1
             └── Child 2
@@ -75,7 +78,8 @@ class TreeHelperTest extends TestCase
         $tree = TreeHelper::createTree($output, $rootNode);
 
         $tree->render();
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             Root
             ├── Child 1
             │   └── SubChild 1
@@ -104,7 +108,8 @@ class TreeHelperTest extends TestCase
         $tree = TreeHelper::createTree($output, $rootNode);
 
         $tree->render();
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             Root
             ├── Child 1
             │   ├── SubChild 1
@@ -123,7 +128,8 @@ class TreeHelperTest extends TestCase
         $tree = TreeHelper::createTree($output, $rootNode);
 
         $tree->render();
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             Root
             TREE,
             self::normalizeLineBreaks(trim($output->fetch()))
@@ -137,7 +143,8 @@ class TreeHelperTest extends TestCase
         $tree = TreeHelper::createTree($output, $rootNode);
 
         $tree->render();
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             Root
             TREE,
             self::normalizeLineBreaks(trim($output->fetch()))
@@ -167,7 +174,8 @@ class TreeHelperTest extends TestCase
         $tree = TreeHelper::createTree($output, $rootNode, [], $style);
 
         $tree->render();
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             Root
             └── Level 1
               └── Level 2
@@ -199,7 +207,8 @@ class TreeHelperTest extends TestCase
         $tree = TreeHelper::createTree($output, $rootNode);
 
         $tree->render();
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             Root
             ├── Child 1
             ├── Child 2
@@ -221,7 +230,8 @@ class TreeHelperTest extends TestCase
         $tree = TreeHelper::createTree($output, $rootNode);
 
         $tree->render();
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             Root
             ├── Child 1
             ├── Child 2
@@ -246,7 +256,8 @@ class TreeHelperTest extends TestCase
         $tree = TreeHelper::createTree($output, $rootNode);
 
         $tree->render();
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             Root
             ├── Child
             │   └── Child
@@ -271,7 +282,8 @@ class TreeHelperTest extends TestCase
         $tree = TreeHelper::createTree($output, $rootNode);
 
         $tree->render();
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             Root
             ├── Child 1 (special)
             │   └── Node with spaces
@@ -326,7 +338,8 @@ class TreeHelperTest extends TestCase
         $tree = TreeHelper::createTree($output, 'root', $array);
 
         $tree->render();
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             root
             ├── child1
             └── child2
@@ -343,7 +356,8 @@ class TreeHelperTest extends TestCase
         $tree = TreeHelper::createTree($output, 'root', $array);
 
         $tree->render();
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             root
             ├── child1
             ├── child2
@@ -364,7 +378,8 @@ class TreeHelperTest extends TestCase
         $tree = TreeHelper::createTree($output, null, $array);
 
         $tree->render();
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             ├── child1
             └── child2
             TREE,

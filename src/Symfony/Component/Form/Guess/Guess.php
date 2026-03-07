@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -50,7 +52,7 @@ abstract class Guess
      * One of VERY_HIGH_CONFIDENCE, HIGH_CONFIDENCE, MEDIUM_CONFIDENCE
      * and LOW_CONFIDENCE.
      */
-    private int $confidence;
+    private readonly int $confidence;
 
     /**
      * Returns the guess most likely to be correct from a list of guesses.

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -592,13 +594,15 @@ class HtmlSanitizerAllTest extends TestCase
 
     public function testIFrameDefaultsAreSafe()
     {
-        $sanitizer = new HtmlSanitizer((new HtmlSanitizerConfig())
+        $sanitizer = new HtmlSanitizer(
+            (new HtmlSanitizerConfig())
             ->allowElement('iframe', '*')
         );
         $input = '<iframe src="javascript:alert()" onload="alert()" srcdoc="<script>alert()</script>">XSS</iframe>';
         $this->assertSame('<iframe>XSS</iframe>', $sanitizer->sanitize($input));
 
-        $sanitizer = new HtmlSanitizer((new HtmlSanitizerConfig())
+        $sanitizer = new HtmlSanitizer(
+            (new HtmlSanitizerConfig())
             ->allowElement('iframe', '*')
             ->allowAttribute('srcdoc', 'iframe')
             ->forceAttribute('iframe', 'sandbox', '')

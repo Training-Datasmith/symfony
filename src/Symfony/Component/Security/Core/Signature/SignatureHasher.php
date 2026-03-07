@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,11 +33,11 @@ class SignatureHasher
      * @param int|null                     $maxUses                  Used together with $expiredSignatureStorage to allow a maximum usage of a hash
      */
     public function __construct(
-        private PropertyAccessorInterface $propertyAccessor,
-        private array $signatureProperties,
-        #[\SensitiveParameter] private string $secret,
-        private ?ExpiredSignatureStorage $expiredSignaturesStorage = null,
-        private ?int $maxUses = null,
+        private readonly PropertyAccessorInterface $propertyAccessor,
+        private readonly array $signatureProperties,
+        #[\SensitiveParameter] private readonly string $secret,
+        private readonly ?ExpiredSignatureStorage $expiredSignaturesStorage = null,
+        private readonly ?int $maxUses = null,
     ) {
         if (!$secret) {
             throw new InvalidArgumentException('A non-empty secret is required.');

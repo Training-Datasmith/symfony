@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -107,7 +109,8 @@ class YamlDumperTest extends TestCase
         $container = new ContainerBuilder();
         $container->register('foo', 'Class1')
             ->setPublic(true)
-            ->addArgument((new Definition('Class2'))
+            ->addArgument(
+                (new Definition('Class2'))
                 ->addArgument(new Definition('Class2'))
             )
         ;

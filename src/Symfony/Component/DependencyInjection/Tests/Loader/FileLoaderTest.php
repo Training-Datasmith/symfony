@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -154,7 +156,8 @@ class FileLoaderTest extends TestCase
         $loader->registerClasses(
             new Definition(),
             'Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\\',
-            'Prototype/*', [
+            'Prototype/*',
+            [
                 'Prototype/%sub_dir%',
                 'Prototype/OtherDir/AnotherSub/DeeperBaz.php',
             ]

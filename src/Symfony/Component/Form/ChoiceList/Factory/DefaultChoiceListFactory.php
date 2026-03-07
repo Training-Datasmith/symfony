@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,7 +37,7 @@ class DefaultChoiceListFactory implements ChoiceListFactoryInterface
         if ($filter) {
             // filter the choice list lazily
             return $this->createListFromLoader(new FilterChoiceLoaderDecorator(
-                new CallbackChoiceLoader(static fn () => $choices),
+                new CallbackChoiceLoader(static fn (): iterable => $choices),
                 $filter
             ), $value);
         }
@@ -66,7 +68,7 @@ class DefaultChoiceListFactory implements ChoiceListFactoryInterface
             } else {
                 // make sure we have keys that reflect order
                 $preferredChoices = array_values($preferredChoices);
-                $preferredChoices = static fn ($choice) => array_search($choice, $preferredChoices, true);
+                $preferredChoices = static fn ($choice): int|false => array_search($choice, $preferredChoices, true);
             }
         }
 
@@ -136,12 +138,12 @@ class DefaultChoiceListFactory implements ChoiceListFactoryInterface
             );
         }
 
-        uksort($preferredViews, static fn ($a, $b) => isset($preferredViewsOrder[$a], $preferredViewsOrder[$b]) ? $preferredViewsOrder[$a] <=> $preferredViewsOrder[$b] : 0);
+        uksort($preferredViews, static fn ($a, $b): int => isset($preferredViewsOrder[$a], $preferredViewsOrder[$b]) ? $preferredViewsOrder[$a] <=> $preferredViewsOrder[$b] : 0);
 
         return new ChoiceListView($otherViews, $preferredViews);
     }
 
-    private static function addChoiceView($choice, string $value, $label, array $keys, &$index, $attr, $labelTranslationParameters, ?callable $isPreferred, array &$preferredViews, array &$preferredViewsOrder, array &$otherViews, bool $duplicatePreferredChoices): void
+    private static function addChoiceView($choice, string $value, $label, array $keys, &$index, array $attr, array $labelTranslationParameters, ?callable $isPreferred, array &$preferredViews, array &$preferredViewsOrder, array &$otherViews, bool $duplicatePreferredChoices): void
     {
         // $value may be an integer or a string, since it's stored in the array
         // keys. We want to guarantee it's a string though.
@@ -247,7 +249,7 @@ class DefaultChoiceListFactory implements ChoiceListFactoryInterface
         }
     }
 
-    private static function addChoiceViewsGroupedByCallable(callable $groupBy, $choice, string $value, $label, array $keys, &$index, $attr, $labelTranslationParameters, ?callable $isPreferred, array &$preferredViews, array &$preferredViewsOrder, array &$otherViews, bool $duplicatePreferredChoices): void
+    private static function addChoiceViewsGroupedByCallable(callable $groupBy, $choice, string $value, callable|bool|null $label, array $keys, &$index, array|callable|null $attr, array|callable $labelTranslationParameters, ?callable $isPreferred, array &$preferredViews, array &$preferredViewsOrder, array &$otherViews, bool $duplicatePreferredChoices): void
     {
         $groupLabels = $groupBy($choice, $keys[$value], $value);
 
@@ -271,7 +273,7 @@ class DefaultChoiceListFactory implements ChoiceListFactoryInterface
             return;
         }
 
-        $groupLabels = \is_array($groupLabels) ? array_map('strval', $groupLabels) : [(string) $groupLabels];
+        $groupLabels = \is_array($groupLabels) ? array_map(strval(...), $groupLabels) : [(string) $groupLabels];
 
         foreach ($groupLabels as $groupLabel) {
             // Initialize the group views if necessary. Unnecessarily built group

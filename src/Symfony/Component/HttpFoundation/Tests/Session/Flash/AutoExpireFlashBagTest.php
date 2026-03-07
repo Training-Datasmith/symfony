@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -101,16 +103,20 @@ class AutoExpireFlashBagTest extends TestCase
         ];
 
         $this->bag->initialize($array);
-        $this->assertEquals([
+        $this->assertEquals(
+            [
             'notice' => 'Foo',
             'error' => 'Bar',
-        ], $this->bag->peekAll()
+        ],
+            $this->bag->peekAll()
         );
 
-        $this->assertEquals([
+        $this->assertEquals(
+            [
             'notice' => 'Foo',
             'error' => 'Bar',
-        ], $this->bag->peekAll()
+        ],
+            $this->bag->peekAll()
         );
     }
 
@@ -133,9 +139,11 @@ class AutoExpireFlashBagTest extends TestCase
     {
         $this->bag->set('notice', 'Foo');
         $this->bag->set('error', 'Bar');
-        $this->assertEquals([
+        $this->assertEquals(
+            [
             'notice' => ['A previous flash message'],
-        ], $this->bag->all()
+        ],
+            $this->bag->all()
         );
 
         $this->assertEquals([], $this->bag->all());

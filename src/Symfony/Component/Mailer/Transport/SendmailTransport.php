@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,7 +36,7 @@ use Symfony\Component\Mime\RawMessage;
 class SendmailTransport extends AbstractTransport
 {
     private string $command = '/usr/sbin/sendmail -bs';
-    private ProcessStream $stream;
+    private readonly ProcessStream $stream;
     private ?SmtpTransport $transport = null;
 
     /**
@@ -89,7 +91,7 @@ class SendmailTransport extends AbstractTransport
 
     protected function doSend(SentMessage $message): void
     {
-        $this->getLogger()->debug(\sprintf('Email transport "%s" starting', __CLASS__));
+        $this->getLogger()->debug(\sprintf('Email transport "%s" starting', self::class));
 
         $command = $this->command;
 
@@ -119,6 +121,6 @@ class SendmailTransport extends AbstractTransport
         $this->stream->flush();
         $this->stream->terminate();
 
-        $this->getLogger()->debug(\sprintf('Email transport "%s" stopped', __CLASS__));
+        $this->getLogger()->debug(\sprintf('Email transport "%s" stopped', self::class));
     }
 }

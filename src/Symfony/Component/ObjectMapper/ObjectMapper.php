@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -293,7 +295,7 @@ final class ObjectMapper implements ObjectMapperInterface, ObjectMapperAwareInte
                 $refl = new \ReflectionClass($mapTo->target);
                 $mapper = $this->objectMapper ?? $this;
 
-                return $refl->newLazyGhost(function ($target) use ($mapper, $value, $objectMap) {
+                return $refl->newLazyGhost(function (object|string|null $target) use ($mapper, $value, $objectMap): void {
                     $previousMap = $this->objectMap;
                     $this->objectMap = $objectMap;
                     try {

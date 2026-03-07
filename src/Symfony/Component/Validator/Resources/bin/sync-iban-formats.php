@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -151,10 +153,9 @@ final class SwiftRegistryIbanProvider
         $pattern = $ibanStructure;
 
         $pattern = preg_replace('/(\d+)!n/', '\\d{$1}', $pattern);
-        $pattern = preg_replace('/(\d+)!a/', '[A-Z]{$1}', $pattern);
-        $pattern = preg_replace('/(\d+)!c/', '[\\dA-Z]{$1}', $pattern);
+        $pattern = preg_replace('/(\d+)!a/', '[A-Z]{$1}', (string) $pattern);
 
-        return $pattern;
+        return preg_replace('/(\d+)!c/', '[\\dA-Z]{$1}', (string) $pattern);
     }
 }
 
@@ -168,7 +169,7 @@ final class WikipediaIbanProvider
         $formats = [];
 
         foreach ($this->readIbanFormatsTable() as $item) {
-            if (!preg_match('/^([A-Z]{2})/', $item['IBAN Fields'], $matches)) {
+            if (!preg_match('/^([A-Z]{2})/', (string) $item['IBAN Fields'], $matches)) {
                 continue;
             }
 
@@ -195,9 +196,9 @@ final class WikipediaIbanProvider
         $pattern = $bbanFormat;
 
         $pattern = preg_replace('/\s*,\s*/', '', $pattern);
-        $pattern = preg_replace('/(\d+)n/', '\\d{$1}', $pattern);
-        $pattern = preg_replace('/(\d+)a/', '[A-Z]{$1}', $pattern);
-        $pattern = preg_replace('/(\d+)c/', '[\\dA-Z]{$1}', $pattern);
+        $pattern = preg_replace('/(\d+)n/', '\\d{$1}', (string) $pattern);
+        $pattern = preg_replace('/(\d+)a/', '[A-Z]{$1}', (string) $pattern);
+        $pattern = preg_replace('/(\d+)c/', '[\\dA-Z]{$1}', (string) $pattern);
 
         return $countryCode.'\\d{2}'.$pattern;
     }

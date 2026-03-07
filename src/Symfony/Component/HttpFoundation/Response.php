@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ class_exists(ResponseHeaderBag::class);
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class Response
+class Response implements \Stringable
 {
     public const HTTP_CONTINUE = 100;
     public const HTTP_SWITCHING_PROTOCOLS = 101;
@@ -107,7 +109,7 @@ class Response
 
     public ResponseHeaderBag $headers {
         set {
-            trigger_deprecation('symfony/http-foundation', '8.1', 'Directly setting property "headers" of "%s" is deprecated; pass the header bag as a constructor argument instead.', __CLASS__);
+            trigger_deprecation('symfony/http-foundation', '8.1', 'Directly setting property "headers" of "%s" is deprecated; pass the header bag as a constructor argument instead.', self::class);
 
             $this->headers = $value;
         }
@@ -296,7 +298,7 @@ class Response
         }
 
         // Check if we need to send extra expire info headers
-        if ('1.0' == $this->getProtocolVersion() && str_contains($headers->get('Cache-Control', ''), 'no-cache')) {
+        if ('1.0' == $this->getProtocolVersion() && str_contains((string) $headers->get('Cache-Control', ''), 'no-cache')) {
             $headers->set('pragma', 'no-cache');
             $headers->set('expires', -1);
         }
@@ -346,7 +348,7 @@ class Response
                 continue;
             }
 
-            $replace = 0 === strcasecmp($name, 'Content-Type');
+            $replace = 0 === strcasecmp((string) $name, 'Content-Type');
 
             if (null !== $previousValues && array_diff($previousValues, $values)) {
                 header_remove($name);
@@ -551,8 +553,10 @@ class Response
         if ($this->headers->hasCacheControlDirective('no-store') || $this->headers->getCacheControlDirective('private')) {
             return false;
         }
-
-        return $this->isValidateable() || $this->isFresh();
+        if ($this->isValidateable()) {
+            return true;
+        }
+        return $this->isFresh();
     }
 
     /**
@@ -577,7 +581,10 @@ class Response
      */
     public function isValidateable(): bool
     {
-        return $this->headers->has('Last-Modified') || $this->headers->has('ETag');
+        if ($this->headers->has('Last-Modified')) {
+            return true;
+        }
+        return $this->headers->has('ETag');
     }
 
     /**
@@ -654,7 +661,10 @@ class Response
      */
     public function mustRevalidate(): bool
     {
-        return $this->headers->hasCacheControlDirective('must-revalidate') || $this->headers->hasCacheControlDirective('proxy-revalidate');
+        if ($this->headers->hasCacheControlDirective('must-revalidate')) {
+            return true;
+        }
+        return $this->headers->hasCacheControlDirective('proxy-revalidate');
     }
 
     /**
@@ -1084,7 +1094,7 @@ class Response
 
         $ret = [];
         foreach ($vary as $item) {
-            $ret[] = preg_split('/[\s,]+/', $item);
+            $ret[] = preg_split('/[\s,]+/', (string) $item);
         }
 
         return array_merge([], ...$ret);
@@ -1126,14 +1136,14 @@ class Response
         $modifiedSince = $request->headers->get('If-Modified-Since');
 
         if (($ifNoneMatchEtags = $request->getETags()) && (null !== $etag = $this->getEtag())) {
-            if (0 == strncmp($etag, 'W/', 2)) {
+            if (str_starts_with($etag, 'W/')) {
                 $etag = substr($etag, 2);
             }
 
             // Use weak comparison as per https://tools.ietf.org/html/rfc7232#section-3.2.
             foreach ($ifNoneMatchEtags as $ifNoneMatchEtag) {
-                if (0 == strncmp($ifNoneMatchEtag, 'W/', 2)) {
-                    $ifNoneMatchEtag = substr($ifNoneMatchEtag, 2);
+                if (str_starts_with((string) $ifNoneMatchEtag, 'W/')) {
+                    $ifNoneMatchEtag = substr((string) $ifNoneMatchEtag, 2);
                 }
 
                 if ($ifNoneMatchEtag === $etag || '*' === $ifNoneMatchEtag) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -120,7 +122,7 @@ final class CompleteCommand extends Command
                 // expand shortcut names ("cache:cl<TAB>") into their full name ("cache:clear")
                 $commandNames = array_filter(array_merge([$command->getName()], $command->getAliases()));
                 foreach ($commandNames as $name) {
-                    if (str_starts_with($name, $completionInput->getCompletionValue())) {
+                    if (str_starts_with((string) $name, $completionInput->getCompletionValue())) {
                         $commandNames = [$name];
                         break;
                     }
@@ -149,7 +151,7 @@ final class CompleteCommand extends Command
 
             $this->log('<info>Suggestions:</>');
             if ($options = $suggestions->getOptionSuggestions()) {
-                $this->log('  --'.implode(' --', array_map(static fn ($o) => $o->getName(), $options)));
+                $this->log('  --'.implode(' --', array_map(static fn ($o): string => $o->getName(), $options)));
             } elseif ($values = $suggestions->getValueSuggestions()) {
                 $this->log('  '.implode(' ', $values));
             } else {
@@ -176,7 +178,7 @@ final class CompleteCommand extends Command
     private function createCompletionInput(InputInterface $input): CompletionInput
     {
         $currentIndex = $input->getOption('current');
-        if (!$currentIndex || !ctype_digit($currentIndex)) {
+        if (!$currentIndex || !ctype_digit((string) $currentIndex)) {
             throw new \RuntimeException('The "--current" option must be set and it must be an integer.');
         }
 
@@ -205,13 +207,13 @@ final class CompleteCommand extends Command
         return null;
     }
 
-    private function log($messages): void
+    private function log(string|array $messages): void
     {
         if (!$this->isDebug) {
             return;
         }
 
-        $commandName = basename($_SERVER['argv'][0]);
+        $commandName = basename((string) $_SERVER['argv'][0]);
         file_put_contents(sys_get_temp_dir().'/sf_'.$commandName.'.log', implode(\PHP_EOL, (array) $messages).\PHP_EOL, \FILE_APPEND);
     }
 }

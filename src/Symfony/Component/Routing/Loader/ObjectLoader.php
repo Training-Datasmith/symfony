@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,11 +37,11 @@ abstract class ObjectLoader extends Loader
      */
     public function load(mixed $resource, ?string $type = null): RouteCollection
     {
-        if (!preg_match('/^[^\:]+(?:::(?:[^\:]+))?$/', $resource)) {
+        if (!preg_match('/^[^\:]+(?:::(?:[^\:]+))?$/', (string) $resource)) {
             throw new \InvalidArgumentException(\sprintf('Invalid resource "%s" passed to the %s route loader: use the format "object_id::method" or "object_id" if your object class has an "__invoke" method.', $resource, \is_string($type) ? '"'.$type.'"' : 'object'));
         }
 
-        $parts = explode('::', $resource);
+        $parts = explode('::', (string) $resource);
         $method = $parts[1] ?? '__invoke';
 
         $loaderObject = $this->getObject($parts[0]);

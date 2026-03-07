@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -60,7 +62,7 @@ class MessageGeneratorTest extends TestCase
             }
         }
 
-        $scheduleProvider = new class($schedule) implements ScheduleProviderInterface {
+        $scheduleProvider = new class ($schedule) implements ScheduleProviderInterface {
             public function __construct(private readonly array $schedule)
             {
             }
@@ -105,7 +107,7 @@ class MessageGeneratorTest extends TestCase
             }
         }
 
-        $scheduleProvider = new class($schedule) implements ScheduleProviderInterface {
+        $scheduleProvider = new class ($schedule) implements ScheduleProviderInterface {
             private Schedule $schedule;
 
             public function __construct(array $schedule)
@@ -345,7 +347,7 @@ class MessageGeneratorTest extends TestCase
                 '22:12:01' => [],
             ],
             'schedule' => [
-                RecurringMessage::trigger(new class implements TriggerInterface {
+                RecurringMessage::trigger(new class () implements TriggerInterface {
                     public function __toString(): string
                     {
                         return 'foo';

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,7 +19,7 @@ use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 /**
  * @internal
  */
-final class CombinedOutput implements OutputInterface
+final readonly class CombinedOutput implements OutputInterface
 {
     /**
      * @param OutputInterface[] $outputs

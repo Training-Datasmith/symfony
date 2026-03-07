@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,15 +29,18 @@ class SourceMappingUrlsCompilerTest extends TestCase
             ->method('getAssetFromSourcePath')
             ->willReturnCallback(static function ($path) {
                 return match ($path) {
-                    '/project/assets/foo.js.map' => new MappedAsset('foo.js.map',
+                    '/project/assets/foo.js.map' => new MappedAsset(
+                        'foo.js.map',
                         publicPathWithoutDigest: '/assets/foo.js.map',
                         publicPath: '/assets/foo.123456.js.map',
                     ),
-                    '/project/assets/styles/bar.css.map' => new MappedAsset('styles/bar.css.map',
+                    '/project/assets/styles/bar.css.map' => new MappedAsset(
+                        'styles/bar.css.map',
                         publicPathWithoutDigest: '/assets/styles/bar.css.map',
                         publicPath: '/assets/styles/bar.abcd123.css.map',
                     ),
-                    '/project/assets/sourcemaps/baz.css.map' => new MappedAsset('sourcemaps/baz.css.map',
+                    '/project/assets/sourcemaps/baz.css.map' => new MappedAsset(
+                        'sourcemaps/baz.css.map',
                         publicPathWithoutDigest: '/assets/sourcemaps/baz.css.map',
                         publicPath: '/assets/sourcemaps/baz.987fedc.css.map',
                     ),
@@ -44,7 +49,8 @@ class SourceMappingUrlsCompilerTest extends TestCase
             });
 
         $compiler = new SourceMappingUrlsCompiler();
-        $asset = new MappedAsset($sourceLogicalName,
+        $asset = new MappedAsset(
+            $sourceLogicalName,
             '/project/assets/'.$sourceLogicalName,
             publicPathWithoutDigest: '/assets/'.$sourceLogicalName,
         );

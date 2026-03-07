@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -76,7 +78,7 @@ class XmlUtils
             if (\is_callable($schemaOrCallable)) {
                 try {
                     $valid = $schemaOrCallable($dom, $internalErrors);
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     $valid = false;
                 }
             } elseif (is_file($schemaOrCallable)) {
@@ -160,7 +162,7 @@ class XmlUtils
         $empty = true;
         $config = [];
         foreach ($element->attributes as $name => $node) {
-            if ($checkPrefix && !\in_array((string) $node->prefix, ['', $prefix], true)) {
+            if ($checkPrefix && !\in_array($node->prefix, ['', $prefix], true)) {
                 continue;
             }
             $config[$name] = static::phpize($node->value);
@@ -170,8 +172,8 @@ class XmlUtils
         $nodeValue = false;
         foreach ($element->childNodes as $node) {
             if ($node instanceof \DOMText) {
-                if ('' !== trim($node->nodeValue)) {
-                    $nodeValue = trim($node->nodeValue);
+                if ('' !== trim((string) $node->nodeValue)) {
+                    $nodeValue = trim((string) $node->nodeValue);
                     $empty = false;
                 }
             } elseif ($checkPrefix && $prefix != $node->prefix) {
@@ -243,7 +245,8 @@ class XmlUtils
     {
         $errors = [];
         foreach (libxml_get_errors() as $error) {
-            $errors[] = \sprintf('[%s %s] %s (in %s - line %d, column %d)',
+            $errors[] = \sprintf(
+                '[%s %s] %s (in %s - line %d, column %d)',
                 \LIBXML_ERR_WARNING == $error->level ? 'WARNING' : 'ERROR',
                 $error->code,
                 trim($error->message),

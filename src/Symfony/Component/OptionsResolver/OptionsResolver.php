@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -1023,7 +1025,7 @@ class OptionsResolver implements Options
                 $fmtActualValue = $this->formatValue($value);
                 $fmtAllowedTypes = implode('" or "', $this->allowedTypes[$option]);
                 $fmtProvidedTypes = implode('|', array_keys($invalidTypes));
-                $allowedContainsArrayType = \count(array_filter($this->allowedTypes[$option], static fn ($item) => str_ends_with($item, '[]'))) > 0;
+                $allowedContainsArrayType = \count(array_filter($this->allowedTypes[$option], static fn ($item): bool => str_ends_with((string) $item, '[]'))) > 0;
 
                 if (\is_array($value) && $allowedContainsArrayType) {
                     throw new InvalidOptionsException(\sprintf('The option "%s" with value %s is expected to be of type "%s", but one of the elements is of type "%s".', $this->formatOptions([$option]), $fmtActualValue, $fmtAllowedTypes, $fmtProvidedTypes));
@@ -1187,7 +1189,8 @@ class OptionsResolver implements Options
      */
     private function splitOutsideParenthesis(string $type): array
     {
-        return preg_split(<<<'EOF'
+        return preg_split(
+            <<<'EOF'
                     /
                     # Define a recursive subroutine for matching balanced parentheses
                     (?(DEFINE)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\DependencyInjection\Tests\Compiler;
 
 use Psr\Container\ContainerInterface;
@@ -327,7 +329,6 @@ class SetterInjectionParent
     {
     }
 }
-
 
 class SetterInjection extends SetterInjectionParent
 {

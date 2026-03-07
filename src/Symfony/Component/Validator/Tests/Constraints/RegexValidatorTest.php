@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -69,7 +71,7 @@ class RegexValidatorTest extends ConstraintValidatorTestCase
             ['0'],
             ['090909'],
             [90909],
-            [new class {
+            [new class () {
                 public function __toString(): string
                 {
                     return '090909';
@@ -109,7 +111,7 @@ class RegexValidatorTest extends ConstraintValidatorTestCase
         return [
             ['abcd'],
             ['090foo'],
-            [new class {
+            [new class () {
                 public function __toString(): string
                 {
                     return 'abcd';

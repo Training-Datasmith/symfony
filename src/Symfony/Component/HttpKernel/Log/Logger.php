@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -45,9 +47,8 @@ class Logger extends AbstractLogger implements DebugLoggerInterface
         LogLevel::EMERGENCY => 600,
     ];
 
-    private int $minLevelIndex;
-    private \Closure $formatter;
-    private bool $debug = false;
+    private readonly int $minLevelIndex;
+    private readonly \Closure $formatter;
     private array $logs = [];
     private array $errorCount = [];
 
@@ -57,7 +58,7 @@ class Logger extends AbstractLogger implements DebugLoggerInterface
     /**
      * @param string|resource|null $output
      */
-    public function __construct(?string $minLevel = null, $output = null, ?callable $formatter = null, private readonly ?RequestStack $requestStack = null, bool $debug = false)
+    public function __construct(?string $minLevel = null, $output = null, ?callable $formatter = null, private readonly ?RequestStack $requestStack = null, private bool $debug = false)
     {
         $minLevel ??= match ((int) ($_ENV['SHELL_VERBOSITY'] ?? $_SERVER['SHELL_VERBOSITY'] ?? 0)) {
             -1 => LogLevel::ERROR,
@@ -76,7 +77,6 @@ class Logger extends AbstractLogger implements DebugLoggerInterface
         if ($output && false === $this->handle = \is_string($output) ? @fopen($output, 'a') : $output) {
             throw new InvalidArgumentException(\sprintf('Unable to open "%s".', $output));
         }
-        $this->debug = $debug;
     }
 
     public function enableDebug(): void
@@ -151,13 +151,13 @@ class Logger extends AbstractLogger implements DebugLoggerInterface
 
         $log = \sprintf('[%s] %s', $level, $message);
         if ($prefixDate) {
-            $log = date(\DateTimeInterface::RFC3339).' '.$log;
+            return date(\DateTimeInterface::RFC3339).' '.$log;
         }
 
         return $log;
     }
 
-    private function record($level, $message, array $context): void
+    private function record(string $level, $message, array $context): void
     {
         $request = $this->requestStack->getCurrentRequest();
         $key = $request ? spl_object_id($request) : '';

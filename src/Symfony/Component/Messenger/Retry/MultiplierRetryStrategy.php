@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -40,11 +42,11 @@ class MultiplierRetryStrategy implements RetryStrategyInterface
      * @param float $jitter               Randomness to apply to the delay (between 0 and 1)
      */
     public function __construct(
-        private int $maxRetries = 3,
-        private int $delayMilliseconds = 1000,
-        private float $multiplier = 1,
-        private int $maxDelayMilliseconds = 0,
-        private float $jitter = 0.1,
+        private readonly int $maxRetries = 3,
+        private readonly int $delayMilliseconds = 1000,
+        private readonly float $multiplier = 1,
+        private readonly int $maxDelayMilliseconds = 0,
+        private readonly float $jitter = 0.1,
     ) {
         if ($delayMilliseconds < 0) {
             throw new InvalidArgumentException(\sprintf('Delay must be greater than or equal to zero: "%s" given.', $delayMilliseconds));

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @param Symfony\Component\JsonStreamer\Tests\Fixtures\Model\SelfReferencingDummy $data
  */
@@ -9,7 +11,7 @@ return static function (mixed $data, \Psr\Container\ContainerInterface $valueTra
             throw new \Symfony\Component\JsonStreamer\Exception\NotEncodableValueException('Maximum stack depth exceeded');
         }
         $prefix1 = '';
-        yield "{";
+        yield '{';
         if (null === $data->self && ($options['include_null_properties'] ?? false)) {
             yield "{$prefix1}\"@self\":null";
         }
@@ -17,7 +19,7 @@ return static function (mixed $data, \Psr\Container\ContainerInterface $valueTra
             yield "{$prefix1}\"@self\":";
             yield from $generators['Symfony\Component\JsonStreamer\Tests\Fixtures\Model\SelfReferencingDummy']($data->self, $depth + 1);
         }
-        yield "}";
+        yield '}';
     };
     try {
         yield from $generators['Symfony\Component\JsonStreamer\Tests\Fixtures\Model\SelfReferencingDummy']($data, 0);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -90,8 +92,8 @@ class PhpConfigReferenceDumpPass implements CompilerPassInterface
         PHPDOC;
 
     public function __construct(
-        private string $referenceFile,
-        private array $bundlesDefinition,
+        private readonly string $referenceFile,
+        private readonly array $bundlesDefinition,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,8 +26,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ExecutionContextFactory implements ExecutionContextFactoryInterface
 {
     public function __construct(
-        private TranslatorInterface $translator,
-        private string|false|null $translationDomain = null,
+        private readonly TranslatorInterface $translator,
+        private readonly string|false|null $translationDomain = null,
     ) {
     }
 

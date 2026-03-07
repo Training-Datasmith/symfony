@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -11,8 +13,6 @@
 
 namespace Symfony\Component\VarDumper\Caster;
 
-use Symfony\Component\VarDumper\Cloner\Stub;
-
 /**
  * @author Alexandre Daubois <alex.daubois@gmail.com>
  *
@@ -20,7 +20,7 @@ use Symfony\Component\VarDumper\Cloner\Stub;
  */
 final class SqliteCaster
 {
-    public static function castSqlite3Result(\SQLite3Result $result, array $a, Stub $stub, bool $isNested): array
+    public static function castSqlite3Result(\SQLite3Result $result, array $a): array
     {
         $numColumns = $result->numColumns();
         for ($i = 0; $i < $numColumns; ++$i) {

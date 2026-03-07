@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -84,7 +86,7 @@ class Application implements ResetInterface
     private HelperSet $helperSet;
     private ?EventDispatcherInterface $dispatcher = null;
     private ?ArgumentResolverInterface $argumentResolver = null;
-    private Terminal $terminal;
+    private readonly Terminal $terminal;
     private string $defaultCommand;
     private bool $singleCommand = false;
     private bool $initialized = false;
@@ -190,7 +192,7 @@ class Application implements ResetInterface
         $input ??= new ArgvInput();
         $output ??= new ConsoleOutput();
 
-        $renderException = function (\Throwable $e) use ($output) {
+        $renderException = function (\Throwable $e) use ($output): void {
             if ($output instanceof ConsoleOutputInterface) {
                 $this->renderThrowable($e, $output->getErrorOutput());
             } else {
@@ -426,7 +428,10 @@ class Application implements ResetInterface
         ) {
             foreach ($this->all() as $name => $command) {
                 // skip hidden commands and aliased commands as they already get added below
-                if ($command->isHidden() || $command->getName() !== $name) {
+                if ($command->isHidden()) {
+                    continue;
+                }
+                if ($command->getName() !== $name) {
                     continue;
                 }
                 $suggestions->suggestValue(new Suggestion($command->getName(), $command->getDescription()));
@@ -685,7 +690,7 @@ class Application implements ResetInterface
     public function findNamespace(string $namespace): string
     {
         $allNamespaces = $this->getNamespaces();
-        $expr = implode('[^:]*:', array_map('preg_quote', explode(':', $namespace))).'[^:]*';
+        $expr = implode('[^:]*:', array_map(preg_quote(...), explode(':', $namespace))).'[^:]*';
         $namespaces = preg_grep('{^'.$expr.'}', $allNamespaces);
 
         if (!$namespaces) {
@@ -741,7 +746,7 @@ class Application implements ResetInterface
         }
 
         $allCommands = $this->commandLoader ? array_merge($this->commandLoader->getNames(), array_keys($this->commands)) : array_keys($this->commands);
-        $expr = implode('[^:]*:', array_map('preg_quote', explode(':', $name))).'[^:]*';
+        $expr = implode('[^:]*:', array_map(preg_quote(...), explode(':', $name))).'[^:]*';
         $commands = preg_grep('{^'.$expr.'}', $allCommands);
 
         if (!$commands) {
@@ -762,7 +767,7 @@ class Application implements ResetInterface
                 $this->wantHelps = false;
 
                 // remove hidden commands
-                if ($alternatives = array_filter($alternatives, fn ($name) => !$this->get($name)->isHidden())) {
+                if ($alternatives = array_filter($alternatives, fn (string $name): bool => !$this->get($name)->isHidden())) {
                     $message .= \sprintf("\n\nDid you mean %s?\n    %s", 1 === \count($alternatives) ? 'this' : 'one of these', implode("\n    ", $alternatives));
                 }
                 $this->wantHelps = $wantHelps;
@@ -774,7 +779,7 @@ class Application implements ResetInterface
         // filter out aliases for commands which are already on the list
         if (\count($commands) > 1) {
             $commandList = $this->commandLoader ? array_merge(array_flip($this->commandLoader->getNames()), $this->commands) : $this->commands;
-            $commands = array_unique(array_filter($commands, function ($nameOrAlias) use (&$commandList, $commands, &$aliases) {
+            $commands = array_unique(array_filter($commands, function ($nameOrAlias) use (&$commandList, $commands, &$aliases): bool {
                 if (!$commandList[$nameOrAlias] instanceof Command) {
                     $commandList[$nameOrAlias] = $this->commandLoader->get($nameOrAlias);
                 }
@@ -789,7 +794,7 @@ class Application implements ResetInterface
 
         // check whether all commands left are aliases to the same one
         if (\count($commands) > 1) {
-            $uniqueCommands = array_unique(array_map(function ($nameOrAlias) use (&$commandList) {
+            $uniqueCommands = array_unique(array_map(function ($nameOrAlias) use (&$commandList): ?string {
                 if (!$commandList[$nameOrAlias] instanceof Command) {
                     $commandList[$nameOrAlias] = $this->commandLoader->get($nameOrAlias);
                 }
@@ -810,7 +815,7 @@ class Application implements ResetInterface
             foreach ($abbrevs as $abbrev) {
                 $maxLen = max(Helper::width($abbrev), $maxLen);
             }
-            $abbrevs = array_map(static function ($cmd) use ($commandList, $usableWidth, $maxLen, &$commands) {
+            $abbrevs = array_map(static function ($cmd) use ($commandList, $usableWidth, $maxLen, &$commands): false|string {
                 if ($commandList[$cmd]->isHidden()) {
                     unset($commands[array_search($cmd, $commands)]);
 
@@ -891,8 +896,8 @@ class Application implements ResetInterface
     {
         $abbrevs = [];
         foreach ($names as $name) {
-            for ($len = \strlen($name); $len > 0; --$len) {
-                $abbrev = substr($name, 0, $len);
+            for ($len = \strlen((string) $name); $len > 0; --$len) {
+                $abbrev = substr((string) $name, 0, $len);
                 $abbrevs[$abbrev][] = $name;
             }
         }
@@ -925,12 +930,12 @@ class Application implements ResetInterface
             }
 
             if (str_contains($message, "@anonymous\0")) {
-                $message = preg_replace_callback('/[a-zA-Z_\x7f-\xff][\\\\a-zA-Z0-9_\x7f-\xff]*+@anonymous\x00.*?\.php(?:0x?|:[0-9]++\$)?[0-9a-fA-F]++/', static fn ($m) => class_exists($m[0], false) ? (get_parent_class($m[0]) ?: key(class_implements($m[0])) ?: 'class').'@anonymous' : $m[0], $message);
+                $message = preg_replace_callback('/[a-zA-Z_\x7f-\xff][\\\\a-zA-Z0-9_\x7f-\xff]*+@anonymous\x00.*?\.php(?:0x?|:[0-9]++\$)?[0-9a-fA-F]++/', static fn ($m): string => class_exists($m[0], false) ? (get_parent_class($m[0]) ?: key(class_implements($m[0])) ?: 'class').'@anonymous' : $m[0], $message);
             }
 
             $width = $this->terminal->getWidth() ? $this->terminal->getWidth() - 1 : \PHP_INT_MAX;
             $lines = [];
-            foreach ('' !== $message ? preg_split('/\r?\n/', $message) : [] as $line) {
+            foreach ('' !== $message ? preg_split('/\r?\n/', (string) $message) : [] as $line) {
                 foreach ($this->splitStringByWidth($line, $width - 4) as $line) {
                     // pre-format lines to get the right string length
                     $lineLength = Helper::width($line) + 4;
@@ -1053,7 +1058,7 @@ class Application implements ResetInterface
                     $signalEvent = new ConsoleSignalEvent($command, $input, $output, $signal);
                     $alarmEvent = \SIGALRM === $signal ? new ConsoleAlarmEvent($command, $input, $output) : null;
 
-                    $signalRegistry->register($signal, function ($signal) use ($signalEvent, $alarmEvent, $command, $commandSignals, $input, $output) {
+                    $signalRegistry->register($signal, function ($signal) use ($signalEvent, $alarmEvent, $command, $commandSignals, $input, $output): void {
                         $this->dispatcher->dispatch($signalEvent, ConsoleEvents::SIGNAL);
                         $exitCode = $signalEvent->getExitCode();
 
@@ -1175,7 +1180,7 @@ class Application implements ResetInterface
             new InputOption('--quiet', '-q', InputOption::VALUE_NONE, 'Only errors are displayed. All other output is suppressed'),
             new InputOption('--verbose', '-v|vv|vvv', InputOption::VALUE_NONE, 'Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug'),
             new InputOption('--version', '-V', InputOption::VALUE_NONE, 'Display this application version'),
-            new InputOption('--ansi', '', InputOption::VALUE_NEGATABLE, 'Force (or disable --no-ansi) ANSI output', null),
+            new InputOption('--ansi', '', InputOption::VALUE_NEGATABLE, 'Force (or disable --no-ansi) ANSI output'),
             new InputOption('--no-interaction', '-n', InputOption::VALUE_NONE, 'Do not ask any interactive question'),
         ]);
     }
@@ -1236,7 +1241,7 @@ class Application implements ResetInterface
 
         $collectionParts = [];
         foreach ($collection as $item) {
-            $collectionParts[$item] = explode(':', $item);
+            $collectionParts[$item] = explode(':', (string) $item);
         }
 
         foreach (explode(':', $name) as $i => $subname) {
@@ -1245,7 +1250,8 @@ class Application implements ResetInterface
                 if (!isset($parts[$i]) && $exists) {
                     $alternatives[$collectionName] += $threshold;
                     continue;
-                } elseif (!isset($parts[$i])) {
+                }
+                if (!isset($parts[$i])) {
                     continue;
                 }
 
@@ -1260,12 +1266,12 @@ class Application implements ResetInterface
 
         foreach ($collection as $item) {
             $lev = levenshtein($name, $item);
-            if ($lev <= \strlen($name) / 3 || str_contains($item, $name)) {
+            if ($lev <= \strlen($name) / 3 || str_contains((string) $item, $name)) {
                 $alternatives[$item] = isset($alternatives[$item]) ? $alternatives[$item] - $lev : $lev;
             }
         }
 
-        $alternatives = array_filter($alternatives, static fn ($lev) => $lev < 2 * $threshold);
+        $alternatives = array_filter($alternatives, static fn (float|int $lev): bool => $lev < 2 * $threshold);
         ksort($alternatives, \SORT_NATURAL | \SORT_FLAG_CASE);
 
         return array_keys($alternatives);

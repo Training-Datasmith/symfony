@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,8 +31,6 @@ class TextPart extends AbstractPart
 
     /** @var resource|string|File */
     private $body;
-    private ?string $charset;
-    private string $subtype;
     private ?string $disposition = null;
     private ?string $name = null;
     private string $encoding;
@@ -39,7 +39,7 @@ class TextPart extends AbstractPart
     /**
      * @param resource|string|File $body Use a File instance to defer loading the file until rendering
      */
-    public function __construct($body, ?string $charset = 'utf-8', string $subtype = 'plain', ?string $encoding = null)
+    public function __construct($body, private ?string $charset = 'utf-8', private string $subtype = 'plain', ?string $encoding = null)
     {
         parent::__construct();
 
@@ -55,8 +55,6 @@ class TextPart extends AbstractPart
         }
 
         $this->body = $body;
-        $this->charset = $charset;
-        $this->subtype = $subtype;
         $this->seekable = \is_resource($body) ? stream_get_meta_data($body)['seekable'] && 0 === fseek($body, 0, \SEEK_CUR) : null;
 
         if (null === $encoding) {
@@ -268,7 +266,7 @@ class TextPart extends AbstractPart
         $this->encoding = $data['encoding'] ?? $data["\0".self::class."\0encoding"];
 
         if (!\is_string($this->body) && !$this->body instanceof File) {
-            throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+            throw new \BadMethodCallException('Cannot unserialize '.self::class);
         }
     }
 }

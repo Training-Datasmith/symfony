@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,6 @@ class Timezone extends Constraint
     public const TIMEZONE_IDENTIFIER_INTL_ERROR = '45863c26-88dc-41ba-bf53-c73bd1f7e90d';
 
     public int $zone = \DateTimeZone::ALL;
-    public ?string $countryCode = null;
     public bool $intlCompatible = false;
     public string $message = 'This value is not a valid timezone.';
 
@@ -51,7 +52,7 @@ class Timezone extends Constraint
     public function __construct(
         ?int $zone = null,
         ?string $message = null,
-        ?string $countryCode = null,
+        public ?string $countryCode = null,
         ?bool $intlCompatible = null,
         ?array $groups = null,
         mixed $payload = null,
@@ -60,7 +61,6 @@ class Timezone extends Constraint
 
         $this->zone = $zone ?? $this->zone;
         $this->message = $message ?? $this->message;
-        $this->countryCode = $countryCode;
         $this->intlCompatible = $intlCompatible ?? $this->intlCompatible;
 
         if (null === $this->countryCode) {

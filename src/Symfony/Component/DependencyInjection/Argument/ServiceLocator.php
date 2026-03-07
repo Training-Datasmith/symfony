@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ use Symfony\Component\DependencyInjection\ServiceLocator as BaseServiceLocator;
 class ServiceLocator extends BaseServiceLocator
 {
     public function __construct(
-        private \Closure $factory,
+        private readonly \Closure $factory,
         private array $serviceMap,
         private ?array $serviceTypes = null,
     ) {
@@ -39,6 +41,6 @@ class ServiceLocator extends BaseServiceLocator
 
     public function getProvidedServices(): array
     {
-        return $this->serviceTypes ??= array_map(static fn () => '?', $this->serviceMap);
+        return $this->serviceTypes ??= array_map(static fn (): string => '?', $this->serviceMap);
     }
 }

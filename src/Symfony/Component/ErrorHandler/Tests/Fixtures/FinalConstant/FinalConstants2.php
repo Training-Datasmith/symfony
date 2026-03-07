@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\ErrorHandler\Tests\Fixtures\FinalConstant;
 
-class FinalConstants2 {
+class FinalConstants2
+{
     /**
      * @final
      */

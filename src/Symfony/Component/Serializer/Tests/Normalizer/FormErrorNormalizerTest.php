@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,8 @@ class FormErrorNormalizerTest extends TestCase
         $this->form->method('all')->willReturn([]);
 
         $this->form->method('getErrors')
-            ->willReturn(new FormErrorIterator($this->form, [
+            ->willReturn(
+                new FormErrorIterator($this->form, [
                 new FormError('a', 'b', ['c', 'd'], 5, 'f'),
                 new FormError(1, 2, [3, 4], 5, 6),
             ])
@@ -120,21 +123,24 @@ class FormErrorNormalizerTest extends TestCase
         $form = clone $form1 = clone $form2 = clone $form3 = $this->createStub(FormInterface::class);
 
         $form1->method('getErrors')
-            ->willReturn(new FormErrorIterator($form1, [
+            ->willReturn(
+                new FormErrorIterator($form1, [
                 new FormError('b'),
             ])
             );
         $form1->method('getName')->willReturn('form1');
 
         $form2->method('getErrors')
-            ->willReturn(new FormErrorIterator($form1, [
+            ->willReturn(
+                new FormErrorIterator($form1, [
                 new FormError('c'),
             ])
             );
         $form2->method('getName')->willReturn('form2');
 
         $form3->method('getErrors')
-            ->willReturn(new FormErrorIterator($form1, [
+            ->willReturn(
+                new FormErrorIterator($form1, [
                 new FormError('d'),
             ])
             );
@@ -146,7 +152,8 @@ class FormErrorNormalizerTest extends TestCase
         $form->method('isSubmitted')->willReturn(true);
         $form->method('all')->willReturn([$form1, $form2]);
         $form->method('getErrors')
-            ->willReturn(new FormErrorIterator($form, [
+            ->willReturn(
+                new FormErrorIterator($form, [
                 new FormError('a'),
             ])
             );

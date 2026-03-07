@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class DecodeFailedMessageMiddleware implements MiddlewareInterface
+final readonly class DecodeFailedMessageMiddleware implements MiddlewareInterface
 {
     public function __construct(
         private ContainerInterface $serializerLocator,

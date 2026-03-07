@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,7 +39,8 @@ final class CompressAssetsCommand extends Command
     {
         $this
             ->addArgument('paths', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'The files to compress')
-            ->setHelp(<<<'EOT'
+            ->setHelp(
+                <<<'EOT'
                 The <info>%command.name%</info> command compresses the given file in Brotli, Zstandard and gzip formats.
                 This is especially useful to serve pre-compressed files through a web server.
 

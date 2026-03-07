@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -47,15 +49,15 @@ class ConsumeMessagesCommand extends Command implements SignalableCommandInterfa
     private ?Worker $worker = null;
 
     public function __construct(
-        private RoutableMessageBus $routableBus,
-        private ContainerInterface $receiverLocator,
-        private EventDispatcherInterface $eventDispatcher,
-        private ?LoggerInterface $logger = null,
-        private array $receiverNames = [],
-        private ?ResetServicesListener $resetServicesListener = null,
-        private array $busIds = [],
-        private ?ContainerInterface $rateLimiterLocator = null,
-        private ?array $signals = null,
+        private readonly RoutableMessageBus $routableBus,
+        private readonly ContainerInterface $receiverLocator,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly ?LoggerInterface $logger = null,
+        private readonly array $receiverNames = [],
+        private readonly ?ResetServicesListener $resetServicesListener = null,
+        private readonly array $busIds = [],
+        private readonly ?ContainerInterface $rateLimiterLocator = null,
+        private readonly ?array $signals = null,
     ) {
         parent::__construct();
     }
@@ -79,7 +81,8 @@ class ConsumeMessagesCommand extends Command implements SignalableCommandInterfa
                 new InputOption('exclude-receivers', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Exclude specific receivers/transports from consumption (can only be used with --all)'),
                 new InputOption('keepalive', null, InputOption::VALUE_OPTIONAL, 'Whether to use the transport\'s keepalive mechanism if implemented', self::DEFAULT_KEEPALIVE_INTERVAL),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command consumes messages and dispatches them to the message bus.
 
                     <info>php %command.full_name% <receiver-name></info>

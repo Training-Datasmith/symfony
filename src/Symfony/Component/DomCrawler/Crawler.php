@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -138,7 +140,7 @@ class Crawler implements \Countable, \IteratorAggregate
 
         // http://www.w3.org/TR/encoding/#encodings
         // http://www.w3.org/TR/REC-xml/#NT-EncName
-        $content = preg_replace_callback('/(charset *= *["\']?)([a-zA-Z\-0-9_:.]+)/i', function ($m) use (&$charset) {
+        $content = preg_replace_callback('/(charset *= *["\']?)([a-zA-Z\-0-9_:.]+)/i', function ($m) use (&$charset): string {
             if ('charset=' === $this->convertToHtmlEntities('charset=', $m[2])) {
                 $charset = $m[2];
             }
@@ -567,7 +569,7 @@ class Crawler implements \Countable, \IteratorAggregate
             if (!$normalizeWhitespace) {
                 return $childNode->nodeValue;
             }
-            if ('' !== trim($childNode->nodeValue)) {
+            if ('' !== trim((string) $childNode->nodeValue)) {
                 return $this->normalizeWhitespace($childNode->nodeValue);
             }
         }
@@ -1207,6 +1209,6 @@ class Crawler implements \Countable, \IteratorAggregate
 
     private function normalizeWhitespace(string $string): string
     {
-        return trim(preg_replace("/(?:[ \n\r\t\x0C]{2,}+|[\n\r\t\x0C])/", ' ', $string), " \n\r\t\x0C");
+        return trim((string) preg_replace("/(?:[ \n\r\t\x0C]{2,}+|[\n\r\t\x0C])/", ' ', $string), " \n\r\t\x0C");
     }
 }

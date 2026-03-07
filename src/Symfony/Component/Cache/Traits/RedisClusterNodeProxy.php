@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,8 +27,8 @@ namespace Symfony\Component\Cache\Traits;
 class RedisClusterNodeProxy
 {
     public function __construct(
-        private array $host,
-        private \RedisCluster $redis,
+        private readonly array $host,
+        private readonly \RedisCluster $redis,
     ) {
     }
 
@@ -35,12 +37,12 @@ class RedisClusterNodeProxy
         return $this->redis->{$method}($this->host, ...$args);
     }
 
-    public function scan(&$iIterator, $strPattern = null, $iCount = null)
+    public function scan(null|int|string &$iIterator, ?string $strPattern = null, ?int $iCount = null): bool|array
     {
         return $this->redis->scan($iIterator, $this->host, $strPattern, $iCount);
     }
 
-    public function getOption($name)
+    public function getOption(int $name): int
     {
         return $this->redis->getOption($name);
     }

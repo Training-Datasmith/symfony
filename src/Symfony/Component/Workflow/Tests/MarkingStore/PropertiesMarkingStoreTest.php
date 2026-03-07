@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -144,7 +146,7 @@ class PropertiesMarkingStoreTest extends TestCase
 
     private function createValueObject(string $markingValue): object
     {
-        return new class($markingValue) {
+        return new class ($markingValue) {
             public function __construct(
                 private string $markingValue,
             ) {

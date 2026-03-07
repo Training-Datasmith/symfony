@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,8 +23,8 @@ use Symfony\Contracts\HttpClient\ChunkInterface;
 class DataChunk implements ChunkInterface
 {
     public function __construct(
-        private int $offset = 0,
-        private string $content = '',
+        private readonly int $offset = 0,
+        private readonly string $content = '',
     ) {
     }
 

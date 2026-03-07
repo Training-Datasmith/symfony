@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -76,7 +78,7 @@ class UrlHelperTest extends TestCase
         }
 
         $requestContext = new RequestContext($baseUrl, 'GET', $host, $scheme, $httpPort, $httpsPort, $path);
-        $contextAware = new class($requestContext) implements RequestContextAwareInterface {
+        $contextAware = new class ($requestContext) implements RequestContextAwareInterface {
             public function __construct(
                 private RequestContext $requestContext,
             ) {

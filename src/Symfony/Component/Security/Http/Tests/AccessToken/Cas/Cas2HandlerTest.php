@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,8 @@ final class Cas2HandlerTest extends TestCase
 {
     public function testWithValidTicket()
     {
-        $response = new MockResponse(<<<BODY
+        $response = new MockResponse(
+            <<<BODY
                 <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
                     <cas:authenticationSuccess>
                         <cas:user>lobster</cas:user>
@@ -48,7 +51,8 @@ final class Cas2HandlerTest extends TestCase
         $this->expectException(AuthenticationException::class);
         $this->expectExceptionMessage('CAS Authentication Failure: Ticket ST-1856339 not recognized');
 
-        $response = new MockResponse(<<<BODY
+        $response = new MockResponse(
+            <<<BODY
                 <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
                     <cas:authenticationFailure code="INVALID_TICKET">
                         Ticket ST-1856339 not recognized
@@ -70,7 +74,8 @@ final class Cas2HandlerTest extends TestCase
         $this->expectException(AuthenticationException::class);
         $this->expectExceptionMessage('Invalid CAS response.');
 
-        $response = new MockResponse(<<<BODY
+        $response = new MockResponse(
+            <<<BODY
                 <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
                 </cas:serviceResponse>
             BODY
@@ -102,7 +107,8 @@ final class Cas2HandlerTest extends TestCase
         $this->expectException(AuthenticationException::class);
         $this->expectExceptionMessage('Invalid CAS response.');
 
-        $response = new MockResponse(<<<BODY
+        $response = new MockResponse(
+            <<<BODY
                 <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
                     <cas:authenticationSuccess>
                         <cas:user>lobster</cas:user>

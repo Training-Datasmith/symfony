@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -73,17 +75,17 @@ final class DateIntervalNormalizer implements NormalizerInterface, DenormalizerI
         $dateIntervalFormat = $context[self::FORMAT_KEY] ?? $this->defaultContext[self::FORMAT_KEY];
 
         $signPattern = '';
-        switch (substr($dateIntervalFormat, 0, 2)) {
+        switch (substr((string) $dateIntervalFormat, 0, 2)) {
             case '%R':
                 $signPattern = '[-+]';
-                $dateIntervalFormat = substr($dateIntervalFormat, 2);
+                $dateIntervalFormat = substr((string) $dateIntervalFormat, 2);
                 break;
             case '%r':
                 $signPattern = '-?';
-                $dateIntervalFormat = substr($dateIntervalFormat, 2);
+                $dateIntervalFormat = substr((string) $dateIntervalFormat, 2);
                 break;
         }
-        $valuePattern = '/^'.$signPattern.preg_replace('/%([yYmMdDhHiIsSwW])(\w)/', '(?:(?P<$1>\d+)$2)?', preg_replace('/(T.*)$/', '($1)?', $dateIntervalFormat)).'$/';
+        $valuePattern = '/^'.$signPattern.preg_replace('/%([yYmMdDhHiIsSwW])(\w)/', '(?:(?P<$1>\d+)$2)?', (string) preg_replace('/(T.*)$/', '($1)?', (string) $dateIntervalFormat)).'$/';
         if (!preg_match($valuePattern, $data)) {
             throw NotNormalizableValueException::createForUnexpectedDataType(\sprintf('Value "%s" contains intervals not accepted by format "%s".', $data, $dateIntervalFormat), $data, ['string'], $context['deserialization_path'] ?? null, false);
         }

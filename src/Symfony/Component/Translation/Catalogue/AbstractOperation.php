@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -160,8 +162,10 @@ abstract class AbstractOperation implements OperationInterface
                 self::ALL_BATCH => $this->getMessages($domain),
                 default => throw new \InvalidArgumentException(\sprintf('$batch argument must be one of ["%s", "%s", "%s"].', self::ALL_BATCH, self::NEW_BATCH, self::OBSOLETE_BATCH)),
             };
-
-            if (!$messages || (!$this->source->all($intlDomain) && $this->source->all($domain))) {
+            if (!$messages) {
+                continue;
+            }
+            if (!$this->source->all($intlDomain) && $this->source->all($domain)) {
                 continue;
             }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -42,7 +44,7 @@ abstract class AbstractRequestHandlerTestCase extends TestCase
 
     protected function setUp(): void
     {
-        $this->serverParams = new class extends ServerParams {
+        $this->serverParams = new class () extends ServerParams {
             public ?int $contentLength = null;
             public string $postMaxSize = '';
 

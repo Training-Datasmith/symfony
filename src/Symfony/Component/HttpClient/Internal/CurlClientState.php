@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,9 +25,9 @@ use Symfony\Component\HttpClient\Response\CurlResponse;
  */
 final class CurlClientState extends ClientState
 {
-    public ?\CurlMultiHandle $handle;
-    public ?\CurlShareHandle $share;
-    public \CurlShareHandle|\CurlSharePersistentHandle|null $persistentShare;
+    public ?\CurlMultiHandle $handle = null;
+    public ?\CurlShareHandle $share = null;
+    public \CurlShareHandle|\CurlSharePersistentHandle|null $persistentShare = null;
     public bool $performing = false;
 
     /** @var PushedResponse[] */
@@ -128,8 +130,8 @@ final class CurlClientState extends ClientState
         $origin = curl_getinfo($parent, \CURLINFO_EFFECTIVE_URL);
 
         foreach ($requestHeaders as $h) {
-            if (false !== $i = strpos($h, ':', 1)) {
-                $headers[substr($h, 0, $i)][] = substr($h, 1 + $i);
+            if (false !== $i = strpos((string) $h, ':', 1)) {
+                $headers[substr((string) $h, 0, $i)][] = substr((string) $h, 1 + $i);
             }
         }
 

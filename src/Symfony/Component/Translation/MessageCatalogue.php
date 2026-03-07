@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,7 @@ class MessageCatalogue implements MessageCatalogueInterface, MetadataAwareInterf
      * @param array $messages An array of messages classified by domain
      */
     public function __construct(
-        private string $locale,
+        private readonly string $locale,
         private array $messages = [],
     ) {
     }
@@ -44,8 +46,8 @@ class MessageCatalogue implements MessageCatalogueInterface, MetadataAwareInterf
         $domains = [];
 
         foreach ($this->messages as $domain => $messages) {
-            if (str_ends_with($domain, self::INTL_DOMAIN_SUFFIX)) {
-                $domain = substr($domain, 0, -\strlen(self::INTL_DOMAIN_SUFFIX));
+            if (str_ends_with((string) $domain, self::INTL_DOMAIN_SUFFIX)) {
+                $domain = substr((string) $domain, 0, -\strlen(self::INTL_DOMAIN_SUFFIX));
             }
             $domains[$domain] = $domain;
         }
@@ -67,8 +69,8 @@ class MessageCatalogue implements MessageCatalogueInterface, MetadataAwareInterf
         $allMessages = [];
 
         foreach ($this->messages as $domain => $messages) {
-            if (str_ends_with($domain, self::INTL_DOMAIN_SUFFIX)) {
-                $domain = substr($domain, 0, -\strlen(self::INTL_DOMAIN_SUFFIX));
+            if (str_ends_with((string) $domain, self::INTL_DOMAIN_SUFFIX)) {
+                $domain = substr((string) $domain, 0, -\strlen(self::INTL_DOMAIN_SUFFIX));
                 $allMessages[$domain] = $messages + ($allMessages[$domain] ?? []);
             } else {
                 $allMessages[$domain] = ($allMessages[$domain] ?? []) + $messages;

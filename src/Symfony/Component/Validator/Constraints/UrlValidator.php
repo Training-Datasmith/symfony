@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -85,7 +87,7 @@ class UrlValidator extends ConstraintValidator
         $pattern = $constraint->relativeProtocol ? str_replace('(%s):', '(?:(%s):)?', static::PATTERN) : static::PATTERN;
         $pattern = \sprintf($pattern, $protocols);
 
-        if (!preg_match($pattern, $value)) {
+        if (!preg_match($pattern, (string) $value)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ value }}', $this->formatValue($value))
                 ->setCode(Url::INVALID_URL_ERROR)
@@ -95,7 +97,7 @@ class UrlValidator extends ConstraintValidator
         }
 
         if ($constraint->requireTld) {
-            $urlHost = parse_url($value, \PHP_URL_HOST);
+            $urlHost = parse_url((string) $value, \PHP_URL_HOST);
             // the host of URLs with a TLD must include at least a '.' (but it can't be an IP address like '127.0.0.1')
             if (!str_contains($urlHost, '.') || filter_var($urlHost, \FILTER_VALIDATE_IP)) {
                 $this->context->buildViolation($constraint->tldMessage)

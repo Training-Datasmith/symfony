@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,14 +27,11 @@ use Symfony\Component\Form\Extension\Core\DataAccessor\PropertyPathAccessor;
  */
 class DataMapper implements DataMapperInterface
 {
-    private DataAccessorInterface $dataAccessor;
-
-    public function __construct(?DataAccessorInterface $dataAccessor = null)
+    public function __construct(private readonly ?DataAccessorInterface $dataAccessor = new ChainAccessor([
+        new CallbackAccessor(),
+        new PropertyPathAccessor(),
+    ]))
     {
-        $this->dataAccessor = $dataAccessor ?? new ChainAccessor([
-            new CallbackAccessor(),
-            new PropertyPathAccessor(),
-        ]);
     }
 
     public function mapDataToForms(mixed $data, \Traversable $forms): void

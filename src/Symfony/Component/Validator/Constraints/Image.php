@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -61,14 +63,6 @@ class Image extends File
     ];
 
     public array|string $mimeTypes = [];
-    public ?int $minWidth = null;
-    public ?int $maxWidth = null;
-    public ?int $maxHeight = null;
-    public ?int $minHeight = null;
-    public int|float|null $maxRatio = null;
-    public int|float|null $minRatio = null;
-    public int|float|null $minPixels = null;
-    public int|float|null $maxPixels = null;
     public bool $allowSquare = true;
     public bool $allowLandscape = true;
     public bool $allowPortrait = true;
@@ -125,14 +119,14 @@ class Image extends File
         ?bool $binaryFormat = null,
         ?array $mimeTypes = null,
         ?int $filenameMaxLength = null,
-        ?int $minWidth = null,
-        ?int $maxWidth = null,
-        ?int $maxHeight = null,
-        ?int $minHeight = null,
-        int|float|null $maxRatio = null,
-        int|float|null $minRatio = null,
-        int|float|null $minPixels = null,
-        int|float|null $maxPixels = null,
+        public ?int $minWidth = null,
+        public ?int $maxWidth = null,
+        public ?int $maxHeight = null,
+        public ?int $minHeight = null,
+        public int|float|null $maxRatio = null,
+        public int|float|null $minRatio = null,
+        public int|float|null $minPixels = null,
+        public int|float|null $maxPixels = null,
         ?bool $allowSquare = null,
         ?bool $allowLandscape = null,
         ?bool $allowPortrait = null,
@@ -204,15 +198,6 @@ class Image extends File
             $filenameCountUnit,
             $filenameCharsetMessage,
         );
-
-        $this->minWidth = $minWidth;
-        $this->maxWidth = $maxWidth;
-        $this->maxHeight = $maxHeight;
-        $this->minHeight = $minHeight;
-        $this->maxRatio = $maxRatio;
-        $this->minRatio = $minRatio;
-        $this->minPixels = $minPixels;
-        $this->maxPixels = $maxPixels;
         $this->allowSquare = $allowSquare ?? $this->allowSquare;
         $this->allowLandscape = $allowLandscape ?? $this->allowLandscape;
         $this->allowPortrait = $allowPortrait ?? $this->allowPortrait;

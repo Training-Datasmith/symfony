@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -52,12 +54,12 @@ class MailjetApiTransport extends AbstractApiTransport
     ];
 
     public function __construct(
-        private string $publicKey,
-        #[\SensitiveParameter] private string $privateKey,
+        private readonly string $publicKey,
+        #[\SensitiveParameter] private readonly string $privateKey,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
         ?LoggerInterface $logger = null,
-        private bool $sandbox = false,
+        private readonly bool $sandbox = false,
     ) {
         parent::__construct($client, $dispatcher, $logger);
     }
@@ -193,7 +195,7 @@ class MailjetApiTransport extends AbstractApiTransport
         return [$attachments, $inlines, $html];
     }
 
-    private function getEndpoint(): ?string
+    private function getEndpoint(): string
     {
         return ($this->host ?: self::HOST).($this->port ? ':'.$this->port : '');
     }

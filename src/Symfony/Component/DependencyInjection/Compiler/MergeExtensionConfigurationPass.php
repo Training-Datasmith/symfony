@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -159,7 +161,7 @@ class MergeExtensionConfigurationParameterBag extends EnvPlaceholderParameterBag
  */
 class MergeExtensionConfigurationContainerBuilder extends ContainerBuilder
 {
-    private string $extensionClass;
+    private readonly string $extensionClass;
 
     public function __construct(ExtensionInterface $extension, ?ParameterBagInterface $parameterBag = null)
     {
@@ -197,11 +199,11 @@ class MergeExtensionConfigurationContainerBuilder extends ContainerBuilder
         }
 
         foreach ($bag->getEnvPlaceholders() as $env => $placeholders) {
-            if (!str_contains($env, ':')) {
+            if (!str_contains((string) $env, ':')) {
                 continue;
             }
             foreach ($placeholders as $placeholder) {
-                if (false !== stripos($value, $placeholder)) {
+                if (false !== stripos((string) $value, $placeholder)) {
                     throw new RuntimeException(\sprintf('Using a cast in "env(%s)" is incompatible with resolution at compile time in "%s". The logic in the extension should be moved to a compiler pass, or an env parameter with no cast should be used instead.', $env, $this->extensionClass));
                 }
             }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ use Symfony\Component\Security\Http\RememberMe\RememberMeHandlerInterface;
  *
  * @internal
  */
-final class DecoratedRememberMeHandler implements RememberMeHandlerInterface
+final readonly class DecoratedRememberMeHandler implements RememberMeHandlerInterface
 {
     public function __construct(
         private RememberMeHandlerInterface $handler,

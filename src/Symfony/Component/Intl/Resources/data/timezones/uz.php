@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Africa/Abidjan' => 'Grinvich o‘rtacha vaqti (Abidjan)',

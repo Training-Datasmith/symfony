@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -50,11 +52,6 @@ abstract class Constraint
     protected const ERROR_NAMES = [];
 
     /**
-     * Domain-specific data attached to a constraint.
-     */
-    public mixed $payload;
-
-    /**
      * The groups that the constraint belongs to.
      *
      * @var string[]
@@ -81,15 +78,13 @@ abstract class Constraint
      * @param string[] $groups  An array of validation groups
      * @param mixed    $payload Domain-specific data attached to a constraint
      */
-    public function __construct(mixed $options = null, ?array $groups = null, mixed $payload = null)
+    public function __construct(mixed $options = null, ?array $groups = null, public mixed $payload = null)
     {
         unset($this->groups); // enable lazy initialization
 
         if (null !== $groups) {
             $this->groups = $groups;
         }
-
-        $this->payload = $payload;
     }
 
     /**
@@ -179,16 +174,13 @@ abstract class Constraint
      */
     public function __serialize(): array
     {
-        // Initialize "groups" option if it is not set
-        $this->groups;
-
         $data = [];
-        $class = $this::class;
+        $class = static::class;
         foreach ((array) $this as $k => $v) {
             $data[match (true) {
                 '' === $k || "\0" !== $k[0] => $k,
-                str_starts_with($k, "\0*\0") => substr($k, 3),
-                str_starts_with($k, "\0{$class}\0") => substr($k, 2 + \strlen($class)),
+                str_starts_with((string) $k, "\0*\0") => substr((string) $k, 3),
+                str_starts_with((string) $k, "\0{$class}\0") => substr((string) $k, 2 + \strlen($class)),
                 default => $k,
             }] = $v;
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $container->loadFromExtension('framework', [
     'session' => [
         'storage_factory_id' => 'session.storage.factory.native',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,9 +26,9 @@ namespace Symfony\Component\CssSelector\Node;
 class RelationNode extends AbstractNode
 {
     public function __construct(
-        private NodeInterface $selector,
-        private string $combinator,
-        private NodeInterface $subSelector,
+        private readonly NodeInterface $selector,
+        private readonly string $combinator,
+        private readonly NodeInterface $subSelector,
     ) {
     }
 

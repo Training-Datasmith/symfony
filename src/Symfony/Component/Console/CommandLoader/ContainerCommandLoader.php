@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ class ContainerCommandLoader implements CommandLoaderInterface
      * @param array $commandMap An array with command names as keys and service ids as values
      */
     public function __construct(
-        private ContainerInterface $container,
+        private readonly ContainerInterface $container,
         private array $commandMap,
     ) {
     }

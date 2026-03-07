@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ class NullAdapter implements AdapterInterface, CacheInterface, NamespacedPoolInt
     public function __construct()
     {
         self::$createCacheItem ??= \Closure::bind(
-            static function ($key) {
+            static function ($key): \Symfony\Component\Cache\CacheItem {
                 $item = new CacheItem();
                 $item->isTaggable = true;
                 $item->key = $key;

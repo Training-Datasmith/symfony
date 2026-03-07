@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,14 +46,14 @@ class WebDebugToolbarListener implements EventSubscriberInterface
     public const ENABLED = 2;
 
     public function __construct(
-        private Environment $twig,
-        private bool $interceptRedirects = false,
+        private readonly Environment $twig,
+        private readonly bool $interceptRedirects = false,
         private int $mode = self::ENABLED,
-        private ?UrlGeneratorInterface $urlGenerator = null,
-        private string $excludedAjaxPaths = '^/bundles|^/_wdt',
-        private ?ContentSecurityPolicyHandler $cspHandler = null,
-        private ?DumpDataCollector $dumpDataCollector = null,
-        private bool $ajaxReplace = false,
+        private readonly ?UrlGeneratorInterface $urlGenerator = null,
+        private readonly string $excludedAjaxPaths = '^/bundles|^/_wdt',
+        private readonly ?ContentSecurityPolicyHandler $cspHandler = null,
+        private readonly ?DumpDataCollector $dumpDataCollector = null,
+        private readonly bool $ajaxReplace = false,
     ) {
     }
 
@@ -128,7 +130,7 @@ class WebDebugToolbarListener implements EventSubscriberInterface
 
         if ($response->headers->has('X-Debug-Token') && $response instanceof EventStreamResponse) {
             $callback = $response->getCallback();
-            $response->setCallback(static function () use ($callback, $response) {
+            $response->setCallback(static function () use ($callback, $response): void {
                 $response->sendEvent(new ServerEvent(
                     [
                         $response->headers->get('X-Debug-Token') ?? '',
@@ -152,7 +154,7 @@ class WebDebugToolbarListener implements EventSubscriberInterface
             || $response->isRedirection()
             || ($response->headers->has('Content-Type') && !str_contains($response->headers->get('Content-Type') ?? '', 'html'))
             || 'html' !== $request->getRequestFormat()
-            || false !== stripos($response->headers->get('Content-Disposition', ''), 'attachment;')
+            || false !== stripos((string) $response->headers->get('Content-Disposition', ''), 'attachment;')
         ) {
             return;
         }

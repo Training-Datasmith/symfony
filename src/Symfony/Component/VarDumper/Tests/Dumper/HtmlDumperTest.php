@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -113,7 +115,6 @@ class HtmlDumperTest extends TestCase
                 </bar>
 
                 EOTXT,
-
             $out
         );
     }
@@ -128,7 +129,8 @@ class HtmlDumperTest extends TestCase
         $data = $cloner->cloneVar(new VirtualProperty());
         $out = $dumper->dump($data, true);
 
-        $this->assertStringMatchesFormat(<<<EODUMP
+        $this->assertStringMatchesFormat(
+            <<<EODUMP
             <foo></foo><bar><span class=sf-dump-note>Symfony\Component\VarDumper\Tests\Fixtures\VirtualProperty</span> {<a class=sf-dump-ref>#%i</a><samp data-depth=1 class=sf-dump-expanded>
               +<span class=sf-dump-public title="Public property">firstName</span>: "<span class=sf-dump-str title="4 characters">John</span>"
               +<span class=sf-dump-public title="Public property">lastName</span>: "<span class=sf-dump-str title="3 characters">Doe</span>"
@@ -177,7 +179,8 @@ class HtmlDumperTest extends TestCase
 
         $out = stream_get_contents($out, -1, 0);
 
-        $this->assertSame(<<<'EOTXT'
+        $this->assertSame(
+            <<<'EOTXT'
             <foo></foo><bar><span class=sf-dump-num>123</span>
             </bar>
             <bar><span class=sf-dump-num>456</span>

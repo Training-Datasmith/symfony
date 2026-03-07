@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'sărut: adult, adult, ton deschis al pielii, ton semi‑deschis al pielii',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'sărut: adult, adult, ton deschis al pielii, ton mediu al pielii',

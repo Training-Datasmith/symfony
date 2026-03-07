@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -125,12 +127,12 @@ class MemcachedStore implements PersistingStoreInterface
 
     private function getUniqueToken(Key $key): string
     {
-        if (!$key->hasState(__CLASS__)) {
+        if (!$key->hasState(self::class)) {
             $token = base64_encode(random_bytes(32));
-            $key->setState(__CLASS__, $token);
+            $key->setState(self::class, $token);
         }
 
-        return $key->getState(__CLASS__);
+        return $key->getState(self::class);
     }
 
     private function getValueAndCas(Key $key): array

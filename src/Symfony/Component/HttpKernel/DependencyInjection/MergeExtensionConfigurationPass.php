@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ class MergeExtensionConfigurationPass extends BaseMergeExtensionConfigurationPas
      * @param string[] $extensions
      */
     public function __construct(
-        private array $extensions,
+        private readonly array $extensions,
     ) {
     }
 

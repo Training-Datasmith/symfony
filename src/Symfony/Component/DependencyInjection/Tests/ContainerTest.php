@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -317,7 +319,7 @@ class ContainerTest extends TestCase
     public function testReset()
     {
         $c = new Container();
-        $c->set('bar', $bar = new class implements ResetInterface {
+        $c->set('bar', $bar = new class () implements ResetInterface {
             public int $resetCounter = 0;
 
             public function reset(): void

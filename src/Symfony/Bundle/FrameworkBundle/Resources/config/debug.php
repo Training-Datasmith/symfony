@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,7 +19,7 @@ use Symfony\Component\HttpKernel\Controller\TraceableArgumentResolver;
 use Symfony\Component\HttpKernel\Controller\TraceableControllerResolver;
 use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
 
-return static function (ContainerConfigurator $container) {
+return static function (ContainerConfigurator $container): void {
     $container->services()
         ->set('debug.event_dispatcher', TraceableEventDispatcher::class)
             ->decorate('event_dispatcher')

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ use Symfony\Component\DependencyInjection\Container;
 class ContainerBag extends FrozenParameterBag implements ContainerBagInterface
 {
     public function __construct(
-        private Container $container,
+        private readonly Container $container,
     ) {
     }
 

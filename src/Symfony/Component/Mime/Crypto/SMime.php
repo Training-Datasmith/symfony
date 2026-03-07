@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,7 +35,7 @@ abstract class SMime
     protected function iteratorToFile(iterable $iterator, $stream): void
     {
         foreach ($iterator as $chunk) {
-            fwrite($stream, $chunk);
+            fwrite($stream, (string) $chunk);
         }
     }
 

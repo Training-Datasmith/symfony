@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,8 +29,8 @@ class StopWorkerOnRestartSignalListener implements EventSubscriberInterface
     private float $workerStartedAt = 0;
 
     public function __construct(
-        private CacheItemPoolInterface $cachePool,
-        private ?LoggerInterface $logger = null,
+        private readonly CacheItemPoolInterface $cachePool,
+        private readonly ?LoggerInterface $logger = null,
     ) {
     }
 

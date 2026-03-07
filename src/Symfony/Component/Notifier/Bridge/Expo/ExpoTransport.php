@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ final class ExpoTransport extends AbstractTransport
     protected const HOST = 'exp.host/--/api/v2/push/send';
 
     public function __construct(
-        #[\SensitiveParameter] private ?string $token = null,
+        #[\SensitiveParameter] private readonly ?string $token = null,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -53,7 +55,7 @@ final class ExpoTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof PushMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, PushMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, PushMessage::class, $message);
         }
 
         $endpoint = \sprintf('https://%s', $this->getEndpoint());
@@ -61,7 +63,7 @@ final class ExpoTransport extends AbstractTransport
         $options['to'] ??= $message->getRecipientId();
 
         if (!$options['to']) {
-            throw new InvalidArgumentException(\sprintf('The "%s" transport required the "to" option to be set.', __CLASS__));
+            throw new InvalidArgumentException(\sprintf('The "%s" transport required the "to" option to be set.', self::class));
         }
 
         $options['title'] = $message->getSubject();

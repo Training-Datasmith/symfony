@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Africa/Abidjan' => 'ග්‍රිනිච් මධ්‍යම වේලාව (අබිජාන්)',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Symfony\Component\JsonStreamer\Mapping\Write\DateTimeTypePropertyMetadataLoa
 use Symfony\Component\JsonStreamer\ValueTransformer\DateTimeToStringValueTransformer;
 use Symfony\Component\JsonStreamer\ValueTransformer\StringToDateTimeValueTransformer;
 
-return static function (ContainerConfigurator $container) {
+return static function (ContainerConfigurator $container): void {
     $container->services()
         // stream reader/writer
         ->set('json_streamer.stream_writer', JsonStreamWriter::class)

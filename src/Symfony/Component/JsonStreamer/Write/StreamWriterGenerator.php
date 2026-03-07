@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,12 +43,12 @@ use Symfony\Component\TypeInfo\Type\UnionType;
  */
 final class StreamWriterGenerator
 {
-    private StreamerDumper $dumper;
+    private readonly StreamerDumper $dumper;
     private ?PhpGenerator $phpGenerator = null;
 
     public function __construct(
-        private PropertyMetadataLoaderInterface $propertyMetadataLoader,
-        private string $streamWritersDir,
+        private readonly PropertyMetadataLoaderInterface $propertyMetadataLoader,
+        private readonly string $streamWritersDir,
         ?ConfigCacheFactoryInterface $cacheFactory = null,
     ) {
         $this->dumper = new StreamerDumper($propertyMetadataLoader, $streamWritersDir, $cacheFactory);

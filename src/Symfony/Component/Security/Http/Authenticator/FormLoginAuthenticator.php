@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -45,10 +47,10 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
     private HttpKernelInterface $httpKernel;
 
     public function __construct(
-        private HttpUtils $httpUtils,
-        private UserProviderInterface $userProvider,
-        private AuthenticationSuccessHandlerInterface $successHandler,
-        private AuthenticationFailureHandlerInterface $failureHandler,
+        private readonly HttpUtils $httpUtils,
+        private readonly UserProviderInterface $userProvider,
+        private readonly AuthenticationSuccessHandlerInterface $successHandler,
+        private readonly AuthenticationFailureHandlerInterface $failureHandler,
         array $options,
     ) {
         $this->options = array_merge([

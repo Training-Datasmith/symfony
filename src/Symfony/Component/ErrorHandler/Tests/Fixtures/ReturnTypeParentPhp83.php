@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\ErrorHandler\Tests\Fixtures;
 
 abstract class ReturnTypeParentPhp83
 {
-    const string FOO = 'foo';
-    const string|int BAR = 'bar';
+    public const string FOO = 'foo';
+    public const string|int BAR = 'bar';
 
     /**
      * @return self::FOO

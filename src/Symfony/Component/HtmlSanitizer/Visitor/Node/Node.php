@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,12 +43,12 @@ final class Node implements NodeInterface
     private array $children = [];
 
     public function __construct(
-        private NodeInterface $parent,
-        private string $tagName,
+        private readonly NodeInterface $parent,
+        private readonly string $tagName,
     ) {
     }
 
-    public function getParent(): ?NodeInterface
+    public function getParent(): \Symfony\Component\HtmlSanitizer\Visitor\Node\NodeInterface
     {
         return $this->parent;
     }
@@ -106,7 +108,7 @@ final class Node implements NodeInterface
                 // IE8's HTML parser treats `` as a blank attribute value and foo=bar becomes a separate attribute.
                 // Adding a space at the end of the attribute prevents this by forcing IE8 to put double
                 // quotes around the attribute when computing nodeB.innerHTML.
-                if (str_contains($value, '`')) {
+                if (str_contains((string) $value, '`')) {
                     $value .= ' ';
                 }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ final class BlueskyTransportFactory extends AbstractTransportFactory
     public function __construct(
         ?EventDispatcherInterface $dispatcher = null,
         ?HttpClientInterface $client = null,
-        private ?LoggerInterface $logger = null,
+        private readonly ?LoggerInterface $logger = null,
         private readonly ?ClockInterface $clock = null,
     ) {
         parent::__construct($dispatcher, $client);

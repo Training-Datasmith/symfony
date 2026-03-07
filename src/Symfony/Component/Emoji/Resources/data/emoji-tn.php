@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'atla: mogolo, mogolo, letlalo le lesweu, letlalo le le bosweu jo bo mo magareng',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'atla: mogolo, mogolo, letlalo le lesweu, letlalo la mmala o o mo magareng',

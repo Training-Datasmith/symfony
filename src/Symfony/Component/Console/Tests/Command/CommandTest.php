@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -203,7 +205,7 @@ class CommandTest extends TestCase
 
     public function testAliasesSetBeforeParentConstructorArePreserved()
     {
-        $command = new class extends Command {
+        $command = new class () extends Command {
             public function __construct()
             {
                 // set aliases before calling parent constructor

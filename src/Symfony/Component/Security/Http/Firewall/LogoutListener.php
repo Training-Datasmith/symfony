@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,11 +39,11 @@ class LogoutListener extends AbstractListener
      * @param array $options An array of options to process a logout attempt
      */
     public function __construct(
-        private TokenStorageInterface $tokenStorage,
-        private HttpUtils $httpUtils,
-        private EventDispatcherInterface $eventDispatcher,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly HttpUtils $httpUtils,
+        private readonly EventDispatcherInterface $eventDispatcher,
         array $options = [],
-        private ?CsrfTokenManagerInterface $csrfTokenManager = null,
+        private readonly ?CsrfTokenManagerInterface $csrfTokenManager = null,
     ) {
         $this->options = array_merge([
             'csrf_parameter' => '_csrf_token',

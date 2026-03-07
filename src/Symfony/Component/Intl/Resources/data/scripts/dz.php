@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Arab' => 'ཨེ་ར་བིཀ་ཡིག་གུ',

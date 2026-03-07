@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,7 +46,7 @@ use Symfony\Component\Security\Http\AccessToken\QueryAccessTokenExtractor;
 use Symfony\Component\Security\Http\Authenticator\AccessTokenAuthenticator;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-return static function (ContainerConfigurator $container) {
+return static function (ContainerConfigurator $container): void {
     $container->services()
         ->set('security.access_token_extractor.header', HeaderAccessTokenExtractor::class)
         ->set('security.access_token_extractor.query_string', QueryAccessTokenExtractor::class)

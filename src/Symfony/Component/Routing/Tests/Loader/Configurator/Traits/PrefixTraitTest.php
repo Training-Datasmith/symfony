@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ class PrefixTraitTest extends TestCase
         $collection->add('app_route', new Route('/path'));
         $collection->addAlias('app_alias', 'app_route');
 
-        $trait = new class {
+        $trait = new class () {
             use PrefixTrait;
 
             public function add(RouteCollection $c, array $p)

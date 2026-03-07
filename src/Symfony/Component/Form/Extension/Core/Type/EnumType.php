@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,16 +32,14 @@ final class EnumType extends AbstractType
             ->setAllowedTypes('class', 'string')
             ->setAllowedValues('class', enum_exists(...))
             ->setDefault('choices', static fn (Options $options): array => $options['class']::cases())
-            ->setDefault('choice_label', static function (Options $options) {
-                return static function (\UnitEnum $choice, int|string $key): string|TranslatableInterface {
-                    if (\is_int($key)) {
-                        // Key is an integer, use the enum's name (or translatable)
-                        return $choice instanceof TranslatableInterface ? $choice : $choice->name;
-                    }
+            ->setDefault('choice_label', static fn (Options $options) => static function (\UnitEnum $choice, int|string $key): string|TranslatableInterface {
+                if (\is_int($key)) {
+                    // Key is an integer, use the enum's name (or translatable)
+                    return $choice instanceof TranslatableInterface ? $choice : $choice->name;
+                }
 
-                    // Key is a string, use it as the label
-                    return $key;
-                };
+                // Key is a string, use it as the label
+                return $key;
             })
             ->setDefault('choice_value', static function (Options $options): ?\Closure {
                 if (!is_a($options['class'], \BackedEnum::class, true)) {

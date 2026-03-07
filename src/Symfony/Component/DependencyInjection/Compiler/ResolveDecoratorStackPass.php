@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -109,7 +111,7 @@ class ResolveDecoratorStackPass implements CompilerPassInterface
         }
 
         if (1 === \count($path)) {
-            foreach ($definitions as $k => $definition) {
+            foreach ($definitions as $definition) {
                 $definition->setPublic(false)->setTags([])->setDecoratedService($decoratedId);
             }
             $definition->setDecoratedService(null);

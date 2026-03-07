@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Symfony\Component\RemoteEvent\Event\Mailer\MailerEngagementEvent;
 
 $wh = new MailerEngagementEvent(MailerEngagementEvent::SPAM, 'b0e50d6d-118c-459b-84e1-70209e68c1c9', json_decode(file_get_contents(str_replace('.php', '.json', __FILE__)), true));

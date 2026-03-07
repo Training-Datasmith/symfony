@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -375,7 +377,9 @@ class RegisterControllerArgumentLocatorsPassTest extends TestCase
 
         $container->register('parent', ArgumentWithoutTypeController::class);
 
-        $container->setDefinition('child', (new ChildDefinition('parent'))
+        $container->setDefinition(
+            'child',
+            (new ChildDefinition('parent'))
             ->setBindings(['$someArg' => new Reference('parent')])
             ->addTag('controller.service_arguments')
         );

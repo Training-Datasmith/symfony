@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -60,12 +62,13 @@ final class TermiiTransportTest extends TransportTestCase
     public function testNoInvalidArgumentExceptionIsThrownIfFromIsValid(string $from)
     {
         $message = new SmsMessage('+33612345678', 'Hello!');
-        $client = new MockHttpClient(static function (string $method, string $url): ResponseInterface {
-            self::assertSame('POST', $method);
-            self::assertSame('https://api.ng.termii.com/api/sms/send', $url);
+        $client = new MockHttpClient(
+            static function (string $method, string $url): ResponseInterface {
+                self::assertSame('POST', $method);
+                self::assertSame('https://api.ng.termii.com/api/sms/send', $url);
 
-            return new MockResponse(json_encode(['message' => 'Successfully sent', 'message_id' => 'foo', 'balance' => 9, 'user' => 'Foo Bar']));
-        }
+                return new MockResponse(json_encode(['message' => 'Successfully sent', 'message_id' => 'foo', 'balance' => 9, 'user' => 'Foo Bar']));
+            }
         );
         $transport = $this->createTransport($client, $from);
         $sentMessage = $transport->send($message);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -91,7 +93,8 @@ class QpMimeHeaderEncoderTest extends TestCase
         */
 
         $allowedBytes = array_merge(
-            range(\ord('a'), \ord('z')), range(\ord('A'), \ord('Z')),
+            range(\ord('a'), \ord('z')),
+            range(\ord('A'), \ord('Z')),
             range(\ord('0'), \ord('9')),
             [\ord('!'), \ord('*'), \ord('+'), \ord('-'), \ord('/')]
         );

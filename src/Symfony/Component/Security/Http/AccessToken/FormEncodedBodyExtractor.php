@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,16 +27,16 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @see https://datatracker.ietf.org/doc/html/rfc6750#section-2.2
  */
-final class FormEncodedBodyExtractor implements AccessTokenExtractorInterface
+final readonly class FormEncodedBodyExtractor implements AccessTokenExtractorInterface
 {
     public function __construct(
-        private readonly string $parameter = 'access_token',
+        private string $parameter = 'access_token',
     ) {
     }
 
     public function extractAccessToken(Request $request): ?string
     {
-        if ('POST' !== $request->getMethod() || !str_starts_with($request->headers->get('CONTENT_TYPE', ''), 'application/x-www-form-urlencoded')) {
+        if ('POST' !== $request->getMethod() || !str_starts_with((string) $request->headers->get('CONTENT_TYPE', ''), 'application/x-www-form-urlencoded')) {
             return null;
         }
         $parameter = $request->request->get($this->parameter);

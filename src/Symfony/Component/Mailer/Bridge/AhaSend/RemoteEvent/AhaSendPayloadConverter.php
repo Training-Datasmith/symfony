@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ final class AhaSendPayloadConverter implements PayloadConverterInterface
                 default => throw new ParseException(\sprintf('Unsupported event "%s".', $payload['type'])),
             };
             $event = new MailerEngagementEvent($name, $payload['data']['id'], $payload);
-        } elseif (str_starts_with($payload['type'], 'message.')) {
+        } elseif (str_starts_with((string) $payload['type'], 'message.')) {
             $name = match ($payload['type']) {
                 'message.reception' => MailerDeliveryEvent::RECEIVED,
                 'message.delivered' => MailerDeliveryEvent::DELIVERED,
@@ -45,7 +47,7 @@ final class AhaSendPayloadConverter implements PayloadConverterInterface
 
         // AhaSend sends timestamps with 9 decimal places for nanosecond precision,
         // truncate to 6 decimal places for microseconds.
-        $truncatedTimestamp = substr($payload['timestamp'], 0, 26).'Z';
+        $truncatedTimestamp = substr((string) $payload['timestamp'], 0, 26).'Z';
         $date = \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $payload['timestamp']) ?: \DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s.uT', $truncatedTimestamp);
         if (!$date) {
             throw new ParseException(\sprintf('Invalid date "%s".', $payload['timestamp']));

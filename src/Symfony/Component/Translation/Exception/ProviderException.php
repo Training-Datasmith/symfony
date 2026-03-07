@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,11 +20,11 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
  */
 class ProviderException extends RuntimeException implements ProviderExceptionInterface
 {
-    private string $debug;
+    private readonly string $debug;
 
     public function __construct(
         string $message,
-        private ResponseInterface $response,
+        private readonly ResponseInterface $response,
         int $code = 0,
         ?\Exception $previous = null,
     ) {

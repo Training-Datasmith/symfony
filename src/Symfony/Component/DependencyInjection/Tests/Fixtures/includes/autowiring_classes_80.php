@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\DependencyInjection\Tests\Compiler;
 
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
@@ -172,8 +174,8 @@ class AutowireNestedAttributes implements AsDecoratorInterface
             'iterator' => new AutowireIterator('foo'),
             'locator' => new AutowireLocator('foo'),
             'service' => new Autowire(service: 'bar'),
-        ])] array $options)
-    {
+        ])] array $options
+    ) {
     }
 }
 

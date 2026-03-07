@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Africa/Abidjan' => 'Hora del meridià de Greenwich (Abidjan)',

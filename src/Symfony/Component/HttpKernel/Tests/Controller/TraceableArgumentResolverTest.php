@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ class TraceableArgumentResolverTest extends TestCase
         $stopwatch = $this->createStub(Stopwatch::class);
         $stopwatch->method('start')->willReturn($stopwatchEvent);
 
-        $resolver = new class implements ArgumentResolverInterface {
+        $resolver = new class () implements ArgumentResolverInterface {
             public function getArguments(Request $request, callable $controller, ?\ReflectionFunctionAbstract $reflector = null): array
             {
                 throw new \Exception();
@@ -38,7 +40,8 @@ class TraceableArgumentResolverTest extends TestCase
         $traceableResolver = new TraceableArgumentResolver($resolver, $stopwatch);
 
         try {
-            $traceableResolver->getArguments(new Request(), static function () {});
+            $traceableResolver->getArguments(new Request(), static function () {
+            });
         } catch (\Exception $ex) {
         }
     }

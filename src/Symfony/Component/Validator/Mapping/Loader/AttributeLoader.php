@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ class AttributeLoader implements LoaderInterface
      * @param array<class-string, class-string[]> $mappedClasses
      */
     public function __construct(
-        private bool $allowAnyClass = true,
+        private readonly bool $allowAnyClass = true,
         private array $mappedClasses = [],
     ) {
     }

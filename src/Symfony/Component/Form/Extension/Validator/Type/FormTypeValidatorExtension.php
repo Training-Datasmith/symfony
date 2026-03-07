@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ class FormTypeValidatorExtension extends BaseValidatorExtension
     private readonly ViolationMapperInterface $violationMapper;
 
     public function __construct(
-        private ValidatorInterface $validator,
+        private readonly ValidatorInterface $validator,
         bool|ViolationMapperInterface|null $violationMapper = null,
         ?FormRendererInterface $formRenderer = null,
         ?TranslatorInterface $translator = null,
@@ -53,7 +55,7 @@ class FormTypeValidatorExtension extends BaseValidatorExtension
         parent::configureOptions($resolver);
 
         // Constraint should always be converted to an array
-        $constraintsNormalizer = static fn (Options $options, $constraints) => \is_object($constraints) ? [$constraints] : (array) $constraints;
+        $constraintsNormalizer = static fn (Options $options, $constraints): array => \is_object($constraints) ? [$constraints] : (array) $constraints;
 
         $resolver->setDefaults([
             'error_mapping' => [],

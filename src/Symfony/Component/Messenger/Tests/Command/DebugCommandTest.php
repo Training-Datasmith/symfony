@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -62,7 +64,8 @@ class DebugCommandTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute([], ['decorated' => false]);
 
-        $this->assertSame(<<<TXT
+        $this->assertSame(
+            <<<TXT
 
             Messenger
             =========
@@ -107,7 +110,8 @@ class DebugCommandTest extends TestCase
 
         $tester->execute(['bus' => 'query_bus'], ['decorated' => false]);
 
-        $this->assertSame(<<<TXT
+        $this->assertSame(
+            <<<TXT
 
             Messenger
             =========
@@ -139,7 +143,8 @@ class DebugCommandTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute([], ['decorated' => false]);
 
-        $this->assertSame(<<<TXT
+        $this->assertSame(
+            <<<TXT
 
             Messenger
             =========

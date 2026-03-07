@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,7 +16,7 @@ namespace Symfony\Component\Messenger\Stamp;
 /**
  * @author Jáchym Toušek <enumag@gmail.com>
  */
-final class HandlerArgumentsStamp implements NonSendableStampInterface
+final readonly class HandlerArgumentsStamp implements NonSendableStampInterface
 {
     public function __construct(
         private array $additionalArguments,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -13,7 +15,7 @@ namespace Symfony\Component\Webhook\Server;
 
 use Symfony\Component\Serializer\SerializerInterface;
 
-final class SerializerPayloadSerializer implements PayloadSerializerInterface
+final readonly class SerializerPayloadSerializer implements PayloadSerializerInterface
 {
     public function __construct(
         private SerializerInterface $serializer,

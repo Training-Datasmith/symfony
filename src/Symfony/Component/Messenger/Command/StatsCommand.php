@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,8 +33,8 @@ use Symfony\Component\Messenger\Transport\Receiver\MessageCountAwareInterface;
 class StatsCommand extends Command
 {
     public function __construct(
-        private ContainerInterface $transportLocator,
-        private array $transportNames = [],
+        private readonly ContainerInterface $transportLocator,
+        private readonly array $transportNames = [],
     ) {
         parent::__construct();
     }
@@ -42,7 +44,8 @@ class StatsCommand extends Command
         $this
             ->addArgument('transport_names', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'List of transports\' names')
             ->addOption('format', '', InputOption::VALUE_REQUIRED, \sprintf('The output format ("%s")', implode('", "', $this->getAvailableFormatOptions())), 'txt')
-            ->setHelp(<<<EOF
+            ->setHelp(
+                <<<EOF
                 The <info>%command.name%</info> command counts the messages for all the transports:
 
                     <info>php %command.full_name%</info>

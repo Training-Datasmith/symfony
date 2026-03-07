@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,13 +30,8 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
  */
 class AmqpSender implements SenderInterface
 {
-    private SerializerInterface $serializer;
-
-    public function __construct(
-        private Connection $connection,
-        ?SerializerInterface $serializer = null,
-    ) {
-        $this->serializer = $serializer ?? new PhpSerializer();
+    public function __construct(private readonly Connection $connection, private readonly ?SerializerInterface $serializer = new PhpSerializer())
+    {
     }
 
     public function send(Envelope $envelope): Envelope

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -118,7 +120,7 @@ class RequestStack
     public function resetRequestFormats(): void
     {
         static $resetRequestFormats;
-        $resetRequestFormats ??= \Closure::bind(static fn () => self::$formats = null, null, Request::class);
+        $resetRequestFormats ??= \Closure::bind(static fn (): null => self::$formats = null, null, Request::class);
         $resetRequestFormats();
     }
 }

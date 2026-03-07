@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -226,7 +228,8 @@ class OutputFormatterTest extends TestCase
     {
         $formatter = new OutputFormatter(false);
         $this->assertEquals(
-            'some info', $formatter->format(new TableCell())
+            'some info',
+            $formatter->format(new TableCell())
         );
     }
 
@@ -301,34 +304,40 @@ class OutputFormatterTest extends TestCase
     {
         $formatter = new OutputFormatter(true);
 
-        $this->assertEquals(<<<EOF
+        $this->assertEquals(
+            <<<EOF
             \033[32m
             some text\033[39m
             EOF,
-            $formatter->format(<<<'EOF'
+            $formatter->format(
+                <<<'EOF'
                 <info>
                 some text</info>
                 EOF
             )
         );
 
-        $this->assertEquals(<<<EOF
+        $this->assertEquals(
+            <<<EOF
             \033[32msome text
             \033[39m
             EOF,
-            $formatter->format(<<<'EOF'
+            $formatter->format(
+                <<<'EOF'
                 <info>some text
                 </info>
                 EOF
             )
         );
 
-        $this->assertEquals(<<<EOF
+        $this->assertEquals(
+            <<<EOF
             \033[32m
             some text
             \033[39m
             EOF,
-            $formatter->format(<<<'EOF'
+            $formatter->format(
+                <<<'EOF'
                 <info>
                 some text
                 </info>
@@ -336,13 +345,15 @@ class OutputFormatterTest extends TestCase
             )
         );
 
-        $this->assertEquals(<<<EOF
+        $this->assertEquals(
+            <<<EOF
             \033[32m
             some text
             more text
             \033[39m
             EOF,
-            $formatter->format(<<<'EOF'
+            $formatter->format(
+                <<<'EOF'
                 <info>
                 some text
                 more text

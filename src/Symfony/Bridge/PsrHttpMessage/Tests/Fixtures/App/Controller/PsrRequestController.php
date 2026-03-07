@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Bridge\PsrHttpMessage\Tests\Fixtures\App\Controller;
 
 use Psr\Http\Message\MessageInterface;

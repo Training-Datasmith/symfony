@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,7 +35,7 @@ class MandrillApiTransport extends AbstractApiTransport
     private const HOST = 'mandrillapp.com';
 
     public function __construct(
-        #[\SensitiveParameter] private string $key,
+        #[\SensitiveParameter] private readonly string $key,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
         ?LoggerInterface $logger = null,
@@ -75,7 +77,7 @@ class MandrillApiTransport extends AbstractApiTransport
         return $response;
     }
 
-    private function getEndpoint(): ?string
+    private function getEndpoint(): string
     {
         return ($this->host ?: self::HOST).($this->port ? ':'.$this->port : '');
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,7 +37,8 @@ class AboutCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setHelp(<<<'EOT'
+            ->setHelp(
+                <<<'EOT'
                 The <info>%command.name%</info> command displays information about the current Symfony project.
 
                 The <info>PHP</info> section displays important configuration that could affect your application. The values might

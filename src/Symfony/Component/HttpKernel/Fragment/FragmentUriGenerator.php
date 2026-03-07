@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ use Symfony\Component\HttpKernel\Controller\ControllerReference;
  * @author Kévin Dunglas <kevin@dunglas.fr>
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class FragmentUriGenerator implements FragmentUriGeneratorInterface
+final readonly class FragmentUriGenerator implements FragmentUriGeneratorInterface
 {
     public function __construct(
         private string $fragmentPath,

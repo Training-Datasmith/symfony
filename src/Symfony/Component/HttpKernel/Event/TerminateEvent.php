@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ final class TerminateEvent extends KernelEvent
     public function __construct(
         HttpKernelInterface $kernel,
         Request $request,
-        private Response $response,
+        private readonly Response $response,
     ) {
         parent::__construct($kernel, $request, HttpKernelInterface::MAIN_REQUEST);
     }

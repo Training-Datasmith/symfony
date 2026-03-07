@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Symfony\Component\Console\Completion\CompletionSuggestions;
 class CommandCompletionTester
 {
     public function __construct(
-        private Command $command,
+        private readonly Command $command,
     ) {
     }
 
@@ -49,6 +51,6 @@ class CommandCompletionTester
             $options[] = '--'.$option->getName();
         }
 
-        return array_map('strval', array_merge($options, $suggestions->getValueSuggestions()));
+        return array_map(strval(...), array_merge($options, $suggestions->getValueSuggestions()));
     }
 }

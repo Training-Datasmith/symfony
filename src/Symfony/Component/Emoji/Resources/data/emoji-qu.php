@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'much’a: runa, runa, chuya qara niraq, tunpa chuya qara niraq',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'much’a: runa, runa, chuya qara niraq, tunpa qara niraq',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\DependencyInjection\Tests\Fixtures;
 
 class FooClassWithDefaultObjectAttribute
@@ -8,5 +10,6 @@ class FooClassWithDefaultObjectAttribute
         object $object = new \stdClass(),
         bool $firstOptional = false,
         bool $secondOptional = false,
-    ) {}
+    ) {
+    }
 }

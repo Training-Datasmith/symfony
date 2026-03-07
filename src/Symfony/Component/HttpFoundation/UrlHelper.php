@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ use Symfony\Component\Routing\RequestContextAwareInterface;
  *
  * @author Valentin Udaltsov <udaltsov.valentin@gmail.com>
  */
-final class UrlHelper
+final readonly class UrlHelper
 {
     public function __construct(
         private RequestStack $requestStack,

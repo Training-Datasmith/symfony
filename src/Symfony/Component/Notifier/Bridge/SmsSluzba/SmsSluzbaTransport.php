@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,8 +32,8 @@ final class SmsSluzbaTransport extends AbstractTransport
     protected const HOST = 'smsgateapi.sms-sluzba.cz';
 
     public function __construct(
-        #[\SensitiveParameter] private string $username,
-        #[\SensitiveParameter] private string $password,
+        #[\SensitiveParameter] private readonly string $username,
+        #[\SensitiveParameter] private readonly string $password,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -51,7 +53,7 @@ final class SmsSluzbaTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $endpoint = \sprintf(
@@ -87,7 +89,7 @@ final class SmsSluzbaTransport extends AbstractTransport
         $responseXml = $xmlEncoder->decode($response->getContent(), 'xml');
 
         if (isset($responseXml['message']) && \is_string($responseXml['message'])) {
-            throw new TransportException(\sprintf('Unable to send the SMS: "%s" (%s).', $responseXml['message'], (int) substr($responseXml['id'], 0, 3)), $response);
+            throw new TransportException(\sprintf('Unable to send the SMS: "%s" (%s).', $responseXml['message'], (int) substr((string) $responseXml['id'], 0, 3)), $response);
         }
 
         $sentMessage = new SentMessage($message, (string) $this);

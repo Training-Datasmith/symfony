@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -45,7 +47,7 @@ class ReplaceAliasByActualDefinitionPass extends AbstractRecursivePass
         // renamed to a deprecated alias ID, causing the original service ID to
         // become an alias to the deprecated one (inverting the alias chain).
         $aliases = $container->getAliases();
-        uasort($aliases, static fn ($a, $b) => $a->isDeprecated() <=> $b->isDeprecated());
+        uasort($aliases, static fn ($a, $b): int => $a->isDeprecated() <=> $b->isDeprecated());
 
         foreach ($aliases as $definitionId => $target) {
             $targetId = (string) $target;

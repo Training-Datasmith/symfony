@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ class DelayedMessageHandlingException extends RuntimeException implements Wrappe
         $this->envelope = $envelope;
 
         $exceptionMessages = implode(", \n", array_map(
-            static fn (\Throwable $e) => $e::class.': '.$e->getMessage(),
+            static fn (\Throwable $e): string => $e::class.': '.$e->getMessage(),
             $exceptions
         ));
 

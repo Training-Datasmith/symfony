@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,8 @@ class PhpProcessTest extends TestCase
     public function testNonBlockingWorks()
     {
         $expected = 'hello world!';
-        $process = new PhpProcess(<<<PHP
+        $process = new PhpProcess(
+            <<<PHP
             <?php echo '$expected';
             PHP
         );
@@ -32,7 +35,8 @@ class PhpProcessTest extends TestCase
 
     public function testCommandLine()
     {
-        $process = new PhpProcess(<<<'PHP'
+        $process = new PhpProcess(
+            <<<'PHP'
             <?php echo phpversion().PHP_SAPI;
             PHP
         );
@@ -66,7 +70,8 @@ class PhpProcessTest extends TestCase
     {
         static::expectException(LogicException::class);
         static::expectExceptionMessage('The "Symfony\Component\Process\PhpProcess::fromShellCommandline()" method cannot be called when using "Symfony\Component\Process\PhpProcess".');
-        PhpProcess::fromShellCommandline(<<<PHP
+        PhpProcess::fromShellCommandline(
+            <<<PHP
             <?php echo 'Hello World!';
             PHP
         );

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'pocałunek: dorosły, dorosły, karnacja jasna i karnacja średnio jasna',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'pocałunek: dorosły, dorosły, karnacja jasna i karnacja średnia',

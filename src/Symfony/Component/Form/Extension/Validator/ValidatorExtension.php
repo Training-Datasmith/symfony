@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,10 +33,10 @@ class ValidatorExtension extends AbstractExtension
     private readonly ?ViolationMapperInterface $violationMapper;
 
     public function __construct(
-        private ValidatorInterface $validator,
+        private readonly ValidatorInterface $validator,
         bool|ViolationMapperInterface|null $violationMapper = null,
-        private ?FormRendererInterface $formRenderer = null,
-        private ?TranslatorInterface $translator = null,
+        private readonly ?FormRendererInterface $formRenderer = null,
+        private readonly ?TranslatorInterface $translator = null,
     ) {
         if (\is_bool($violationMapper)) {
             trigger_deprecation('symfony/form', '8.1', \sprintf('Passing a boolean as a second argument of "%s"\'s constructor is deprecated; pass a "%s" instead.', self::class, ViolationMapperInterface::class));

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -203,23 +205,35 @@ class PhpFileLoaderTest extends TestCase
 
         $expectedCollection = new RouteCollection();
 
-        $expectedCollection->add('foo', (new Route('/foo'))
+        $expectedCollection->add(
+            'foo',
+            (new Route('/foo'))
             ->setOptions(['utf8' => true])
             ->setCondition('abc')
         );
-        $expectedCollection->add('buz', (new Route('/zub'))
+        $expectedCollection->add(
+            'buz',
+            (new Route('/zub'))
             ->setDefaults(['_controller' => 'foo:act', '_stateless' => true])
         );
-        $expectedCollection->add('controller_class', (new Route('/controller'))
+        $expectedCollection->add(
+            'controller_class',
+            (new Route('/controller'))
             ->setDefaults(['_controller' => ['Acme\MyApp\MyController', 'myAction']])
         );
-        $expectedCollection->add('c_root', (new Route('/sub/pub/'))
+        $expectedCollection->add(
+            'c_root',
+            (new Route('/sub/pub/'))
             ->setRequirements(['id' => '\d+'])
         );
-        $expectedCollection->add('c_bar', (new Route('/sub/pub/bar'))
+        $expectedCollection->add(
+            'c_bar',
+            (new Route('/sub/pub/bar'))
             ->setRequirements(['id' => '\d+'])
         );
-        $expectedCollection->add('c_pub_buz', (new Route('/sub/pub/buz'))
+        $expectedCollection->add(
+            'c_pub_buz',
+            (new Route('/sub/pub/buz'))
             ->setHost('host')
             ->setRequirements(['id' => '\d+'])
         );
@@ -228,7 +242,9 @@ class PhpFileLoaderTest extends TestCase
         $expectedCollection->add('z_c_pub_buz', (new Route('/zub/pub/buz'))->setHost('host'));
         $expectedCollection->add('r_root', new Route('/bus'));
         $expectedCollection->add('r_bar', new Route('/bus/bar/'));
-        $expectedCollection->add('ouf', (new Route('/ouf'))
+        $expectedCollection->add(
+            'ouf',
+            (new Route('/ouf'))
             ->setSchemes(['https'])
             ->setMethods(['GET'])
             ->setDefaults(['id' => 0])
@@ -391,7 +407,7 @@ class PhpFileLoaderTest extends TestCase
         new LoaderResolver([
             $loader = new PhpFileLoader($locator),
             new Psr4DirectoryLoader($locator),
-            new class extends AttributeClassLoader {
+            new class () extends AttributeClassLoader {
                 protected function configureRoute(Route $route, \ReflectionClass $class, \ReflectionMethod $method, object $attr): void
                 {
                     $route->setDefault('_controller', $class->getName().'::'.$method->getName());
@@ -416,7 +432,7 @@ class PhpFileLoaderTest extends TestCase
     {
         new LoaderResolver([
             $loader = new PhpFileLoader(new FileLocator(\dirname(__DIR__).'/Fixtures')),
-            new class extends AttributeClassLoader {
+            new class () extends AttributeClassLoader {
                 protected function configureRoute(Route $route, \ReflectionClass $class, \ReflectionMethod $method, object $attr): void
                 {
                     $route->setDefault('_controller', $class->getName().'::'.$method->getName());

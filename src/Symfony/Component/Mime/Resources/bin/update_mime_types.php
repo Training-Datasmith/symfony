@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,10 @@ foreach ($xml as $node) {
     $exts = [];
     foreach ($node->glob as $glob) {
         $pattern = (string) $glob['pattern'];
-        if ('*' != $pattern[0] || '.' != $pattern[1]) {
+        if ('*' != $pattern[0]) {
+            continue;
+        }
+        if ('.' != $pattern[1]) {
             continue;
         }
 
@@ -170,6 +175,6 @@ foreach (explode("\n", $data) as $line) {
 
 $updated = preg_replace('{Updated from upstream on .+?\.}', sprintf('Updated from upstream on %s.', date('Y-m-d')), $updated, -1);
 
-file_put_contents($output, rtrim($updated, "\n")."\n");
+file_put_contents($output, rtrim((string) $updated, "\n")."\n");
 
 echo "Done.\n";

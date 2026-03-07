@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -217,7 +219,7 @@ class ConsumeMessagesCommandTest extends TestCase
         $busLocator = new Container();
         $busLocator->set('dummy-bus', $bus);
 
-        $logger = new class implements LoggerInterface {
+        $logger = new class () implements LoggerInterface {
             use LoggerTrait;
 
             public array $logs = [];
@@ -266,7 +268,8 @@ class ConsumeMessagesCommandTest extends TestCase
 
         $command = new ConsumeMessagesCommand(
             new RoutableMessageBus($busLocator),
-            $receiverLocator, new EventDispatcher(),
+            $receiverLocator,
+            new EventDispatcher(),
             receiverNames: ['dummy-receiver1', 'dummy-receiver2']
         );
 
@@ -400,7 +403,8 @@ class ConsumeMessagesCommandTest extends TestCase
 
         $command = new ConsumeMessagesCommand(
             new RoutableMessageBus($busLocator),
-            $receiverLocator, new EventDispatcher(),
+            $receiverLocator,
+            new EventDispatcher(),
             receiverNames: ['dummy-receiver1', 'dummy-receiver2', 'dummy-receiver3']
         );
 
@@ -452,7 +456,8 @@ class ConsumeMessagesCommandTest extends TestCase
 
         $command = new ConsumeMessagesCommand(
             new RoutableMessageBus($busLocator),
-            $receiverLocator, new EventDispatcher(),
+            $receiverLocator,
+            new EventDispatcher(),
             receiverNames: ['dummy-receiver1', 'dummy-receiver2', 'dummy-receiver3', 'dummy-receiver4']
         );
 

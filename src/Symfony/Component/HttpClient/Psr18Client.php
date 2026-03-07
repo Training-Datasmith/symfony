@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -223,7 +225,7 @@ class Psr18NetworkException extends \RuntimeException implements NetworkExceptio
 {
     public function __construct(
         TransportExceptionInterface $e,
-        private RequestInterface $request,
+        private readonly RequestInterface $request,
     ) {
         parent::__construct($e->getMessage(), 0, $e);
     }
@@ -241,7 +243,7 @@ class Psr18RequestException extends \InvalidArgumentException implements Request
 {
     public function __construct(
         TransportExceptionInterface $e,
-        private RequestInterface $request,
+        private readonly RequestInterface $request,
     ) {
         parent::__construct($e->getMessage(), 0, $e);
     }

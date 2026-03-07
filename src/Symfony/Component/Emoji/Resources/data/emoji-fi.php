@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'pusu: aikuinen, aikuinen, vaalea iho, keskivaalea iho',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'pusu: aikuinen, aikuinen, vaalea iho, tummanvaalea iho',

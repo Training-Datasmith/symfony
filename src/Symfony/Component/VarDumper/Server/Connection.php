@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ use Symfony\Component\VarDumper\Dumper\ContextProvider\ContextProviderInterface;
  */
 class Connection
 {
-    private string $host;
+    private readonly string $host;
 
     /**
      * @var resource|null
@@ -34,7 +36,7 @@ class Connection
      */
     public function __construct(
         string $host,
-        private array $contextProviders = [],
+        private readonly array $contextProviders = [],
     ) {
         if (!str_contains($host, '://')) {
             $host = 'tcp://'.$host;
@@ -62,7 +64,7 @@ class Connection
         $context = array_filter($context);
         $encodedPayload = base64_encode(serialize([$data, $context]))."\n";
 
-        set_error_handler(static fn () => null);
+        set_error_handler(static fn (): null => null);
         try {
             if (-1 !== stream_socket_sendto($this->socket, $encodedPayload)) {
                 return true;
@@ -87,7 +89,7 @@ class Connection
      */
     private function createSocket()
     {
-        set_error_handler(static fn () => null);
+        set_error_handler(static fn (): null => null);
         try {
             return stream_socket_client($this->host, $errno, $errstr, 3) ?: null;
         } finally {

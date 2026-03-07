@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -460,7 +462,8 @@ class FrameworkExtension extends Extension
         } else {
             $container->getDefinition('argument_resolver.request_payload')
                 ->setArguments([])
-                ->addError('You can neither use "#[MapRequestPayload]" nor "#[MapQueryString]" since the Serializer component is not '
+                ->addError(
+                    'You can neither use "#[MapRequestPayload]" nor "#[MapQueryString]" since the Serializer component is not '
                     .(class_exists(Serializer::class) ? 'enabled. Try setting "framework.serializer.enabled" to true.' : 'installed. Try running "composer require symfony/serializer-pack".')
                 )
                 ->addTag('container.error')
@@ -609,7 +612,8 @@ class FrameworkExtension extends Extension
             if (!$this->readConfigEnabled('http_client', $container, $config['http_client'])) {
                 $container->getDefinition('webhook.transport')
                     ->setArguments([])
-                    ->addError('You cannot use the "webhook transport" service since the HttpClient component is not '
+                    ->addError(
+                        'You cannot use the "webhook transport" service since the HttpClient component is not '
                         .(class_exists(ScopingHttpClient::class) ? 'enabled. Try setting "framework.http_client.enabled" to true.' : 'installed. Try running "composer require symfony/http-client".')
                     )
                     ->addTag('container.error');
@@ -654,7 +658,7 @@ class FrameworkExtension extends Extension
             ->addTag('assets.package');
         $container->registerForAutoconfiguration(AssetCompilerInterface::class)
             ->addTag('asset_mapper.compiler');
-        $container->registerAttributeForAutoconfiguration(AsCommand::class, static function (ChildDefinition $definition, AsCommand $attribute, \ReflectionClass|\ReflectionMethod $reflector) {
+        $container->registerAttributeForAutoconfiguration(AsCommand::class, static function (ChildDefinition $definition, AsCommand $attribute, \ReflectionClass|\ReflectionMethod $reflector): void {
             $tagAttributes = [
                 'command' => $attribute->name,
                 'description' => $attribute->description,
@@ -744,7 +748,7 @@ class FrameworkExtension extends Extension
         $container->registerForAutoconfiguration(LoggerAwareInterface::class)
             ->addMethodCall('setLogger', [new Reference('logger')]);
 
-        $container->registerAttributeForAutoconfiguration(AsEventListener::class, static function (ChildDefinition $definition, AsEventListener $attribute, \ReflectionClass|\ReflectionMethod $reflector) {
+        $container->registerAttributeForAutoconfiguration(AsEventListener::class, static function (ChildDefinition $definition, AsEventListener $attribute, \ReflectionClass|\ReflectionMethod $reflector): void {
             $tagAttributes = get_object_vars($attribute);
             if ($reflector instanceof \ReflectionMethod) {
                 if (isset($tagAttributes['method'])) {
@@ -817,20 +821,20 @@ class FrameworkExtension extends Extension
             $definition->addTag('container.excluded', ['source' => 'because it\'s a messenger message']);
             $definition->addTag('messenger.message', ['serializedTypeName' => $attribute->serializedTypeName]);
         });
-        $container->registerAttributeForAutoconfiguration(\Attribute::class, static function (ChildDefinition $definition) {
+        $container->registerAttributeForAutoconfiguration(\Attribute::class, static function (ChildDefinition $definition): void {
             $definition->addTag('container.excluded', ['source' => 'because it\'s a PHP attribute']);
         });
-        $container->registerAttributeForAutoconfiguration(Entity::class, static function (ChildDefinition $definition) {
+        $container->registerAttributeForAutoconfiguration(Entity::class, static function (ChildDefinition $definition): void {
             $definition->addTag('container.excluded', ['source' => 'because it\'s a Doctrine entity']);
         });
-        $container->registerAttributeForAutoconfiguration(Embeddable::class, static function (ChildDefinition $definition) {
+        $container->registerAttributeForAutoconfiguration(Embeddable::class, static function (ChildDefinition $definition): void {
             $definition->addTag('container.excluded', ['source' => 'because it\'s a Doctrine embeddable']);
         });
-        $container->registerAttributeForAutoconfiguration(MappedSuperclass::class, static function (ChildDefinition $definition) {
+        $container->registerAttributeForAutoconfiguration(MappedSuperclass::class, static function (ChildDefinition $definition): void {
             $definition->addTag('container.excluded', ['source' => 'because it\'s a Doctrine mapped superclass']);
         });
 
-        $container->registerAttributeForAutoconfiguration(JsonStreamable::class, static function (ChildDefinition $definition, JsonStreamable $attribute) {
+        $container->registerAttributeForAutoconfiguration(JsonStreamable::class, static function (ChildDefinition $definition, JsonStreamable $attribute): void {
             $definition->addTag('json_streamer.streamable', [
                 'object' => $attribute->asObject,
                 'list' => $attribute->asList,
@@ -922,15 +926,17 @@ class FrameworkExtension extends Extension
 
         if ($httpMethodOverride) {
             $container->getDefinition('http_cache')
-                  ->addArgument((new Definition('void'))
-                      ->setFactory([Request::class, 'enableHttpMethodParameterOverride'])
+                  ->addArgument(
+                      (new Definition('void'))
+                      ->setFactory(Request::enableHttpMethodParameterOverride(...))
                   );
         }
 
         if (null !== $allowedHttpMethodOverride) {
             $container->getDefinition('http_cache')
-                    ->addArgument((new Definition('void'))
-                        ->setFactory([Request::class, 'setAllowedHttpMethodOverride'])
+                    ->addArgument(
+                        (new Definition('void'))
+                        ->setFactory(Request::setAllowedHttpMethodOverride(...))
                         ->addArgument($allowedHttpMethodOverride)
                     );
         }
@@ -1027,7 +1033,7 @@ class FrameworkExtension extends Extension
         $container->setParameter('profiler_listener.only_main_requests', $config['only_main_requests']);
 
         // Choose storage class based on the DSN
-        [$class] = explode(':', $config['dsn'], 2);
+        [$class] = explode(':', (string) $config['dsn'], 2);
         if ('file' !== $class) {
             throw new \LogicException(\sprintf('Driver "%s" is not supported for the profiler.', $class));
         }
@@ -1322,7 +1328,7 @@ class FrameworkExtension extends Extension
             $container->resolveEnvPlaceholders($enabledLocales, null, $usedEnvs);
 
             if (!$usedEnvs) {
-                $locales = implode('|', array_map('preg_quote', $enabledLocales));
+                $locales = implode('|', array_map(preg_quote(...), $enabledLocales));
             } else {
                 $locales = (new Definition('string'))
                     ->setFactory('implode')
@@ -1467,7 +1473,7 @@ class FrameworkExtension extends Extension
         $paths = $config['paths'];
         foreach ($container->getParameter('kernel.bundles_metadata') as $name => $bundle) {
             if ($container->fileExists($dir = $bundle['path'].'/Resources/public') || $container->fileExists($dir = $bundle['path'].'/public')) {
-                $paths[$dir] = \sprintf('bundles/%s', preg_replace('/bundle$/', '', strtolower($name)));
+                $paths[$dir] = \sprintf('bundles/%s', preg_replace('/bundle$/', '', strtolower((string) $name)));
             }
         }
         $excludedPathPatterns = [];
@@ -1484,7 +1490,7 @@ class FrameworkExtension extends Extension
             ->setArgument(0, $config['public_prefix']);
 
         $publicDirectory = $this->getPublicDirectory($container);
-        $publicAssetsDirectory = rtrim($publicDirectory.'/'.ltrim($config['public_prefix'], '/'), '/');
+        $publicAssetsDirectory = rtrim($publicDirectory.'/'.ltrim((string) $config['public_prefix'], '/'), '/');
         $container->getDefinition('asset_mapper.local_public_assets_filesystem')
             ->setArgument(0, $publicDirectory)
         ;
@@ -1687,7 +1693,7 @@ class FrameworkExtension extends Extension
                 $finder = Finder::create()
                     ->followLinks()
                     ->files()
-                    ->filter(static fn (\SplFileInfo $file) => 2 <= substr_count($file->getBasename(), '.') && preg_match('/\.\w+$/', $file->getBasename()))
+                    ->filter(static fn (\SplFileInfo $file): bool => 2 <= substr_count($file->getBasename(), '.') && preg_match('/\.\w+$/', $file->getBasename()))
                     ->in($dir)
                     ->sortByName()
                 ;
@@ -1710,7 +1716,7 @@ class FrameworkExtension extends Extension
                     'resource_files' => $files,
                     'scanned_directories' => $scannedDirectories = array_merge($dirs, $nonExistingDirs),
                     'cache_vary' => [
-                        'scanned_directories' => array_map(static fn ($dir) => str_starts_with($dir, $projectDir.'/') ? substr($dir, 1 + \strlen($projectDir)) : $dir, $scannedDirectories),
+                        'scanned_directories' => array_map(static fn ($dir) => str_starts_with((string) $dir, $projectDir.'/') ? substr((string) $dir, 1 + \strlen($projectDir)) : $dir, $scannedDirectories),
                     ],
                 ]
             );
@@ -1824,12 +1830,12 @@ class FrameworkExtension extends Extension
         // And when runtime-discovery of attributes is enabled, we can skip compile-time autoconfiguration in debug mode.
         if (!($config['enable_attributes'] ?? false) || !$container->getParameter('kernel.debug')) {
             // The $reflector argument hints at where the attribute could be used
-            $container->registerAttributeForAutoconfiguration(Constraint::class, static function (ChildDefinition $definition, Constraint $attribute, \ReflectionClass|\ReflectionMethod|\ReflectionProperty $reflector) {
+            $container->registerAttributeForAutoconfiguration(Constraint::class, static function (ChildDefinition $definition, Constraint $attribute, \ReflectionClass|\ReflectionMethod|\ReflectionProperty $reflector): void {
                 $definition->addTag('validator.attribute_metadata');
             });
         }
 
-        $container->registerAttributeForAutoconfiguration(ExtendsValidationFor::class, static function (ChildDefinition $definition, ExtendsValidationFor $attribute) {
+        $container->registerAttributeForAutoconfiguration(ExtendsValidationFor::class, static function (ChildDefinition $definition, ExtendsValidationFor $attribute): void {
             $definition->addTag('validator.attribute_metadata', ['for' => $attribute->class])
                 ->addTag('container.excluded', ['source' => 'because it\'s a validator constraint extension']);
         });
@@ -1873,7 +1879,7 @@ class FrameworkExtension extends Extension
 
     private function registerValidatorMapping(ContainerBuilder $container, array $config, array &$files): void
     {
-        $fileRecorder = static function ($extension, $path) use (&$files) {
+        $fileRecorder = static function ($extension, $path) use (&$files): void {
             $files['yaml' === $extension ? 'yml' : $extension][] = $path;
         };
 
@@ -1922,7 +1928,7 @@ class FrameworkExtension extends Extension
                 $this->registerMappingFilesFromDir($path, $fileRecorder);
                 $container->addResource(new DirectoryResource($path, '/^$/'));
             } elseif ($container->fileExists($path, false)) {
-                if (!preg_match('/\.(xml|ya?ml)$/', $path, $matches)) {
+                if (!preg_match('/\.(xml|ya?ml)$/', (string) $path, $matches)) {
                     throw new \RuntimeException(\sprintf('Unsupported mapping type in "%s", supported types are XML & Yaml.', $path));
                 }
                 $fileRecorder($matches[1], $path);
@@ -1973,7 +1979,7 @@ class FrameworkExtension extends Extension
         $loader->load('secrets.php');
 
         $container->resolveEnvPlaceholders($secret, null, $usedEnvs);
-        $secretEnvVar = 1 === \count($usedEnvs ?? []) ? substr(key($usedEnvs), 1 + (strrpos(key($usedEnvs), ':') ?: -1)) : null;
+        $secretEnvVar = 1 === \count($usedEnvs ?? []) ? substr((string) key($usedEnvs), 1 + (strrpos((string) key($usedEnvs), ':') ?: -1)) : null;
         $container->getDefinition('secrets.vault')->replaceArgument(2, $secretEnvVar);
         $container->getDefinition('secrets.vault')->replaceArgument(0, $config['vault_directory']);
 
@@ -1984,7 +1990,7 @@ class FrameworkExtension extends Extension
         }
 
         if ($config['decryption_env_var']) {
-            if (!preg_match('/^(?:[-.\w\\\\]*+:)*+[\w.]++$/', $config['decryption_env_var'])) {
+            if (!preg_match('/^(?:[-.\w\\\\]*+:)*+[\w.]++$/', (string) $config['decryption_env_var'])) {
                 throw new InvalidArgumentException(\sprintf('Invalid value "%s" set as "decryption_env_var": only "word" and dot characters are allowed.', $config['decryption_env_var']));
             }
 
@@ -2080,13 +2086,13 @@ class FrameworkExtension extends Extension
         // And when runtime-discovery of attributes is enabled, we can skip compile-time autoconfiguration in debug mode.
         if (!($config['enable_attributes'] ?? false) || !$container->getParameter('kernel.debug')) {
             // The $reflector argument hints at where the attribute could be used
-            $configurator = static function (ChildDefinition $definition, object $attribute, \ReflectionClass|\ReflectionMethod|\ReflectionProperty $reflector) {
+            $configurator = static function (ChildDefinition $definition, object $attribute, \ReflectionClass|\ReflectionMethod|\ReflectionProperty $reflector): void {
                 $definition->addTag('serializer.attribute_metadata');
             };
             $container->registerAttributeForAutoconfiguration(SerializerMapping\Context::class, $configurator);
             $container->registerAttributeForAutoconfiguration(SerializerMapping\Groups::class, $configurator);
 
-            $configurator = static function (ChildDefinition $definition, object $attribute, \ReflectionMethod|\ReflectionProperty $reflector) {
+            $configurator = static function (ChildDefinition $definition, object $attribute, \ReflectionMethod|\ReflectionProperty $reflector): void {
                 $definition->addTag('serializer.attribute_metadata');
             };
             $container->registerAttributeForAutoconfiguration(SerializerMapping\Ignore::class, $configurator);
@@ -2094,7 +2100,7 @@ class FrameworkExtension extends Extension
             $container->registerAttributeForAutoconfiguration(SerializerMapping\SerializedName::class, $configurator);
             $container->registerAttributeForAutoconfiguration(SerializerMapping\SerializedPath::class, $configurator);
 
-            $container->registerAttributeForAutoconfiguration(SerializerMapping\DiscriminatorMap::class, static function (ChildDefinition $definition) {
+            $container->registerAttributeForAutoconfiguration(SerializerMapping\DiscriminatorMap::class, static function (ChildDefinition $definition): void {
                 $definition->addTag('serializer.attribute_metadata');
             });
         }
@@ -2104,7 +2110,7 @@ class FrameworkExtension extends Extension
         $container->getDefinition('serializer.mapping.attribute_loader')
             ->replaceArgument(0, $config['enable_attributes'] ?? false);
 
-        $fileRecorder = static function ($extension, $path) use (&$serializerLoaders) {
+        $fileRecorder = static function ($extension, $path) use (&$serializerLoaders): void {
             $definition = new Definition(\in_array($extension, ['yaml', 'yml'], true) ? YamlFileLoader::class : XmlFileLoader::class, [$path]);
             $serializerLoaders[] = $definition;
         };
@@ -2161,7 +2167,7 @@ class FrameworkExtension extends Extension
 
         $container->setParameter('.serializer.named_serializers', $config['named_serializers'] ?? []);
 
-        $container->registerAttributeForAutoconfiguration(ExtendsSerializationFor::class, static function (ChildDefinition $definition, ExtendsSerializationFor $attribute) {
+        $container->registerAttributeForAutoconfiguration(ExtendsSerializationFor::class, static function (ChildDefinition $definition, ExtendsSerializationFor $attribute): void {
             $definition->addTag('serializer.attribute_metadata', ['for' => $attribute->class])
                 ->addTag('container.excluded', ['source' => 'because it\'s a serializer metadata extension']);
         });
@@ -2279,12 +2285,12 @@ class FrameworkExtension extends Extension
                 }
                 $usedEnvs = [];
                 $storeDsn = $container->resolveEnvPlaceholders($resourceStore, null, $usedEnvs);
-                if (!$usedEnvs && !str_contains($resourceStore, ':') && !\in_array($resourceStore, ['flock', 'semaphore', 'in-memory', 'null'], true)) {
+                if (!$usedEnvs && !str_contains((string) $resourceStore, ':') && !\in_array($resourceStore, ['flock', 'semaphore', 'in-memory', 'null'], true)) {
                     $resourceStore = new Reference($resourceStore);
                 }
                 $storeDefinition = new Definition(PersistingStoreInterface::class);
                 $storeDefinition
-                    ->setFactory([StoreFactory::class, 'createStore'])
+                    ->setFactory(StoreFactory::createStore(...))
                     ->setArguments([$resourceStore])
                     ->addTag('lock.store');
 
@@ -2331,16 +2337,16 @@ class FrameworkExtension extends Extension
         foreach ($config['resources'] as $resourceName => $resourceStore) {
             $storeDsn = $container->resolveEnvPlaceholders($resourceStore, null, $usedEnvs);
 
-            if (str_starts_with($storeDsn, 'lock://') && !class_exists(LockStore::class)) {
+            if (str_starts_with((string) $storeDsn, 'lock://') && !class_exists(LockStore::class)) {
                 throw new LogicException('Cannot use a lock store as the installed version of the Semaphore component does not support it. Try running "composer require symfony/semaphore:^8.1".');
             }
 
             $storeDefinition = new Definition(SemaphoreStoreInterface::class);
-            $storeDefinition->setFactory([SemaphoreStoreFactory::class, 'createStore']);
+            $storeDefinition->setFactory(SemaphoreStoreFactory::createStore(...));
             $storeDefinition->setArguments([match (true) {
                 $usedEnvs => $resourceStore,
-                str_starts_with($storeDsn, 'lock://') => new Reference('lock.'.(substr($storeDsn, 7) ?: 'default').'.factory'),
-                !str_contains($resourceStore, '://') => new Reference($resourceStore),
+                str_starts_with((string) $storeDsn, 'lock://') => new Reference('lock.'.(substr((string) $storeDsn, 7) ?: 'default').'.factory'),
+                !str_contains((string) $resourceStore, '://') => new Reference($resourceStore),
                 default => $resourceStore,
             }]);
 
@@ -2525,7 +2531,7 @@ class FrameworkExtension extends Extension
                 'is_failure_transport' => \in_array($name, $failureTransports, true),
             ];
             $serializerReferencesByTransport[$name] = new Reference($serializerId);
-            if (str_starts_with($transport['dsn'], 'sync://')) {
+            if (str_starts_with((string) $transport['dsn'], 'sync://')) {
                 $tags['is_consumable'] = false;
             }
             $transportDefinition = (new Definition(TransportInterface::class))
@@ -2576,20 +2582,22 @@ class FrameworkExtension extends Extension
             $senderReferences[$transportId] = new Reference($transportId);
         }
 
-        foreach ($config['transports'] as $name => $transport) {
-            if ($transport['failure_transport']) {
-                if (!isset($senderReferences[$transport['failure_transport']])) {
-                    throw new LogicException(\sprintf('Invalid Messenger configuration: the failure transport "%s" is not a valid transport or service id.', $transport['failure_transport']));
-                }
+        foreach ($config['transports'] as $transport) {
+            if (!$transport['failure_transport']) {
+                continue;
             }
+            if (isset($senderReferences[$transport['failure_transport']])) {
+                continue;
+            }
+            throw new LogicException(\sprintf('Invalid Messenger configuration: the failure transport "%s" is not a valid transport or service id.', $transport['failure_transport']));
         }
 
-        $failureTransportReferencesByTransportName = array_map(static fn ($failureTransportName) => $senderReferences[$failureTransportName], $failureTransportsByName);
+        $failureTransportReferencesByTransportName = array_map(static fn ($failureTransportName): \Symfony\Component\DependencyInjection\Reference => $senderReferences[$failureTransportName], $failureTransportsByName);
 
         $messageToSendersMapping = [];
         foreach ($config['routing'] as $message => $messageConfiguration) {
-            if ('*' !== $message && !class_exists($message) && !interface_exists($message, false) && !preg_match('/^(?:[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+\\\\)++\*$/', $message)) {
-                if (str_contains($message, '*')) {
+            if ('*' !== $message && !class_exists($message) && !interface_exists($message, false) && !preg_match('/^(?:[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+\\\\)++\*$/', (string) $message)) {
+                if (str_contains((string) $message, '*')) {
                     throw new LogicException(\sprintf('Invalid Messenger routing configuration: invalid namespace "%s" wildcard.', $message));
                 }
 
@@ -2762,7 +2770,7 @@ class FrameworkExtension extends Extension
             $propertyAccessDefinition = $container->register('cache.property_access', AdapterInterface::class);
 
             if (!$container->getParameter('kernel.debug')) {
-                $propertyAccessDefinition->setFactory([PropertyAccessor::class, 'createCache']);
+                $propertyAccessDefinition->setFactory(PropertyAccessor::createCache(...));
                 $propertyAccessDefinition->setArguments(['', 0, $version, new Reference('logger', ContainerInterface::IGNORE_ON_INVALID_REFERENCE)]);
                 $propertyAccessDefinition->addTag('cache.pool', ['clearer' => 'cache.system_clearer']);
                 $propertyAccessDefinition->addTag('monolog.logger', ['channel' => 'cache']);
@@ -3080,7 +3088,7 @@ class FrameworkExtension extends Extension
             $headers = new Definition(Headers::class);
             foreach ($config['headers'] as $name => $data) {
                 $value = $data['value'];
-                if (\in_array(strtolower($name), ['from', 'to', 'cc', 'bcc', 'reply-to'], true)) {
+                if (\in_array(strtolower((string) $name), ['from', 'to', 'cc', 'bcc', 'reply-to'], true)) {
                     $value = (array) $value;
                 }
                 $headers->addMethodCall('addHeader', [$name, $value]);
@@ -3449,7 +3457,7 @@ class FrameworkExtension extends Extension
             $container->register($limiterId = 'limiter.'.$name, CompoundRateLimiterFactory::class)
                 ->addTag('rate_limiter', ['name' => $name])
                 ->addArgument(new IteratorArgument(array_map(
-                    static fn (string $name) => new Reference('limiter.'.$name),
+                    static fn (string $name): \Symfony\Component\DependencyInjection\Reference => new Reference('limiter.'.$name),
                     $limiterConfig['limiters']
                 )))
             ;

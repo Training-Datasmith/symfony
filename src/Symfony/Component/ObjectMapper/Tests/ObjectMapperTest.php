@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -173,7 +175,7 @@ final class ObjectMapperTest extends TestCase
     {
         $this->expectException(MappingException::class);
         $this->expectExceptionMessage('Mapping target not found for source "class@anonymous".');
-        (new ObjectMapper())->map(new class {});
+        (new ObjectMapper())->map(new class () {});
     }
 
     public function testHasNothingToMapToWithNamedClass()
@@ -316,7 +318,7 @@ final class ObjectMapperTest extends TestCase
 
     protected function getServiceLocator(array $factories): ContainerInterface
     {
-        return new class($factories) implements ContainerInterface {
+        return new class ($factories) implements ContainerInterface {
             public function __construct(private array $factories)
             {
             }
@@ -346,7 +348,7 @@ final class ObjectMapperTest extends TestCase
     public function testSourceOnlyWithMagicMethods()
     {
         $mapper = new ObjectMapper();
-        $a = new class {
+        $a = new class () {
             public function __isset($key): bool
             {
                 return 'name' === $key;
@@ -508,7 +510,7 @@ final class ObjectMapperTest extends TestCase
     public function testDecorateObjectMapper()
     {
         $mapper = new ObjectMapper();
-        $myMapper = new class($mapper) implements ObjectMapperInterface {
+        $myMapper = new class ($mapper) implements ObjectMapperInterface {
             public function __construct(private ObjectMapperInterface $mapper)
             {
                 $this->mapper = $mapper->withObjectMapper($this);
@@ -768,10 +770,10 @@ final class ObjectMapperTest extends TestCase
     public function testMissingSourcePropertiesAreIgnored()
     {
         $mapper = new ObjectMapper();
-        $source = new class {
+        $source = new class () {
             public string $name = 'test';
         };
-        $target = $mapper->map($source, new class {
+        $target = $mapper->map($source, new class () {
             public string $name;
             public bool $withDefault = true;
             public string $withoutDefault;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -193,7 +195,7 @@ class XmlDescriptor extends Descriptor
         $objectXML->setAttribute('name', '--'.$option->getName());
         $pos = strpos($option->getShortcut() ?? '', '|');
         if (false !== $pos) {
-            $objectXML->setAttribute('shortcut', '-'.substr($option->getShortcut(), 0, $pos));
+            $objectXML->setAttribute('shortcut', '-'.substr((string) $option->getShortcut(), 0, $pos));
             $objectXML->setAttribute('shortcuts', '-'.str_replace('|', '|-', $option->getShortcut()));
         } else {
             $objectXML->setAttribute('shortcut', $option->getShortcut() ? '-'.$option->getShortcut() : '');

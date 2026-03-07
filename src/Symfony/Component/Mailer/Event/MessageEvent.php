@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,8 +34,8 @@ final class MessageEvent extends Event
     public function __construct(
         private RawMessage $message,
         private Envelope $envelope,
-        private string $transport,
-        private bool $queued = false,
+        private readonly string $transport,
+        private readonly bool $queued = false,
     ) {
     }
 

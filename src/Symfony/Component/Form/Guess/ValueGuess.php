@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ class ValueGuess extends Guess
      * @param int $confidence The confidence that the guessed class name is correct
      */
     public function __construct(
-        private string|int|bool|null $value,
+        private readonly string|int|bool|null $value,
         int $confidence,
     ) {
         parent::__construct($confidence);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'porik, kiž so koši: dorosćeny, dorosćeny, swětła barba kože a srěnjoswětła barba kože',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'porik, kiž so koši: dorosćeny, dorosćeny, swětła barba kože a srěnja barba kože',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,13 +35,13 @@ use Symfony\Contracts\EventDispatcher\Event;
 class LoginSuccessEvent extends Event
 {
     public function __construct(
-        private AuthenticatorInterface $authenticator,
-        private Passport $passport,
-        private TokenInterface $authenticatedToken,
-        private Request $request,
+        private readonly AuthenticatorInterface $authenticator,
+        private readonly Passport $passport,
+        private readonly TokenInterface $authenticatedToken,
+        private readonly Request $request,
         private ?Response $response,
-        private string $firewallName,
-        private ?TokenInterface $previousToken = null,
+        private readonly string $firewallName,
+        private readonly ?TokenInterface $previousToken = null,
     ) {
     }
 

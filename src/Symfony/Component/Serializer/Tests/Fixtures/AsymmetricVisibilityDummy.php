@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -13,7 +15,7 @@ namespace Symfony\Component\Serializer\Tests\Fixtures;
 
 final class AsymmetricVisibilityDummy
 {
-    private(set) string $type;
+    public private(set) string $type;
 
     public function __construct(
         public readonly string $item,

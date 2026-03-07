@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,12 +38,12 @@ class ProfilerController
     private TemplateManager $templateManager;
 
     public function __construct(
-        private UrlGeneratorInterface $generator,
-        private ?Profiler $profiler,
-        private Environment $twig,
-        private array $templates,
-        private ?ContentSecurityPolicyHandler $cspHandler = null,
-        private ?string $baseDir = null,
+        private readonly UrlGeneratorInterface $generator,
+        private readonly ?Profiler $profiler,
+        private readonly Environment $twig,
+        private readonly array $templates,
+        private readonly ?ContentSecurityPolicyHandler $cspHandler = null,
+        private readonly ?string $baseDir = null,
     ) {
     }
 
@@ -72,7 +74,7 @@ class ProfilerController
         $page = $request->query->get('page', 'home');
         $profileType = $request->query->get('type', 'request');
 
-        if ('latest' === $token && $latest = current($this->profiler->find(null, null, 1, null, null, null, null, static fn ($profile) => $profileType === $profile['virtual_type']))) {
+        if ('latest' === $token && $latest = current($this->profiler->find(null, null, 1, null, null, null, null, static fn ($profile): bool => $profileType === $profile['virtual_type']))) {
             $token = $latest['token'];
         }
 
@@ -234,8 +236,8 @@ class ProfilerController
         $method = $request->query->get('method');
         $statusCode = $request->query->get('status_code');
         $url = $request->query->get('url');
-        $start = $request->query->get('start', null);
-        $end = $request->query->get('end', null);
+        $start = $request->query->get('start');
+        $end = $request->query->get('end');
         $limit = $request->query->get('limit');
         $profileType = $request->query->get('type', 'request');
 
@@ -243,7 +245,7 @@ class ProfilerController
             'request' => $request,
             'token' => $token,
             'profile' => $profile,
-            'tokens' => $this->profiler->find($ip, $url, $limit, $method, $start, $end, $statusCode, static fn ($profile) => $profileType === $profile['virtual_type']),
+            'tokens' => $this->profiler->find($ip, $url, $limit, $method, $start, $end, $statusCode, static fn ($profile): bool => $profileType === $profile['virtual_type']),
             'ip' => $ip,
             'method' => $method,
             'status_code' => $statusCode,
@@ -269,8 +271,8 @@ class ProfilerController
         $method = $request->query->get('method');
         $statusCode = $request->query->get('status_code');
         $url = $request->query->get('url');
-        $start = $request->query->get('start', null);
-        $end = $request->query->get('end', null);
+        $start = $request->query->get('start');
+        $end = $request->query->get('end');
         $limit = $request->query->get('limit');
         $token = $request->query->get('token');
         $profileType = $request->query->get('type', 'request');
@@ -293,7 +295,7 @@ class ProfilerController
             return new RedirectResponse($this->generator->generate('_profiler', ['token' => $token]), 302, ['Content-Type' => 'text/html']);
         }
 
-        $tokens = $this->profiler->find($ip, $url, $limit, $method, $start, $end, $statusCode, static fn ($profile) => $profileType === $profile['virtual_type']);
+        $tokens = $this->profiler->find($ip, $url, $limit, $method, $start, $end, $statusCode, static fn ($profile): bool => $profileType === $profile['virtual_type']);
 
         return new RedirectResponse($this->generator->generate('_profiler_search_results', [
             'token' => $tokens ? $tokens[0]['token'] : 'empty',
@@ -388,7 +390,7 @@ class ProfilerController
 
         $filename = $this->baseDir.\DIRECTORY_SEPARATOR.$file;
 
-        if (preg_match("'(^|[/\\\\])\.'", $file) || !is_readable($filename)) {
+        if (preg_match("'(^|[/\\\\])\.'", (string) $file) || !is_readable($filename)) {
             throw new NotFoundHttpException(\sprintf('The file "%s" cannot be opened.', $file));
         }
 

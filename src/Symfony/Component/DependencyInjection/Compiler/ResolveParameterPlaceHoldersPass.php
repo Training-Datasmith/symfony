@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,8 +30,8 @@ class ResolveParameterPlaceHoldersPass extends AbstractRecursivePass
     private ParameterBagInterface $bag;
 
     public function __construct(
-        private bool $resolveArrays = true,
-        private bool $throwOnResolveException = true,
+        private readonly bool $resolveArrays = true,
+        private readonly bool $throwOnResolveException = true,
     ) {
     }
 
@@ -94,7 +96,7 @@ class ResolveParameterPlaceHoldersPass extends AbstractRecursivePass
         $value = parent::processValue($value, $isRoot);
 
         if ($value && \is_array($value)) {
-            $value = array_combine($this->bag->resolveValue(array_keys($value)), $value);
+            return array_combine($this->bag->resolveValue(array_keys($value)), $value);
         }
 
         return $value;

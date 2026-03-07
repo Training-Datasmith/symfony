@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ class Valid extends Constraint
      * @param string[]|null $groups
      * @param bool|null     $traverse Whether to validate {@see \Traversable} objects (defaults to true)
      */
-    public function __construct(?array $options = null, ?array $groups = null, $payload = null, ?bool $traverse = null)
+    public function __construct(?array $options = null, ?array $groups = null, mixed $payload = null, ?bool $traverse = null)
     {
         if (null !== $options) {
             throw new InvalidArgumentException(\sprintf('Passing an array of options to configure the "%s" constraint is no longer supported.', static::class));

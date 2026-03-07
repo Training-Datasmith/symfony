@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,10 @@ trait OidcTrait
 
         foreach ($claims as $claim => $value) {
             unset($claims[$claim]);
-            if ('' === $value || null === $value) {
+            if ('' === $value) {
+                continue;
+            }
+            if (null === $value) {
                 continue;
             }
             $claims[u($claim)->camel()->toString()] = $value;

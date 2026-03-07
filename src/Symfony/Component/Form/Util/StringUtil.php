@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -53,7 +55,7 @@ class StringUtil
     {
         // Non-greedy ("+?") to match "type" suffix, if present
         if (preg_match('~([^\\\\]+?)(type)?$~i', $fqcn, $matches)) {
-            return strtolower(preg_replace(['/([A-Z]+)([A-Z][a-z])/', '/([a-z\d])([A-Z])/'], ['\\1_\\2', '\\1_\\2'], $matches[1]));
+            return strtolower((string) preg_replace(['/([A-Z]+)([A-Z][a-z])/', '/([a-z\d])([A-Z])/'], ['\\1_\\2', '\\1_\\2'], $matches[1]));
         }
 
         return null;

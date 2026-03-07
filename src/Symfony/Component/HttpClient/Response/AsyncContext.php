@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,11 +37,11 @@ final class AsyncContext
      */
     public function __construct(
         ?callable &$passthru,
-        private HttpClientInterface $client,
+        private readonly HttpClientInterface $client,
         ResponseInterface &$response,
         array &$info,
         private $content,
-        private int $offset,
+        private readonly int $offset,
     ) {
         $this->passthru = &$passthru;
         $this->response = &$response;
@@ -62,9 +64,9 @@ final class AsyncContext
         $headers = [];
 
         foreach ($this->response->getInfo('response_headers') as $h) {
-            if (11 <= \strlen($h) && '/' === $h[4] && preg_match('#^HTTP/\d+(?:\.\d+)? ([123456789]\d\d)(?: |$)#', $h, $m)) {
+            if (11 <= \strlen((string) $h) && '/' === $h[4] && preg_match('#^HTTP/\d+(?:\.\d+)? ([123456789]\d\d)(?: |$)#', (string) $h, $m)) {
                 $headers = [];
-            } elseif (2 === \count($m = explode(':', $h, 2))) {
+            } elseif (2 === \count($m = explode(':', (string) $h, 2))) {
                 $headers[strtolower($m[0])][] = ltrim($m[1]);
             }
         }
@@ -160,7 +162,7 @@ final class AsyncContext
         $this->info['previous_info'][] = $info = $this->response->getInfo();
         if (null !== $onProgress = $options['on_progress'] ?? null) {
             $thisInfo = &$this->info;
-            $options['on_progress'] = static function (int $dlNow, int $dlSize, array $info) use (&$thisInfo, $onProgress) {
+            $options['on_progress'] = static function (int $dlNow, int $dlSize, array $info) use (&$thisInfo, $onProgress): void {
                 $onProgress($dlNow, $dlSize, $thisInfo + $info);
             };
         }

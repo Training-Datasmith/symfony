@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,7 +40,9 @@ class NullAdapterTest extends TestCase
         $adapter = $this->createCachePool();
 
         $fetched = [];
-        $adapter->get('myKey', static function ($item) use (&$fetched) { $fetched[] = $item; });
+        $adapter->get('myKey', static function ($item) use (&$fetched) {
+            $fetched[] = $item;
+        });
         $this->assertCount(1, $fetched);
         $item = $fetched[0];
         $this->assertFalse($item->isHit());

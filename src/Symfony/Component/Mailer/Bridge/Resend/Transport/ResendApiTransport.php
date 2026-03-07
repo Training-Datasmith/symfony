@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -118,7 +120,7 @@ final class ResendApiTransport extends AbstractApiTransport
             $payload['html'] = $email->getHtmlBody();
         }
         if ($headersAndTags = $this->prepareHeadersAndTags($email->getHeaders())) {
-            $payload = array_merge($payload, $headersAndTags);
+            return array_merge($payload, $headersAndTags);
         }
 
         return $payload;
@@ -162,13 +164,13 @@ final class ResendApiTransport extends AbstractApiTransport
         $formattedAddress = $address->getEncodedAddress();
 
         if ($address->getName()) {
-            $formattedAddress = $address->getName().' <'.$formattedAddress.'>';
+            return $address->getName().' <'.$formattedAddress.'>';
         }
 
         return $formattedAddress;
     }
 
-    private function getEndpoint(): ?string
+    private function getEndpoint(): string
     {
         return ($this->host ?: 'api.resend.com').($this->port ? ':'.$this->port : '');
     }

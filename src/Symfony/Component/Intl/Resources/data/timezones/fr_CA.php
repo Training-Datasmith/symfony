@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Africa/Addis_Ababa' => 'heure d’Afrique orientale (Addis-Abeba)',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,8 +31,8 @@ use Symfony\Component\Messenger\Transport\SetupableTransportInterface;
 class SetupTransportsCommand extends Command
 {
     public function __construct(
-        private ContainerInterface $transportLocator,
-        private array $transportNames = [],
+        private readonly ContainerInterface $transportLocator,
+        private readonly array $transportNames = [],
     ) {
         parent::__construct();
     }
@@ -38,8 +40,9 @@ class SetupTransportsCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('transport', InputArgument::OPTIONAL, 'Name of the transport to setup', null)
-            ->setHelp(<<<EOF
+            ->addArgument('transport', InputArgument::OPTIONAL, 'Name of the transport to setup')
+            ->setHelp(
+                <<<EOF
                 The <info>%command.name%</info> command setups the transports:
 
                     <info>php %command.full_name%</info>
@@ -65,7 +68,7 @@ class SetupTransportsCommand extends Command
             $transportNames = [$transport];
         }
 
-        foreach ($transportNames as $id => $transportName) {
+        foreach ($transportNames as $transportName) {
             $transport = $this->transportLocator->get($transportName);
             if (!$transport instanceof SetupableTransportInterface) {
                 $io->note(\sprintf('The "%s" transport does not support setup.', $transportName));

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Asia/Pyongyang' => '조선 시간(평양)',

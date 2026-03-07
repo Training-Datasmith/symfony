@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -112,7 +114,7 @@ class DateTimeType extends AbstractType
             ]));
 
             if ($emptyData instanceof \Closure) {
-                $lazyEmptyData = static fn ($option) => static function (FormInterface $form) use ($emptyData, $option) {
+                $lazyEmptyData = static fn ($option): \Closure => static function (FormInterface $form) use ($emptyData, $option) {
                     $emptyData = $emptyData($form->getParent());
 
                     return $emptyData[$option] ?? '';
@@ -243,7 +245,7 @@ class DateTimeType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $compound = static fn (Options $options) => 'single_text' !== $options['widget'];
+        $compound = static fn (Options $options): bool => 'single_text' !== $options['widget'];
 
         $resolver->setDefaults([
             'input' => 'datetime',
@@ -269,7 +271,7 @@ class DateTimeType extends AbstractType
             'compound' => $compound,
             'date_label' => null,
             'time_label' => null,
-            'empty_data' => static fn (Options $options) => $options['compound'] ? [] : '',
+            'empty_data' => static fn (Options $options): array|string => $options['compound'] ? [] : '',
             'input_format' => 'Y-m-d H:i:s',
             'invalid_message' => 'Please enter a valid date and time.',
         ]);

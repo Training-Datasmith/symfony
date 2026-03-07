@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -58,14 +60,19 @@ abstract class DataCollector implements DataCollectorInterface
     protected function getCasters(): array
     {
         return [
-            '*' => static function ($v, array $a, Stub $s, $isNested) {
+            '*' => static function ($v, array $a, Stub $s, $isNested): array {
                 if (!$v instanceof Stub) {
                     $b = $a;
                     foreach ($a as $k => $v) {
-                        if (!\is_object($v) || $v instanceof \DateTimeInterface || $v instanceof Stub) {
+                        if (!\is_object($v)) {
                             continue;
                         }
-
+                        if ($v instanceof \DateTimeInterface) {
+                            continue;
+                        }
+                        if ($v instanceof Stub) {
+                            continue;
+                        }
                         try {
                             $a[$k] = $s = new CutStub($v);
 
@@ -73,7 +80,7 @@ abstract class DataCollector implements DataCollectorInterface
                                 // we've hit a non-typed reference
                                 $a[$k] = $v;
                             }
-                        } catch (\TypeError $e) {
+                        } catch (\TypeError) {
                             // we've hit a typed reference
                         }
                     }

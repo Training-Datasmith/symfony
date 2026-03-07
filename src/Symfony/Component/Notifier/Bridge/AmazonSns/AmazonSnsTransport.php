@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 final class AmazonSnsTransport extends AbstractTransport
 {
     public function __construct(
-        private SnsClient $snsClient,
+        private readonly SnsClient $snsClient,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -51,11 +53,11 @@ final class AmazonSnsTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$this->supports($message)) {
-            throw new UnsupportedMessageTypeException(__CLASS__, \sprintf('"%s" or "%s"', SmsMessage::class, ChatMessage::class), $message);
+            throw new UnsupportedMessageTypeException(self::class, \sprintf('"%s" or "%s"', SmsMessage::class, ChatMessage::class), $message);
         }
 
         if ($message instanceof SmsMessage && '' !== $message->getFrom()) {
-            throw new InvalidArgumentException(\sprintf('The "%s" transport does not support "from" in "%s".', __CLASS__, SmsMessage::class));
+            throw new InvalidArgumentException(\sprintf('The "%s" transport does not support "from" in "%s".', self::class, SmsMessage::class));
         }
 
         if ($message instanceof ChatMessage && $message->getOptions() instanceof AmazonSnsOptions) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'nụ hôn: người, người, màu da sáng, màu da sáng trung bình',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'nụ hôn: người, người, màu da sáng, màu da trung bình',

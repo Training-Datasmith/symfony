@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Symfony\Contracts\Service\ServiceProviderInterface;
 class ExpressionLanguageProvider implements ExpressionFunctionProviderInterface
 {
     public function __construct(
-        private ServiceProviderInterface $functions,
+        private readonly ServiceProviderInterface $functions,
     ) {
     }
 
@@ -34,7 +36,7 @@ class ExpressionLanguageProvider implements ExpressionFunctionProviderInterface
         foreach ($this->functions->getProvidedServices() as $function => $type) {
             $functions[] = new ExpressionFunction(
                 $function,
-                static fn (...$args) => \sprintf('($context->getParameter(\'_functions\')->get(%s)(%s))', var_export($function, true), implode(', ', $args)),
+                static fn (...$args): string => \sprintf('($context->getParameter(\'_functions\')->get(%s)(%s))', var_export($function, true), implode(', ', $args)),
                 static fn ($values, ...$args) => $values['context']->getParameter('_functions')->get($function)(...$args)
             );
         }

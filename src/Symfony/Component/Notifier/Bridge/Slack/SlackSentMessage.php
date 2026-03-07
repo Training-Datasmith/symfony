@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ final class SlackSentMessage extends SentMessage
     public function __construct(
         MessageInterface $original,
         string $transport,
-        private string $channelId,
+        private readonly string $channelId,
         string $messageId,
     ) {
         parent::__construct($original, $transport);

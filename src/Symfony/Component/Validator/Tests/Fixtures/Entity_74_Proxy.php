@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\Validator\Tests\Fixtures;
 
 class Entity_74_Proxy extends Entity_74

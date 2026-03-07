@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,11 +25,16 @@ class ResolveClassPass implements CompilerPassInterface
     public function process(ContainerBuilder $container): void
     {
         foreach ($container->getDefinitions() as $id => $definition) {
-            if ($definition->isSynthetic()
-                || $definition->hasErrors()
-                || null !== $definition->getClass()
-                || !preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+(?:\\\\[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+)++$/', $id)
-            ) {
+            if ($definition->isSynthetic()) {
+                continue;
+            }
+            if ($definition->hasErrors()) {
+                continue;
+            }
+            if (null !== $definition->getClass()) {
+                continue;
+            }
+            if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+(?:\\\\[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+)++$/', $id)) {
                 continue;
             }
             if ($container->getReflectionClass($id, false)) {

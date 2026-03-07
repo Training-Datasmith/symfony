@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,9 +30,9 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 final class ZulipTransport extends AbstractTransport
 {
     public function __construct(
-        private string $email,
-        #[\SensitiveParameter] private string $token,
-        private string $channel,
+        private readonly string $email,
+        #[\SensitiveParameter] private readonly string $token,
+        private readonly string $channel,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -53,14 +55,14 @@ final class ZulipTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof ChatMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, ChatMessage::class, $message);
         }
 
         $options = $message->getOptions()?->toArray() ?? [];
         $options['content'] = $message->getSubject();
 
         if (null === $message->getRecipientId() && empty($options['topic'])) {
-            throw new LogicException(\sprintf('The "%s" transport requires a topic when posting to streams.', __CLASS__));
+            throw new LogicException(\sprintf('The "%s" transport requires a topic when posting to streams.', self::class));
         }
 
         if (null === $message->getRecipientId()) {

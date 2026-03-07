@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -113,7 +115,7 @@ final class WorkflowDataCollector extends DataCollector implements LateDataColle
     {
         return [
             ...parent::getCasters(),
-            TransitionBlocker::class => static function ($v, array $a, Stub $s) {
+            TransitionBlocker::class => static function ($v, array $a, Stub $s): array {
                 unset($a[\sprintf(Caster::PATTERN_PRIVATE, $v::class, 'code')]);
                 unset($a[\sprintf(Caster::PATTERN_PRIVATE, $v::class, 'parameters')]);
 
@@ -121,7 +123,7 @@ final class WorkflowDataCollector extends DataCollector implements LateDataColle
 
                 return $a;
             },
-            Marking::class => static function ($v, array $a) {
+            Marking::class => static function ($v, array $a): array {
                 $a[Caster::PREFIX_VIRTUAL.'.places'] = array_keys($v->getPlaces());
 
                 return $a;

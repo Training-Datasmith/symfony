@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -177,7 +179,7 @@ class CasterTest extends TestCase
 
     public function testTypeErrorInDebugInfo()
     {
-        $this->assertDumpMatchesFormat('class@anonymous {}', new class {
+        $this->assertDumpMatchesFormat('class@anonymous {}', new class () {
             public function __debugInfo(): array
             {
                 return ['class' => \get_class(null)];
@@ -187,7 +189,8 @@ class CasterTest extends TestCase
 
     public function testClassHierarchy()
     {
-        $this->assertDumpMatchesFormat(<<<'DUMP'
+        $this->assertDumpMatchesFormat(
+            <<<'DUMP'
             Symfony\Component\VarDumper\Tests\Caster\B {
               +a: "a"
               #b: "b"

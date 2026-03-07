@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,16 +33,16 @@ class FileLinkFormatter
      */
     public function __construct(
         string|array|null $fileLinkFormat = null,
-        private ?RequestStack $requestStack = null,
-        private ?string $baseDir = null,
+        private readonly ?RequestStack $requestStack = null,
+        private readonly ?string $baseDir = null,
         private string|\Closure|null $urlFormat = null,
     ) {
         $fileLinkFormat ??= $_ENV['SYMFONY_IDE'] ?? $_SERVER['SYMFONY_IDE'] ?? '';
 
         if (!\is_array($f = $fileLinkFormat)) {
             $f = (ErrorRendererInterface::IDE_LINK_FORMATS[$f] ?? $f) ?: \ini_get('xdebug.file_link_format') ?: get_cfg_var('xdebug.file_link_format') ?: 'file://%f#L%l';
-            $i = strpos($f, '&', max(strrpos($f, '%f'), strrpos($f, '%l'))) ?: \strlen($f);
-            $fileLinkFormat = [substr($f, 0, $i)] + preg_split('/&([^>]++)>/', substr($f, $i), -1, \PREG_SPLIT_DELIM_CAPTURE);
+            $i = strpos((string) $f, '&', max(strrpos((string) $f, '%f'), strrpos((string) $f, '%l'))) ?: \strlen((string) $f);
+            $fileLinkFormat = [substr((string) $f, 0, $i)] + preg_split('/&([^>]++)>/', substr((string) $f, $i), -1, \PREG_SPLIT_DELIM_CAPTURE);
         }
 
         $this->fileLinkFormat = $fileLinkFormat;
@@ -50,8 +52,8 @@ class FileLinkFormatter
     {
         if ($fmt = $this->getFileLinkFormat()) {
             for ($i = 1; isset($fmt[$i]); ++$i) {
-                if (str_starts_with($file, $k = $fmt[$i++])) {
-                    $file = substr_replace($file, $fmt[$i], 0, \strlen($k));
+                if (str_starts_with($file, (string) $k = $fmt[$i++])) {
+                    $file = substr_replace($file, $fmt[$i], 0, \strlen((string) $k));
                     break;
                 }
             }

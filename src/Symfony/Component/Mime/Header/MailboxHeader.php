@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -65,7 +67,7 @@ final class MailboxHeader extends AbstractHeader
     {
         $str = $this->address->getEncodedAddress();
         if ($name = $this->address->getName()) {
-            $str = $this->createPhrase($this, $name, $this->getCharset(), true).' <'.$str.'>';
+            return $this->createPhrase($this, $name, $this->getCharset(), true).' <'.$str.'>';
         }
 
         return $str;

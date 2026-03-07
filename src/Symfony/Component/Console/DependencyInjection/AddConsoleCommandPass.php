@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -91,7 +93,7 @@ class AddConsoleCommandPass implements CompilerPassInterface
             $class = Command::class;
 
             $closureDefinition = new Definition(\Closure::class)
-                ->setFactory([\Closure::class, 'fromCallable'])
+                ->setFactory(\Closure::fromCallable(...))
                 ->setArguments([$callableRef]);
 
             $definition = $container->register($id, $class)

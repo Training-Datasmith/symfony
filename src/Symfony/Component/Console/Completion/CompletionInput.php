@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -91,7 +93,7 @@ final class CompletionInput extends ArgvInput
         }
 
         $previousToken = $this->tokens[$this->currentIndex - 1];
-        if ('-' === $previousToken[0] && '' !== trim($previousToken, '-')) {
+        if ('-' === $previousToken[0] && '' !== trim((string) $previousToken, '-')) {
             // check if previous option accepted a value
             $previousOption = $this->getOptionFromToken($previousToken);
             if ($previousOption?->acceptValue()) {

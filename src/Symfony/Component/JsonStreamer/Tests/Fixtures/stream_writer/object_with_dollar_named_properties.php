@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @param Symfony\Component\JsonStreamer\Tests\Fixtures\Model\DummyWithDollarNamedProperties $data
  */
@@ -11,7 +13,7 @@ return static function (mixed $data, \Psr\Container\ContainerInterface $valueTra
         $prefix1 = ',';
         yield "{$prefix1}\"{\$foo->bar}\":";
         yield $data->bar ? 'true' : 'false';
-        yield "}";
+        yield '}';
     } catch (\JsonException $e) {
         throw new \Symfony\Component\JsonStreamer\Exception\NotEncodableValueException($e->getMessage(), 0, $e);
     }

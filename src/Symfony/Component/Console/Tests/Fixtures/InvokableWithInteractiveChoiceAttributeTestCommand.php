@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,10 +25,8 @@ class InvokableWithInteractiveChoiceAttributeTestCommand
 {
     public function __invoke(
         SymfonyStyle $io,
-
         #[Argument, AskChoice('Select a color', ['red', 'green', 'blue'])]
         string $color,
-
         #[MapInput]
         ChoiceDto $dto,
     ): int {

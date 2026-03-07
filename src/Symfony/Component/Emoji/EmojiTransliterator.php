@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,7 +35,7 @@ final class EmojiTransliterator extends \Transliterator
 
     public readonly string $id;
 
-    private array $map;
+    private readonly array $map;
 
     private string $quickCheck;
 
@@ -114,7 +116,7 @@ final class EmojiTransliterator extends \Transliterator
 
     public function transliterate(string $string, int $start = 0, int $end = -1): string|false
     {
-        $this->quickCheck ??= str_starts_with(array_key_first($this->map), ':') ? ':' : self::QUICK_CHECK;
+        $this->quickCheck ??= str_starts_with((string) array_key_first($this->map), ':') ? ':' : self::QUICK_CHECK;
 
         if (0 === $start && -1 === $end && preg_match('//u', $string)) {
             return \strlen($string) === strcspn($string, $this->quickCheck) ? $string : strtr($string, $this->map);

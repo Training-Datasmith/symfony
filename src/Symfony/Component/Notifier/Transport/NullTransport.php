@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class NullTransport implements TransportInterface
 {
     public function __construct(
-        private ?EventDispatcherInterface $dispatcher = null,
+        private readonly ?EventDispatcherInterface $dispatcher = null,
     ) {
     }
 

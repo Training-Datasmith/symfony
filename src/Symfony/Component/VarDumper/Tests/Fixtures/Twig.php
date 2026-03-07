@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 abstract class AbstractTwigTemplate extends Twig\Template
 {
     private function createError()

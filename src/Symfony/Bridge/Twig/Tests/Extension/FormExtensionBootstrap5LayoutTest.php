@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -74,7 +76,8 @@ class FormExtensionBootstrap5LayoutTest extends AbstractBootstrap5LayoutTestCase
             ->createNamed('name', MoneyType::class)
             ->createView();
 
-        self::assertSame(<<<'HTML'
+        self::assertSame(
+            <<<'HTML'
             <div class="input-group "><span class="input-group-text">&euro; </span><input type="text" id="name" name="name" required="required" inputmode="decimal" class="form-control" /></div>
             HTML,
             trim($this->renderWidget($view))

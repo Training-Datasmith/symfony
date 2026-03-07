@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ final class ViewEvent extends RequestEvent
      */
     public private(set) ?ControllerArgumentsEvent $controllerArgumentsEvent {
         get {
-            trigger_deprecation('symfony/http-kernel', '8.1', 'Accessing the "controllerArgumentsEvent" property of the "%s" class is deprecated. Use "controllerMetadata" instead.', __CLASS__);
+            trigger_deprecation('symfony/http-kernel', '8.1', 'Accessing the "controllerArgumentsEvent" property of the "%s" class is deprecated. Use "controllerMetadata" instead.', self::class);
 
             if (!$m = $this->controllerMetadata) {
                 return null;
@@ -52,7 +54,7 @@ final class ViewEvent extends RequestEvent
         if ($controllerMetadata instanceof ControllerArgumentsEvent) {
             trigger_deprecation('symfony/http-kernel', '8.1', 'Passing a ControllerArgumentsEvent to the ViewEvent constructor is deprecated. Pass a ControllerArgumentsMetadata instance instead.');
             $this->controllerArgumentsEvent = $controllerMetadata;
-            $controllerEvent = \Closure::bind(fn () => $this->controllerEvent, $controllerMetadata, ControllerArgumentsEvent::class)();
+            $controllerEvent = \Closure::bind(fn (): \Symfony\Component\HttpKernel\Event\ControllerEvent => $this->controllerEvent, $controllerMetadata, ControllerArgumentsEvent::class)();
             $controllerMetadata = new ControllerArgumentsMetadata($controllerEvent, $controllerMetadata);
         }
         $this->controllerMetadata = $controllerMetadata;

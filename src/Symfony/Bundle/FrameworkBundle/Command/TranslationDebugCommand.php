@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -51,13 +53,13 @@ class TranslationDebugCommand extends Command
     public const MESSAGE_EQUALS_FALLBACK = 2;
 
     public function __construct(
-        private TranslatorInterface $translator,
-        private TranslationReaderInterface $reader,
-        private ExtractorInterface $extractor,
-        private ?string $defaultTransPath = null,
-        private ?string $defaultViewsPath = null,
-        private array $transPaths = [],
-        private array $codePaths = [],
+        private readonly TranslatorInterface $translator,
+        private readonly TranslationReaderInterface $reader,
+        private readonly ExtractorInterface $extractor,
+        private readonly ?string $defaultTransPath = null,
+        private readonly ?string $defaultViewsPath = null,
+        private readonly array $transPaths = [],
+        private readonly array $codePaths = [],
         private array $enabledLocales = [],
     ) {
         $this->enabledLocales = array_filter($enabledLocales);
@@ -75,7 +77,8 @@ class TranslationDebugCommand extends Command
                 new InputOption('only-unused', null, InputOption::VALUE_NONE, 'Display only unused messages'),
                 new InputOption('all', null, InputOption::VALUE_NONE, 'Load messages from all registered bundles'),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command helps finding unused or missing translation
                 messages and comparing them with the fallback ones by inspecting the
                 templates and translation files of a given bundle or the default translations directory.
@@ -213,10 +216,10 @@ class TranslationDebugCommand extends Command
                         $exitCode |= self::EXIT_CODE_UNUSED;
                     }
                 }
-
-                if (!\in_array(self::MESSAGE_UNUSED, $states, true) && $input->getOption('only-unused')
-                    || !\in_array(self::MESSAGE_MISSING, $states, true) && $input->getOption('only-missing')
-                ) {
+                if (!\in_array(self::MESSAGE_UNUSED, $states, true) && $input->getOption('only-unused')) {
+                    continue;
+                }
+                if (!\in_array(self::MESSAGE_MISSING, $states, true) && $input->getOption('only-missing')) {
                     continue;
                 }
 
@@ -316,7 +319,7 @@ class TranslationDebugCommand extends Command
 
     private function sanitizeString(string $string, int $length = 40): string
     {
-        $string = trim(preg_replace('/\s+/', ' ', $string));
+        $string = trim((string) preg_replace('/\s+/', ' ', $string));
 
         if (false !== $encoding = mb_detect_encoding($string, null, true)) {
             if (mb_strlen($string, $encoding) > $length) {

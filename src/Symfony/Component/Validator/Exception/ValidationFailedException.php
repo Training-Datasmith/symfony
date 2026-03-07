@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,8 +21,8 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 class ValidationFailedException extends RuntimeException
 {
     public function __construct(
-        private mixed $value,
-        private ConstraintViolationListInterface $violations,
+        private readonly mixed $value,
+        private readonly ConstraintViolationListInterface $violations,
     ) {
         parent::__construct($violations);
     }

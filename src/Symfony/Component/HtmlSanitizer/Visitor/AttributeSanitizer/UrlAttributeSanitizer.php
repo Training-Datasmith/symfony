@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ final class UrlAttributeSanitizer implements AttributeSanitizerInterface
         return null;
     }
 
-    public function getSupportedAttributes(): ?array
+    public function getSupportedAttributes(): array
     {
         return ['src', 'href', 'lowsrc', 'background', 'ping'];
     }

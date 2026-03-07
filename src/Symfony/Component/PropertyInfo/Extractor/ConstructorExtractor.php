@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,13 +21,13 @@ use Symfony\Component\TypeInfo\Type;
  *
  * @author Dmitrii Poddubnyi <dpoddubny@gmail.com>
  */
-final class ConstructorExtractor implements PropertyTypeExtractorInterface
+final readonly class ConstructorExtractor implements PropertyTypeExtractorInterface
 {
     /**
      * @param iterable<int, ConstructorArgumentTypeExtractorInterface> $extractors
      */
     public function __construct(
-        private readonly iterable $extractors = [],
+        private iterable $extractors = [],
     ) {
     }
 

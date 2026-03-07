@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,8 +26,8 @@ class Collection implements CollectionInterface
     private array $entries;
 
     public function __construct(
-        private Connection $connection,
-        private Query $search,
+        private readonly Connection $connection,
+        private readonly Query $search,
     ) {
     }
 
@@ -101,7 +103,7 @@ class Collection implements CollectionInterface
         unset($this->entries[$offset]);
     }
 
-    private function getSingleEntry($con, $current): Entry
+    private function getSingleEntry(?\LDAP\Connection $con, \LDAP\ResultEntry $current): Entry
     {
         $attributes = ldap_get_attributes($con, $current);
 
@@ -126,7 +128,7 @@ class Collection implements CollectionInterface
             'count' => null,
             'dn' => null,
         ]);
-        array_walk($attributes, static function (&$value) {
+        array_walk($attributes, static function (array &$value): void {
             unset($value['count']);
         });
 

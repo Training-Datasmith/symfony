@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ class DateIntervalToStringTransformer implements DataTransformerInterface
      * @param string $format The date format
      */
     public function __construct(
-        private string $format = 'P%yY%mM%dDT%hH%iM%sS',
+        private readonly string $format = 'P%yY%mM%dDT%hH%iM%sS',
     ) {
     }
 

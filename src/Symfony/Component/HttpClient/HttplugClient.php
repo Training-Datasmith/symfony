@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -129,9 +131,9 @@ final class HttplugClient implements ClientInterface, HttpAsyncClient, RequestFa
 
         $waitLoop = $this->waitLoop;
 
-        $promise = new GuzzlePromise(static function () use ($response, $waitLoop) {
+        $promise = new GuzzlePromise(static function () use ($response, $waitLoop): void {
             $waitLoop->wait($response);
-        }, static function () use ($response, $promisePool) {
+        }, static function () use ($response, $promisePool): void {
             $response->cancel();
             unset($promisePool[$response]);
         });
@@ -205,12 +207,12 @@ final class HttplugClient implements ClientInterface, HttpAsyncClient, RequestFa
 
     public function __serialize(): array
     {
-        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot serialize '.self::class);
     }
 
     public function __unserialize(array $data): void
     {
-        throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot unserialize '.self::class);
     }
 
     public function __destruct()

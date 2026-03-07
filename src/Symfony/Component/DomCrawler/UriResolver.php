@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -70,7 +72,7 @@ class UriResolver
         }
 
         // relative path
-        $path = parse_url(substr($baseUri, \strlen($baseUriCleaned)), \PHP_URL_PATH) ?? '';
+        $path = parse_url(substr($baseUri, \strlen((string) $baseUriCleaned)), \PHP_URL_PATH) ?? '';
         $path = self::canonicalizePath((str_contains($path, '/') ? substr($path, 0, strrpos($path, '/')) : '').'/'.$uri);
 
         return $baseUriCleaned.('' === $path || '/' !== $path[0] ? '/' : '').$path;

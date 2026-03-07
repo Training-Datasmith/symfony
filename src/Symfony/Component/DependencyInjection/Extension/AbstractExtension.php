@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -45,7 +47,7 @@ abstract class AbstractExtension extends Extension implements ConfigurableExtens
 
     final public function prepend(ContainerBuilder $container): void
     {
-        $callback = function (ContainerConfigurator $configurator) use ($container) {
+        $callback = function (ContainerConfigurator $configurator) use ($container): void {
             $this->prependExtension($configurator, $container);
         };
 
@@ -56,7 +58,7 @@ abstract class AbstractExtension extends Extension implements ConfigurableExtens
     {
         $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
 
-        $callback = function (ContainerConfigurator $configurator) use ($config, $container) {
+        $callback = function (ContainerConfigurator $configurator) use ($config, $container): void {
             $this->loadExtension($config, $configurator, $container);
         };
 

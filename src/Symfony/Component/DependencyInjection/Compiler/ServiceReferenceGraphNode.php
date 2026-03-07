@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,8 +29,8 @@ class ServiceReferenceGraphNode
     private array $outEdges = [];
 
     public function __construct(
-        private string $id,
-        private mixed $value,
+        private readonly string $id,
+        private readonly mixed $value,
     ) {
     }
 

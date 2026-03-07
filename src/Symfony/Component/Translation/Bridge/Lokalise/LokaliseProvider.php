@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  *  * Keys refers to Symfony's translation keys;
  *  * Translations refers to Symfony's translated messages
  */
-final class LokaliseProvider implements ProviderInterface
+final readonly class LokaliseProvider implements ProviderInterface
 {
     private const LOKALISE_GET_KEYS_LIMIT = 5000;
     private const PROJECT_TOO_BIG_STATUS_CODE = 413;
@@ -166,7 +168,7 @@ final class LokaliseProvider implements ProviderInterface
         }
 
         // Lokalise returns languages with "-" separator, we need to reformat them to "_" separator.
-        $reformattedLanguages = array_map(static fn ($language) => str_replace('-', '_', $language), array_keys($responseContent['files']));
+        $reformattedLanguages = array_map(static fn (int|string $language): string => str_replace('-', '_', $language), array_keys($responseContent['files']));
 
         return array_combine($reformattedLanguages, $responseContent['files']);
     }
@@ -322,7 +324,7 @@ final class LokaliseProvider implements ProviderInterface
             }
 
             $keys = $response->toArray(false)['keys'] ?? [];
-            $createdKeys = array_reduce($keys, static function ($carry, array $keyItem) {
+            $createdKeys = array_reduce($keys, static function (array $carry, array $keyItem): array {
                 $carry[$keyItem['key_name']['web']] = $keyItem['key_id'];
 
                 return $carry;
@@ -407,7 +409,7 @@ final class LokaliseProvider implements ProviderInterface
         $keysFromResponse = $response->toArray(false)['keys'] ?? [];
 
         if (\count($keysFromResponse) > 0) {
-            $result = array_reduce($keysFromResponse, static function ($carry, array $keyItem) {
+            $result = array_reduce($keysFromResponse, static function (array $carry, array $keyItem): array {
                 $carry[$keyItem['key_name']['web']] = $keyItem['key_id'];
 
                 return $carry;
@@ -423,7 +425,7 @@ final class LokaliseProvider implements ProviderInterface
 
         $pages = ceil($keysTotalCount / self::LOKALISE_GET_KEYS_LIMIT);
         if ($page < $pages) {
-            $result = array_merge($result, $this->getKeysIds($keys, $domain, ++$page));
+            return array_merge($result, $this->getKeysIds($keys, $domain, ++$page));
         }
 
         return $result;
@@ -432,7 +434,7 @@ final class LokaliseProvider implements ProviderInterface
     private function ensureAllLocalesAreCreated(TranslatorBagInterface $translatorBag): void
     {
         $providerLanguages = $this->getLanguages();
-        $missingLanguages = array_reduce($translatorBag->getCatalogues(), static function ($carry, $catalogue) use ($providerLanguages) {
+        $missingLanguages = array_reduce($translatorBag->getCatalogues(), static function ($carry, \Symfony\Component\Translation\MessageCatalogueInterface $catalogue) use ($providerLanguages) {
             if (!\in_array($catalogue->getLocale(), $providerLanguages, true)) {
                 $carry[] = $catalogue->getLocale();
             }
@@ -472,7 +474,7 @@ final class LokaliseProvider implements ProviderInterface
     {
         $response = $this->client->request('POST', 'languages', [
             'json' => [
-                'languages' => array_map(static fn ($language) => ['lang_iso' => $language], $languages),
+                'languages' => array_map(static fn ($language): array => ['lang_iso' => $language], $languages),
             ],
         ]);
 

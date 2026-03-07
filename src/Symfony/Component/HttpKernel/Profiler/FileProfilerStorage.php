@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ class FileProfilerStorage implements ProfilerStorageInterface
     /**
      * Folder where profiler data are stored.
      */
-    private string $folder;
+    private readonly string $folder;
 
     /**
      * Constructs the file storage using a "dsn-like" path.
@@ -55,7 +57,7 @@ class FileProfilerStorage implements ProfilerStorageInterface
 
         $result = [];
         while (\count($result) < $limit && $line = $this->readLineFromFile($file)) {
-            $values = str_getcsv($line, ',', '"', '\\');
+            $values = str_getcsv((string) $line, ',', '"', '\\');
 
             if (7 > \count($values)) {
                 // skip invalid lines
@@ -67,10 +69,18 @@ class FileProfilerStorage implements ProfilerStorageInterface
 
             $urlFilter = false;
             if ($url) {
-                $urlFilter = str_starts_with($url, '!') ? str_contains($csvUrl, substr($url, 1)) : !str_contains($csvUrl, $url);
+                $urlFilter = str_starts_with($url, '!') ? str_contains((string) $csvUrl, substr($url, 1)) : !str_contains((string) $csvUrl, $url);
             }
-
-            if ($ip && !str_contains($csvIp, $ip) || $urlFilter || $method && !str_contains($csvMethod, $method) || $statusCode && !str_contains($csvStatusCode, $statusCode)) {
+            if ($ip && !str_contains((string) $csvIp, $ip)) {
+                continue;
+            }
+            if ($urlFilter) {
+                continue;
+            }
+            if ($method && !str_contains((string) $csvMethod, $method)) {
+                continue;
+            }
+            if ($statusCode && !str_contains((string) $csvStatusCode, $statusCode)) {
                 continue;
             }
 
@@ -146,7 +156,7 @@ class FileProfilerStorage implements ProfilerStorageInterface
         // when there are errors in sub-requests, the parent and/or children tokens
         // may equal the profile token, resulting in infinite loops
         $parentToken = $profile->getParentToken() !== $profileToken ? $profile->getParentToken() : null;
-        $childrenToken = array_filter(array_map(static fn (Profile $p) => $profileToken !== $p->getToken() ? $p->getToken() : null, $profile->getChildren()));
+        $childrenToken = array_filter(array_map(static fn (Profile $p): ?string => $profileToken !== $p->getToken() ? $p->getToken() : null, $profile->getChildren()));
 
         // Store profile
         $data = [

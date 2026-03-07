@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\ErrorHandler\Tests\Fixtures;
 
 abstract class ReturnTypeParent extends ReturnTypeGrandParent implements ReturnTypeParentInterface
 {
-    const FOO = 'foo';
+    public const FOO = 'foo';
 
     /**
      * @return void

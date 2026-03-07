@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ use Symfony\Component\Messenger\Envelope;
  */
 class StackMiddleware implements MiddlewareInterface, StackInterface
 {
-    private MiddlewareStack $stack;
+    private readonly MiddlewareStack $stack;
     private int $offset = 0;
 
     /**

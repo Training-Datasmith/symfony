@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,7 +46,7 @@ class MicrosoftGraphTransportFactory extends AbstractTransportFactory
             throw new IncompleteDsnException('Transport "microsoftgraph+api" requires the "authEndpoint" option when not using the default graph endpoint.');
         }
 
-        if (preg_match('#^https?://#', $authEndpoint)) {
+        if (preg_match('#^https?://#', (string) $authEndpoint)) {
             throw new InvalidArgumentException('Auth endpoint needs to be provided without "http(s)://".');
         }
 

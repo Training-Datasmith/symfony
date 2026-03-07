@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,8 +22,8 @@ class TimeBasedUuidFactory
      * @param class-string<Uuid&TimeBasedUidInterface> $class
      */
     public function __construct(
-        private string $class,
-        private ?Uuid $node = null,
+        private readonly string $class,
+        private readonly ?Uuid $node = null,
     ) {
     }
 

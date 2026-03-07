@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,20 +26,12 @@ final class RocketChatOptions implements MessageOptionsInterface
     /** prefix with '@' for personal messages */
     private ?string $channel = null;
 
-    /** @var string[]|string[][] */
-    private array $attachments;
-
-    /** @var string[] */
-    private array $payload;
-
     /**
      * @param string[]|string[][] $attachments
      * @param string[]            $payload
      */
-    public function __construct(array $attachments = [], array $payload = [])
+    public function __construct(private readonly array $attachments = [], private readonly array $payload = [])
     {
-        $this->attachments = $attachments;
-        $this->payload = $payload;
     }
 
     public function toArray(): array

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,12 +31,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 class HttpBrowser extends AbstractBrowser
 {
-    private HttpClientInterface $client;
+    private readonly HttpClientInterface $client;
 
     public function __construct(?HttpClientInterface $client = null, ?History $history = null, ?CookieJar $cookieJar = null)
     {
         if (!$client && !class_exists(HttpClient::class)) {
-            throw new LogicException(\sprintf('You cannot use "%s" as the HttpClient component is not installed. Try running "composer require symfony/http-client".', __CLASS__));
+            throw new LogicException(\sprintf('You cannot use "%s" as the HttpClient component is not installed. Try running "composer require symfony/http-client".', self::class));
         }
 
         $this->client = $client ?? HttpClient::create();
@@ -94,7 +96,7 @@ class HttpBrowser extends AbstractBrowser
             return ['', []];
         }
 
-        array_walk_recursive($fields, $caster = static function (&$v) use (&$caster) {
+        array_walk_recursive($fields, $caster = static function (&$v) use (&$caster): void {
             if (\is_object($v)) {
                 if ($vars = get_object_vars($v)) {
                     array_walk_recursive($vars, $caster);

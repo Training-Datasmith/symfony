@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ use Symfony\Component\VarDumper\Cloner\Stub;
  */
 class ReflectionCaster
 {
-    public const UNSET_CLOSURE_FILE_INFO = ['Closure' => __CLASS__.'::unsetClosureFileInfo'];
+    public const UNSET_CLOSURE_FILE_INFO = ['Closure' => self::class.'::unsetClosureFileInfo'];
 
     private const EXTRA_MAP = [
         'docComment' => 'getDocComment',

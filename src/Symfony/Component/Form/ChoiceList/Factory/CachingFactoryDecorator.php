@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -52,7 +54,7 @@ class CachingFactoryDecorator implements ChoiceListFactoryInterface, ResetInterf
         if (\is_object($value)) {
             $value = spl_object_hash($value);
         } elseif (\is_array($value)) {
-            array_walk_recursive($value, static function (&$v) {
+            array_walk_recursive($value, static function (&$v): void {
                 if (\is_object($v)) {
                     $v = spl_object_hash($v);
                 }
@@ -63,7 +65,7 @@ class CachingFactoryDecorator implements ChoiceListFactoryInterface, ResetInterf
     }
 
     public function __construct(
-        private ChoiceListFactoryInterface $decoratedFactory,
+        private readonly ChoiceListFactoryInterface $decoratedFactory,
     ) {
     }
 

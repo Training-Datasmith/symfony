@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -409,7 +411,7 @@ class HtmlSanitizerCustomTest extends TestCase
     {
         $config = (new HtmlSanitizerConfig())
             ->allowElement('div', ['data-attr'])
-            ->withAttributeSanitizer(new class implements AttributeSanitizerInterface {
+            ->withAttributeSanitizer(new class () implements AttributeSanitizerInterface {
                 public function getSupportedElements(): ?array
                 {
                     return ['div'];

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'cusan: person, person, arlliw croen golau, arlliw croen canolig-golau',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'cusan: person, person, arlliw croen golau, arlliw croen canolog',

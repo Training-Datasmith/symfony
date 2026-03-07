@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -53,12 +55,12 @@ class FormErrorIterator implements \RecursiveIterator, \SeekableIterator, \Array
      * @throws InvalidArgumentException If the errors are invalid
      */
     public function __construct(
-        private FormInterface $form,
+        private readonly FormInterface $form,
         array $errors,
     ) {
         foreach ($errors as $error) {
             if (!($error instanceof FormError || $error instanceof self)) {
-                throw new InvalidArgumentException(\sprintf('The errors must be instances of "Symfony\Component\Form\FormError" or "%s". Got: "%s".', __CLASS__, get_debug_type($error)));
+                throw new InvalidArgumentException(\sprintf('The errors must be instances of "Symfony\Component\Form\FormError" or "%s". Got: "%s".', self::class, get_debug_type($error)));
             }
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,7 @@ use Symfony\Contracts\Service\ResetInterface;
 class EventDataCollector extends DataCollector implements LateDataCollectorInterface
 {
     /** @var iterable<EventDispatcherInterface> */
-    private iterable $dispatchers;
+    private readonly iterable $dispatchers;
     private ?Request $currentRequest = null;
 
     /**
@@ -37,8 +39,8 @@ class EventDataCollector extends DataCollector implements LateDataCollectorInter
      */
     public function __construct(
         iterable|EventDispatcherInterface|null $dispatchers = null,
-        private ?RequestStack $requestStack = null,
-        private string $defaultDispatcher = 'event_dispatcher',
+        private readonly ?RequestStack $requestStack = null,
+        private readonly string $defaultDispatcher = 'event_dispatcher',
     ) {
         if ($dispatchers instanceof EventDispatcherInterface) {
             $dispatchers = [$this->defaultDispatcher => $dispatchers];

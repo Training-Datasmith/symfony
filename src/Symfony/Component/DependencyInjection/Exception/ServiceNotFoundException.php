@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,10 +23,10 @@ use Psr\Container\NotFoundExceptionInterface;
 class ServiceNotFoundException extends InvalidArgumentException implements NotFoundExceptionInterface
 {
     public function __construct(
-        private string $id,
-        private ?string $sourceId = null,
+        private readonly string $id,
+        private readonly ?string $sourceId = null,
         ?\Throwable $previous = null,
-        private array $alternatives = [],
+        private readonly array $alternatives = [],
         ?string $msg = null,
     ) {
         if (null !== $msg) {

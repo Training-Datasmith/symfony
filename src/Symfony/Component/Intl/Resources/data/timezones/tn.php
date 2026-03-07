@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Africa/Abidjan' => 'Palogare ya nako ya ngwaga le ngwaga ya Greenwich (Abidjan)',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,11 +21,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
-final class Interaction
+final readonly class Interaction
 {
     public function __construct(
-        private readonly object $owner,
-        private readonly InteractiveAttributeInterface $attribute,
+        private object $owner,
+        private InteractiveAttributeInterface $attribute,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -50,7 +52,7 @@ class ExprBuilder
      */
     public function always(?\Closure $then = null): static
     {
-        $this->ifPart = static fn () => true;
+        $this->ifPart = static fn (): true => true;
         $this->allowedTypes = self::TYPE_ANY;
 
         if (null !== $then) {
@@ -69,7 +71,7 @@ class ExprBuilder
      */
     public function ifTrue(?\Closure $closure = null): static
     {
-        $this->ifPart = $closure ?? static fn ($v) => true === $v;
+        $this->ifPart = $closure ?? static fn ($v): bool => true === $v;
         $this->allowedTypes = $closure ? self::TYPE_ANY : self::TYPE_BOOL;
 
         return $this;
@@ -84,7 +86,7 @@ class ExprBuilder
      */
     public function ifFalse(?\Closure $closure = null): static
     {
-        $this->ifPart = $closure ? static fn ($v) => !$closure($v) : static fn ($v) => false === $v;
+        $this->ifPart = $closure ? static fn ($v): bool => !$closure($v) : static fn ($v): bool => false === $v;
         $this->allowedTypes = $closure ? self::TYPE_ANY : self::TYPE_BOOL;
 
         return $this;
@@ -123,7 +125,7 @@ class ExprBuilder
      */
     public function ifEmpty(): static
     {
-        $this->ifPart = static fn ($v) => !$v;
+        $this->ifPart = static fn ($v): bool => !$v;
         $this->allowedTypes = self::TYPE_ANY;
 
         return $this;
@@ -149,7 +151,7 @@ class ExprBuilder
      */
     public function ifInArray(array $array): static
     {
-        $this->ifPart = static fn ($v) => \in_array($v, $array, true);
+        $this->ifPart = static fn ($v): bool => \in_array($v, $array, true);
         $this->allowedTypes = self::TYPE_ANY;
 
         return $this;
@@ -162,7 +164,7 @@ class ExprBuilder
      */
     public function ifNotInArray(array $array): static
     {
-        $this->ifPart = static fn ($v) => !\in_array($v, $array, true);
+        $this->ifPart = static fn ($v): bool => !\in_array($v, $array, true);
         $this->allowedTypes = self::TYPE_ANY;
 
         return $this;
@@ -175,9 +177,9 @@ class ExprBuilder
      */
     public function castToArray(): static
     {
-        $this->ifPart = static fn ($v) => !\is_array($v);
+        $this->ifPart = static fn ($v): bool => !\is_array($v);
         $this->allowedTypes = self::TYPE_ANY;
-        $this->thenPart = static fn ($v) => [$v];
+        $this->thenPart = static fn ($v): array => [$v];
 
         return $this;
     }
@@ -201,7 +203,7 @@ class ExprBuilder
      */
     public function thenEmptyArray(): static
     {
-        $this->thenPart = static fn () => [];
+        $this->thenPart = static fn (): array => [];
 
         return $this;
     }

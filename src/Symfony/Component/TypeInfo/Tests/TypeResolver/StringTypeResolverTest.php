@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -48,7 +50,7 @@ class StringTypeResolverTest extends TestCase
     #[DataProvider('resolveDataProvider')]
     public function testResolveStringable(Type $expectedType, string $string, ?TypeContext $typeContext = null)
     {
-        $this->assertEquals($expectedType, $this->resolver->resolve(new class($string) implements \Stringable {
+        $this->assertEquals($expectedType, $this->resolver->resolve(new class ($string) implements \Stringable {
             public function __construct(private string $value)
             {
             }
@@ -71,7 +73,7 @@ class StringTypeResolverTest extends TestCase
          * @template TFoo of int
          * @template TBar of string
          */
-        $dummyTemplateKeyUnion = new class {};
+        $dummyTemplateKeyUnion = new class () {};
 
         // callable
         yield [Type::callable(), 'callable(string, int): mixed'];
@@ -316,7 +318,7 @@ class StringTypeResolverTest extends TestCase
         /**
          * @template TKey of mixed
          */
-        $dummyClass = new class {};
+        $dummyClass = new class () {};
 
         $typeContextFactory = new TypeContextFactory(new StringTypeResolver());
 
@@ -330,7 +332,7 @@ class StringTypeResolverTest extends TestCase
          * @template TFoo of int
          * @template TBar of float
          */
-        $dummyClass = new class {};
+        $dummyClass = new class () {};
 
         $typeContextFactory = new TypeContextFactory(new StringTypeResolver());
 

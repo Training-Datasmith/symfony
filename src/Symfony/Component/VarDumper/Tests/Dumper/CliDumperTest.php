@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -145,7 +147,8 @@ class CliDumperTest extends TestCase
 
         $dump = $dumper->dump($cloner->cloneVar($ex)->withRefHandles(false), true);
 
-        $this->assertStringMatchesFormat(<<<'EOTXT'
+        $this->assertStringMatchesFormat(
+            <<<'EOTXT'
             RuntimeException {
               #message: "foo"
               #code: 0
@@ -301,7 +304,8 @@ class CliDumperTest extends TestCase
 
     public function testVirtualProperties()
     {
-        $this->assertDumpEquals(<<<EODUMP
+        $this->assertDumpEquals(
+            <<<EODUMP
             Symfony\Component\VarDumper\Tests\Fixtures\VirtualProperty {
               +firstName: "John"
               +lastName: "Doe"

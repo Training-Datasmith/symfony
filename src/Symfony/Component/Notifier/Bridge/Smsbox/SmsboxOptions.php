@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ use Symfony\Component\Notifier\Message\MessageOptionsInterface;
  */
 final class SmsboxOptions implements MessageOptionsInterface
 {
-    private ClockInterface $clock;
+    private readonly ClockInterface $clock;
 
     public function __construct(
         private array $options = [],

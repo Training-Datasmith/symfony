@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,8 +33,8 @@ class ViolationMapper implements ViolationMapperInterface
     private bool $allowNonSynchronized = false;
 
     public function __construct(
-        private ?FormRendererInterface $formRenderer = null,
-        private ?TranslatorInterface $translator = null,
+        private readonly ?FormRendererInterface $formRenderer = null,
+        private readonly ?TranslatorInterface $translator = null,
     ) {
     }
 

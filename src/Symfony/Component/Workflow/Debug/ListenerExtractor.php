@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,11 +25,11 @@ use Symfony\Component\Workflow\Transition;
  *
  * @author Grégoire Pineau <lyrixx@lyrixx.info>
  */
-final class ListenerExtractor
+final readonly class ListenerExtractor
 {
     public function __construct(
-        private readonly ?EventDispatcherInterface $dispatcher = null,
-        private readonly ?FileLinkFormatter $fileLinkFormatter = null,
+        private ?EventDispatcherInterface $dispatcher = null,
+        private ?FileLinkFormatter $fileLinkFormatter = null,
     ) {
     }
 
@@ -107,7 +109,7 @@ final class ListenerExtractor
                 $extra['guardExpressions'] = $this->extractGuardExpressions($callable[0], $eventName, $transition);
             }
             $r = new \ReflectionMethod($callable[0], $callable[1]);
-            $title = (\is_string($callable[0]) ? $callable[0] : \get_class($callable[0])).'::'.$callable[1].'()';
+            $title = (\is_string($callable[0]) ? $callable[0] : $callable[0]::class).'::'.$callable[1].'()';
         } else {
             throw new \RuntimeException('Unknown callable type.');
         }

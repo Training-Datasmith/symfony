@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'Mfeano: onipa, onipa, wedeε ani a εda so, ne wedeε ani a εda so kakra',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'Mfeano: onipa, onipa, wedeε ani a εda so, ne wedeε ani a εda hᴐ kakra',

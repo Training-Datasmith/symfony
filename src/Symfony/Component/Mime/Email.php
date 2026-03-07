@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -460,7 +462,7 @@ class Email extends Message
         return $this->cachedBody = $part;
     }
 
-    private function prepareParts(): ?array
+    private function prepareParts(): array
     {
         $names = [];
         $htmlPart = null;
@@ -512,7 +514,7 @@ class Email extends Message
     /**
      * @return $this
      */
-    private function setHeaderBody(string $type, string $name, $body): static
+    private function setHeaderBody(string $type, string $name, string|\DateTimeInterface|\Symfony\Component\Mime\Address $body): static
     {
         $this->getHeaders()->setHeaderBody($type, $name, $body);
 

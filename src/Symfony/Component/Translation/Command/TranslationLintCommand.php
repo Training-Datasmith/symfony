@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,7 +36,7 @@ class TranslationLintCommand extends Command
     private SymfonyStyle $io;
 
     public function __construct(
-        private TranslatorInterface&TranslatorBagInterface $translator,
+        private readonly TranslatorInterface&TranslatorBagInterface $translator,
         private array $enabledLocales = [],
     ) {
         $this->enabledLocales = array_filter($enabledLocales);
@@ -54,7 +56,8 @@ class TranslationLintCommand extends Command
             ->setDefinition([
                 new InputOption('locale', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Specify the locales to lint.', $this->enabledLocales),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</> command lint translations.
 
                   <info>php %command.full_name%</>
@@ -98,7 +101,7 @@ class TranslationLintCommand extends Command
         $this->io->table(
             ['Locale', 'Domains', 'Valid?'],
             array_map(
-                static fn (string $locale, array $domains) => [
+                static fn (string $locale, array $domains): array => [
                     $locale,
                     implode(', ', $domains),
                     !\array_key_exists($locale, $errors) ? '<info>Yes</>' : '<error>No</>',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,8 +43,8 @@ class MainConfiguration implements ConfigurationInterface
      * @param array<AuthenticatorFactoryInterface> $factories
      */
     public function __construct(
-        private array $factories,
-        private array $userProviderFactories,
+        private readonly array $factories,
+        private readonly array $userProviderFactories,
     ) {
     }
 
@@ -80,15 +82,15 @@ class MainConfiguration implements ConfigurationInterface
                         ->booleanNode('allow_if_equal_granted_denied')->defaultTrue()->end()
                     ->end()
                     ->validate()
-                        ->ifTrue(static fn ($v) => isset($v['strategy'], $v['service']))
+                        ->ifTrue(static fn ($v): bool => isset($v['strategy'], $v['service']))
                         ->thenInvalid('"strategy" and "service" cannot be used together.')
                     ->end()
                     ->validate()
-                        ->ifTrue(static fn ($v) => isset($v['strategy'], $v['strategy_service']))
+                        ->ifTrue(static fn ($v): bool => isset($v['strategy'], $v['strategy_service']))
                         ->thenInvalid('"strategy" and "strategy_service" cannot be used together.')
                     ->end()
                     ->validate()
-                        ->ifTrue(static fn ($v) => isset($v['service'], $v['strategy_service']))
+                        ->ifTrue(static fn ($v): bool => isset($v['service'], $v['strategy_service']))
                         ->thenInvalid('"service" and "strategy_service" cannot be used together.')
                     ->end()
                 ->end()
@@ -112,7 +114,7 @@ class MainConfiguration implements ConfigurationInterface
                     ->useAttributeAsKey('id')
                     ->prototype('array')
                         ->performNoDeepMerging()
-                        ->beforeNormalization()->ifString()->then(static fn ($v) => preg_split('/\s*,\s*/', $v))->end()
+                        ->beforeNormalization()->ifString()->then(static fn ($v) => preg_split('/\s*,\s*/', (string) $v))->end()
                         ->prototype('scalar')->end()
                     ->end()
                 ->end()
@@ -147,14 +149,14 @@ class MainConfiguration implements ConfigurationInterface
                             ->end()
                             ->scalarNode('route')->defaultNull()->end()
                             ->arrayNode('methods', 'method')
-                                ->beforeNormalization()->ifString()->then(static fn ($v) => preg_split('/\s*,\s*/', $v))->end()
+                                ->beforeNormalization()->ifString()->then(static fn ($v) => preg_split('/\s*,\s*/', (string) $v))->end()
                                 ->prototype('scalar')->end()
                             ->end()
                             ->scalarNode('allow_if')->defaultNull()->end()
                         ->end()
                         ->children()
                             ->arrayNode('roles', 'role')
-                                ->beforeNormalization()->ifString()->then(static fn ($v) => preg_split('/\s*,\s*/', $v))->end()
+                                ->beforeNormalization()->ifString()->then(static fn ($v) => preg_split('/\s*,\s*/', (string) $v))->end()
                                 ->prototype('scalar')->end()
                             ->end()
                         ->end()
@@ -184,12 +186,12 @@ class MainConfiguration implements ConfigurationInterface
             ->scalarNode('pattern')
                 ->beforeNormalization()
                     ->ifArray()
-                    ->then(static fn ($v) => \sprintf('(?:%s)', implode('|', $v)))
+                    ->then(static fn ($v): string => \sprintf('(?:%s)', implode('|', $v)))
                 ->end()
             ->end()
             ->scalarNode('host')->end()
             ->arrayNode('methods')
-                ->beforeNormalization()->ifString()->then(static fn ($v) => preg_split('/\s*,\s*/', $v))->end()
+                ->beforeNormalization()->ifString()->then(static fn ($v) => preg_split('/\s*,\s*/', (string) $v))->end()
                 ->prototype('scalar')->end()
             ->end()
             ->booleanNode('security')->defaultTrue()->end()
@@ -213,7 +215,7 @@ class MainConfiguration implements ConfigurationInterface
                 ->canBeUnset()
                 ->beforeNormalization()
                     ->ifArray()
-                    ->then(static function ($v) {
+                    ->then(static function (array $v): array {
                         if (isset($v['csrf_token_manager'])) {
                             $v['enable_csrf'] ??= true;
                         } elseif ($v['enable_csrf'] ?? false) {
@@ -233,7 +235,7 @@ class MainConfiguration implements ConfigurationInterface
                     ->booleanNode('invalidate_session')->defaultTrue()->end()
                     ->arrayNode('clear_site_data')
                         ->performNoDeepMerging()
-                        ->beforeNormalization()->ifString()->then(static fn ($v) => $v ? array_map('trim', explode(',', $v)) : [])->end()
+                        ->beforeNormalization()->ifString()->then(static fn ($v): array => $v ? array_map(trim(...), explode(',', (string) $v)) : [])->end()
                         ->enumPrototype()
                             ->values([
                                 '*', 'cache', 'cookies', 'storage', 'clientHints', 'executionContexts', 'prefetchCache', 'prerenderCache',
@@ -247,7 +249,7 @@ class MainConfiguration implements ConfigurationInterface
                         ->acceptAndWrap(['string'])
                         ->beforeNormalization()
                             ->ifArray()
-                            ->then(static fn ($v) => array_map(static fn ($v) => \is_string($v) ? ['name' => $v] : $v, $v))
+                            ->then(static fn ($v): array => array_map(static fn ($v) => \is_string($v) ? ['name' => $v] : $v, $v))
                         ->end()
                         ->useAttributeAsKey('name')
                         ->prototype('array')
@@ -275,22 +277,20 @@ class MainConfiguration implements ConfigurationInterface
                 ->info('A list of badges that must be present on the authenticated passport.')
                 ->validate()
                     ->always()
-                    ->then(static function ($requiredBadges) {
-                        return array_map(static function ($requiredBadge) {
-                            if (class_exists($requiredBadge)) {
-                                return $requiredBadge;
-                            }
+                    ->then(static fn ($requiredBadges) => array_map(static function (string $requiredBadge): string {
+                        if (class_exists($requiredBadge)) {
+                            return $requiredBadge;
+                        }
 
-                            if (!str_contains($requiredBadge, '\\')) {
-                                $fqcn = 'Symfony\Component\Security\Http\Authenticator\Passport\Badge\\'.$requiredBadge;
-                                if (class_exists($fqcn)) {
-                                    return $fqcn;
-                                }
+                        if (!str_contains($requiredBadge, '\\')) {
+                            $fqcn = 'Symfony\Component\Security\Http\Authenticator\Passport\Badge\\'.$requiredBadge;
+                            if (class_exists($fqcn)) {
+                                return $fqcn;
                             }
+                        }
 
-                            throw new InvalidConfigurationException(\sprintf('Undefined security Badge class "%s" set in "security.firewall.required_badges".', $requiredBadge));
-                        }, $requiredBadges);
-                    })
+                        throw new InvalidConfigurationException(\sprintf('Undefined security Badge class "%s" set in "security.firewall.required_badges".', $requiredBadge));
+                    }, $requiredBadges))
                 ->end()
                 ->prototype('scalar')->end()
             ->end()
@@ -314,14 +314,14 @@ class MainConfiguration implements ConfigurationInterface
         $firewallNodeBuilder
             ->end()
             ->validate()
-                ->ifTrue(static fn ($v) => true === $v['security'] && isset($v['pattern']) && !isset($v['request_matcher']))
-                ->then(static function ($firewall) use ($abstractFactoryKeys) {
+                ->ifTrue(static fn ($v): bool => true === $v['security'] && isset($v['pattern']) && !isset($v['request_matcher']))
+                ->then(static function (array $firewall) use ($abstractFactoryKeys): array {
                     foreach ($abstractFactoryKeys as $k) {
                         if (!isset($firewall[$k]['check_path'])) {
                             continue;
                         }
 
-                        if (str_contains($firewall[$k]['check_path'], '/') && !preg_match('#'.$firewall['pattern'].'#', $firewall[$k]['check_path'])) {
+                        if (str_contains((string) $firewall[$k]['check_path'], '/') && !preg_match('#'.$firewall['pattern'].'#', (string) $firewall[$k]['check_path'])) {
                             throw new \LogicException(\sprintf('The check_path "%s" for login method "%s" is not matched by the firewall pattern "%s".', $firewall[$k]['check_path'], $k, $firewall['pattern']));
                         }
                     }
@@ -359,7 +359,7 @@ class MainConfiguration implements ConfigurationInterface
                 ->arrayNode('chain')
                     ->children()
                         ->arrayNode('providers', 'provider')
-                            ->beforeNormalization()->ifString()->then(static fn ($v) => preg_split('/\s*,\s*/', $v))->end()
+                            ->beforeNormalization()->ifString()->then(static fn ($v) => preg_split('/\s*,\s*/', (string) $v))->end()
                             ->prototype('scalar')->end()
                         ->end()
                     ->end()
@@ -376,11 +376,11 @@ class MainConfiguration implements ConfigurationInterface
 
         $providerNodeBuilder
             ->validate()
-                ->ifTrue(static fn ($v) => \count($v) > 1)
+                ->ifTrue(static fn ($v): bool => \count($v) > 1)
                 ->thenInvalid('You cannot set multiple provider types for the same provider')
             ->end()
             ->validate()
-                ->ifTrue(static fn ($v) => 0 === \count($v))
+                ->ifTrue(static fn ($v): bool => 0 === \count($v))
                 ->thenInvalid('You must set a provider definition for the provider.')
             ->end()
         ;
@@ -409,7 +409,7 @@ class MainConfiguration implements ConfigurationInterface
                             ->scalarNode('algorithm')
                                 ->cannotBeEmpty()
                                 ->validate()
-                                    ->ifTrue(static fn ($v) => !\is_string($v))
+                                    ->ifTrue(static fn ($v): bool => !\is_string($v))
                                     ->thenInvalid('You must provide a string value.')
                                 ->end()
                             ->end()

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -73,7 +75,7 @@ class TextBundleWriter implements BundleWriterInterface
         }
 
         if (\is_array($value)) {
-            $intValues = \count($value) === \count(array_filter($value, 'is_int'));
+            $intValues = \count($value) === \count(array_filter($value, is_int(...)));
 
             // check that the keys are 0-indexed and ascending
             $intKeys = array_is_list($value);
@@ -189,11 +191,11 @@ class TextBundleWriter implements BundleWriterInterface
             fwrite($file, str_repeat('    ', $indentation + 1));
 
             // escape colons, otherwise they are interpreted as resource types
-            if (str_contains($key, ':') || str_contains($key, ' ')) {
+            if (str_contains((string) $key, ':') || str_contains((string) $key, ' ')) {
                 $key = '"'.$key.'"';
             }
 
-            fwrite($file, $key);
+            fwrite($file, (string) $key);
 
             $this->writeResource($file, $entry, $indentation + 1);
 

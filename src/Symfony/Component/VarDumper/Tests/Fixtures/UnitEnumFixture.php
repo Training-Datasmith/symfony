@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\VarDumper\Tests\Fixtures;
 
-enum UnitEnumFixture {
+enum UnitEnumFixture
+{
     case Hearts;
     case Diamonds;
     case Clubs;

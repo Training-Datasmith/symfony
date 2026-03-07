@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,9 +34,9 @@ class Registry
     ) {
     }
 
-    public static function unserialize($objects, $serializables)
+    public static function unserialize(array $objects, $serializables): array
     {
-        $unserializeCallback = ini_set('unserialize_callback_func', __CLASS__.'::getClassReflector');
+        $unserializeCallback = ini_set('unserialize_callback_func', self::class.'::getClassReflector');
 
         try {
             foreach ($serializables as $k => $v) {

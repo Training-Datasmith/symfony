@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -68,12 +70,12 @@ final class SameOriginCsrfTokenManager implements CsrfTokenManagerInterface
      * @param string[]      $tokenIds
      */
     public function __construct(
-        private RequestStack $requestStack,
-        private ?LoggerInterface $logger = null,
-        private ?CsrfTokenManagerInterface $fallbackCsrfTokenManager = null,
+        private readonly RequestStack $requestStack,
+        private readonly ?LoggerInterface $logger = null,
+        private readonly ?CsrfTokenManagerInterface $fallbackCsrfTokenManager = null,
         private array $tokenIds = [],
-        private int $checkHeader = self::CHECK_NO_HEADER,
-        private string $cookieName = 'csrf-token',
+        private readonly int $checkHeader = self::CHECK_NO_HEADER,
+        private readonly string $cookieName = 'csrf-token',
     ) {
         if (!$cookieName) {
             throw new \InvalidArgumentException('The cookie name cannot be empty.');
@@ -152,7 +154,6 @@ final class SameOriginCsrfTokenManager implements CsrfTokenManagerInterface
         $usageIndexValue = $session instanceof Session ? $usageIndexReference = &$session->getUsageIndex() : 0;
         $usageIndexReference = \PHP_INT_MIN;
         $previousCsrfProtection = (int) $session?->get($this->cookieName);
-        $usageIndexReference = $usageIndexValue;
         $shift = $request->isMethodSafe() ? 8 : 0;
 
         if ($previousCsrfProtection) {
@@ -227,7 +228,6 @@ final class SameOriginCsrfTokenManager implements CsrfTokenManagerInterface
         $usageIndexValue = $session instanceof Session ? $usageIndexReference = &$session->getUsageIndex() : 0;
         $usageIndexReference = \PHP_INT_MIN;
         $session->set($this->cookieName, $request->attributes->get($this->cookieName));
-        $usageIndexReference = $usageIndexValue;
     }
 
     /**

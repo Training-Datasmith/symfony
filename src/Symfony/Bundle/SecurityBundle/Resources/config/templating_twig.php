@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,7 +16,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Symfony\Bridge\Twig\Extension\LogoutUrlExtension;
 use Symfony\Bridge\Twig\Extension\SecurityExtension;
 
-return static function (ContainerConfigurator $container) {
+return static function (ContainerConfigurator $container): void {
     $container->services()
         ->set('twig.extension.logout_url', LogoutUrlExtension::class)
             ->args([

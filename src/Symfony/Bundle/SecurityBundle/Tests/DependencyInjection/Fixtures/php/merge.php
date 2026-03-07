@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $loader->load('merge_import.php');
 
 $container->loadFromExtension('security', [

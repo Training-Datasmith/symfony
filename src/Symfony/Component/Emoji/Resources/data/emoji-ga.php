@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'póg: aosach, aosach, ton cnis geal, ton cnis mheánach-gheal',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'póg: aosach, aosach, ton cnis geal, ton cnis meánach',

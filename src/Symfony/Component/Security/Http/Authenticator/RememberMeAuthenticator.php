@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,10 +46,10 @@ use Symfony\Component\Security\Http\RememberMe\ResponseListener;
 class RememberMeAuthenticator implements InteractiveAuthenticatorInterface
 {
     public function __construct(
-        private RememberMeHandlerInterface $rememberMeHandler,
-        private TokenStorageInterface $tokenStorage,
-        private string $cookieName,
-        private ?LoggerInterface $logger = null,
+        private readonly RememberMeHandlerInterface $rememberMeHandler,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly string $cookieName,
+        private readonly ?LoggerInterface $logger = null,
     ) {
     }
 
@@ -80,7 +82,7 @@ class RememberMeAuthenticator implements InteractiveAuthenticatorInterface
 
         $rememberMeCookie = RememberMeDetails::fromRawCookie($rawCookie);
 
-        $userBadge = new UserBadge($rememberMeCookie->getUserIdentifier(), fn () => $this->rememberMeHandler->consumeRememberMeCookie($rememberMeCookie));
+        $userBadge = new UserBadge($rememberMeCookie->getUserIdentifier(), fn (): \Symfony\Component\Security\Core\User\UserInterface => $this->rememberMeHandler->consumeRememberMeCookie($rememberMeCookie));
 
         return new SelfValidatingPassport($userBadge);
     }

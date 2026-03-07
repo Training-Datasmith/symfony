@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -131,7 +133,7 @@ abstract class AbstractObjectNormalizer extends AbstractNormalizer
     public function __construct(
         ?ClassMetadataFactoryInterface $classMetadataFactory = null,
         ?NameConverterInterface $nameConverter = null,
-        private ?PropertyTypeExtractorInterface $propertyTypeExtractor = null,
+        private readonly ?PropertyTypeExtractorInterface $propertyTypeExtractor = null,
         ?ClassDiscriminatorResolverInterface $classDiscriminatorResolver = null,
         ?callable $objectClassResolver = null,
         array $defaultContext = [],
@@ -707,7 +709,7 @@ abstract class AbstractObjectNormalizer extends AbstractNormalizer
 
         if (null !== $parameterType && $parameterTypeResolver ??= class_exists(ReflectionTypeResolver::class) ? new ReflectionTypeResolver() : false) {
             $resolvedParameterType = $parameterTypeResolver->resolve($parameterType);
-            if ($resolvedParameterType->isSatisfiedBy(static fn (Type $t) => match (true) {
+            if ($resolvedParameterType->isSatisfiedBy(static fn (Type $t): bool => match (true) {
                 $t instanceof BuiltinType && TypeIdentifier::NULL !== $t->getTypeIdentifier() => !$type->isIdentifiedBy($t->getTypeIdentifier()),
                 $t instanceof ObjectType => !$type->isIdentifiedBy($t->getClassName()),
                 default => false,

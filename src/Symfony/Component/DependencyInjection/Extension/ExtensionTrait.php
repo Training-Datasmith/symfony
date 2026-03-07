@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,7 +40,7 @@ trait ExtensionTrait
             throw new \LogicException('Unable to create the ContainerConfigurator.');
         }
         $bundleLoader->setCurrentDir(\dirname($file));
-        $instanceof = &\Closure::bind(fn &() => $this->instanceof, $bundleLoader, $bundleLoader)();
+        $instanceof = &\Closure::bind(fn &(): array => $this->instanceof, $bundleLoader, $bundleLoader)();
 
         try {
             $callback(new ContainerConfigurator($container, $bundleLoader, $instanceof, $file, $file, $env));

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,12 +27,12 @@ use Twig\TwigFilter;
  */
 final class CodeExtension extends AbstractExtension
 {
-    private string|FileLinkFormatter|array|false $fileLinkFormat;
+    private readonly string|FileLinkFormatter|array|false $fileLinkFormat;
 
     public function __construct(
         string|FileLinkFormatter $fileLinkFormat,
         private string $projectDir,
-        private string $charset,
+        private readonly string $charset,
     ) {
         $this->fileLinkFormat = $fileLinkFormat ?: \ini_get('xdebug.file_link_format') ?: get_cfg_var('xdebug.file_link_format');
         $this->projectDir = str_replace('\\', '/', $projectDir).'/';
@@ -82,7 +84,7 @@ final class CodeExtension extends AbstractExtension
         $result = [];
         foreach ($args as $key => $item) {
             if ('object' === $item[0]) {
-                $item[1] = htmlspecialchars($item[1], \ENT_COMPAT | \ENT_SUBSTITUTE, $this->charset);
+                $item[1] = htmlspecialchars((string) $item[1], \ENT_COMPAT | \ENT_SUBSTITUTE, $this->charset);
                 $parts = explode('\\', $item[1]);
                 $short = array_pop($parts);
                 $formattedValue = \sprintf('<em>object</em>(<abbr title="%s">%s</abbr>)', $item[1], $short);
@@ -149,9 +151,9 @@ final class CodeExtension extends AbstractExtension
         $code = preg_replace_callback(
             '#<span ([^>]++)>((?:[^<\\n]*+\\n)++[^<]*+)</span>#',
             static fn (array $m): string => "<span $m[1]>".str_replace("\n", "</span>\n<span $m[1]>", $m[2]).'</span>',
-            $code
+            (string) $code
         );
-        $lines = explode("\n", $code);
+        $lines = explode("\n", (string) $code);
 
         if (0 > $srcContext) {
             $srcContext = \count($lines);
@@ -239,7 +241,7 @@ final class CodeExtension extends AbstractExtension
 
     public function formatFileFromText(string $text): string
     {
-        return preg_replace_callback('/in ("|&quot;)?(.+?)\1(?: +(?:on|at))? +line (\d+)/s', fn ($match) => 'in '.$this->formatFile($match[2], $match[3]), $text);
+        return preg_replace_callback('/in ("|&quot;)?(.+?)\1(?: +(?:on|at))? +line (\d+)/s', fn ($match): string => 'in '.$this->formatFile($match[2], $match[3]), $text);
     }
 
     /**

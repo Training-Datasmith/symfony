@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -49,7 +51,7 @@ class TranslatorPathsPass extends AbstractRecursivePass
         }
 
         foreach ($this->findControllerArguments($container) as $controller => $argument) {
-            $id = substr($controller, 0, strpos($controller, ':') ?: \strlen($controller));
+            $id = substr((string) $controller, 0, strpos((string) $controller, ':') ?: \strlen((string) $controller));
             if ($container->hasDefinition($id)) {
                 [$locatorRef] = $argument->getValues();
                 $this->controllers[(string) $locatorRef][$container->getDefinition($id)->getClass()] = true;

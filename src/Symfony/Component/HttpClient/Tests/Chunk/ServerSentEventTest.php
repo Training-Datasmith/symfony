@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -80,7 +82,8 @@ class ServerSentEventTest extends TestCase
 
     public function testGetArrayData()
     {
-        $this->assertSame(['foo' => 'bar'], (new ServerSentEvent(<<<STR
+        $this->assertSame(['foo' => 'bar'], (new ServerSentEvent(
+            <<<STR
             id: 33
             data: {"foo": "bar"}
             STR
@@ -100,7 +103,8 @@ class ServerSentEventTest extends TestCase
         $this->expectException(JsonException::class);
         $this->expectExceptionMessage('Decoding Server-Sent Event "33" failed: Syntax error');
 
-        (new ServerSentEvent(<<<STR
+        (new ServerSentEvent(
+            <<<STR
             id: 33
             data: foobarccc
             STR
@@ -112,7 +116,8 @@ class ServerSentEventTest extends TestCase
         $this->expectException(JsonException::class);
         $this->expectExceptionMessage('JSON content was expected to decode to an array, "string" returned in Server-Sent Event "33".');
 
-        (new ServerSentEvent(<<<STR
+        (new ServerSentEvent(
+            <<<STR
             id: 33
             data: "ccc"
             STR

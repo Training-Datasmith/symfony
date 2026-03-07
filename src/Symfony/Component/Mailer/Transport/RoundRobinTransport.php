@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,8 +39,8 @@ class RoundRobinTransport implements TransportInterface
      */
     public function __construct(
         private array $transports,
-        private int $retryPeriod = 60,
-        private LoggerInterface $logger = new NullLogger(),
+        private readonly int $retryPeriod = 60,
+        private readonly LoggerInterface $logger = new NullLogger(),
     ) {
         if (!$transports) {
             throw new TransportException(\sprintf('"%s" must have at least one transport configured.', static::class));
@@ -67,7 +69,7 @@ class RoundRobinTransport implements TransportInterface
 
     public function __toString(): string
     {
-        return $this->getNameSymbol().'('.implode(' ', array_map('strval', $this->transports)).')';
+        return $this->getNameSymbol().'('.implode(' ', array_map(strval(...), $this->transports)).')';
     }
 
     /**

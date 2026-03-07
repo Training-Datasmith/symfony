@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -54,7 +56,7 @@ trait CallbacksTestTrait
     {
         $normalizer = $this->getNormalizerForCallbacksWithPropertyTypeExtractor();
 
-        $obj = new class extends CallbacksObject {
+        $obj = new class () extends CallbacksObject {
             public function __construct()
             {
             }
@@ -90,7 +92,7 @@ trait CallbacksTestTrait
     {
         $normalizer = $this->getNormalizerForCallbacksWithPropertyTypeExtractor();
 
-        $objWithNoConstructorArgument = new class extends CallbacksObject {
+        $objWithNoConstructorArgument = new class () extends CallbacksObject {
             public function __construct()
             {
             }

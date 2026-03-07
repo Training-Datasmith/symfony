@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,7 +43,7 @@ class DateIntervalToArrayTransformer implements DataTransformerInterface
         self::SECONDS => 's',
         self::INVERT => 'r',
     ];
-    private array $fields;
+    private readonly array $fields;
 
     /**
      * @param string[]|null $fields The date fields
@@ -49,7 +51,7 @@ class DateIntervalToArrayTransformer implements DataTransformerInterface
      */
     public function __construct(
         ?array $fields = null,
-        private bool $pad = false,
+        private readonly bool $pad = false,
     ) {
         $this->fields = $fields ?? ['years', 'months', 'days', 'hours', 'minutes', 'seconds', 'invert'];
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,12 +32,13 @@ class Acknowledger
      * @param \Closure(\Throwable|null, mixed):void|null $ack
      */
     public function __construct(
-        private string $handlerClass,
+        private readonly string $handlerClass,
         ?\Closure $ack = null,
         ?ClockInterface $clock = null,
     ) {
         $this->clock = $clock ?? Clock::get();
-        $this->ack = $ack ?? static function () {};
+        $this->ack = $ack ?? static function (): void {
+        };
     }
 
     /**

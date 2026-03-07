@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ namespace Symfony\Component\Config\Resource;
  */
 class FileResource implements SelfCheckingResourceInterface
 {
-    private string $resource;
+    private readonly string $resource;
 
     /**
      * @param string $resource The file path to the resource

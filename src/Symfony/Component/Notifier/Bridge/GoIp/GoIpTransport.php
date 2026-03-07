@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -60,15 +62,15 @@ final class GoIpTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         if (($options = $message->getOptions()) && !$options instanceof GoIpOptions) {
-            throw new UnsupportedOptionsException(__CLASS__, GoIpOptions::class, $options);
+            throw new UnsupportedOptionsException(self::class, GoIpOptions::class, $options);
         }
 
         if ('' !== $message->getFrom()) {
-            throw new LogicException(\sprintf('The "%s" transport does not support the "From" option.', __CLASS__));
+            throw new LogicException(\sprintf('The "%s" transport does not support the "From" option.', self::class));
         }
 
         $response = $this->client->request('GET', 'https://'.$this->getEndpoint(), [

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,11 +31,13 @@ class CssAssetUrlCompilerTest extends TestCase
             ->method('getAssetFromSourcePath')
             ->willReturnCallback(static function ($path) {
                 return match ($path) {
-                    '/project/assets/images/foo.png' => new MappedAsset('images/foo.png',
+                    '/project/assets/images/foo.png' => new MappedAsset(
+                        'images/foo.png',
                         publicPathWithoutDigest: '/assets/images/foo.png',
                         publicPath: '/assets/images/foo.123456.png',
                     ),
-                    '/project/assets/more-styles.css' => new MappedAsset('more-styles.css',
+                    '/project/assets/more-styles.css' => new MappedAsset(
+                        'more-styles.css',
                         publicPathWithoutDigest: '/assets/more-styles.css',
                         publicPath: '/assets/more-styles.abcd123.css',
                     ),
@@ -224,11 +228,13 @@ class CssAssetUrlCompilerTest extends TestCase
             ->method('getAssetFromSourcePath')
             ->willReturnCallback(static function ($path) {
                 return match ($path) {
-                    '/project/assets/images/foo.png' => new MappedAsset('images/foo.png',
+                    '/project/assets/images/foo.png' => new MappedAsset(
+                        'images/foo.png',
                         publicPathWithoutDigest: '/assets/images/foo.png',
                         publicPath: '/assets/images/foo.123456.png',
                     ),
-                    '/project/more-styles.css' => new MappedAsset('more-styles.css',
+                    '/project/more-styles.css' => new MappedAsset(
+                        'more-styles.css',
                         publicPathWithoutDigest: '/assets/more-styles.css',
                         publicPath: '/assets/more-styles.abcd123.css',
                     ),

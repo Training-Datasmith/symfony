@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,8 +27,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class TraceableVoter implements CacheableVoterInterface
 {
     public function __construct(
-        private VoterInterface $voter,
-        private EventDispatcherInterface $eventDispatcher,
+        private readonly VoterInterface $voter,
+        private readonly EventDispatcherInterface $eventDispatcher,
     ) {
     }
 

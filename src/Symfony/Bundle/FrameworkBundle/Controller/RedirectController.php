@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,9 +30,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class RedirectController
 {
     public function __construct(
-        private ?UrlGeneratorInterface $router = null,
-        private ?int $httpPort = null,
-        private ?int $httpsPort = null,
+        private readonly ?UrlGeneratorInterface $router = null,
+        private readonly ?int $httpPort = null,
+        private readonly ?int $httpsPort = null,
     ) {
     }
 

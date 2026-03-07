@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'af' => '𞤀𞤬𞤪𞤭𞤳𞤢𞤲𞤪𞤫',

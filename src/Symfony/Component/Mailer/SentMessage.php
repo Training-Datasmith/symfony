@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ use Symfony\Component\Mime\RawMessage;
  */
 class SentMessage
 {
-    private RawMessage $original;
+    private readonly RawMessage $original;
     private RawMessage $raw;
     private string $messageId;
     private string $debug = '';
@@ -29,7 +31,7 @@ class SentMessage
      */
     public function __construct(
         RawMessage $message,
-        private Envelope $envelope,
+        private readonly Envelope $envelope,
     ) {
         $message->ensureValidity();
 

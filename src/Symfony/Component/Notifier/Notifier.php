@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,7 +35,7 @@ final class Notifier implements NotifierInterface
      */
     public function __construct(
         private array|ContainerInterface $channels,
-        private ?ChannelPolicyInterface $policy = null,
+        private readonly ?ChannelPolicyInterface $policy = null,
     ) {
     }
 

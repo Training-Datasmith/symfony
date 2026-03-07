@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,7 @@ use Symfony\Component\Notifier\Recipient\SmsRecipientInterface;
 class LoginLinkNotification extends Notification implements EmailNotificationInterface, SmsNotificationInterface
 {
     public function __construct(
-        private LoginLinkDetails $loginLinkDetails,
+        private readonly LoginLinkDetails $loginLinkDetails,
         string $subject,
         array $channels = [],
     ) {

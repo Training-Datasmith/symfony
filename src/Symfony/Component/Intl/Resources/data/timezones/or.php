@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Africa/Abidjan' => 'ଗ୍ରୀନୱିଚ୍ ମିନ୍ ସମୟ (ଆବିଦଜାନ)',

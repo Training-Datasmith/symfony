@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'koss: manneskja, manneskja, ljós húðlitur og meðalljós húðlitur',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'koss: manneskja, manneskja, ljós húðlitur og millihúðlitur',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -50,13 +52,6 @@ namespace Symfony\Component\Validator\Constraints;
 class GroupSequence
 {
     /**
-     * The groups in the sequence.
-     *
-     * @var array<int, string|string[]|GroupSequence>
-     */
-    public array $groups;
-
-    /**
      * The group in which cascaded objects are validated when validating
      * this sequence.
      *
@@ -75,8 +70,11 @@ class GroupSequence
      *
      * @param array<string|string[]|GroupSequence> $groups The groups in the sequence
      */
-    public function __construct(array $groups)
-    {
-        $this->groups = $groups;
+    public function __construct(
+        /**
+         * The groups in the sequence.
+         */
+        public array $groups
+    ) {
     }
 }

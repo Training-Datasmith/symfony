@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -147,7 +149,7 @@ class HtmlExtension extends AbstractExtension
             ."translate(@%s, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '-')"
             .', %s)]',
             'lang',
-            Translator::getXpathLiteral(strtolower($arguments[0]->getValue()).'-')
+            Translator::getXpathLiteral(strtolower((string) $arguments[0]->getValue()).'-')
         ));
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ use Symfony\Component\VarDumper\Cloner\Data;
 class TranslationDataCollector extends DataCollector implements LateDataCollectorInterface
 {
     public function __construct(
-        private DataCollectorTranslator $translator,
+        private readonly DataCollectorTranslator $translator,
     ) {
     }
 
@@ -140,7 +142,7 @@ class TranslationDataCollector extends DataCollector implements LateDataCollecto
 
     private function sanitizeString(string $string, int $length = 80): string
     {
-        $string = trim(preg_replace('/\s+/', ' ', $string));
+        $string = trim((string) preg_replace('/\s+/', ' ', $string));
 
         if (false !== $encoding = mb_detect_encoding($string, null, true)) {
             if (mb_strlen($string, $encoding) > $length) {

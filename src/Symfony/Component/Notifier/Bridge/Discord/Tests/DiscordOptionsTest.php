@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,14 +40,16 @@ final class DiscordOptionsTest extends TestCase
     public function testDiscordEmbedFields()
     {
         $discordOptions = (new DiscordOptions())
-            ->addEmbed((new DiscordEmbed())
+            ->addEmbed(
+                (new DiscordEmbed())
                 ->description('descript.io')
                 ->url('http://ava.tar/pic.png')
                 ->timestamp(new \DateTimeImmutable('2020-10-12 9:14:15+0000'))
                 ->color(2021216)
                 ->title('New song added!')
             )
-            ->addEmbed((new DiscordEmbed())
+            ->addEmbed(
+                (new DiscordEmbed())
                 ->description('descript.io 2')
                 ->url('http://ava.tar/pic.png')
                 ->timestamp(new \DateTimeImmutable('2020-10-12 9:14:15+0000'))
@@ -73,7 +77,8 @@ final class DiscordOptionsTest extends TestCase
         ], $discordOptions->toArray());
 
         $discordOptions = (new DiscordOptions())
-            ->addEmbed((new DiscordEmbed())
+            ->addEmbed(
+                (new DiscordEmbed())
                 ->description('descript.io')
                 ->url('http://ava.tar/pic.png')
                 ->timestamp(new \DateTimeImmutable('2020-10-12 9:14:15+0000'))

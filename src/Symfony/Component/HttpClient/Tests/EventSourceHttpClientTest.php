@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -40,7 +42,10 @@ class EventSourceHttpClientTest extends TestCase
             $this->assertSame(['Accept: text/event-stream', 'Cache-Control: no-cache'], $options['headers']);
 
             return new MockResponse([
-                str_replace("\n", $sep, <<<TXT
+                str_replace(
+                    "\n",
+                    $sep,
+                    <<<TXT
                     event: builderror
                     id: 46
                     data: {"foo": "bar"}
@@ -59,7 +64,10 @@ class EventSourceHttpClientTest extends TestCase
 
                     TXT
                 ),
-                str_replace("\n", $sep, <<<TXT
+                str_replace(
+                    "\n",
+                    $sep,
+                    <<<TXT
                     : anywhere
                     id: 48
                     data: {}

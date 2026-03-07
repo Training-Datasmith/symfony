@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -52,7 +54,8 @@ class FormExtensionTableLayoutTest extends AbstractTableLayoutTestCase
         $view = $form->createView();
         $html = $this->renderHelp($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@id="name_help"]
     [@class="class-test help-text"]
@@ -70,7 +73,8 @@ class FormExtensionTableLayoutTest extends AbstractTableLayoutTestCase
         $view = $form->createView();
         $html = $this->renderHelp($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@id="name_help"]
     [@class="help-text"]
@@ -78,13 +82,15 @@ class FormExtensionTableLayoutTest extends AbstractTableLayoutTestCase
 '
         );
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@id="name_help"]
     [@class="help-text"]
     /b
     [.="text"]
-', 0
+',
+            0
         );
     }
 
@@ -98,7 +104,8 @@ class FormExtensionTableLayoutTest extends AbstractTableLayoutTestCase
         $view = $form->createView();
         $html = $this->renderHelp($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@id="name_help"]
     [@class="help-text"]
@@ -106,13 +113,15 @@ class FormExtensionTableLayoutTest extends AbstractTableLayoutTestCase
 '
         );
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@id="name_help"]
     [@class="help-text"]
     /b
     [.="text"]
-', 0
+',
+            0
         );
     }
 
@@ -126,15 +135,18 @@ class FormExtensionTableLayoutTest extends AbstractTableLayoutTestCase
         $view = $form->createView();
         $html = $this->renderHelp($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@id="name_help"]
     [@class="help-text"]
     [.="[trans]Help <b>text</b> test![/trans]"]
-', 0
+',
+            0
         );
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@id="name_help"]
     [@class="help-text"]

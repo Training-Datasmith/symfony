@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,13 +33,9 @@ class DoctrineReceiver implements ListableReceiverInterface, MessageCountAwareIn
 {
     private const MAX_RETRIES = 3;
     private int $retryingSafetyCounter = 0;
-    private SerializerInterface $serializer;
 
-    public function __construct(
-        private Connection $connection,
-        ?SerializerInterface $serializer = null,
-    ) {
-        $this->serializer = $serializer ?? new PhpSerializer();
+    public function __construct(private readonly Connection $connection, private readonly ?SerializerInterface $serializer = new PhpSerializer())
+    {
     }
 
     public function get(): iterable
@@ -68,7 +66,7 @@ class DoctrineReceiver implements ListableReceiverInterface, MessageCountAwareIn
 
     public function ack(Envelope $envelope): void
     {
-        $this->withRetryableExceptionRetry(function () use ($envelope) {
+        $this->withRetryableExceptionRetry(function () use ($envelope): void {
             $this->connection->ack($this->findDoctrineReceivedStampId($envelope));
         });
     }
@@ -80,7 +78,7 @@ class DoctrineReceiver implements ListableReceiverInterface, MessageCountAwareIn
 
     public function reject(Envelope $envelope): void
     {
-        $this->withRetryableExceptionRetry(function () use ($envelope) {
+        $this->withRetryableExceptionRetry(function () use ($envelope): void {
             $this->connection->reject($this->findDoctrineReceivedStampId($envelope));
         });
     }
@@ -149,24 +147,16 @@ class DoctrineReceiver implements ListableReceiverInterface, MessageCountAwareIn
         $delay = 100;
         $multiplier = 2;
         $jitter = 0.1;
-        $retries = 0;
 
         retry:
         try {
             $callable();
-        } catch (RetryableException $exception) {
-            if (++$retries <= self::MAX_RETRIES) {
-                $delay *= $multiplier;
-
-                $randomness = (int) ($delay * $jitter);
-                $delay += random_int(-$randomness, +$randomness);
-
-                usleep($delay * 1000);
-
-                goto retry;
-            }
-
-            throw new TransportException($exception->getMessage(), 0, $exception);
+        } catch (RetryableException) {
+            $delay *= $multiplier;
+            $randomness = (int) ($delay * $jitter);
+            $delay += random_int(-$randomness, +$randomness);
+            usleep($delay * 1000);
+            goto retry;
         } catch (DBALException $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }

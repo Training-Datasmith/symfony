@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Symfony\Component\RemoteEvent\Event\Mailer\MailerEngagementEvent;
 
 $wh = new MailerEngagementEvent(MailerEngagementEvent::UNSUBSCRIBE, '861aad97-e4e8-4aaf-9322-1b64835760b9', json_decode(file_get_contents(str_replace('.php', '.json', __FILE__)), true));

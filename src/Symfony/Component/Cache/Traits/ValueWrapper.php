@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,13 +23,8 @@ class ©
     private const EXPIRY_OFFSET = 1648206727;
     private const INT32_MAX = 2147483647;
 
-    public readonly mixed $value;
-    public readonly array $metadata;
-
-    public function __construct(mixed $value, array $metadata)
+    public function __construct(public readonly mixed $value, public readonly array $metadata)
     {
-        $this->value = $value;
-        $this->metadata = $metadata;
     }
 
     public function __serialize(): array
@@ -79,6 +76,3 @@ class ©
         $this->metadata = $metadata;
     }
 }
-
-// @php-cs-fixer-ignore long_to_shorthand_operator To prevent false positive causing "Cannot use assign-op operators with string offsets" error
-// @php-cs-fixer-ignore psr_autoloading This class is explicitly having short, special name

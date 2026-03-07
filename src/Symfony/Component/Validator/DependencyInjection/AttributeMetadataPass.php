@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ final class AttributeMetadataPass implements CompilerPassInterface
 
         $resolve = $container->getParameterBag()->resolveValue(...);
         $mappedClasses = [];
-        foreach ($container->getDefinitions() as $id => $definition) {
+        foreach ($container->getDefinitions() as $definition) {
             if (!$definition->hasTag('validator.attribute_metadata')) {
                 continue;
             }
@@ -49,7 +51,7 @@ final class AttributeMetadataPass implements CompilerPassInterface
         ksort($mappedClasses);
 
         $container->getDefinition('validator.builder')
-            ->addMethodCall('addAttributeMappings', [array_map('array_keys', $mappedClasses)]);
+            ->addMethodCall('addAttributeMappings', [array_map(array_keys(...), $mappedClasses)]);
     }
 
     private function checkSourceMapsToTarget(ContainerBuilder $container, string $source, string $target): void

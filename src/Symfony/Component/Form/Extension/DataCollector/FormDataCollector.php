@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -61,10 +63,10 @@ class FormDataCollector extends DataCollector implements FormDataCollectorInterf
     private array $formsByView;
 
     public function __construct(
-        private FormDataExtractorInterface $dataExtractor,
+        private readonly FormDataExtractorInterface $dataExtractor,
     ) {
         if (!class_exists(ClassStub::class)) {
-            throw new \LogicException(\sprintf('The VarDumper component is needed for using the "%s" class. Install symfony/var-dumper version 3.4 or above.', __CLASS__));
+            throw new \LogicException(\sprintf('The VarDumper component is needed for using the "%s" class. Install symfony/var-dumper version 3.4 or above.', self::class));
         }
 
         $this->reset();
@@ -211,7 +213,7 @@ class FormDataCollector extends DataCollector implements FormDataCollectorInterf
     protected function getCasters(): array
     {
         return parent::getCasters() + [
-            \Exception::class => static function (\Exception $e, array $a, Stub $s) {
+            \Exception::class => static function (\Exception $e, array $a, Stub $s): array {
                 foreach (["\0Exception\0previous", "\0Exception\0trace"] as $k) {
                     if (isset($a[$k])) {
                         unset($a[$k]);
@@ -221,12 +223,12 @@ class FormDataCollector extends DataCollector implements FormDataCollectorInterf
 
                 return $a;
             },
-            FormInterface::class => static fn (FormInterface $f, array $a) => [
+            FormInterface::class => static fn (FormInterface $f, array $a): array => [
                 Caster::PREFIX_VIRTUAL.'name' => $f->getName(),
                 Caster::PREFIX_VIRTUAL.'type_class' => new ClassStub($f->getConfig()->getType()->getInnerType()::class),
             ],
             FormView::class => StubCaster::cutInternals(...),
-            ConstraintViolationInterface::class => static fn (ConstraintViolationInterface $v, array $a) => [
+            ConstraintViolationInterface::class => static fn (ConstraintViolationInterface $v, array $a): array => [
                 Caster::PREFIX_VIRTUAL.'root' => $v->getRoot(),
                 Caster::PREFIX_VIRTUAL.'path' => $v->getPropertyPath(),
                 Caster::PREFIX_VIRTUAL.'value' => $v->getInvalidValue(),

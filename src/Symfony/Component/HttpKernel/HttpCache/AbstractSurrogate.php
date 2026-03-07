@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -107,10 +109,10 @@ abstract class AbstractSurrogate implements SurrogateInterface
 
         if (\sprintf('content="%s/1.0"', $upperName) == $value) {
             $response->headers->remove('Surrogate-Control');
-        } elseif (preg_match(\sprintf('#,\s*content="%s/1.0"#', $upperName), $value)) {
-            $response->headers->set('Surrogate-Control', preg_replace(\sprintf('#,\s*content="%s/1.0"#', $upperName), '', $value));
-        } elseif (preg_match(\sprintf('#content="%s/1.0",\s*#', $upperName), $value)) {
-            $response->headers->set('Surrogate-Control', preg_replace(\sprintf('#content="%s/1.0",\s*#', $upperName), '', $value));
+        } elseif (preg_match(\sprintf('#,\s*content="%s/1.0"#', $upperName), (string) $value)) {
+            $response->headers->set('Surrogate-Control', preg_replace(\sprintf('#,\s*content="%s/1.0"#', $upperName), '', (string) $value));
+        } elseif (preg_match(\sprintf('#content="%s/1.0",\s*#', $upperName), (string) $value)) {
+            $response->headers->set('Surrogate-Control', preg_replace(\sprintf('#content="%s/1.0",\s*#', $upperName), '', (string) $value));
         }
     }
 

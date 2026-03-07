@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,13 +32,11 @@ use Symfony\Component\VarDumper\Caster\ClassStub;
 final class WrappedLazyListener extends AbstractListener
 {
     private ?Response $response = null;
-    private FirewallListenerInterface $listener;
     private ?float $time = null;
     private ClassStub $stub;
 
-    public function __construct(FirewallListenerInterface $listener)
+    public function __construct(private readonly FirewallListenerInterface $listener)
     {
-        $this->listener = $listener;
     }
 
     public function supports(Request $request): ?bool

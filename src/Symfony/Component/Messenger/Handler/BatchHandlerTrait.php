@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -92,9 +94,9 @@ trait BatchHandlerTrait
     }
 
     /**
-     * @return int|null The idle timeout in seconds
+     * @return int The idle timeout in seconds
      */
-    private function getIdleTimeout(): ?int
+    private function getIdleTimeout(): int
     {
         return 1;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,8 +37,8 @@ use Symfony\Component\Security\Http\RememberMe\RememberMeHandlerInterface;
 class RememberMeListener implements EventSubscriberInterface
 {
     public function __construct(
-        private RememberMeHandlerInterface $rememberMeHandler,
-        private ?LoggerInterface $logger = null,
+        private readonly RememberMeHandlerInterface $rememberMeHandler,
+        private readonly ?LoggerInterface $logger = null,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -59,12 +61,10 @@ class PropertyAccessor implements PropertyAccessorInterface
     private const CACHE_PREFIX_PROPERTY_PATH = 'p';
     private const RESULT_PROTO = [self::VALUE => null];
 
-    private bool $ignoreInvalidIndices;
-    private bool $ignoreInvalidProperty;
-    private ?CacheItemPoolInterface $cacheItemPool;
+    private readonly bool $ignoreInvalidIndices;
+    private readonly bool $ignoreInvalidProperty;
+    private readonly ?CacheItemPoolInterface $cacheItemPool;
     private array $propertyPathCache = [];
-    private PropertyReadInfoExtractorInterface $readInfoExtractor;
-    private PropertyWriteInfoExtractorInterface $writeInfoExtractor;
     private array $readPropertyCache = [];
     private array $writePropertyCache = [];
 
@@ -79,17 +79,15 @@ class PropertyAccessor implements PropertyAccessorInterface
      *                               to specify when exceptions should be thrown
      */
     public function __construct(
-        private int $magicMethodsFlags = self::MAGIC_GET | self::MAGIC_SET,
+        private readonly int $magicMethodsFlags = self::MAGIC_GET | self::MAGIC_SET,
         int $throw = self::THROW_ON_INVALID_PROPERTY_PATH,
         ?CacheItemPoolInterface $cacheItemPool = null,
-        ?PropertyReadInfoExtractorInterface $readInfoExtractor = null,
-        ?PropertyWriteInfoExtractorInterface $writeInfoExtractor = null,
+        private readonly ?PropertyReadInfoExtractorInterface $readInfoExtractor = new ReflectionExtractor([], null, null, false),
+        private readonly ?PropertyWriteInfoExtractorInterface $writeInfoExtractor = new ReflectionExtractor(['set'], null, null, false),
     ) {
         $this->ignoreInvalidIndices = 0 === ($throw & self::THROW_ON_INVALID_INDEX);
         $this->cacheItemPool = $cacheItemPool instanceof NullAdapter ? null : $cacheItemPool; // Replace the NullAdapter by the null value
         $this->ignoreInvalidProperty = 0 === ($throw & self::THROW_ON_INVALID_PROPERTY_PATH);
-        $this->readInfoExtractor = $readInfoExtractor ?? new ReflectionExtractor([], null, null, false);
-        $this->writeInfoExtractor = $writeInfoExtractor ?? new ReflectionExtractor(['set'], null, null, false);
     }
 
     public function getValue(object|array $objectOrArray, string|PropertyPathInterface $propertyPath): mixed
@@ -421,7 +419,7 @@ class PropertyAccessor implements PropertyAccessorInterface
                             if ($r->isPublic() && !$r->hasType()) {
                                 throw new UninitializedPropertyException(\sprintf('The property "%s::$%s" is not initialized.', $class, $name));
                             }
-                        } catch (\ReflectionException $e) {
+                        } catch (\ReflectionException) {
                             if (!$ignoreInvalidProperty) {
                                 throw new NoSuchPropertyException(\sprintf('Can\'t get a way to read the property "%s" in class "%s".', $property, $class));
                             }

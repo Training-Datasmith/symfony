@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,10 +30,12 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\FileQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Terminal;
-use Symfony\Component\Validator\Validation;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 use function Symfony\Component\String\s;
+
+use Symfony\Component\Validator\Validation;
+
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * The QuestionHelper class provides helpers to interact with the user.
@@ -44,7 +48,7 @@ class QuestionHelper extends Helper
     private static bool $stdinIsInteractive;
 
     public function __construct(
-        private ?EventDispatcherInterface $dispatcher = null,
+        private readonly ?EventDispatcherInterface $dispatcher = null,
     ) {
     }
 
@@ -73,7 +77,7 @@ class QuestionHelper extends Helper
                 return $this->doAsk($inputStream, $output, $question);
             }
 
-            $interviewer = fn () => $this->doAsk($inputStream, $output, $question);
+            $interviewer = fn (): mixed => $this->doAsk($inputStream, $output, $question);
 
             return $this->validateAttempts($interviewer, $output, $question);
         } catch (MissingInputException $exception) {
@@ -178,16 +182,15 @@ class QuestionHelper extends Helper
         if (null === $default) {
             return $default;
         }
-
         if ($validator = $question->getValidator()) {
             return \call_user_func($validator, $default);
-        } elseif ($question instanceof ChoiceQuestion) {
-            $choices = $question->getChoices();
+        }
 
+        if ($question instanceof ChoiceQuestion) {
+            $choices = $question->getChoices();
             if (!$question->isMultiselect()) {
                 return $choices[$default] ?? $default;
             }
-
             $default = explode(',', $default);
             foreach ($default as $k => $v) {
                 $v = $question->isTrimmable() ? trim($v) : $v;
@@ -223,7 +226,7 @@ class QuestionHelper extends Helper
     {
         $messages = [];
 
-        $maxWidth = max(array_map([__CLASS__, 'width'], array_keys($choices = $question->getChoices())));
+        $maxWidth = max(array_map(self::width(...), array_keys($choices = $question->getChoices())));
 
         foreach ($choices as $key => $value) {
             $padding = str_repeat(' ', $maxWidth - self::width($key));
@@ -277,20 +280,22 @@ class QuestionHelper extends Helper
         while (!feof($inputStream)) {
             $inputHelper->waitForInput();
             $c = fread($inputStream, 1);
-
             // as opposed to fgets(), fread() returns an empty string when the stream content is empty, not false.
             if (false === $c || ('' === $ret && '' === $c && null === $question->getDefault())) {
                 // Restore the terminal so it behaves normally again
                 $inputHelper->finish();
                 throw new MissingInputException('Aborted while asking: '.$question->getQuestion());
-            } elseif ("\177" === $c) { // Backspace Character
+            }
+
+            // as opposed to fgets(), fread() returns an empty string when the stream content is empty, not false.
+            if ("\177" === $c) {
+                // Backspace Character
                 if (0 === $numMatches && 0 !== $i) {
                     --$i;
                     $cursor->moveLeft(s($fullChoice)->slice(-1)->width(false));
 
                     $fullChoice = self::substr($fullChoice, 0, $i);
                 }
-
                 if (0 === $i) {
                     $ofs = -1;
                     $matches = $autocomplete($ret);
@@ -298,7 +303,6 @@ class QuestionHelper extends Helper
                 } else {
                     $numMatches = 0;
                 }
-
                 // Pop the last character off the end of our string
                 $ret = self::substr($ret, 0, $i);
             } elseif ("\033" === $c) {
@@ -330,7 +334,7 @@ class QuestionHelper extends Helper
 
                         $matches = array_filter(
                             $autocomplete($ret),
-                            static fn ($match) => '' === $ret || str_starts_with($match, $ret)
+                            static fn (string $match): bool => '' === $ret || str_starts_with($match, $ret)
                         );
                         $numMatches = \count($matches);
                         $ofs = -1;
@@ -496,7 +500,7 @@ class QuestionHelper extends Helper
                 throw $error ?? $e;
             } catch (RuntimeException $e) {
                 throw $e;
-            } catch (\Exception $error) {
+            } catch (\Exception) {
             }
         }
 
@@ -530,11 +534,7 @@ class QuestionHelper extends Helper
             return false;
         }
 
-        if (isset(self::$stdinIsInteractive)) {
-            return self::$stdinIsInteractive;
-        }
-
-        return self::$stdinIsInteractive = @stream_isatty(fopen('php://stdin', 'r'));
+        return self::$stdinIsInteractive ?? self::$stdinIsInteractive = @stream_isatty(fopen('php://stdin', 'r'));
     }
 
     /**

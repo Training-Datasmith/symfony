@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,16 +29,16 @@ class ResizeFormListener implements EventSubscriberInterface
 {
     protected array $prototypeOptions;
 
-    private \Closure|bool $deleteEmpty;
+    private readonly \Closure|bool $deleteEmpty;
 
     public function __construct(
-        private string $type,
-        private array $options = [],
-        private bool $allowAdd = false,
-        private bool $allowDelete = false,
+        private readonly string $type,
+        private readonly array $options = [],
+        private readonly bool $allowAdd = false,
+        private readonly bool $allowDelete = false,
         bool|callable $deleteEmpty = false,
         ?array $prototypeOptions = null,
-        private bool $keepAsList = false,
+        private readonly bool $keepAsList = false,
     ) {
         $this->deleteEmpty = \is_bool($deleteEmpty) ? $deleteEmpty : $deleteEmpty(...);
         $this->prototypeOptions = $prototypeOptions ?? $options;
@@ -121,10 +123,12 @@ class ResizeFormListener implements EventSubscriberInterface
             $previousData = $form->getData();
             /** @var FormInterface $child */
             foreach ($form as $name => $child) {
-                if (!$child->isValid() || !$child->isSynchronized()) {
+                if (!$child->isValid()) {
                     continue;
                 }
-
+                if (!$child->isSynchronized()) {
+                    continue;
+                }
                 $isNew = !isset($previousData[$name]);
                 $isEmpty = \is_callable($this->deleteEmpty) ? ($this->deleteEmpty)($child->getData()) : $child->isEmpty();
 

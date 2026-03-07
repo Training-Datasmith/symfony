@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,17 +39,19 @@ class AttributeDirectoryLoader extends AttributeFileLoader
         $files = iterator_to_array(new \RecursiveIteratorIterator(
             new \RecursiveCallbackFilterIterator(
                 new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::FOLLOW_SYMLINKS),
-                static fn (\SplFileInfo $current) => !str_starts_with($current->getBasename(), '.')
+                static fn (\SplFileInfo $current): bool => !str_starts_with($current->getBasename(), '.')
             ),
             \RecursiveIteratorIterator::LEAVES_ONLY
         ));
-        usort($files, static fn (\SplFileInfo $a, \SplFileInfo $b) => (string) $a > (string) $b ? 1 : -1);
+        usort($files, static fn (\SplFileInfo $a, \SplFileInfo $b): int => (string) $a > (string) $b ? 1 : -1);
 
         foreach ($files as $file) {
-            if (!$file->isFile() || !str_ends_with($file->getFilename(), '.php')) {
+            if (!$file->isFile()) {
                 continue;
             }
-
+            if (!str_ends_with((string) $file->getFilename(), '.php')) {
+                continue;
+            }
             if ($class = $this->findClass($file)) {
                 $refl = new \ReflectionClass($class);
                 if ($refl->isAbstract()) {

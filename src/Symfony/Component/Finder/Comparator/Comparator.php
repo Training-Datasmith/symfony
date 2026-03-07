@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,10 +18,10 @@ namespace Symfony\Component\Finder\Comparator;
  */
 class Comparator
 {
-    private string $operator;
+    private readonly string $operator;
 
     public function __construct(
-        private string $target,
+        private readonly string $target,
         string $operator = '==',
     ) {
         if (!\in_array($operator, ['>', '<', '>=', '<=', '==', '!='], true)) {

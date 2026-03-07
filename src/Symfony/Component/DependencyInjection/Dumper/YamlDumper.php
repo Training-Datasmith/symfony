@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -70,7 +72,7 @@ class YamlDumper extends Dumper
 
         $tagsCode = '';
         $tags = $definition->getTags();
-        $tags['container.error'] = array_map(static fn ($e) => ['message' => $e], $definition->getErrors());
+        $tags['container.error'] = array_map(static fn ($e): array => ['message' => $e], $definition->getErrors());
         foreach ($tags as $name => $tags) {
             foreach ($tags as $attributes) {
                 $att = [];
@@ -295,27 +297,33 @@ class YamlDumper extends Dumper
 
             return new TaggedValue($tag, $this->dumpValue($value->getValues()));
         }
-
         if (\is_array($value)) {
             $code = [];
             foreach ($value as $k => $v) {
                 $code[$this->container->resolveEnvPlaceholders($k)] = $this->dumpValue($v);
             }
-
             return $code;
-        } elseif ($value instanceof Reference) {
+        }
+        if ($value instanceof Reference) {
             return $this->getServiceCall((string) $value, $value);
-        } elseif ($value instanceof Parameter) {
+        }
+        if ($value instanceof Parameter) {
             return $this->getParameterCall((string) $value);
-        } elseif ($value instanceof Expression) {
+        }
+        if ($value instanceof Expression) {
             return $this->getExpressionCall((string) $value);
-        } elseif ($value instanceof Definition) {
+        }
+        if ($value instanceof Definition) {
             return new TaggedValue('service', (new Parser())->parse("_:\n".$this->addService('_', $value), Yaml::PARSE_CUSTOM_TAGS)['_']['_']);
-        } elseif ($value instanceof \UnitEnum) {
+        }
+        if ($value instanceof \UnitEnum) {
             return new TaggedValue('php/enum', \sprintf('%s::%s', $value::class, $value->name));
-        } elseif ($value instanceof AbstractArgument) {
+        }
+        if ($value instanceof AbstractArgument) {
             return new TaggedValue('abstract', $value->getText());
-        } elseif (\is_object($value) || \is_resource($value)) {
+        }
+
+        if (\is_object($value) || \is_resource($value)) {
             throw new RuntimeException(\sprintf('Unable to dump a service container if a parameter is an object or a resource, got "%s".', get_debug_type($value)));
         }
 
@@ -326,7 +334,7 @@ class YamlDumper extends Dumper
     {
         if (null !== $reference) {
             switch ($reference->getInvalidBehavior()) {
-                case ContainerInterface::RUNTIME_EXCEPTION_ON_INVALID_REFERENCE: break;
+                case ContainerInterface::RUNTIME_EXCEPTION_ON_INVALID_REFERENCE:
                 case ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE: break;
                 case ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE: return \sprintf('@!%s', $id);
                 default: return \sprintf('@?%s', $id);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -48,7 +50,8 @@ final class ImportMapRequireCommand extends Command
             ->addOption('entrypoint', null, InputOption::VALUE_NONE, 'Make the packages an entrypoint?')
             ->addOption('path', null, InputOption::VALUE_REQUIRED, 'The local path where the package lives relative to the project root')
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Simulate the installation of the packages')
-            ->setHelp(<<<'EOT'
+            ->setHelp(
+                <<<'EOT'
                 The <info>%command.name%</info> command adds packages to <comment>importmap.php</comment> usually
                 by finding a CDN URL for the given package and version.
 

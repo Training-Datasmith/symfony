@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'af' => 'ആഫ്രിക്കാൻസ്',

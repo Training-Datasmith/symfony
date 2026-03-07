@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,18 +23,18 @@ use Symfony\Component\VarDumper\Cloner\Stub;
  */
 final class OpenSSLCaster
 {
-    public static function castOpensslX509(\OpenSSLCertificate $h, array $a, Stub $stub, bool $isNested): array
+    public static function castOpensslX509(\OpenSSLCertificate $h, array $a, Stub $stub): array
     {
         $stub->cut = -1;
         $info = openssl_x509_parse($h, false);
 
         $pin = openssl_pkey_get_public($h);
         $pin = openssl_pkey_get_details($pin)['key'];
-        $pin = \array_slice(explode("\n", $pin), 1, -2);
+        $pin = \array_slice(explode("\n", (string) $pin), 1, -2);
         $pin = base64_decode(implode('', $pin));
         $pin = base64_encode(hash('sha256', $pin, true));
 
-        $a += [
+        return $a + [
             Caster::PREFIX_VIRTUAL.'subject' => new EnumStub(array_intersect_key($info['subject'], ['organizationName' => true, 'commonName' => true])),
             Caster::PREFIX_VIRTUAL.'issuer' => new EnumStub(array_intersect_key($info['issuer'], ['organizationName' => true, 'commonName' => true])),
             Caster::PREFIX_VIRTUAL.'expiry' => new ConstStub(date(\DateTimeInterface::ISO8601, $info['validTo_time_t']), $info['validTo_time_t']),
@@ -43,11 +45,9 @@ final class OpenSSLCaster
                 'pin-sha256' => new ConstStub($pin),
             ]),
         ];
-
-        return $a;
     }
 
-    public static function castOpensslAsymmetricKey(\OpenSSLAsymmetricKey $key, array $a, Stub $stub, bool $isNested): array
+    public static function castOpensslAsymmetricKey(\OpenSSLAsymmetricKey $key, array $a): array
     {
         foreach (openssl_pkey_get_details($key) as $k => $v) {
             $a[Caster::PREFIX_VIRTUAL.$k] = $v;
@@ -58,7 +58,7 @@ final class OpenSSLCaster
         return $a;
     }
 
-    public static function castOpensslCsr(\OpenSSLCertificateSigningRequest $csr, array $a, Stub $stub, bool $isNested): array
+    public static function castOpensslCsr(\OpenSSLCertificateSigningRequest $csr, array $a): array
     {
         foreach (openssl_csr_get_subject($csr, false) as $k => $v) {
             $a[Caster::PREFIX_VIRTUAL.$k] = $v;

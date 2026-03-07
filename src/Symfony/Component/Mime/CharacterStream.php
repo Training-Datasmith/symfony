@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -67,7 +69,7 @@ final class CharacterStream
      */
     public function __construct($input, ?string $charset = 'utf-8')
     {
-        $charset = strtolower(trim($charset)) ?: 'utf-8';
+        $charset = strtolower(trim((string) $charset)) ?: 'utf-8';
         if ('utf-8' === $charset || 'utf8' === $charset) {
             $this->fixedWidth = 0;
             $this->map = ['p' => [], 'i' => []];
@@ -135,7 +137,7 @@ final class CharacterStream
     public function readBytes(int $length): ?array
     {
         if (null !== $read = $this->read($length)) {
-            return array_map('ord', str_split($read, 1));
+            return array_map(ord(...), str_split($read, 1));
         }
 
         return null;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -54,7 +56,7 @@ class UndefinedFunctionErrorEnhancer implements ErrorEnhancerInterface
         }
 
         $candidates = [];
-        foreach (get_defined_functions() as $type => $definedFunctionNames) {
+        foreach (get_defined_functions() as $definedFunctionNames) {
             foreach ($definedFunctionNames as $definedFunctionName) {
                 if (false !== $namespaceSeparatorIndex = strrpos($definedFunctionName, '\\')) {
                     $definedFunctionNameBasename = substr($definedFunctionName, $namespaceSeparatorIndex + 1);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,7 @@ abstract class Bundle implements BundleInterface
     protected string $name;
     protected ExtensionInterface|false|null $extension = null;
     protected string $path;
-    protected ?ContainerInterface $container;
+    protected ?ContainerInterface $container = null;
 
     private string $namespace;
 
@@ -58,10 +60,6 @@ abstract class Bundle implements BundleInterface
             $extension = $this->createContainerExtension();
 
             if (null !== $extension) {
-                if (!$extension instanceof ExtensionInterface) {
-                    throw new \LogicException(\sprintf('Extension "%s" must implement Symfony\Component\DependencyInjection\Extension\ExtensionInterface.', get_debug_type($extension)));
-                }
-
                 // check naming convention
                 $basename = preg_replace('/Bundle$/', '', $this->getName());
                 $expectedAlias = Container::underscore($basename);

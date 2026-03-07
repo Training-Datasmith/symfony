@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,7 +37,7 @@ final class Translator extends BaseTranslator implements WarmableInterface
     /**
      * @var list<string>
      */
-    private array $resourceLocales;
+    private readonly array $resourceLocales;
 
     /**
      * Holds parameters from addResource() calls so we can defer the actual
@@ -53,7 +55,7 @@ final class Translator extends BaseTranslator implements WarmableInterface
     /**
      * @var string[]
      */
-    private array $scannedDirectories;
+    private readonly array $scannedDirectories;
 
     /**
      * Constructor.
@@ -75,7 +77,7 @@ final class Translator extends BaseTranslator implements WarmableInterface
         string $defaultLocale,
         protected array $loaderIds = [],
         array $options = [],
-        private array $enabledLocales = [],
+        private readonly array $enabledLocales = [],
     ) {
         // check option names
         if ($diff = array_diff(array_keys($options), array_keys($this->options))) {

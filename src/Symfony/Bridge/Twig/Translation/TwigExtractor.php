@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,7 +41,7 @@ class TwigExtractor extends AbstractFileExtractor implements ExtractorInterface
     private string $prefix = '';
 
     public function __construct(
-        private Environment $twig,
+        private readonly Environment $twig,
     ) {
     }
 
@@ -67,7 +69,7 @@ class TwigExtractor extends AbstractFileExtractor implements ExtractorInterface
         $this->twig->parse($this->twig->tokenize(new Source($template, '')));
 
         foreach ($visitor->getMessages() as $message) {
-            $catalogue->set(trim($message[0]), $this->prefix.trim($message[0]), $message[1] ?: $this->defaultDomain);
+            $catalogue->set(trim((string) $message[0]), $this->prefix.trim((string) $message[0]), $message[1] ?: $this->defaultDomain);
         }
 
         $visitor->disable();

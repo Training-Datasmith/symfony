@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ namespace Symfony\Component\HttpKernel\Exception;
 class HttpException extends \RuntimeException implements HttpExceptionInterface
 {
     public function __construct(
-        private int $statusCode,
+        private readonly int $statusCode,
         string $message = '',
         ?\Throwable $previous = null,
         private array $headers = [],

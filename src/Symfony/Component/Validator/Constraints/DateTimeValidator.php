@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -52,7 +54,7 @@ class DateTimeValidator extends DateValidator
         }
 
         if (str_ends_with($constraint->format, '+')) {
-            $errors['warnings'] = array_filter($errors['warnings'], static fn ($warning) => 'Trailing data' !== $warning);
+            $errors['warnings'] = array_filter($errors['warnings'], static fn (string $warning): bool => 'Trailing data' !== $warning);
         }
 
         foreach ($errors['warnings'] as $warning) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -62,7 +64,7 @@ final class ElasticsearchLogstashHandler extends AbstractHandler
         private string $elasticsearchVersion = '1.0.0',
     ) {
         if (!$client && !class_exists(HttpClient::class)) {
-            throw new \LogicException(\sprintf('The "%s" handler needs an HTTP client. Try running "composer require symfony/http-client".', __CLASS__));
+            throw new \LogicException(\sprintf('The "%s" handler needs an HTTP client. Try running "composer require symfony/http-client".', self::class));
         }
 
         parent::__construct($level, $bubble);
@@ -140,12 +142,12 @@ final class ElasticsearchLogstashHandler extends AbstractHandler
 
     public function __serialize(): array
     {
-        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot serialize '.self::class);
     }
 
     public function __unserialize(array $data): void
     {
-        throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot unserialize '.self::class);
     }
 
     public function __destruct()

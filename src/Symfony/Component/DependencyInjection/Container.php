@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -50,7 +52,6 @@ class_exists(ArgumentServiceLocator::class);
  */
 class Container implements ContainerInterface, ResetInterface
 {
-    protected ParameterBagInterface $parameterBag;
     protected array $services = [];
     protected array $privates = [];
     protected array $fileMap = [];
@@ -67,9 +68,8 @@ class Container implements ContainerInterface, ResetInterface
 
     private static \Closure $make;
 
-    public function __construct(?ParameterBagInterface $parameterBag = null)
+    public function __construct(protected ?ParameterBagInterface $parameterBag = new EnvPlaceholderParameterBag())
     {
-        $this->parameterBag = $parameterBag ?? new EnvPlaceholderParameterBag();
     }
 
     /**
@@ -219,7 +219,8 @@ class Container implements ContainerInterface, ResetInterface
         try {
             if (isset($container->fileMap[$id])) {
                 return /* self::IGNORE_ON_UNINITIALIZED_REFERENCE */ 4 === $invalidBehavior ? null : $container->load($container->fileMap[$id]);
-            } elseif (isset($container->methodMap[$id])) {
+            }
+            if (isset($container->methodMap[$id])) {
                 return /* self::IGNORE_ON_UNINITIALIZED_REFERENCE */ 4 === $invalidBehavior ? null : $container->{$container->methodMap[$id]}($container);
             }
         } catch (\Exception $e) {
@@ -243,7 +244,10 @@ class Container implements ContainerInterface, ResetInterface
 
             $alternatives = [];
             foreach ($container->getServiceIds() as $knownId) {
-                if ('' === $knownId || '.' === $knownId[0]) {
+                if ('' === $knownId) {
+                    continue;
+                }
+                if ('.' === $knownId[0]) {
                     continue;
                 }
                 $lev = levenshtein($id, $knownId);
@@ -306,7 +310,7 @@ class Container implements ContainerInterface, ResetInterface
      */
     public function getServiceIds(): array
     {
-        return array_map('strval', array_unique(array_merge(['service_container'], array_keys($this->fileMap), array_keys($this->methodMap), array_keys($this->aliases), array_keys($this->services))));
+        return array_map(strval(...), array_unique(array_merge(['service_container'], array_keys($this->fileMap), array_keys($this->methodMap), array_keys($this->aliases), array_keys($this->services))));
     }
 
     /**
@@ -330,7 +334,7 @@ class Container implements ContainerInterface, ResetInterface
      */
     public static function underscore(string $id): string
     {
-        return strtolower(preg_replace(['/([A-Z]+)([A-Z][a-z])/', '/([a-z\d])([A-Z])/'], ['\\1_\\2', '\\1_\\2'], str_replace('_', '.', $id)));
+        return strtolower((string) preg_replace(['/([A-Z]+)([A-Z][a-z])/', '/([a-z\d])([A-Z])/'], ['\\1_\\2', '\\1_\\2'], str_replace('_', '.', $id)));
     }
 
     /**

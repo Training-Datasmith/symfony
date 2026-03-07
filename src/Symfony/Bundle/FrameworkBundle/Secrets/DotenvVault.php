@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -88,13 +90,13 @@ class DotenvVault extends AbstractVault
         $secrets = [];
 
         foreach ($_ENV as $k => $v) {
-            if ('' !== ($v ?? '') && preg_match('/^\w+$/D', $k)) {
+            if ('' !== ($v ?? '') && preg_match('/^\w+$/D', (string) $k)) {
                 $secrets[$k] = \is_string($v) && $reveal ? $v : null;
             }
         }
 
         foreach ($_SERVER as $k => $v) {
-            if ('' !== ($v ?? '') && preg_match('/^\w+$/D', $k)) {
+            if ('' !== ($v ?? '') && preg_match('/^\w+$/D', (string) $k)) {
                 $secrets[$k] = \is_string($v) && $reveal ? $v : null;
             }
         }

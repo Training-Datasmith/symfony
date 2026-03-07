@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -165,7 +167,9 @@ class ReflectionClassResourceTest extends TestCase
         yield [true, 17, 'public function ccc($bar = 187) {}', ++$i];
         yield [true, 17, 'public function ccc($bar = ANOTHER_ONE_THAT_WILL_NEVER_BE_DEFINED_CCCCCCCCC) {}', ++$i];
         yield [true, 17, 'public function ccc($bar = parent::BOOM) {}', ++$i];
-        yield [false, 17, null, ++$i, static function () { \define('A_CONSTANT_THAT_FOR_SURE_WILL_NEVER_BE_DEFINED_CCCCCC', 'foo'); }];
+        yield [false, 17, null, ++$i, static function () {
+            \define('A_CONSTANT_THAT_FOR_SURE_WILL_NEVER_BE_DEFINED_CCCCCC', 'foo');
+        }];
     }
 
     public function testEventSubscriber()

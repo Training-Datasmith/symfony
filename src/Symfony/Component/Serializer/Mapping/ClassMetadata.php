@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,20 +20,15 @@ namespace Symfony\Component\Serializer\Mapping;
  */
 class ClassMetadata implements ClassMetadataInterface
 {
-    private string $name;
-
     /**
      * @var AttributeMetadataInterface[]
      */
     private array $attributesMetadata = [];
 
     private ?\ReflectionClass $reflClass = null;
-    private ?ClassDiscriminatorMapping $classDiscriminatorMapping = null;
 
-    public function __construct(string $class, ?ClassDiscriminatorMapping $classDiscriminatorMapping = null)
+    public function __construct(private readonly string $name, private ?ClassDiscriminatorMapping $classDiscriminatorMapping = null)
     {
-        $this->name = $class;
-        $this->classDiscriminatorMapping = $classDiscriminatorMapping;
     }
 
     public function getName(): string

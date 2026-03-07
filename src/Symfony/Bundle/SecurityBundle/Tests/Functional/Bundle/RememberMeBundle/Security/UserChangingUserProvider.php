@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -50,7 +52,9 @@ class UserChangingUserProvider implements UserProviderInterface
     private function changeUser(UserInterface $user): UserInterface
     {
         if (self::$changePassword) {
-            $alterUser = \Closure::bind(static function (InMemoryUser $user) { $user->password = 'changed!'; }, null, InMemoryUser::class);
+            $alterUser = \Closure::bind(static function (InMemoryUser $user) {
+                $user->password = 'changed!';
+            }, null, InMemoryUser::class);
             $alterUser($user);
         }
 

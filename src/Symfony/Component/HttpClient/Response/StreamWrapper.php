@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ class StreamWrapper
     private ResponseInterface $response;
 
     /** @var resource|string|null */
-    private $content;
+    private ?string $content = null;
 
     /** @var resource|callable|null */
     private $handle;
@@ -56,12 +58,12 @@ class StreamWrapper
         }
 
         if (null === $client && !method_exists($response, 'stream')) {
-            throw new \InvalidArgumentException(\sprintf('Providing a client to "%s()" is required when the response doesn\'t have any "stream()" method.', __CLASS__));
+            throw new \InvalidArgumentException(\sprintf('Providing a client to "%s()" is required when the response doesn\'t have any "stream()" method.', self::class));
         }
 
         static $registered = false;
 
-        if (!$registered = $registered || stream_wrapper_register(strtr(__CLASS__, '\\', '-'), __CLASS__)) {
+        if (!$registered = $registered || stream_wrapper_register(strtr(self::class, '\\', '-'), self::class)) {
             throw new \RuntimeException(error_get_last()['message'] ?? 'Registering the "symfony" stream wrapper failed.');
         }
 
@@ -70,7 +72,7 @@ class StreamWrapper
             'response' => $response,
         ];
 
-        return fopen(strtr(__CLASS__, '\\', '-').'://'.$response->getInfo('url'), 'r', false, stream_context_create(['symfony' => $context]));
+        return fopen(strtr(self::class, '\\', '-').'://'.$response->getInfo('url'), 'r', false, stream_context_create(['symfony' => $context]));
     }
 
     public function getResponse(): ResponseInterface
@@ -159,7 +161,6 @@ class StreamWrapper
 
         foreach ($this->client->stream([$this->response], $this->blocking ? $this->timeout : 0) as $chunk) {
             try {
-                $this->eof = true;
                 $this->eof = !$chunk->isTimeout();
 
                 if (!$this->eof && !$this->blocking) {

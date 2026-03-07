@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'bisou : adulte, adulte, peau claire et peau modérément claire',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'bisou : adulte, adulte, peau claire et peau légèrement mate',

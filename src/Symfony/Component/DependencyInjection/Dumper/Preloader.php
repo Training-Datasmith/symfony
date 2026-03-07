@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,8 +28,8 @@ final class Preloader
         $classes = [];
 
         foreach ($list as $item) {
-            if (str_starts_with($item, $cacheDir)) {
-                file_put_contents($file, \sprintf("require_once __DIR__.%s;\n", var_export(strtr(substr($item, \strlen($cacheDir)), \DIRECTORY_SEPARATOR, '/'), true)), \FILE_APPEND);
+            if (str_starts_with((string) $item, $cacheDir)) {
+                file_put_contents($file, \sprintf("require_once __DIR__.%s;\n", var_export(strtr(substr((string) $item, \strlen($cacheDir)), \DIRECTORY_SEPARATOR, '/'), true)), \FILE_APPEND);
                 continue;
             }
 
@@ -39,7 +41,7 @@ final class Preloader
 
     public static function preload(array $classes, array $preloaded = []): array
     {
-        set_error_handler(static function ($t, $m, $f, $l) {
+        set_error_handler(static function ($t, $m, $f, $l): void {
             if (error_reporting() & $t) {
                 if (__FILE__ !== $f) {
                     throw new \ErrorException($m, 0, $t, $f, $l);
@@ -99,8 +101,8 @@ final class Preloader
                     if ($p->isDefaultValueAvailable() && $p->isDefaultValueConstant()) {
                         $c = $p->getDefaultValueConstantName();
 
-                        if ($i = strpos($c, '::')) {
-                            self::doPreload(substr($c, 0, $i), $preloaded);
+                        if ($i = strpos((string) $c, '::')) {
+                            self::doPreload(substr((string) $c, 0, $i), $preloaded);
                         }
                     }
 

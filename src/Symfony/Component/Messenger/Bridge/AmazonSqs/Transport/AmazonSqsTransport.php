@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,16 +33,8 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 class AmazonSqsTransport implements TransportInterface, KeepaliveReceiverInterface, SetupableTransportInterface, CloseableTransportInterface, MessageCountAwareInterface, ResetInterface
 {
-    private SerializerInterface $serializer;
-
-    public function __construct(
-        private Connection $connection,
-        ?SerializerInterface $serializer = null,
-        private (ReceiverInterface&MessageCountAwareInterface)|null $receiver = null,
-        private ?SenderInterface $sender = null,
-        private bool $handleRetries = true,
-    ) {
-        $this->serializer = $serializer ?? new PhpSerializer();
+    public function __construct(private readonly Connection $connection, private readonly ?SerializerInterface $serializer = new PhpSerializer(), private (ReceiverInterface&MessageCountAwareInterface)|null $receiver = null, private ?SenderInterface $sender = null, private readonly bool $handleRetries = true)
+    {
     }
 
     public function get(): iterable

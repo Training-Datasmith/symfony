@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -42,12 +44,12 @@ class Connection extends AbstractConnection
 
     public function __serialize(): array
     {
-        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot serialize '.self::class);
     }
 
     public function __unserialize(array $data): void
     {
-        throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot unserialize '.self::class);
     }
 
     public function __destruct()
@@ -118,7 +120,7 @@ class Connection extends AbstractConnection
     public function whoami(): string
     {
         if (!$this->connection) {
-            throw new NotBoundException(\sprintf('Cannot execute "%s()" before calling "%s::saslBind()".', __METHOD__, __CLASS__));
+            throw new NotBoundException(\sprintf('Cannot execute "%s()" before calling "%s::saslBind()".', __METHOD__, self::class));
         }
 
         if (false === $authzId = ldap_exop_whoami($this->connection)) {
@@ -170,8 +172,8 @@ class Connection extends AbstractConnection
         $resolver->setAllowedTypes('debug', 'bool');
         $resolver->setDefault('referrals', false);
         $resolver->setAllowedTypes('referrals', 'bool');
-        $resolver->setOptions('options', static function (OptionsResolver $options, Options $parent) {
-            $options->setDefined(array_map('strtolower', array_keys((new \ReflectionClass(ConnectionOptions::class))->getConstants())));
+        $resolver->setOptions('options', static function (OptionsResolver $options, Options $parent): void {
+            $options->setDefined(array_map(strtolower(...), array_keys((new \ReflectionClass(ConnectionOptions::class))->getConstants())));
 
             if (true === $parent['debug']) {
                 $options->setDefault('debug_level', 7);

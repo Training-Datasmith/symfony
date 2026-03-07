@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -618,7 +620,7 @@ class Command implements SignalableCommandInterface
      */
     public function addUsage(string $usage): static
     {
-        if (!str_starts_with($usage, $this->name)) {
+        if (!str_starts_with($usage, (string) $this->name)) {
             $usage = \sprintf('%s %s', $this->name, $usage);
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,8 +24,8 @@ class FileQuestion extends Question
 {
     public function __construct(
         string $question,
-        private bool $allowPaste = true,
-        private bool $allowPath = true,
+        private readonly bool $allowPaste = true,
+        private readonly bool $allowPath = true,
     ) {
         parent::__construct($question);
 

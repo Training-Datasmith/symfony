@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -287,7 +289,7 @@ abstract class BaseNode implements NodeInterface
 
         $message = strtr($this->deprecation['message'], ['%node%' => $this->getName(), '%path%' => ($parent ?? $this->parent ?? $this)->getPath()]);
         if ($this->deprecation['package'] || $this->deprecation['version']) {
-            $message = \sprintf('Since %s %s: ', $this->deprecation['package'], $this->deprecation['version']).$message;
+            return \sprintf('Since %s %s: ', $this->deprecation['package'], $this->deprecation['version']).$message;
         }
 
         return $message;
@@ -492,7 +494,7 @@ abstract class BaseNode implements NodeInterface
             }
 
             foreach (self::$placeholderUniquePrefixes as $placeholderUniquePrefix) {
-                if (str_starts_with($value, $placeholderUniquePrefix)) {
+                if (str_starts_with($value, (string) $placeholderUniquePrefix)) {
                     return [];
                 }
             }

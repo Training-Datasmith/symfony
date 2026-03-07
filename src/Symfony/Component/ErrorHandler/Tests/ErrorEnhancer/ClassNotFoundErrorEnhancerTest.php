@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -132,7 +134,8 @@ class ClassNotFoundErrorEnhancerTest extends TestCase
             [
                 'Class \'Foo\\Bar\\UndefinedFunctionError\' not found',
                 "Attempted to load class \"UndefinedFunctionError\" from namespace \"Foo\\Bar\".\nDid you forget a \"use\" statement for another namespace?",
-                static function ($className) { /* do nothing here */ },
+                static function ($className) { /* do nothing here */
+                },
             ],
         ];
     }

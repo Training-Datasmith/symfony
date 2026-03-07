@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -63,13 +65,15 @@ class TemplateManager
             }
 
             [$name, $template] = $arguments;
-
-            if (!$this->profiler->has($name) || !$profile->hasCollector($name)) {
+            if (!$this->profiler->has($name)) {
+                continue;
+            }
+            if (!$profile->hasCollector($name)) {
                 continue;
             }
 
-            if (str_ends_with($template, '.html.twig')) {
-                $template = substr($template, 0, -10);
+            if (str_ends_with((string) $template, '.html.twig')) {
+                $template = substr((string) $template, 0, -10);
             }
 
             if (!$loader->exists($template.'.html.twig')) {

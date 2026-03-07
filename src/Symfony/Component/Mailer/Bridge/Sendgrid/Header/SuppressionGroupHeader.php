@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,8 +24,8 @@ final class SuppressionGroupHeader extends UnstructuredHeader
      * @param int[] $groupsToDisplay
      */
     public function __construct(
-        private int $groupId,
-        private array $groupsToDisplay = [],
+        private readonly int $groupId,
+        private readonly array $groupsToDisplay = [],
     ) {
         parent::__construct('X-Sendgrid-SuppressionGroup', json_encode([
             'group_id' => $groupId,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,7 +36,7 @@ class Application extends BaseApplication
     private array $registrationErrors = [];
 
     public function __construct(
-        private KernelInterface $kernel,
+        private readonly KernelInterface $kernel,
     ) {
         parent::__construct('Symfony', Kernel::VERSION);
 

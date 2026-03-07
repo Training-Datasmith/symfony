@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,7 +35,7 @@ class TaggedIteratorArgument extends IteratorArgument
      * @param bool        $excludeSelf    Whether to automatically exclude the referencing service from the iterator
      */
     public function __construct(
-        private string $tag,
+        private readonly string $tag,
         ?string $indexAttribute = null,
         bool|string|null $needsIndexes = false,
         array|bool $exclude = [],
@@ -53,8 +55,8 @@ class TaggedIteratorArgument extends IteratorArgument
         }
 
         $this->indexAttribute = $indexAttribute;
-        $this->defaultIndexMethod = $defaultIndexMethod ?: ($indexAttribute ? 'getDefault'.str_replace(' ', '', ucwords(preg_replace('/[^a-zA-Z0-9\x7f-\xff]++/', ' ', $indexAttribute))).'Name' : null);
-        $this->defaultPriorityMethod = $defaultPriorityMethod ?: ($indexAttribute ? 'getDefault'.str_replace(' ', '', ucwords(preg_replace('/[^a-zA-Z0-9\x7f-\xff]++/', ' ', $indexAttribute))).'Priority' : null);
+        $this->defaultIndexMethod = $defaultIndexMethod ?: ($indexAttribute ? 'getDefault'.str_replace(' ', '', ucwords((string) preg_replace('/[^a-zA-Z0-9\x7f-\xff]++/', ' ', $indexAttribute))).'Name' : null);
+        $this->defaultPriorityMethod = $defaultPriorityMethod ?: ($indexAttribute ? 'getDefault'.str_replace(' ', '', ucwords((string) preg_replace('/[^a-zA-Z0-9\x7f-\xff]++/', ' ', $indexAttribute))).'Priority' : null);
         $this->needsIndexes = $needsIndexes;
         $this->exclude = $exclude;
         $this->excludeSelf = $excludeSelf;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'csók: felnőtt, felnőtt, világos bőrtónus és közepesen világos bőrtónus',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'csók: felnőtt, felnőtt, világos bőrtónus és közepes bőrtónus',

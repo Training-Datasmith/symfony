@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,7 @@ class ColorType extends AbstractType
     private const HTML5_PATTERN = '/^#[0-9a-f]{6}$/i';
 
     public function __construct(
-        private ?TranslatorInterface $translator = null,
+        private readonly ?TranslatorInterface $translator = null,
     ) {
     }
 

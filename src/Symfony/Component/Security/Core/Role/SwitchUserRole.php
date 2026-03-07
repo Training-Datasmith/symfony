@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,6 +20,4 @@ namespace Symfony\Component\Security\Core\Role;
  */
 class SwitchUserRole extends Role
 {
-    private $deprecationTriggered;
-    private $source;
 }

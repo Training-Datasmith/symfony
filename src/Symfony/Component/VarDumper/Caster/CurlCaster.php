@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -11,8 +13,6 @@
 
 namespace Symfony\Component\VarDumper\Caster;
 
-use Symfony\Component\VarDumper\Cloner\Stub;
-
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
@@ -20,7 +20,7 @@ use Symfony\Component\VarDumper\Cloner\Stub;
  */
 final class CurlCaster
 {
-    public static function castCurl(\CurlHandle $h, array $a, Stub $stub, bool $isNested): array
+    public static function castCurl(\CurlHandle $h, array $a): array
     {
         foreach (curl_getinfo($h) as $key => $val) {
             $a[Caster::PREFIX_VIRTUAL.$key] = $val;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -516,7 +518,7 @@ class AbstractObjectNormalizerTest extends TestCase
 
         $factory = new ClassMetadataFactory(new AttributeLoader());
 
-        $loaderMock = new class implements ClassMetadataFactoryInterface {
+        $loaderMock = new class () implements ClassMetadataFactoryInterface {
             public function getMetadataFor($value): ClassMetadataInterface
             {
                 if (AbstractDummy::class === $value) {
@@ -552,7 +554,7 @@ class AbstractObjectNormalizerTest extends TestCase
      */
     public static function provideInvalidDiscriminatorTypes(): iterable
     {
-        $toStringObject = new class {
+        $toStringObject = new class () {
             public function __toString()
             {
                 return 'first';
@@ -571,7 +573,7 @@ class AbstractObjectNormalizerTest extends TestCase
     {
         $factory = new ClassMetadataFactory(new AttributeLoader());
 
-        $loaderMock = new class implements ClassMetadataFactoryInterface {
+        $loaderMock = new class () implements ClassMetadataFactoryInterface {
             public function getMetadataFor($value): ClassMetadataInterface
             {
                 if (AbstractDummy::class === $value) {
@@ -606,7 +608,7 @@ class AbstractObjectNormalizerTest extends TestCase
     {
         $factory = new ClassMetadataFactory(new AttributeLoader());
 
-        $loaderMock = new class implements ClassMetadataFactoryInterface {
+        $loaderMock = new class () implements ClassMetadataFactoryInterface {
             public function getMetadataFor($value): ClassMetadataInterface
             {
                 if (AbstractDummy::class === $value) {
@@ -641,7 +643,7 @@ class AbstractObjectNormalizerTest extends TestCase
     {
         $factory = new ClassMetadataFactory(new AttributeLoader());
 
-        $loaderMock = new class implements ClassMetadataFactoryInterface {
+        $loaderMock = new class () implements ClassMetadataFactoryInterface {
             public function getMetadataFor($value): ClassMetadataInterface
             {
                 if (AbstractDummy::class === $value) {
@@ -694,7 +696,7 @@ class AbstractObjectNormalizerTest extends TestCase
 
     public function testDenormalizeWithNestedDiscriminatorMap()
     {
-        $classDiscriminatorResolver = new class implements ClassDiscriminatorResolverInterface {
+        $classDiscriminatorResolver = new class () implements ClassDiscriminatorResolverInterface {
             public function getMappingForClass(string $class): ?ClassDiscriminatorMapping
             {
                 return match ($class) {
@@ -886,7 +888,7 @@ class AbstractObjectNormalizerTest extends TestCase
         $object = new DummyChild();
         $object->bar = 'not called';
 
-        $normalizer = new class(null, null, null, null, null, [AbstractObjectNormalizer::EXCLUDE_FROM_CACHE_KEY => ['foo']]) extends AbstractObjectNormalizerDummy {
+        $normalizer = new class (null, null, null, null, null, [AbstractObjectNormalizer::EXCLUDE_FROM_CACHE_KEY => ['foo']]) extends AbstractObjectNormalizerDummy {
             public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
             {
                 AbstractObjectNormalizerTest::assertContains('foo', $this->defaultContext[ObjectNormalizer::EXCLUDE_FROM_CACHE_KEY]);
@@ -921,7 +923,7 @@ class AbstractObjectNormalizerTest extends TestCase
 
     public function testDenormalizeUsesConstructorUnionTypeWhenExtractorIsLessPrecise()
     {
-        $extractor = new class implements PropertyTypeExtractorInterface {
+        $extractor = new class () implements PropertyTypeExtractorInterface {
             public function getType(string $class, string $property, array $context = []): ?Type
             {
                 return Type::string();
@@ -947,7 +949,7 @@ class AbstractObjectNormalizerTest extends TestCase
             '99' => 'baz',
         ];
 
-        $obj = new class {
+        $obj = new class () {
             #[SerializedName('1')]
             public $foo;
 
@@ -971,7 +973,7 @@ class AbstractObjectNormalizerTest extends TestCase
             ],
         ];
 
-        $obj = new class {
+        $obj = new class () {
             #[SerializedPath('[data][id]')]
             public $id;
         };
@@ -990,7 +992,7 @@ class AbstractObjectNormalizerTest extends TestCase
             ],
         ];
 
-        $obj = new class {
+        $obj = new class () {
             #[SerializedPath('[data][foo]')]
             public ?string $foo;
 
@@ -1018,7 +1020,7 @@ class AbstractObjectNormalizerTest extends TestCase
             'empty_data' => null,
         ];
 
-        $obj = new class {
+        $obj = new class () {
             #[SerializedPath('[data][foo?]')]
             public ?string $foo;
 
@@ -1041,7 +1043,7 @@ class AbstractObjectNormalizerTest extends TestCase
 
     public function testNormalizeBasedOnAllowedAttributes()
     {
-        $normalizer = new class extends AbstractObjectNormalizer {
+        $normalizer = new class () extends AbstractObjectNormalizer {
             public function getSupportedTypes(?string $format): array
             {
                 return ['*' => false];
@@ -1121,7 +1123,7 @@ class AbstractObjectNormalizerTest extends TestCase
         $foobar->bar = 'bar';
         $foobar->baz = 'baz';
 
-        $normalizer = new class extends AbstractObjectNormalizerDummy {
+        $normalizer = new class () extends AbstractObjectNormalizerDummy {
             public $childContextCacheKey;
 
             protected function extractAttributes(object $object, ?string $format = null, array $context = []): array
@@ -1161,7 +1163,7 @@ class AbstractObjectNormalizerTest extends TestCase
         $foobar->bar = 'bar';
         $foobar->baz = 'baz';
 
-        $normalizer = new class extends AbstractObjectNormalizerDummy {
+        $normalizer = new class () extends AbstractObjectNormalizerDummy {
             public array $childContextCacheKeys = [];
 
             protected function extractAttributes(object $object, ?string $format = null, array $context = []): array
@@ -1196,7 +1198,7 @@ class AbstractObjectNormalizerTest extends TestCase
         $foobar->bar = 'bar';
         $foobar->baz = 'baz';
 
-        $normalizer = new class extends AbstractObjectNormalizerDummy {
+        $normalizer = new class () extends AbstractObjectNormalizerDummy {
             public $childContextCacheKey;
 
             protected function extractAttributes(object $object, ?string $format = null, array $context = []): array
@@ -1226,7 +1228,7 @@ class AbstractObjectNormalizerTest extends TestCase
 
     public function testDenormalizeXmlScalar()
     {
-        $normalizer = new class extends AbstractObjectNormalizer {
+        $normalizer = new class () extends AbstractObjectNormalizer {
             public function __construct()
             {
                 parent::__construct(null, new MetadataAwareNameConverter(new ClassMetadataFactory(new AttributeLoader())));
@@ -1400,7 +1402,7 @@ class AbstractObjectNormalizerTest extends TestCase
 
     public function testDenormalizeArrayObject()
     {
-        $normalizer = new class extends AbstractObjectNormalizerDummy {
+        $normalizer = new class () extends AbstractObjectNormalizerDummy {
             public function __construct()
             {
                 parent::__construct(null, null, new PhpDocExtractor());
@@ -1423,7 +1425,7 @@ class AbstractObjectNormalizerTest extends TestCase
 
     public function testTemplateTypeWhenAnObjectIsPassedToDenormalize()
     {
-        $normalizer = new class(classMetadataFactory: new ClassMetadataFactory(new AttributeLoader()), propertyTypeExtractor: new PropertyInfoExtractor(typeExtractors: [new PhpStanExtractor(), new ReflectionExtractor()])) extends AbstractObjectNormalizerDummy {
+        $normalizer = new class (classMetadataFactory: new ClassMetadataFactory(new AttributeLoader()), propertyTypeExtractor: new PropertyInfoExtractor(typeExtractors: [new PhpStanExtractor(), new ReflectionExtractor()])) extends AbstractObjectNormalizerDummy {
             protected function isAllowedAttribute($classOrObject, string $attribute, ?string $format = null, array $context = []): bool
             {
                 return true;
@@ -1442,7 +1444,7 @@ class AbstractObjectNormalizerTest extends TestCase
 
     public function testDenormalizeTemplateType()
     {
-        $normalizer = new class(classMetadataFactory: new ClassMetadataFactory(new AttributeLoader()), propertyTypeExtractor: new PropertyInfoExtractor(typeExtractors: [new PhpStanExtractor(), new ReflectionExtractor()])) extends AbstractObjectNormalizerDummy {
+        $normalizer = new class (classMetadataFactory: new ClassMetadataFactory(new AttributeLoader()), propertyTypeExtractor: new PropertyInfoExtractor(typeExtractors: [new PhpStanExtractor(), new ReflectionExtractor()])) extends AbstractObjectNormalizerDummy {
             protected function isAllowedAttribute($classOrObject, string $attribute, ?string $format = null, array $context = []): bool
             {
                 return true;
@@ -1579,13 +1581,10 @@ class NestedDummyWithConstructor
     public function __construct(
         #[SerializedPath('[one][two][three]')]
         public $foo,
-
         #[SerializedPath('[one][four]')]
         public $quux,
-
         #[SerializedPath('[foo]')]
         public $notfoo,
-
         public $baz,
     ) {
     }
@@ -1611,7 +1610,6 @@ abstract class AbstractNestedDummyWithConstructorAndDiscriminator
     public function __construct(
         #[SerializedPath('[foo]')]
         public $notfoo,
-
         public $baz,
     ) {
     }
@@ -1622,7 +1620,6 @@ class FirstNestedDummyWithConstructorAndDiscriminator extends AbstractNestedDumm
     public function __construct(
         #[SerializedPath('[one][two][three]')]
         public $foo,
-
         $notfoo,
         $baz,
     ) {
@@ -1635,7 +1632,6 @@ class SecondNestedDummyWithConstructorAndDiscriminator extends AbstractNestedDum
     public function __construct(
         #[SerializedPath('[one][four]')]
         public $quux,
-
         $notfoo,
         $baz,
     ) {

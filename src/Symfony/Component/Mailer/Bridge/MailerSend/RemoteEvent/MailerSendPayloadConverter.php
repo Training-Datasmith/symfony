@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -71,11 +73,7 @@ final class MailerSendPayloadConverter implements PayloadConverterInterface
             return $payload['data']['morph']['readable_reason'];
         }
 
-        if (isset($payload['data']['morph']['reason'])) {
-            return $payload['data']['morph']['reason'];
-        }
-
-        return '';
+        return $payload['data']['morph']['reason'] ?? '';
     }
 
     private function getTags(array $payload): array

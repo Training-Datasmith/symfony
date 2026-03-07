@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -13,7 +15,7 @@ namespace Symfony\Component\Scheduler\Trigger;
 
 use Symfony\Component\Scheduler\Generator\MessageContext;
 
-final class CallbackMessageProvider implements MessageProviderInterface, \Stringable
+final readonly class CallbackMessageProvider implements MessageProviderInterface, \Stringable
 {
     private \Closure $callback;
 

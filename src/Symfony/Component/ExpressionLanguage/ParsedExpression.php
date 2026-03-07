@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ class ParsedExpression extends Expression
 {
     public function __construct(
         string $expression,
-        private Node $nodes,
+        private readonly Node $nodes,
     ) {
         parent::__construct($expression);
     }

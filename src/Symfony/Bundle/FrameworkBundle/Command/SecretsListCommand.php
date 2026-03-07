@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,8 +34,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 final class SecretsListCommand extends Command
 {
     public function __construct(
-        private AbstractVault $vault,
-        private ?AbstractVault $localVault = null,
+        private readonly AbstractVault $vault,
+        private readonly ?AbstractVault $localVault = null,
     ) {
         parent::__construct();
     }
@@ -42,7 +44,8 @@ final class SecretsListCommand extends Command
     {
         $this
             ->addOption('reveal', 'r', InputOption::VALUE_NONE, 'Display decrypted values alongside names')
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command list all stored secrets.
 
                     <info>%command.full_name%</info>
@@ -71,7 +74,7 @@ final class SecretsListCommand extends Command
         $rows = [];
 
         $dump = new Dumper($output);
-        $dump = static fn ($v) => null === $v ? '******' : $dump($v);
+        $dump = static fn ($v): string => null === $v ? '******' : $dump($v);
 
         foreach ($secrets as $name => $value) {
             $rows[$name] = [$name, $dump($value)];

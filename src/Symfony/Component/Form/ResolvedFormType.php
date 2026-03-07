@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ class ResolvedFormType implements ResolvedFormTypeInterface
     /**
      * @var FormTypeExtensionInterface[]
      */
-    private array $typeExtensions;
+    private readonly array $typeExtensions;
 
     private OptionsResolver $optionsResolver;
 
@@ -38,9 +40,9 @@ class ResolvedFormType implements ResolvedFormTypeInterface
      * @param FormTypeExtensionInterface[] $typeExtensions
      */
     public function __construct(
-        private FormTypeInterface $innerType,
+        private readonly FormTypeInterface $innerType,
         array $typeExtensions = [],
-        private ?ResolvedFormTypeInterface $parent = null,
+        private readonly ?ResolvedFormTypeInterface $parent = null,
     ) {
         foreach ($typeExtensions as $extension) {
             if (!$extension instanceof FormTypeExtensionInterface) {

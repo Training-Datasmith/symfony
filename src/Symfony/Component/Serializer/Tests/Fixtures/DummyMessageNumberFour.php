@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -13,7 +15,8 @@ namespace Symfony\Component\Serializer\Tests\Fixtures;
 
 use Symfony\Component\Serializer\Attribute\Ignore;
 
-abstract class SomeAbstract {
+abstract class SomeAbstract
+{
     #[Ignore]
     public function getDescription()
     {

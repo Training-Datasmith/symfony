@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,11 +16,11 @@ namespace Symfony\Component\Workflow;
 /**
  * @author Grégoire Pineau <lyrixx@lyrixx.info>
  */
-final class Arc
+final readonly class Arc
 {
     public function __construct(
-        public readonly string $place,
-        public readonly int $weight,
+        public string $place,
+        public int $weight,
     ) {
         if ($weight < 1) {
             throw new \InvalidArgumentException(\sprintf('The weight must be greater than 0, %d given.', $weight));

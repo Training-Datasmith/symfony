@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -50,8 +52,8 @@ class VoterTest extends TestCase
             [$voter, ['DELETE'], VoterInterface::ACCESS_ABSTAIN, new \stdClass(), 'ACCESS_ABSTAIN if no attribute is supported'],
             [$voter, ['DELETE'], VoterInterface::ACCESS_ABSTAIN, new \stdClass(), 'ACCESS_ABSTAIN if no attribute is supported', new Vote()],
 
-            [$voter, ['EDIT'], VoterInterface::ACCESS_ABSTAIN, new class {}, 'ACCESS_ABSTAIN if class is not supported'],
-            [$voter, ['EDIT'], VoterInterface::ACCESS_ABSTAIN, new class {}, 'ACCESS_ABSTAIN if class is not supported', new Vote()],
+            [$voter, ['EDIT'], VoterInterface::ACCESS_ABSTAIN, new class () {}, 'ACCESS_ABSTAIN if class is not supported'],
+            [$voter, ['EDIT'], VoterInterface::ACCESS_ABSTAIN, new class () {}, 'ACCESS_ABSTAIN if class is not supported', new Vote()],
 
             [$voter, ['EDIT'], VoterInterface::ACCESS_ABSTAIN, null, 'ACCESS_ABSTAIN if object is null'],
             [$voter, ['EDIT'], VoterInterface::ACCESS_ABSTAIN, null, 'ACCESS_ABSTAIN if object is null', new Vote()],

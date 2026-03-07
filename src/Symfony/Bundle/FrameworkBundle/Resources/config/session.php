@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorageFactory
 use Symfony\Component\HttpFoundation\Session\Storage\PhpBridgeSessionStorageFactory;
 use Symfony\Component\HttpKernel\EventListener\SessionListener;
 
-return static function (ContainerConfigurator $container) {
+return static function (ContainerConfigurator $container): void {
     $container->parameters()->set('session.metadata.storage_key', '_sf2_meta');
 
     $container->services()

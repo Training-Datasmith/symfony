@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,9 +29,9 @@ class KernelEvent extends Event
      *                         HttpKernelInterface::MAIN_REQUEST or HttpKernelInterface::SUB_REQUEST
      */
     public function __construct(
-        private HttpKernelInterface $kernel,
-        private Request $request,
-        private ?int $requestType,
+        private readonly HttpKernelInterface $kernel,
+        private readonly Request $request,
+        private readonly ?int $requestType,
     ) {
     }
 

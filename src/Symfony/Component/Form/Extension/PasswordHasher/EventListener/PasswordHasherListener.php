@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,7 @@ class PasswordHasherListener
     private array $passwords = [];
 
     public function __construct(
-        private UserPasswordHasherInterface $passwordHasher,
+        private readonly UserPasswordHasherInterface $passwordHasher,
         private ?PropertyAccessorInterface $propertyAccessor = null,
     ) {
         $this->propertyAccessor ??= PropertyAccess::createPropertyAccessor();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,10 +27,10 @@ final class OrangeSmsTransport extends AbstractTransport
     protected const HOST = 'api.orange.com';
 
     public function __construct(
-        private string $clientID,
-        #[\SensitiveParameter] private string $clientSecret,
-        private string $from,
-        private ?string $senderName = null,
+        private readonly string $clientID,
+        #[\SensitiveParameter] private readonly string $clientSecret,
+        private readonly string $from,
+        private readonly ?string $senderName = null,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -52,7 +54,7 @@ final class OrangeSmsTransport extends AbstractTransport
     public function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $from = $message->getFrom() ?: $this->from;

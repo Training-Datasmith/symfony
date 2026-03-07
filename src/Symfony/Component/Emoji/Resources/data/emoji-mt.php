@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'bewsa: adult, adult, ton ċar tal-ġilda, u ton medju-ċar tal-ġilda',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'bewsa: adult, adult, ton ċar tal-ġilda, u ton medju tal-ġilda',

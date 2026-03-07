@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,21 +34,21 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 class TraceableResponse implements ResponseInterface, StreamableInterface
 {
     public function __construct(
-        private HttpClientInterface $client,
-        private ResponseInterface $response,
+        private readonly HttpClientInterface $client,
+        private readonly ResponseInterface $response,
         private mixed &$content = false,
-        private ?StopwatchEvent $event = null,
+        private readonly ?StopwatchEvent $event = null,
     ) {
     }
 
     public function __serialize(): array
     {
-        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot serialize '.self::class);
     }
 
     public function __unserialize(array $data): void
     {
-        throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot unserialize '.self::class);
     }
 
     public function __destruct()

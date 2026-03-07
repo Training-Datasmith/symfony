@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,5 +34,3 @@ interface BatchHandlerInterface
      */
     public function flush(bool $force): void;
 }
-
-// @php-cs-fixer-ignore no_superfluous_phpdoc_tags As long as `__invoke` method is commented out

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ use Symfony\Component\Security\Http\Event\CheckPassportEvent;
 class CheckLdapCredentialsListener implements EventSubscriberInterface
 {
     public function __construct(
-        private ContainerInterface $ldapLocator,
+        private readonly ContainerInterface $ldapLocator,
     ) {
     }
 

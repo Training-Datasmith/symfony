@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ class ConfirmationQuestion extends Question
     public function __construct(
         string $question,
         bool $default = true,
-        private string $trueAnswerRegex = '/^y/i',
+        private readonly string $trueAnswerRegex = '/^y/i',
     ) {
         parent::__construct($question, $default);
 
@@ -41,7 +43,7 @@ class ConfirmationQuestion extends Question
         $default = $this->getDefault();
         $regex = $this->trueAnswerRegex;
 
-        return static function ($answer) use ($default, $regex) {
+        return static function ($answer) use ($default, $regex): bool {
             if (\is_bool($answer)) {
                 return $answer;
             }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -43,7 +45,7 @@ class TraceableFirewallListenerTest extends TestCase
         $request = new Request();
         $event = new RequestEvent($this->createStub(HttpKernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST);
         $event->setResponse(new Response());
-        $listener = new class extends AbstractListener {
+        $listener = new class () extends AbstractListener {
             public int $callCount = 0;
 
             public function supports(Request $request): ?bool
@@ -95,7 +97,8 @@ class TraceableFirewallListenerTest extends TestCase
             ->expects($this->once())
             ->method('authenticate')
             ->with($request)
-            ->willReturn(new SelfValidatingPassport(new UserBadge('robin', static function () {})));
+            ->willReturn(new SelfValidatingPassport(new UserBadge('robin', static function () {
+            })));
         $supportingAuthenticator
             ->expects($this->once())
             ->method('onAuthenticationSuccess')
@@ -103,7 +106,7 @@ class TraceableFirewallListenerTest extends TestCase
         $supportingAuthenticator
             ->expects($this->once())
             ->method('createToken')
-            ->willReturn(new class extends AbstractToken {});
+            ->willReturn(new class () extends AbstractToken {});
 
         $notSupportingAuthenticator = $this->createMock(DummyAuthenticator::class);
         $notSupportingAuthenticator

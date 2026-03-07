@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -46,7 +48,8 @@ class GitignoreTest extends TestCase
             $this->assertDoesNotMatchRegularExpression(
                 $regex,
                 $nonMatchingCase,
-                \sprintf("Failed asserting path:\n%s\nNOT matching gitignore patterns:\n%s",
+                \sprintf(
+                    "Failed asserting path:\n%s\nNOT matching gitignore patterns:\n%s",
                     preg_replace('~^~m', '    ', $nonMatchingCase),
                     preg_replace('~^~m', '    ', $patterns)
                 )
@@ -468,7 +471,8 @@ class GitignoreTest extends TestCase
             $this->assertDoesNotMatchRegularExpression(
                 $regex,
                 $nonMatchingCase,
-                \sprintf("Failed asserting path:\n%s\nNOT matching gitignore negated patterns:\n%s",
+                \sprintf(
+                    "Failed asserting path:\n%s\nNOT matching gitignore negated patterns:\n%s",
                     preg_replace('~^~m', '    ', $nonMatchingCase),
                     preg_replace('~^~m', '    ', $patterns)
                 )

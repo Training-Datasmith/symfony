@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -147,7 +149,10 @@ class HtmlDumper extends CliDumper
             return $this->dumpHeader;
         }
 
-        $line = str_replace('{$options}', json_encode($this->displayOptions, \JSON_FORCE_OBJECT), <<<'EOHTML'
+        $line = str_replace(
+            '{$options}',
+            json_encode($this->displayOptions, \JSON_FORCE_OBJECT),
+            <<<'EOHTML'
             <script>
             Sfdump = window.Sfdump || (function (doc) {
             doc.documentElement.classList.add('sf-js-enabled');
@@ -775,7 +780,7 @@ class HtmlDumper extends CliDumper
             $this->line .= $cursor->depth >= $this->displayOptions['maxDepth'] ? ' <samp class=sf-dump-compact>' : ' <samp class=sf-dump-expanded>';
             $this->endValue($cursor);
             $this->line .= $this->indentPad;
-            $this->line .= \sprintf('<img src="data:%s;base64,%s" /></samp>', $cursor->attr['content-type'], base64_encode($cursor->attr['img-data']));
+            $this->line .= \sprintf('<img src="data:%s;base64,%s" /></samp>', $cursor->attr['content-type'], base64_encode((string) $cursor->attr['img-data']));
             $this->endValue($cursor);
         } else {
             parent::dumpString($cursor, $str, $bin, $cut);
@@ -883,7 +888,7 @@ class HtmlDumper extends CliDumper
             1 === \count($dumpClasses) ? '' : '"',
             implode(' ', $dumpClasses),
             $dumpTitle ? ' title="'.$dumpTitle.'"' : '',
-            preg_replace_callback(static::$controlCharsRx, static function ($c) use ($map) {
+            preg_replace_callback(static::$controlCharsRx, static function ($c) use ($map): string {
                 $s = $b = '<span class="sf-dump-default';
                 $c = $c[$i = 0];
                 if ($ns = "\r" === $c[$i] || "\n" === $c[$i]) {
@@ -907,7 +912,7 @@ class HtmlDumper extends CliDumper
         );
 
         if (!($attr['binary'] ?? false)) {
-            $v = preg_replace_callback(static::$unicodeCharsRx, static fn ($c) => '<span class=sf-dump-default>\u{'.strtoupper(dechex(mb_ord($c[0]))).'}</span>', $v);
+            $v = preg_replace_callback(static::$unicodeCharsRx, static fn ($c): string => '<span class=sf-dump-default>\u{'.strtoupper(dechex(mb_ord($c[0]))).'}</span>', $v);
         }
 
         if (isset($attr['file']) && $href = $this->getSourceLink($attr['file'], $attr['line'] ?? 0)) {
@@ -927,7 +932,7 @@ class HtmlDumper extends CliDumper
             $v .= ' ';
         }
         if ($attr['virtual'] ?? false) {
-            $v = '<span class=sf-dump-virtual>'.$v.'</span>';
+            return '<span class=sf-dump-virtual>'.$v.'</span>';
         }
 
         return $v;

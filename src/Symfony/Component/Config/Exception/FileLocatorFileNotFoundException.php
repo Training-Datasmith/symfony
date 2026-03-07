@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ class FileLocatorFileNotFoundException extends \InvalidArgumentException
         string $message = '',
         int $code = 0,
         ?\Throwable $previous = null,
-        private array $paths = [],
+        private readonly array $paths = [],
     ) {
         parent::__construct($message, $code, $previous);
     }

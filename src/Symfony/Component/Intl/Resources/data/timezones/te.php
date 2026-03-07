@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Africa/Abidjan' => 'గ్రీన్‌విచ్ సగటు సమయం (అబిడ్జాన్)',

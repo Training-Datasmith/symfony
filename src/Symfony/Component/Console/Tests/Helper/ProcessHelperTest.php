@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -90,7 +92,9 @@ class ProcessHelperTest extends TestCase
         $output = $this->getOutputStream(StreamOutput::VERBOSITY_NORMAL);
 
         $executed = false;
-        $callback = static function () use (&$executed) { $executed = true; };
+        $callback = static function () use (&$executed) {
+            $executed = true;
+        };
 
         $helper->run($output, ['php', '-r', 'echo 42;'], null, $callback);
         $this->assertTrue($executed);

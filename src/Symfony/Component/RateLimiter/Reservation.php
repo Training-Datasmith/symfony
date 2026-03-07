@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,7 +16,7 @@ namespace Symfony\Component\RateLimiter;
 /**
  * @author Wouter de Jong <wouter@wouterj.nl>
  */
-final class Reservation
+final readonly class Reservation
 {
     /**
      * @param float $timeToAct Unix timestamp in seconds when this reservation should act

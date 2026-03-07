@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -91,8 +93,10 @@ final class MapInput
     {
         foreach ($this->definition as $name => $spec) {
             $property = $this->class->getProperty($name);
-
-            if (!$property->isInitialized($object) || \in_array($value = $property->getValue($object), [null, []], true)) {
+            if (!$property->isInitialized($object)) {
+                continue;
+            }
+            if (\in_array($value = $property->getValue($object), [null, []], true)) {
                 continue;
             }
 
@@ -168,10 +172,10 @@ final class MapInput
                 if ($spec->isRequired() && \in_array($value, [null, []], true)) {
                     continue;
                 }
-                $instance->$name = $this->resolveValue($spec->typeName, $value, $spec->default);
+                $instance->$name = $this->resolveValue($spec->typeName);
             } elseif ($spec instanceof Option) {
                 $value = $input->getOption($spec->name);
-                $instance->$name = $this->resolveValue($spec->typeName, $value, $spec->default);
+                $instance->$name = $this->resolveValue($spec->typeName);
             } elseif ($spec instanceof self) {
                 $instance->$name = $spec->createInstance($input);
             }

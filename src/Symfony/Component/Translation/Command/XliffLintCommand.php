@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,14 +39,14 @@ class XliffLintCommand extends Command
 {
     private string $format;
     private bool $displayCorrectFiles;
-    private ?\Closure $directoryIteratorProvider;
-    private ?\Closure $isReadableProvider;
+    private readonly ?\Closure $directoryIteratorProvider;
+    private readonly ?\Closure $isReadableProvider;
 
     public function __construct(
         ?string $name = null,
         ?callable $directoryIteratorProvider = null,
         ?callable $isReadableProvider = null,
-        private bool $requireStrictFileNames = true,
+        private readonly bool $requireStrictFileNames = true,
     ) {
         parent::__construct($name);
 
@@ -57,7 +59,8 @@ class XliffLintCommand extends Command
         $this
             ->addArgument('filename', InputArgument::IS_ARRAY, 'A file, a directory or "-" for reading from STDIN')
             ->addOption('format', null, InputOption::VALUE_REQUIRED, \sprintf('The output format ("%s")', implode('", "', $this->getAvailableFormatOptions())))
-            ->setHelp(<<<EOF
+            ->setHelp(
+                <<<EOF
                 The <info>%command.name%</info> command lints an XLIFF file and outputs to STDOUT
                 the first encountered syntax error.
 
@@ -133,11 +136,11 @@ class XliffLintCommand extends Command
             // http://docs.oasis-open.org/xliff/v1.2/os/xliff-core.html#target-language
             $expectedFilenamePattern = $this->requireStrictFileNames ? \sprintf('/^.*\.(?i:%s)\.(?:xlf|xliff)/', $normalizedLocalePattern) : \sprintf('/^(?:.*\.(?i:%s)|(?i:%s)\..*)\.(?:xlf|xliff)/', $normalizedLocalePattern, $normalizedLocalePattern);
 
-            if (0 === preg_match($expectedFilenamePattern, basename($file))) {
+            if (0 === preg_match($expectedFilenamePattern, basename((string) $file))) {
                 $errors[] = [
                     'line' => -1,
                     'column' => -1,
-                    'message' => \sprintf('There is a mismatch between the language included in the file name ("%s") and the "%s" value used in the "target-language" attribute of the file.', basename($file), $targetLanguage),
+                    'message' => \sprintf('There is a mismatch between the language included in the file name ("%s") and the "%s" value used in the "target-language" attribute of the file.', basename((string) $file), $targetLanguage),
                 ];
             }
         }
@@ -178,7 +181,7 @@ class XliffLintCommand extends Command
             } elseif (!$info['valid']) {
                 ++$erroredFiles;
                 $io->text('<error> ERROR </error>'.($info['file'] ? \sprintf(' in %s', $info['file']) : ''));
-                $io->listing(array_map(static function ($error) use ($info, $githubReporter) {
+                $io->listing(array_map(static function (array $error) use ($info, $githubReporter) {
                     // general document errors have a '-1' line number
                     $line = -1 === $error['line'] ? null : $error['line'];
 
@@ -202,7 +205,7 @@ class XliffLintCommand extends Command
     {
         $errors = 0;
 
-        array_walk($filesInfo, static function (&$v) use (&$errors) {
+        array_walk($filesInfo, static function (array &$v) use (&$errors): void {
             $v['file'] = (string) $v['file'];
             if (!$v['valid']) {
                 ++$errors;
@@ -239,7 +242,7 @@ class XliffLintCommand extends Command
      */
     private function getDirectoryIterator(string $directory): iterable
     {
-        $default = static fn ($directory) => new \RecursiveIteratorIterator(
+        $default = static fn ($directory): \RecursiveIteratorIterator => new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($directory, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::FOLLOW_SYMLINKS),
             \RecursiveIteratorIterator::LEAVES_ONLY
         );
@@ -253,7 +256,7 @@ class XliffLintCommand extends Command
 
     private function isReadable(string $fileOrDirectory): bool
     {
-        $default = static fn ($fileOrDirectory) => is_readable($fileOrDirectory);
+        $default = static fn ($fileOrDirectory): bool => is_readable($fileOrDirectory);
 
         if (null !== $this->isReadableProvider) {
             return ($this->isReadableProvider)($fileOrDirectory, $default);

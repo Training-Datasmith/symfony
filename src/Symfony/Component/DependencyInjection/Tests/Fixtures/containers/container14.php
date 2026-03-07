@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Container14;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;

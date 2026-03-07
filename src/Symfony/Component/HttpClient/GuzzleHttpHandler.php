@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -48,9 +50,9 @@ use Symfony\Contracts\HttpClient\ResponseInterface as SymfonyResponseInterface;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class GuzzleHttpHandler
+final readonly class GuzzleHttpHandler
 {
-    private readonly HttpClientInterface $client;
+    private HttpClientInterface $client;
 
     /**
      * Maps each Symfony response (key) to a 3-tuple:
@@ -58,7 +60,7 @@ final class GuzzleHttpHandler
      *
      * @var \SplObjectStorage<SymfonyResponseInterface, array{0: RequestInterface, 1: array, 2: Promise}>
      */
-    private readonly \SplObjectStorage $pending;
+    private \SplObjectStorage $pending;
 
     /**
      * PSR-7 response created eagerly on the first chunk so that the same
@@ -66,14 +68,11 @@ final class GuzzleHttpHandler
      *
      * @var \SplObjectStorage<SymfonyResponseInterface, ResponseInterface>
      */
-    private readonly \SplObjectStorage $psr7Responses;
+    private \SplObjectStorage $psr7Responses;
 
-    private readonly bool $autoUpgradeHttpVersion;
-
-    public function __construct(?HttpClientInterface $client = null, bool $autoUpgradeHttpVersion = true)
+    public function __construct(?HttpClientInterface $client = null, private bool $autoUpgradeHttpVersion = true)
     {
         $this->client = $client ?? HttpClient::create();
-        $this->autoUpgradeHttpVersion = $autoUpgradeHttpVersion;
         $this->pending = new \SplObjectStorage();
         $this->psr7Responses = new \SplObjectStorage();
     }

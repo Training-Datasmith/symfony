@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -78,7 +80,7 @@ class Route implements \Serializable
      */
     final public function serialize(): string
     {
-        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot serialize '.self::class);
     }
 
     public function __unserialize(array $data): void
@@ -164,7 +166,7 @@ class Route implements \Serializable
      */
     public function setSchemes(string|array $schemes): static
     {
-        $this->schemes = array_map('strtolower', (array) $schemes);
+        $this->schemes = array_map(strtolower(...), (array) $schemes);
         $this->compiled = null;
 
         return $this;
@@ -199,7 +201,7 @@ class Route implements \Serializable
      */
     public function setMethods(string|array $methods): static
     {
-        $this->methods = array_map('strtoupper', (array) $methods);
+        $this->methods = array_map(strtoupper(...), (array) $methods);
         $this->compiled = null;
 
         return $this;
@@ -418,15 +420,15 @@ class Route implements \Serializable
 
         $mapping = $this->getDefault('_route_mapping') ?? [];
 
-        $pattern = preg_replace_callback('#\{(!?)([\w\x80-\xFF]++)(:([\w\x80-\xFF]++)(\.[\w\x80-\xFF]++)?)?(<.*?>)?(\?[^\}]*+)?\}#', function ($m) use (&$mapping) {
+        $pattern = preg_replace_callback('#\{(!?)([\w\x80-\xFF]++)(:([\w\x80-\xFF]++)(\.[\w\x80-\xFF]++)?)?(<.*?>)?(\?[^\}]*+)?\}#', function ($m) use (&$mapping): string {
             if (isset($m[7][0])) {
-                $this->setDefault($m[2], '?' !== $m[7] ? substr($m[7], 1) : null);
+                $this->setDefault($m[2], '?' !== $m[7] ? substr((string) $m[7], 1) : null);
             }
             if (isset($m[6][0])) {
-                $this->setRequirement($m[2], substr($m[6], 1, -1));
+                $this->setRequirement($m[2], substr((string) $m[6], 1, -1));
             }
             if (isset($m[4][0])) {
-                $mapping[$m[2]] = isset($m[5][0]) ? [$m[4], substr($m[5], 1)] : $m[4];
+                $mapping[$m[2]] = isset($m[5][0]) ? [$m[4], substr((string) $m[5], 1)] : $m[4];
             }
 
             return '{'.$m[1].$m[2].'}';

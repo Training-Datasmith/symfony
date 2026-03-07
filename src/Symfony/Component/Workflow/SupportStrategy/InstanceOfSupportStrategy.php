@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,7 +19,7 @@ use Symfony\Component\Workflow\WorkflowInterface;
  * @author Andreas Kleemann <akleemann@inviqa.com>
  * @author Amrouche Hamza <hamza.simperfit@gmail.com>
  */
-final class InstanceOfSupportStrategy implements WorkflowSupportStrategyInterface
+final readonly class InstanceOfSupportStrategy implements WorkflowSupportStrategyInterface
 {
     public function __construct(
         private string $className,

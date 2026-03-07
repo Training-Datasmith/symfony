@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -398,7 +400,8 @@ class AccessTokenTest extends AbstractWebTestCase
 
     public function testCasSuccess()
     {
-        $casResponse = new MockResponse(<<<BODY
+        $casResponse = new MockResponse(
+            <<<BODY
                 <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
                     <cas:authenticationSuccess>
                         <cas:user>dunglas</cas:user>
@@ -471,7 +474,8 @@ class AccessTokenTest extends AbstractWebTestCase
 
     private static function createJws(array $claims, array $header = []): string
     {
-        return (new JwsCompactSerializer())->serialize((new JWSBuilder(new AlgorithmManager([
+        return (new JwsCompactSerializer())->serialize(
+            (new JWSBuilder(new AlgorithmManager([
             new ES256(),
         ])))->create()
             ->withPayload(json_encode($claims))

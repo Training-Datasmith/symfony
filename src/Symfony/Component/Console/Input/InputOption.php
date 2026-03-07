@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -50,9 +52,9 @@ class InputOption
      */
     public const VALUE_NEGATABLE = 16;
 
-    private string $name;
-    private ?string $shortcut;
-    private int $mode;
+    private readonly string $name;
+    private readonly ?string $shortcut;
+    private readonly int $mode;
     private mixed $default;
 
     /**
@@ -67,9 +69,9 @@ class InputOption
         string $name,
         string|array|null $shortcut = null,
         ?int $mode = null,
-        private string $description = '',
+        private readonly string $description = '',
         mixed $default = null,
-        private array|\Closure $suggestedValues = [],
+        private readonly array|\Closure $suggestedValues = [],
     ) {
         if (str_starts_with($name, '--')) {
             $name = substr($name, 2);
@@ -88,7 +90,7 @@ class InputOption
                 $shortcut = implode('|', $shortcut);
             }
             $shortcuts = preg_split('{(\|)-?}', ltrim($shortcut, '-'));
-            $shortcuts = array_filter($shortcuts, 'strlen');
+            $shortcuts = array_filter($shortcuts, strlen(...));
             $shortcut = implode('|', $shortcuts);
 
             if ('' === $shortcut) {
@@ -146,7 +148,10 @@ class InputOption
      */
     public function acceptValue(): bool
     {
-        return $this->isValueRequired() || $this->isValueOptional();
+        if ($this->isValueRequired()) {
+            return true;
+        }
+        return $this->isValueOptional();
     }
 
     /**

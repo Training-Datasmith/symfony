@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,11 +29,11 @@ final class LocoProviderFactory extends AbstractProviderFactory
     private const HOST = 'localise.biz';
 
     public function __construct(
-        private HttpClientInterface $client,
-        private LoggerInterface $logger,
-        private string $defaultLocale,
-        private LoaderInterface $loader,
-        private ?TranslatorBagInterface $translatorBag = null,
+        private readonly HttpClientInterface $client,
+        private readonly LoggerInterface $logger,
+        private readonly string $defaultLocale,
+        private readonly LoaderInterface $loader,
+        private readonly ?TranslatorBagInterface $translatorBag = null,
     ) {
     }
 

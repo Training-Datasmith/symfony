@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,9 +24,9 @@ use Symfony\Component\Translation\TranslatorBagInterface;
 class FilteringProvider implements ProviderInterface
 {
     public function __construct(
-        private ProviderInterface $provider,
+        private readonly ProviderInterface $provider,
         private array $locales,
-        private array $domains = [],
+        private readonly array $domains = [],
     ) {
         $this->locales = array_filter($locales);
     }

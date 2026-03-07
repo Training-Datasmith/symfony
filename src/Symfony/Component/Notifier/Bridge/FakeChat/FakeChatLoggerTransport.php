@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ final class FakeChatLoggerTransport extends AbstractTransport
     protected const HOST = 'default';
 
     public function __construct(
-        private LoggerInterface $logger,
+        private readonly LoggerInterface $logger,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -45,13 +47,10 @@ final class FakeChatLoggerTransport extends AbstractTransport
         return $message instanceof ChatMessage;
     }
 
-    /**
-     * @param MessageInterface|ChatMessage $message
-     */
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$this->supports($message)) {
-            throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, ChatMessage::class, $message);
         }
 
         $subject = 'New Chat message without specified recipient!';

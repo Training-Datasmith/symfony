@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ class Dumper
     /**
      * @param int $indentation The amount of spaces to use for indentation of nested nodes
      */
-    public function __construct(private int $indentation = 4)
+    public function __construct(private readonly int $indentation = 4)
     {
         if ($indentation < 1) {
             throw new \InvalidArgumentException('The indentation must be greater than zero.');
@@ -112,7 +114,8 @@ class Dumper
                 $willBeInlined = $inline - 1 <= 0 || !\is_array($value) && $dumpObjectAsInlineMap || !$value;
                 $isSimpleSequenceHash = !$willBeInlined && $isSequenceItem && \is_array($value) && Inline::isHash($value) && $this->isSimpleInlineMap($value);
 
-                $output .= \sprintf('%s%s%s%s',
+                $output .= \sprintf(
+                    '%s%s%s%s',
                     $prefix,
                     $dumpAsMap ? Inline::dump($key, $flags).':' : '-',
                     $willBeInlined || $isSimpleSequenceHash || ($compactNestedMapping && \is_array($value) && Inline::isHash($value)) ? ' ' : "\n",
@@ -130,9 +133,8 @@ class Dumper
 
         if (Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK & $flags && \is_string($value->getValue()) && str_contains($value->getValue(), "\n") && !str_contains($value->getValue(), "\r")) {
             $output .= \sprintf(' |%s%s', $this->getBlockIndentationIndicator($value->getValue()), $this->getBlockChompingIndicator($value->getValue()));
-            $output .= $this->dumpBlockScalarLines($value->getValue(), $prefix);
 
-            return $output;
+            return $output . $this->dumpBlockScalarLines($value->getValue(), $prefix);
         }
 
         if ($inline - 1 <= 0 || null === $value->getValue() || \is_scalar($value->getValue())) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,7 +35,7 @@ class TextDescriptor extends Descriptor
     {
         if ($options['core_types']) {
             $this->output->section('Built-in form types (Symfony\Component\Form\Extension\Core\Type)');
-            $shortClassNames = array_map(fn ($fqcn) => $this->formatClassLink($fqcn, \array_slice(explode('\\', $fqcn), -1)[0]), $options['core_types']);
+            $shortClassNames = array_map(fn (string $fqcn): string => $this->formatClassLink($fqcn, \array_slice(explode('\\', $fqcn), -1)[0]), $options['core_types']);
             for ($i = 0, $loopsMax = \count($shortClassNames); $i * 5 < $loopsMax; ++$i) {
                 $this->output->writeln(' '.implode(', ', \array_slice($shortClassNames, $i * 5, 5)));
             }
@@ -169,8 +171,10 @@ class TextDescriptor extends Descriptor
                 if (\is_string($class)) {
                     unset($options[$group][$class]);
                 }
-
-                if (!\is_array($opt) || 0 === \count($opt)) {
+                if (!\is_array($opt)) {
+                    continue;
+                }
+                if (0 === \count($opt)) {
                     continue;
                 }
 

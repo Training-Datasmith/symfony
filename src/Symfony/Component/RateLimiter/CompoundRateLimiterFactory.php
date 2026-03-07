@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,7 +16,7 @@ namespace Symfony\Component\RateLimiter;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class CompoundRateLimiterFactory implements RateLimiterFactoryInterface
+final readonly class CompoundRateLimiterFactory implements RateLimiterFactoryInterface
 {
     /**
      * @param iterable<RateLimiterFactoryInterface> $rateLimiterFactories

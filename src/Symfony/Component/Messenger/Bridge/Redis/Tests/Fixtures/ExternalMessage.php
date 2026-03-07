@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\Messenger\Bridge\Redis\Tests\Fixtures;
 
 class ExternalMessage

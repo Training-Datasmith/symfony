@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ class ResourceCheckerConfigCacheFactory implements ConfigCacheFactoryInterface
      * @param iterable<int, ResourceCheckerInterface> $resourceCheckers
      */
     public function __construct(
-        private iterable $resourceCheckers = [],
+        private readonly iterable $resourceCheckers = [],
     ) {
     }
 

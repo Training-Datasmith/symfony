@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use Symfony\Component\RemoteEvent\Event\Mailer\MailerEngagementEvent;
 
 $wh = new MailerEngagementEvent(MailerEngagementEvent::OPEN, '62fb66bef54a112e920b5493', json_decode(file_get_contents(str_replace('.php', '.json', __FILE__)), true));
 $wh->setRecipientEmail('test@example.com');
-$wh->setTags(["test-tag"]);
+$wh->setTags(['test-tag']);
 $wh->setMetadata([
     'ip' => '127.0.0.1',
 ]);

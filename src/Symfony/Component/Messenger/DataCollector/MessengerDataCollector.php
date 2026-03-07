@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -50,7 +52,7 @@ class MessengerDataCollector extends DataCollector implements LateDataCollectorI
         }
 
         // Order by call time
-        usort($messages, static fn ($a, $b) => $a[1] <=> $b[1]);
+        usort($messages, static fn (array $a, array $b): int => $a[1] <=> $b[1]);
 
         // Keep the messages clones only
         $this->data['messages'] = array_column($messages, 0);
@@ -122,7 +124,7 @@ class MessengerDataCollector extends DataCollector implements LateDataCollectorI
             return $this->data['messages'];
         }
 
-        return array_filter($this->data['messages'], static fn ($message) => $bus === $message['bus']);
+        return array_filter($this->data['messages'], static fn (array $message): bool => $bus === $message['bus']);
     }
 
     public function getBuses(): array

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 return #[When(env: 'prod')] function () {

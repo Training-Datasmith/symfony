@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -81,8 +83,6 @@ class Connection
         'arguments',
         'bindings',
     ];
-
-    private AmqpFactory $amqpFactory;
     private mixed $autoSetupExchange;
     private mixed $autoSetupDelayExchange;
     private \AMQPChannel $amqpChannel;
@@ -101,10 +101,10 @@ class Connection
         #[\SensitiveParameter] private array $connectionOptions,
         private array $exchangeOptions,
         private array $queuesOptions,
-        ?AmqpFactory $amqpFactory = null,
+        private readonly ?AmqpFactory $amqpFactory = new AmqpFactory(),
     ) {
         if (!\extension_loaded('amqp')) {
-            throw new LogicException(\sprintf('You cannot use the "%s" as the "amqp" extension is not installed.', __CLASS__));
+            throw new LogicException(\sprintf('You cannot use the "%s" as the "amqp" extension is not installed.', self::class));
         }
 
         $this->connectionOptions = array_replace_recursive([
@@ -114,7 +114,6 @@ class Connection
             ],
         ], $connectionOptions);
         $this->autoSetupExchange = $this->autoSetupDelayExchange = $connectionOptions['auto_setup'] ?? true;
-        $this->amqpFactory = $amqpFactory ?? new AmqpFactory();
     }
 
     /**
@@ -216,7 +215,7 @@ class Connection
             $amqpOptions['auto_setup'] = filter_var($amqpOptions['auto_setup'], \FILTER_VALIDATE_BOOL);
         }
 
-        $queuesOptions = array_map(static function ($queueOptions) {
+        $queuesOptions = array_map(static function ($queueOptions): array {
             if (!\is_array($queueOptions)) {
                 $queueOptions = [];
             }
@@ -295,7 +294,7 @@ class Connection
             $this->setupExchangeAndQueues(); // also setup normal exchange for delayed messages so delay queue can DLX messages to it
         }
 
-        $this->withConnectionExceptionRetry(function () use ($body, $headers, $delayInMs, $amqpStamp) {
+        $this->withConnectionExceptionRetry(function () use ($body, $headers, $delayInMs, $amqpStamp): void {
             if (0 < $delayInMs) {
                 $this->publishWithDelay($body, $headers, $delayInMs, $amqpStamp);
 
@@ -317,7 +316,7 @@ class Connection
      */
     public function countMessagesInQueues(): int
     {
-        return array_sum(array_map(fn ($queueName) => $this->queue($queueName)->declareQueue(), $this->getQueueNames()));
+        return array_sum(array_map(fn (string $queueName): int => $this->queue($queueName)->declareQueue(), $this->getQueueNames()));
     }
 
     /**
@@ -617,20 +616,13 @@ class Connection
 
     private function withConnectionExceptionRetry(callable $callable): void
     {
-        $maxRetries = 3;
-        $retries = 0;
-
         retry:
         try {
             $callable();
-        } catch (\AMQPConnectionException $e) {
-            if (++$retries <= $maxRetries) {
-                $this->clear();
+        } catch (\AMQPConnectionException) {
+            $this->clear();
 
-                goto retry;
-            }
-
-            throw $e;
+            goto retry;
         }
     }
 }

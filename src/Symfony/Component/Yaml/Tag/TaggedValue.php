@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -15,7 +17,7 @@ namespace Symfony\Component\Yaml\Tag;
  * @author Nicolas Grekas <p@tchwork.com>
  * @author Guilhem N. <egetick@gmail.com>
  */
-final class TaggedValue
+final readonly class TaggedValue
 {
     public function __construct(
         private string $tag,

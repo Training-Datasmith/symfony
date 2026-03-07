@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ class AttributeBag implements AttributeBagInterface, \IteratorAggregate, \Counta
      * @param string $storageKey The key used to store attributes in the session
      */
     public function __construct(
-        private string $storageKey = '_sf2_attributes',
+        private readonly string $storageKey = '_sf2_attributes',
     ) {
     }
 

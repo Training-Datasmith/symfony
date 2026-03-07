@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -106,7 +108,9 @@ class KernelTest extends TestCase
         $this->assertFileExists($containerDir);
         $this->assertFileDoesNotExist($containerDir.'.legacy');
 
-        $kernel = new CustomProjectDirKernel(static function ($container) { $container->register('foo', 'stdClass')->setPublic(true); });
+        $kernel = new CustomProjectDirKernel(static function ($container) {
+            $container->register('foo', 'stdClass')->setPublic(true);
+        });
         $kernel->boot();
 
         $this->assertFileExists($containerDir);
@@ -407,7 +411,9 @@ class KernelTest extends TestCase
         $this->assertFileExists($containerFile);
         unlink(__DIR__.'/Fixtures/var/cache/custom/Symfony_Component_HttpKernel_Tests_CustomProjectDirKernelCustomDebugContainer.php.meta');
 
-        $kernel = new CustomProjectDirKernel(static function ($container) { $container->register('foo', 'stdClass')->setPublic(true); });
+        $kernel = new CustomProjectDirKernel(static function ($container) {
+            $container->register('foo', 'stdClass')->setPublic(true);
+        });
         $kernel->boot();
 
         $this->assertNotInstanceOf($containerClass, $kernel->getContainer());
@@ -417,7 +423,7 @@ class KernelTest extends TestCase
 
     public function testKernelExtension()
     {
-        $kernel = new class extends CustomProjectDirKernel implements ExtensionInterface {
+        $kernel = new class () extends CustomProjectDirKernel implements ExtensionInterface {
             public function load(array $configs, ContainerBuilder $container): void
             {
                 $container->setParameter('test.extension-registered', true);
@@ -569,7 +575,7 @@ class KernelTest extends TestCase
 
     public function testAnonymousKernelGeneratesValidContainerClass()
     {
-        $kernel = new class('test', true) extends Kernel {
+        $kernel = new class ('test', true) extends Kernel {
             public function registerBundles(): iterable
             {
                 return [];
@@ -613,7 +619,7 @@ class KernelTest extends TestCase
 
         $_SERVER['SOURCE_DATE_EPOCH'] = $sourceDateEpoch;
 
-        $kernel = new class('test', true) extends Kernel {
+        $kernel = new class ('test', true) extends Kernel {
             public function registerBundles(): iterable
             {
                 return [];

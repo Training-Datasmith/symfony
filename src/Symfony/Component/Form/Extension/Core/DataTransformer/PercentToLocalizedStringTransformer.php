@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,8 +35,8 @@ class PercentToLocalizedStringTransformer implements DataTransformerInterface
         self::INTEGER,
     ];
 
-    private string $type;
-    private int $scale;
+    private readonly string $type;
+    private readonly int $scale;
 
     /**
      * @see self::$types for a list of supported types
@@ -47,8 +49,8 @@ class PercentToLocalizedStringTransformer implements DataTransformerInterface
     public function __construct(
         ?int $scale = null,
         ?string $type = null,
-        private int $roundingMode = \NumberFormatter::ROUND_HALFUP,
-        private bool $html5Format = false,
+        private readonly int $roundingMode = \NumberFormatter::ROUND_HALFUP,
+        private readonly bool $html5Format = false,
     ) {
         $type ??= self::FRACTIONAL;
 

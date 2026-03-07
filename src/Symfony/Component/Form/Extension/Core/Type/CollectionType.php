@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -98,7 +100,7 @@ class CollectionType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $entryOptionsNormalizer = static function (Options $options, $value) {
+        $entryOptionsNormalizer = static function (Options $options, array $value): array {
             $value['block_name'] = 'entry';
 
             return $value;

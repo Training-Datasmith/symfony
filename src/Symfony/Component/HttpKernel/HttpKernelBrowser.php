@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -181,7 +183,7 @@ class HttpKernelBrowser extends AbstractBrowser
     protected function filterResponse(object $response): DomResponse
     {
         $content = '';
-        ob_start(static function ($chunk) use (&$content) {
+        ob_start(static function (string $chunk) use (&$content): string {
             $content .= $chunk;
 
             return '';

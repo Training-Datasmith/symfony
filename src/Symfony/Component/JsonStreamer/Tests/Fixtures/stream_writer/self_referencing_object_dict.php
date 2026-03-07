@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @param Symfony\Component\JsonStreamer\Tests\Fixtures\Model\SelfReferencingDummyDict $data
  */
@@ -10,7 +12,7 @@ return static function (mixed $data, \Psr\Container\ContainerInterface $valueTra
         }
         $prefix1 = '';
         yield "{{$prefix1}\"items\":";
-        yield "{";
+        yield '{';
         $prefix2 = '';
         foreach ($data->items as $key1 => $value1) {
             $key1 = \substr(\json_encode($key1), 1, -1);
@@ -18,7 +20,7 @@ return static function (mixed $data, \Psr\Container\ContainerInterface $valueTra
             yield from $generators['Symfony\Component\JsonStreamer\Tests\Fixtures\Model\SelfReferencingDummyDict']($value1, $depth + 1);
             $prefix2 = ',';
         }
-        yield "}}";
+        yield '}}';
     };
     try {
         yield from $generators['Symfony\Component\JsonStreamer\Tests\Fixtures\Model\SelfReferencingDummyDict']($data, 0);

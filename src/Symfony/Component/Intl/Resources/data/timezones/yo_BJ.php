@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Africa/Bangui' => 'Àkókò Ìwɔ̀-Oòrùn Afírikà (Bangui)',

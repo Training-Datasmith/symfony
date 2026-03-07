@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -178,7 +180,7 @@ class BinaryNode extends Node
                 return $this->evaluateMatches($right, $left);
         }
 
-        throw new \LogicException(\sprintf('"%s" does not support the "%s" operator.', __CLASS__, $operator));
+        throw new \LogicException(\sprintf('"%s" does not support the "%s" operator.', self::class, $operator));
     }
 
     public function toArray(): array

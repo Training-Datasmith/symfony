@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,9 +28,9 @@ use Symfony\Component\Security\Http\Firewall\SwitchUserListener;
 class ImpersonateUrlGenerator
 {
     public function __construct(
-        private RequestStack $requestStack,
-        private FirewallMap $firewallMap,
-        private TokenStorageInterface $tokenStorage,
+        private readonly RequestStack $requestStack,
+        private readonly FirewallMap $firewallMap,
+        private readonly TokenStorageInterface $tokenStorage,
     ) {
     }
 
@@ -81,8 +83,6 @@ class ImpersonateUrlGenerator
 
         $targetUri ??= $request->getRequestUri();
 
-        $targetUri .= (str_contains($targetUri, '?') ? '&' : '?').http_build_query([$switchUserConfig['parameter'] => $identifier], '', '&');
-
-        return $targetUri;
+        return $targetUri . (str_contains($targetUri, '?') ? '&' : '?' . http_build_query([$switchUserConfig['parameter'] => $identifier], '', '&'));
     }
 }

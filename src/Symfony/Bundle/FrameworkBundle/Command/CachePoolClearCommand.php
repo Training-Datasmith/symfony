@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,8 +38,8 @@ final class CachePoolClearCommand extends Command
      * @param string[]|null $poolNames
      */
     public function __construct(
-        private Psr6CacheClearer $poolClearer,
-        private ?array $poolNames = null,
+        private readonly Psr6CacheClearer $poolClearer,
+        private readonly ?array $poolNames = null,
     ) {
         parent::__construct();
     }
@@ -50,7 +52,8 @@ final class CachePoolClearCommand extends Command
             ])
             ->addOption('all', null, InputOption::VALUE_NONE, 'Clear all cache pools')
             ->addOption('exclude', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'A list of cache pools or cache pool clearers to exclude')
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command clears the given cache pools or cache pool clearers.
 
                     %command.full_name% <cache pool or clearer 1> [...<cache pool or clearer N>]

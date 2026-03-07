@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Africa/Abidjan' => 'ഗ്രീൻവിച്ച് മീൻ സമയം (അബിദ്‌ജാൻ‌)',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -282,7 +284,7 @@ final class Path
         $extension = pathinfo($path, \PATHINFO_EXTENSION);
 
         if ($forceLowerCase) {
-            $extension = self::toLower($extension);
+            return self::toLower($extension);
         }
 
         return $extension;
@@ -363,8 +365,10 @@ final class Path
      */
     public static function isAbsolute(string $path): bool
     {
-        return '' !== $path && (strspn($path, '/\\', 0, 1)
-            || (\strlen($path) > 3 && ctype_alpha($path[0])
+        return '' !== $path && (
+            strspn($path, '/\\', 0, 1)
+            || (
+                \strlen($path) > 3 && ctype_alpha($path[0])
                 && ':' === $path[1]
                 && strspn($path, '/\\', 2, 1)
             )
@@ -502,7 +506,7 @@ final class Path
         if ('' === $root && '' !== $baseRoot) {
             // If base path is already in its root
             if ('' === $relativeBasePath) {
-                $relativePath = ltrim($relativePath, './\\');
+                return ltrim($relativePath, './\\');
             }
 
             return $relativePath;
@@ -708,10 +712,12 @@ final class Path
 
         // Collapse "." and "..", if possible
         foreach ($parts as $part) {
-            if ('.' === $part || '' === $part) {
+            if ('.' === $part) {
                 continue;
             }
-
+            if ('' === $part) {
+                continue;
+            }
             // Collapse ".." with the previous part, if one exists
             // Don't collapse ".." if the previous part is also ".."
             if ('..' === $part && \count($canonicalParts) > 0 && '..' !== $canonicalParts[\count($canonicalParts) - 1]) {

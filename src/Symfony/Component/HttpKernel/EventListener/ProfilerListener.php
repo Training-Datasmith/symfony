@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -43,12 +45,12 @@ class ProfilerListener implements EventSubscriberInterface
      * @param bool $onlyMainRequests True if the profiler only collects data when the request is the main request, false otherwise
      */
     public function __construct(
-        private Profiler $profiler,
-        private RequestStack $requestStack,
-        private ?RequestMatcherInterface $matcher = null,
-        private bool $onlyException = false,
-        private bool $onlyMainRequests = false,
-        private ?string $collectParameter = null,
+        private readonly Profiler $profiler,
+        private readonly RequestStack $requestStack,
+        private readonly ?RequestMatcherInterface $matcher = null,
+        private readonly bool $onlyException = false,
+        private readonly bool $onlyMainRequests = false,
+        private readonly ?string $collectParameter = null,
     ) {
         $this->profiles = new \SplObjectStorage();
         $this->parents = new \SplObjectStorage();
@@ -117,11 +119,13 @@ class ProfilerListener implements EventSubscriberInterface
     {
         // attach children to parents
         foreach ($this->profiles as $request) {
-            if (null !== $parentRequest = $this->parents[$request]) {
-                if (isset($this->profiles[$parentRequest])) {
-                    $this->profiles[$parentRequest]->addChild($this->profiles[$request]);
-                }
+            if (null === $parentRequest = $this->parents[$request]) {
+                continue;
             }
+            if (!isset($this->profiles[$parentRequest])) {
+                continue;
+            }
+            $this->profiles[$parentRequest]->addChild($this->profiles[$request]);
         }
 
         // save profiles

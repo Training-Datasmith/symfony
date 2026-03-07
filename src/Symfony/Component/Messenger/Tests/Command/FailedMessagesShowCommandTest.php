@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -67,7 +69,9 @@ class FailedMessagesShowCommandTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute(['id' => 15]);
 
-        $this->assertStringContainsString(\sprintf(<<<EOF
+        $this->assertStringContainsString(
+            \sprintf(
+                <<<EOF
             ------------- --------------------- 
               Class         stdClass             
               Message Id    15                   
@@ -77,8 +81,10 @@ class FailedMessagesShowCommandTest extends TestCase
               Error Class   Exception            
               Transport     async
             EOF,
-            $redeliveryStamp->getRedeliveredAt()->format('Y-m-d H:i:s')),
-            $tester->getDisplay(true));
+                $redeliveryStamp->getRedeliveredAt()->format('Y-m-d H:i:s')
+            ),
+            $tester->getDisplay(true)
+        );
     }
 
     public function testMultipleRedeliveryFailsWithServiceLocator()
@@ -105,7 +111,9 @@ class FailedMessagesShowCommandTest extends TestCase
         );
         $tester = new CommandTester($command);
         $tester->execute(['id' => 15]);
-        $this->assertStringContainsString(\sprintf(<<<EOF
+        $this->assertStringContainsString(
+            \sprintf(
+                <<<EOF
              ------------- --------------------- 
               Class         stdClass             
               Message Id    15                   
@@ -115,8 +123,10 @@ class FailedMessagesShowCommandTest extends TestCase
               Error Class   Exception            
               Transport     async
             EOF,
-            $redeliveryStamp2->getRedeliveredAt()->format('Y-m-d H:i:s')),
-            $tester->getDisplay(true));
+                $redeliveryStamp2->getRedeliveredAt()->format('Y-m-d H:i:s')
+            ),
+            $tester->getDisplay(true)
+        );
     }
 
     public function testReceiverShouldBeListableWithServiceLocator()
@@ -162,11 +172,15 @@ class FailedMessagesShowCommandTest extends TestCase
         $tester->setInputs([0]);
         $tester->execute([]);
 
-        $this->assertStringContainsString(\sprintf(<<<EOF
+        $this->assertStringContainsString(
+            \sprintf(
+                <<<EOF
             15   stdClass   %s   Things are bad!
             EOF,
-            $redeliveryStamp->getRedeliveredAt()->format('Y-m-d H:i:s')),
-            $tester->getDisplay(true));
+                $redeliveryStamp->getRedeliveredAt()->format('Y-m-d H:i:s')
+            ),
+            $tester->getDisplay(true)
+        );
 
         $expectedLoadingMessage = <<<EOF
             > Available failure transports are: failure_receiver, failure_receiver_2, failure_receiver_3
@@ -301,7 +315,9 @@ class FailedMessagesShowCommandTest extends TestCase
         $command = new FailedMessagesShowCommand($failureTransportName, new ServiceLocator([$failureTransportName => static fn () => $receiver]));
         $tester = new CommandTester($command);
         $tester->execute(['id' => 42], ['verbosity' => OutputInterface::VERBOSITY_VERY_VERBOSE]);
-        $this->assertStringMatchesFormat(\sprintf(<<<'EOF'
+        $this->assertStringMatchesFormat(
+            \sprintf(
+                <<<'EOF'
             %%A
             Exception:
             ==========
@@ -314,8 +330,11 @@ class FailedMessagesShowCommandTest extends TestCase
               trace: {
             %%A
             EOF,
-            __FILE__, $exceptionLine),
-            $tester->getDisplay(true));
+                __FILE__,
+                $exceptionLine
+            ),
+            $tester->getDisplay(true)
+        );
     }
 
     public function testListMessagesWithServiceLocatorFromSpecificTransport()
@@ -341,11 +360,15 @@ class FailedMessagesShowCommandTest extends TestCase
 
         $tester = new CommandTester($command);
         $tester->execute(['--transport' => $failureTransportName]);
-        $this->assertStringContainsString(\sprintf(<<<EOF
+        $this->assertStringContainsString(
+            \sprintf(
+                <<<EOF
             15   stdClass   %s   Things are bad!
             EOF,
-            $redeliveryStamp->getRedeliveredAt()->format('Y-m-d H:i:s')),
-            $tester->getDisplay(true));
+                $redeliveryStamp->getRedeliveredAt()->format('Y-m-d H:i:s')
+            ),
+            $tester->getDisplay(true)
+        );
     }
 
     public function testCompletingTransport()
@@ -435,7 +458,7 @@ class FailedMessagesShowCommandTest extends TestCase
 
     public function testPendingMessageCountGoesToStdout()
     {
-        $receiver = new class implements ListableReceiverInterface, MessageCountAwareInterface {
+        $receiver = new class () implements ListableReceiverInterface, MessageCountAwareInterface {
             public function get(): iterable
             {
                 return [];

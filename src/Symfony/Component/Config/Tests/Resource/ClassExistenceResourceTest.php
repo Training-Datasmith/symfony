@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -59,7 +61,9 @@ class ClassExistenceResourceTest extends TestCase
 
     public function testExistsKo()
     {
-        spl_autoload_register($autoloader = static function ($class) use (&$loadedClass) { $loadedClass = $class; });
+        spl_autoload_register($autoloader = static function ($class) use (&$loadedClass) {
+            $loadedClass = $class;
+        });
 
         try {
             $res = new ClassExistenceResource('MissingFooClass');

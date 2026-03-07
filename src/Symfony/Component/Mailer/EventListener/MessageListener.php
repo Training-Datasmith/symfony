@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -42,8 +44,8 @@ class MessageListener implements EventSubscriberInterface
     private array $headerRules = [];
 
     public function __construct(
-        private ?Headers $headers = null,
-        private ?BodyRendererInterface $renderer = null,
+        private readonly ?Headers $headers = null,
+        private readonly ?BodyRendererInterface $renderer = null,
         array $headerRules = self::DEFAULT_RULES,
     ) {
         foreach ($headerRules as $headerName => $rule) {

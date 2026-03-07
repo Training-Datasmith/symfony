@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -56,7 +58,7 @@ class IsSignatureValidAttributeListener implements EventSubscriberInterface
 
     private function processAttribute(IsSignatureValid $attribute, Request $request): void
     {
-        $methods = array_map('strtoupper', $attribute->methods);
+        $methods = array_map(strtoupper(...), $attribute->methods);
         if ($methods && !\in_array($request->getMethod(), $methods, true)) {
             return;
         }

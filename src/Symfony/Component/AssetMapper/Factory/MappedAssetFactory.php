@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -109,7 +111,7 @@ class MappedAssetFactory implements MappedAssetFactoryInterface
         return $compiled !== $content ? $compiled : null;
     }
 
-    private function getPublicPath(MappedAsset $asset, ?string $content): ?string
+    private function getPublicPath(MappedAsset $asset, ?string $content): string
     {
         [$digest, $isPredigested] = $this->getDigest($asset, $content);
 

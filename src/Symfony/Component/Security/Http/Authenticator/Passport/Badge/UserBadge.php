@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -51,7 +53,7 @@ class UserBadge implements BadgeInterface
     public function __construct(
         private string $userIdentifier,
         ?callable $userLoader = null,
-        private ?array $attributes = null,
+        private readonly ?array $attributes = null,
         ?\Closure $identifierNormalizer = null,
     ) {
         $this->validateUserIdentifier($userIdentifier);

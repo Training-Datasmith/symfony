@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -69,7 +71,7 @@ class ImportMapUpdateChecker
         return $updateInfos;
     }
 
-    private function getVersionPart(string $version, int $part): ?string
+    private function getVersionPart(string $version, int $part): string
     {
         return explode('.', $version)[$part] ?? $version;
     }

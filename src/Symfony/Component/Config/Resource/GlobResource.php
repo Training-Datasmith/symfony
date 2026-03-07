@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -134,7 +136,7 @@ class GlobResource implements \IteratorAggregate, SelfCheckingResourceInterface
             } elseif (!str_contains($this->pattern, '\\') || !preg_match('/\\\\[,{}]/', $this->pattern)) {
                 $paths = [];
                 foreach ($this->expandGlob($this->pattern) as $p) {
-                    if (false !== $i = strpos($p, '/**/')) {
+                    if (false !== $i = strpos((string) $p, '/**/')) {
                         $p = substr_replace($p, '/*', $i);
                     }
                     $paths += array_fill_keys(glob($this->prefix.$p, \GLOB_NOSORT), false !== $i ? $regex : null);
@@ -143,7 +145,7 @@ class GlobResource implements \IteratorAggregate, SelfCheckingResourceInterface
         }
 
         if (null !== $paths) {
-            uksort($paths, 'strnatcmp');
+            uksort($paths, strnatcmp(...));
             foreach ($paths as $path => $regex) {
                 if ($this->excludedPrefixes) {
                     $normalizedPath = str_replace('\\', '/', $path);
@@ -164,19 +166,22 @@ class GlobResource implements \IteratorAggregate, SelfCheckingResourceInterface
                     yield $path => new \SplFileInfo($path);
                     continue;
                 }
-                if (!($this->recursive || null !== $regex) || isset($this->excludedPrefixes[str_replace('\\', '/', $path)])) {
+                if (!($this->recursive || null !== $regex)) {
+                    continue;
+                }
+                if (isset($this->excludedPrefixes[str_replace('\\', '/', $path)])) {
                     continue;
                 }
                 $files = iterator_to_array(new \RecursiveIteratorIterator(
                     new \RecursiveCallbackFilterIterator(
                         new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::FOLLOW_SYMLINKS),
-                        fn (\SplFileInfo $file, $path) => !isset($this->excludedPrefixes[$path = str_replace('\\', '/', $path)])
+                        fn (\SplFileInfo $file, $path): bool => !isset($this->excludedPrefixes[$path = str_replace('\\', '/', $path)])
                             && (null === $regex || preg_match($regex, substr($path, $prefixLen)) || $file->isDir())
                             && '.' !== $file->getBasename()[0]
                     ),
                     \RecursiveIteratorIterator::LEAVES_ONLY
                 ));
-                uksort($files, 'strnatcmp');
+                uksort($files, strnatcmp(...));
 
                 foreach ($files as $path => $info) {
                     if ($info->isFile()) {

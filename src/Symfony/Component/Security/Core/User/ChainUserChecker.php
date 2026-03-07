@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -13,12 +15,12 @@ namespace Symfony\Component\Security\Core\User;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-final class ChainUserChecker implements UserCheckerInterface
+final readonly class ChainUserChecker implements UserCheckerInterface
 {
     /**
      * @param iterable<UserCheckerInterface> $checkers
      */
-    public function __construct(private readonly iterable $checkers)
+    public function __construct(private iterable $checkers)
     {
     }
 

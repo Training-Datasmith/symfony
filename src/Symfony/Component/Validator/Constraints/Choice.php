@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,14 +33,10 @@ class Choice extends Constraint
         self::TOO_FEW_ERROR => 'TOO_FEW_ERROR',
         self::TOO_MANY_ERROR => 'TOO_MANY_ERROR',
     ];
-
-    public ?array $choices = null;
     /** @var callable|string|null */
     public $callback;
     public bool $multiple = false;
     public bool $strict = true;
-    public ?int $min = null;
-    public ?int $max = null;
     public string $message = 'The value you selected is not a valid choice.';
     public string $multipleMessage = 'One or more of the given values is invalid.';
     public string $minMessage = 'You must select at least {{ limit }} choice.|You must select at least {{ limit }} choices.';
@@ -57,12 +55,12 @@ class Choice extends Constraint
      */
     public function __construct(
         string|array|null $options = null,
-        ?array $choices = null,
+        public ?array $choices = null,
         callable|string|null $callback = null,
         ?bool $multiple = null,
         ?bool $strict = null,
-        ?int $min = null,
-        ?int $max = null,
+        public ?int $min = null,
+        public ?int $max = null,
         ?string $message = null,
         ?string $multipleMessage = null,
         ?string $minMessage = null,
@@ -76,13 +74,9 @@ class Choice extends Constraint
         }
 
         parent::__construct(null, $groups, $payload);
-
-        $this->choices = $choices;
         $this->callback = $callback;
         $this->multiple = $multiple ?? $this->multiple;
         $this->strict = $strict ?? $this->strict;
-        $this->min = $min;
-        $this->max = $max;
         $this->message = $message ?? $this->message;
         $this->multipleMessage = $multipleMessage ?? $this->multipleMessage;
         $this->minMessage = $minMessage ?? $this->minMessage;

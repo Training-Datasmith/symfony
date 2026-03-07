@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -45,7 +47,7 @@ class NormalizationBuilder
      */
     public function remap(string $key, ?string $plural = null): static
     {
-        $this->remappings[] = [$key, null === $plural ? $key.'s' : $plural];
+        $this->remappings[] = [$key, $plural ?? $key . 's'];
 
         return $this;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,8 +26,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class UploadValidatorExtension extends AbstractTypeExtension
 {
     public function __construct(
-        private TranslatorInterface $translator,
-        private ?string $translationDomain = null,
+        private readonly TranslatorInterface $translator,
+        private readonly ?string $translationDomain = null,
     ) {
     }
 
@@ -33,7 +35,7 @@ class UploadValidatorExtension extends AbstractTypeExtension
     {
         $translator = $this->translator;
         $translationDomain = $this->translationDomain;
-        $resolver->setNormalizer('upload_max_size_message', static fn (Options $options, $message) => static fn () => $translator->trans($message(), [], $translationDomain));
+        $resolver->setNormalizer('upload_max_size_message', static fn (Options $options, $message): \Closure => static fn (): string => $translator->trans($message(), [], $translationDomain));
     }
 
     public static function getExtendedTypes(): iterable

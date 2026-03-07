@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'gusomana: umuntu mukuru, umuntu mukuru, ibara ry’uruhu rwera, ibara ry’uruhu rwera gahoro',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'gusomana: umuntu mukuru, umuntu mukuru, ibara ry’uruhu rwera, ibara ry’uruhu rw’inzobe',

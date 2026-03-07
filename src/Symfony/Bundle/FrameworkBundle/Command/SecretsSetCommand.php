@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,8 +36,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 final class SecretsSetCommand extends Command
 {
     public function __construct(
-        private AbstractVault $vault,
-        private ?AbstractVault $localVault = null,
+        private readonly AbstractVault $vault,
+        private readonly ?AbstractVault $localVault = null,
     ) {
         parent::__construct();
     }
@@ -47,7 +49,8 @@ final class SecretsSetCommand extends Command
             ->addArgument('file', InputArgument::OPTIONAL, 'A file where to read the secret from or "-" for reading from STDIN')
             ->addOption('local', 'l', InputOption::VALUE_NONE, 'Update the local vault.')
             ->addOption('random', 'r', InputOption::VALUE_OPTIONAL, 'Generate a random value.', false)
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command stores a secret in the vault.
 
                     <info>%command.full_name% <name></info>

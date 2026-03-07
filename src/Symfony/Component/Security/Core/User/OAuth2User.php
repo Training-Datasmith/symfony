@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ class OAuth2User implements UserInterface
     public readonly array $additionalClaims;
 
     public function __construct(
-        private array $roles = ['ROLE_USER'],
+        private readonly array $roles = ['ROLE_USER'],
         // Standard Claims (https://datatracker.ietf.org/doc/html/rfc7662#section-2.2)
         public readonly ?string $scope = null,
         public readonly ?string $clientId = null,

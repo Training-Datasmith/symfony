@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,10 +25,10 @@ namespace Symfony\Component\CssSelector\Node;
  */
 class SelectorNode extends AbstractNode
 {
-    private ?string $pseudoElement;
+    private readonly ?string $pseudoElement;
 
     public function __construct(
-        private NodeInterface $tree,
+        private readonly NodeInterface $tree,
         ?string $pseudoElement = null,
     ) {
         $this->pseudoElement = $pseudoElement ? strtolower($pseudoElement) : null;

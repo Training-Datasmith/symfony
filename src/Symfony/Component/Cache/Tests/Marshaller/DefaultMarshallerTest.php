@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,8 @@ class DefaultMarshallerTest extends TestCase
         $marshaller = new DefaultMarshaller();
         $values = [
             'a' => 123,
-            'b' => static function () {},
+            'b' => static function () {
+            },
         ];
 
         $expected = ['a' => serialize(123)];
@@ -40,7 +43,8 @@ class DefaultMarshallerTest extends TestCase
         $marshaller = new DefaultMarshaller(true);
         $values = [
             'a' => 123,
-            'b' => static function () {},
+            'b' => static function () {
+            },
         ];
 
         $expected = ['a' => igbinary_serialize(123)];
@@ -126,7 +130,8 @@ class DefaultMarshallerTest extends TestCase
     {
         $marshaller = new DefaultMarshaller(false, true);
         $values = [
-            'a' => static function () {},
+            'a' => static function () {
+            },
         ];
 
         $this->expectException(\ValueError::class);

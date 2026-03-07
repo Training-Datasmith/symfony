@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ use Symfony\Component\RateLimiter\LimiterInterface;
  *
  * @author Bob van de Vijver
  */
-final class WorkerRateLimitedEvent
+final readonly class WorkerRateLimitedEvent
 {
     public function __construct(private LimiterInterface $limiter, private string $transportName)
     {

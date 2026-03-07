@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -51,13 +53,13 @@ final class BrevoTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $sender = $message->getFrom() ?: $this->sender;
 
         if (($options = $message->getOptions()) && !$options instanceof BrevoOptions) {
-            throw new UnsupportedOptionsException(__CLASS__, BrevoOptions::class, $options);
+            throw new UnsupportedOptionsException(self::class, BrevoOptions::class, $options);
         }
 
         $options = $options?->toArray() ?? [];

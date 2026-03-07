@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -170,12 +172,12 @@ class ArgvInput extends Input
             $arg = $this->definition->getArgument($c);
             $this->arguments[$arg->getName()] = $arg->isArray() ? [$token] : $token;
 
-        // if last argument isArray(), append token to last argument
+            // if last argument isArray(), append token to last argument
         } elseif ($this->definition->hasArgument($c - 1) && $this->definition->getArgument($c - 1)->isArray()) {
             $arg = $this->definition->getArgument($c - 1);
             $this->arguments[$arg->getName()][] = $token;
 
-        // unexpected argument
+            // unexpected argument
         } else {
             $all = $this->definition->getArguments();
             $symfonyCommandName = null;
@@ -274,10 +276,12 @@ class ArgvInput extends Input
         $isOption = false;
         foreach ($this->tokens as $i => $token) {
             if ($token && '-' === $token[0]) {
-                if (str_contains($token, '=') || !isset($this->tokens[$i + 1])) {
+                if (str_contains($token, '=')) {
                     continue;
                 }
-
+                if (!isset($this->tokens[$i + 1])) {
+                    continue;
+                }
                 // If it's a long option, consider that everything after "--" is the option name.
                 // Otherwise, use the last char (if it's a short option set, only the last one can take a value with space separator)
                 $name = '-' === $token[1] ? substr($token, 2) : substr($token, -1);
@@ -313,8 +317,8 @@ class ArgvInput extends Input
                 // Options with values:
                 //   For long options, test for '--option=' at beginning
                 //   For short options, test for '-o' at beginning
-                $leading = str_starts_with($value, '--') ? $value.'=' : $value;
-                if ($token === $value || '' !== $leading && str_starts_with($token, $leading)) {
+                $leading = str_starts_with((string) $value, '--') ? $value.'=' : $value;
+                if ($token === $value || '' !== $leading && str_starts_with($token, (string) $leading)) {
                     return true;
                 }
             }
@@ -341,9 +345,9 @@ class ArgvInput extends Input
                 // Options with values:
                 //   For long options, test for '--option=' at beginning
                 //   For short options, test for '-o' at beginning
-                $leading = str_starts_with($value, '--') ? $value.'=' : $value;
-                if ('' !== $leading && str_starts_with($token, $leading)) {
-                    return substr($token, \strlen($leading));
+                $leading = str_starts_with((string) $value, '--') ? $value.'=' : $value;
+                if ('' !== $leading && str_starts_with($token, (string) $leading)) {
+                    return substr($token, \strlen((string) $leading));
                 }
             }
         }
@@ -385,7 +389,7 @@ class ArgvInput extends Input
      */
     public function __toString(): string
     {
-        $tokens = array_map(function ($token) {
+        $tokens = array_map(function (string $token): string {
             if (preg_match('{^(-[^=]+=)(.+)}', $token, $match)) {
                 return $match[1].$this->escapeToken($match[2]);
             }

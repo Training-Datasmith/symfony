@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ class AbstractNormalizerContextBuilderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->contextBuilder = new class extends AbstractNormalizerContextBuilder {};
+        $this->contextBuilder = new class () extends AbstractNormalizerContextBuilder {};
     }
 
     /**
@@ -63,8 +65,10 @@ class AbstractNormalizerContextBuilderTest extends TestCase
             AbstractNormalizer::ATTRIBUTES => ['attribute1', 'attribute2'],
             AbstractNormalizer::ALLOW_EXTRA_ATTRIBUTES => true,
             AbstractNormalizer::DEFAULT_CONSTRUCTOR_ARGUMENTS => [self::class => ['foo' => 'bar']],
-            AbstractNormalizer::CALLBACKS => [static function (): void {}],
-            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => static function (): void {},
+            AbstractNormalizer::CALLBACKS => [static function (): void {
+            }],
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => static function (): void {
+            },
             AbstractNormalizer::IGNORED_ATTRIBUTES => ['attribute3'],
             AbstractNormalizer::REQUIRE_ALL_PROPERTIES => true,
         ]];

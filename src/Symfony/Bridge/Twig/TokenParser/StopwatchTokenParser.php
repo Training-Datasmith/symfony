@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ use Twig\TokenParser\AbstractTokenParser;
 final class StopwatchTokenParser extends AbstractTokenParser
 {
     public function __construct(
-        private bool $stopwatchIsAvailable,
+        private readonly bool $stopwatchIsAvailable,
     ) {
     }
 

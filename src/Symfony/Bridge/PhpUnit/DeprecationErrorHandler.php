@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,15 +35,15 @@ class DeprecationErrorHandler
     public const MODE_STRICT = 'max[total]=0';
 
     private $mode;
-    private $configuration;
+    private ?\Symfony\Bridge\PhpUnit\DeprecationErrorHandler\Configuration $configuration = null;
 
     /**
      * @var DeprecationGroup[]
      */
-    private $deprecationGroups = [];
+    private array $deprecationGroups = [];
 
-    private static $isRegistered = false;
-    private static $errorHandler;
+    private static bool $isRegistered = false;
+    private static ?string $errorHandler = null;
 
     public function __construct()
     {
@@ -72,7 +74,7 @@ class DeprecationErrorHandler
         }
 
         $handler = new self();
-        $oldErrorHandler = set_error_handler([$handler, 'handleError']);
+        $oldErrorHandler = set_error_handler($handler->handleError(...));
 
         if (null !== $oldErrorHandler) {
             restore_error_handler();
@@ -107,10 +109,12 @@ class DeprecationErrorHandler
 
             $filesStack = [];
             foreach (debug_backtrace() as $frame) {
-                if (!isset($frame['file']) || \in_array($frame['function'], ['require', 'require_once', 'include', 'include_once'], true)) {
+                if (!isset($frame['file'])) {
                     continue;
                 }
-
+                if (\in_array($frame['function'], ['require', 'require_once', 'include', 'include_once'], true)) {
+                    continue;
+                }
                 $filesStack[] = $frame['file'];
             }
 
@@ -119,7 +123,7 @@ class DeprecationErrorHandler
             return null;
         });
 
-        register_shutdown_function(static function () use ($outputFile, &$deprecations) {
+        register_shutdown_function(static function () use ($outputFile, &$deprecations): void {
             file_put_contents($outputFile, serialize($deprecations));
         });
     }
@@ -129,7 +133,7 @@ class DeprecationErrorHandler
      */
     public function handleError($type, $msg, $file, $line, $context = [])
     {
-        if ((\E_USER_DEPRECATED !== $type && \E_DEPRECATED !== $type && (\E_WARNING !== $type || !str_contains($msg, '" targeting switch is equivalent to "break'))) || !$this->getConfiguration()->isEnabled()) {
+        if ((\E_USER_DEPRECATED !== $type && \E_DEPRECATED !== $type && (\E_WARNING !== $type || !str_contains((string) $msg, '" targeting switch is equivalent to "break'))) || !$this->getConfiguration()->isEnabled()) {
             return \call_user_func(self::getPhpUnitErrorHandler(), $type, $msg, $file, $line, $context);
         }
 
@@ -205,10 +209,10 @@ class DeprecationErrorHandler
         if (class_exists(DebugClassLoader::class, false)) {
             DebugClassLoader::checkClasses();
         }
-        $currErrorHandler = set_error_handler('is_int');
+        $currErrorHandler = set_error_handler(is_int(...));
         restore_error_handler();
 
-        if ($currErrorHandler !== [$this, 'handleError']) {
+        if ($currErrorHandler !== $this->handleError(...)) {
             echo "\n", self::colorize('THE ERROR HANDLER HAS CHANGED!', true), "\n";
         }
 
@@ -221,7 +225,7 @@ class DeprecationErrorHandler
 
         $this->resetDeprecationGroups();
 
-        register_shutdown_function(function () use ($isFailing, $groups, $configuration) {
+        register_shutdown_function(function () use ($isFailing, $groups, $configuration): void {
             foreach ($this->deprecationGroups as $group) {
                 if ($group->count() > 0) {
                     echo "Shutdown-time deprecations:\n";
@@ -302,7 +306,7 @@ class DeprecationErrorHandler
      */
     private function displayDeprecations(array $groups, Configuration $configuration): void
     {
-        $cmp = static fn ($a, $b) => $b->count() - $a->count();
+        $cmp = static fn ($a, $b): int|float => $b->count() - $a->count();
 
         if ($configuration->shouldWriteToLogFile()) {
             if (false === $handle = @fopen($file = $configuration->getLogFile(), 'a')) {
@@ -345,7 +349,7 @@ class DeprecationErrorHandler
                                 fwrite($handle, "    ...\n");
                                 break;
                             }
-                            fwrite($handle, \sprintf("    %dx in %s\n", $count, preg_replace('/(.*)\\\\(.*?::.*?)$/', '$2 from $1', $method)));
+                            fwrite($handle, \sprintf("    %dx in %s\n", $count, preg_replace('/(.*)\\\\(.*?::.*?)$/', '$2 from $1', (string) $method)));
                         }
                     }
                 }
@@ -379,7 +383,6 @@ class DeprecationErrorHandler
             if (!isset($frame['object'])) {
                 continue;
             }
-
             if ($frame['object'] instanceof TestResult) {
                 return new $eh(
                     $frame['object']->getConvertDeprecationsToExceptions(),
@@ -387,8 +390,10 @@ class DeprecationErrorHandler
                     $frame['object']->getConvertNoticesToExceptions(),
                     $frame['object']->getConvertWarningsToExceptions()
                 );
-            } elseif (ErrorHandler::class === $eh && $frame['object'] instanceof TestCase) {
-                return static function (int $errorNumber, string $errorString, string $errorFile, int $errorLine) {
+            }
+
+            if (ErrorHandler::class === $eh && $frame['object'] instanceof TestCase) {
+                return static function (int $errorNumber, string $errorString, string $errorFile, int $errorLine): true {
                     ErrorHandler::instance()($errorNumber, $errorString, $errorFile, $errorLine);
 
                     return true;
@@ -396,7 +401,7 @@ class DeprecationErrorHandler
             }
         }
 
-        return static fn () => false;
+        return static fn (): false => false;
     }
 
     /**

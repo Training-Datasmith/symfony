@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -49,7 +51,7 @@ class NovuTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof PushMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, PushMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, PushMessage::class, $message);
         }
 
         $options = $message->getOptions()?->toArray() ?? [];

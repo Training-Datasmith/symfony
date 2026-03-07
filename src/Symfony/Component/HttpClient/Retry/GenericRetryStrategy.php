@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -45,10 +47,10 @@ class GenericRetryStrategy implements RetryStrategyInterface
      */
     public function __construct(
         private array $statusCodes = self::DEFAULT_RETRY_STATUS_CODES,
-        private int $delayMs = 1000,
-        private float $multiplier = 2.0,
-        private int $maxDelayMs = 0,
-        private float $jitter = 0.1,
+        private readonly int $delayMs = 1000,
+        private readonly float $multiplier = 2.0,
+        private readonly int $maxDelayMs = 0,
+        private readonly float $jitter = 0.1,
     ) {
         if ($delayMs < 0) {
             throw new InvalidArgumentException(\sprintf('Delay must be greater than or equal to zero: "%s" given.', $delayMs));

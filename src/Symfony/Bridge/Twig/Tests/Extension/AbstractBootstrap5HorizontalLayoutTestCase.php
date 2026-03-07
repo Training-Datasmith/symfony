@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,8 @@ abstract class AbstractBootstrap5HorizontalLayoutTestCase extends AbstractBootst
         $form->get('name')->addError(new FormError('[trans]Error![/trans]'));
         $html = $this->renderRow($form->get('name')->createView());
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@class="mb-3 row"]
     [
@@ -63,7 +66,8 @@ abstract class AbstractBootstrap5HorizontalLayoutTestCase extends AbstractBootst
             ],
         ]);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@class="mb-5 row"]
     [
@@ -91,7 +95,8 @@ abstract class AbstractBootstrap5HorizontalLayoutTestCase extends AbstractBootst
         $this->renderWidget($view, ['label' => 'foo']);
         $html = $this->renderLabel($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/legend
     [@class="col-form-label col-sm-2 required"]
     [.="[trans]Name[/trans]"]
@@ -108,7 +113,8 @@ abstract class AbstractBootstrap5HorizontalLayoutTestCase extends AbstractBootst
             ],
         ]);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/label
     [@for="name"]
     [@class="col-form-label col-sm-2 required"]
@@ -125,7 +131,8 @@ abstract class AbstractBootstrap5HorizontalLayoutTestCase extends AbstractBootst
             ],
         ]);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/label
     [@for="name"]
     [@class="my&class col-form-label col-sm-2 required"]
@@ -142,7 +149,8 @@ abstract class AbstractBootstrap5HorizontalLayoutTestCase extends AbstractBootst
             ],
         ]);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/label
     [@for="name"]
     [@class="my&class col-form-label col-sm-2 required"]
@@ -162,7 +170,8 @@ abstract class AbstractBootstrap5HorizontalLayoutTestCase extends AbstractBootst
             ],
         ]);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/label
     [@for="name"]
     [@class="my&class col-form-label col-sm-2 required"]
@@ -215,7 +224,8 @@ abstract class AbstractBootstrap5HorizontalLayoutTestCase extends AbstractBootst
         $this->renderWidget($view);
         $html = $this->renderLabel($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/legend
     [@class="col-sm-2 col-form-label required"]
     [.="[trans]Custom label[/trans]"]
@@ -238,7 +248,8 @@ abstract class AbstractBootstrap5HorizontalLayoutTestCase extends AbstractBootst
         $view = $form->createView();
         $html = $this->renderRow($view, ['label' => 'foo', 'help' => 'really helpful text']);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@class="mb-3 row"]
     [
@@ -259,7 +270,8 @@ abstract class AbstractBootstrap5HorizontalLayoutTestCase extends AbstractBootst
         $form = $this->factory->createNamed('name', RadioType::class, false);
         $html = $this->renderRow($form->createView(), ['label' => 'foo', 'help' => 'really helpful text']);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@class="mb-3 row"]
     [
@@ -288,7 +300,8 @@ abstract class AbstractBootstrap5HorizontalLayoutTestCase extends AbstractBootst
             ],
         ]);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@class="mb-3 row"]
     [
@@ -327,7 +340,8 @@ abstract class AbstractBootstrap5HorizontalLayoutTestCase extends AbstractBootst
 
         $html = $this->renderRow($form->createView());
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@class="mb-3 row"]
     [

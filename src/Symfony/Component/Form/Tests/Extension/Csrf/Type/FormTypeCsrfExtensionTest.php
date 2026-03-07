@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -81,7 +83,8 @@ class FormTypeCsrfExtensionTest extends TypeTestCase
             ->createNamedBuilder('root', 'Symfony\Component\Form\Extension\Core\Type\FormType', null, [
                 'csrf_token_id' => 'root_token_id',
             ])
-            ->add($this->factory
+            ->add(
+                $this->factory
                 ->createNamedBuilder('form', 'Symfony\Component\Form\Extension\Core\Type\FormType', null, [
                     'csrf_field_name' => 'csrf',
                     'csrf_token_id' => 'child_token_id',
@@ -313,7 +316,8 @@ class FormTypeCsrfExtensionTest extends TypeTestCase
 
         $form = $this->factory
             ->createNamedBuilder('root', 'Symfony\Component\Form\Extension\Core\Type\FormType')
-            ->add($this->factory
+            ->add(
+                $this->factory
                 ->createNamedBuilder('form', 'Symfony\Component\Form\Extension\Core\Type\FormType', null, [
                     'csrf_field_name' => 'csrf',
                     'csrf_token_manager' => $this->tokenManager,

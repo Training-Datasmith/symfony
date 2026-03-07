@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ use Symfony\Component\PasswordHasher\PasswordHasherInterface;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class MigratingPasswordHasher implements PasswordHasherInterface
+final readonly class MigratingPasswordHasher implements PasswordHasherInterface
 {
     private array $extraHashers;
 

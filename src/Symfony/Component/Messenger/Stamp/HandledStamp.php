@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,7 @@ use Symfony\Component\Messenger\Middleware\HandleMessageMiddleware;
  *
  * @author Maxime Steinhausser <maxime.steinhausser@gmail.com>
  */
-final class HandledStamp implements StampInterface
+final readonly class HandledStamp implements StampInterface
 {
     public function __construct(
         private mixed $result,

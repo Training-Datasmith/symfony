@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -54,7 +56,7 @@ class FirewallTest extends TestCase
 
     public function testOnKernelRequestStopsWhenThereIsAResponse()
     {
-        $listener = new class extends AbstractListener {
+        $listener = new class () extends AbstractListener {
             public int $callCount = 0;
 
             public function supports(Request $request): ?bool
@@ -108,7 +110,7 @@ class FirewallTest extends TestCase
     {
         $calledListeners = [];
 
-        $firewallListener = new class($calledListeners) implements FirewallListenerInterface {
+        $firewallListener = new class ($calledListeners) implements FirewallListenerInterface {
             public function __construct(private array &$calledListeners)
             {
             }
@@ -128,7 +130,7 @@ class FirewallTest extends TestCase
                 return 0;
             }
         };
-        $callableFirewallListener = new class($calledListeners) extends AbstractListener {
+        $callableFirewallListener = new class ($calledListeners) extends AbstractListener {
             public function __construct(private array &$calledListeners)
             {
             }

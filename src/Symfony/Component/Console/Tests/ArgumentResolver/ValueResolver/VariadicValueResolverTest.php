@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ class VariadicValueResolverTest extends TestCase
             new InputArgument('files', InputArgument::IS_ARRAY),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 string ...$files,
@@ -55,7 +57,7 @@ class VariadicValueResolverTest extends TestCase
             new InputOption('tags', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Option]
                 string ...$tags,
@@ -79,7 +81,7 @@ class VariadicValueResolverTest extends TestCase
             new InputArgument('files', InputArgument::IS_ARRAY | InputArgument::OPTIONAL),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 string ...$files,
@@ -103,7 +105,7 @@ class VariadicValueResolverTest extends TestCase
             new InputArgument('name'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 string $name,
@@ -148,7 +150,7 @@ class VariadicValueResolverTest extends TestCase
             new InputArgument('files'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 string ...$files,
@@ -173,7 +175,7 @@ class VariadicValueResolverTest extends TestCase
             new InputOption('tags', null, InputOption::VALUE_REQUIRED),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Option]
                 string ...$tags,

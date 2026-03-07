@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -42,7 +44,7 @@ class ServerDumpCommand extends Command
     private array $descriptors;
 
     public function __construct(
-        private DumpServer $server,
+        private readonly DumpServer $server,
         array $descriptors = [],
     ) {
         $this->descriptors = $descriptors + [
@@ -57,7 +59,8 @@ class ServerDumpCommand extends Command
     {
         $this
             ->addOption('format', null, InputOption::VALUE_REQUIRED, \sprintf('The output format (%s)', implode(', ', $this->getAvailableFormats())), 'cli')
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 <info>%command.name%</info> starts a dump server that collects and displays
                 dumps in a single place for debugging you application:
 
@@ -90,7 +93,7 @@ class ServerDumpCommand extends Command
         $errorIo->success(\sprintf('Server listening on %s', $this->server->getHost()));
         $errorIo->comment('Quit the server with CONTROL-C.');
 
-        $this->server->listen(static function (Data $data, array $context, int $clientId) use ($descriptor, $io) {
+        $this->server->listen(static function (Data $data, array $context, int $clientId) use ($descriptor, $io): void {
             $descriptor->describe($io, $data, $context, $clientId);
         });
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,7 +38,7 @@ class AuthenticatedVoter implements CacheableVoterInterface
     public const PUBLIC_ACCESS = 'PUBLIC_ACCESS';
 
     public function __construct(
-        private AuthenticationTrustResolverInterface $authenticationTrustResolver,
+        private readonly AuthenticationTrustResolverInterface $authenticationTrustResolver,
     ) {
     }
 
@@ -50,14 +52,16 @@ class AuthenticatedVoter implements CacheableVoterInterface
 
         $result = VoterInterface::ACCESS_ABSTAIN;
         foreach ($attributes as $attribute) {
-            if (null === $attribute || (self::IS_AUTHENTICATED_FULLY !== $attribute
+            if (null === $attribute) {
+                continue;
+            }
+            if (self::IS_AUTHENTICATED_FULLY !== $attribute
                     && self::IS_AUTHENTICATED_REMEMBERED !== $attribute
                     && self::IS_AUTHENTICATED !== $attribute
                     && self::IS_IMPERSONATOR !== $attribute
-                    && self::IS_REMEMBERED !== $attribute)) {
+                    && self::IS_REMEMBERED !== $attribute) {
                 continue;
             }
-
             if ($token instanceof OfflineTokenInterface) {
                 throw new InvalidArgumentException('Cannot decide on authentication attributes when an offline token is used.');
             }

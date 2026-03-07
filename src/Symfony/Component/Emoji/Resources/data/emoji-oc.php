@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '👩‍❤‍💋‍👨' => 'poton: femna e òme',
     '👨‍❤‍💋‍👨' => 'poton: òme e òme',

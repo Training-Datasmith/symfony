@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -13,7 +15,6 @@ namespace Symfony\Component\Cache;
 
 use Psr\Cache\CacheException as Psr6CacheException;
 use Psr\Cache\CacheItemPoolInterface;
-use Psr\SimpleCache\CacheException as SimpleCacheException;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
@@ -41,7 +42,7 @@ class Psr16Cache implements CacheInterface, PruneableInterface, ResettableInterf
         }
         $cacheItemPrototype = &$this->cacheItemPrototype;
         $createCacheItem = \Closure::bind(
-            static function ($key, $value, $allowInt = false) use (&$cacheItemPrototype) {
+            static function ($key, $value, $allowInt = false) use (&$cacheItemPrototype): \Symfony\Component\Cache\CacheItem {
                 $item = clone $cacheItemPrototype;
                 $item->poolHash = $item->innerItem = null;
                 if ($allowInt && \is_int($key)) {
@@ -81,8 +82,6 @@ class Psr16Cache implements CacheInterface, PruneableInterface, ResettableInterf
     {
         try {
             $item = $this->pool->getItem($key);
-        } catch (SimpleCacheException $e) {
-            throw $e;
         } catch (Psr6CacheException $e) {
             throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
@@ -102,8 +101,6 @@ class Psr16Cache implements CacheInterface, PruneableInterface, ResettableInterf
             } else {
                 $item = $this->pool->getItem($key)->set($value);
             }
-        } catch (SimpleCacheException $e) {
-            throw $e;
         } catch (Psr6CacheException $e) {
             throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
@@ -118,8 +115,6 @@ class Psr16Cache implements CacheInterface, PruneableInterface, ResettableInterf
     {
         try {
             return $this->pool->deleteItem($key);
-        } catch (SimpleCacheException $e) {
-            throw $e;
         } catch (Psr6CacheException $e) {
             throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
@@ -140,8 +135,6 @@ class Psr16Cache implements CacheInterface, PruneableInterface, ResettableInterf
 
         try {
             $items = $this->pool->getItems($keys);
-        } catch (SimpleCacheException $e) {
-            throw $e;
         } catch (Psr6CacheException $e) {
             throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
@@ -190,8 +183,6 @@ class Psr16Cache implements CacheInterface, PruneableInterface, ResettableInterf
                     $items[$key] = $this->pool->getItem($key)->set($value);
                 }
             }
-        } catch (SimpleCacheException $e) {
-            throw $e;
         } catch (Psr6CacheException $e) {
             throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
@@ -220,8 +211,6 @@ class Psr16Cache implements CacheInterface, PruneableInterface, ResettableInterf
 
         try {
             return $this->pool->deleteItems($keys);
-        } catch (SimpleCacheException $e) {
-            throw $e;
         } catch (Psr6CacheException $e) {
             throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
@@ -231,8 +220,6 @@ class Psr16Cache implements CacheInterface, PruneableInterface, ResettableInterf
     {
         try {
             return $this->pool->hasItem($key);
-        } catch (SimpleCacheException $e) {
-            throw $e;
         } catch (Psr6CacheException $e) {
             throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }

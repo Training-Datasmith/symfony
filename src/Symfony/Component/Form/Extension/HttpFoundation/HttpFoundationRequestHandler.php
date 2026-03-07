@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,12 +32,10 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class HttpFoundationRequestHandler implements RequestHandlerInterface
 {
-    private ServerParams $serverParams;
-    private MissingDataHandler $missingDataHandler;
+    private readonly MissingDataHandler $missingDataHandler;
 
-    public function __construct(?ServerParams $serverParams = null)
+    public function __construct(private readonly ?ServerParams $serverParams = new ServerParams())
     {
-        $this->serverParams = $serverParams ?? new ServerParams();
         $this->missingDataHandler = new MissingDataHandler();
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ namespace Symfony\Component\Messenger\Stamp;
  *
  * @author Ryan Weaver <ryan@symfonycasts.com>
  */
-final class SentToFailureTransportStamp implements StampInterface
+final readonly class SentToFailureTransportStamp implements StampInterface
 {
     public function __construct(
         private string $originalReceiverName,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -197,7 +199,7 @@ class JsonDescriptor extends Descriptor
 
         // Recursively search for enum values, so we can replace it
         // before json_encode (which will not display anything for \UnitEnum otherwise)
-        array_walk_recursive($data, static function (&$value) {
+        array_walk_recursive($data, static function (&$value): void {
             if ($value instanceof \UnitEnum) {
                 $value = ltrim(var_export($value, true), '\\');
             }
@@ -337,7 +339,7 @@ class JsonDescriptor extends Descriptor
                 $data[] = $l;
             }
         } else {
-            $registeredListeners = \array_key_exists('events', $options) ? array_combine($options['events'], array_map(static fn ($event) => $eventDispatcher->getListeners($event), $options['events'])) : $eventDispatcher->getListeners();
+            $registeredListeners = \array_key_exists('events', $options) ? array_combine($options['events'], array_map($eventDispatcher->getListeners(...), $options['events'])) : $eventDispatcher->getListeners();
             ksort($registeredListeners);
 
             foreach ($registeredListeners as $eventListened => $eventListeners) {
@@ -363,12 +365,12 @@ class JsonDescriptor extends Descriptor
                 $data['name'] = $callable[1];
                 $data['class'] = $callable[0]::class;
             } else {
-                if (!str_starts_with($callable[1], 'parent::')) {
+                if (!str_starts_with((string) $callable[1], 'parent::')) {
                     $data['name'] = $callable[1];
                     $data['class'] = $callable[0];
                     $data['static'] = true;
                 } else {
-                    $data['name'] = substr($callable[1], 8);
+                    $data['name'] = substr((string) $callable[1], 8);
                     $data['class'] = $callable[0];
                     $data['static'] = true;
                     $data['parent'] = true;

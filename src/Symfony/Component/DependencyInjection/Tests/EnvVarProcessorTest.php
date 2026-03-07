@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -139,7 +141,7 @@ class EnvVarProcessorTest extends TestCase
         $GLOBALS['ENV_FOO'] = 'value';
 
         $loaders = static function () {
-            yield new class implements EnvVarLoaderInterface {
+            yield new class () implements EnvVarLoaderInterface {
                 public function loadEnvVars(): array
                 {
                     return ['FOO' => $GLOBALS['ENV_FOO']];
@@ -149,7 +151,8 @@ class EnvVarProcessorTest extends TestCase
 
         $processor = new EnvVarProcessor(new Container(), new RewindableGenerator($loaders, 1));
 
-        $noop = static function () {};
+        $noop = static function () {
+        };
 
         $result = $processor->getEnv('string', 'FOO', $noop);
         $this->assertSame('value', $result);
@@ -169,7 +172,7 @@ class EnvVarProcessorTest extends TestCase
         $GLOBALS['ENV_FOO'] = 'value';
 
         $loaders = static function () {
-            yield new class implements EnvVarLoaderInterface {
+            yield new class () implements EnvVarLoaderInterface {
                 public function loadEnvVars(): array
                 {
                     return ['FOO' => $GLOBALS['ENV_FOO']];
@@ -179,7 +182,8 @@ class EnvVarProcessorTest extends TestCase
 
         $processor = new EnvVarProcessor(new Container(), new RewindableGenerator($loaders, 1));
 
-        $noop = static function () {};
+        $noop = static function () {
+        };
 
         $result = $processor->getEnv('string', 'FOO', $noop);
         $this->assertSame('value', $result);
@@ -749,7 +753,8 @@ class EnvVarProcessorTest extends TestCase
         $processor = new EnvVarProcessor($container);
         $getEnv = $processor->getEnv(...);
 
-        $result = $processor->getEnv('resolve', 'foo', static fn ($name) => 'foo' === $name ? '%env(BAR)%' : $getEnv('string', $name, static function () {}));
+        $result = $processor->getEnv('resolve', 'foo', static fn ($name) => 'foo' === $name ? '%env(BAR)%' : $getEnv('string', $name, static function () {
+        }));
 
         $this->assertSame('BAR in container', $result);
     }
@@ -765,7 +770,8 @@ class EnvVarProcessorTest extends TestCase
         $processor = new EnvVarProcessor($container);
         $getEnv = $processor->getEnv(...);
 
-        $result = $processor->getEnv('resolve', 'foo', static fn ($name) => 'foo' === $name ? '%env(BAR)%' : $getEnv('string', $name, static function () {}));
+        $result = $processor->getEnv('resolve', 'foo', static fn ($name) => 'foo' === $name ? '%env(BAR)%' : $getEnv('string', $name, static function () {
+        }));
 
         $this->assertSame('BAR in environment', $result);
 
@@ -826,13 +832,13 @@ class EnvVarProcessorTest extends TestCase
         $_ENV['BUZ_ENV_LOADER'] = '';
 
         $loaders = static function () {
-            yield new class implements EnvVarLoaderInterface {
+            yield new class () implements EnvVarLoaderInterface {
                 public function loadEnvVars(): array
                 {
                     return [
                         'FOO_ENV_LOADER' => '123',
                         'BAZ_ENV_LOADER' => '',
-                        'LAZY_ENV_LOADER' => new class {
+                        'LAZY_ENV_LOADER' => new class () {
                             public function __toString(): string
                             {
                                 return '';
@@ -842,14 +848,14 @@ class EnvVarProcessorTest extends TestCase
                 }
             };
 
-            yield new class implements EnvVarLoaderInterface {
+            yield new class () implements EnvVarLoaderInterface {
                 public function loadEnvVars(): array
                 {
                     return [
                         'FOO_ENV_LOADER' => '234',
                         'BAR_ENV_LOADER' => '456',
                         'BAZ_ENV_LOADER' => '567',
-                        'LAZY_ENV_LOADER' => new class {
+                        'LAZY_ENV_LOADER' => new class () {
                             public function __toString(): string
                             {
                                 return '678';
@@ -862,22 +868,28 @@ class EnvVarProcessorTest extends TestCase
 
         $processor = new EnvVarProcessor(new Container(), new RewindableGenerator($loaders, 2));
 
-        $result = $processor->getEnv('string', 'FOO_ENV_LOADER', static function () {});
+        $result = $processor->getEnv('string', 'FOO_ENV_LOADER', static function () {
+        });
         $this->assertSame('123', $result);
 
-        $result = $processor->getEnv('string', 'BAR_ENV_LOADER', static function () {});
+        $result = $processor->getEnv('string', 'BAR_ENV_LOADER', static function () {
+        });
         $this->assertSame('456', $result);
 
-        $result = $processor->getEnv('string', 'BAZ_ENV_LOADER', static function () {});
+        $result = $processor->getEnv('string', 'BAZ_ENV_LOADER', static function () {
+        });
         $this->assertSame('567', $result);
 
-        $result = $processor->getEnv('string', 'BUZ_ENV_LOADER', static function () {});
+        $result = $processor->getEnv('string', 'BUZ_ENV_LOADER', static function () {
+        });
         $this->assertSame('', $result);
 
-        $result = $processor->getEnv('string', 'FOO_ENV_LOADER', static function () {});
+        $result = $processor->getEnv('string', 'FOO_ENV_LOADER', static function () {
+        });
         $this->assertSame('123', $result); // check twice
 
-        $result = $processor->getEnv('string', 'LAZY_ENV_LOADER', static function () {});
+        $result = $processor->getEnv('string', 'LAZY_ENV_LOADER', static function () {
+        });
         $this->assertSame('678', $result);
 
         unset($_ENV['BAZ_ENV_LOADER']);
@@ -896,7 +908,7 @@ class EnvVarProcessorTest extends TestCase
                 throw new ParameterCircularReferenceException(['FOO_CONTAINER']);
             }
 
-            yield new class implements EnvVarLoaderInterface {
+            yield new class () implements EnvVarLoaderInterface {
                 public function loadEnvVars(): array
                 {
                     return [
@@ -908,16 +920,19 @@ class EnvVarProcessorTest extends TestCase
 
         $processor = new EnvVarProcessor($container, new RewindableGenerator($loaders, 1));
 
-        $result = $processor->getEnv('string', 'FOO_CONTAINER', static function () {});
+        $result = $processor->getEnv('string', 'FOO_CONTAINER', static function () {
+        });
         $this->assertSame('foo', $result);
 
-        $result = $processor->getEnv('string', 'FOO_ENV_LOADER', static function () {});
+        $result = $processor->getEnv('string', 'FOO_ENV_LOADER', static function () {
+        });
         $this->assertSame('123', $result);
 
         $result = $processor->getEnv('default', ':BAR_CONTAINER', function ($name) use ($processor) {
             $this->assertSame('BAR_CONTAINER', $name);
 
-            return $processor->getEnv('string', $name, static function () {});
+            return $processor->getEnv('string', $name, static function () {
+            });
         });
         $this->assertNull($result);
 
@@ -993,7 +1008,9 @@ class EnvVarProcessorTest extends TestCase
         $_ENV['FOO'] = 4;
 
         try {
-            $this->assertSame('4', $processor->getEnv('', 'FOO', function () { $this->fail('Should not be called'); }));
+            $this->assertSame('4', $processor->getEnv('', 'FOO', function () {
+                $this->fail('Should not be called');
+            }));
         } finally {
             unset($_ENV['FOO']);
         }

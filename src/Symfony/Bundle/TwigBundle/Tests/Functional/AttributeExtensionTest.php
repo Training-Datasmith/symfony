@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,7 +35,7 @@ class AttributeExtensionTest extends TestCase
 {
     public function testExtensionWithAttributes()
     {
-        $kernel = new class extends AttributeExtensionKernel {
+        $kernel = new class () extends AttributeExtensionKernel {
             public function registerContainerConfiguration(LoaderInterface $loader): void
             {
                 $loader->load(static function (ContainerBuilder $container) {
@@ -64,7 +66,7 @@ class AttributeExtensionTest extends TestCase
 
     public function testInvalidExtensionClass()
     {
-        $kernel = new class extends AttributeExtensionKernel {
+        $kernel = new class () extends AttributeExtensionKernel {
             public function registerContainerConfiguration(LoaderInterface $loader): void
             {
                 $loader->load(static function (ContainerBuilder $container) {

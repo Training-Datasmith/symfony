@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -82,8 +84,11 @@ class ValidatorBuilderTest extends TestCase
 
     public function testSetConstraintValidatorFactory()
     {
-        $this->assertSame($this->builder, $this->builder->setConstraintValidatorFactory(
-            $this->createStub(ConstraintValidatorFactoryInterface::class))
+        $this->assertSame(
+            $this->builder,
+            $this->builder->setConstraintValidatorFactory(
+                $this->createStub(ConstraintValidatorFactoryInterface::class)
+            )
         );
     }
 

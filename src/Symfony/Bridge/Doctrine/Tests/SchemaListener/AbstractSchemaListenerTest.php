@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,7 +41,7 @@ class AbstractSchemaListenerTest extends TestCase
 
     private function getIsSameDatabaseChecker(Connection $connection): \Closure
     {
-        return (new class extends AbstractSchemaListener {
+        return (new class () extends AbstractSchemaListener {
             public function postGenerateSchema($event): void
             {
             }

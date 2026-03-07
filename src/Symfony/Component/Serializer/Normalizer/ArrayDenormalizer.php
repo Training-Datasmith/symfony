@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -56,7 +58,7 @@ class ArrayDenormalizer implements DenormalizerInterface, DenormalizerAwareInter
             /** @var list<BuiltinType<TypeIdentifier::INT>|BuiltinType<TypeIdentifier::STRING>> */
             $keyTypes = $keyType instanceof UnionType ? $keyType->getTypes() : [$keyType];
 
-            $typeIdentifiers = array_map(static fn ($t) => $t->getTypeIdentifier()->value, $keyTypes);
+            $typeIdentifiers = array_map(static fn (\Symfony\Component\TypeInfo\Type\BuiltinType $t) => $t->getTypeIdentifier()->value, $keyTypes);
         }
 
         foreach ($data as $key => $value) {

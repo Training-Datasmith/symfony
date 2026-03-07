@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -40,7 +42,6 @@ class Count extends Constraint
     public string $divisibleByMessage = 'The number of elements in this collection should be a multiple of {{ compared_value }}.';
     public ?int $min = null;
     public ?int $max = null;
-    public ?int $divisibleBy = null;
 
     /**
      * @param int<0, max>|null  $exactly     The exact expected number of elements
@@ -53,7 +54,7 @@ class Count extends Constraint
         ?int $exactly = null,
         ?int $min = null,
         ?int $max = null,
-        ?int $divisibleBy = null,
+        public ?int $divisibleBy = null,
         ?string $exactMessage = null,
         ?string $minMessage = null,
         ?string $maxMessage = null,
@@ -69,14 +70,13 @@ class Count extends Constraint
 
         $this->min = $min;
         $this->max = $max;
-        $this->divisibleBy = $divisibleBy;
         $this->exactMessage = $exactMessage ?? $this->exactMessage;
         $this->minMessage = $minMessage ?? $this->minMessage;
         $this->maxMessage = $maxMessage ?? $this->maxMessage;
         $this->divisibleByMessage = $divisibleByMessage ?? $this->divisibleByMessage;
 
         if (null === $this->min && null === $this->max && null === $this->divisibleBy) {
-            throw new MissingOptionsException(\sprintf('Either option "min", "max" or "divisibleBy" must be given for constraint "%s".', __CLASS__), ['min', 'max', 'divisibleBy']);
+            throw new MissingOptionsException(\sprintf('Either option "min", "max" or "divisibleBy" must be given for constraint "%s".', self::class), ['min', 'max', 'divisibleBy']);
         }
     }
 }

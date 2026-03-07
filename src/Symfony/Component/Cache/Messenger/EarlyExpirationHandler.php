@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ class EarlyExpirationHandler
     private array $processedNonces = [];
 
     public function __construct(
-        private ReverseContainer $reverseContainer,
+        private readonly ReverseContainer $reverseContainer,
     ) {
     }
 
@@ -60,7 +62,7 @@ class EarlyExpirationHandler
         static $setMetadata;
 
         $setMetadata ??= \Closure::bind(
-            static function (CacheItem $item, float $startTime) {
+            static function (CacheItem $item, float $startTime): void {
                 if ($item->expiry > $endTime = microtime(true)) {
                     $item->newMetadata[CacheItem::METADATA_EXPIRY] = $item->expiry;
                     $item->newMetadata[CacheItem::METADATA_CTIME] = (int) ceil(1000 * ($endTime - $startTime));

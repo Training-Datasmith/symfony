@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'pòg: inbheach, inbheach, tòna soilleir a’ chraicinn ’s tòna meadhanach soilleir a’ chraicinn',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'pòg: inbheach, inbheach, tòna soilleir a’ chraicinn ’s tòna meadhanach a’ chraicinn',

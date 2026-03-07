@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,18 +27,16 @@ use Twig\Environment;
  */
 class TwigErrorRenderer implements ErrorRendererInterface
 {
-    private HtmlErrorRenderer $fallbackErrorRenderer;
-    private \Closure|bool $debug;
+    private readonly \Closure|bool $debug;
 
     /**
      * @param bool|callable $debug The debugging mode as a boolean or a callable that should return it
      */
     public function __construct(
-        private Environment $twig,
-        ?HtmlErrorRenderer $fallbackErrorRenderer = null,
+        private readonly Environment $twig,
+        private readonly ?HtmlErrorRenderer $fallbackErrorRenderer = new HtmlErrorRenderer(),
         bool|callable $debug = false,
     ) {
-        $this->fallbackErrorRenderer = $fallbackErrorRenderer ?? new HtmlErrorRenderer();
         $this->debug = \is_bool($debug) ? $debug : $debug(...);
     }
 

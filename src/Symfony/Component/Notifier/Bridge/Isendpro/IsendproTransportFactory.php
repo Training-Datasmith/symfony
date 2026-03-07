@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ final class IsendproTransportFactory extends AbstractTransportFactory
         }
 
         $keyid = $this->getUser($dsn);
-        $from = $dsn->getOption('from', null);
+        $from = $dsn->getOption('from');
         $noStop = $dsn->getBooleanOption('no_stop');
         $sandbox = $dsn->getBooleanOption('sandbox');
         $host = 'default' === $dsn->getHost() ? null : $dsn->getHost();

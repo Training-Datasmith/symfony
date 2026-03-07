@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,7 +39,7 @@ final class AhaSendApiTransport extends AbstractApiTransport
     public function __construct(
         #[\SensitiveParameter] private readonly string $apiKey,
         ?HttpClientInterface $client = null,
-        private ?EventDispatcherInterface $dispatcher = null,
+        private readonly ?EventDispatcherInterface $dispatcher = null,
         ?LoggerInterface $logger = null,
     ) {
         parent::__construct($client, $dispatcher, $logger);
@@ -88,7 +90,7 @@ final class AhaSendApiTransport extends AbstractApiTransport
      */
     private function formatAddresses(array $addresses): array
     {
-        return array_map(fn (Address $address) => $this->formatAddress($address), $addresses);
+        return array_map($this->formatAddress(...), $addresses);
     }
 
     private function getPayload(Email $email, Envelope $envelope): array
@@ -203,7 +205,7 @@ final class AhaSendApiTransport extends AbstractApiTransport
         return $formattedAddress;
     }
 
-    private function getEndpoint(): ?string
+    private function getEndpoint(): string
     {
         return ($this->host ?: self::HOST).($this->port ? ':'.$this->port : '');
     }

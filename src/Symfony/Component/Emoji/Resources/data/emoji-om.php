@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'dhungoo: nama, nama, toonii gogaa ifaa, toonii gogaa ifaa-gidduugaleessa',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'dhungoo: nama, nama, toonii gogaa ifaa, toonii godaa gidduugaleessa',

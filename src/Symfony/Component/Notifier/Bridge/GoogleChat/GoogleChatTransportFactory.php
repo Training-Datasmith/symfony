@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ final class GoogleChatTransportFactory extends AbstractTransportFactory
             throw new UnsupportedSchemeException($dsn, 'googlechat', $this->getSupportedSchemes());
         }
 
-        $space = explode('/', $dsn->getPath())[1];
+        $space = explode('/', (string) $dsn->getPath())[1];
         $accessKey = $this->getUser($dsn);
         $accessToken = $this->getPassword($dsn);
         $threadKey = $dsn->getOption('thread_key');

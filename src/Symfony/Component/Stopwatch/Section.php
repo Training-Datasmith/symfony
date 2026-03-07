@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,8 +37,8 @@ class Section
      * @param bool       $morePrecision If true, time is stored as float to keep the original microsecond precision
      */
     public function __construct(
-        private ?float $origin = null,
-        private bool $morePrecision = false,
+        private readonly ?float $origin = null,
+        private readonly bool $morePrecision = false,
     ) {
     }
 
@@ -62,7 +64,7 @@ class Section
     public function open(?string $id): self
     {
         if (null === $id || null === $session = $this->get($id)) {
-            $session = $this->children[] = new self(microtime(true) * 1000, $this->morePrecision);
+            return $this->children[] = new self(microtime(true) * 1000, $this->morePrecision);
         }
 
         return $session;

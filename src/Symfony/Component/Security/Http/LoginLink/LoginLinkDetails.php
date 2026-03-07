@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,11 +16,11 @@ namespace Symfony\Component\Security\Http\LoginLink;
 /**
  * @author Ryan Weaver <ryan@symfonycasts.com>
  */
-class LoginLinkDetails
+class LoginLinkDetails implements \Stringable
 {
     public function __construct(
-        private string $url,
-        private \DateTimeImmutable $expiresAt,
+        private readonly string $url,
+        private readonly \DateTimeImmutable $expiresAt,
     ) {
     }
 

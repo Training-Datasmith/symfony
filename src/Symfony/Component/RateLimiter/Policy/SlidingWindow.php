@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -127,7 +129,7 @@ final class SlidingWindow implements LimiterStateInterface
 
         $pack = key($data);
         $this->windowEndAt = $data[$pack];
-        ['a' => $this->hitCount, 'b' => $this->hitCountForLastWindow, 'c' => $this->intervalInSeconds] = unpack('Na/Nb/Nc', $pack);
-        $this->id = substr($pack, 12);
+        ['a' => $this->hitCount, 'b' => $this->hitCountForLastWindow, 'c' => $this->intervalInSeconds] = unpack('Na/Nb/Nc', (string) $pack);
+        $this->id = substr((string) $pack, 12);
     }
 }

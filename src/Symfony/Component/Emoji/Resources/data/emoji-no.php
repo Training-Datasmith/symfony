@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'kyss: voksen, voksen, hudtype 1–2, hudtype 3',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'kyss: voksen, voksen, hudtype 1–2, hudtype 4',

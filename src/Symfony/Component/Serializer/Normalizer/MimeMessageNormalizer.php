@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,7 +36,7 @@ final class MimeMessageNormalizer implements NormalizerInterface, DenormalizerIn
 {
     private NormalizerInterface&DenormalizerInterface $serializer;
     private array $headerClassMap;
-    private \ReflectionProperty $headersProperty;
+    private readonly \ReflectionProperty $headersProperty;
 
     public function __construct(private readonly PropertyNormalizer $normalizer)
     {
@@ -93,7 +95,7 @@ final class MimeMessageNormalizer implements NormalizerInterface, DenormalizerIn
             $ret = [];
             foreach ($data as $headers) {
                 foreach ($headers as $header) {
-                    $ret[] = $this->serializer->denormalize($header, $this->headerClassMap[strtolower($header['name'])] ?? UnstructuredHeader::class, $format, $context);
+                    $ret[] = $this->serializer->denormalize($header, $this->headerClassMap[strtolower((string) $header['name'])] ?? UnstructuredHeader::class, $format, $context);
                 }
             }
 

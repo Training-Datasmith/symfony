@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,8 +31,8 @@ class ChatworkTransport extends AbstractTransport
     protected const HOST = 'api.chatwork.com';
 
     public function __construct(
-        #[\SensitiveParameter] private string $apiToken,
-        private string $roomId,
+        #[\SensitiveParameter] private readonly string $apiToken,
+        private readonly string $roomId,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -50,7 +52,7 @@ class ChatworkTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof ChatMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, ChatMessage::class, $message);
         }
 
         $options = $message->getOptions()?->toArray() ?? [];

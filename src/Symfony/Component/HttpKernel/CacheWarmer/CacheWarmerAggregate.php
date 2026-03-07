@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,9 +31,9 @@ class CacheWarmerAggregate implements CacheWarmerInterface
      * @param iterable<mixed, CacheWarmerInterface> $warmers
      */
     public function __construct(
-        private iterable $warmers = [],
-        private bool $debug = false,
-        private ?string $deprecationLogsFilepath = null,
+        private readonly iterable $warmers = [],
+        private readonly bool $debug = false,
+        private readonly ?string $deprecationLogsFilepath = null,
     ) {
     }
 

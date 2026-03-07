@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -212,7 +214,7 @@ class ProxyHelperTest extends TestCase
 
     public static function classWithUnserializeMagicMethodProvider(): iterable
     {
-        yield 'not type hinted __unserialize method' => [new class extends \stdClass {
+        yield 'not type hinted __unserialize method' => [new class () extends \stdClass {
             public function __unserialize($array): void
             {
             }
@@ -232,7 +234,7 @@ class ProxyHelperTest extends TestCase
             }
             EOPHP];
 
-        yield 'type hinted __unserialize method' => [new class extends \stdClass {
+        yield 'type hinted __unserialize method' => [new class () extends \stdClass {
             public function __unserialize(array $array): void
             {
             }
@@ -258,7 +260,7 @@ class ProxyHelperTest extends TestCase
 
             EOPHP;
 
-        $class = new \ReflectionClass(new class extends \stdClass {
+        $class = new \ReflectionClass(new class () extends \stdClass {
             #[SomeAttribute]
             public function foo(#[\SensitiveParameter, AnotherAttribute] $a): int
             {

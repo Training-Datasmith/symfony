@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,8 +26,8 @@ class MissingConstructorArgumentsException extends RuntimeException
         string $message,
         int $code = 0,
         ?\Throwable $previous = null,
-        private array $missingArguments = [],
-        private ?string $class = null,
+        private readonly array $missingArguments = [],
+        private readonly ?string $class = null,
     ) {
         parent::__construct($message, $code, $previous);
     }

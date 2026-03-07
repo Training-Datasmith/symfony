@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ class RunCommandFailedExceptionTest extends TestCase
 
     public function testNonIntegerCodeProvidesZero()
     {
-        $exception = self::createException(new class extends \Exception {
+        $exception = self::createException(new class () extends \Exception {
             protected $code = 'non-integer-code';
         });
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -170,9 +172,11 @@ class IsbnValidator extends ConstraintValidator
     {
         if (null !== $constraint->message) {
             return $constraint->message;
-        } elseif (Isbn::ISBN_10 === $type) {
+        }
+        if (Isbn::ISBN_10 === $type) {
             return $constraint->isbn10Message;
-        } elseif (Isbn::ISBN_13 === $type) {
+        }
+        if (Isbn::ISBN_13 === $type) {
             return $constraint->isbn13Message;
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @param Symfony\Component\JsonStreamer\Tests\Fixtures\Enum\DummyBackedEnum $data
  */

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,9 +19,10 @@ use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\DatePoint;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Clock\NativeClock;
-use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
 use function Symfony\Component\Clock\now;
+
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
 class ClockTest extends TestCase
 {
@@ -74,7 +77,7 @@ class ClockTest extends TestCase
 
     public function testPsrClock()
     {
-        $psrClock = new class implements ClockInterface {
+        $psrClock = new class () implements ClockInterface {
             public function now(): \DateTimeImmutable
             {
                 return new \DateTimeImmutable('@1234567');

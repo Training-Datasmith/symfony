@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,9 +29,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class DefinitionFileLoader extends FileLoader
 {
     public function __construct(
-        private TreeBuilder $treeBuilder,
+        private readonly TreeBuilder $treeBuilder,
         FileLocatorInterface $locator,
-        private ?ContainerBuilder $container = null,
+        private readonly ?ContainerBuilder $container = null,
     ) {
         parent::__construct($locator);
     }
@@ -44,9 +46,7 @@ class DefinitionFileLoader extends FileLoader
         $this->container?->fileExists($path);
 
         // the closure forbids access to the private scope in the included file
-        $load = \Closure::bind(static function ($file) use ($loader) {
-            return include $file;
-        }, null, null);
+        $load = \Closure::bind(static fn ($file) => include $file, null, null);
 
         $callback = $load($path);
 

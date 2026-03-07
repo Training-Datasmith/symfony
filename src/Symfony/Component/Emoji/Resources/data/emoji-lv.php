@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'skūpsts: pieaugušais, pieaugušais, gaišs ādas tonis un vidēji gaišs ādas tonis',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'skūpsts: pieaugušais, pieaugušais, gaišs ādas tonis un vidējs ādas tonis',

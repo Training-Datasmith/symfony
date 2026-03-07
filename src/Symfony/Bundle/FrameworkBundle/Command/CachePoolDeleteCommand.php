@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,8 +35,8 @@ final class CachePoolDeleteCommand extends Command
      * @param string[]|null $poolNames
      */
     public function __construct(
-        private Psr6CacheClearer $poolClearer,
-        private ?array $poolNames = null,
+        private readonly Psr6CacheClearer $poolClearer,
+        private readonly ?array $poolNames = null,
     ) {
         parent::__construct();
     }
@@ -46,7 +48,8 @@ final class CachePoolDeleteCommand extends Command
                 new InputArgument('pool', InputArgument::REQUIRED, 'The cache pool from which to delete an item'),
                 new InputArgument('key', InputArgument::REQUIRED, 'The cache key to delete from the pool'),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> deletes an item from a given cache pool.
 
                     %command.full_name% <pool> <key>

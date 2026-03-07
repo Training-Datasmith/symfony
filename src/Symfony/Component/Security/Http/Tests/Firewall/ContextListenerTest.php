@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -406,7 +408,7 @@ class ContextListenerTest extends TestCase
         }
 
         $factories = ['request_stack' => static fn () => $requestStack];
-        $tokenStorage = new UsageTrackingTokenStorage(new TokenStorage(), new class($factories) implements ContainerInterface {
+        $tokenStorage = new UsageTrackingTokenStorage(new TokenStorage(), new class ($factories) implements ContainerInterface {
             use ServiceLocatorTrait;
         });
 
@@ -452,7 +454,7 @@ class ContextListenerTest extends TestCase
         $usageIndex = $session->getUsageIndex();
 
         $factories = ['request_stack' => static fn () => $requestStack];
-        $tokenStorage = new UsageTrackingTokenStorage($tokenStorage, new class($factories) implements ContainerInterface {
+        $tokenStorage = new UsageTrackingTokenStorage($tokenStorage, new class ($factories) implements ContainerInterface {
             use ServiceLocatorTrait;
         });
         $sessionTrackerEnabler = $tokenStorage->enableUsageTracking(...);

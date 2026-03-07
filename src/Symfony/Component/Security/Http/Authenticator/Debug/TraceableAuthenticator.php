@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,7 +39,7 @@ final class TraceableAuthenticator implements AuthenticatorInterface, Interactiv
     private ?bool $authenticated = null;
     private ?AuthenticationException $exception = null;
 
-    public function __construct(private AuthenticatorInterface $authenticator)
+    public function __construct(private readonly AuthenticatorInterface $authenticator)
     {
     }
 
@@ -119,7 +121,7 @@ final class TraceableAuthenticator implements AuthenticatorInterface, Interactiv
         return $this->authenticator;
     }
 
-    public function __call($method, $args): mixed
+    public function __call(string $method, array $args): mixed
     {
         return $this->authenticator->{$method}(...$args);
     }

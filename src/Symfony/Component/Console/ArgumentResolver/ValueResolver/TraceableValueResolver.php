@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
 /**
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-final class TraceableValueResolver implements ValueResolverInterface
+final readonly class TraceableValueResolver implements ValueResolverInterface
 {
     public function __construct(
         private ValueResolverInterface $inner,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,8 +30,8 @@ use Symfony\Contracts\EventDispatcher\Event;
 class CheckPassportEvent extends Event
 {
     public function __construct(
-        private AuthenticatorInterface $authenticator,
-        private Passport $passport,
+        private readonly AuthenticatorInterface $authenticator,
+        private readonly Passport $passport,
     ) {
     }
 

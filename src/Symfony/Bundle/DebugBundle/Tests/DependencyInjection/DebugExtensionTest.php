@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -112,7 +114,7 @@ class DebugExtensionTest extends TestCase
 
     public function testRuntimeModeIsNotSetIfParameterDoesNotExist()
     {
-        $kernel = new class('dev', true) extends Kernel {
+        $kernel = new class ('dev', true) extends Kernel {
             public function registerBundles(): iterable
             {
                 return [];

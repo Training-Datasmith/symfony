@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class SessionListener extends AbstractSessionListener
 {
     public function __construct(
-        private ?ContainerInterface $container = null,
+        private readonly ?ContainerInterface $container = null,
         bool $debug = false,
         array $sessionOptions = [],
     ) {

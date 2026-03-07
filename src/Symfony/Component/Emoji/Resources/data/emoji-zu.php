@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'ukuqabula: mdala, mdala, uhlobo-1-2, uhlobo-3',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'ukuqabula: mdala, mdala, uhlobo-1-2, uhlobo-4',

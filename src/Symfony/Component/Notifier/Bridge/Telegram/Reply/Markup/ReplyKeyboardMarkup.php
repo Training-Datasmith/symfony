@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ final class ReplyKeyboardMarkup extends AbstractTelegramReplyMarkup
      */
     public function keyboard(array $buttons): static
     {
-        $buttons = array_map(static fn (KeyboardButton $button) => $button->toArray(), $buttons);
+        $buttons = array_map(static fn (KeyboardButton $button): array => $button->toArray(), $buttons);
 
         $this->options['keyboard'][] = $buttons;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,7 +38,7 @@ class VarCloner extends AbstractCloner
         $minimumDepthReached = 0 === $minDepth; // Becomes true when minimum tree depth has been reached
         $a = null;                      // Array cast for nested structures
         $stub = null;                   // Stub capturing the main properties of an original item value
-                                        // or null if the original value is used directly
+        // or null if the original value is used directly
 
         $arrayStub = new Stub();
         $arrayStub->type = Stub::TYPE_ARRAY;

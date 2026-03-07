@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -54,7 +56,7 @@ class HttpExceptionTest extends TestCase
 
     public function testThrowableIsAllowedForPrevious()
     {
-        $previous = new class('Error of PHP 7+') extends \Error {
+        $previous = new class ('Error of PHP 7+') extends \Error {
         };
         $exception = $this->createException('', $previous);
         $this->assertSame($previous, $exception->getPrevious());

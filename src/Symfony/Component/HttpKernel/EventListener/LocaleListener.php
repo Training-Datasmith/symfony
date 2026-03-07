@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,10 +32,10 @@ use Symfony\Component\Routing\RequestContextAwareInterface;
 class LocaleListener implements EventSubscriberInterface
 {
     public function __construct(
-        private RequestStack $requestStack,
-        private string $defaultLocale = 'en',
-        private ?RequestContextAwareInterface $router = null,
-        private bool $useAcceptLanguageHeader = false,
+        private readonly RequestStack $requestStack,
+        private readonly string $defaultLocale = 'en',
+        private readonly ?RequestContextAwareInterface $router = null,
+        private readonly bool $useAcceptLanguageHeader = false,
         private array $enabledLocales = [],
     ) {
         $this->enabledLocales = $enabledLocales ? array_values(array_unique(array_merge([$defaultLocale], array_filter($enabledLocales)))) : [];

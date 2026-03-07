@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ use Symfony\Component\VarExporter\ProxyHelper;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class LazyServiceDumper implements DumperInterface
+final readonly class LazyServiceDumper implements DumperInterface
 {
     public function __construct(
         private string $salt = '',
@@ -57,7 +59,7 @@ final class LazyServiceDumper implements DumperInterface
         }
 
         try {
-            $asGhostObject = (bool) (new \ReflectionClass($class))->newLazyGhost(static fn () => null);
+            $asGhostObject = (bool) (new \ReflectionClass($class))->newLazyGhost(static fn (): null => null);
         } catch (\Error $e) {
             if (__FILE__ !== $e->getFile()) {
                 throw $e;
@@ -173,7 +175,7 @@ final class LazyServiceDumper implements DumperInterface
             }
         }
 
-        return preg_replace('/^.*\\\\/', '', $definition->getClass()).'Proxy'
+        return preg_replace('/^.*\\\\/', '', (string) $definition->getClass()).'Proxy'
             .ucfirst(substr(hash('xxh128', $this->salt.'+'.$class->name.'+'.serialize($definition->getTag('proxy'))), -7));
     }
 }

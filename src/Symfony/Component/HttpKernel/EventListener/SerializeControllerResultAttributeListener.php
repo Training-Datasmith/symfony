@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,9 +27,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 /**
  * @author Konstantin Myakshin <molodchick@gmail.com>
  */
-final class SerializeControllerResultAttributeListener implements EventSubscriberInterface
+final readonly class SerializeControllerResultAttributeListener implements EventSubscriberInterface
 {
-    public function __construct(private readonly ?SerializerInterface $serializer)
+    public function __construct(private ?SerializerInterface $serializer)
     {
     }
 
@@ -75,7 +77,7 @@ final class SerializeControllerResultAttributeListener implements EventSubscribe
     private function mergeHeaders(Serialize $attribute, Request $request, string $format): array
     {
         $headers = array_combine(
-            array_map('strtolower', array_keys($attribute->headers)),
+            array_map(strtolower(...), array_keys($attribute->headers)),
             array_values($attribute->headers),
         );
 

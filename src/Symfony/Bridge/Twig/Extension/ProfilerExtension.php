@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ final class ProfilerExtension extends BaseProfilerExtension
 
     public function __construct(
         Profile $profile,
-        private ?Stopwatch $stopwatch = null,
+        private readonly ?Stopwatch $stopwatch = null,
     ) {
         parent::__construct($profile);
 

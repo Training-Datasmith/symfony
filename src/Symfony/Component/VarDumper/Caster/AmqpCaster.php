@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -68,7 +70,7 @@ class AmqpCaster
             $timeout = $c->getTimeout();
         }
 
-        $a += [
+        return $a + [
             $prefix.'is_connected' => $c->isConnected(),
             $prefix.'login' => $c->getLogin(),
             $prefix.'password' => $c->getPassword(),
@@ -77,8 +79,6 @@ class AmqpCaster
             $prefix.'port' => $c->getPort(),
             $prefix.'read_timeout' => $timeout,
         ];
-
-        return $a;
     }
 
     public static function castChannel(\AMQPChannel $c, array $a, Stub $stub, bool $isNested): array
@@ -95,13 +95,11 @@ class AmqpCaster
             return $a;
         }
 
-        $a += [
+        return $a + [
             $prefix.'connection' => $c->getConnection(),
             $prefix.'prefetch_size' => $c->getPrefetchSize(),
             $prefix.'prefetch_count' => $c->getPrefetchCount(),
         ];
-
-        return $a;
     }
 
     public static function castQueue(\AMQPQueue $c, array $a, Stub $stub, bool $isNested): array
@@ -117,14 +115,12 @@ class AmqpCaster
             return $a;
         }
 
-        $a += [
+        return $a + [
             $prefix.'connection' => $c->getConnection(),
             $prefix.'channel' => $c->getChannel(),
             $prefix.'name' => $c->getName(),
             $prefix.'arguments' => $c->getArguments(),
         ];
-
-        return $a;
     }
 
     public static function castExchange(\AMQPExchange $c, array $a, Stub $stub, bool $isNested): array
@@ -144,15 +140,13 @@ class AmqpCaster
             return $a;
         }
 
-        $a += [
+        return $a + [
             $prefix.'connection' => $c->getConnection(),
             $prefix.'channel' => $c->getChannel(),
             $prefix.'name' => $c->getName(),
             $prefix.'type' => $type,
             $prefix.'arguments' => $c->getArguments(),
         ];
-
-        return $a;
     }
 
     public static function castEnvelope(\AMQPEnvelope $c, array $a, Stub $stub, bool $isNested, int $filter = 0): array
@@ -172,7 +166,7 @@ class AmqpCaster
             $a += [$prefix.'body' => $c->getBody()];
         }
 
-        $a += [
+        return $a + [
             $prefix.'delivery_tag' => $c->getDeliveryTag(),
             $prefix.'is_redelivery' => $c->isRedelivery(),
             $prefix.'exchange_name' => $c->getExchangeName(),
@@ -191,8 +185,6 @@ class AmqpCaster
             $prefix.'user_id' => $c->getUserId(),
             $prefix.'app_id' => $c->getAppId(),
         ];
-
-        return $a;
     }
 
     private static function extractFlags(int $flags): ConstStub

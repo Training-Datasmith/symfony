@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -161,7 +163,7 @@ final class PhpGenerator
 
         if ($dataModelNode instanceof ScalarNode) {
             return match (true) {
-                TypeIdentifier::NULL === $dataModelNode->getType()->getTypeIdentifier() => $this->yieldInterpolatedString('null', $context),
+                TypeIdentifier::NULL === $dataModelNode->getType()->getTypeIdentifier() => $this->yieldInterpolatedString('null'),
                 TypeIdentifier::BOOL === $dataModelNode->getType()->getTypeIdentifier() => $this->yield("$accessor ? 'true' : 'false'", $context),
                 default => $this->yield($this->encode($accessor, $context), $context),
             };
@@ -199,13 +201,13 @@ final class PhpGenerator
             $collectionKeyType = $dataModelNode->getType()->getCollectionKeyType();
 
             if ($collectionKeyType instanceof BuiltinType && TypeIdentifier::INT === $collectionKeyType->getTypeIdentifier()) {
-                $php = $this->yieldInterpolatedString('[', $context)
+                $php = $this->yieldInterpolatedString('[')
                     .$this->flushYieldBuffer($context)
                     .$this->line('$prefix'.$context['depth'].' = \'\';', $context)
                     .$this->line("foreach ($accessor as ".$dataModelNode->getItemNode()->getAccessor().') {', $context);
 
                 ++$context['indentation_level'];
-                $php .= $this->yieldInterpolatedString('{$prefix'.$context['depth'].'}', $context, false)
+                $php .= $this->yieldInterpolatedString('{$prefix'.$context['depth'].'}', false)
                     .$this->generateYields($dataModelNode->getItemNode(), $options, $context)
                     .$this->flushYieldBuffer($context)
                     .$this->line('$prefix'.$context['depth'].' = \',\';', $context);
@@ -214,7 +216,7 @@ final class PhpGenerator
 
                 return $php
                     .$this->line('}', $context)
-                    .$this->yieldInterpolatedString(']', $context);
+                    .$this->yieldInterpolatedString(']');
             }
 
             $keyAccessor = $dataModelNode->getKeyNode()->getAccessor();
@@ -223,14 +225,14 @@ final class PhpGenerator
                 ? "$keyAccessor = is_int($keyAccessor) ? $keyAccessor : \substr(\json_encode($keyAccessor), 1, -1);"
                 : "$keyAccessor = \substr(\json_encode($keyAccessor), 1, -1);";
 
-            $php = $this->yieldInterpolatedString('{', $context)
+            $php = $this->yieldInterpolatedString('{')
                 .$this->flushYieldBuffer($context)
                 .$this->line('$prefix'.$context['depth'].' = \'\';', $context)
                 .$this->line("foreach ($accessor as $keyAccessor => ".$dataModelNode->getItemNode()->getAccessor().') {', $context);
 
             ++$context['indentation_level'];
             $php .= $this->line($escapedKey, $context)
-                .$this->yieldInterpolatedString('{$prefix'.$context['depth'].'}"{'.$keyAccessor.'}":', $context, false)
+                .$this->yieldInterpolatedString('{$prefix'.$context['depth'].'}"{'.$keyAccessor.'}":', false)
                 .$this->generateYields($dataModelNode->getItemNode(), $options, $context)
                 .$this->flushYieldBuffer($context)
                 .$this->line('$prefix'.$context['depth'].' = \',\';', $context);
@@ -239,7 +241,7 @@ final class PhpGenerator
 
             return $php
                 .$this->line('}', $context)
-                .$this->yieldInterpolatedString('}', $context);
+                .$this->yieldInterpolatedString('}');
         }
 
         if ($dataModelNode instanceof ObjectNode) {
@@ -253,7 +255,7 @@ final class PhpGenerator
             ++$context['depth'];
 
             $php = $this->line('$prefix'.$context['depth'].' = \'\';', $context)
-                .$this->yieldInterpolatedString('{', $context);
+                .$this->yieldInterpolatedString('{');
 
             $prefixIsCommaForSure = false;
 
@@ -280,9 +282,9 @@ final class PhpGenerator
 
                     ++$context['indentation_level'];
 
-                    $php .= $this->yieldInterpolatedString('{$prefix'.$context['depth'].'}', $context, false)
-                        .$this->yieldInterpolatedString('"'.$encodedName.'":', $context)
-                        .$this->yieldInterpolatedString('null', $context)
+                    $php .= $this->yieldInterpolatedString('{$prefix'.$context['depth'].'}', false)
+                        .$this->yieldInterpolatedString('"'.$encodedName.'":')
+                        .$this->yieldInterpolatedString('null')
                         .$this->flushYieldBuffer($context);
 
                     if (!$prefixIsCommaForSure && $name !== array_key_last($dataModelNode->getProperties())) {
@@ -297,8 +299,8 @@ final class PhpGenerator
 
                     ++$context['indentation_level'];
 
-                    $php .= $this->yieldInterpolatedString('{$prefix'.$context['depth'].'}', $context, false)
-                        .$this->yieldInterpolatedString('"'.$encodedName.'":', $context)
+                    $php .= $this->yieldInterpolatedString('{$prefix'.$context['depth'].'}', false)
+                        .$this->yieldInterpolatedString('"'.$encodedName.'":')
                         .$this->flushYieldBuffer($context)
                         .$this->generateYields($propertyNode, $options, $context)
                         .$this->flushYieldBuffer($context);
@@ -311,8 +313,8 @@ final class PhpGenerator
 
                     $php .= $this->line('}', $context);
                 } else {
-                    $php .= $this->yieldInterpolatedString('{$prefix'.$context['depth'].'}', $context, false)
-                        .$this->yieldInterpolatedString('"'.$encodedName.'":', $context)
+                    $php .= $this->yieldInterpolatedString('{$prefix'.$context['depth'].'}', false)
+                        .$this->yieldInterpolatedString('"'.$encodedName.'":')
                         .$this->flushYieldBuffer($context)
                         .$this->generateYields($propertyNode, $options, $context);
 
@@ -325,7 +327,7 @@ final class PhpGenerator
             }
 
             return $php
-                .$this->yieldInterpolatedString('}', $context);
+                .$this->yieldInterpolatedString('}');
         }
 
         throw new LogicException(\sprintf('Unexpected "%s" node', $dataModelNode::class));
@@ -348,10 +350,7 @@ final class PhpGenerator
             .$this->line("yield $value;", $context);
     }
 
-    /**
-     * @param array<string, mixed> $context
-     */
-    private function yieldInterpolatedString(string $string, array $context, bool $escapeDollar = true): string
+    private function yieldInterpolatedString(string $string, bool $escapeDollar = true): string
     {
         $this->yieldBuffer .= addcslashes($string, "\\\"\n\r\t\v\e\f".($escapeDollar ? '$' : ''));
 

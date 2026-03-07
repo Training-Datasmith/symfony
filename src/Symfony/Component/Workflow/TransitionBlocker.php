@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,7 +16,7 @@ namespace Symfony\Component\Workflow;
 /**
  * A reason why a transition cannot be performed for a subject.
  */
-final class TransitionBlocker
+final readonly class TransitionBlocker
 {
     public const BLOCKED_BY_MARKING = '19beefc8-6b1e-4716-9d07-a39bd6d16e34';
     public const BLOCKED_BY_EXPRESSION_GUARD_LISTENER = '326a1e9c-0c12-11e8-ba89-0ed5f89f718b';

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ class ChainCacheClearer implements CacheClearerInterface
      * @param iterable<mixed, CacheClearerInterface> $clearers
      */
     public function __construct(
-        private iterable $clearers = [],
+        private readonly iterable $clearers = [],
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,7 +40,7 @@ class EventDispatcherDebugCommand extends Command
     private const DEFAULT_DISPATCHER = 'event_dispatcher';
 
     public function __construct(
-        private ContainerInterface $dispatchers,
+        private readonly ContainerInterface $dispatchers,
     ) {
         parent::__construct();
     }
@@ -52,7 +54,8 @@ class EventDispatcherDebugCommand extends Command
                 new InputOption('format', null, InputOption::VALUE_REQUIRED, \sprintf('The output format ("%s")', implode('", "', $this->getAvailableFormatOptions())), 'txt'),
                 new InputOption('raw', null, InputOption::VALUE_NONE, 'To output raw description'),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command displays all configured listeners:
 
                   <info>php %command.full_name%</info>
@@ -94,9 +97,9 @@ class EventDispatcherDebugCommand extends Command
                 $events = $this->searchForEvent($dispatcher, $event);
                 if (0 === \count($events)) {
                     $io->getErrorStyle()->warning(\sprintf('The event "%s" does not have any registered listeners.', $event));
-
                     return 0;
-                } elseif (1 === \count($events)) {
+                }
+                if (1 === \count($events)) {
                     $options = ['event' => $events[array_key_first($events)]];
                 } else {
                     $options = ['events' => $events];
@@ -149,7 +152,7 @@ class EventDispatcherDebugCommand extends Command
         $lcNeedle = strtolower($needle);
         $allEvents = array_keys($dispatcher->getListeners());
         foreach ($allEvents as $event) {
-            if (str_contains(strtolower($event), $lcNeedle)) {
+            if (str_contains(strtolower((string) $event), $lcNeedle)) {
                 $output[] = $event;
             }
         }

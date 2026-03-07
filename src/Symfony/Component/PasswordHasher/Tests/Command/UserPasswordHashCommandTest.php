@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -162,7 +164,8 @@ class UserPasswordHashCommandTest extends TestCase
         $this->passwordHasherCommandTester->execute(
             [
                 'password' => 'p@ssw0rd',
-            ], ['interactive' => false]
+            ],
+            ['interactive' => false]
         );
 
         $this->assertStringContainsString('Password hashing succeeded', $this->passwordHasherCommandTester->getDisplay());
@@ -256,7 +259,8 @@ class UserPasswordHashCommandTest extends TestCase
             'password' => 'password',
         ], ['decorated' => false]);
 
-        $this->assertStringContainsString(<<<EOTXT
+        $this->assertStringContainsString(
+            <<<EOTXT
              For which user class would you like to hash a password? [Custom\Class\Native\User]:
               [0] Custom\Class\Native\User
               [1] Custom\Class\Pbkdf2\User

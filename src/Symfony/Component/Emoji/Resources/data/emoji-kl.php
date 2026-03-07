@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '👩‍❤‍💋‍👨' => 'kys: kvinde, mand',
     '👨‍❤‍💋‍👨' => 'kys: mand, mand',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,7 +43,8 @@ class NotificationEmailTest extends TestCase
 
     public function testSerialize()
     {
-        $email = unserialize(serialize((new NotificationEmail())
+        $email = unserialize(serialize(
+            (new NotificationEmail())
             ->content('Foo', true)
             ->exception(new \Exception())
             ->importance(NotificationEmail::IMPORTANCE_HIGH)

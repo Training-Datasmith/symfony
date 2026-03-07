@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ abstract class AbstractPhpFileCacheWarmer implements CacheWarmerInterface
      * @param string $phpArrayFile The PHP file where metadata are cached
      */
     public function __construct(
-        private string $phpArrayFile,
+        private readonly string $phpArrayFile,
     ) {
     }
 
@@ -48,7 +50,7 @@ abstract class AbstractPhpFileCacheWarmer implements CacheWarmerInterface
         // the ArrayAdapter stores the values serialized
         // to avoid mutation of the data after it was written to the cache
         // so here we un-serialize the values first
-        $values = array_map(static fn ($val) => null !== $val ? unserialize($val) : null, $arrayAdapter->getValues());
+        $values = array_map(static fn ($val): mixed => null !== $val ? unserialize($val) : null, $arrayAdapter->getValues());
 
         return $this->warmUpPhpArrayAdapter(new PhpArrayAdapter($this->phpArrayFile, new NullAdapter()), $values);
     }

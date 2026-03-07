@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -123,7 +125,7 @@ class LanguageDataGenerator extends AbstractDataGenerator
             $names = [];
             $localizedNames = [];
             foreach (self::generateLanguageNames($localeBundle) as $language => $name) {
-                if (!str_contains($language, '_')) {
+                if (!str_contains((string) $language, '_')) {
                     $this->languageCodes[] = $language;
                     $names[$language] = $name;
                 } else {
@@ -188,7 +190,7 @@ class LanguageDataGenerator extends AbstractDataGenerator
 
         foreach ($aliases as $alias => $data) {
             $language = $data['replacement'];
-            if (2 === \strlen($language) && 3 === \strlen($alias) && 'overlong' === $data['reason']) {
+            if (2 === \strlen((string) $language) && 3 === \strlen((string) $alias) && 'overlong' === $data['reason']) {
                 if (isset(self::PREFERRED_ALPHA2_TO_ALPHA3_MAPPING[$language])) {
                     // Validate to prevent typos
                     if (!isset($aliases[self::PREFERRED_ALPHA2_TO_ALPHA3_MAPPING[$language]])) {
@@ -222,7 +224,7 @@ class LanguageDataGenerator extends AbstractDataGenerator
 
         foreach ($metadataBundle['alias']['language'] as $alias => $data) {
             $language = $data['replacement'];
-            if (2 === \strlen($language) && 3 === \strlen($alias) && \in_array($data['reason'], ['overlong', 'bibliographic'], true)) {
+            if (2 === \strlen((string) $language) && 3 === \strlen($alias) && \in_array($data['reason'], ['overlong', 'bibliographic'], true)) {
                 $alpha3ToAlpha2[$alias] = $language;
             }
         }

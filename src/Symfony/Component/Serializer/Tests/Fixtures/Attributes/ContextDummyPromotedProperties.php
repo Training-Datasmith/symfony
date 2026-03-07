@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,14 +26,12 @@ class ContextDummyPromotedProperties extends ContextDummyParent
         ], 'array' => ['first', 'second']])]
         #[Context(context: ['bar' => 'value_for_group_a'], groups: ['a'])]
         public $foo,
-
         #[Context(
             normalizationContext: ['format' => 'd/m/Y'],
             denormalizationContext: ['format' => 'm-d-Y H:i'],
             groups: ['a', 'b'],
         )]
         public $bar,
-
         #[Context(normalizationContext: ['prop' => 'dummy_value'])]
         public $overriddenParentProperty,
     ) {

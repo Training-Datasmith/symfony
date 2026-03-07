@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -15,7 +17,7 @@ while (!file_exists($vendor.'/vendor')) {
 }
 require $vendor.'/vendor/autoload.php';
 
-(new class extends Command {
+(new class () extends Command {
     protected function configure(): void
     {
         $this->addArgument('mode', InputArgument::OPTIONAL, default: 'single');

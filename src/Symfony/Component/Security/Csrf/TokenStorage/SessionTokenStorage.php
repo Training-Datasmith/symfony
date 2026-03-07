@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,8 +36,8 @@ class SessionTokenStorage implements ClearableTokenStorageInterface
      * @param string $namespace The namespace under which the token is stored in the requestStack
      */
     public function __construct(
-        private RequestStack $requestStack,
-        private string $namespace = self::SESSION_NAMESPACE,
+        private readonly RequestStack $requestStack,
+        private readonly string $namespace = self::SESSION_NAMESPACE,
     ) {
     }
 
@@ -87,7 +89,7 @@ class SessionTokenStorage implements ClearableTokenStorageInterface
     {
         $session = $this->getSession();
         foreach (array_keys($session->all()) as $key) {
-            if (str_starts_with($key, $this->namespace.'/')) {
+            if (str_starts_with((string) $key, $this->namespace.'/')) {
                 $session->remove($key);
             }
         }

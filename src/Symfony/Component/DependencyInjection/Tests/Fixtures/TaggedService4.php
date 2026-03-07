@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -13,36 +15,42 @@ namespace Symfony\Component\DependencyInjection\Tests\Fixtures;
 
 use Symfony\Component\DependencyInjection\Tests\Fixtures\Attribute\CustomAnyAttribute;
 use Symfony\Component\DependencyInjection\Tests\Fixtures\Attribute\CustomMethodAttribute;
-use Symfony\Component\DependencyInjection\Tests\Fixtures\Attribute\CustomPropertyAttribute;
 use Symfony\Component\DependencyInjection\Tests\Fixtures\Attribute\CustomParameterAttribute;
+use Symfony\Component\DependencyInjection\Tests\Fixtures\Attribute\CustomPropertyAttribute;
 
 #[CustomAnyAttribute]
 final class TaggedService4
 {
     #[CustomAnyAttribute]
-    #[CustomPropertyAttribute(someAttribute: "on name")]
+    #[CustomPropertyAttribute(someAttribute: 'on name')]
     public string $name;
 
     public function __construct(
         #[CustomAnyAttribute]
-        #[CustomParameterAttribute(someAttribute: "on param1 in constructor")]
+        #[CustomParameterAttribute(someAttribute: 'on param1 in constructor')]
         private string $param1,
         #[CustomAnyAttribute]
-        #[CustomParameterAttribute(someAttribute: "on param2 in constructor")]
+        #[CustomParameterAttribute(someAttribute: 'on param2 in constructor')]
         string $param2,
-    ) {}
+    ) {
+    }
 
     #[CustomAnyAttribute]
-    #[CustomMethodAttribute(someAttribute: "on fooAction")]
+    #[CustomMethodAttribute(someAttribute: 'on fooAction')]
     public function fooAction(
         #[CustomAnyAttribute]
-        #[CustomParameterAttribute(someAttribute: "on param1 in fooAction")]
+        #[CustomParameterAttribute(someAttribute: 'on param1 in fooAction')]
         string $param1,
-    ) {}
+    ) {
+    }
 
     #[CustomAnyAttribute]
-    #[CustomMethodAttribute(someAttribute: "on barAction")]
-    public function barAction() {}
+    #[CustomMethodAttribute(someAttribute: 'on barAction')]
+    public function barAction()
+    {
+    }
 
-    public function someOtherMethod() {}
+    public function someOtherMethod()
+    {
+    }
 }

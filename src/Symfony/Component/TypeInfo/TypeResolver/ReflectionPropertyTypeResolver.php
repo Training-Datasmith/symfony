@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,11 +24,11 @@ use Symfony\Component\TypeInfo\TypeContext\TypeContextFactory;
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
  * @author Baptiste Leduc <baptiste.leduc@gmail.com>
  */
-final class ReflectionPropertyTypeResolver implements TypeResolverInterface
+final readonly class ReflectionPropertyTypeResolver implements TypeResolverInterface
 {
     public function __construct(
-        private readonly ReflectionTypeResolver $reflectionTypeResolver,
-        private readonly TypeContextFactory $typeContextFactory,
+        private ReflectionTypeResolver $reflectionTypeResolver,
+        private TypeContextFactory $typeContextFactory,
     ) {
     }
 

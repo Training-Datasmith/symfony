@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,14 +29,12 @@ class MemcachedCaster
 
     public static function castMemcached(\Memcached $c, array $a, Stub $stub, bool $isNested): array
     {
-        $a += [
+        return $a + [
             Caster::PREFIX_VIRTUAL.'servers' => $c->getServerList(),
             Caster::PREFIX_VIRTUAL.'options' => new EnumStub(
                 self::getNonDefaultOptions($c)
             ),
         ];
-
-        return $a;
     }
 
     private static function getNonDefaultOptions(\Memcached $c): array

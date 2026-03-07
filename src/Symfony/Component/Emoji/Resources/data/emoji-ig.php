@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'nsusò ọnụ: okenye, okenye, ọtanjele ahụ maka ọcha, ọtanjele ahụ maka ọcha-ndịna etiti',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'nsusò ọnụ: okenye, okenye, ọtanjele ahụ maka ọcha, ọtanjele ahụ ndịna etiti',

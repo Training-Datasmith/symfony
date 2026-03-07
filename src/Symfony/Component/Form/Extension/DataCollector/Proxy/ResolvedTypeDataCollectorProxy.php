@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,8 +30,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ResolvedTypeDataCollectorProxy implements ResolvedFormTypeInterface
 {
     public function __construct(
-        private ResolvedFormTypeInterface $proxiedType,
-        private FormDataCollectorInterface $dataCollector,
+        private readonly ResolvedFormTypeInterface $proxiedType,
+        private readonly FormDataCollectorInterface $dataCollector,
     ) {
     }
 

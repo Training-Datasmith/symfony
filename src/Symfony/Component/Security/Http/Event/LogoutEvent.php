@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,8 +26,8 @@ class LogoutEvent extends Event
     private ?Response $response = null;
 
     public function __construct(
-        private Request $request,
-        private ?TokenInterface $token,
+        private readonly Request $request,
+        private readonly ?TokenInterface $token,
     ) {
     }
 

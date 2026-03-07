@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -68,7 +70,7 @@ class PhpSubprocess extends Process
         $tmpIni = $this->writeTmpIni($this->getAllIniFiles(), sys_get_temp_dir());
 
         $php = array_merge($php, ['-n', '-c', $tmpIni]);
-        register_shutdown_function('unlink', $tmpIni);
+        register_shutdown_function(unlink(...), $tmpIni);
 
         $command = array_merge($php, $command);
 
@@ -161,7 +163,7 @@ class PhpSubprocess extends Process
         $paths = [(string) php_ini_loaded_file()];
 
         if (false !== $scanned = php_ini_scanned_files()) {
-            $paths = array_merge($paths, array_map('trim', explode(',', $scanned)));
+            return array_merge($paths, array_map(trim(...), explode(',', $scanned)));
         }
 
         return $paths;

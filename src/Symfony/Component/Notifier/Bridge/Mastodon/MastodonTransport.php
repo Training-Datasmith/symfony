@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,7 +16,6 @@ namespace Symfony\Component\Notifier\Bridge\Mastodon;
 use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\File;
 use Symfony\Component\Mime\Part\Multipart\FormDataPart;
-use Symfony\Component\Notifier\Exception\RuntimeException;
 use Symfony\Component\Notifier\Exception\TransportException;
 use Symfony\Component\Notifier\Exception\UnsupportedMessageTypeException;
 use Symfony\Component\Notifier\Message\ChatMessage;
@@ -66,7 +67,7 @@ final class MastodonTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof ChatMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, ChatMessage::class, $message);
         }
 
         $options = $message->getOptions()?->toArray() ?? [];
@@ -83,11 +84,7 @@ final class MastodonTransport extends AbstractTransport
             $statusCode = $response->getStatusCode();
             $result = $response->toArray(false);
         } catch (ExceptionInterface $e) {
-            if (null !== $response) {
-                throw new TransportException($e->getMessage(), $response, 0, $e);
-            }
-
-            throw new RuntimeException($e->getMessage(), 0, $e);
+            throw new TransportException($e->getMessage(), $response, 0, $e);
         }
 
         if (200 !== $statusCode) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ class BuiltinTypeValueResolverTest extends TestCase
             new InputArgument('username'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 string $username,
@@ -55,7 +57,7 @@ class BuiltinTypeValueResolverTest extends TestCase
             new InputOption('name'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Option]
                 string $name = '',
@@ -79,7 +81,7 @@ class BuiltinTypeValueResolverTest extends TestCase
             new InputArgument('status'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 DummyBackedEnum $status,
@@ -104,7 +106,7 @@ class BuiltinTypeValueResolverTest extends TestCase
             new InputOption('status'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Option]
                 DummyBackedEnum $status = DummyBackedEnum::Pending,
@@ -129,7 +131,7 @@ class BuiltinTypeValueResolverTest extends TestCase
             new InputOption('force'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Option]
                 bool $force = false,
@@ -153,7 +155,7 @@ class BuiltinTypeValueResolverTest extends TestCase
             new InputOption('force'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Option]
                 ?bool $force = null,
@@ -177,7 +179,7 @@ class BuiltinTypeValueResolverTest extends TestCase
             new InputOption('tags', mode: InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Option]
                 array $tags = [],
@@ -201,7 +203,7 @@ class BuiltinTypeValueResolverTest extends TestCase
             new InputOption('tags', mode: InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Option]
                 ?array $tags = null,
@@ -243,7 +245,7 @@ class BuiltinTypeValueResolverTest extends TestCase
             new InputArgument('count'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 int $count,

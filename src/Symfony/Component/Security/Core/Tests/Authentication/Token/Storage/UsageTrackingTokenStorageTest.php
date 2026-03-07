@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -55,7 +57,7 @@ class UsageTrackingTokenStorageTest extends TestCase
 
     public function testWithoutMainRequest()
     {
-        $locator = new class(['request_stack' => static fn () => new RequestStack()]) implements ContainerInterface {
+        $locator = new class (['request_stack' => static fn () => new RequestStack()]) implements ContainerInterface {
             use ServiceLocatorTrait;
         };
         $tokenStorage = new TokenStorage();

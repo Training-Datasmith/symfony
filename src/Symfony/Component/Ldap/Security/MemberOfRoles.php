@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -13,15 +15,15 @@ namespace Symfony\Component\Ldap\Security;
 
 use Symfony\Component\Ldap\Entry;
 
-final class MemberOfRoles implements RoleFetcherInterface
+final readonly class MemberOfRoles implements RoleFetcherInterface
 {
     /**
      * @param array<string, string> $mapping
      */
     public function __construct(
-        private readonly array $mapping,
-        private readonly string $attributeName = 'ismemberof',
-        private readonly string $groupNameRegex = '/^CN=(?P<group>[^,]+),ou.*$/i',
+        private array $mapping,
+        private string $attributeName = 'ismemberof',
+        private string $groupNameRegex = '/^CN=(?P<group>[^,]+),ou.*$/i',
     ) {
     }
 

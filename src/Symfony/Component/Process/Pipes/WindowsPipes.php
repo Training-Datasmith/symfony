@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,7 +38,7 @@ class WindowsPipes extends AbstractPipes
 
     public function __construct(
         mixed $input,
-        private bool $haveReadSupport,
+        private readonly bool $haveReadSupport,
     ) {
         if ($this->haveReadSupport) {
             // Fix for PHP bug #51800: reading from STDOUT pipe hangs forever on Windows if the output is too big.
@@ -49,7 +51,9 @@ class WindowsPipes extends AbstractPipes
             ];
             $tmpDir = sys_get_temp_dir();
             $lastError = 'unknown reason';
-            set_error_handler(static function ($type, $msg) use (&$lastError) { $lastError = $msg; });
+            set_error_handler(static function ($type, $msg) use (&$lastError): void {
+                $lastError = $msg;
+            });
             for ($i = 0;; ++$i) {
                 foreach ($pipes as $pipe => $name) {
                     $file = \sprintf('%s\\sf_proc_%02X.%s', $tmpDir, $i, $name);
@@ -89,12 +93,12 @@ class WindowsPipes extends AbstractPipes
 
     public function __serialize(): array
     {
-        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot serialize '.self::class);
     }
 
     public function __unserialize(array $data): void
     {
-        throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot unserialize '.self::class);
     }
 
     public function __destruct()

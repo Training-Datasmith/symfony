@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,7 @@ final class ZulipOptions implements MessageOptionsInterface
 {
     public function __construct(
         private ?string $topic = null,
-        private ?string $recipient = null,
+        private readonly ?string $recipient = null,
     ) {
     }
 

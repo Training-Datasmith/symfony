@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,8 +35,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 final class SecretsRemoveCommand extends Command
 {
     public function __construct(
-        private AbstractVault $vault,
-        private ?AbstractVault $localVault = null,
+        private readonly AbstractVault $vault,
+        private readonly ?AbstractVault $localVault = null,
     ) {
         parent::__construct();
     }
@@ -44,7 +46,8 @@ final class SecretsRemoveCommand extends Command
         $this
             ->addArgument('name', InputArgument::REQUIRED, 'The name of the secret')
             ->addOption('local', 'l', InputOption::VALUE_NONE, 'Update the local vault.')
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command removes a secret from the vault.
 
                     <info>%command.full_name% <name></info>

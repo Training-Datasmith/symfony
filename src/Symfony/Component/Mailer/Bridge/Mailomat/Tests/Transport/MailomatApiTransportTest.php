@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -127,9 +129,11 @@ class MailomatApiTransportTest extends TestCase
                         'message' => 'Dieser Wert sollte nicht leer sein.',
                     ],
                 ],
-            ], [
+            ],
+            [
                 'http_code' => 422,
-            ]));
+            ]
+        ));
         $transport = new MailomatApiTransport(self::KEY, $client);
         $transport->setPort(8984);
 

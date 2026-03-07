@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'puss: person, person, ljus hy, mellanljus hy',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'puss: person, person, ljus hy, mellanfärgad hy',

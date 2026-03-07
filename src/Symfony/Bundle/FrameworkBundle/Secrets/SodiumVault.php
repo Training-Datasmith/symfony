@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,8 +25,7 @@ use Symfony\Component\VarExporter\VarExporter;
 class SodiumVault extends AbstractVault implements EnvVarLoaderInterface
 {
     private ?string $encryptionKey = null;
-    private string|\Stringable|null $decryptionKey = null;
-    private string $pathPrefix;
+    private readonly string $pathPrefix;
     private ?string $secretsDir;
 
     /**
@@ -33,11 +34,10 @@ class SodiumVault extends AbstractVault implements EnvVarLoaderInterface
      */
     public function __construct(
         string $secretsDir,
-        #[\SensitiveParameter] string|\Stringable|null $decryptionKey = null,
-        private ?string $derivedSecretEnvVar = null,
+        #[\SensitiveParameter] private string|\Stringable|null $decryptionKey = null,
+        private readonly ?string $derivedSecretEnvVar = null,
     ) {
         $this->pathPrefix = rtrim(strtr($secretsDir, '/', \DIRECTORY_SEPARATOR), \DIRECTORY_SEPARATOR).\DIRECTORY_SEPARATOR.basename($secretsDir).'.';
-        $this->decryptionKey = $decryptionKey;
         $this->secretsDir = $secretsDir;
     }
 
@@ -88,7 +88,7 @@ class SodiumVault extends AbstractVault implements EnvVarLoaderInterface
 
         $list = $this->list();
         $list[$name] = null;
-        uksort($list, 'strnatcmp');
+        uksort($list, strnatcmp(...));
         file_put_contents($this->pathPrefix.'list.php', \sprintf("<?php\n\nreturn %s;\n", VarExporter::export($list)), \LOCK_EX);
 
         $this->lastMessage = \sprintf('Secret "%s" encrypted in "%s"; you can commit it.', $name, $this->getPrettyPath(\dirname($this->pathPrefix).\DIRECTORY_SEPARATOR));
@@ -182,7 +182,7 @@ class SodiumVault extends AbstractVault implements EnvVarLoaderInterface
 
         if ($this->derivedSecretEnvVar && !\array_key_exists($this->derivedSecretEnvVar, $envs)) {
             $k = $this->decryptionKey;
-            $envs[$this->derivedSecretEnvVar] = LazyString::fromCallable(static fn () => '' !== ($k = (string) $k) ? base64_encode(hash('sha256', $k, true)) : '');
+            $envs[$this->derivedSecretEnvVar] = LazyString::fromCallable(static fn (): string => '' !== ($k = (string) $k) ? base64_encode(hash('sha256', $k, true)) : '');
         }
 
         return $envs;

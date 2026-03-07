@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,7 +19,7 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
  * @author Christian Flothmann <christian.flothmann@sensiolabs.de>
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-final class CsrfRuntime
+final readonly class CsrfRuntime
 {
     public function __construct(
         private CsrfTokenManagerInterface $csrfTokenManager,

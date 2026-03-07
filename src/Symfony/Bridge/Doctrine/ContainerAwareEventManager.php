@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ class ContainerAwareEventManager extends EventManager
      * @param list<array{string[], string|object}> $listeners List of [events, listener] tuples
      */
     public function __construct(
-        private ContainerInterface $container,
+        private readonly ContainerInterface $container,
         private array $listeners = [],
     ) {
     }

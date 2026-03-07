@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -201,10 +203,10 @@ class CliDumper extends AbstractDumper
             $this->endValue($cursor);
         } else {
             $attr += [
-                'length' => 0 <= $cut ? mb_strlen($str, 'UTF-8') + $cut : 0,
+                'length' => 0 <= $cut ? mb_strlen((string) $str, 'UTF-8') + $cut : 0,
                 'binary' => $bin,
             ];
-            $str = $bin && str_contains($str, "\0") ? [$str] : explode("\n", $str);
+            $str = $bin && str_contains((string) $str, "\0") ? [$str] : explode("\n", (string) $str);
             if (isset($str[1]) && !isset($str[2]) && !isset($str[1][0])) {
                 unset($str[1]);
                 $str[0] .= "\n";
@@ -230,8 +232,8 @@ class CliDumper extends AbstractDumper
                 if ($i < $m) {
                     $str .= "\n";
                 }
-                if (0 < $this->maxStringWidth && $this->maxStringWidth < $len = mb_strlen($str, 'UTF-8')) {
-                    $str = mb_substr($str, 0, $this->maxStringWidth, 'UTF-8');
+                if (0 < $this->maxStringWidth && $this->maxStringWidth < $len = mb_strlen((string) $str, 'UTF-8')) {
+                    $str = mb_substr((string) $str, 0, $this->maxStringWidth, 'UTF-8');
                     $lineCut = $len - $this->maxStringWidth;
                 }
                 if ($m && 0 < $cursor->depth) {
@@ -441,8 +443,8 @@ class CliDumper extends AbstractDumper
 
         if (isset($attr['ellipsis'], $attr['ellipsis-type'])) {
             $prefix = substr($value, 0, -$attr['ellipsis']);
-            if ('cli' === \PHP_SAPI && 'path' === $attr['ellipsis-type'] && isset($_SERVER[$pwd = '\\' === \DIRECTORY_SEPARATOR ? 'CD' : 'PWD']) && str_starts_with($prefix, $_SERVER[$pwd])) {
-                $prefix = '.'.substr($prefix, \strlen($_SERVER[$pwd]));
+            if ('cli' === \PHP_SAPI && 'path' === $attr['ellipsis-type'] && isset($_SERVER[$pwd = '\\' === \DIRECTORY_SEPARATOR ? 'CD' : 'PWD']) && str_starts_with($prefix, (string) $_SERVER[$pwd])) {
+                $prefix = '.'.substr($prefix, \strlen((string) $_SERVER[$pwd]));
             }
             if (!empty($attr['ellipsis-tail'])) {
                 $prefix .= substr($value, -$attr['ellipsis'], $attr['ellipsis-tail']);
@@ -459,7 +461,7 @@ class CliDumper extends AbstractDumper
         $map = static::$controlCharsMap;
         $startCchr = $this->colors ? "\033[m\033[{$this->styles['default']}m" : '';
         $endCchr = $this->colors ? "\033[m\033[{$this->styles[$style]}m" : '';
-        $value = preg_replace_callback(static::$controlCharsRx, static function ($c) use ($map, $startCchr, $endCchr) {
+        $value = preg_replace_callback(static::$controlCharsRx, static function ($c) use ($map, $startCchr, $endCchr): string {
             $s = $startCchr;
             $c = $c[$i = 0];
             do {
@@ -470,16 +472,16 @@ class CliDumper extends AbstractDumper
         }, $value, -1, $cchrCount);
 
         if (!($attr['binary'] ?? false)) {
-            $value = preg_replace_callback(static::$unicodeCharsRx, static function ($c) use (&$cchrCount, $startCchr, $endCchr) {
+            $value = preg_replace_callback(static::$unicodeCharsRx, static function ($c) use (&$cchrCount, $startCchr, $endCchr): string {
                 ++$cchrCount;
 
                 return $startCchr.'\u{'.strtoupper(dechex(mb_ord($c[0]))).'}'.$endCchr;
-            }, $value);
+            }, (string) $value);
         }
 
         if ($this->colors && '' !== $value) {
             if ($cchrCount && "\033" === $value[0]) {
-                $value = substr($value, \strlen($startCchr));
+                $value = substr((string) $value, \strlen($startCchr));
             } else {
                 $value = "\033[{$this->styles[$style]}m".$value;
             }
@@ -511,7 +513,7 @@ class CliDumper extends AbstractDumper
             $value .= ' ';
         }
         if ($this->colors && ($attr['virtual'] ?? false)) {
-            $value = "\033[{$this->styles['virtual']}m".$value;
+            return "\033[{$this->styles['virtual']}m".$value;
         }
 
         return $value;

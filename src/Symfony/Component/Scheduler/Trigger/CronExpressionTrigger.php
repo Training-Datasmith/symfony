@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ use Symfony\Component\Scheduler\Exception\LogicException;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class CronExpressionTrigger implements TriggerInterface
+final readonly class CronExpressionTrigger implements TriggerInterface
 {
     private const HASH_ALIAS_MAP = [
         '#hourly' => '# * * * *',
@@ -44,10 +46,10 @@ final class CronExpressionTrigger implements TriggerInterface
         [0, 6],
     ];
 
-    private readonly ?string $timezone;
+    private ?string $timezone;
 
     public function __construct(
-        private readonly CronExpression $expression = new CronExpression('* * * * *'),
+        private CronExpression $expression = new CronExpression('* * * * *'),
         \DateTimeZone|string|null $timezone = null,
     ) {
         $this->timezone = $timezone instanceof \DateTimeZone ? $timezone->getName() : $timezone;
@@ -55,13 +57,13 @@ final class CronExpressionTrigger implements TriggerInterface
 
     public function __toString(): string
     {
-        return $this->expression->getExpression();
+        return (string) $this->expression->getExpression();
     }
 
     public static function fromSpec(string $expression = '* * * * *', ?string $context = null, \DateTimeZone|string|null $timezone = null): self
     {
         if (!class_exists(CronExpression::class)) {
-            throw new LogicException(\sprintf('You cannot use "%s" as the "cron expression" package is not installed. Try running "composer require dragonmantank/cron-expression".', __CLASS__));
+            throw new LogicException(\sprintf('You cannot use "%s" as the "cron expression" package is not installed. Try running "composer require dragonmantank/cron-expression".', self::class));
         }
 
         if (!str_contains($expression, '#')) {
@@ -75,7 +77,7 @@ final class CronExpressionTrigger implements TriggerInterface
         return new self(new CronExpression(self::parseHashed($expression, $context)), $timezone);
     }
 
-    public function getNextRunDate(\DateTimeImmutable $run): ?\DateTimeImmutable
+    public function getNextRunDate(\DateTimeImmutable $run): \DateTimeImmutable
     {
         return \DateTimeImmutable::createFromInterface($this->expression->getNextRunDate($run, timeZone: $this->timezone));
     }

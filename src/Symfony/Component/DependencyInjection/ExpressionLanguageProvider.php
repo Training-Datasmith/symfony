@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,11 +28,11 @@ use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
  */
 class ExpressionLanguageProvider implements ExpressionFunctionProviderInterface
 {
-    private ?\Closure $serviceCompiler;
+    private readonly ?\Closure $serviceCompiler;
 
     public function __construct(
         ?callable $serviceCompiler = null,
-        private ?\Closure $getEnv = null,
+        private readonly ?\Closure $getEnv = null,
     ) {
         $this->serviceCompiler = null === $serviceCompiler ? null : $serviceCompiler(...);
     }
@@ -38,11 +40,11 @@ class ExpressionLanguageProvider implements ExpressionFunctionProviderInterface
     public function getFunctions(): array
     {
         return [
-            new ExpressionFunction('service', $this->serviceCompiler ?? static fn ($arg) => \sprintf('$container->get(%s)', $arg), static fn (array $variables, $value) => $variables['container']->get($value)),
+            new ExpressionFunction('service', $this->serviceCompiler ?? static fn (string $arg): string => \sprintf('$container->get(%s)', $arg), static fn (array $variables, $value) => $variables['container']->get($value)),
 
-            new ExpressionFunction('parameter', static fn ($arg) => \sprintf('$container->getParameter(%s)', $arg), static fn (array $variables, $value) => $variables['container']->getParameter($value)),
+            new ExpressionFunction('parameter', static fn (string $arg): string => \sprintf('$container->getParameter(%s)', $arg), static fn (array $variables, $value) => $variables['container']->getParameter($value)),
 
-            new ExpressionFunction('env', static fn ($arg) => \sprintf('$container->getEnv(%s)', $arg), function (array $variables, $value) {
+            new ExpressionFunction('env', static fn (string $arg): string => \sprintf('$container->getEnv(%s)', $arg), function (array $variables, $value) {
                 if (!$this->getEnv) {
                     throw new LogicException('You need to pass a getEnv closure to the expression language provider to use the "env" function.');
                 }
@@ -50,7 +52,7 @@ class ExpressionLanguageProvider implements ExpressionFunctionProviderInterface
                 return ($this->getEnv)($value);
             }),
 
-            new ExpressionFunction('arg', static fn ($arg) => \sprintf('$args?->get(%s)', $arg), static fn (array $variables, $value) => $variables['args']?->get($value)),
+            new ExpressionFunction('arg', static fn (string $arg): string => \sprintf('$args?->get(%s)', $arg), static fn (array $variables, $value) => $variables['args']?->get($value)),
         ];
     }
 }

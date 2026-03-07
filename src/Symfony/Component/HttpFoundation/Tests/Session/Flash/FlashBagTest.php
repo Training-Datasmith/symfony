@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -93,9 +95,11 @@ class FlashBagTest extends TestCase
     {
         $this->bag->set('notice', 'Foo');
         $this->bag->set('error', 'Bar');
-        $this->assertEquals([
+        $this->assertEquals(
+            [
             'notice' => ['Foo'],
-            'error' => ['Bar'], ], $this->bag->all()
+            'error' => ['Bar'], ],
+            $this->bag->all()
         );
 
         $this->assertEquals([], $this->bag->all());
@@ -136,17 +140,21 @@ class FlashBagTest extends TestCase
     {
         $this->bag->set('notice', 'Foo');
         $this->bag->set('error', 'Bar');
-        $this->assertEquals([
+        $this->assertEquals(
+            [
             'notice' => ['Foo'],
             'error' => ['Bar'],
-        ], $this->bag->peekAll()
+        ],
+            $this->bag->peekAll()
         );
         $this->assertTrue($this->bag->has('notice'));
         $this->assertTrue($this->bag->has('error'));
-        $this->assertEquals([
+        $this->assertEquals(
+            [
             'notice' => ['Foo'],
             'error' => ['Bar'],
-        ], $this->bag->peekAll()
+        ],
+            $this->bag->peekAll()
         );
     }
 }

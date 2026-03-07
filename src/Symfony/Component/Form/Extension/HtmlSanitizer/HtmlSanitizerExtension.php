@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,8 +24,8 @@ use Symfony\Component\Form\AbstractExtension;
 class HtmlSanitizerExtension extends AbstractExtension
 {
     public function __construct(
-        private ContainerInterface $sanitizers,
-        private string $defaultSanitizer = 'default',
+        private readonly ContainerInterface $sanitizers,
+        private readonly string $defaultSanitizer = 'default',
     ) {
     }
 

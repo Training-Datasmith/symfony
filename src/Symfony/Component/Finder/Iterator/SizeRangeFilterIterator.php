@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,16 +24,12 @@ use Symfony\Component\Finder\Comparator\NumberComparator;
  */
 class SizeRangeFilterIterator extends \FilterIterator
 {
-    private array $comparators = [];
-
     /**
      * @param \Iterator<string, \SplFileInfo> $iterator
      * @param NumberComparator[]              $comparators
      */
-    public function __construct(\Iterator $iterator, array $comparators)
+    public function __construct(\Iterator $iterator, private readonly array $comparators)
     {
-        $this->comparators = $comparators;
-
         parent::__construct($iterator);
     }
 

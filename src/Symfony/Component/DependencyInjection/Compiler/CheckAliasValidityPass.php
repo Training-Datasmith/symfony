@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,12 +32,18 @@ class CheckAliasValidityPass implements CompilerPassInterface
                 }
 
                 $target = $container->getDefinition((string) $alias);
-                if (null === $target->getClass() || null !== $target->getFactory()) {
+                if (null === $target->getClass()) {
+                    continue;
+                }
+                if (null !== $target->getFactory()) {
                     continue;
                 }
 
                 $reflection = $container->getReflectionClass($id);
-                if (null === $reflection || !$reflection->isInterface()) {
+                if (null === $reflection) {
+                    continue;
+                }
+                if (!$reflection->isInterface()) {
                     continue;
                 }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,9 +26,8 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class SerializerErrorRenderer implements ErrorRendererInterface
 {
-    private string|\Closure $format;
-    private ErrorRendererInterface $fallbackErrorRenderer;
-    private bool|\Closure $debug;
+    private readonly string|\Closure $format;
+    private readonly bool|\Closure $debug;
 
     /**
      * @param string|callable(FlattenException): string $format The format as a string or a callable that should return it
@@ -34,13 +35,12 @@ class SerializerErrorRenderer implements ErrorRendererInterface
      * @param bool|callable                             $debug  The debugging mode as a boolean or a callable that should return it
      */
     public function __construct(
-        private SerializerInterface $serializer,
+        private readonly SerializerInterface $serializer,
         string|callable $format,
-        ?ErrorRendererInterface $fallbackErrorRenderer = null,
+        private readonly ?ErrorRendererInterface $fallbackErrorRenderer = new HtmlErrorRenderer(),
         bool|callable $debug = false,
     ) {
         $this->format = \is_string($format) ? $format : $format(...);
-        $this->fallbackErrorRenderer = $fallbackErrorRenderer ?? new HtmlErrorRenderer();
         $this->debug = \is_bool($debug) ? $debug : $debug(...);
     }
 
@@ -72,7 +72,7 @@ class SerializerErrorRenderer implements ErrorRendererInterface
 
     public static function getPreferredFormat(RequestStack $requestStack): \Closure
     {
-        return static function () use ($requestStack) {
+        return static function () use ($requestStack): ?string {
             if (!$request = $requestStack->getCurrentRequest()) {
                 throw new NotEncodableValueException();
             }

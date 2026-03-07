@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ use Symfony\Component\Runtime\SymfonyRuntime;
 
 require __DIR__.'/autoload.php';
 
-$runtime = new class(['project_dir' => __DIR__]) extends SymfonyRuntime {
+$runtime = new class (['project_dir' => __DIR__]) extends SymfonyRuntime {
     public function getRunner(?object $kernel): RunnerInterface
     {
         return new ClosureRunner(static function () use ($kernel): int {

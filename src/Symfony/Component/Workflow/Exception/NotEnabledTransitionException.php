@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ class NotEnabledTransitionException extends TransitionException
         object $subject,
         string $transitionName,
         WorkflowInterface $workflow,
-        private TransitionBlockerList $transitionBlockerList,
+        private readonly TransitionBlockerList $transitionBlockerList,
         array $context = [],
     ) {
         parent::__construct($subject, $transitionName, $workflow, \sprintf('Cannot apply transition "%s" on workflow "%s".', $transitionName, $workflow->getName()), $context);

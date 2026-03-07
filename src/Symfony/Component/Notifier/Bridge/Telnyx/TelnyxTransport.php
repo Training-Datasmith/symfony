@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,9 +32,9 @@ final class TelnyxTransport extends AbstractTransport
     protected const HOST = 'api.telnyx.com';
 
     public function __construct(
-        #[\SensitiveParameter] private string $apiKey,
-        private string $from,
-        private ?string $messagingProfileId,
+        #[\SensitiveParameter] private readonly string $apiKey,
+        private readonly string $from,
+        private readonly ?string $messagingProfileId,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -56,7 +58,7 @@ final class TelnyxTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $from = $message->getFrom() ?: $this->from;
@@ -64,7 +66,8 @@ final class TelnyxTransport extends AbstractTransport
         if (!preg_match('/^[+]+[1-9][0-9]{9,14}$/', $from)) {
             if ('' === $from) {
                 throw new IncompleteDsnException('This phone number is invalid.');
-            } elseif (null === $this->messagingProfileId) {
+            }
+            if (null === $this->messagingProfileId) {
                 throw new IncompleteDsnException('The sending messaging profile must be specified.');
             }
 

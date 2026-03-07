@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,10 +30,10 @@ use Symfony\Component\Security\Http\AccessMapInterface;
 class ChannelListener extends AbstractListener
 {
     public function __construct(
-        private AccessMapInterface $map,
-        private ?LoggerInterface $logger = null,
-        private int $httpPort = 80,
-        private int $httpsPort = 443,
+        private readonly AccessMapInterface $map,
+        private readonly ?LoggerInterface $logger = null,
+        private readonly int $httpPort = 80,
+        private readonly int $httpsPort = 443,
     ) {
     }
 
@@ -46,7 +48,7 @@ class ChannelListener extends AbstractListener
             if (null !== $this->logger) {
                 if ('https' === $request->headers->get('X-Forwarded-Proto')) {
                     $this->logger->info('Redirecting to HTTPS. ("X-Forwarded-Proto" header is set to "https" - did you set "trusted_proxies" correctly?)');
-                } elseif (str_contains($request->headers->get('Forwarded', ''), 'proto=https')) {
+                } elseif (str_contains((string) $request->headers->get('Forwarded', ''), 'proto=https')) {
                     $this->logger->info('Redirecting to HTTPS. ("Forwarded" header is set to "proto=https" - did you set "trusted_proxies" correctly?)');
                 } else {
                     $this->logger->info('Redirecting to HTTPS.');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -49,15 +51,15 @@ final class AmpClientState extends ClientState
     public array $pushedResponses = [];
 
     private array $clients = [];
-    private \Closure $clientConfigurator;
+    private readonly \Closure $clientConfigurator;
 
     public function __construct(
         ?callable $clientConfigurator,
-        private int $maxHostConnections,
-        private int $maxPendingPushes,
+        private readonly int $maxHostConnections,
+        private readonly int $maxPendingPushes,
         private ?LoggerInterface &$logger,
     ) {
-        $clientConfigurator ??= static fn (PooledHttpClient $client) => new InterceptedHttpClient($client, new RetryRequests(2), []);
+        $clientConfigurator ??= static fn (PooledHttpClient $client): \Amp\Http\Client\InterceptedHttpClient => new InterceptedHttpClient($client, new RetryRequests(2), []);
         $this->clientConfigurator = $clientConfigurator(...);
     }
 
@@ -71,9 +73,9 @@ final class AmpClientState extends ClientState
             // Matching "no_proxy" should follow the behavior of curl
             $host = $request->getUri()->getHost();
             foreach ($options['proxy']['no_proxy'] as $rule) {
-                $dotRule = '.'.ltrim($rule, '.');
+                $dotRule = '.'.ltrim((string) $rule, '.');
 
-                if ('*' === $rule || $host === $rule || str_ends_with($host, $dotRule)) {
+                if ('*' === $rule || $host === $rule || str_ends_with((string) $host, $dotRule)) {
                     $options['proxy'] = null;
                     break;
                 }
@@ -89,7 +91,7 @@ final class AmpClientState extends ClientState
         }
 
         $request->addEventListener(new AmpListener($info, $options['peer_fingerprint']['pin-sha256'] ?? [], $onProgress, $handle, $options['max_connect_duration'], $canceller));
-        $request->setPushHandler(fn ($request, $response) => $this->handlePush($request, $response, $options));
+        $request->setPushHandler(fn (\Amp\Http\Client\Request $request, \Amp\Future $response) => $this->handlePush($request, $response, $options));
 
         if (0 <= $bodySize = $request->hasHeader('content-length') ? (int) $request->getHeader('content-length') : $request->getBody()->getContentLength() ?? -1) {
             $info['upload_content_length'] = ((1 + $info['upload_content_length']) ?? 1) - 1 + $bodySize;
@@ -132,7 +134,7 @@ final class AmpClientState extends ClientState
         $options['capture_peer_cert_chain'] && $context = $context->withPeerCapturing();
         $options['crypto_method'] && $context = $context->withMinimumVersion($options['crypto_method']);
 
-        $connector = $handleConnector = new class implements SocketConnector {
+        $connector = $handleConnector = new class () implements SocketConnector {
             public DnsSocketConnector $connector;
             public string $uri;
             /** @var resource|null */
@@ -161,7 +163,7 @@ final class AmpClientState extends ClientState
         }
 
         if ($options['proxy']) {
-            $proxyUrl = parse_url($options['proxy']['url']);
+            $proxyUrl = parse_url((string) $options['proxy']['url']);
             $proxySocket = new InternetAddress($proxyUrl['host'], $proxyUrl['port']);
             $proxyHeaders = $options['proxy']['auth'] ? ['Proxy-Authorization' => $options['proxy']['auth']] : [];
 

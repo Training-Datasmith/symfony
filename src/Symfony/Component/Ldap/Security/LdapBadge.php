@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,13 +27,13 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\BadgeInterface;
 class LdapBadge implements BadgeInterface
 {
     private bool $resolved = false;
-    private string $queryString;
+    private readonly string $queryString;
 
     public function __construct(
-        private string $ldapServiceId,
-        private string $dnString = '{user_identifier}',
-        private string $searchDn = '',
-        private string $searchPassword = '',
+        private readonly string $ldapServiceId,
+        private readonly string $dnString = '{user_identifier}',
+        private readonly string $searchDn = '',
+        private readonly string $searchPassword = '',
         ?string $queryString = null,
     ) {
         $this->queryString = $queryString ?? '';

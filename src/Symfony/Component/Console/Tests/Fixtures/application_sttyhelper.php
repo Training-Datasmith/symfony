@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -14,7 +16,7 @@ while (!file_exists($vendor.'/vendor')) {
 }
 require $vendor.'/vendor/autoload.php';
 
-(new class extends SingleCommandApplication {})
+(new class () extends SingleCommandApplication {})
     ->setDefinition(new InputDefinition([
         new InputOption('choice', null, InputOption::VALUE_NONE, ''),
         new InputOption('hidden', null, InputOption::VALUE_NONE, ''),

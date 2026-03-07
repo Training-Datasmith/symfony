@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'poljubac: odrasla osoba, odrasla osoba, svetla koža i srednje svetla koža',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'poljubac: odrasla osoba, odrasla osoba, svetla koža i ni svetla ni tamna koža',

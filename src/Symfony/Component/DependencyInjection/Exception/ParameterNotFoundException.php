@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,8 +35,8 @@ class ParameterNotFoundException extends InvalidArgumentException implements Not
         private ?string $sourceId = null,
         private ?string $sourceKey = null,
         ?\Throwable $previous = null,
-        private array $alternatives = [],
-        private ?string $nonNestedAlternative = null,
+        private readonly array $alternatives = [],
+        private readonly ?string $nonNestedAlternative = null,
         private ?string $sourceExtensionName = null,
         private ?string $extraMessage = null,
     ) {

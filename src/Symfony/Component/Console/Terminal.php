@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -164,7 +166,10 @@ class Terminal
 
     public static function supportsImageProtocol(): bool
     {
-        return self::supportsKittyGraphics() || self::supportsITerm2Images();
+        if (self::supportsKittyGraphics()) {
+            return true;
+        }
+        return self::supportsITerm2Images();
     }
 
     public static function setKittyGraphicsSupport(?bool $supported): void

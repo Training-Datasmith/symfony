@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ final class DumpCompletionCommand extends Command
     protected function configure(): void
     {
         $fullCommand = $_SERVER['PHP_SELF'];
-        $commandName = basename($fullCommand);
+        $commandName = basename((string) $fullCommand);
         $fullCommand = @realpath($fullCommand) ?: $fullCommand;
 
         $shell = self::guessShell();
@@ -45,7 +47,8 @@ final class DumpCompletionCommand extends Command
         $supportedShells = implode(', ', $this->getSupportedShells());
 
         $this
-            ->setHelp(<<<EOH
+            ->setHelp(
+                <<<EOH
                 The <info>%command.name%</> command dumps the shell completion script required
                 to use shell autocompletion (currently, {$supportedShells} completion are supported).
 
@@ -81,7 +84,7 @@ final class DumpCompletionCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $commandName = basename($_SERVER['argv'][0]);
+        $commandName = basename((string) $_SERVER['argv'][0]);
 
         if ($input->getOption('debug')) {
             $this->tailDebugLog($commandName, $output);

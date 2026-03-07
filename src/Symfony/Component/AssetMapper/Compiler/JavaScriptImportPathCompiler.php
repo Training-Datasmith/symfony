@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ use Symfony\Component\Filesystem\Path;
  *
  * @author Ryan Weaver <ryan@symfonycasts.com>
  */
-final class JavaScriptImportPathCompiler implements AssetCompilerInterface
+final readonly class JavaScriptImportPathCompiler implements AssetCompilerInterface
 {
     /**
      * @see https://regex101.com/r/1iBAIb/2
@@ -54,9 +56,9 @@ final class JavaScriptImportPathCompiler implements AssetCompilerInterface
     /mxu';
 
     public function __construct(
-        private readonly ImportMapConfigReader $importMapConfigReader,
-        private readonly string $missingImportMode = self::MISSING_IMPORT_WARN,
-        private readonly ?LoggerInterface $logger = null,
+        private ImportMapConfigReader $importMapConfigReader,
+        private string $missingImportMode = self::MISSING_IMPORT_WARN,
+        private ?LoggerInterface $logger = null,
     ) {
     }
 
@@ -64,7 +66,7 @@ final class JavaScriptImportPathCompiler implements AssetCompilerInterface
     {
         $jsParser = new JavascriptSequenceParser($content);
 
-        return preg_replace_callback(self::IMPORT_PATTERN, function ($matches) use ($asset, $assetMapper, $jsParser) {
+        return preg_replace_callback(self::IMPORT_PATTERN, function ($matches) use ($asset, $assetMapper, $jsParser): string {
             $fullImportString = $matches[0][0];
 
             $jsParser->parseUntil($matches[0][1]);

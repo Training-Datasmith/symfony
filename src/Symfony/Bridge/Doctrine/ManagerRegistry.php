@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -59,7 +61,7 @@ abstract class ManagerRegistry extends AbstractManagerRegistry
                 }
 
                 $manager = match (true) {
-                    isset($this->fileMap[$name]) => $this->load($this->fileMap[$name], $manager),
+                    isset($this->fileMap[$name]) => $this->load($this->fileMap[$name]),
                     !$method = $this->methodMap[$name] ?? null => throw new \LogicException(\sprintf('The "%s" service is synthetic and cannot be reset.', $name)),
                     (new \ReflectionMethod($this, $method))->isStatic() => $this->{$method}($this, $manager),
                     default => $this->{$method}($manager),

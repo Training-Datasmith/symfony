@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,8 +34,8 @@ final class NtfyTransport extends AbstractTransport
     private ?string $password = null;
 
     public function __construct(
-        private string $topic,
-        private bool $secureHttp = true,
+        private readonly string $topic,
+        private readonly bool $secureHttp = true,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -62,11 +64,11 @@ final class NtfyTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof PushMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, PushMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, PushMessage::class, $message);
         }
 
         if (($options = $message->getOptions()) && !$message->getOptions() instanceof NtfyOptions) {
-            throw new UnsupportedOptionsException(__CLASS__, NtfyOptions::class, $options);
+            throw new UnsupportedOptionsException(self::class, NtfyOptions::class, $options);
         }
 
         if (!($opts = $message->getOptions()) && $notification = $message->getNotification()) {

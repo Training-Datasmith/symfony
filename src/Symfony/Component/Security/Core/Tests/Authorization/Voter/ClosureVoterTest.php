@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,10 +37,13 @@ class ClosureVoterTest extends TestCase
 
     public function testEmptyAttributeAbstains()
     {
-        $this->assertSame(VoterInterface::ACCESS_ABSTAIN, $this->voter->vote(
-            new NullToken(),
-            null,
-            [])
+        $this->assertSame(
+            VoterInterface::ACCESS_ABSTAIN,
+            $this->voter->vote(
+                new NullToken(),
+                null,
+                []
+            )
         );
     }
 

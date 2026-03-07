@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -169,7 +171,7 @@ class PhpDumper extends Dumper
         $this->serviceLocatorTag = $options['service_locator_tag'];
         $this->class = $options['class'];
 
-        if (!str_starts_with($baseClass = $options['base_class'], '\\') && 'Container' !== $baseClass) {
+        if (!str_starts_with((string) $baseClass = $options['base_class'], '\\') && 'Container' !== $baseClass) {
             $baseClass = \sprintf('%s\%s', $options['namespace'] ? '\\'.$options['namespace'] : '', $baseClass);
             $this->baseClass = $baseClass;
         } elseif ('Container' === $baseClass) {
@@ -188,7 +190,7 @@ class PhpDumper extends Dumper
         $this->analyzeReferences();
         $this->docStar = $options['debug'] ? '*' : '';
 
-        if (!empty($options['file']) && is_dir($dir = \dirname($options['file']))) {
+        if (!empty($options['file']) && is_dir($dir = \dirname((string) $options['file']))) {
             // Build a regexp where the first root dirs are mandatory,
             // but every other sub-dir is optional up to the full path in $dir
             // Mandate at least 1 root dir and not more than 5 optional dirs.
@@ -272,7 +274,7 @@ class PhpDumper extends Dumper
 
             if (!$this->inlineFactories) {
                 foreach ($this->generateServiceFiles($services) as $file => [$c, $preload]) {
-                    $files[$file] = \sprintf($fileTemplate, substr($file, 0, -4), $c);
+                    $files[$file] = \sprintf($fileTemplate, substr((string) $file, 0, -4), $c);
 
                     if ($preload) {
                         $preloadedFiles[$file] = $file;
@@ -311,7 +313,7 @@ class PhpDumper extends Dumper
             $this->asFiles = false;
 
             if ($this->preload && null !== $autoloadFile = $this->getAutoloadFile()) {
-                $autoloadFile = trim($this->export($autoloadFile), '()\\');
+                $autoloadFile = trim((string) $this->export($autoloadFile), '()\\');
 
                 $preloadedFiles = array_reverse($preloadedFiles);
                 if ('' !== $preloadedFiles = implode("';\nrequire __DIR__.'/", $preloadedFiles)) {
@@ -338,7 +340,13 @@ class PhpDumper extends Dumper
                     EOF;
 
                 foreach ($this->preload as $class) {
-                    if (!$class || str_contains($class, '$') || \in_array($class, ['int', 'float', 'string', 'bool', 'resource', 'object', 'array', 'null', 'callable', 'iterable', 'mixed', 'void', 'never'], true)) {
+                    if (!$class) {
+                        continue;
+                    }
+                    if (str_contains($class, '$')) {
+                        continue;
+                    }
+                    if (\in_array($class, ['int', 'float', 'string', 'bool', 'resource', 'object', 'array', 'null', 'callable', 'iterable', 'mixed', 'void', 'never'], true)) {
                         continue;
                     }
                     if (!(class_exists($class, false) || interface_exists($class, false) || trait_exists($class, false)) || (new \ReflectionClass($class))->isUserDefined()) {
@@ -443,7 +451,13 @@ class PhpDumper extends Dumper
         foreach ($edges as $edge) {
             $node = $edge->getDestNode();
             $id = $node->getId();
-            if (($sourceId === $id && !$edge->isLazy()) || !$node->getValue() instanceof Definition || $edge->isWeak()) {
+            if ($sourceId === $id && !$edge->isLazy()) {
+                continue;
+            }
+            if (!$node->getValue() instanceof Definition) {
+                continue;
+            }
+            if ($edge->isWeak()) {
                 continue;
             }
 
@@ -534,7 +548,7 @@ class PhpDumper extends Dumper
             return;
         }
 
-        $lineage[$class] = substr($exportedFile, 1, -1);
+        $lineage[$class] = substr((string) $exportedFile, 1, -1);
 
         if ($parent = $r->getParentClass()) {
             $this->collectLineage($parent->name, $lineage);
@@ -549,7 +563,7 @@ class PhpDumper extends Dumper
         }
 
         unset($lineage[$class]);
-        $lineage[$class] = substr($exportedFile, 1, -1);
+        $lineage[$class] = substr((string) $exportedFile, 1, -1);
     }
 
     private function generateProxyClasses(): array
@@ -727,7 +741,10 @@ class PhpDumper extends Dumper
         }
 
         foreach ($definition->getArguments() as $arg) {
-            if (!$arg || $arg instanceof Parameter) {
+            if (!$arg) {
+                continue;
+            }
+            if ($arg instanceof Parameter) {
                 continue;
             }
             if (\is_array($arg) && 3 >= \count($arg)) {
@@ -735,7 +752,10 @@ class PhpDumper extends Dumper
                     if ($this->dumpValue($k) !== $this->dumpValue($k, false)) {
                         return false;
                     }
-                    if (!$v || $v instanceof Parameter) {
+                    if (!$v) {
+                        continue;
+                    }
+                    if ($v instanceof Parameter) {
                         continue;
                     }
                     if ($v instanceof Reference && $this->container->has($id = (string) $v) && $this->container->findDefinition($id)->isSynthetic()) {
@@ -936,7 +956,7 @@ class PhpDumper extends Dumper
             $c = $this->addServiceInclude($id, $definition, null !== $isProxyCandidate);
 
             if ('' !== $c && $isProxyCandidate && !$definition->isShared()) {
-                $c = implode("\n", array_map(static fn ($line) => $line ? '    '.$line : $line, explode("\n", $c)));
+                $c = implode("\n", array_map(static fn ($line): string => $line ? '    '.$line : $line, explode("\n", $c)));
                 $code .= "        static \$include = true;\n\n";
                 $code .= "        if (\$include) {\n";
                 $code .= $c;
@@ -949,7 +969,7 @@ class PhpDumper extends Dumper
             $c = $this->addInlineService($id, $definition);
 
             if (!$isProxyCandidate && !$definition->isShared()) {
-                $c = implode("\n", array_map(static fn ($line) => $line ? '    '.$line : $line, explode("\n", $c)));
+                $c = implode("\n", array_map(static fn ($line): string => $line ? '    '.$line : $line, explode("\n", $c)));
                 $lazyloadInitialization = $definition->isLazy() ? ', $lazyLoad = true' : '';
 
                 $c = \sprintf("        %s = function (\$container%s) {\n%s        };\n\n        return %1\$s(\$container);\n", $factory, $lazyloadInitialization, $c);
@@ -1025,7 +1045,8 @@ class PhpDumper extends Dumper
             return $code;
         }
 
-        return $code.\sprintf(<<<'EOTXT'
+        return $code.\sprintf(
+            <<<'EOTXT'
 
                     if (isset($container->%s[%s])) {
                         return $container->%1$s[%2$s];
@@ -1115,7 +1136,10 @@ class PhpDumper extends Dumper
         }
 
         foreach ($definitions as $id => $definition) {
-            if (!([$file, $code] = $services[$id]) || null !== $file) {
+            if (!([$file, $code] = $services[$id])) {
+                continue;
+            }
+            if (null !== $file) {
                 continue;
             }
             if ($definition->isPublic()) {
@@ -1175,7 +1199,8 @@ class PhpDumper extends Dumper
             }
 
             if (\is_string($callable) && str_starts_with($callable, '@=')) {
-                return $return.\sprintf('(($args = %s) ? (%s) : null)',
+                return $return.\sprintf(
+                    '(($args = %s) ? (%s) : null)',
                     $this->dumpValue(new ServiceLocatorArgument($definition->getArguments())),
                     $this->getExpressionLanguage()->compile(substr($callable, 2), ['container' => 'container', 'args' => 'args'])
                 ).$tail;
@@ -1185,7 +1210,7 @@ class PhpDumper extends Dumper
                 return $return.\sprintf('%s(%s)', $this->dumpLiteralClass($this->dumpValue($callable)), $arguments ? implode(', ', $arguments) : '').$tail;
             }
 
-            if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $callable[1])) {
+            if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', (string) $callable[1])) {
                 throw new RuntimeException(\sprintf('Cannot dump definition because of invalid factory method (%s).', $callable[1] ?: 'n/a'));
             }
 
@@ -1335,10 +1360,12 @@ class PhpDumper extends Dumper
         }
 
         foreach ($this->container->getDefinitions() as $definition) {
-            if (!$definition->isLazy() || !$this->hasProxyDumper) {
+            if (!$definition->isLazy()) {
                 continue;
             }
-
+            if (!$this->hasProxyDumper) {
+                continue;
+            }
             if ($this->asFiles && !$this->inlineFactories) {
                 $proxyLoader = "class_exists(\$class, false) || require __DIR__.'/'.\$class.'.php';\n\n        ";
             } else {
@@ -1683,7 +1710,7 @@ class PhpDumper extends Dumper
         }
 
         if (!$bag instanceof ParameterBag || !$bag->allDeprecated()) {
-            $code = preg_replace("/\n.*DEPRECATED_PARAMETERS.*\n.*\n.*\n/m", '', $code, 1);
+            $code = preg_replace("/\n.*DEPRECATED_PARAMETERS.*\n.*\n.*\n/m", '', (string) $code, 1);
             $code = str_replace(', self::DEPRECATED_PARAMETERS', ', []', $code);
         }
 
@@ -1776,7 +1803,7 @@ class PhpDumper extends Dumper
         }
 
         // re-indent the wrapped code
-        $code = implode("\n", array_map(static fn ($line) => $line ? '    '.$line : $line, explode("\n", $code)));
+        $code = implode("\n", array_map(static fn ($line): string => $line ? '    '.$line : $line, explode("\n", $code)));
 
         return \sprintf("        if (%s) {\n%s        }\n", $condition, $code);
     }
@@ -1856,12 +1883,11 @@ class PhpDumper extends Dumper
             foreach ($value as $k => $v) {
                 $code[] = $isList ? $this->dumpValue($v, $interpolate) : \sprintf('%s => %s', $this->dumpValue($k, $interpolate), $this->dumpValue($v, $interpolate));
             }
-
             return \sprintf('[%s]', implode(', ', $code));
-        } elseif ($value instanceof ArgumentInterface) {
+        }
+        if ($value instanceof ArgumentInterface) {
             $scope = [$this->definitionVariables, $this->referenceVariables];
             $this->definitionVariables = $this->referenceVariables = null;
-
             try {
                 if ($value instanceof ServiceClosureArgument) {
                     $value = $value->getValues()[0];
@@ -1933,7 +1959,8 @@ class PhpDumper extends Dumper
                         }
                         $definition = $this->container->getDefinition($id);
                         $load = !($definition->hasErrors() && $e = $definition->getErrors()) ? $this->asFiles && !$this->inlineFactories && !$this->isHotPath($definition) : reset($e);
-                        $serviceMap .= \sprintf("\n            %s => [%s, %s, %s, %s],",
+                        $serviceMap .= \sprintf(
+                            "\n            %s => [%s, %s, %s, %s],",
                             $this->export($k),
                             $this->export($definition->isShared() ? ($definition->isPublic() ? 'services' : 'privates') : false),
                             $this->doExport($id),
@@ -1993,9 +2020,9 @@ class PhpDumper extends Dumper
                 return $this->dumpParameter($match[1]);
             }
 
-            $replaceParameters = fn ($match) => "'.".$this->dumpParameter($match[2]).".'";
+            $replaceParameters = fn ($match): string => "'.".$this->dumpParameter($match[2]).".'";
 
-            return str_replace('%%', '%', preg_replace_callback('/(?<!%)(%)([^%]+)\1/', $replaceParameters, $this->export($value)));
+            return str_replace('%%', '%', preg_replace_callback('/(?<!%)(%)([^%]+)\1/', $replaceParameters, (string) $this->export($value)));
         } elseif ($value instanceof \UnitEnum) {
             return \sprintf('\%s::%s', $value::class, $value->name);
         } elseif ($value instanceof AbstractArgument) {
@@ -2079,7 +2106,7 @@ class PhpDumper extends Dumper
                 }
             }
             if ($definition->isShared() && !isset($this->singleUsePrivateIds[$id])) {
-                $code = \sprintf('($container->%s[%s] ?? %s)', $definition->isPublic() ? 'services' : 'privates', $this->doExport($id), $code);
+                return \sprintf('($container->%s[%s] ?? %s)', $definition->isPublic() ? 'services' : 'privates', $this->doExport($id), $code);
             }
 
             return $code;
@@ -2174,7 +2201,7 @@ class PhpDumper extends Dumper
                 throw new LogicException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed. Try running "composer require symfony/expression-language".');
             }
             $providers = $this->container->getExpressionLanguageProviders();
-            $this->expressionLanguage = new ExpressionLanguage(null, $providers, function ($arg) {
+            $this->expressionLanguage = new ExpressionLanguage(null, $providers, function ($arg): string {
                 $id = '""' === substr_replace($arg, '', 1, -1) ? stripcslashes(substr($arg, 1, -1)) : null;
 
                 if (null !== $id && ($this->container->hasAlias($id) || $this->container->hasDefinition($id))) {
@@ -2266,7 +2293,7 @@ class PhpDumper extends Dumper
         }
         if (\is_string($value) && str_contains($value, "\n")) {
             $cleanParts = explode("\n", $value);
-            $cleanParts = array_map(static fn ($part) => var_export($part, true), $cleanParts);
+            $cleanParts = array_map(static fn ($part): string => var_export($part, true), $cleanParts);
             $export = implode('."\n".', $cleanParts);
         } else {
             $export = var_export($value, true);
@@ -2274,14 +2301,14 @@ class PhpDumper extends Dumper
 
         if ($resolveEnv && "'" === $export[0] && $export !== $resolvedExport = $this->container->resolveEnvPlaceholders($export, "'.\$container->getEnv('string:%s').'")) {
             $export = $resolvedExport;
-            if (str_ends_with($export, ".''")) {
-                $export = substr($export, 0, -3);
+            if (str_ends_with((string) $export, ".''")) {
+                $export = substr((string) $export, 0, -3);
                 if ("'" === $export[1]) {
                     $export = substr_replace($export, '', 23, 7);
                 }
             }
             if ("'" === $export[1]) {
-                $export = substr($export, 3);
+                $export = substr((string) $export, 3);
             }
         }
 
@@ -2304,8 +2331,13 @@ class PhpDumper extends Dumper
             if ($autoloader[0] instanceof DebugClassLoader) {
                 $autoloader = $autoloader[0]->getClassLoader();
             }
-
-            if (!\is_array($autoloader) || !$autoloader[0] instanceof ClassLoader || !$autoloader[0]->findFile(__CLASS__)) {
+            if (!\is_array($autoloader)) {
+                continue;
+            }
+            if (!$autoloader[0] instanceof ClassLoader) {
+                continue;
+            }
+            if (!$autoloader[0]->findFile(self::class)) {
                 continue;
             }
 
@@ -2353,7 +2385,7 @@ class PhpDumper extends Dumper
             $definition = $factory[0] ?? null;
 
             if (\is_string($definition)) {
-                $classes[] = trim($factory[0], '\\');
+                $classes[] = trim((string) $factory[0], '\\');
             }
         }
 

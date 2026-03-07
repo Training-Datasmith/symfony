@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,14 +19,14 @@ namespace Symfony\Component\Messenger\Stamp;
 class RouterContextStamp implements StampInterface
 {
     public function __construct(
-        private string $baseUrl,
-        private string $method,
-        private string $host,
-        private string $scheme,
-        private int $httpPort,
-        private int $httpsPort,
-        private string $pathInfo,
-        private string $queryString,
+        private readonly string $baseUrl,
+        private readonly string $method,
+        private readonly string $host,
+        private readonly string $scheme,
+        private readonly int $httpPort,
+        private readonly int $httpsPort,
+        private readonly string $pathInfo,
+        private readonly string $queryString,
     ) {
     }
 

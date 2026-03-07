@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -146,7 +148,7 @@ class MicroKernelTraitTest extends TestCase
 
     public function testAnonymousMicroKernel()
     {
-        $kernel = $this->kernel = new class('anonymous_kernel') extends MinimalKernel {
+        $kernel = $this->kernel = new class ('anonymous_kernel') extends MinimalKernel {
             public function helloAction(): Response
             {
                 return new Response('Hello World!');

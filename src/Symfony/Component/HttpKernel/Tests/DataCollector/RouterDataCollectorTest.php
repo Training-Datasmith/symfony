@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -84,6 +86,7 @@ class RouterDataCollectorTest extends TestCase
     {
         $kernel = $this->createStub(HttpKernelInterface::class);
 
-        return new ControllerEvent($kernel, static function () {}, $request, null);
+        return new ControllerEvent($kernel, static function () {
+        }, $request, null);
     }
 }

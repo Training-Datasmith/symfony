@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,8 +27,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class TextTypeHtmlSanitizerExtension extends AbstractTypeExtension
 {
     public function __construct(
-        private ContainerInterface $sanitizers,
-        private string $defaultSanitizer = 'default',
+        private readonly ContainerInterface $sanitizers,
+        private readonly string $defaultSanitizer = 'default',
     ) {
     }
 
@@ -55,7 +57,7 @@ class TextTypeHtmlSanitizerExtension extends AbstractTypeExtension
 
         $builder->addEventListener(
             FormEvents::PRE_SUBMIT,
-            static function (FormEvent $event) use ($sanitizers, $sanitizer) {
+            static function (FormEvent $event) use ($sanitizers, $sanitizer): void {
                 if (\is_scalar($data = $event->getData()) && '' !== trim($data)) {
                     $event->setData($sanitizers->get($sanitizer)->sanitize($data));
                 }

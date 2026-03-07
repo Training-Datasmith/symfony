@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -228,7 +230,7 @@ class IsGrantedAttributeListenerTest extends TestCase
         $authChecker = new AuthorizationChecker(new TokenStorage(), new AccessDecisionManager((static function () use (&$authChecker) {
             yield new ExpressionVoter(new ExpressionLanguage(), null, $authChecker);
             yield new RoleVoter();
-            yield new class extends Voter {
+            yield new class () extends Voter {
                 protected function supports(string $attribute, mixed $subject): bool
                 {
                     return 'POST_VIEW' === $attribute;
@@ -635,7 +637,7 @@ class IsGrantedAttributeListenerTest extends TestCase
             null
         );
 
-        $custom = new class('ROLE_ADMIN') extends IsGranted {};
+        $custom = new class ('ROLE_ADMIN') extends IsGranted {};
 
         // Inject subclass instance; instanceof IsGranted should match
         $event->setController($controller, property_exists(ResponseEvent::class, 'controllerMetadata') ? [

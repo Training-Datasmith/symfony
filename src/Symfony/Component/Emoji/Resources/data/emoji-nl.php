@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'kus: volwassene, volwassene, lichte huidskleur, lichtgetinte huidskleur',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'kus: volwassene, volwassene, lichte huidskleur, getinte huidskleur',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,7 +39,7 @@ final class Psr4DirectoryLoader extends Loader implements DirectoryAwareLoaderIn
     /**
      * @param array{path: string, namespace: string} $resource
      */
-    public function load(mixed $resource, ?string $type = null): ?RouteCollection
+    public function load(mixed $resource, ?string $type = null): \Symfony\Component\Routing\RouteCollection
     {
         $excluded = $resource['_excluded'] ?? [];
         $path = $this->locator->locate($resource['path'], $this->currentDirectory);
@@ -72,11 +74,11 @@ final class Psr4DirectoryLoader extends Loader implements DirectoryAwareLoaderIn
         $files = iterator_to_array(new \RecursiveIteratorIterator(
             new \RecursiveCallbackFilterIterator(
                 new \RecursiveDirectoryIterator($directory, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::FOLLOW_SYMLINKS),
-                static fn (\SplFileInfo $current) => !str_starts_with($current->getBasename(), '.')
+                static fn (\SplFileInfo $current): bool => !str_starts_with($current->getBasename(), '.')
             ),
             \RecursiveIteratorIterator::SELF_FIRST
         ));
-        usort($files, static fn (\SplFileInfo $a, \SplFileInfo $b) => (string) $a > (string) $b ? 1 : -1);
+        usort($files, static fn (\SplFileInfo $a, \SplFileInfo $b): int => (string) $a > (string) $b ? 1 : -1);
 
         /** @var \SplFileInfo $file */
         foreach ($files as $file) {
@@ -90,7 +92,13 @@ final class Psr4DirectoryLoader extends Loader implements DirectoryAwareLoaderIn
 
                 continue;
             }
-            if ('php' !== $file->getExtension() || !class_exists($className = $psr4Prefix.'\\'.$file->getBasename('.php')) || (new \ReflectionClass($className))->isAbstract()) {
+            if ('php' !== $file->getExtension()) {
+                continue;
+            }
+            if (!class_exists($className = $psr4Prefix.'\\'.$file->getBasename('.php'))) {
+                continue;
+            }
+            if ((new \ReflectionClass($className))->isAbstract()) {
                 continue;
             }
 

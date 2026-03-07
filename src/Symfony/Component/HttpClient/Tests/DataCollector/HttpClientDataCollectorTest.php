@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -270,7 +272,7 @@ class HttpClientDataCollectorTest extends TestCase
                             'fooprop' => 'foopropval',
                             'barprop' => 'barpropval',
                         ],
-                        'tostring' => new class {
+                        'tostring' => new class () {
                             public function __toString(): string
                             {
                                 return 'tostringval';
@@ -360,14 +362,16 @@ class HttpClientDataCollectorTest extends TestCase
         $collectedData = $sut->getClients();
         self::assertCount(1, $collectedData['http_client']['traces']);
         $curlCommand = $collectedData['http_client']['traces'][0]['curlCommand'];
-        self::assertSame('curl \\
+        self::assertSame(
+            'curl \\
   --compressed \\
   --request GET \\
   --url http://localhost:8057/301 \\
   --header Accept: */* \\
   --header Authorization: Basic Zm9vOmJhcg== \\
   --header Accept-Encoding: gzip \\
-  --header User-Agent: Symfony HttpClient (Native)', str_replace(['"', "'"], '', $curlCommand)
+  --header User-Agent: Symfony HttpClient (Native)',
+            str_replace(['"', "'"], '', $curlCommand)
         );
     }
 
@@ -462,7 +466,7 @@ class HttpClientDataCollectorTest extends TestCase
     #[DataProvider('provideClientIsResetWhenExpectedCases')]
     public function testClientIsResetWhenExpected(\Closure $request, bool $wasReset)
     {
-        $mockHttpClient = new class extends MockHttpClient {
+        $mockHttpClient = new class () extends MockHttpClient {
             public bool $wasReset = false;
 
             public function reset(): void

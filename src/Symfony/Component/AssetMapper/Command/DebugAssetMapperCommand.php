@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -46,7 +48,8 @@ final class DebugAssetMapperCommand extends Command
             ->addOption('ext', null, InputOption::VALUE_REQUIRED, 'Filter assets by extension (e.g. "css")', null, ['js', 'css', 'json'])
             ->addOption('full', null, null, 'Whether to show the full paths')
             ->addOption('vendor', null, InputOption::VALUE_NEGATABLE, 'Only show assets from vendor packages')
-            ->setHelp(<<<'EOT'
+            ->setHelp(
+                <<<'EOT'
                 The <info>%command.name%</info> command displays information about the Asset
                 Mapper for debugging purposes.
 
@@ -97,7 +100,7 @@ final class DebugAssetMapperCommand extends Command
                 if (!$input->getOption('full')) {
                     $path = $this->shortenPath($path);
                 }
-                if ($name && !str_contains($path, $name) && !str_contains($namespace, $name)) {
+                if ($name && !str_contains($path, (string) $name) && !str_contains((string) $namespace, (string) $name)) {
                     continue;
                 }
                 $pathRows[] = [$path, $namespace];

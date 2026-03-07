@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -57,7 +59,8 @@ class RouterDebugCommand extends Command
                 new InputOption('raw', null, InputOption::VALUE_NONE, 'To output raw route(s)'),
                 new InputOption('method', null, InputOption::VALUE_REQUIRED, 'Filter by HTTP method', '', ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> displays the configured routes:
 
                   <info>php %command.full_name%</info>
@@ -77,12 +80,12 @@ class RouterDebugCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $name = $input->getArgument('name');
-        $method = strtoupper($input->getOption('method'));
+        $method = strtoupper((string) $input->getOption('method'));
         $helper = new DescriptorHelper($this->fileLinkFormatter);
         $routes = $this->router->getRouteCollection();
         $container = null;
         if ($this->fileLinkFormatter) {
-            $container = fn () => $this->getContainerBuilder($this->getApplication()->getKernel());
+            $container = fn (): \Symfony\Component\DependencyInjection\ContainerBuilder => $this->getContainerBuilder($this->getApplication()->getKernel());
         }
 
         if ($name) {

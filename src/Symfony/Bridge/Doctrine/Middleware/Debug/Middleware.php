@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,12 +22,12 @@ use Symfony\Component\Stopwatch\Stopwatch;
  *
  * @author Laurent VOULLEMIER <laurent.voullemier@gmail.com>
  */
-final class Middleware implements MiddlewareInterface
+final readonly class Middleware implements MiddlewareInterface
 {
     public function __construct(
-        private readonly DebugDataHolder $debugDataHolder,
-        private readonly ?Stopwatch $stopwatch,
-        private readonly string $connectionName = 'default',
+        private DebugDataHolder $debugDataHolder,
+        private ?Stopwatch $stopwatch,
+        private string $connectionName = 'default',
     ) {
     }
 

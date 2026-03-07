@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -74,7 +76,7 @@ use Symfony\Component\Validator\Command\DebugCommand as ValidatorDebugCommand;
 use Symfony\Component\Workflow\Command\WorkflowDumpCommand;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 
-return static function (ContainerConfigurator $container) {
+return static function (ContainerConfigurator $container): void {
     $container->services()
         ->set('console.error_listener', ErrorListener::class)
             ->args([

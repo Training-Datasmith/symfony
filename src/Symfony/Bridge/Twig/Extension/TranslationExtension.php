@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,10 +46,10 @@ final class TranslationExtension extends AbstractExtension
     {
         if (null === $this->translator) {
             if (!interface_exists(TranslatorInterface::class)) {
-                throw new \LogicException(\sprintf('You cannot use the "%s" if the Translation Contracts are not available. Try running "composer require symfony/translation".', __CLASS__));
+                throw new \LogicException(\sprintf('You cannot use the "%s" if the Translation Contracts are not available. Try running "composer require symfony/translation".', self::class));
             }
 
-            $this->translator = new class implements TranslatorInterface {
+            $this->translator = new class () implements TranslatorInterface {
                 use TranslatorTrait;
             };
         }
@@ -125,7 +127,7 @@ final class TranslationExtension extends AbstractExtension
     public function createTranslatable(string $message, array $parameters = [], ?string $domain = null): TranslatableMessage
     {
         if (!class_exists(TranslatableMessage::class)) {
-            throw new \LogicException(\sprintf('You cannot use the "%s" as the Translation Component is not installed. Try running "composer require symfony/translation".', __CLASS__));
+            throw new \LogicException(\sprintf('You cannot use the "%s" as the Translation Component is not installed. Try running "composer require symfony/translation".', self::class));
         }
 
         return new TranslatableMessage($message, $parameters, $domain);

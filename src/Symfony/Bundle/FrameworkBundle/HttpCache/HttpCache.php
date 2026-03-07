@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,7 +40,7 @@ class HttpCache extends BaseHttpCache
     public function __construct(
         protected KernelInterface $kernel,
         string|StoreInterface|null $cache = null,
-        private ?SurrogateInterface $surrogate = null,
+        private readonly ?SurrogateInterface $surrogate = null,
         ?array $options = null,
     ) {
         $this->options = $options ?? [];

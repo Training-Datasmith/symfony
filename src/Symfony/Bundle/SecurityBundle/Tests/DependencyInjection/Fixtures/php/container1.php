@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $container->loadFromExtension('security', [
     'password_hashers' => [
         'JMS\FooBundle\Entity\User1' => 'plaintext',

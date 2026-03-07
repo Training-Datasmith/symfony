@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'süüse: persuun, persuun, laacht hidjet an madel laacht hidj',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'süüse: persuun, persuun, laacht hidjet an madel hidj',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'posa: şahs, şahs, açyk deri reňki, orta açyk deri reňki',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'posa: şahs, şahs, açyk deri reňki, orta deri reňki',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,7 +37,10 @@ class XmlReferenceDumperTest extends TestCase
 
     private function getConfigurationAsString()
     {
-        return str_replace("\n", \PHP_EOL, <<<'EOL'
+        return str_replace(
+            "\n",
+            \PHP_EOL,
+            <<<'EOL'
             <!-- Namespace: http://example.org/schema/dic/acme_root -->
             <!-- scalar-required: Required -->
             <!-- scalar-deprecated: Deprecated (Since vendor/package 1.1: The child node "scalar_deprecated" at path "acme_root" is deprecated.) -->

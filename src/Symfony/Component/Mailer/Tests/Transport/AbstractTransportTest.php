@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -88,7 +90,7 @@ class AbstractTransportTest extends TestCase
         $dispatcher->addListener(MessageEvent::class, static fn (MessageEvent $event) => $event->reject(), 255);
         $dispatcher->addListener(MessageEvent::class, static fn () => throw new \RuntimeException('Should never be called.'));
 
-        $transport = new class($dispatcher, $this) extends AbstractTransport {
+        $transport = new class ($dispatcher, $this) extends AbstractTransport {
             public function __construct(EventDispatcherInterface $dispatcher, private TestCase $test)
             {
                 parent::__construct($dispatcher);

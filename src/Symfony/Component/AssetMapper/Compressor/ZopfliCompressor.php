@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,10 +40,7 @@ final class ZopfliCompressor implements SupportedCompressorInterface
         (new Process([$this->executable, '--', $path]))->mustRun();
     }
 
-    /**
-     * @return resource
-     */
-    private function createStreamContext()
+    private function createStreamContext(): never
     {
         throw new \BadMethodCallException('Extension is not supported yet.');
     }

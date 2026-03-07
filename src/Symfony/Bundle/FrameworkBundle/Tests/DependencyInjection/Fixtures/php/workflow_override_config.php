@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return function (Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator $container) {
     $container->extension('framework', [
         'workflows' => [

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,7 +35,7 @@ class InfobipApiTransportTest extends TestCase
     protected function setUp(): void
     {
         $this->response = new MockResponse('{}');
-        $this->httpClient = new class(fn () => $this->response) extends MockHttpClient {
+        $this->httpClient = new class (fn () => $this->response) extends MockHttpClient {
             public function request(string $method, string $url, array $options = []): ResponseInterface
             {
                 // The only purpose of this method override is to record the request body as a string
@@ -93,7 +95,8 @@ class InfobipApiTransportTest extends TestCase
 
         $options = $this->response->getRequestOptions();
         $this->arrayHasKey('body');
-        $this->assertStringMatchesFormat(<<<'TXT'
+        $this->assertStringMatchesFormat(
+            <<<'TXT'
             --%s
             Content-Type: text/plain; charset=utf-8
             Content-Transfer-Encoding: 8bit
@@ -142,7 +145,8 @@ class InfobipApiTransportTest extends TestCase
 
         $options = $this->response->getRequestOptions();
         $this->arrayHasKey('body');
-        $this->assertStringMatchesFormat(<<<'TXT'
+        $this->assertStringMatchesFormat(
+            <<<'TXT'
             --%s
             Content-Type: text/plain; charset=utf-8
             Content-Transfer-Encoding: 8bit
@@ -215,7 +219,8 @@ class InfobipApiTransportTest extends TestCase
 
         $options = $this->response->getRequestOptions();
         $this->arrayHasKey('body');
-        $this->assertStringMatchesFormat(<<<'TXT'
+        $this->assertStringMatchesFormat(
+            <<<'TXT'
             %a
             --%s
             Content-Type: text/plain; charset=utf-8
@@ -259,7 +264,8 @@ class InfobipApiTransportTest extends TestCase
 
         $options = $this->response->getRequestOptions();
         $this->arrayHasKey('body');
-        $this->assertStringMatchesFormat(<<<'TXT'
+        $this->assertStringMatchesFormat(
+            <<<'TXT'
             %a
             --%s
             Content-Type: text/plain; charset=utf-8

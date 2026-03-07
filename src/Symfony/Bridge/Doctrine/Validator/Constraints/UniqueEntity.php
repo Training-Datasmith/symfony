@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -59,7 +61,7 @@ class UniqueEntity extends Constraint
         bool|string|array|null $ignoreNull = null,
         ?array $identifierFieldNames = null,
         ?array $groups = null,
-        $payload = null,
+        mixed $payload = null,
     ) {
         parent::__construct(null, $groups, $payload);
 

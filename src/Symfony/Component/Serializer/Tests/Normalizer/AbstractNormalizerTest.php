@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -264,7 +266,7 @@ class AbstractNormalizerTest extends TestCase
     public static function getNormalizerWithCustomNameConverter()
     {
         $extractor = new PhpDocExtractor();
-        $nameConverter = new class implements NameConverterInterface {
+        $nameConverter = new class () implements NameConverterInterface {
             public function normalize(string $propertyName, ?string $class = null, ?string $format = null, array $context = []): string
             {
                 return ucfirst($propertyName);

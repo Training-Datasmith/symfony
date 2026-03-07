@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ abstract class AbstractStaticOption
 {
     private static array $options = [];
 
-    private bool|string|array|\Closure|ChoiceLoaderInterface $option;
+    private readonly bool|string|array|\Closure|ChoiceLoaderInterface $option;
 
     /**
      * @param mixed $option Any pseudo callable, array, string or bool to define a choice list option

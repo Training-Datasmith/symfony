@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,15 +22,12 @@ use Symfony\Component\Routing\RequestContext;
  */
 class CompiledUrlGenerator extends UrlGenerator
 {
-    private array $compiledRoutes = [];
-
     public function __construct(
-        array $compiledRoutes,
+        private array $compiledRoutes,
         RequestContext $context,
         ?LoggerInterface $logger = null,
-        private ?string $defaultLocale = null,
+        private readonly ?string $defaultLocale = null,
     ) {
-        $this->compiledRoutes = $compiledRoutes;
         $this->context = $context;
         $this->logger = $logger;
     }
@@ -45,7 +44,7 @@ class CompiledUrlGenerator extends UrlGenerator
                     $name .= '.'.$locale;
                     break;
                 }
-            } while (false !== $locale = strstr($locale, '_', true));
+            } while (false !== $locale = strstr((string) $locale, '_', true));
         }
 
         if (!isset($this->compiledRoutes[$name])) {

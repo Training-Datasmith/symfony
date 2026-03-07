@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,17 +18,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ReferenceConfigurator extends AbstractConfigurator
+class ReferenceConfigurator extends AbstractConfigurator implements \Stringable
 {
-    /** @internal */
-    protected string $id;
-
     /** @internal */
     protected int $invalidBehavior = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE;
 
-    public function __construct(string $id)
-    {
-        $this->id = $id;
+    public function __construct(
+        /** @internal */
+        protected string $id
+    ) {
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -69,7 +71,8 @@ final class DoctrineTestHelper
         $driverChain->addDriver(
             new XmlDriver(
                 new SymfonyFileLocator(
-                    [__DIR__.'/../Tests/Resources/orm' => 'Symfony\\Bridge\\Doctrine\\Tests\\Fixtures'], '.orm.xml'
+                    [__DIR__.'/../Tests/Resources/orm' => 'Symfony\\Bridge\\Doctrine\\Tests\\Fixtures'],
+                    '.orm.xml'
                 ),
                 '.orm.xml',
                 true

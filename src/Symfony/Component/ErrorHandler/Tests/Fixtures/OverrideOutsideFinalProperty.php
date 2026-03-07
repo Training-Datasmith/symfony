@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Test\Symfony\Component\ErrorHandler\Tests;
 
 use Test\Symfony\Component\ErrorHandler\Tests\FinalProperty\OutsideFinalProperty;

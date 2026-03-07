@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,7 +41,7 @@ class Stopwatch implements ResetInterface
      * @param bool $morePrecision If true, time is stored as float to keep the original microsecond precision
      */
     public function __construct(
-        private bool $morePrecision = false,
+        private readonly bool $morePrecision = false,
     ) {
         $this->reset();
     }

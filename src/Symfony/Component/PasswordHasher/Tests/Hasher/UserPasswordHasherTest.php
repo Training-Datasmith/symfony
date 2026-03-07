@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -122,7 +124,9 @@ class UserPasswordHasherTest extends TestCase
 
         $passwordHasher = new UserPasswordHasher($passwordHasherFactory);
 
-        \Closure::bind(function () use ($passwordHasher) { $this->password = $passwordHasher->hashPassword($this, 'foo', 'salt'); }, $user, InMemoryUser::class)();
+        \Closure::bind(function () use ($passwordHasher) {
+            $this->password = $passwordHasher->hashPassword($this, 'foo', 'salt');
+        }, $user, InMemoryUser::class)();
         $this->assertFalse($passwordHasher->needsRehash($user));
         $this->assertTrue($passwordHasher->needsRehash($user));
         $this->assertFalse($passwordHasher->needsRehash($user));

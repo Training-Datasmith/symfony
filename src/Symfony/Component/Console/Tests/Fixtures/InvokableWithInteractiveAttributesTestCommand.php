@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,10 +32,8 @@ class InvokableWithInteractiveAttributesTestCommand
 
     public function __invoke(
         SymfonyStyle $io,
-
         #[Argument, Ask('Enter arg1')]
         string $arg1,
-
         #[MapInput]
         DummyDto $dto,
     ): int {
@@ -102,7 +102,8 @@ class DummyDto2
     }
 }
 
-enum Arg2: string {
+enum Arg2: string
+{
     case ARG2_VALUE = 'arg2-value';
     case ARG22_VALUE = 'arg22-value';
 }

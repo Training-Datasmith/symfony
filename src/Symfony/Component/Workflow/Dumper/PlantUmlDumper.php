@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -52,7 +54,7 @@ class PlantUmlDumper implements DumperInterface
     ];
 
     public function __construct(
-        private string $transitionType,
+        private readonly string $transitionType,
     ) {
         if (!\in_array($transitionType, self::TRANSITION_TYPES, true)) {
             throw new \InvalidArgumentException("Transition type '$transitionType' does not exist.");
@@ -203,7 +205,7 @@ class PlantUmlDumper implements DumperInterface
 
         $description = $workflowMetadata->getMetadata('description', $place);
         if (null !== $description) {
-            foreach (array_filter(explode("\n", $description)) as $line) {
+            foreach (array_filter(explode("\n", (string) $description)) as $line) {
                 $output .= "\n".$placeEscaped.' : '.$line;
             }
         }

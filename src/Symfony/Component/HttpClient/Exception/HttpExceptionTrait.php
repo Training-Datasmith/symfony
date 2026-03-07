@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ trait HttpExceptionTrait
         $httpCodeFound = false;
         $isJson = false;
         foreach (array_reverse($response->getInfo('response_headers')) as $h) {
-            if (str_starts_with($h, 'HTTP/')) {
+            if (str_starts_with((string) $h, 'HTTP/')) {
                 if ($httpCodeFound) {
                     break;
                 }
@@ -39,8 +41,8 @@ trait HttpExceptionTrait
                 $httpCodeFound = true;
             }
 
-            if (0 === stripos($h, 'content-type:')) {
-                if (preg_match('/\bjson\b/i', $h)) {
+            if (0 === stripos((string) $h, 'content-type:')) {
+                if (preg_match('/\bjson\b/i', (string) $h)) {
                     $isJson = true;
                 }
 

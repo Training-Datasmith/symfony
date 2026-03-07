@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,10 +36,10 @@ class DefinitionConfigurator
      * @param TreeBuilder<T> $treeBuilder
      */
     public function __construct(
-        private TreeBuilder $treeBuilder,
-        private DefinitionFileLoader $loader,
-        private string $path,
-        private string $file,
+        private readonly TreeBuilder $treeBuilder,
+        private readonly DefinitionFileLoader $loader,
+        private readonly string $path,
+        private readonly string $file,
     ) {
     }
 

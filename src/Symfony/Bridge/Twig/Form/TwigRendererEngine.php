@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ class TwigRendererEngine extends AbstractRendererEngine
 
     public function __construct(
         array $defaultThemes,
-        private Environment $environment,
+        private readonly Environment $environment,
     ) {
         parent::__construct($defaultThemes);
     }

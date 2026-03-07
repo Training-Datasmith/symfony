@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ namespace Symfony\Component\Security\Core\User;
  * @author Robin Chalas <robin.chalas@gmail.com>
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class InMemoryUser implements UserInterface, PasswordAuthenticatedUserInterface, EquatableInterface, \Stringable
+final readonly class InMemoryUser implements UserInterface, PasswordAuthenticatedUserInterface, EquatableInterface, \Stringable
 {
     private string $username;
 
@@ -84,8 +86,8 @@ final class InMemoryUser implements UserInterface, PasswordAuthenticatedUserInte
             return false;
         }
 
-        $currentRoles = array_map('strval', $this->getRoles());
-        $newRoles = array_map('strval', $user->getRoles());
+        $currentRoles = array_map(strval(...), $this->getRoles());
+        $newRoles = array_map(strval(...), $user->getRoles());
         $rolesChanged = \count($currentRoles) !== \count($newRoles) || \count($currentRoles) !== \count(array_intersect($currentRoles, $newRoles));
         if ($rolesChanged) {
             return false;

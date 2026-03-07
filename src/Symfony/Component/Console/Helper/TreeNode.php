@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ namespace Symfony\Component\Console\Helper;
  *
  * @author Simon André <smn.andre@gmail.com>
  */
-final class TreeNode implements \Countable, \IteratorAggregate
+final class TreeNode implements \Countable, \IteratorAggregate, \Stringable
 {
     /**
      * @var array<TreeNode|callable(): \Generator>

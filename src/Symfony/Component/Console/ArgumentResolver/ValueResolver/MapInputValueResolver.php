@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,12 +25,12 @@ use Symfony\Component\Console\Input\InputInterface;
  * @author Yonel Ceruto <open@yceruto.dev>
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-final class MapInputValueResolver implements ValueResolverInterface
+final readonly class MapInputValueResolver implements ValueResolverInterface
 {
     public function __construct(
-        private readonly ValueResolverInterface $builtinTypeResolver,
-        private readonly ValueResolverInterface $backedEnumResolver,
-        private readonly ValueResolverInterface $dateTimeResolver,
+        private ValueResolverInterface $builtinTypeResolver,
+        private ValueResolverInterface $backedEnumResolver,
+        private ValueResolverInterface $dateTimeResolver,
     ) {
     }
 

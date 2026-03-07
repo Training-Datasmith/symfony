@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'petó: persona, persona, pell molt clara i pell bastant clara',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'petó: persona, persona, pell molt clara i pell morena',

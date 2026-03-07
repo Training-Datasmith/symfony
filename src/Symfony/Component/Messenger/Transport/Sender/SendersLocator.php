@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ class SendersLocator implements SendersLocatorInterface
      */
     public function __construct(
         private array $sendersMap,
-        private ContainerInterface $sendersLocator,
+        private readonly ContainerInterface $sendersLocator,
     ) {
     }
 
@@ -49,7 +51,7 @@ class SendersLocator implements SendersLocatorInterface
         $found = false;
 
         foreach (HandlersLocator::listTypes($envelope) as $type) {
-            if (str_ends_with($type, '*') && $seen) {
+            if (str_ends_with((string) $type, '*') && $seen) {
                 // the '*' acts as a fallback, if other senders already matched
                 // with previous types, skip the senders bound to the fallback
                 continue;

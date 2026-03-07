@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -96,11 +98,7 @@ final class RecurringMessage implements MessageProviderInterface
      */
     public function getId(): string
     {
-        if (isset($this->id)) {
-            return $this->id;
-        }
-
-        return $this->id = hash('crc32c', implode('', [
+        return $this->id ?? $this->id = hash('crc32c', implode('', [
             $this->provider::class,
             $this->provider->getId(),
             $this->trigger::class,

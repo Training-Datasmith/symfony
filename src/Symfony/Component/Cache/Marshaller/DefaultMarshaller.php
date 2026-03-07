@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,15 +23,13 @@ use Symfony\Component\Cache\Exception\CacheException;
 class DefaultMarshaller implements MarshallerInterface
 {
     private bool $useIgbinarySerialize = false;
-    private bool $throwOnSerializationFailure = false;
 
-    public function __construct(?bool $useIgbinarySerialize = null, bool $throwOnSerializationFailure = false)
+    public function __construct(?bool $useIgbinarySerialize = null, private readonly bool $throwOnSerializationFailure = false)
     {
         if ($useIgbinarySerialize && (!\extension_loaded('igbinary') || version_compare('3.1.6', phpversion('igbinary'), '>'))) {
             throw new CacheException(\extension_loaded('igbinary') ? 'Please upgrade the "igbinary" PHP extension to v3.1.6 or higher.' : 'The "igbinary" PHP extension is not loaded.');
         }
         $this->useIgbinarySerialize = true === $useIgbinarySerialize;
-        $this->throwOnSerializationFailure = $throwOnSerializationFailure;
     }
 
     public function marshall(array $values, ?array &$failed): array
@@ -66,7 +66,7 @@ class DefaultMarshaller implements MarshallerInterface
         if ($value === $igbinaryNull ??= \extension_loaded('igbinary') ? igbinary_serialize(null) : false) {
             return null;
         }
-        $unserializeCallbackHandler = ini_set('unserialize_callback_func', __CLASS__.'::handleUnserializeCallback');
+        $unserializeCallbackHandler = ini_set('unserialize_callback_func', self::class.'::handleUnserializeCallback');
         try {
             if (':' === ($value[1] ?? ':')) {
                 if (false !== $value = unserialize($value)) {

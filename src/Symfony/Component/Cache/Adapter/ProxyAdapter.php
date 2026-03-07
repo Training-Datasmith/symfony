@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,12 +34,11 @@ class ProxyAdapter implements AdapterInterface, NamespacedPoolInterface, CacheIn
     private string $namespace = '';
     private int $namespaceLen;
     private string $poolHash;
-    private int $defaultLifetime;
 
     private static \Closure $createCacheItem;
     private static \Closure $setInnerItem;
 
-    public function __construct(CacheItemPoolInterface $pool, string $namespace = '', int $defaultLifetime = 0)
+    public function __construct(CacheItemPoolInterface $pool, string $namespace = '', private int $defaultLifetime = 0)
     {
         if ('' !== $namespace) {
             if ($pool instanceof NamespacedPoolInterface) {
@@ -51,9 +52,8 @@ class ProxyAdapter implements AdapterInterface, NamespacedPoolInterface, CacheIn
         $this->pool = $pool;
         $this->poolHash = spl_object_hash($pool);
         $this->namespaceLen = \strlen($namespace);
-        $this->defaultLifetime = $defaultLifetime;
         self::$createCacheItem ??= \Closure::bind(
-            static function ($key, $innerItem, $poolHash) {
+            static function ($key, $innerItem, $poolHash): \Symfony\Component\Cache\CacheItem {
                 $item = new CacheItem();
                 $item->key = $key;
 
@@ -77,7 +77,7 @@ class ProxyAdapter implements AdapterInterface, NamespacedPoolInterface, CacheIn
             CacheItem::class
         );
         self::$setInnerItem ??= \Closure::bind(
-            static function (CacheItemInterface $innerItem, CacheItem $item, $expiry = null) {
+            static function (CacheItemInterface $innerItem, CacheItem $item, $expiry = null): void {
                 $innerItem->set($item->pack());
                 $innerItem->expiresAt(($expiry ?? $item->expiry) ? \DateTimeImmutable::createFromFormat('U.u', \sprintf('%.6F', $expiry ?? $item->expiry)) : null);
             },
@@ -210,7 +210,7 @@ class ProxyAdapter implements AdapterInterface, NamespacedPoolInterface, CacheIn
 
         foreach ($items as $key => $item) {
             if ($this->namespaceLen) {
-                $key = substr($key, $this->namespaceLen);
+                $key = substr((string) $key, $this->namespaceLen);
             }
 
             yield $key => $f($key, $item, $this->poolHash);

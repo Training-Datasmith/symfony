@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ class File
     private static MimeTypes $mimeTypes;
 
     public function __construct(
-        private string $path,
+        private readonly string $path,
         private ?string $filename = null,
     ) {
     }

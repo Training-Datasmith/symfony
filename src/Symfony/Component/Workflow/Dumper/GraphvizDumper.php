@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -231,13 +233,15 @@ class GraphvizDumper implements DumperInterface
 
         foreach ($edges as $edge) {
             if ('from' === $edge['direction']) {
-                $code .= \sprintf("  place_%s -> transition_%s [style=\"solid\"%s];\n",
+                $code .= \sprintf(
+                    "  place_%s -> transition_%s [style=\"solid\"%s];\n",
                     $this->dotize($edge['from']),
                     $this->dotize($edge['transition_number']),
                     $edge['weight'] > 1 ? \sprintf(',label="%s"', $this->escape($edge['weight'])) : '',
                 );
             } else {
-                $code .= \sprintf("  transition_%s -> place_%s [style=\"solid\"%s];\n",
+                $code .= \sprintf(
+                    "  transition_%s -> place_%s [style=\"solid\"%s];\n",
                     $this->dotize($edge['transition_number']),
                     $this->dotize($edge['to']),
                     $edge['weight'] > 1 ? \sprintf(',label="%s"', $this->escape($edge['weight'])) : '',
@@ -253,7 +257,8 @@ class GraphvizDumper implements DumperInterface
      */
     protected function startDot(array $options, string $label): string
     {
-        return \sprintf("digraph workflow {\n  %s%s\n  node [%s];\n  edge [%s];\n\n",
+        return \sprintf(
+            "digraph workflow {\n  %s%s\n  node [%s];\n  edge [%s];\n\n",
             $this->addOptions($options['graph']),
             '""' !== $label && '<>' !== $label ? \sprintf(' label=%s', $label) : '',
             $this->addOptions($options['node']),

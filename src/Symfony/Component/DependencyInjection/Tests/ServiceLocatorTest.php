@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -52,7 +54,8 @@ class ServiceLocatorTest extends ServiceLocatorTestCase
         $container = new Container();
         $container->set('foo', new \stdClass());
         $subscriber = new SomeServiceSubscriber();
-        $subscriber->container = $this->getServiceLocator(['bar' => static function () {}]);
+        $subscriber->container = $this->getServiceLocator(['bar' => static function () {
+        }]);
         $subscriber->container = $subscriber->container->withContext('caller', $container);
 
         $this->expectException(NotFoundExceptionInterface::class);

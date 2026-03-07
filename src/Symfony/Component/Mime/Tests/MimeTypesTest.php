@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,7 @@ class MimeTypesTest extends AbstractMimeTypeGuesserTestCase
     public function testUnsupportedGuesser()
     {
         $guesser = $this->getGuesser();
-        $guesser->registerGuesser(new class implements MimeTypeGuesserInterface {
+        $guesser->registerGuesser(new class () implements MimeTypeGuesserInterface {
             public function isGuesserSupported(): bool
             {
                 return false;

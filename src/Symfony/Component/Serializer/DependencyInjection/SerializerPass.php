@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -89,7 +91,7 @@ class SerializerPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds($tagName) as $serviceId => $tags) {
             $definition = $container->getDefinition($serviceId);
 
-            if (array_any($tags, $closure = static fn (array $tag) => (bool) $tag)) {
+            if (array_any($tags, $closure = static fn (array $tag): bool => (bool) $tag)) {
                 $tags = array_filter($tags, $closure);
             }
 
@@ -195,7 +197,7 @@ class SerializerPass implements CompilerPassInterface
         }
     }
 
-    private function buildChildNameConverterDefinition(ContainerBuilder $container, ?string $nameConverter): ?string
+    private function buildChildNameConverterDefinition(ContainerBuilder $container, ?string $nameConverter): string
     {
         $childId = self::NAME_CONVERTER_METADATA_AWARE_ID.'.'.ContainerBuilder::hash($nameConverter);
 

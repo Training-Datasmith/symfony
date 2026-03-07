@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,7 @@ use Symfony\Component\RateLimiter\LimiterStateInterface;
 class CacheStorage implements StorageInterface
 {
     public function __construct(
-        private CacheItemPoolInterface $pool,
+        private readonly CacheItemPoolInterface $pool,
     ) {
     }
 

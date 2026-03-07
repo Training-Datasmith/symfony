@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,17 +34,14 @@ class_exists(SessionBagProxy::class);
  */
 class Session implements FlashBagAwareSessionInterface, \IteratorAggregate, \Countable
 {
-    protected SessionStorageInterface $storage;
-
-    private string $flashName;
-    private string $attributeName;
+    private readonly string $flashName;
+    private readonly string $attributeName;
     private array $data = [];
     private int $usageIndex = 0;
-    private ?\Closure $usageReporter;
+    private readonly ?\Closure $usageReporter;
 
-    public function __construct(?SessionStorageInterface $storage = null, ?AttributeBagInterface $attributes = null, ?FlashBagInterface $flashes = null, ?callable $usageReporter = null)
+    public function __construct(protected ?SessionStorageInterface $storage = new NativeSessionStorage(), ?AttributeBagInterface $attributes = null, ?FlashBagInterface $flashes = null, ?callable $usageReporter = null)
     {
-        $this->storage = $storage ?? new NativeSessionStorage();
         $this->usageReporter = null === $usageReporter ? null : $usageReporter(...);
 
         $attributes ??= new AttributeBag();

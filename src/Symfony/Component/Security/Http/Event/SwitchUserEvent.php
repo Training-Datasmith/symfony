@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,8 +26,8 @@ use Symfony\Contracts\EventDispatcher\Event;
 final class SwitchUserEvent extends Event
 {
     public function __construct(
-        private Request $request,
-        private UserInterface $targetUser,
+        private readonly Request $request,
+        private readonly UserInterface $targetUser,
         private ?TokenInterface $token = null,
     ) {
     }

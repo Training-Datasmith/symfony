@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,8 +27,8 @@ class SplFileInfo extends \SplFileInfo
      */
     public function __construct(
         string $file,
-        private string $relativePath,
-        private string $relativePathname,
+        private readonly string $relativePath,
+        private readonly string $relativePathname,
     ) {
         parent::__construct($file);
     }
@@ -65,7 +67,9 @@ class SplFileInfo extends \SplFileInfo
      */
     public function getContents(): string
     {
-        set_error_handler(static function ($type, $msg) use (&$error) { $error = $msg; });
+        set_error_handler(static function ($type, $msg) use (&$error): void {
+            $error = $msg;
+        });
         try {
             $content = file_get_contents($this->getPathname());
         } finally {

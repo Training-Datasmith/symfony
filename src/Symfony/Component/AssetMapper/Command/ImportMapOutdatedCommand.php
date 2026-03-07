@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -51,7 +53,8 @@ final class ImportMapOutdatedCommand extends Command
                 description: \sprintf('The output format ("%s")', implode(', ', $this->getAvailableFormatOptions())),
                 default: 'txt',
             )
-            ->setHelp(<<<'EOT'
+            ->setHelp(
+                <<<'EOT'
                 The <info>%command.name%</info> command will list the latest updates available for the 3rd party packages in <comment>importmap.php</comment>.
                 Versions showing in <fg=red>red</> are semver compatible versions and you should upgrading.
                 Versions showing in <fg=yellow>yellow</> are major updates that include backward compatibility breaks according to semver.
@@ -74,7 +77,7 @@ final class ImportMapOutdatedCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $packages = $input->getArgument('packages');
         $packagesUpdateInfos = $this->updateChecker->getAvailableUpdates($packages);
-        $packagesUpdateInfos = array_filter($packagesUpdateInfos, static fn ($packageUpdateInfo) => $packageUpdateInfo->hasUpdate());
+        $packagesUpdateInfos = array_filter($packagesUpdateInfos, static fn (\Symfony\Component\AssetMapper\ImportMap\PackageUpdateInfo $packageUpdateInfo): bool => $packageUpdateInfo->hasUpdate());
         if (0 === \count($packagesUpdateInfos)) {
             if ('json' === $input->getOption('format')) {
                 $io->writeln('[]');
@@ -85,7 +88,7 @@ final class ImportMapOutdatedCommand extends Command
             return Command::SUCCESS;
         }
 
-        $displayData = array_map(static fn (string $importName, PackageUpdateInfo $packageUpdateInfo) => [
+        $displayData = array_map(static fn (string $importName, PackageUpdateInfo $packageUpdateInfo): array => [
             'name' => $importName,
             'current' => $packageUpdateInfo->currentVersion,
             'latest' => $packageUpdateInfo->latestVersion,

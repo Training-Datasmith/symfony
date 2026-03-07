@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -161,7 +163,7 @@ class NodeExtension extends AbstractExtension
         $xpath = $translator->nodeToXPath($node->getSelector());
 
         if ($this->hasFlag(self::ATTRIBUTE_VALUE_IN_LOWER_CASE)) {
-            $value = strtolower($value);
+            $value = strtolower((string) $value);
         }
 
         return $translator->addAttributeMatching($xpath, $node->getOperator(), $attribute, $value);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  *  * Assets refers to Symfony's translation keys
  *  * Translations refers to Symfony's translated messages
  */
-final class LocoProvider implements ProviderInterface
+final readonly class LocoProvider implements ProviderInterface
 {
     public function __construct(
         private HttpClientInterface $client,
@@ -98,7 +100,7 @@ final class LocoProvider implements ProviderInterface
                 $previousCatalogue = $this->translatorBag?->getCatalogue($locale);
 
                 // Loco forbids concurrent requests, so the requests must be synchronous in order to prevent "429 Too Many Requests" errors.
-                $response = $this->client->request('GET', \sprintf('export/locale/%s.xlf', rawurlencode($locale)), [
+                $response = $this->client->request('GET', \sprintf('export/locale/%s.xlf', rawurlencode((string) $locale)), [
                     'query' => [
                         'filter' => '*' !== $domain ? $domain : '',
                         'status' => $this->restrictToStatus ?? 'translated,blank-translation',
@@ -119,7 +121,7 @@ final class LocoProvider implements ProviderInterface
                     $catalogue = new MessageCatalogue($locale);
                     $previousMessages = $previousCatalogue->all($domain);
 
-                    if (!str_ends_with($domain, $catalogue::INTL_DOMAIN_SUFFIX)) {
+                    if (!str_ends_with((string) $domain, (string) $catalogue::INTL_DOMAIN_SUFFIX)) {
                         $previousMessages = array_diff_key($previousMessages, $previousCatalogue->all($domain.$catalogue::INTL_DOMAIN_SUFFIX));
                     }
                     foreach ($previousMessages as $key => $message) {
@@ -173,7 +175,7 @@ final class LocoProvider implements ProviderInterface
 
         foreach (array_keys($catalogue->all()) as $domain) {
             foreach ($this->getAssetsIds($domain) as $id) {
-                $responses[$id] = $this->client->request('DELETE', \sprintf('assets/%s.json', rawurlencode($id)));
+                $responses[$id] = $this->client->request('DELETE', \sprintf('assets/%s.json', rawurlencode((string) $id)));
             }
         }
 
@@ -207,7 +209,7 @@ final class LocoProvider implements ProviderInterface
             }
         }
 
-        return array_map(static fn ($asset) => $asset['id'], $response->toArray(false));
+        return array_map(static fn (array $asset) => $asset['id'], $response->toArray(false));
     }
 
     private function createAssets(array $keys, string $domain): array
@@ -245,7 +247,7 @@ final class LocoProvider implements ProviderInterface
         $responses = [];
 
         foreach ($translations as $id => $message) {
-            $responses[$id] = $this->client->request('POST', \sprintf('translations/%s/%s', rawurlencode($id), rawurlencode($locale)), [
+            $responses[$id] = $this->client->request('POST', \sprintf('translations/%s/%s', rawurlencode((string) $id), rawurlencode($locale)), [
                 'body' => $message,
                 'headers' => ['Content-Type' => 'text/plain'],
             ]);
@@ -271,7 +273,7 @@ final class LocoProvider implements ProviderInterface
         // Separate ids with and without comma.
         $idsWithComma = $idsWithoutComma = [];
         foreach ($ids as $id) {
-            if (str_contains($id, ',')) {
+            if (str_contains((string) $id, ',')) {
                 $idsWithComma[] = $id;
             } else {
                 $idsWithoutComma[] = $id;
@@ -295,7 +297,7 @@ final class LocoProvider implements ProviderInterface
 
         // Set tags for each id with comma one by one.
         foreach ($idsWithComma as $id) {
-            $response = $this->client->request('POST', \sprintf('assets/%s/tags', rawurlencode($id)), [
+            $response = $this->client->request('POST', \sprintf('assets/%s/tags', rawurlencode((string) $id)), [
                 'body' => ['name' => $tag],
             ]);
 
@@ -364,7 +366,7 @@ final class LocoProvider implements ProviderInterface
             throw new ProviderException(\sprintf('Unable to get locales on Loco: "%s".', $response->getContent(false)), $response);
         }
 
-        return array_reduce($content, static function ($carry, $locale) {
+        return array_reduce($content, static function ($carry, array $locale) {
             $carry[] = $locale['code'];
 
             return $carry;

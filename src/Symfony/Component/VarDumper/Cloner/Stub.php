@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -52,7 +54,7 @@ class Stub
         if (self::class === static::class) {
             $data = [];
             foreach ($this as $k => $v) {
-                $default = self::$propertyDefaults[$this::class][$k] ??= ($p = new \ReflectionProperty($this, $k))->hasDefaultValue() ? $p->getDefaultValue() : ($p->hasType() ? $noDefault : null);
+                $default = self::$propertyDefaults[static::class][$k] ??= ($p = new \ReflectionProperty($this, $k))->hasDefaultValue() ? $p->getDefaultValue() : ($p->hasType() ? $noDefault : null);
                 if ($noDefault === $default || $default !== $v) {
                     $data[$k] = $v;
                 }
@@ -61,16 +63,16 @@ class Stub
             return $data;
         }
 
-        return \Closure::bind(function () use ($noDefault) {
+        return \Closure::bind(function () use ($noDefault): array {
             $data = [];
             foreach ($this as $k => $v) {
-                $default = self::$propertyDefaults[$this::class][$k] ??= ($p = new \ReflectionProperty($this, $k))->hasDefaultValue() ? $p->getDefaultValue() : ($p->hasType() ? $noDefault : null);
+                $default = self::$propertyDefaults[static::class][$k] ??= ($p = new \ReflectionProperty($this, $k))->hasDefaultValue() ? $p->getDefaultValue() : ($p->hasType() ? $noDefault : null);
                 if ($noDefault === $default || $default !== $v) {
                     $data[$k] = $v;
                 }
             }
 
             return $data;
-        }, $this, $this::class)();
+        }, $this, static::class)();
     }
 }

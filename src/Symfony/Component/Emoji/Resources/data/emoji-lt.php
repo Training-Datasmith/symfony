@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'bučinys: suaugusysis suaugusysis šviesios odos vidutinio gymio',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'bučinys: suaugusysis suaugusysis šviesios odos rusvos odos',

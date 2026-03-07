@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,8 +28,8 @@ use Symfony\Component\Security\Http\HttpUtils;
 class DefaultLogoutListener implements EventSubscriberInterface
 {
     public function __construct(
-        private HttpUtils $httpUtils,
-        private string $targetUrl = '/',
+        private readonly HttpUtils $httpUtils,
+        private readonly string $targetUrl = '/',
     ) {
     }
 

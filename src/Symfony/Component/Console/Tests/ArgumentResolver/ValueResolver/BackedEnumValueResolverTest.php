@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,7 +35,7 @@ class BackedEnumValueResolverTest extends TestCase
             new InputArgument('status'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 BackedEnumTestStatus $status,
@@ -57,7 +59,7 @@ class BackedEnumValueResolverTest extends TestCase
             new InputOption('status'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Option]
                 BackedEnumTestStatus $status = BackedEnumTestStatus::Pending,
@@ -83,7 +85,7 @@ class BackedEnumValueResolverTest extends TestCase
             new InputArgument('status'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 BackedEnumTestStatus $status,
@@ -107,7 +109,7 @@ class BackedEnumValueResolverTest extends TestCase
             new InputOption('status'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Option]
                 BackedEnumTestStatus $status = BackedEnumTestStatus::Pending,
@@ -129,7 +131,7 @@ class BackedEnumValueResolverTest extends TestCase
             new InputArgument('username'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 string $username,
@@ -153,7 +155,7 @@ class BackedEnumValueResolverTest extends TestCase
             new InputOption('name'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Option]
                 string $name = '',
@@ -195,7 +197,7 @@ class BackedEnumValueResolverTest extends TestCase
             new InputArgument('priority'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[Argument]
                 BackedEnumTestPriority $priority,

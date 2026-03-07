@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -13,5 +15,4 @@ namespace Symfony\Component\PropertyAccess\Tests\Fixtures;
 
 class ExtendedUninitializedProperty extends UninitializedProperty
 {
-
 }

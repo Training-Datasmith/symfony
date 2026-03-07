@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,9 @@ class WrappedTemplatedEmailTest extends TestCase
         $contentId1 = $email->getAttachments()[0]->getContentId();
         $contentId2 = $email->getAttachments()[1]->getContentId();
 
-        $part1 = str_replace("\n", "\r\n",
+        $part1 = str_replace(
+            "\n",
+            "\r\n",
             <<<PART
                 Content-ID: <$contentId1>
                 Content-Type: image/png; name="$contentId1"
@@ -43,7 +47,9 @@ class WrappedTemplatedEmailTest extends TestCase
                 PART
         );
 
-        $part2 = str_replace("\n", "\r\n",
+        $part2 = str_replace(
+            "\n",
+            "\r\n",
             <<<PART
                 Content-ID: <$contentId2>
                 Content-Type: image/png; name="$contentId2"
@@ -64,7 +70,9 @@ class WrappedTemplatedEmailTest extends TestCase
         $email = $this->buildEmail('email/attach.html.twig');
         $body = $email->toString();
 
-        $part1 = str_replace("\n", "\r\n",
+        $part1 = str_replace(
+            "\n",
+            "\r\n",
             <<<PART
                 Content-Type: image/png; name=logo1.png
                 Content-Transfer-Encoding: base64
@@ -73,7 +81,9 @@ class WrappedTemplatedEmailTest extends TestCase
                 PART
         );
 
-        $part2 = str_replace("\n", "\r\n",
+        $part2 = str_replace(
+            "\n",
+            "\r\n",
             <<<PART
                 Content-Type: image/png; name=image.png
                 Content-Transfer-Encoding: base64

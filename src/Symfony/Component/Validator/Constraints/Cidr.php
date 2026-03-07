@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -81,7 +83,7 @@ class Cidr extends Constraint
         ?int $netmaskMax = null,
         ?string $message = null,
         ?array $groups = null,
-        $payload = null,
+        mixed $payload = null,
         ?callable $normalizer = null,
     ) {
         if (null !== $options) {

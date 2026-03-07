@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class JsonBodyConfigurator implements RequestConfiguratorInterface
+final readonly class JsonBodyConfigurator implements RequestConfiguratorInterface
 {
     private PayloadSerializerInterface $payloadSerializer;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,10 +21,10 @@ use Symfony\Component\RateLimiter\Exception\RateLimitExceededException;
 class RateLimit
 {
     public function __construct(
-        private int $availableTokens,
-        private \DateTimeImmutable $retryAfter,
-        private bool $accepted,
-        private int $limit,
+        private readonly int $availableTokens,
+        private readonly \DateTimeImmutable $retryAfter,
+        private readonly bool $accepted,
+        private readonly int $limit,
     ) {
     }
 

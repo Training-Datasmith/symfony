@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ use Symfony\Component\VarDumper\Cloner\Stub;
  */
 class DumpServer
 {
-    private string $host;
+    private readonly string $host;
 
     /**
      * @var resource|null
@@ -33,7 +35,7 @@ class DumpServer
 
     public function __construct(
         string $host,
-        private ?LoggerInterface $logger = null,
+        private readonly ?LoggerInterface $logger = null,
     ) {
         if (!str_contains($host, '://')) {
             $host = 'tcp://'.$host;
@@ -58,7 +60,7 @@ class DumpServer
         foreach ($this->getMessages() as $clientId => $message) {
             $this->logger?->info('Received a payload from client {clientId}', ['clientId' => $clientId]);
 
-            $payload = @unserialize(base64_decode($message), ['allowed_classes' => [Data::class, Stub::class]]);
+            $payload = @unserialize(base64_decode((string) $message), ['allowed_classes' => [Data::class, Stub::class]]);
 
             // Impossible to decode the message, give up.
             if (false === $payload) {

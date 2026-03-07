@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -162,7 +164,7 @@ class Parser
                     // Inline first child
                     $currentLineNumber = $this->getRealCurrentLineNb();
 
-                    $sequenceIndentation = \strlen($values['leadspaces']) + 1;
+                    $sequenceIndentation = \strlen((string) $values['leadspaces']) + 1;
                     $sequenceYaml = substr($this->currentLine, $sequenceIndentation);
                     $sequenceYaml .= "\n".$this->getNextEmbedBlock($sequenceIndentation, true);
 
@@ -198,7 +200,7 @@ class Parser
                 }
             } elseif (
                 self::preg_match('#^(?P<key>(?:![^\s]++\s++)?(?:'.Inline::REGEX_QUOTED_STRING.'|[^ \'"\[\{!].*?)) *\:(( |\t)++(?P<value>.+))?$#u', rtrim($this->currentLine), $values)
-                && (!str_contains($values['key'], ' #') || \in_array($values['key'][0], ['"', "'"], true))
+                && (!str_contains((string) $values['key'], ' #') || \in_array($values['key'][0], ['"', "'"], true))
             ) {
                 if ($context && 'sequence' == $context) {
                     throw new ParseException('You cannot define a mapping item when in a sequence.', $this->currentLineNb + 1, $this->currentLine, $this->filename);
@@ -293,7 +295,7 @@ class Parser
                 $subTag = null;
                 if ($mergeNode) {
                     // Merge keys
-                } elseif (!isset($values['value']) || '' === $values['value'] || str_starts_with($values['value'], '#') || (null !== $subTag = $this->getLineTag($values['value'], $flags)) || '<<' === $key) {
+                } elseif (!isset($values['value']) || '' === $values['value'] || str_starts_with((string) $values['value'], '#') || (null !== $subTag = $this->getLineTag($values['value'], $flags)) || '<<' === $key) {
                     // hash
                     // if next line is less indented or equal, then it means that the current value is null
                     if (!$this->isNextLineIndented() && !$this->isNextLineUnIndentedCollection()) {
@@ -341,7 +343,7 @@ class Parser
                         }
                     }
                 } else {
-                    $value = $this->parseValue(rtrim($values['value']), $flags, $context);
+                    $value = $this->parseValue(rtrim((string) $values['value']), $flags, $context);
                     // Spec: Keys MUST be unique; first one wins.
                     // But overwriting is allowed when a merge node is used in current block.
                     if ($allowOverwrite || !isset($data[$key])) {
@@ -587,9 +589,7 @@ class Parser
                 if ($this->isCurrentLineEmpty() || $this->isCurrentLineComment()) {
                     $EOF = !$this->moveToNextLine();
 
-                    if (!$EOF) {
-                        ++$movements;
-                    }
+                    ++$movements;
                 } else {
                     $newIndent = $this->getCurrentLineIndentation();
                 }
@@ -737,7 +737,7 @@ class Parser
                     return Inline::evaluateBinaryScalar($data);
                 }
 
-                return new TaggedValue(substr($matches['tag'], 1), $data);
+                return new TaggedValue(substr((string) $matches['tag'], 1), $data);
             }
 
             return $data;
@@ -746,11 +746,10 @@ class Parser
         try {
             if ('' !== $value && '{' === $value[0]) {
                 $cursor = \strlen(rtrim($this->currentLine)) - \strlen(rtrim($value));
-
                 return Inline::parse($this->lexInlineMapping($cursor), $flags, $this->refs);
-            } elseif ('' !== $value && '[' === $value[0]) {
+            }
+            if ('' !== $value && '[' === $value[0]) {
                 $cursor = \strlen(rtrim($this->currentLine)) - \strlen(rtrim($value));
-
                 return Inline::parse($this->lexInlineSequence($cursor), $flags, $this->refs);
             }
 
@@ -964,7 +963,10 @@ class Parser
 
     private function isCurrentLineEmpty(): bool
     {
-        return $this->isCurrentLineBlank() || $this->isCurrentLineComment();
+        if ($this->isCurrentLineBlank()) {
+            return true;
+        }
+        return $this->isCurrentLineComment();
     }
 
     private function isCurrentLineBlank(): bool
@@ -995,22 +997,22 @@ class Parser
         $this->offset += $count;
 
         // remove leading comments
-        $trimmedValue = preg_replace('#^(?>(\#.*?\n))+#s', '', $value, -1, $count);
+        $trimmedValue = preg_replace('#^(?>(\#.*?\n))+#s', '', (string) $value, -1, $count);
         if (1 === $count) {
             // items have been removed, update the offset
-            $this->offset += substr_count($value, "\n") - substr_count($trimmedValue, "\n");
+            $this->offset += substr_count((string) $value, "\n") - substr_count((string) $trimmedValue, "\n");
             $value = $trimmedValue;
         }
 
         // remove start of the document marker (---)
-        $trimmedValue = preg_replace('#^\-\-\-.*?\n#s', '', $value, -1, $count);
+        $trimmedValue = preg_replace('#^\-\-\-.*?\n#s', '', (string) $value, -1, $count);
         if (1 === $count) {
             // items have been removed, update the offset
-            $this->offset += substr_count($value, "\n") - substr_count($trimmedValue, "\n");
+            $this->offset += substr_count((string) $value, "\n") - substr_count((string) $trimmedValue, "\n");
             $value = $trimmedValue;
 
             // remove end of the document marker (...)
-            $value = preg_replace('#\.\.\.\s*$#', '', $value);
+            $value = preg_replace('#\.\.\.\s*$#', '', (string) $value);
         }
 
         return $value;
@@ -1092,7 +1094,7 @@ class Parser
             return null;
         }
 
-        $tag = substr($matches['tag'], 1);
+        $tag = substr((string) $matches['tag'], 1);
 
         // Built-in tags
         if ($tag && '!' === $tag[0]) {

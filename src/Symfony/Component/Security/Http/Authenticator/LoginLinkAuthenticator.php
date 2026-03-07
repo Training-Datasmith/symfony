@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,6 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerI
 use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
-use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Component\Security\Http\LoginLink\Exception\InvalidLoginLinkAuthenticationException;
@@ -34,28 +35,28 @@ final class LoginLinkAuthenticator extends AbstractAuthenticator implements Inte
     private array $options;
 
     public function __construct(
-        private LoginLinkHandlerInterface $loginLinkHandler,
-        private HttpUtils $httpUtils,
-        private AuthenticationSuccessHandlerInterface $successHandler,
-        private AuthenticationFailureHandlerInterface $failureHandler,
+        private readonly LoginLinkHandlerInterface $loginLinkHandler,
+        private readonly HttpUtils $httpUtils,
+        private readonly AuthenticationSuccessHandlerInterface $successHandler,
+        private readonly AuthenticationFailureHandlerInterface $failureHandler,
         array $options,
     ) {
         $this->options = $options + ['check_post_only' => false];
     }
 
-    public function supports(Request $request): ?bool
+    public function supports(Request $request): bool
     {
         return ($this->options['check_post_only'] ? $request->isMethod('POST') : true)
             && $this->httpUtils->checkRequestPath($request, $this->options['check_route']);
     }
 
-    public function authenticate(Request $request): Passport
+    public function authenticate(Request $request): \Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport
     {
         if (!$username = $request->query->get('user') ?? (!\in_array($request->getMethod(), ['GET', 'HEAD'], true) ? $request->request->get('user') : null)) {
             throw new InvalidLoginLinkAuthenticationException('Missing user from link.');
         }
 
-        $userBadge = new UserBadge($username, function () use ($request) {
+        $userBadge = new UserBadge($username, function () use ($request): \Symfony\Component\Security\Core\User\UserInterface {
             try {
                 $user = $this->loginLinkHandler->consumeLoginLink($request);
             } catch (InvalidLoginLinkExceptionInterface $e) {

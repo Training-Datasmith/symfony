@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,22 +25,22 @@ use Symfony\Component\Process\Process;
 class UnixPipes extends AbstractPipes
 {
     public function __construct(
-        private ?bool $ttyMode,
-        private bool $ptyMode,
+        private readonly ?bool $ttyMode,
+        private readonly bool $ptyMode,
         mixed $input,
-        private bool $haveReadSupport,
+        private readonly bool $haveReadSupport,
     ) {
         parent::__construct($input);
     }
 
     public function __serialize(): array
     {
-        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot serialize '.self::class);
     }
 
     public function __unserialize(array $data): void
     {
-        throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot unserialize '.self::class);
     }
 
     public function __destruct()

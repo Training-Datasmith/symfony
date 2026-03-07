@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class ControllerAttributeEvent implements StoppableEventInterface
+final readonly class ControllerAttributeEvent implements StoppableEventInterface
 {
     private string|array|object|null $controller;
 
@@ -31,9 +33,9 @@ final class ControllerAttributeEvent implements StoppableEventInterface
      */
     public function __construct(
         /** @var T */
-        public readonly object $attribute,
-        public readonly KernelEvent $kernelEvent,
-        private readonly ?ExpressionLanguage $expressionLanguage = null,
+        public object $attribute,
+        public KernelEvent $kernelEvent,
+        private ?ExpressionLanguage $expressionLanguage = null,
     ) {
         $this->controller = match (true) {
             $kernelEvent instanceof ControllerEvent => $kernelEvent->getController(),

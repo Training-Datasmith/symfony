@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ use Psr\Http\Message\ResponseInterface as Psr7ResponseInterface;
  *
  * @internal
  */
-final class HttplugPromise implements HttplugPromiseInterface
+final readonly class HttplugPromise implements HttplugPromiseInterface
 {
     public function __construct(
         private GuzzlePromiseInterface $promise,

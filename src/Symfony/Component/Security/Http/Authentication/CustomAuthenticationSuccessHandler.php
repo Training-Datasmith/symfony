@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler
      * @param array $options Options for processing a successful authentication attempt
      */
     public function __construct(
-        private AuthenticationSuccessHandlerInterface $handler,
+        private readonly AuthenticationSuccessHandlerInterface $handler,
         array $options,
         string $firewallName,
     ) {

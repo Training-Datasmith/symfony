@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,8 +35,8 @@ final class MatrixTransport extends AbstractTransport
     private const SUPPORTED_MSG_TYPES_BY_API = ['m.text', 'm.emote', 'm.notice', 'm.image', 'm.file', 'm.audio', 'm.video', 'm.key.verification'];
 
     public function __construct(
-        #[\SensitiveParameter] private string $accessToken,
-        private bool $ssl,
+        #[\SensitiveParameter] private readonly string $accessToken,
+        private readonly bool $ssl,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -54,11 +56,11 @@ final class MatrixTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof ChatMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, ChatMessage::class, $message);
         }
 
         if (($opts = $message->getOptions()) && !$message->getOptions() instanceof MatrixOptions) {
-            throw new UnsupportedOptionsException(__CLASS__, MatrixOptions::class, $opts);
+            throw new UnsupportedOptionsException(self::class, MatrixOptions::class, $opts);
         }
 
         $options = $opts ? $opts->toArray() : [];
@@ -107,7 +109,7 @@ final class MatrixTransport extends AbstractTransport
         return $response->toArray()['room_id'];
     }
 
-    private function createPrivateChannel(string $recipientId): ?array
+    private function createPrivateChannel(string $recipientId): array
     {
         $invites[] = $recipientId;
         $response = $this->request('POST', '/_matrix/client/v3/createRoom', ['json' => ['creation_content' => ['m.federate' => false], 'is_direct' => true, 'preset' => 'trusted_private_chat', 'invite' => $invites]]);
@@ -137,14 +139,14 @@ final class MatrixTransport extends AbstractTransport
         }
     }
 
-    private function getAccountData(string $userId, string $type): ?array
+    private function getAccountData(string $userId, string $type): array
     {
         $response = $this->request('GET', \sprintf('/_matrix/client/v3/user/%s/account_data/%s', urlencode($userId), $type));
 
         return $response->toArray();
     }
 
-    private function getWhoami(): ?array
+    private function getWhoami(): array
     {
         $response = $this->request('GET', '/_matrix/client/v3/account/whoami');
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -49,7 +51,7 @@ class LoggingTranslatorPass implements CompilerPassInterface
         $subscriberAttributes = $warmer->getTag('container.service_subscriber');
         $warmer->clearTag('container.service_subscriber');
 
-        foreach ($subscriberAttributes as $k => $v) {
+        foreach ($subscriberAttributes as $v) {
             if ((!isset($v['id']) || 'translator' !== $v['id']) && (!isset($v['key']) || 'translator' !== $v['key'])) {
                 $warmer->addTag('container.service_subscriber', $v);
             }

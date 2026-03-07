@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,7 @@ class MaxIdLengthAdapterTest extends TestCase
 {
     public function testLongKey()
     {
-        $cache = new class extends MaxIdLengthAdapter {
+        $cache = new class () extends MaxIdLengthAdapter {
             private static $series = [
                 ['----------:z5XrNUPebf0nPxQwjc6C1A:'],
                 ['----------:---------------------------------------'],
@@ -45,7 +47,7 @@ class MaxIdLengthAdapterTest extends TestCase
 
     public function testLongKeyVersioning()
     {
-        $cache = new class extends MaxIdLengthAdapter {
+        $cache = new class () extends MaxIdLengthAdapter {
             public function __construct()
             {
                 parent::__construct(str_repeat('-', 26));

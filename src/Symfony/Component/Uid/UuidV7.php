@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -128,7 +130,8 @@ class UuidV7 extends Uuid implements TimeBasedUidInterface
         self::$subMs = $subMs;
 
         if (\PHP_INT_SIZE >= 8) {
-            return substr_replace(\sprintf('%012x-%04x-%04x-%04x%08x',
+            return substr_replace(\sprintf(
+                '%012x-%04x-%04x-%04x%08x',
                 $time,
                 0x7000 | ($subMs << 2) | (self::$rand[1] >> 30),
                 0x8000 | (self::$rand[1] >> 16 & 0x3FFF),
@@ -137,7 +140,8 @@ class UuidV7 extends Uuid implements TimeBasedUidInterface
             ), '-', 8, 0);
         }
 
-        return substr_replace(\sprintf('%012s-%04x-%04x-%04x%04x%04x',
+        return substr_replace(\sprintf(
+            '%012s-%04x-%04x-%04x%04x%04x',
             bin2hex(BinaryUtil::fromBase($time, BinaryUtil::BASE10)),
             0x7000 | ($subMs << 2) | (self::$rand[1] >> 14),
             0x8000 | (self::$rand[1] & 0x3FFF),

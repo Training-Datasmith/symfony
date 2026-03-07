@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ class TwigDataCollector extends DataCollector implements LateDataCollectorInterf
 
     public function __construct(
         private Profile $profile,
-        private ?Environment $twig = null,
+        private readonly ?Environment $twig = null,
     ) {
     }
 
@@ -56,7 +58,7 @@ class TwigDataCollector extends DataCollector implements LateDataCollectorInterf
             return;
         }
 
-        $templateFinder = function (Profile $profile) use (&$templateFinder) {
+        $templateFinder = function (Profile $profile) use (&$templateFinder): void {
             if ($profile->isTemplate()) {
                 try {
                     $template = $this->twig->load($name = $profile->getName());

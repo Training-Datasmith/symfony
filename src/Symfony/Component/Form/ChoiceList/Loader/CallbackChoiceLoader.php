@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ namespace Symfony\Component\Form\ChoiceList\Loader;
  */
 class CallbackChoiceLoader extends AbstractChoiceLoader
 {
-    private \Closure $callback;
+    private readonly \Closure $callback;
 
     /**
      * @param callable $callback The callable returning iterable choices

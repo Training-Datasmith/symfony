@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ use Symfony\Component\JsonStreamer\Read\Splitter;
  *
  * @author Alexandre Daubois <alex.daubois@gmail.com>
  */
-final class JsonCrawler implements JsonCrawlerInterface
+final readonly class JsonCrawler implements JsonCrawlerInterface
 {
     private const RFC9535_FUNCTIONS = [
         'length' => true,
@@ -56,7 +58,7 @@ final class JsonCrawler implements JsonCrawlerInterface
      * @param resource|string $raw
      */
     public function __construct(
-        private readonly mixed $raw,
+        private mixed $raw,
     ) {
         if (!\is_string($raw) && !\is_resource($raw)) {
             throw new InvalidArgumentException(\sprintf('Expected string or resource, got "%s".', get_debug_type($raw)));
@@ -129,8 +131,6 @@ final class JsonCrawler implements JsonCrawlerInterface
             }
 
             return $this->normalizeStorage($this->evaluateTokensOnDecodedData($tokens, $data));
-        } catch (InvalidArgumentException $e) {
-            throw $e;
         } catch (InvalidJsonPathException $e) {
             throw new JsonCrawlerException($query, $e->getMessage(), previous: $e);
         }
@@ -163,7 +163,7 @@ final class JsonCrawler implements JsonCrawlerInterface
             if (TokenType::Recursive === $token->type
                 && isset($tokens[$i + 1])
                 && TokenType::Bracket === $tokens[$i + 1]->type
-                && (str_contains($tokens[$i + 1]->value, '"') || str_contains($tokens[$i + 1]->value, "'"))
+                && (str_contains((string) $tokens[$i + 1]->value, '"') || str_contains((string) $tokens[$i + 1]->value, "'"))
             ) {
                 $bracketToken = $tokens[$i + 1];
 
@@ -366,7 +366,7 @@ final class JsonCrawler implements JsonCrawlerInterface
             $parts = JsonPathUtils::parseCommaSeparatedValues($expr);
             $result = [];
             foreach ($parts as $part) {
-                $part = trim($part);
+                $part = trim((string) $part);
 
                 if (preg_match('/^\?(.*)$/', $part, $matches)) {
                     $result = array_merge($result, $this->evaluateFilter(trim($matches[1]), $value));
@@ -429,7 +429,7 @@ final class JsonCrawler implements JsonCrawlerInterface
 
             $allStringKeys = true;
             foreach ($parts as $part) {
-                $part = trim($part);
+                $part = trim((string) $part);
                 if (!preg_match('/^([\'"])(.*)\1$/', $part)) {
                     $allStringKeys = false;
 
@@ -440,7 +440,7 @@ final class JsonCrawler implements JsonCrawlerInterface
             if ($allStringKeys) {
                 if (!\is_array($value) || !array_is_list($value)) {
                     foreach ($parts as $part) {
-                        $part = trim($part);
+                        $part = trim((string) $part);
 
                         if (!preg_match('/^([\'"])(.*)\1$/', $part, $matches)) {
                             continue;
@@ -459,7 +459,7 @@ final class JsonCrawler implements JsonCrawlerInterface
                     }
 
                     foreach ($parts as $part) {
-                        $part = trim($part);
+                        $part = trim((string) $part);
                         if (!preg_match('/^([\'"])(.*)\1$/', $part, $matches)) {
                             continue;
                         }
@@ -473,7 +473,7 @@ final class JsonCrawler implements JsonCrawlerInterface
             }
 
             foreach ($parts as $part) {
-                $part = trim($part);
+                $part = trim((string) $part);
 
                 if ('*' === $part) {
                     $result = array_merge($result, array_values((array) $value));
@@ -567,10 +567,13 @@ final class JsonCrawler implements JsonCrawlerInterface
 
         if ($logicalOp = $this->findRightmostLogicalOperator($expr)) {
             $left = trim(substr($expr, 0, $logicalOp['position']));
-            $right = trim(substr($expr, $logicalOp['position'] + \strlen($logicalOp['operator'])));
+            $right = trim(substr($expr, $logicalOp['position'] + \strlen((string) $logicalOp['operator'])));
 
             if ('||' === $logicalOp['operator']) {
-                return $this->evaluateFilterExpression($left, $context) || $this->evaluateFilterExpression($right, $context);
+                if ($this->evaluateFilterExpression($left, $context)) {
+                    return true;
+                }
+                return $this->evaluateFilterExpression($right, $context);
             }
 
             return $this->evaluateFilterExpression($left, $context) && $this->evaluateFilterExpression($right, $context);
@@ -747,7 +750,7 @@ final class JsonCrawler implements JsonCrawlerInterface
         if ($args = trim($args)) {
             $args = JsonPathUtils::parseCommaSeparatedValues($args);
             foreach ($args as $arg) {
-                $arg = trim($arg);
+                $arg = trim((string) $arg);
                 if (str_starts_with($arg, '$')) { // special handling for absolute paths
                     $results = $this->evaluate(new JsonPath($arg));
                     $argList[] = $results[0] ?? null;
@@ -1007,7 +1010,7 @@ final class JsonCrawler implements JsonCrawlerInterface
     {
         if ($logicalOp = $this->findRightmostLogicalOperator($expr)) {
             $this->validateFilterExpression(trim(substr($expr, 0, $logicalOp['position']))); // left
-            $this->validateFilterExpression(trim(substr($expr, $logicalOp['position'] + \strlen($logicalOp['operator'])))); // right
+            $this->validateFilterExpression(trim(substr($expr, $logicalOp['position'] + \strlen((string) $logicalOp['operator'])))); // right
 
             return;
         }
@@ -1106,7 +1109,7 @@ final class JsonCrawler implements JsonCrawlerInterface
         $validMixed = true;
 
         foreach ($parts as $part) {
-            $part = trim($part);
+            $part = trim((string) $part);
             if (preg_match('/^\?/', $part)) {
                 $hasFilter = true;
                 // complete filter expression and not part of a comparison?

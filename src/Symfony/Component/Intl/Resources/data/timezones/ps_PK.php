@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Africa/Casablanca' => 'لوېديزے اروپا وخت (کاسابلانکا)',

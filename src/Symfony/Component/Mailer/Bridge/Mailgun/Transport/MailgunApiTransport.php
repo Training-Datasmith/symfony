@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,9 +36,9 @@ class MailgunApiTransport extends AbstractApiTransport
     private const HOST = 'api.%region_dot%mailgun.net';
 
     public function __construct(
-        #[\SensitiveParameter] private string $key,
-        private string $domain,
-        private ?string $region = null,
+        #[\SensitiveParameter] private readonly string $key,
+        private readonly string $domain,
+        private readonly ?string $region = null,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
         ?LoggerInterface $logger = null,
@@ -134,7 +136,7 @@ class MailgunApiTransport extends AbstractApiTransport
             }
 
             // Check if it is a valid prefix or header name according to Mailgun API
-            $prefix = substr($name, 0, 2);
+            $prefix = substr((string) $name, 0, 2);
             if (\in_array($prefix, ['h:', 't:', 'o:', 'v:']) || \in_array($name, ['recipient-variables', 'template', 'amp-html'], true)) {
                 $headerName = $header->getName();
             } else {
@@ -156,7 +158,7 @@ class MailgunApiTransport extends AbstractApiTransport
                 // replace the cid with just a file name (the only supported way by Mailgun)
                 if ($html) {
                     $filename = $headers->getHeaderParameter('Content-Disposition', 'filename');
-                    $new = basename($filename);
+                    $new = basename((string) $filename);
                     $html = str_replace('cid:'.$filename, 'cid:'.$new, $html);
                     $p = new \ReflectionProperty($attachment, 'filename');
                     $p->setValue($attachment, $new);

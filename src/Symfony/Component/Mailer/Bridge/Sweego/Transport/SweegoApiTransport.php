@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -79,7 +81,7 @@ final class SweegoApiTransport extends AbstractApiTransport
      */
     private function formatAddresses(array $addresses): array
     {
-        return array_map(fn (Address $address) => $this->formatAddress($address), $addresses);
+        return array_map($this->formatAddress(...), $addresses);
     }
 
     private function getPayload(Email $email, Envelope $envelope): array
@@ -166,7 +168,7 @@ final class SweegoApiTransport extends AbstractApiTransport
         return $formattedAddress;
     }
 
-    private function getEndpoint(): ?string
+    private function getEndpoint(): string
     {
         return ($this->host ?: 'api.sweego.io').($this->port ? ':'.$this->port : '');
     }

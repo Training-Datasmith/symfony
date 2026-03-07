@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -73,7 +75,7 @@ class HttpCodeActivationStrategyTest extends TestCase
 
     private static function getContextException(int $code): array
     {
-        return ['exception' => new class($code) extends \RuntimeException implements HttpExceptionInterface {
+        return ['exception' => new class ($code) extends \RuntimeException implements HttpExceptionInterface {
             private int $statusCode;
 
             public function __construct(int $statusCode)

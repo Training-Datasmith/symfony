@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,8 +27,8 @@ use Symfony\Component\Security\Http\FirewallMapInterface;
 class FirewallMap implements FirewallMapInterface
 {
     public function __construct(
-        private ContainerInterface $container,
-        private iterable $map,
+        private readonly ContainerInterface $container,
+        private readonly iterable $map,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,7 +37,7 @@ abstract class AbstractConfigCommand extends ContainerDebugCommand
         $rows = [];
 
         $bundles = $this->getApplication()->getKernel()->getBundles();
-        usort($bundles, static fn ($bundleA, $bundleB) => strcmp($bundleA->getName(), $bundleB->getName()));
+        usort($bundles, static fn ($bundleA, $bundleB): int => strcmp((string) $bundleA->getName(), (string) $bundleB->getName()));
 
         foreach ($bundles as $bundle) {
             $extension = $bundle->getContainerExtension();

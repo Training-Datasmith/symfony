@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'ambung: wong, wong, kulit putih, kulit putih langsep',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'ambung: wong, wong, kulit putih, kulit kuning',

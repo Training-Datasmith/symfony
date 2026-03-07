@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,8 @@ class AssetMapperDevServerSubscriberFunctionalTest extends WebTestCase
         $response = $client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
-        $this->assertSame(<<<EOF
+        $this->assertSame(
+            <<<EOF
             /* file1.css */
             body {}
 
@@ -44,7 +47,8 @@ class AssetMapperDevServerSubscriberFunctionalTest extends WebTestCase
         $client->request('GET', '/assets/voilà-Y0RCLaa.css');
         $response = $client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame(<<<EOF
+        $this->assertSame(
+            <<<EOF
             /* voilà.css */
             body {}
 
@@ -80,7 +84,8 @@ class AssetMapperDevServerSubscriberFunctionalTest extends WebTestCase
         $response = $client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
-        $this->assertSame(<<<EOF
+        $this->assertSame(
+            <<<EOF
             /* already-abcdefVWXYZ0123456789.digested.css */
             body {}
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -45,8 +47,6 @@ class Isbn extends Constraint
     public string $isbn10Message = 'This value is not a valid ISBN-10.';
     public string $isbn13Message = 'This value is not a valid ISBN-13.';
     public string $bothIsbnMessage = 'This value is neither a valid ISBN-10 nor a valid ISBN-13.';
-    public ?string $type = null;
-    public ?string $message = null;
 
     /**
      * @param self::ISBN_*|null $type    The type of ISBN to validate (i.e. {@see Isbn::ISBN_10}, {@see Isbn::ISBN_13} or null to accept both, defaults to null)
@@ -54,8 +54,8 @@ class Isbn extends Constraint
      * @param string[]|null     $groups
      */
     public function __construct(
-        ?string $type = null,
-        ?string $message = null,
+        public ?string $type = null,
+        public ?string $message = null,
         ?string $isbn10Message = null,
         ?string $isbn13Message = null,
         ?string $bothIsbnMessage = null,
@@ -63,11 +63,8 @@ class Isbn extends Constraint
         mixed $payload = null,
     ) {
         parent::__construct(null, $groups, $payload);
-
-        $this->message = $message;
         $this->isbn10Message = $isbn10Message ?? $this->isbn10Message;
         $this->isbn13Message = $isbn13Message ?? $this->isbn13Message;
         $this->bothIsbnMessage = $bothIsbnMessage ?? $this->bothIsbnMessage;
-        $this->type = $type;
     }
 }

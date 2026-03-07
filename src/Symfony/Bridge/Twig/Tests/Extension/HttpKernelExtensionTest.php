@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -69,7 +71,8 @@ class HttpKernelExtensionTest extends TestCase
         $kernelRuntime = new HttpKernelRuntime($fragmentHandler, $fragmentUriGenerator);
 
         $loader = new ArrayLoader([
-            'index' => \sprintf(<<<TWIG
+            'index' => \sprintf(
+                <<<TWIG
                 {{ fragment_uri(controller("%s::templateAction", {template: "foo.html.twig"})) }}
                 TWIG,
                 str_replace('\\', '\\\\', TemplateController::class)

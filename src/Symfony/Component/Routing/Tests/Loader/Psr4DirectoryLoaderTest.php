@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -163,7 +165,7 @@ class Psr4DirectoryLoaderTest extends TestCase
         return new DelegatingLoader(
             new LoaderResolver([
                 new Psr4DirectoryLoader($locator),
-                new class extends AttributeClassLoader {
+                new class () extends AttributeClassLoader {
                     protected function configureRoute(Route $route, \ReflectionClass $class, \ReflectionMethod $method, object $attr): void
                     {
                         $route->setDefault('_controller', $class->getName().'::'.$method->getName());

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,8 +32,6 @@ use Symfony\Contracts\Service\ResetInterface;
 class RetryableHttpClient implements HttpClientInterface, ResetInterface
 {
     use AsyncDecoratorTrait;
-
-    private RetryStrategyInterface $strategy;
     private array $baseUris = [];
 
     /**
@@ -39,12 +39,11 @@ class RetryableHttpClient implements HttpClientInterface, ResetInterface
      */
     public function __construct(
         HttpClientInterface $client,
-        ?RetryStrategyInterface $strategy = null,
+        private ?RetryStrategyInterface $strategy = new GenericRetryStrategy(),
         private int $maxRetries = 3,
         private ?LoggerInterface $logger = null,
     ) {
         $this->client = $client;
-        $this->strategy = $strategy ?? new GenericRetryStrategy();
     }
 
     public function withOptions(array $options): static
@@ -170,7 +169,7 @@ class RetryableHttpClient implements HttpClientInterface, ResetInterface
                 return (int) ($after * 1000);
             }
 
-            if (false !== $time = strtotime($after)) {
+            if (false !== $time = strtotime((string) $after)) {
                 return max(0, $time - time()) * 1000;
             }
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ class LazyChoiceList implements ChoiceListInterface
      *
      * If null, choices are cast to strings.
      */
-    private ?\Closure $value;
+    private readonly ?\Closure $value;
 
     /**
      * Creates a lazily-loaded list using the given loader.
@@ -45,7 +47,7 @@ class LazyChoiceList implements ChoiceListInterface
      *                             If null, choices are cast to strings.
      */
     public function __construct(
-        private ChoiceLoaderInterface $loader,
+        private readonly ChoiceLoaderInterface $loader,
         ?callable $value = null,
     ) {
         $this->value = null === $value ? null : $value(...);

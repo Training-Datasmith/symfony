@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ use Symfony\Component\Messenger\Worker;
  *
  * @author Tobias Schultze <http://tobion.de>
  */
-final class WorkerStartedEvent
+final readonly class WorkerStartedEvent
 {
     public function __construct(
         private Worker $worker,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,8 +41,8 @@ final class DebugFirewallCommand extends Command
      */
     public function __construct(
         private array $firewallNames,
-        private ContainerInterface $contexts,
-        private ContainerInterface $eventDispatchers,
+        private readonly ContainerInterface $contexts,
+        private readonly ContainerInterface $eventDispatchers,
         private array $authenticators,
     ) {
         parent::__construct();
@@ -51,7 +53,8 @@ final class DebugFirewallCommand extends Command
         $exampleName = $this->getExampleName();
 
         $this
-            ->setHelp(<<<EOF
+            ->setHelp(
+                <<<EOF
                 The <info>%command.name%</info> command displays the firewalls that are configured
                 in your application:
 
@@ -211,7 +214,7 @@ final class DebugFirewallCommand extends Command
         $io->table(
             ['Classname'],
             array_map(
-                static fn ($authenticator) => [($authenticator instanceof TraceableAuthenticator ? $authenticator->getAuthenticator() : $authenticator)::class],
+                static fn ($authenticator): array => [($authenticator instanceof TraceableAuthenticator ? $authenticator->getAuthenticator() : $authenticator)::class],
                 $authenticators
             )
         );
@@ -255,7 +258,7 @@ final class DebugFirewallCommand extends Command
         $name = 'main';
 
         if (!\in_array($name, $this->firewallNames, true)) {
-            $name = reset($this->firewallNames);
+            return reset($this->firewallNames);
         }
 
         return $name;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -120,7 +122,7 @@ class ReStructuredTextDescriptor extends Descriptor
                 .str_repeat($this->subsectionChar, Helper::width($command->getName()))."\n\n"
                 .($command->getDescription() ? $command->getDescription()."\n\n" : '')
                 ."Usage\n".str_repeat($this->paragraphsChar, 5)."\n\n"
-                .array_reduce($command->getAliases(), static fn ($carry, $usage) => $carry.'- ``'.$usage.'``'."\n")
+                .array_reduce($command->getAliases(), static fn ($carry, $usage): string => $carry.'- ``'.$usage.'``'."\n")
             );
 
             return;
@@ -136,7 +138,7 @@ class ReStructuredTextDescriptor extends Descriptor
             .str_repeat($this->subsectionChar, Helper::width($command->getName()))."\n\n"
             .($command->getDescription() ? $command->getDescription()."\n\n" : '')
             ."Usage\n".str_repeat($this->subsubsectionChar, 5)."\n\n"
-            .array_reduce(array_merge([$command->getSynopsis()], $command->getAliases(), $command->getUsages()), static fn ($carry, $usage) => $carry.'- ``'.$usage.'``'."\n")
+            .array_reduce(array_merge([$command->getSynopsis()], $command->getAliases(), $command->getUsages()), static fn ($carry, $usage): string => $carry.'- ``'.$usage.'``'."\n")
         );
 
         if ($help = $command->getProcessedHelp()) {
@@ -173,7 +175,7 @@ class ReStructuredTextDescriptor extends Descriptor
         return $application->getName();
     }
 
-    private function describeCommands($application, array $options): void
+    private function describeCommands(\Symfony\Component\Console\Application $application, array $options): void
     {
         $title = 'Commands';
         $this->write("\n\n$title\n".str_repeat($this->chapterChar, Helper::width($title))."\n\n");
@@ -209,7 +211,7 @@ class ReStructuredTextDescriptor extends Descriptor
             $commands = $this->removeAliasesAndHiddenCommands($commands);
 
             $this->write("\n\n");
-            $this->write(implode("\n", array_map(static fn ($commandName) => \sprintf('- `%s`_', $commandName), array_keys($commands))));
+            $this->write(implode("\n", array_map(static fn (int|string $commandName): string => \sprintf('- `%s`_', $commandName), array_keys($commands))));
         }
     }
 

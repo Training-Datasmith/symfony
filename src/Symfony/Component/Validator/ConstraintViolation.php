@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,16 +41,16 @@ class ConstraintViolation implements ConstraintViolationInterface
      * @param mixed              $cause           The cause of the violation
      */
     public function __construct(
-        private string|\Stringable $message,
-        private ?string $messageTemplate,
-        private array $parameters,
-        private mixed $root,
-        private ?string $propertyPath,
-        private mixed $invalidValue,
-        private ?int $plural = null,
-        private ?string $code = null,
-        private ?Constraint $constraint = null,
-        private mixed $cause = null,
+        private readonly string|\Stringable $message,
+        private readonly ?string $messageTemplate,
+        private readonly array $parameters,
+        private readonly mixed $root,
+        private readonly ?string $propertyPath,
+        private readonly mixed $invalidValue,
+        private readonly ?int $plural = null,
+        private readonly ?string $code = null,
+        private readonly ?Constraint $constraint = null,
+        private readonly mixed $cause = null,
     ) {
     }
 

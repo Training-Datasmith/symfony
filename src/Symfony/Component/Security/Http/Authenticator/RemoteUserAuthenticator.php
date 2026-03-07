@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ final class RemoteUserAuthenticator extends AbstractPreAuthenticatedAuthenticato
         UserProviderInterface $userProvider,
         TokenStorageInterface $tokenStorage,
         string $firewallName,
-        private string $userKey = 'REMOTE_USER',
+        private readonly string $userKey = 'REMOTE_USER',
         ?LoggerInterface $logger = null,
     ) {
         parent::__construct($userProvider, $tokenStorage, $firewallName, $logger);

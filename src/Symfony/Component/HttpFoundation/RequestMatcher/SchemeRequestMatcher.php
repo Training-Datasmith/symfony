@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ class SchemeRequestMatcher implements RequestMatcherInterface
     /**
      * @var string[]
      */
-    private array $schemes;
+    private readonly array $schemes;
 
     /**
      * @param string[]|string $schemes A scheme or a list of schemes
@@ -32,7 +34,7 @@ class SchemeRequestMatcher implements RequestMatcherInterface
      */
     public function __construct(array|string $schemes)
     {
-        $this->schemes = array_reduce(array_map('strtolower', (array) $schemes), static fn (array $schemes, string $scheme) => array_merge($schemes, preg_split('/\s*,\s*/', $scheme)), []);
+        $this->schemes = array_reduce(array_map(strtolower(...), (array) $schemes), static fn (array $schemes, string $scheme): array => array_merge($schemes, preg_split('/\s*,\s*/', $scheme)), []);
     }
 
     public function matches(Request $request): bool

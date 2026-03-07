@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,12 +20,10 @@ namespace Symfony\Component\Form\ChoiceList\Loader;
  */
 class FilterChoiceLoaderDecorator extends AbstractChoiceLoader
 {
-    private ChoiceLoaderInterface $decoratedLoader;
-    private \Closure $filter;
+    private readonly \Closure $filter;
 
-    public function __construct(ChoiceLoaderInterface $loader, callable $filter)
+    public function __construct(private readonly ChoiceLoaderInterface $decoratedLoader, callable $filter)
     {
-        $this->decoratedLoader = $loader;
         $this->filter = $filter(...);
     }
 

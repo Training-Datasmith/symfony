@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ class YunpianTransport extends AbstractTransport
     protected const HOST = 'sms.yunpian.com';
 
     public function __construct(
-        #[\SensitiveParameter] private string $apiKey,
+        #[\SensitiveParameter] private readonly string $apiKey,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -50,11 +52,11 @@ class YunpianTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         if ('' !== $message->getFrom()) {
-            throw new InvalidArgumentException(\sprintf('The "%s" transport does not support "from" in "%s".', __CLASS__, SmsMessage::class));
+            throw new InvalidArgumentException(\sprintf('The "%s" transport does not support "from" in "%s".', self::class, SmsMessage::class));
         }
 
         $endpoint = \sprintf('https://%s/v2/sms/single_send.json', self::HOST);

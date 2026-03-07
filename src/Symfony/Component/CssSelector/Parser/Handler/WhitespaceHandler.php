@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,7 +38,7 @@ class WhitespaceHandler implements HandlerInterface
         }
 
         $stream->push(new Token(Token::TYPE_WHITESPACE, $match[0], $reader->getPosition()));
-        $reader->moveForward(\strlen($match[0]));
+        $reader->moveForward(\strlen((string) $match[0]));
 
         return true;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,7 @@ use Symfony\Component\CssSelector\Parser\TokenStream;
 class NumberHandler implements HandlerInterface
 {
     public function __construct(
-        private TokenizerPatterns $patterns,
+        private readonly TokenizerPatterns $patterns,
     ) {
     }
 
@@ -42,7 +44,7 @@ class NumberHandler implements HandlerInterface
         }
 
         $stream->push(new Token(Token::TYPE_NUMBER, $match[0], $reader->getPosition()));
-        $reader->moveForward(\strlen($match[0]));
+        $reader->moveForward(\strlen((string) $match[0]));
 
         return true;
     }

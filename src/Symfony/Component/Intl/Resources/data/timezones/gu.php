@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Africa/Abidjan' => 'ગ્રીનવિચ મધ્યમ સમય (આબિદ્જાન)',

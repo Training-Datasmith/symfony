@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'phuza: umntu omdala, umntu omdala, ithoni yesikhumba esikhanyayo, ithoni yesikhumba esikhanyayo phakathi',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'phuza: umntu omdala, umntu omdala, ithoni yesikhumba esikhanyayo, ithoni yesikhumba esiphakathi',

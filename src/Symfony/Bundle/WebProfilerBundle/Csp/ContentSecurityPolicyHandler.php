@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ class ContentSecurityPolicyHandler
     private bool $cspDisabled = false;
 
     public function __construct(
-        private NonceGenerator $nonceGenerator,
+        private readonly NonceGenerator $nonceGenerator,
     ) {
     }
 
@@ -179,7 +181,7 @@ class ContentSecurityPolicyHandler
      */
     private function generateCspHeader(array $directives): string
     {
-        return array_reduce(array_keys($directives), static fn ($res, $name) => ('' !== $res ? $res.'; ' : '').\sprintf('%s %s', $name, implode(' ', $directives[$name])), '');
+        return array_reduce(array_keys($directives), static fn ($res, string $name): string => ('' !== $res ? $res.'; ' : '').\sprintf('%s %s', $name, implode(' ', $directives[$name])), '');
     }
 
     /**
@@ -218,13 +220,13 @@ class ContentSecurityPolicyHandler
     private function hasHashOrNonce(array $directives): bool
     {
         foreach ($directives as $directive) {
-            if (!str_ends_with($directive, '\'')) {
+            if (!str_ends_with((string) $directive, '\'')) {
                 continue;
             }
-            if (str_starts_with($directive, '\'nonce-')) {
+            if (str_starts_with((string) $directive, '\'nonce-')) {
                 return true;
             }
-            if (\in_array(substr($directive, 0, 8), ['\'sha256-', '\'sha384-', '\'sha512-'], true)) {
+            if (\in_array(substr((string) $directive, 0, 8), ['\'sha256-', '\'sha384-', '\'sha512-'], true)) {
                 return true;
             }
         }

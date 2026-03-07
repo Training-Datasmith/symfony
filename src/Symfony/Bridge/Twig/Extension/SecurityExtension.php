@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,8 +31,8 @@ use Twig\TwigFunction;
 final class SecurityExtension extends AbstractExtension
 {
     public function __construct(
-        private ?AuthorizationCheckerInterface $securityChecker = null,
-        private ?ImpersonateUrlGenerator $impersonateUrlGenerator = null,
+        private readonly ?AuthorizationCheckerInterface $securityChecker = null,
+        private readonly ?ImpersonateUrlGenerator $impersonateUrlGenerator = null,
     ) {
     }
 

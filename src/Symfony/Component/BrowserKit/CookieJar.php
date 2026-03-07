@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,14 +43,14 @@ class CookieJar
 
         foreach ($this->cookieJar as $cookieDomain => $pathCookies) {
             if ($cookieDomain && $domain) {
-                $cookieDomain = '.'.ltrim($cookieDomain, '.');
+                $cookieDomain = '.'.ltrim((string) $cookieDomain, '.');
                 if (!str_ends_with('.'.$domain, $cookieDomain)) {
                     continue;
                 }
             }
 
             foreach ($pathCookies as $cookiePath => $namedCookies) {
-                if (!str_starts_with($path, $cookiePath)) {
+                if (!str_starts_with($path, (string) $cookiePath)) {
                     continue;
                 }
                 if (isset($namedCookies[$name])) {
@@ -168,14 +170,14 @@ class CookieJar
         $cookies = [];
         foreach ($this->cookieJar as $domain => $pathCookies) {
             if ($domain) {
-                $domain = '.'.ltrim($domain, '.');
+                $domain = '.'.ltrim((string) $domain, '.');
                 if (!str_ends_with('.'.$parts['host'], $domain)) {
                     continue;
                 }
             }
 
             foreach ($pathCookies as $path => $namedCookies) {
-                if (!str_starts_with($parts['path'], $path)) {
+                if (!str_starts_with((string) $parts['path'], (string) $path)) {
                     continue;
                 }
 

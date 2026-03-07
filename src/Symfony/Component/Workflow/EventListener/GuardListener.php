@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,12 +28,12 @@ class GuardListener
 {
     public function __construct(
         private array $configuration,
-        private ExpressionLanguage $expressionLanguage,
-        private TokenStorageInterface $tokenStorage,
-        private AuthorizationCheckerInterface $authorizationChecker,
-        private AuthenticationTrustResolverInterface $trustResolver,
-        private ?RoleHierarchyInterface $roleHierarchy = null,
-        private ?ValidatorInterface $validator = null,
+        private readonly ExpressionLanguage $expressionLanguage,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly AuthenticationTrustResolverInterface $trustResolver,
+        private readonly ?RoleHierarchyInterface $roleHierarchy = null,
+        private readonly ?ValidatorInterface $validator = null,
     ) {
     }
 

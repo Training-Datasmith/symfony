@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'soen: volwassene, volwassene, ligte velkleur, medium-ligte velkleur',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'soen: volwassene, volwassene, ligte velkleur, medium velkleur',

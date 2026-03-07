@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ use Symfony\Component\Validator\Constraints\GroupSequence;
 /**
  * @author Maxime Steinhausser <maxime.steinhausser@gmail.com>
  */
-final class ValidationStamp implements StampInterface
+final readonly class ValidationStamp implements StampInterface
 {
     /**
      * @param string[]|GroupSequence $groups

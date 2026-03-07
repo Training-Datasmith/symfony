@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,7 +40,7 @@ class RingBuffer implements \ArrayAccess
     private int $cursor = 0;
 
     public function __construct(
-        private int $size,
+        private readonly int $size,
     ) {
     }
 

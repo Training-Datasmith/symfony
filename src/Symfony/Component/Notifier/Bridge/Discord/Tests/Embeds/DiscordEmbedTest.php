@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,8 @@ final class DiscordEmbedTest extends TestCase
         $embed = (new DiscordEmbed())
             ->title('foo')
             ->description('bar')
-            ->addField((new DiscordFieldEmbedObject())
+            ->addField(
+                (new DiscordFieldEmbedObject())
                 ->name('baz')
                 ->value('qux')
             );

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,20 +30,14 @@ final class InputFile extends \SplFileInfo
     private static array $tempFiles = [];
     private static bool $shutdownRegistered = false;
 
-    private ?string $mimeType = null;
-    private bool $isTempFile;
-
     public function __construct(
         string $path,
-        bool $isTempFile = false,
-        ?string $mimeType = null,
+        private readonly bool $isTempFile = false,
+        private ?string $mimeType = null,
     ) {
         parent::__construct($path);
 
-        $this->isTempFile = $isTempFile;
-        $this->mimeType = $mimeType;
-
-        if ($isTempFile) {
+        if ($this->isTempFile) {
             if (!self::$shutdownRegistered) {
                 register_shutdown_function(self::cleanupAll(...));
                 self::$shutdownRegistered = true;
@@ -100,7 +96,7 @@ final class InputFile extends \SplFileInfo
 
         // Remove backslash escapes (e.g., "\ " for escaped spaces) on non-Windows systems
         if ('\\' !== \DIRECTORY_SEPARATOR) {
-            $path = preg_replace('/\\\\(.)/', '$1', $path) ?? $path;
+            return preg_replace('/\\\\(.)/', '$1', $path) ?? $path;
         }
 
         return $path;

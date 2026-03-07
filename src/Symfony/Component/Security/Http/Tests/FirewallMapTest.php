@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,7 +35,8 @@ class FirewallMapTest extends TestCase
             ->willReturn(false)
         ;
 
-        $map->add($notMatchingMatcher, [static function () {}]);
+        $map->add($notMatchingMatcher, [static function () {
+        }]);
 
         $matchingMatcher = $this->createMock(RequestMatcherInterface::class);
         $matchingMatcher
@@ -42,7 +45,8 @@ class FirewallMapTest extends TestCase
             ->with($this->equalTo($request))
             ->willReturn(true)
         ;
-        $theListener = static function () {};
+        $theListener = static function () {
+        };
         $theException = $this->createStub(ExceptionListener::class);
 
         $map->add($matchingMatcher, [$theListener], $theException);
@@ -53,7 +57,8 @@ class FirewallMapTest extends TestCase
             ->method('matches')
         ;
 
-        $map->add($tooLateMatcher, [static function () {}]);
+        $map->add($tooLateMatcher, [static function () {
+        }]);
 
         [$listeners, $exception] = $map->getListeners($request);
 
@@ -75,9 +80,11 @@ class FirewallMapTest extends TestCase
             ->willReturn(false)
         ;
 
-        $map->add($notMatchingMatcher, [static function () {}]);
+        $map->add($notMatchingMatcher, [static function () {
+        }]);
 
-        $theListener = static function () {};
+        $theListener = static function () {
+        };
         $theException = $this->createStub(ExceptionListener::class);
 
         $map->add(null, [$theListener], $theException);
@@ -88,7 +95,8 @@ class FirewallMapTest extends TestCase
             ->method('matches')
         ;
 
-        $map->add($tooLateMatcher, [static function () {}]);
+        $map->add($tooLateMatcher, [static function () {
+        }]);
 
         [$listeners, $exception] = $map->getListeners($request);
 
@@ -110,7 +118,8 @@ class FirewallMapTest extends TestCase
             ->willReturn(false)
         ;
 
-        $map->add($notMatchingMatcher, [static function () {}]);
+        $map->add($notMatchingMatcher, [static function () {
+        }]);
 
         [$listeners, $exception] = $map->getListeners($request);
 

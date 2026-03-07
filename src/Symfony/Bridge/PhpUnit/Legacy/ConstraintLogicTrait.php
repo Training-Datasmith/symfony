@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ namespace Symfony\Bridge\PhpUnit\Legacy;
  */
 trait ConstraintLogicTrait
 {
-    private function doEvaluate($other, $description, $returnResult)
+    private function doEvaluate($other, $description, $returnResult): ?bool
     {
         $success = false;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ use Symfony\Component\RateLimiter\RateLimit;
 class RateLimitExceededException extends \RuntimeException
 {
     public function __construct(
-        private RateLimit $rateLimit,
+        private readonly RateLimit $rateLimit,
         int $code = 0,
         ?\Throwable $previous = null,
     ) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,8 +31,8 @@ class BooleanToStringTransformer implements DataTransformerInterface
      * @param string $trueValue The value emitted upon transform if the input is true
      */
     public function __construct(
-        private string $trueValue,
-        private array $falseValues = [null],
+        private readonly string $trueValue,
+        private readonly array $falseValues = [null],
     ) {
         if (\in_array($this->trueValue, $this->falseValues, true)) {
             throw new InvalidArgumentException('The specified "true" value is contained in the false-values.');

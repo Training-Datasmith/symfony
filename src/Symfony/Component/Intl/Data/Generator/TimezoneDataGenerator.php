@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -144,10 +146,12 @@ class TimezoneDataGenerator extends AbstractDataGenerator
         $typeBundle = $reader->read($tempDir, 'timezoneTypes');
         $available = [];
         foreach ($typeBundle['typeMap']['timezone'] as $zone => $_) {
-            if ('Etc:Unknown' === $zone || preg_match('~^Etc:GMT[-+]\d+$~', $zone)) {
+            if ('Etc:Unknown' === $zone) {
                 continue;
             }
-
+            if (preg_match('~^Etc:GMT[-+]\d+$~', (string) $zone)) {
+                continue;
+            }
             $available[$zone] = true;
         }
 
@@ -207,8 +211,8 @@ class TimezoneDataGenerator extends AbstractDataGenerator
 
             // Infer a default English named city for all locales
             // Ensures each timezone ID has a distinctive name
-            if (null === $city && 0 !== strrpos($zone, 'Etc:') && false !== $i = strrpos($zone, ':')) {
-                $city = str_replace('_', ' ', substr($zone, $i + 1));
+            if (null === $city && 0 !== strrpos((string) $zone, 'Etc:') && false !== $i = strrpos((string) $zone, ':')) {
+                $city = str_replace('_', ' ', substr((string) $zone, $i + 1));
             }
             if (null === $name) {
                 $name = $resolveName($id, $city);

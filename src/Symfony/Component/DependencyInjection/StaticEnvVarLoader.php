@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -15,7 +17,7 @@ class StaticEnvVarLoader implements EnvVarLoaderInterface
 {
     private array $envVars;
 
-    public function __construct(private EnvVarLoaderInterface $envVarLoader)
+    public function __construct(private readonly EnvVarLoaderInterface $envVarLoader)
     {
     }
 

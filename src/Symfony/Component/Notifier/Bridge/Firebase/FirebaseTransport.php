@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ final class FirebaseTransport extends AbstractTransport
     protected const HOST = 'fcm.googleapis.com/fcm/send';
 
     public function __construct(
-        #[\SensitiveParameter] private string $token,
+        #[\SensitiveParameter] private readonly string $token,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -50,7 +52,7 @@ final class FirebaseTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof ChatMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, ChatMessage::class, $message);
         }
 
         $endpoint = \sprintf('https://%s', $this->getEndpoint());
@@ -58,7 +60,7 @@ final class FirebaseTransport extends AbstractTransport
         $options['to'] = $message->getRecipientId();
 
         if (!$options['to']) {
-            throw new InvalidArgumentException(\sprintf('The "%s" transport required the "to" option to be set.', __CLASS__));
+            throw new InvalidArgumentException(\sprintf('The "%s" transport required the "to" option to be set.', self::class));
         }
         $options['notification']['body'] = $message->getSubject();
         $options['data'] ??= [];

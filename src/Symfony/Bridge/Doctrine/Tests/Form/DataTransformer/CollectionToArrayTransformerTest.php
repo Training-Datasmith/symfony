@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -74,7 +76,7 @@ class CollectionToArrayTransformerTest extends TestCase
             3 => 'bar',
         ];
 
-        $collection = new class($array) implements ReadableCollection {
+        $collection = new class ($array) implements ReadableCollection {
             public function __construct(private readonly array $array)
             {
             }

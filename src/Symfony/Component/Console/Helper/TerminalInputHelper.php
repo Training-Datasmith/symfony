@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,27 +36,22 @@ namespace Symfony\Component\Console\Helper;
  */
 final class TerminalInputHelper
 {
-    /** @var resource */
-    private $inputStream;
-    private bool $isStdin;
+    private readonly bool $isStdin;
     private string $initialState = '';
     private int $signalToKill = 0;
     private array $signalHandlers = [];
     private array $targetSignals = [];
-    private bool $withStty;
 
     /**
      * @param resource $inputStream
      *
      * @throws \RuntimeException If unable to read terminal settings
      */
-    public function __construct($inputStream, bool $withStty = true)
+    public function __construct(private $inputStream, private readonly bool $withStty = true)
     {
-        $this->inputStream = $inputStream;
-        $this->isStdin = 'php://stdin' === stream_get_meta_data($inputStream)['uri'];
-        $this->withStty = $withStty;
+        $this->isStdin = 'php://stdin' === stream_get_meta_data($this->inputStream)['uri'];
 
-        if ($withStty) {
+        if ($this->withStty) {
             if (!\is_string($state = shell_exec('stty -g'))) {
                 throw new \RuntimeException('Unable to read the terminal settings.');
             }
@@ -118,7 +115,7 @@ final class TerminalInputHelper
         foreach ($this->targetSignals as $signal) {
             $this->signalHandlers[$signal] = pcntl_signal_get_handler($signal);
 
-            pcntl_signal($signal, function ($signal) {
+            pcntl_signal($signal, function ($signal): void {
                 // Save current state, then restore to initial state
                 $currentState = shell_exec('stty -g');
                 shell_exec('stty '.$this->initialState);

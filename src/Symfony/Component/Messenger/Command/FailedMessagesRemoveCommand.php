@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,7 +40,8 @@ class FailedMessagesRemoveCommand extends AbstractFailedMessagesCommand
                 new InputOption('show-messages', null, InputOption::VALUE_NONE, 'Display messages before removing it (if multiple ids are given)'),
                 new InputOption('class-filter', null, InputOption::VALUE_REQUIRED, 'Filter by a specific class name'),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> removes given messages that are pending in the failure transport.
 
                     <info>php %command.full_name% {id1} [{id2} ...]</info>
@@ -87,10 +90,11 @@ class FailedMessagesRemoveCommand extends AbstractFailedMessagesCommand
                 return 0;
             }
         }
-
         if (!$shouldDeleteAllMessages && !$idsCount) {
             throw new RuntimeException('Please specify at least one message id. If you want to remove all failed messages, use the "--all" option.');
-        } elseif ($shouldDeleteAllMessages && $idsCount) {
+        }
+
+        if ($shouldDeleteAllMessages && $idsCount) {
             throw new RuntimeException('You cannot specify message ids when using the "--all" option.');
         }
 

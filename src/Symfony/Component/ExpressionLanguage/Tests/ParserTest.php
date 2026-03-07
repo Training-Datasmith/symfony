@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -113,7 +115,8 @@ class ParserTest extends TestCase
                 '3 - 3',
             ],
             [
-                new Node\BinaryNode('*',
+                new Node\BinaryNode(
+                    '*',
                     new Node\BinaryNode('-', new Node\ConstantNode(3), new Node\ConstantNode(3)),
                     new Node\ConstantNode(2)
                 ),
@@ -206,9 +209,15 @@ class ParserTest extends TestCase
                     self::createGetAttrNode(
                         self::createGetAttrNode(
                             self::createGetAttrNode(new Node\NameNode('foo'), 'bar', Node\GetAttrNode::METHOD_CALL),
-                            'foo', Node\GetAttrNode::METHOD_CALL),
-                        'baz', Node\GetAttrNode::PROPERTY_CALL),
-                    '3', Node\GetAttrNode::ARRAY_CALL),
+                            'foo',
+                            Node\GetAttrNode::METHOD_CALL
+                        ),
+                        'baz',
+                        Node\GetAttrNode::PROPERTY_CALL
+                    ),
+                    '3',
+                    Node\GetAttrNode::ARRAY_CALL
+                ),
                 'foo.bar().foo().baz[3]',
                 ['foo'],
             ],

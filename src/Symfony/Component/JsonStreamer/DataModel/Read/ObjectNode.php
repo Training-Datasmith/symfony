@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ use Symfony\Component\TypeInfo\Type\UnionType;
  *
  * @internal
  */
-final class ObjectNode implements DataModelNodeInterface
+final readonly class ObjectNode implements DataModelNodeInterface
 {
     /**
      * @param array<string, array{name: string, value: DataModelNodeInterface, accessor: callable(string): string}> $properties

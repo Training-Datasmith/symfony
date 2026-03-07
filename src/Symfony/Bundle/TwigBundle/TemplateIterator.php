@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,10 +35,10 @@ class TemplateIterator implements \IteratorAggregate
      * @param string[]    $namePatterns Pattern of file names
      */
     public function __construct(
-        private KernelInterface $kernel,
-        private array $paths = [],
-        private ?string $defaultPath = null,
-        private array $namePatterns = [],
+        private readonly KernelInterface $kernel,
+        private readonly array $paths = [],
+        private readonly ?string $defaultPath = null,
+        private readonly array $namePatterns = [],
     ) {
     }
 

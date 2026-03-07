@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ final class AuthorShare extends AbstractLinkedInShare
 {
     public const PERSON = 'person';
 
-    private string $author;
+    private readonly string $author;
 
     public function __construct(string $value, string $organisation = self::PERSON)
     {

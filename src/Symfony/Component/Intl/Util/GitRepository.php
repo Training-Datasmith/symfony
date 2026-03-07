@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,7 +19,7 @@ use Symfony\Component\Intl\Exception\RuntimeException;
 /**
  * @internal
  */
-final class GitRepository
+final readonly class GitRepository
 {
     public function __construct(
         private string $path,

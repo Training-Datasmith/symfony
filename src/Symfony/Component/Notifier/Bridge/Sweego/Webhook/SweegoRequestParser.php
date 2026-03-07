@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,7 +39,7 @@ final class SweegoRequestParser extends AbstractRequestParser
         ]);
     }
 
-    protected function doParse(Request $request, #[\SensitiveParameter] string $secret): ?SmsEvent
+    protected function doParse(Request $request, #[\SensitiveParameter] string $secret): \Symfony\Component\RemoteEvent\Event\Sms\SmsEvent
     {
         $payload = $request->toArray();
 

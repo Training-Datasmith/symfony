@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -231,7 +233,7 @@ class XliffFileLoader implements LoaderInterface
         if (isset($unit->notes)) {
             $metadata['notes'] = [];
             foreach ($unit->notes->note as $noteNode) {
-                $note = array_map('strval', $noteNode->attributes() ?? []);
+                $note = array_map(strval(...), $noteNode->attributes() ?? []);
 
                 $note['content'] = (string) $noteNode;
                 $metadata['notes'][] = $note;
@@ -296,7 +298,7 @@ class XliffFileLoader implements LoaderInterface
 
         $grouped = [];
         foreach ($cases as $caseKey => $text) {
-            $caseParts = explode(' ', $caseKey, 2);
+            $caseParts = explode(' ', (string) $caseKey, 2);
             $grouped[$caseParts[0]][$caseParts[1] ?? 'other'] = $text;
         }
 

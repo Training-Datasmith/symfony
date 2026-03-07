@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,13 +25,13 @@ use Symfony\Component\Form\FormEvents;
 class FormTypePasswordHasherExtension extends AbstractTypeExtension
 {
     public function __construct(
-        private PasswordHasherListener $passwordHasherListener,
+        private readonly PasswordHasherListener $passwordHasherListener,
     ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this->passwordHasherListener, 'hashPasswords']);
+        $builder->addEventListener(FormEvents::POST_SUBMIT, $this->passwordHasherListener->hashPasswords(...));
     }
 
     public static function getExtendedTypes(): iterable

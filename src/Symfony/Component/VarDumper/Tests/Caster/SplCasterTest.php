@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -167,7 +169,7 @@ class SplCasterTest extends TestCase
     {
         $var = new
             #[\AllowDynamicProperties]
-            class([123]) extends \ArrayObject {};
+            class ([123]) extends \ArrayObject {};
         $var->foo = 234;
 
         $expected = <<<EOTXT

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -190,7 +192,7 @@ class Store implements StoreInterface
             if ($this->getPath($digest) !== $response->headers->get('X-Body-File')) {
                 throw new \RuntimeException('X-Body-File and X-Content-Digest do not match.');
             }
-        // Everything seems ok, omit writing content to disk
+            // Everything seems ok, omit writing content to disk
         } else {
             $digest = $this->generateContentDigest($response);
             $response->headers->set('X-Content-Digest', $digest);
@@ -217,7 +219,7 @@ class Store implements StoreInterface
         unset($headers['age']);
 
         foreach ($this->options['private_headers'] as $h) {
-            unset($headers[strtolower($h)]);
+            unset($headers[strtolower((string) $h)]);
         }
 
         array_unshift($entries, [$storedEnv, $headers]);
@@ -278,7 +280,7 @@ class Store implements StoreInterface
             return true;
         }
 
-        foreach (preg_split('/[\s,]+/', $vary) as $header) {
+        foreach (preg_split('/[\s,]+/', (string) $vary) as $header) {
             $key = str_replace('_', '-', strtolower($header));
             $v1 = $env1[$key] ?? null;
             $v2 = $env2[$key] ?? null;
@@ -439,11 +441,7 @@ class Store implements StoreInterface
      */
     private function getCacheKey(Request $request): string
     {
-        if (isset($this->keyCache[$request])) {
-            return $this->keyCache[$request];
-        }
-
-        return $this->keyCache[$request] = $this->generateCacheKey($request);
+        return $this->keyCache[$request] ?? $this->keyCache[$request] = $this->generateCacheKey($request);
     }
 
     /**

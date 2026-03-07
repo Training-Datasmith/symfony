@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -139,7 +141,7 @@ class Form implements \IteratorAggregate, FormInterface, ClearableErrorsInterfac
      * @throws LogicException if a data mapper is not provided for a compound form
      */
     public function __construct(
-        private FormConfigInterface $config,
+        private readonly FormConfigInterface $config,
     ) {
         // Compound forms always need a data mapper, otherwise calls to
         // `setData` and `add` will not lead to the correct population of

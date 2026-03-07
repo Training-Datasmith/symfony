@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -71,7 +73,11 @@ trait IgnoredAttributesTestTrait
                 'foo' => 'foo',
                 'bar' => 'bar',
                 'inner' => ['foo' => 'innerFoo', 'bar' => 'innerBar'],
-            ], ObjectOuter::class, null, $context));
+            ],
+            ObjectOuter::class,
+            null,
+            $context
+        ));
     }
 
     public function testIgnoredAttributesContextDenormalizeInherit()
@@ -91,6 +97,10 @@ trait IgnoredAttributesTestTrait
                 'foo' => 'foo',
                 'bar' => 'bar',
                 'inner' => ['foo' => 'innerFoo', 'bar' => 'innerBar'],
-            ], ObjectOuter::class, null, $context));
+            ],
+            ObjectOuter::class,
+            null,
+            $context
+        ));
     }
 }

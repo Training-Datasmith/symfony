@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Twig\Node\Node;
 final class DumpNode extends Node
 {
     public function __construct(
-        private LocalVariable|string $varPrefix,
+        private readonly LocalVariable|string $varPrefix,
         ?Node $values,
         int $lineno,
     ) {

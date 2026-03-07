@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -198,7 +200,7 @@ class DoctrineDbalStore implements PersistingStoreInterface
     public function createTable(): void
     {
         $schema = new Schema();
-        $this->configureSchema($schema, static fn () => true);
+        $this->configureSchema($schema, static fn (): true => true);
 
         foreach ($schema->toSql($this->conn->getDatabasePlatform()) as $sql) {
             $this->conn->executeStatement($sql);

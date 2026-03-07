@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,8 +25,8 @@ class ConsoleSectionOutput extends StreamOutput
 {
     private array $content = [];
     private int $lines = 0;
-    private array $sections;
-    private Terminal $terminal;
+    private readonly array $sections;
+    private readonly Terminal $terminal;
     private int $maxHeight = 0;
 
     /**
@@ -128,7 +130,7 @@ class ConsoleSectionOutput extends StreamOutput
             // needs to be continued (i.e. does not end with a line break).
             if (0 === $i
                 && (false !== $lastLine = end($this->content))
-                && !str_ends_with($lastLine, \PHP_EOL)
+                && !str_ends_with((string) $lastLine, \PHP_EOL)
             ) {
                 // deduct the line count of the previous line
                 $this->lines -= (int) ceil($this->getDisplayLength($lastLine) / $width) ?: 1;
@@ -174,7 +176,7 @@ class ConsoleSectionOutput extends StreamOutput
 
         // Check if the previous line (last entry of `$this->content`) needs to be continued
         // (i.e. does not end with a line break). In which case, it needs to be erased first.
-        $linesToClear = $deleteLastLine = ($lastLine = end($this->content) ?: '') && !str_ends_with($lastLine, \PHP_EOL) ? 1 : 0;
+        $linesToClear = $deleteLastLine = ($lastLine = end($this->content) ?: '') && !str_ends_with((string) $lastLine, \PHP_EOL) ? 1 : 0;
 
         $linesAdded = $this->addContent($message, $newline);
 
@@ -213,7 +215,7 @@ class ConsoleSectionOutput extends StreamOutput
 
             $numberOfLinesToClear += $section->maxHeight ? min($section->lines, $section->maxHeight) : $section->lines;
             if ('' !== $sectionContent = $section->getVisibleContent()) {
-                if (!str_ends_with($sectionContent, \PHP_EOL)) {
+                if (!str_ends_with((string) $sectionContent, \PHP_EOL)) {
                     $sectionContent .= \PHP_EOL;
                 }
                 $erasedContent[] = $sectionContent;

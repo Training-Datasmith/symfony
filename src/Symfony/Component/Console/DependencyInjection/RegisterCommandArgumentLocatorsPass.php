@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -134,9 +136,11 @@ final class RegisterCommandArgumentLocatorsPass implements CompilerPassInterface
                     } elseif (!$p->allowsNull()) {
                         $invalidBehavior = ContainerInterface::RUNTIME_EXCEPTION_ON_INVALID_REFERENCE;
                     }
-
                     // Skip console-specific types that are resolved by other resolvers
-                    if (InputInterface::class === $type || OutputInterface::class === $type) {
+                    if (InputInterface::class === $type) {
+                        continue;
+                    }
+                    if (OutputInterface::class === $type) {
                         continue;
                     }
 
@@ -172,7 +176,7 @@ final class RegisterCommandArgumentLocatorsPass implements CompilerPassInterface
                         $arguments[$p->name] = new Reference($erroredId, ContainerInterface::RUNTIME_EXCEPTION_ON_INVALID_REFERENCE);
                         ++$erroredIds;
                     } else {
-                        $target = preg_replace('/(^|[(|&])\\\\/', '\1', $target);
+                        $target = preg_replace('/(^|[(|&])\\\\/', '\1', (string) $target);
                         $arguments[$p->name] = $type ? new TypedReference($target, $type, $invalidBehavior, Target::parseName($p)) : new Reference($target, $invalidBehavior);
                     }
                 }

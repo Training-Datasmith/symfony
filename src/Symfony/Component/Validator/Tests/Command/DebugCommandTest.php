@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,8 @@ class DebugCommandTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute(['class' => DummyClassOne::class], ['decorated' => false]);
 
-        $this->assertSame(<<<TXT
+        $this->assertSame(
+            <<<TXT
 
             Symfony\Component\Validator\Tests\Dummy\DummyClassOne
             -----------------------------------------------------
@@ -86,7 +89,8 @@ class DebugCommandTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute(['class' => __DIR__.'/../Dummy'], ['decorated' => false]);
 
-        $this->assertSame(<<<TXT
+        $this->assertSame(
+            <<<TXT
 
             Symfony\Component\Validator\Tests\Dummy\DummyClassOne
             -----------------------------------------------------
@@ -184,7 +188,8 @@ class DebugCommandTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute(['class' => 'App\\NotFoundResource'], ['decorated' => false]);
 
-        $this->assertStringContainsString(<<<TXT
+        $this->assertStringContainsString(
+            <<<TXT
             Neither class nor path were found with "App\NotFoundResource" argument.
             TXT,
             $tester->getDisplay(true)

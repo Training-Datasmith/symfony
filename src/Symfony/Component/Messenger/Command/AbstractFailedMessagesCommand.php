@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -47,7 +49,7 @@ abstract class AbstractFailedMessagesCommand extends Command
     protected const DEFAULT_TRANSPORT_OPTION = 'choose';
 
     public function __construct(
-        private ?string $globalFailureReceiverName,
+        private readonly ?string $globalFailureReceiverName,
         /**
          * @var ServiceProviderInterface<ReceiverInterface>
          */

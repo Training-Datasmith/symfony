@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,7 +46,7 @@ class LazyStringTest extends TestCase
     {
         $count = 0;
         $s = LazyString::fromCallable([static function () use (&$count) {
-            return new class($count) {
+            return new class ($count) {
                 private int $count;
 
                 public function __construct(int &$count)

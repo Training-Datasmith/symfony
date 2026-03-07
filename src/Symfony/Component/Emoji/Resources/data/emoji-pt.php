@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'beijo: pessoa, pessoa, pele clara e pele morena clara',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'beijo: pessoa, pessoa, pele clara e pele morena',

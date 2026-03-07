@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -76,15 +78,14 @@ class ReflectionExtractor implements PropertyListExtractorInterface, PropertyTyp
         'double' => TypeIdentifier::FLOAT->value,
     ];
 
-    private array $mutatorPrefixes;
-    private array $accessorPrefixes;
-    private array $arrayMutatorPrefixes;
-    private int $methodReflectionFlags;
-    private int $propertyReflectionFlags;
-    private InflectorInterface $inflector;
-    private array $arrayMutatorPrefixesFirst;
-    private array $arrayMutatorPrefixesLast;
-    private TypeResolverInterface $typeResolver;
+    private readonly array $mutatorPrefixes;
+    private readonly array $accessorPrefixes;
+    private readonly array $arrayMutatorPrefixes;
+    private readonly int $methodReflectionFlags;
+    private readonly int $propertyReflectionFlags;
+    private readonly array $arrayMutatorPrefixesFirst;
+    private readonly array $arrayMutatorPrefixesLast;
+    private readonly TypeResolverInterface $typeResolver;
 
     /**
      * @param string[]|null $mutatorPrefixes
@@ -95,17 +96,16 @@ class ReflectionExtractor implements PropertyListExtractorInterface, PropertyTyp
         ?array $mutatorPrefixes = null,
         ?array $accessorPrefixes = null,
         ?array $arrayMutatorPrefixes = null,
-        private bool $enableConstructorExtraction = true,
+        private readonly bool $enableConstructorExtraction = true,
         int $accessFlags = self::ALLOW_PUBLIC,
-        ?InflectorInterface $inflector = null,
-        private int $magicMethodsFlags = self::ALLOW_MAGIC_GET | self::ALLOW_MAGIC_SET,
+        private readonly ?InflectorInterface $inflector = new EnglishInflector(),
+        private readonly int $magicMethodsFlags = self::ALLOW_MAGIC_GET | self::ALLOW_MAGIC_SET,
     ) {
         $this->mutatorPrefixes = $mutatorPrefixes ?? self::$defaultMutatorPrefixes;
         $this->accessorPrefixes = $accessorPrefixes ?? self::$defaultAccessorPrefixes;
         $this->arrayMutatorPrefixes = $arrayMutatorPrefixes ?? self::$defaultArrayMutatorPrefixes;
         $this->methodReflectionFlags = $this->getMethodsFlags($accessFlags);
         $this->propertyReflectionFlags = $this->getPropertyFlags($accessFlags);
-        $this->inflector = $inflector ?? new EnglishInflector();
 
         $typeContextFactory = new TypeContextFactory();
         $this->typeResolver = TypeResolver::create([
@@ -142,7 +142,10 @@ class ReflectionExtractor implements PropertyListExtractorInterface, PropertyTyp
             }
 
             $propertyName = $this->getPropertyName($reflectionMethod->name, $reflectionProperties);
-            if (!$propertyName || isset($properties[$propertyName])) {
+            if (!$propertyName) {
+                continue;
+            }
+            if (isset($properties[$propertyName])) {
                 continue;
             }
             if ($reflectionClass->hasProperty($lowerCasedPropertyName = lcfirst($propertyName)) || (!$reflectionClass->hasProperty($propertyName) && !preg_match('/^[A-Z]{2,}/', $propertyName))) {
@@ -163,7 +166,7 @@ class ReflectionExtractor implements PropertyListExtractorInterface, PropertyTyp
                 $type = $this->typeResolver->resolve($mutatorReflection->getParameters()[0]);
 
                 if (!$type instanceof CollectionType && \in_array($prefix, $this->arrayMutatorPrefixes, true)) {
-                    $type = $this->isNullableProperty($class, $property) ? Type::nullable(Type::list($type)) : Type::list($type);
+                    return $this->isNullableProperty($class, $property) ? Type::nullable(Type::list($type)) : Type::list($type);
                 }
 
                 return $type;
@@ -226,7 +229,7 @@ class ReflectionExtractor implements PropertyListExtractorInterface, PropertyTyp
         $type = 'array' === $typeIdentifier->value ? Type::array() : Type::builtin($typeIdentifier);
 
         if ($this->isNullableProperty($class, $property)) {
-            $type = Type::nullable($type);
+            return Type::nullable($type);
         }
 
         return $type;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -144,6 +146,7 @@ class Inline
             case false === $value:
                 return 'false';
             case \is_int($value):
+            default:
                 return $value;
             case is_numeric($value) && false === strpbrk($value, "\f\n\r\t\v"):
                 $locale = setlocale(\LC_NUMERIC, 0);
@@ -171,13 +174,13 @@ class Inline
             case '' == $value:
                 return "''";
             case self::isBinaryString($value):
-                return '!!binary '.base64_encode($value);
+                return '!!binary '.base64_encode((string) $value);
             case Escaper::requiresDoubleQuoting($value):
             case Yaml::DUMP_FORCE_DOUBLE_QUOTES_ON_VALUES & $flags:
                 return Escaper::escapeWithDoubleQuotes($value);
             case Escaper::requiresSingleQuoting($value):
                 $singleQuoted = Escaper::escapeWithSingleQuotes($value);
-                if (!str_contains($value, "'")) {
+                if (!str_contains((string) $value, "'")) {
                     return $singleQuoted;
                 }
                 // Attempt double-quoting the string instead to see if it's more efficient.
@@ -188,8 +191,6 @@ class Inline
             case Parser::preg_match(self::getHexRegex(), $value):
             case Parser::preg_match(self::getTimestampRegex(), $value):
                 return Escaper::escapeWithSingleQuotes($value);
-            default:
-                return $value;
         }
     }
 
@@ -303,8 +304,8 @@ class Inline
                 }
             } elseif (Parser::preg_match('/^(.*?)('.implode('|', $delimiters).')/', substr($scalar, $i), $match)) {
                 $output = $match[1];
-                $i += \strlen($output);
-                $output = trim($output);
+                $i += \strlen((string) $output);
+                $output = trim((string) $output);
             } else {
                 throw new ParseException(\sprintf('Malformed inline YAML string: "%s".', $scalar), self::$parsedLineNumber + 1, null, self::$parsedFilename);
             }
@@ -333,7 +334,7 @@ class Inline
             throw new ParseException(\sprintf('Malformed inline YAML string: "%s".', substr($scalar, $i)), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
         }
 
-        $output = substr($match[0], 1, -1);
+        $output = substr((string) $match[0], 1, -1);
 
         $unescaper = new Unescaper();
         if ('"' == $scalar[$i]) {
@@ -342,7 +343,7 @@ class Inline
             $output = $unescaper->unescapeSingleQuotedString($output);
         }
 
-        $i += \strlen($match[0]);
+        $i += \strlen((string) $match[0]);
 
         return $output;
     }
@@ -680,8 +681,8 @@ class Inline
 
                             $i = 0;
                             $enumName = self::parseScalar(substr($scalar, 10), 0, null, $i, false);
-                            $useName = str_contains($enumName, '::');
-                            $enum = $useName ? strstr($enumName, '::', true) : $enumName;
+                            $useName = str_contains((string) $enumName, '::');
+                            $enum = $useName ? strstr((string) $enumName, '::', true) : $enumName;
 
                             if (!enum_exists($enum)) {
                                 throw new ParseException(\sprintf('The enum "%s" is not defined.', $enum), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
@@ -689,8 +690,8 @@ class Inline
                             if (!$useName) {
                                 return $enum::cases();
                             }
-                            if ($useValue = str_ends_with($enumName, '->value')) {
-                                $enumName = substr($enumName, 0, -7);
+                            if ($useValue = str_ends_with((string) $enumName, '->value')) {
+                                $enumName = substr((string) $enumName, 0, -7);
                             }
 
                             if (!\defined($enumName)) {
@@ -831,15 +832,15 @@ class Inline
     {
         $parsedBinaryData = self::parseScalar(preg_replace('/\s/', '', $scalar));
 
-        if (0 !== (\strlen($parsedBinaryData) % 4)) {
-            throw new ParseException(\sprintf('The normalized base64 encoded data (data without whitespace characters) length must be a multiple of four (%d bytes given).', \strlen($parsedBinaryData)), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
+        if (0 !== (\strlen((string) $parsedBinaryData) % 4)) {
+            throw new ParseException(\sprintf('The normalized base64 encoded data (data without whitespace characters) length must be a multiple of four (%d bytes given).', \strlen((string) $parsedBinaryData)), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
         }
 
         if (!Parser::preg_match('#^[A-Z0-9+/]+={0,2}$#i', $parsedBinaryData)) {
             throw new ParseException(\sprintf('The base64 encoded data (%s) contains invalid characters.', $parsedBinaryData), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
         }
 
-        return base64_decode($parsedBinaryData, true);
+        return base64_decode((string) $parsedBinaryData, true);
     }
 
     private static function isBinaryString(string $value): bool

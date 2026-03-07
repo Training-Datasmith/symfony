@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,7 @@ class HttpTransportException extends TransportException
 {
     public function __construct(
         string $message,
-        private ResponseInterface $response,
+        private readonly ResponseInterface $response,
         int $code = 0,
         ?\Throwable $previous = null,
     ) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -58,7 +60,9 @@ class ConsoleHandlerTest extends TestCase
             ->willReturn($verbosity)
         ;
         $handler = new ConsoleHandler($output, true, $map);
-        $this->assertSame($isHandling, $handler->isHandling(RecordFactory::create($level)),
+        $this->assertSame(
+            $isHandling,
+            $handler->isHandling(RecordFactory::create($level)),
             '->isHandling returns correct value depending on console verbosity and log level'
         );
 
@@ -152,10 +156,12 @@ class ConsoleHandlerTest extends TestCase
             ->willReturn(OutputInterface::VERBOSITY_QUIET, OutputInterface::VERBOSITY_DEBUG)
         ;
         $handler = new ConsoleHandler($output);
-        $this->assertFalse($handler->isHandling(RecordFactory::create(Level::Notice)),
+        $this->assertFalse(
+            $handler->isHandling(RecordFactory::create(Level::Notice)),
             'when verbosity is set to quiet, the handler does not handle the log'
         );
-        $this->assertTrue($handler->isHandling(RecordFactory::create(Level::Notice)),
+        $this->assertTrue(
+            $handler->isHandling(RecordFactory::create(Level::Notice)),
             'since the verbosity of the output increased externally, the handler is now handling the log'
         );
     }
@@ -164,7 +170,8 @@ class ConsoleHandlerTest extends TestCase
     {
         $handler = new ConsoleHandler();
         $this->assertInstanceOf(
-            ConsoleFormatter::class, $handler->getFormatter(),
+            ConsoleFormatter::class,
+            $handler->getFormatter(),
             '->getFormatter returns ConsoleFormatter by default'
         );
     }

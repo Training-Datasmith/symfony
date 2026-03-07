@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -146,7 +148,7 @@ class PhraseProvider implements ProviderInterface
         }
 
         $keys = array_unique(array_merge(...$keys));
-        $names = array_map(static fn ($v): ?string => preg_replace('/([\s:,])/', '\\\\\\\\$1', $v), $keys);
+        $names = array_map(static fn (int|string $v): ?string => preg_replace('/([\s:,])/', '\\\\\\\\$1', (string) $v), $keys);
 
         foreach ($names as $name) {
             $response = $this->client->request('DELETE', 'keys', [
@@ -248,7 +250,8 @@ class PhraseProvider implements ProviderInterface
         $headers = $response->getHeaders(false);
 
         throw match (true) {
-            429 === $statusCode => new ProviderException(\sprintf('Rate limit exceeded (%s). please wait %s seconds.',
+            429 === $statusCode => new ProviderException(\sprintf(
+                'Rate limit exceeded (%s). please wait %s seconds.',
                 $headers['x-rate-limit-limit'][0],
                 $headers['x-rate-limit-reset'][0]
             ), $response),

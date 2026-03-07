@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,7 +46,7 @@ class AccessListenerTest extends TestCase
             ->willReturn([['foo' => 'bar'], null])
         ;
 
-        $token = new class extends AbstractToken {};
+        $token = new class () extends AbstractToken {};
 
         $tokenStorage = new TokenStorage();
         $tokenStorage->setToken($token);

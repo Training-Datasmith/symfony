@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -60,7 +62,8 @@ class AssetMapperCompileCommandTest extends TestCase
         $this->assertMatchesRegularExpression('/Compiled \d+ assets/', $tester->getDisplay());
 
         $this->assertFileExists($targetBuildDir.'/subdir/file5-9P3Dc3X.js');
-        $this->assertSame(<<<EOF
+        $this->assertSame(
+            <<<EOF
             import '../file4.js';
             console.log('file5.js');
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ use Symfony\Component\Mime\RawMessage;
  */
 class SendgridSmtpTransport extends EsmtpTransport
 {
-    public function __construct(#[\SensitiveParameter] string $key, ?EventDispatcherInterface $dispatcher = null, ?LoggerInterface $logger = null, private ?string $region = null)
+    public function __construct(#[\SensitiveParameter] string $key, ?EventDispatcherInterface $dispatcher = null, ?LoggerInterface $logger = null, ?string $region = null)
     {
         $host = 'smtp.sendgrid.net';
 

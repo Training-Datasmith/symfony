@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file has been auto-generated
  * by the Symfony Routing Component.
@@ -26,8 +28,8 @@ return [
     ],
     static function ($condition, $context, $request, $params) { // $checkCondition
         switch ($condition) {
-            case -1: return ($context->getMethod() == "GET");
-            case -2: return ($params["id"] < 100);
+            case -1: return ($context->getMethod() == 'GET');
+            case -2: return ($params['id'] < 100);
         }
     },
 ];

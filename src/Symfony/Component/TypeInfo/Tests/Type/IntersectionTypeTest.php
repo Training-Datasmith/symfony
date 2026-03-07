@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -84,7 +86,7 @@ class IntersectionTypeTest extends TestCase
 
         $traversableAndCountable = new \ArrayObject();
 
-        $countable = new class implements \Countable {
+        $countable = new class () implements \Countable {
             public function count(): int
             {
                 return 1;

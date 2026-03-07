@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ use Symfony\Component\Uid\Factory\UlidFactory;
 class GenerateUlidCommand extends Command
 {
     public function __construct(
-        private UlidFactory $factory = new UlidFactory(),
+        private readonly UlidFactory $factory = new UlidFactory(),
     ) {
         parent::__construct();
     }
@@ -39,7 +41,8 @@ class GenerateUlidCommand extends Command
                 new InputOption('count', 'c', InputOption::VALUE_REQUIRED, 'The number of ULID to generate', 1),
                 new InputOption('format', 'f', InputOption::VALUE_REQUIRED, \sprintf('The ULID output format ("%s")', implode('", "', $this->getAvailableFormatOptions())), 'base32'),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command generates a ULID.
 
                     <info>php %command.full_name%</info>

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,13 +32,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class FormTypeCsrfExtension extends AbstractTypeExtension
 {
     public function __construct(
-        private CsrfTokenManagerInterface $defaultTokenManager,
-        private bool $defaultEnabled = true,
-        private string $defaultFieldName = '_token',
-        private ?TranslatorInterface $translator = null,
-        private ?string $translationDomain = null,
-        private ?ServerParams $serverParams = null,
-        private array $fieldAttr = [],
+        private readonly CsrfTokenManagerInterface $defaultTokenManager,
+        private readonly bool $defaultEnabled = true,
+        private readonly string $defaultFieldName = '_token',
+        private readonly ?TranslatorInterface $translator = null,
+        private readonly ?string $translationDomain = null,
+        private readonly ?ServerParams $serverParams = null,
+        private readonly array $fieldAttr = [],
         private string|array|null $defaultTokenId = null,
     ) {
     }

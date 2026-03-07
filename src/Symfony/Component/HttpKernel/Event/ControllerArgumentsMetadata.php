@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ class ControllerArgumentsMetadata extends ControllerMetadata
 {
     public function __construct(
         ControllerEvent $controllerEvent,
-        private ControllerArgumentsEvent $controllerArgumentsEvent,
+        private readonly ControllerArgumentsEvent $controllerArgumentsEvent,
     ) {
         parent::__construct($controllerEvent);
     }

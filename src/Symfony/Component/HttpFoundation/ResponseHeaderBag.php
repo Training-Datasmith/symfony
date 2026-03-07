@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -87,7 +89,7 @@ class ResponseHeaderBag extends HeaderBag
         if (null !== $key) {
             $key = strtr($key, self::UPPER, self::LOWER);
 
-            return 'set-cookie' !== $key ? $headers[$key] ?? [] : array_map('strval', $this->getCookies());
+            return 'set-cookie' !== $key ? $headers[$key] ?? [] : array_map(strval(...), $this->getCookies());
         }
 
         foreach ($this->getCookies() as $cookie) {

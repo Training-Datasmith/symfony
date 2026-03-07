@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ use Symfony\Component\Messenger\Handler\HandlerDescriptor;
 /**
  * Marker telling that ack should not be done automatically for this message.
  */
-final class NoAutoAckStamp implements NonSendableStampInterface
+final readonly class NoAutoAckStamp implements NonSendableStampInterface
 {
     public function __construct(
         private HandlerDescriptor $handlerDescriptor,

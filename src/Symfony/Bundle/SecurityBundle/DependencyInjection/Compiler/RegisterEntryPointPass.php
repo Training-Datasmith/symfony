@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,10 +33,12 @@ class RegisterEntryPointPass implements CompilerPassInterface
 
         $firewalls = $container->getParameter('security.firewalls');
         foreach ($firewalls as $firewallName) {
-            if (!$container->hasDefinition('security.authenticator.manager.'.$firewallName) || !$container->hasParameter('security.'.$firewallName.'._indexed_authenticators')) {
+            if (!$container->hasDefinition('security.authenticator.manager.'.$firewallName)) {
                 continue;
             }
-
+            if (!$container->hasParameter('security.'.$firewallName.'._indexed_authenticators')) {
+                continue;
+            }
             $entryPoints = [];
             $indexedAuthenticators = $container->getParameter('security.'.$firewallName.'._indexed_authenticators');
             // this is a compile-only parameter, removing it cleans up space and avoids unintended usage

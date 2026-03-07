@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,8 +28,8 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
 class ExceptionPanelController
 {
     public function __construct(
-        private HtmlErrorRenderer $errorRenderer,
-        private ?Profiler $profiler = null,
+        private readonly HtmlErrorRenderer $errorRenderer,
+        private readonly ?Profiler $profiler = null,
     ) {
     }
 

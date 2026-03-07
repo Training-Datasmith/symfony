@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -63,7 +65,7 @@ abstract class Input implements InputInterface, StreamableInputInterface
         $definition = $this->definition;
         $givenArguments = $this->arguments;
 
-        $missingArguments = array_filter(array_keys($definition->getArguments()), static fn ($argument) => !\array_key_exists($argument, $givenArguments) && $definition->getArgument($argument)->isRequired());
+        $missingArguments = array_filter(array_keys($definition->getArguments()), static fn (int|string $argument): bool => !\array_key_exists($argument, $givenArguments) && $definition->getArgument($argument)->isRequired());
 
         if (\count($missingArguments) > 0) {
             throw new RuntimeException(\sprintf('Not enough arguments (missing: "%s").', implode(', ', $missingArguments)));
@@ -134,9 +136,9 @@ abstract class Input implements InputInterface, StreamableInputInterface
     {
         if ($this->definition->hasNegation($name)) {
             $this->options[$this->definition->negationToName($name)] = !$value;
-
             return;
-        } elseif (!$this->definition->hasOption($name)) {
+        }
+        if (!$this->definition->hasOption($name)) {
             throw new InvalidArgumentException(\sprintf('The "%s" option does not exist.', $name));
         }
 
@@ -145,7 +147,10 @@ abstract class Input implements InputInterface, StreamableInputInterface
 
     public function hasOption(string $name): bool
     {
-        return $this->definition->hasOption($name) || $this->definition->hasNegation($name);
+        if ($this->definition->hasOption($name)) {
+            return true;
+        }
+        return $this->definition->hasNegation($name);
     }
 
     /**

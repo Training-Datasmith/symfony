@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -220,7 +222,8 @@ class ContainerDebugCommandTest extends AbstractWebTestCase
         $tester->setInputs(['0']);
         $tester->run(['command' => 'debug:container', '--tag' => 'kernel.'], ['decorated' => false]);
 
-        $this->assertStringMatchesFormat(<<<EOTXT
+        $this->assertStringMatchesFormat(
+            <<<EOTXT
 
              Select one of the following tags to display its information:
             %A
@@ -247,7 +250,8 @@ class ContainerDebugCommandTest extends AbstractWebTestCase
         $tester = new ApplicationTester($application);
         $tester->run(['command' => 'debug:container', '--env-vars' => true], ['decorated' => false]);
 
-        $this->assertStringMatchesFormat(<<<'TXT'
+        $this->assertStringMatchesFormat(
+            <<<'TXT'
 
             Symfony Container Environment Variables
             =======================================

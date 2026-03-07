@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,12 +27,11 @@ use Symfony\Component\Security\Core\Exception\LogicException;
  */
 class PasswordCredentials implements CredentialsInterface
 {
-    private ?string $password = null;
     private bool $resolved = false;
 
-    public function __construct(#[\SensitiveParameter] string $password)
-    {
-        $this->password = $password;
+    public function __construct(
+        #[\SensitiveParameter] private ?string $password
+    ) {
     }
 
     public function getPassword(): string

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Symfony\Component\HttpFoundation\Cookie;
 
 $r = require __DIR__.'/common.inc';

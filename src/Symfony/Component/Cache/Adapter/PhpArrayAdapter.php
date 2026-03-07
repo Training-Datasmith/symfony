@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -51,7 +53,7 @@ class PhpArrayAdapter implements AdapterInterface, CacheInterface, PruneableInte
     ) {
         $this->pool = $fallbackPool;
         self::$createCacheItem ??= \Closure::bind(
-            static function ($key, $value, $isHit) {
+            static function ($key, $value, $isHit): \Symfony\Component\Cache\CacheItem {
                 $item = new CacheItem();
                 $item->key = $key;
                 $item->value = $value;
@@ -196,7 +198,7 @@ class PhpArrayAdapter implements AdapterInterface, CacheInterface, PruneableInte
         }
 
         if ($fallbackKeys) {
-            $deleted = $this->pool->deleteItems($fallbackKeys) && $deleted;
+            return $this->pool->deleteItems($fallbackKeys) && $deleted;
         }
 
         return $deleted;

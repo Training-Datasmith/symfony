@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -48,13 +50,13 @@ class SymfonyStyle extends OutputStyle
 
     private SymfonyQuestionHelper $questionHelper;
     private ProgressBar $progressBar;
-    private int $lineLength;
-    private TrimmedBufferOutput $bufferedOutput;
+    private readonly int $lineLength;
+    private readonly TrimmedBufferOutput $bufferedOutput;
 
     public function __construct(
-        private InputInterface $input,
-        private OutputInterface $output,
-        private ?EventDispatcherInterface $dispatcher = null,
+        private readonly InputInterface $input,
+        private readonly OutputInterface $output,
+        private readonly ?EventDispatcherInterface $dispatcher = null,
     ) {
         $this->bufferedOutput = new TrimmedBufferOutput(\DIRECTORY_SEPARATOR === '\\' ? 4 : 2, $output->getVerbosity(), false, clone $output->getFormatter());
         // Windows cmd wraps lines as soon as the terminal width is reached, whether there are following chars or not.
@@ -99,7 +101,7 @@ class SymfonyStyle extends OutputStyle
     public function listing(array $elements): void
     {
         $this->autoPrependText();
-        $elements = array_map(static fn ($element) => \sprintf(' * %s', $element), $elements);
+        $elements = array_map(static fn (string $element): string => \sprintf(' * %s', $element), $elements);
 
         $this->writeln($elements);
         $this->newLine();
@@ -261,8 +263,7 @@ class SymfonyStyle extends OutputStyle
      */
     public function progressStart(int $max = 0 /* , ?string $format = null */): void
     {
-        $format = 2 <= \func_num_args() ? func_get_arg(1) : null;
-        $this->progressBar = $this->createProgressBar($max, $format);
+        $this->progressBar = $this->createProgressBar($max);
         $this->progressBar->start();
     }
 
@@ -313,8 +314,7 @@ class SymfonyStyle extends OutputStyle
      */
     public function progressIterate(iterable $iterable, ?int $max = null /* , ?string $format = null */): iterable
     {
-        $format = 3 <= \func_num_args() ? func_get_arg(2) : null;
-        yield from $this->createProgressBar(0, $format)->iterate($iterable, $max);
+        yield from $this->createProgressBar(0)->iterate($iterable, $max);
 
         $this->newLine(2);
     }

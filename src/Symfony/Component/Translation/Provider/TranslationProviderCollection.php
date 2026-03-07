@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException;
 /**
  * @author Mathieu Santostefano <msantostefano@protonmail.com>
  */
-final class TranslationProviderCollection
+final class TranslationProviderCollection implements \Stringable
 {
     /**
      * @var array<string, ProviderInterface>

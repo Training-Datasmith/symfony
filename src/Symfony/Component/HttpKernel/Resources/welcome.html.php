@@ -239,7 +239,7 @@ SVG;
                 <?php echo $renderSymfonyLogoSvg; ?>
                 <h1>
                     <small>Welcome to</small>
-                    <span translate="no" class="notranslate">Symfony</span> <?php echo explode('.', $version, 2)[0]; ?>
+                    <span translate="no" class="notranslate">Symfony</span> <?php echo explode('.', (string) $version, 2)[0]; ?>
                 </h1>
             </section>
 

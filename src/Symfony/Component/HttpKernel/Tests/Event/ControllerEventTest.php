@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -144,7 +146,8 @@ class ControllerEventTest extends TestCase
         yield [[new AttributeController(), '__invoke']];
         yield [new AttributeController()];
         yield [(new AttributeController())->__invoke(...)];
-        yield [#[Bar('class'), Bar('method'), Baz] static function () {}];
+        yield [#[Bar('class'), Bar('method'), Baz] static function () {
+        }];
     }
 
     public function testEvaluateWithClosureUsesArgsRequestAndController()
@@ -185,7 +188,8 @@ class ControllerEventTest extends TestCase
 
     public function testEvaluateWithExpressionRequiresExpressionLanguage()
     {
-        $event = new ControllerEvent(new TestHttpKernel(), static function () {}, new Request(), HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerEvent(new TestHttpKernel(), static function () {
+        }, new Request(), HttpKernelInterface::MAIN_REQUEST);
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Cannot evaluate Expression for controllers since no ExpressionLanguage service was configured.');

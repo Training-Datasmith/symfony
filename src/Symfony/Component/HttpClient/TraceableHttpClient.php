@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -58,7 +60,7 @@ final class TraceableHttpClient implements HttpClientInterface, ResetInterface
         }
         $this->tracedRequests[] = $tracedRequest;
 
-        $options['on_progress'] = static function (int $dlNow, int $dlSize, array $info) use (&$traceInfo, $onProgress) {
+        $options['on_progress'] = static function (int $dlNow, int $dlSize, array $info) use (&$traceInfo, $onProgress): void {
             $traceInfo = $info;
 
             if (null !== $onProgress) {

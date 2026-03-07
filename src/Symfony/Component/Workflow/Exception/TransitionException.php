@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,11 +22,11 @@ use Symfony\Component\Workflow\WorkflowInterface;
 class TransitionException extends LogicException
 {
     public function __construct(
-        private object $subject,
-        private string $transitionName,
-        private WorkflowInterface $workflow,
+        private readonly object $subject,
+        private readonly string $transitionName,
+        private readonly WorkflowInterface $workflow,
         string $message,
-        private array $context = [],
+        private readonly array $context = [],
     ) {
         parent::__construct($message);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,8 +18,6 @@ use Symfony\Component\ErrorHandler\Exception\FlattenException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Log\DebugLoggerConfigurator;
-use Symfony\Component\VarDumper\Cloner\Data;
-use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 
 /**
  * @author Yonel Ceruto <yonelceruto@gmail.com>
@@ -34,10 +34,10 @@ class HtmlErrorRenderer implements ErrorRendererInterface
     private const GHOST_HEART = 'M125.91386369681868,8.305165958366445 C128.95033202169043,-0.40540639102854037 140.8469835342744,8.305165958366445 125.91386369681868,19.504526138305664 C110.98208663272044,8.305165958366445 122.87795231771452,-0.40540639102854037 125.91386369681868,8.305165958366445 z';
     private const GHOST_PLUS = 'M111.36824226379395,8.969108581542969 L118.69175148010254,8.969108581542969 L118.69175148010254,1.6455793380737305 L126.20429420471191,1.6455793380737305 L126.20429420471191,8.969108581542969 L133.52781105041504,8.969108581542969 L133.52781105041504,16.481630325317383 L126.20429420471191,16.481630325317383 L126.20429420471191,23.805158615112305 L118.69175148010254,23.805158615112305 L118.69175148010254,16.481630325317383 L111.36824226379395,16.481630325317383 z';
 
-    private bool|\Closure $debug;
-    private string $charset;
-    private FileLinkFormatter $fileLinkFormat;
-    private string|\Closure $outputBuffer;
+    private readonly bool|\Closure $debug;
+    private readonly string $charset;
+    private readonly FileLinkFormatter $fileLinkFormat;
+    private readonly string|\Closure $outputBuffer;
 
     private static string $template = 'views/error.html.php';
 
@@ -49,9 +49,9 @@ class HtmlErrorRenderer implements ErrorRendererInterface
         bool|callable $debug = false,
         ?string $charset = null,
         string|FileLinkFormatter|null $fileLinkFormat = null,
-        private ?string $projectDir = null,
+        private readonly ?string $projectDir = null,
         string|callable $outputBuffer = '',
-        private ?LoggerInterface $logger = null,
+        private readonly ?LoggerInterface $logger = null,
     ) {
         $this->debug = \is_bool($debug) ? $debug : $debug(...);
         $this->charset = $charset ?: (\ini_get('default_charset') ?: 'UTF-8');
@@ -147,14 +147,6 @@ class HtmlErrorRenderer implements ErrorRendererInterface
         ]);
     }
 
-    private function dumpValue(Data $value): string
-    {
-        $dumper = new HtmlDumper();
-        $dumper->setTheme('light');
-
-        return $dumper->dump($value, true);
-    }
-
     private function formatArgs(array $args): string
     {
         $result = [];
@@ -169,7 +161,7 @@ class HtmlErrorRenderer implements ErrorRendererInterface
                 $formattedValue = '<em>'.strtolower(var_export($item[1], true)).'</em>';
             } elseif ('resource' === $item[0]) {
                 $formattedValue = '<em>resource</em>';
-            } elseif (preg_match('/[^\x07-\x0D\x1B\x20-\xFF]/', $item[1])) {
+            } elseif (preg_match('/[^\x07-\x0D\x1B\x20-\xFF]/', (string) $item[1])) {
                 $formattedValue = '<em>binary string</em>';
             } else {
                 $formattedValue = str_replace("\n", '', $this->escape(var_export($item[1], true)));
@@ -179,11 +171,6 @@ class HtmlErrorRenderer implements ErrorRendererInterface
         }
 
         return implode(', ', $result);
-    }
-
-    private function formatArgsAsText(array $args): string
-    {
-        return strip_tags($this->formatArgs($args));
     }
 
     private function escape(string $string): string
@@ -240,91 +227,6 @@ class HtmlErrorRenderer implements ErrorRendererInterface
         $link = $this->fileLinkFormat->format($file, $line);
 
         return \sprintf('<a href="%s" title="Click to open this file" class="file_link">%s</a>', $this->escape($link), $text);
-    }
-
-    /**
-     * Returns an excerpt of a code file around the given line number.
-     *
-     * @param string $file       A file path
-     * @param int    $line       The selected line number
-     * @param int    $srcContext The number of displayed lines around or -1 for the whole file
-     */
-    private function fileExcerpt(string $file, int $line, int $srcContext = 3): string
-    {
-        if (is_file($file) && is_readable($file)) {
-            // highlight_file could throw warnings
-            // see https://bugs.php.net/25725
-            $code = @highlight_file($file, true);
-            // remove main pre/code tags
-            $code = preg_replace('#^<pre.*?>\s*<code.*?>(.*)</code>\s*</pre>#s', '\\1', $code);
-            // split multiline span tags
-            $code = preg_replace_callback('#<span ([^>]++)>((?:[^<\\n]*+\\n)++[^<]*+)</span>#', static fn ($m) => "<span $m[1]>".str_replace("\n", "</span>\n<span $m[1]>", $m[2]).'</span>', $code);
-            $content = explode("\n", $code);
-
-            $lines = [];
-            if (0 > $srcContext) {
-                $srcContext = \count($content);
-            }
-
-            for ($i = max($line - $srcContext, 1), $max = min($line + $srcContext, \count($content)); $i <= $max; ++$i) {
-                $lines[] = '<li'.($i == $line ? ' class="selected"' : '').'><code>'.$this->fixCodeMarkup($content[$i - 1]).'</code></li>';
-            }
-
-            return '<ol start="'.max($line - $srcContext, 1).'">'.implode("\n", $lines).'</ol>';
-        }
-
-        return '';
-    }
-
-    private function fixCodeMarkup(string $line): string
-    {
-        // </span> ending tag from previous line
-        $opening = strpos($line, '<span');
-        $closing = strpos($line, '</span>');
-        if (false !== $closing && (false === $opening || $closing < $opening)) {
-            $line = substr_replace($line, '', $closing, 7);
-        }
-
-        // missing </span> tag at the end of line
-        $opening = strrpos($line, '<span');
-        $closing = strrpos($line, '</span>');
-        if (false !== $opening && (false === $closing || $closing < $opening)) {
-            $line .= '</span>';
-        }
-
-        return trim($line);
-    }
-
-    private function formatFileFromText(string $text): string
-    {
-        return preg_replace_callback('/in ("|&quot;)?(.+?)\1(?: +(?:on|at))? +line (\d+)/s', fn ($match) => 'in '.$this->formatFile($match[2], $match[3]), $text) ?? $text;
-    }
-
-    private function formatLogMessage(string $message, array $context): string
-    {
-        if ($context && str_contains($message, '{')) {
-            $replacements = [];
-            foreach ($context as $key => $val) {
-                if (\is_scalar($val)) {
-                    $replacements['{'.$key.'}'] = $val;
-                }
-            }
-
-            if ($replacements) {
-                $message = strtr($message, $replacements);
-            }
-        }
-
-        return $this->escape($message);
-    }
-
-    private function addElementToGhost(): string
-    {
-        if (!isset(self::GHOST_ADDONS[date('m-d')])) {
-            return '';
-        }
-
-        return '<path d="'.self::GHOST_ADDONS[date('m-d')].'" fill="#fff" fill-opacity="0.6"></path>';
     }
 
     private function include(string $name, array $context = []): string

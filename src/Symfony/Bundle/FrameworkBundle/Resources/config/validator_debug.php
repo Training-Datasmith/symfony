@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,7 +16,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Symfony\Component\Validator\DataCollector\ValidatorDataCollector;
 use Symfony\Component\Validator\Validator\TraceableValidator;
 
-return static function (ContainerConfigurator $container) {
+return static function (ContainerConfigurator $container): void {
     $container->services()
         ->set('debug.validator', TraceableValidator::class)
             ->decorate('validator', null, 255)

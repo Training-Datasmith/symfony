@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ class AuthenticationTokenCreatedEvent extends Event
 {
     public function __construct(
         private TokenInterface $token,
-        private Passport $passport,
+        private readonly Passport $passport,
     ) {
     }
 

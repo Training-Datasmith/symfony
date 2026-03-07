@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,6 @@ class CommandTester
     use TesterTrait;
 
     private Command $command;
-    private OutputFormatterInterface $outputFormatter;
 
     /**
      * @param OutputInterface::VERBOSITY_* $verbosity
@@ -41,10 +42,9 @@ class CommandTester
         private ?bool $interactive = null,
         private bool $decorated = false,
         private int $verbosity = OutputInterface::VERBOSITY_NORMAL,
-        ?OutputFormatterInterface $outputFormatter = null,
+        private ?OutputFormatterInterface $outputFormatter = new OutputFormatter(),
     ) {
         $this->command = $command instanceof Command ? $command : new Command(null, $command);
-        $this->outputFormatter = $outputFormatter ?? new OutputFormatter();
     }
 
     public function setInteractive(bool $interactive): void

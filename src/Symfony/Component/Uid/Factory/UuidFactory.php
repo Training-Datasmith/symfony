@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,12 +22,12 @@ use Symfony\Component\Uid\UuidV7;
 
 class UuidFactory
 {
-    private string $defaultClass;
-    private string $timeBasedClass;
-    private string $nameBasedClass;
-    private string $randomBasedClass;
-    private ?Uuid $timeBasedNode;
-    private ?Uuid $nameBasedNamespace;
+    private readonly string $defaultClass;
+    private readonly string $timeBasedClass;
+    private readonly string $nameBasedClass;
+    private readonly string $randomBasedClass;
+    private readonly ?Uuid $timeBasedNode;
+    private readonly ?Uuid $nameBasedNamespace;
 
     public function __construct(string|int $defaultClass = UuidV7::class, string|int $timeBasedClass = UuidV7::class, string|int $nameBasedClass = UuidV5::class, string|int $randomBasedClass = UuidV4::class, Uuid|string|null $timeBasedNode = null, Uuid|string|null $nameBasedNamespace = null)
     {

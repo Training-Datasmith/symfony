@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,14 +41,11 @@ class SmtpTransport extends AbstractTransport
     private int $restartCounter = 0;
     private int $pingThreshold = 100;
     private float $lastMessageTime = 0;
-    private AbstractStream $stream;
     private string $domain = '[127.0.0.1]';
 
-    public function __construct(?AbstractStream $stream = null, ?EventDispatcherInterface $dispatcher = null, ?LoggerInterface $logger = null)
+    public function __construct(private readonly ?AbstractStream $stream = new SocketStream(), ?EventDispatcherInterface $dispatcher = null, ?LoggerInterface $logger = null)
     {
         parent::__construct($dispatcher, $logger);
-
-        $this->stream = $stream ?? new SocketStream();
     }
 
     public function getStream(): AbstractStream
@@ -212,12 +211,10 @@ class SmtpTransport extends AbstractTransport
                     $this->stream->write($chunk, false);
                 }
                 $this->stream->flush();
-            } catch (TransportExceptionInterface $e) {
-                throw $e;
             } catch (\Exception $e) {
                 $this->stream->terminate();
                 $this->started = false;
-                $this->getLogger()->debug(\sprintf('Email transport "%s" stopped', __CLASS__));
+                $this->getLogger()->debug(\sprintf('Email transport "%s" stopped', self::class));
                 throw $e;
             }
             $mtaResult = $this->executeCommand("\r\n.\r\n", [250]);
@@ -263,7 +260,7 @@ class SmtpTransport extends AbstractTransport
             return;
         }
 
-        $this->getLogger()->debug(\sprintf('Email transport "%s" starting', __CLASS__));
+        $this->getLogger()->debug(\sprintf('Email transport "%s" starting', self::class));
 
         $this->stream->initialize();
         $this->assertResponseCode($this->getFullResponse(), [220]);
@@ -271,7 +268,7 @@ class SmtpTransport extends AbstractTransport
         $this->started = true;
         $this->lastMessageTime = 0;
 
-        $this->getLogger()->debug(\sprintf('Email transport "%s" started', __CLASS__));
+        $this->getLogger()->debug(\sprintf('Email transport "%s" started', self::class));
     }
 
     /**
@@ -287,7 +284,7 @@ class SmtpTransport extends AbstractTransport
             return;
         }
 
-        $this->getLogger()->debug(\sprintf('Email transport "%s" stopping', __CLASS__));
+        $this->getLogger()->debug(\sprintf('Email transport "%s" stopping', self::class));
 
         try {
             $this->executeCommand("QUIT\r\n", [221]);
@@ -295,7 +292,7 @@ class SmtpTransport extends AbstractTransport
         } finally {
             $this->stream->terminate();
             $this->started = false;
-            $this->getLogger()->debug(\sprintf('Email transport "%s" stopped', __CLASS__));
+            $this->getLogger()->debug(\sprintf('Email transport "%s" stopped', self::class));
         }
     }
 
@@ -357,7 +354,7 @@ class SmtpTransport extends AbstractTransport
 
         $this->stop();
         if (0 < $sleep = $this->restartThresholdSleep) {
-            $this->getLogger()->debug(\sprintf('Email transport "%s" sleeps for %d seconds after stopping', __CLASS__, $sleep));
+            $this->getLogger()->debug(\sprintf('Email transport "%s" sleeps for %d seconds after stopping', self::class, $sleep));
 
             sleep($sleep);
         }
@@ -367,12 +364,12 @@ class SmtpTransport extends AbstractTransport
 
     public function __serialize(): array
     {
-        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot serialize '.self::class);
     }
 
     public function __unserialize(array $data): void
     {
-        throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot unserialize '.self::class);
     }
 
     public function __destruct()

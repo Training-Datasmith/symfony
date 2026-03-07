@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ class Entry
      * @param array<string, array> $attributes
      */
     public function __construct(
-        private string $dn,
+        private readonly string $dn,
         array $attributes = [],
     ) {
         foreach ($attributes as $key => $attribute) {

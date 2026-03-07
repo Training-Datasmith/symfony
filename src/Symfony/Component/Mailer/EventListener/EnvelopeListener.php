@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,7 +40,7 @@ class EnvelopeListener implements EventSubscriberInterface
     public function __construct(
         Address|string|null $sender = null,
         ?array $recipients = null,
-        private array $allowedRecipients = [],
+        private readonly array $allowedRecipients = [],
     ) {
         if (null !== $sender) {
             $this->sender = Address::create($sender);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,8 +23,6 @@ use Symfony\Component\Cache\Exception\InvalidArgumentException;
  */
 class SodiumMarshaller implements MarshallerInterface
 {
-    private MarshallerInterface $marshaller;
-
     /**
      * @param string[] $decryptionKeys The key at index "0" is required and is used to decrypt and encrypt values;
      *                                 more rotating keys can be provided to decrypt values;
@@ -30,7 +30,7 @@ class SodiumMarshaller implements MarshallerInterface
      */
     public function __construct(
         private array $decryptionKeys,
-        ?MarshallerInterface $marshaller = null,
+        private readonly ?MarshallerInterface $marshaller = new DefaultMarshaller(),
     ) {
         if (!self::isSupported()) {
             throw new CacheException('The "sodium" PHP extension is not loaded.');
@@ -39,8 +39,6 @@ class SodiumMarshaller implements MarshallerInterface
         if (!isset($decryptionKeys[0])) {
             throw new InvalidArgumentException('At least one decryption key must be provided at index "0".');
         }
-
-        $this->marshaller = $marshaller ?? new DefaultMarshaller();
     }
 
     public static function isSupported(): bool
@@ -54,7 +52,7 @@ class SodiumMarshaller implements MarshallerInterface
 
         $encryptedValues = [];
         foreach ($this->marshaller->marshall($values, $failed) as $k => $v) {
-            $encryptedValues[$k] = sodium_crypto_box_seal($v, $encryptionKey);
+            $encryptedValues[$k] = sodium_crypto_box_seal((string) $v, $encryptionKey);
         }
 
         return $encryptedValues;

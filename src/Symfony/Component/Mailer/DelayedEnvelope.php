@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,7 @@ final class DelayedEnvelope extends Envelope
     private bool $recipientsSet = false;
 
     public function __construct(
-        private Message $message,
+        private readonly Message $message,
     ) {
     }
 

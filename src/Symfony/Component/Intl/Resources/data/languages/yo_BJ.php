@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'agq' => 'Èdè Ágɛ̀ɛ̀mù',

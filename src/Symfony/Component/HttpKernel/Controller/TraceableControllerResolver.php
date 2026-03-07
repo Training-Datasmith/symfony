@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,8 +22,8 @@ use Symfony\Component\Stopwatch\Stopwatch;
 class TraceableControllerResolver implements ControllerResolverInterface
 {
     public function __construct(
-        private ControllerResolverInterface $resolver,
-        private Stopwatch $stopwatch,
+        private readonly ControllerResolverInterface $resolver,
+        private readonly Stopwatch $stopwatch,
     ) {
     }
 

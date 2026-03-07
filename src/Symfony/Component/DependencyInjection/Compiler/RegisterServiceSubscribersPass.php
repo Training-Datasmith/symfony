@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -115,7 +117,7 @@ class RegisterServiceSubscribersPass extends AbstractRecursivePass
             }
 
             if (null !== $name && !$this->container->has($name) && !$this->container->has($type.' $'.$name)) {
-                $camelCaseName = lcfirst(str_replace(' ', '', ucwords(preg_replace('/[^a-zA-Z0-9\x7f-\xff]++/', ' ', $name))));
+                $camelCaseName = lcfirst(str_replace(' ', '', ucwords((string) preg_replace('/[^a-zA-Z0-9\x7f-\xff]++/', ' ', $name))));
                 $name = $this->container->has($type.' $'.$camelCaseName) ? $camelCaseName : $name;
             }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ class ConstantNode extends Node
 {
     public function __construct(
         mixed $value,
-        private bool $isIdentifier = false,
+        private readonly bool $isIdentifier = false,
         public readonly bool $isNullSafe = false,
     ) {
         parent::__construct(

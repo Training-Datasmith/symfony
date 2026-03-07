@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,12 +18,12 @@ namespace Symfony\Component\Security\Csrf;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class CsrfToken
+class CsrfToken implements \Stringable
 {
-    private string $value;
+    private readonly string $value;
 
     public function __construct(
-        private string $id,
+        private readonly string $id,
         #[\SensitiveParameter] ?string $value,
     ) {
         $this->value = $value ?? '';

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ namespace Symfony\Component\Messenger\Handler;
  */
 final class HandlerDescriptor
 {
-    private \Closure $handler;
+    private readonly \Closure $handler;
     private string $name;
     private ?BatchHandlerInterface $batchHandler = null;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,8 +31,8 @@ class ValidationListener implements EventSubscriberInterface
     }
 
     public function __construct(
-        private ValidatorInterface $validator,
-        private ViolationMapperInterface $violationMapper,
+        private readonly ValidatorInterface $validator,
+        private readonly ViolationMapperInterface $violationMapper,
     ) {
     }
 

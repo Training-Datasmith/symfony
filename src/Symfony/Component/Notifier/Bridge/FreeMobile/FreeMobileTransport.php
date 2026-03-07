@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,8 +32,8 @@ final class FreeMobileTransport extends AbstractTransport
     protected const HOST = 'smsapi.free-mobile.fr/sendmsg';
 
     public function __construct(
-        private string $login,
-        #[\SensitiveParameter] private string $password,
+        private readonly string $login,
+        #[\SensitiveParameter] private readonly string $password,
         private string $phone,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
@@ -54,12 +56,12 @@ final class FreeMobileTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$this->supports($message)) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         /** @var SmsMessage $message */
         if ('' !== $message->getFrom()) {
-            throw new InvalidArgumentException(\sprintf('The "%s" transport does not support "from" in "%s".', __CLASS__, SmsMessage::class));
+            throw new InvalidArgumentException(\sprintf('The "%s" transport does not support "from" in "%s".', self::class, SmsMessage::class));
         }
 
         $endpoint = \sprintf('https://%s', $this->getEndpoint());

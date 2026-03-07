@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -40,7 +42,7 @@ final class Transports implements TransportInterface
         }
 
         if (!$this->transports) {
-            throw new LogicException(\sprintf('"%s" must have at least one transport configured.', __CLASS__));
+            throw new LogicException(\sprintf('"%s" must have at least one transport configured.', self::class));
         }
     }
 

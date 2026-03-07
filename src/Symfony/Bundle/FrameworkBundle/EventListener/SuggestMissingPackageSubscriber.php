@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -46,7 +48,7 @@ final class SuggestMissingPackageSubscriber implements EventSubscriberInterface
             return;
         }
 
-        [$namespace, $command] = explode(':', $event->getInput()->getFirstArgument()) + [1 => ''];
+        [$namespace, $command] = explode(':', (string) $event->getInput()->getFirstArgument()) + [1 => ''];
 
         if (!isset(self::PACKAGES[$namespace])) {
             return;

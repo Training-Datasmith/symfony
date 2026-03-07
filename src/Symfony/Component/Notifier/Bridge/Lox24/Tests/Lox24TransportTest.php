@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -266,7 +268,8 @@ class Lox24TransportTest extends TransportTestCase
             'Unable to send the SMS: "service_code: Service\'s code is invalid or unavailable.".'
         );
 
-        $client = $this->mockHttpClient([
+        $client = $this->mockHttpClient(
+            [
             'sender_id' => 'testFrom',
             'phone' => '+1411111111',
             'text' => 'test text',

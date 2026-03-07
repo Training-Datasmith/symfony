@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -189,9 +191,7 @@ class ImportMapRenderer
             $attributeString .= \sprintf($pattern, $this->escapeAttributeValue($name, $flags), $this->escapeAttributeValue($value, $flags));
         }
 
-        $attributeString = preg_replace('/\b([^ =]++)="\1"/', '\1', $attributeString);
-
-        return $attributeString;
+        return preg_replace('/\b([^ =]++)="\1"/', '\1', $attributeString);
     }
 
     private function addWebLinkPreloads(Request $request, array $links): void

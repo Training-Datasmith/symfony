@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑‍🧑‍🧒‍🧒' => 'E15.1-004',
     '🧑‍🤝‍🧑' => 'E12–099',

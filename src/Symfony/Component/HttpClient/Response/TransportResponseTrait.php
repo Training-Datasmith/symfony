@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -104,13 +106,13 @@ trait TransportResponseTrait
     private static function addResponseHeaders(array $responseHeaders, array &$info, array &$headers, string &$debug = ''): void
     {
         foreach ($responseHeaders as $h) {
-            if (11 <= \strlen($h) && '/' === $h[4] && preg_match('#^HTTP/\d+(?:\.\d+)? (\d\d\d)(?: |$)#', $h, $m)) {
+            if (11 <= \strlen((string) $h) && '/' === $h[4] && preg_match('#^HTTP/\d+(?:\.\d+)? (\d\d\d)(?: |$)#', (string) $h, $m)) {
                 if ($headers) {
                     $debug .= "< \r\n";
                     $headers = [];
                 }
                 $info['http_code'] = (int) $m[1];
-            } elseif (2 === \count($m = explode(':', $h, 2))) {
+            } elseif (2 === \count($m = explode(':', (string) $h, 2))) {
                 $headers[strtolower($m[0])][] = ltrim($m[1]);
             }
 

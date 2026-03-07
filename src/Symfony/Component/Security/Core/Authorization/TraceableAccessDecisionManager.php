@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ class TraceableAccessDecisionManager implements AccessDecisionManagerInterface
     private array $accessDecisionStack = [];
 
     public function __construct(
-        private AccessDecisionManagerInterface $manager,
+        private readonly AccessDecisionManagerInterface $manager,
     ) {
     }
 

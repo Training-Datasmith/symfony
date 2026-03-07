@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,20 +26,14 @@ function bailout(string $message): void
     exit(1);
 }
 
-/**
- * @return string
- */
-function strip_minor_versions(string $version)
+function strip_minor_versions(string $version): string
 {
     preg_match('/^(?P<version>[0-9]\.[0-9]|[0-9]{2,})/', $version, $matches);
 
     return $matches['version'];
 }
 
-/**
- * @return string
- */
-function centered(string $text)
+function centered(string $text): string
 {
     $padding = (int) ((LINE_WIDTH - strlen($text)) / 2);
 
@@ -63,10 +59,7 @@ function run(string $command): void
     }
 }
 
-/**
- * @return string|null
- */
-function get_icu_version_from_genrb(string $genrb)
+function get_icu_version_from_genrb(string $genrb): ?string
 {
     exec($genrb.' --version - 2>&1', $output, $status);
 
@@ -83,11 +76,11 @@ function get_icu_version_from_genrb(string $genrb)
 
 error_reporting(\E_ALL);
 
-set_error_handler(static function (int $type, string $msg, string $file, int $line) {
+set_error_handler(static function (int $type, string $msg, string $file, int $line): void {
     throw new ErrorException($msg, 0, $type, $file, $line);
 });
 
-set_exception_handler(static function (Throwable $exception) {
+set_exception_handler(static function (Throwable $exception): void {
     echo "\n";
 
     $cause = $exception;

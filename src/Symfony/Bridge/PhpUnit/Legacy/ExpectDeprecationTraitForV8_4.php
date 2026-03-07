@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,7 +43,7 @@ trait ExpectDeprecationTraitForV8_4
         }
 
         if (!SymfonyTestsListenerTrait::$previousErrorHandler) {
-            SymfonyTestsListenerTrait::$previousErrorHandler = set_error_handler([SymfonyTestsListenerTrait::class, 'handleError']);
+            SymfonyTestsListenerTrait::$previousErrorHandler = set_error_handler(SymfonyTestsListenerTrait::handleError(...));
         }
 
         SymfonyTestsListenerTrait::$expectedDeprecations[] = $message;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,15 +31,13 @@ class ExpressionSyntax extends Constraint
     ];
 
     public string $message = 'This value should be a valid expression.';
-    public ?string $service = null;
-    public ?array $allowedVariables = null;
 
     /**
      * @param non-empty-string|null $service          The service used to validate the constraint instead of the default one
      * @param string[]|null         $allowedVariables Restrict the available variables in the expression to these values (defaults to null that allows any variable)
      * @param string[]|null         $groups
      */
-    public function __construct(?array $options = null, ?string $message = null, ?string $service = null, ?array $allowedVariables = null, ?array $groups = null, mixed $payload = null)
+    public function __construct(?array $options = null, ?string $message = null, public ?string $service = null, public ?array $allowedVariables = null, ?array $groups = null, mixed $payload = null)
     {
         if (null !== $options) {
             throw new InvalidArgumentException(\sprintf('Passing an array of options to configure the "%s" constraint is no longer supported.', static::class));
@@ -46,8 +46,6 @@ class ExpressionSyntax extends Constraint
         parent::__construct(null, $groups, $payload);
 
         $this->message = $message ?? $this->message;
-        $this->service = $service;
-        $this->allowedVariables = $allowedVariables;
     }
 
     public function validatedBy(): string

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,7 @@ class ApcuAdapter extends AbstractAdapter
         string $namespace = '',
         int $defaultLifetime = 0,
         ?string $version = null,
-        private ?MarshallerInterface $marshaller = null,
+        private readonly ?MarshallerInterface $marshaller = null,
     ) {
         if (!static::isSupported()) {
             throw new CacheException('APCu is not enabled.');
@@ -54,7 +56,7 @@ class ApcuAdapter extends AbstractAdapter
 
     protected function doFetch(array $ids): iterable
     {
-        $unserializeCallbackHandler = ini_set('unserialize_callback_func', __CLASS__.'::handleUnserializeCallback');
+        $unserializeCallbackHandler = ini_set('unserialize_callback_func', self::class.'::handleUnserializeCallback');
         try {
             $values = [];
             foreach (apcu_fetch($ids, $ok) ?: [] as $k => $v) {

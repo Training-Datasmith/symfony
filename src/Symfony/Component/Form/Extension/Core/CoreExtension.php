@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,13 +31,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class CoreExtension extends AbstractExtension
 {
-    private PropertyAccessorInterface $propertyAccessor;
-    private ChoiceListFactoryInterface $choiceListFactory;
+    private readonly PropertyAccessorInterface $propertyAccessor;
+    private readonly ChoiceListFactoryInterface $choiceListFactory;
 
     public function __construct(
         ?PropertyAccessorInterface $propertyAccessor = null,
         ?ChoiceListFactoryInterface $choiceListFactory = null,
-        private ?TranslatorInterface $translator = null,
+        private readonly ?TranslatorInterface $translator = null,
     ) {
         $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();
         $this->choiceListFactory = $choiceListFactory ?? new CachingFactoryDecorator(new PropertyAccessDecorator(new DefaultChoiceListFactory(), $this->propertyAccessor));

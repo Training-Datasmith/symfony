@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ namespace Symfony\Component\DependencyInjection\Exception;
 class ParameterCircularReferenceException extends RuntimeException
 {
     public function __construct(
-        private array $parameters,
+        private readonly array $parameters,
         ?\Throwable $previous = null,
     ) {
         parent::__construct(\sprintf('Circular reference detected for parameter "%s" ("%s" > "%s").', $parameters[0], implode('" > "', $parameters), $parameters[0]), 0, $previous);

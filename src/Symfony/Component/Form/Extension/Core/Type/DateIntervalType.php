@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -159,12 +161,12 @@ class DateIntervalType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $compound = static fn (Options $options) => 'single_text' !== $options['widget'];
-        $emptyData = static fn (Options $options) => 'single_text' === $options['widget'] ? '' : [];
+        $compound = static fn (Options $options): bool => 'single_text' !== $options['widget'];
+        $emptyData = static fn (Options $options): array|string => 'single_text' === $options['widget'] ? '' : [];
 
-        $placeholderDefault = static fn (Options $options) => $options['required'] ? null : '';
+        $placeholderDefault = static fn (Options $options): ?string => $options['required'] ? null : '';
 
-        $placeholderNormalizer = static function (Options $options, $placeholder) use ($placeholderDefault) {
+        $placeholderNormalizer = static function (Options $options, $placeholder) use ($placeholderDefault): array {
             if (\is_array($placeholder)) {
                 $default = $placeholderDefault($options);
 
@@ -174,7 +176,7 @@ class DateIntervalType extends AbstractType
             return array_fill_keys(self::TIME_PARTS, $placeholder);
         };
 
-        $labelsNormalizer = static fn (Options $options, array $labels) => array_replace([
+        $labelsNormalizer = static fn (Options $options, array $labels): array => array_replace([
             'years' => null,
             'months' => null,
             'days' => null,
@@ -183,7 +185,7 @@ class DateIntervalType extends AbstractType
             'minutes' => null,
             'seconds' => null,
             'invert' => 'Negative interval',
-        ], array_filter($labels, static fn ($label) => null !== $label));
+        ], array_filter($labels, static fn ($label): bool => null !== $label));
 
         $resolver->setDefaults([
             'with_years' => true,

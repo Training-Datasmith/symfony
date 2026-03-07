@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ use Symfony\Component\Serializer\Exception\UnexpectedPropertyException;
  *
  * @author Kévin Dunglas <kevin@dunglas.dev>
  */
-final class SnakeCaseToCamelCaseNameConverter implements NameConverterInterface
+final readonly class SnakeCaseToCamelCaseNameConverter implements NameConverterInterface
 {
     /**
      * Require all properties to be written in camelCase.
@@ -30,8 +32,8 @@ final class SnakeCaseToCamelCaseNameConverter implements NameConverterInterface
      * @param bool          $lowerCamelCase Use lowerCamelCase style
      */
     public function __construct(
-        private readonly ?array $attributes = null,
-        private readonly bool $lowerCamelCase = true,
+        private ?array $attributes = null,
+        private bool $lowerCamelCase = true,
     ) {
     }
 
@@ -48,7 +50,7 @@ final class SnakeCaseToCamelCaseNameConverter implements NameConverterInterface
         $camelCasedName = preg_replace_callback('/(^|_|\.)++(.)/', static fn ($match) => ('.' === $match[1] ? '_' : '').strtoupper($match[2]), $propertyName);
 
         if ($this->lowerCamelCase) {
-            $camelCasedName = lcfirst($camelCasedName);
+            return lcfirst((string) $camelCasedName);
         }
 
         return $camelCasedName;
@@ -64,7 +66,7 @@ final class SnakeCaseToCamelCaseNameConverter implements NameConverterInterface
             throw new UnexpectedPropertyException($propertyName);
         }
 
-        $snakeCased = strtolower(preg_replace('/[A-Z]/', '_\\0', lcfirst($propertyName)));
+        $snakeCased = strtolower((string) preg_replace('/[A-Z]/', '_\\0', lcfirst($propertyName)));
         if (null === $this->attributes || \in_array($snakeCased, $this->attributes, true)) {
             return $snakeCased;
         }

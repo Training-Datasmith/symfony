@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -86,7 +88,9 @@ class ReflectionCasterTest extends TestCase
     public function testClosureCaster()
     {
         $a = $b = 123;
-        $var = static function ($x) use ($a, &$b) { var_dump($a, $b); };
+        $var = static function ($x) use ($a, &$b) {
+            var_dump($a, $b);
+        };
 
         $this->assertDumpMatchesFormat(
             <<<'EOTXT'
@@ -157,7 +161,8 @@ class ReflectionCasterTest extends TestCase
 
     public function testReflectionParameterScalar()
     {
-        $f = static function (int $a) {};
+        $f = static function (int $a) {
+        };
         $var = new \ReflectionParameter($f, 0);
 
         $this->assertDumpMatchesFormat(
@@ -174,7 +179,8 @@ class ReflectionCasterTest extends TestCase
 
     public function testReflectionParameterMixed()
     {
-        $f = static function (mixed $a) {};
+        $f = static function (mixed $a) {
+        };
         $var = new \ReflectionParameter($f, 0);
 
         $this->assertDumpMatchesFormat(
@@ -192,7 +198,8 @@ class ReflectionCasterTest extends TestCase
 
     public function testReflectionParameterUnion()
     {
-        $f = static function (int|float $a) {};
+        $f = static function (int|float $a) {
+        };
         $var = new \ReflectionParameter($f, 0);
 
         $this->assertDumpMatchesFormat(
@@ -209,7 +216,8 @@ class ReflectionCasterTest extends TestCase
 
     public function testReflectionParameterNullableUnion()
     {
-        $f = static function (int|float|null $a) {};
+        $f = static function (int|float|null $a) {
+        };
         $var = new \ReflectionParameter($f, 0);
 
         $this->assertDumpMatchesFormat(
@@ -227,7 +235,8 @@ class ReflectionCasterTest extends TestCase
 
     public function testReflectionParameterIntersection()
     {
-        $f = static function (\Traversable&\Countable $a) {};
+        $f = static function (\Traversable&\Countable $a) {
+        };
         $var = new \ReflectionParameter($f, 0);
 
         $this->assertDumpMatchesFormat(
@@ -568,7 +577,8 @@ class ReflectionCasterTest extends TestCase
     {
         $var = new \ReflectionClass(LotsOfAttributes::class);
 
-        $this->assertDumpMatchesFormat(<<<EOTXT
+        $this->assertDumpMatchesFormat(
+            <<<EOTXT
             ReflectionClass {
               +name: "Symfony\Component\VarDumper\Tests\Fixtures\LotsOfAttributes"
             %A  attributes: array:1 [
@@ -588,7 +598,8 @@ class ReflectionCasterTest extends TestCase
     {
         $var = new \ReflectionMethod(LotsOfAttributes::class, 'someMethod');
 
-        $this->assertDumpMatchesFormat(<<<EOTXT
+        $this->assertDumpMatchesFormat(
+            <<<EOTXT
             ReflectionMethod {
               +name: "someMethod"
               +class: "Symfony\Component\VarDumper\Tests\Fixtures\LotsOfAttributes"
@@ -611,7 +622,8 @@ class ReflectionCasterTest extends TestCase
     {
         $var = new \ReflectionProperty(LotsOfAttributes::class, 'someProperty');
 
-        $this->assertDumpMatchesFormat(<<<EOTXT
+        $this->assertDumpMatchesFormat(
+            <<<EOTXT
             ReflectionProperty {
               +name: "someProperty"
               +class: "Symfony\Component\VarDumper\Tests\Fixtures\LotsOfAttributes"
@@ -634,7 +646,8 @@ class ReflectionCasterTest extends TestCase
     {
         $var = new \ReflectionClassConstant(LotsOfAttributes::class, 'SOME_CONSTANT');
 
-        $this->assertDumpMatchesFormat(<<<EOTXT
+        $this->assertDumpMatchesFormat(
+            <<<EOTXT
             ReflectionClassConstant {
               +name: "SOME_CONSTANT"
               +class: "Symfony\Component\VarDumper\Tests\Fixtures\LotsOfAttributes"
@@ -664,7 +677,8 @@ class ReflectionCasterTest extends TestCase
     {
         $var = new \ReflectionParameter([LotsOfAttributes::class, 'someMethod'], 'someParameter');
 
-        $this->assertDumpMatchesFormat(<<<EOTXT
+        $this->assertDumpMatchesFormat(
+            <<<EOTXT
             ReflectionParameter {
               +name: "someParameter"
               position: 0

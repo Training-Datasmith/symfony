@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,14 +26,14 @@ class EnvVarProcessor implements EnvVarProcessorInterface, ResetInterface
     /** @var \Traversable<EnvVarLoaderInterface> */
     private \Traversable $loaders;
     /** @var \Traversable<EnvVarLoaderInterface> */
-    private \Traversable $originalLoaders;
+    private readonly \Traversable $originalLoaders;
     private array $loadedVars = [];
 
     /**
      * @param \Traversable<EnvVarLoaderInterface>|null $loaders
      */
     public function __construct(
-        private ContainerInterface $container,
+        private readonly ContainerInterface $container,
         ?\Traversable $loaders = null,
     ) {
         $this->originalLoaders = $this->loaders = $loaders ?? new \ArrayIterator();
@@ -329,7 +331,7 @@ class EnvVarProcessor implements EnvVarProcessorInterface, ResetInterface
             $params['pass'] = null !== $params['pass'] ? rawurldecode($params['pass']) : null;
 
             // remove the '/' separator
-            $params['path'] = '/' === ($params['path'] ?? '/') ? '' : substr($params['path'], 1);
+            $params['path'] = '/' === ($params['path'] ?? '/') ? '' : substr((string) $params['path'], 1);
 
             return $params;
         }
@@ -342,13 +344,13 @@ class EnvVarProcessor implements EnvVarProcessorInterface, ResetInterface
         }
 
         if ('resolve' === $prefix) {
-            return preg_replace_callback('/%%|%([^%\s]+)%/', function ($match) use ($name, $getEnv) {
+            return preg_replace_callback('/%%|%([^%\s]+)%/', function ($match) use ($name, $getEnv): int|float|string|bool {
                 if (!isset($match[1])) {
                     return '%';
                 }
 
-                if (str_starts_with($match[1], 'env(') && str_ends_with($match[1], ')') && 'env()' !== $match[1]) {
-                    $value = $getEnv(substr($match[1], 4, -1));
+                if (str_starts_with((string) $match[1], 'env(') && str_ends_with((string) $match[1], ')') && 'env()' !== $match[1]) {
+                    $value = $getEnv(substr((string) $match[1], 4, -1));
                 } else {
                     $value = $this->container->getParameter($match[1]);
                 }

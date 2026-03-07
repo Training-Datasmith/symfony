@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -11,7 +13,7 @@
 
 namespace Symfony\Component\Messenger\Stamp;
 
-final class SerializedMessageStamp implements NonSendableStampInterface
+final readonly class SerializedMessageStamp implements NonSendableStampInterface
 {
     public function __construct(private string $serializedMessage)
     {

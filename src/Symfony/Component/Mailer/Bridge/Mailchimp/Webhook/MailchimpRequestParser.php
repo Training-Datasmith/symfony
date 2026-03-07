@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,7 +19,6 @@ use Symfony\Component\HttpFoundation\RequestMatcher\MethodRequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\Mailer\Bridge\Mailchimp\RemoteEvent\MailchimpPayloadConverter;
 use Symfony\Component\RemoteEvent\Exception\ParseException;
-use Symfony\Component\RemoteEvent\RemoteEvent;
 use Symfony\Component\Webhook\Client\AbstractRequestParser;
 use Symfony\Component\Webhook\Exception\RejectWebhookException;
 
@@ -35,7 +36,7 @@ final class MailchimpRequestParser extends AbstractRequestParser
         ]);
     }
 
-    protected function doParse(Request $request, #[\SensitiveParameter] string $secret): RemoteEvent|array|null
+    protected function doParse(Request $request, #[\SensitiveParameter] string $secret): ?array
     {
         $content = $request->request->all();
         if (!isset($content['mandrill_events'])) {
@@ -43,7 +44,7 @@ final class MailchimpRequestParser extends AbstractRequestParser
         }
 
         // Mailchimp sends an empty array to verify the webhook URL is reachable.
-        if ([] === $events = json_decode($content['mandrill_events'], true)) {
+        if ([] === $events = json_decode((string) $content['mandrill_events'], true)) {
             $this->validateSignature($content, $secret, $request->getUri(), $request->headers->get('X-Mandrill-Signature'));
 
             return null;

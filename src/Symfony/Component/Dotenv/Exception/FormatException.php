@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,7 @@ final class FormatException extends \LogicException implements ExceptionInterfac
 {
     public function __construct(
         string $message,
-        private FormatExceptionContext $context,
+        private readonly FormatExceptionContext $context,
         int $code = 0,
         ?\Throwable $previous = null,
     ) {

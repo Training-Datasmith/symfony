@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,7 @@ use Twig\Environment;
 class TemplateAttributeListener implements EventSubscriberInterface
 {
     public function __construct(
-        private Environment $twig,
+        private readonly Environment $twig,
     ) {
     }
 
@@ -73,17 +75,20 @@ class TemplateAttributeListener implements EventSubscriberInterface
             $parameters[$k] = $v->createView();
         }
 
-        $event->setResponse($attribute->stream
+        $event->setResponse(
+            $attribute->stream
             ? new StreamedResponse(
                 null !== $attribute->block
                     ? fn () => $this->twig->load($attribute->template)->displayBlock($attribute->block, $parameters)
                     : fn () => $this->twig->display($attribute->template, $parameters),
-                $status)
+                $status
+            )
             : new Response(
                 null !== $attribute->block
                     ? $this->twig->load($attribute->template)->renderBlock($attribute->block, $parameters)
                     : $this->twig->render($attribute->template, $parameters),
-                $status)
+                $status
+            )
         );
     }
 
@@ -109,7 +114,7 @@ class TemplateAttributeListener implements EventSubscriberInterface
         $parameters = $controllerMetadata->getNamedArguments();
 
         if (null !== $vars) {
-            $parameters = array_intersect_key($parameters, array_flip($vars));
+            return array_intersect_key($parameters, array_flip($vars));
         }
 
         return $parameters;

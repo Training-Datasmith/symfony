@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -54,7 +56,7 @@ class FormPass implements CompilerPassInterface
             // Add form type service to the service locator
             $serviceDefinition = $container->getDefinition($serviceId);
             $servicesMap[$formType = $serviceDefinition->getClass()] = new Reference($serviceId);
-            $namespaces[substr($formType, 0, strrpos($formType, '\\') ?: \strlen($formType))] = true;
+            $namespaces[substr((string) $formType, 0, strrpos((string) $formType, '\\') ?: \strlen((string) $formType))] = true;
 
             if (isset($tag[0]['csrf_token_id'])) {
                 $csrfTokenIds[$formType] = $tag[0]['csrf_token_id'];

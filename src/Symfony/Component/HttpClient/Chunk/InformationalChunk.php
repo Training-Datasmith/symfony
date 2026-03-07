@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ namespace Symfony\Component\HttpClient\Chunk;
  */
 class InformationalChunk extends DataChunk
 {
-    private array $status;
+    private readonly array $status;
 
     public function __construct(int $statusCode, array $headers)
     {

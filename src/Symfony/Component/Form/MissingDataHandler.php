@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,7 +36,7 @@ class MissingDataHandler
     {
         $config = $form->getConfig();
         $missingData = $this->missingData;
-        $falseValues = $config->getOption('false_values', null);
+        $falseValues = $config->getOption('false_values');
 
         if (\is_array($falseValues)) {
             if ($data === $missingData) {

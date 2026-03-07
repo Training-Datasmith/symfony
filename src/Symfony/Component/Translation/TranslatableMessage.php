@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,9 +22,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class TranslatableMessage implements TranslatableInterface
 {
     public function __construct(
-        private string $message,
-        private array $parameters = [],
-        private ?string $domain = null,
+        private readonly string $message,
+        private readonly array $parameters = [],
+        private readonly ?string $domain = null,
     ) {
     }
 

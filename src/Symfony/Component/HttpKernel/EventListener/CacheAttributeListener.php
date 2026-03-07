@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -155,13 +157,13 @@ class CacheAttributeListener implements EventSubscriberInterface
         }
 
         if (null !== $cache->etag) {
-            $etag = hash('sha256', $this->evaluate($cache->etag, $cache->variables));
+            $etag = hash('sha256', (string) $this->evaluate($cache->etag, $cache->variables));
             ($response ??= new Response())->setEtag($etag);
             $cache->etag = $etag;
         }
 
         if ($response?->isNotModified($request)) {
-            $event->setController(static fn () => $response);
+            $event->setController(static fn (): \Symfony\Component\HttpFoundation\Response => $response);
             $event->stopPropagation();
         }
     }
@@ -176,8 +178,8 @@ class CacheAttributeListener implements EventSubscriberInterface
         // it's only 'Accept-Language' and the request has the '_vary_by_language' attribute
         $hasVary ??= ['Accept-Language'] === $response->getVary() ? !$request->attributes->get('_vary_by_language') : $response->hasVary();
         // Check if cache-control directive was set manually in cacheControl (not auto computed)
-        $hasCacheControlDirective ??= new class($response->headers) extends HeaderBag {
-            public function __construct(private parent $headerBag)
+        $hasCacheControlDirective ??= new class ($response->headers) extends HeaderBag {
+            public function __construct(private readonly parent $headerBag)
             {
             }
 

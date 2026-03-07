@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,7 +16,7 @@ namespace Symfony\Component\Messenger\Stamp;
 use Symfony\Component\Lock\Key;
 use Symfony\Component\Messenger\Exception\LogicException;
 
-final class DeduplicateStamp implements StampInterface
+final readonly class DeduplicateStamp implements StampInterface
 {
     private Key $key;
 

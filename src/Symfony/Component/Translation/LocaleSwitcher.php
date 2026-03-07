@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,15 +21,15 @@ use Symfony\Contracts\Translation\LocaleAwareInterface;
  */
 class LocaleSwitcher implements LocaleAwareInterface
 {
-    private string $defaultLocale;
+    private readonly string $defaultLocale;
 
     /**
      * @param LocaleAwareInterface[] $localeAwareServices
      */
     public function __construct(
         private string $locale,
-        private iterable $localeAwareServices,
-        private ?RequestContext $requestContext = null,
+        private readonly iterable $localeAwareServices,
+        private readonly ?RequestContext $requestContext = null,
     ) {
         $this->defaultLocale = $locale;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -712,7 +714,7 @@ class HttpCacheTest extends HttpCacheTestCase
         $this->request('GET', '/'); // warm the cache
 
         // Use a store that simulates a cache entry being locked upon first attempt
-        $this->store = new class(sys_get_temp_dir().'/http_cache') extends Store {
+        $this->store = new class (sys_get_temp_dir().'/http_cache') extends Store {
             private bool $hasLock = false;
 
             public function lock(Request $request): bool
@@ -1806,7 +1808,8 @@ class HttpCacheTest extends HttpCacheTestCase
                 return new Response();
             });
 
-        $cache = new HttpCache($kernel,
+        $cache = new HttpCache(
+            $kernel,
             $store,
             new Esi()
         );

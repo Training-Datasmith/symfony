@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ final class TraceableFirewallListener extends FirewallListener implements ResetI
     public function getWrappedListeners(): array
     {
         return array_map(
-            static fn (WrappedLazyListener $listener) => $listener->getInfo(),
+            static fn (WrappedLazyListener $listener): array => $listener->getInfo(),
             $this->wrappedListeners
         );
     }
@@ -55,7 +57,7 @@ final class TraceableFirewallListener extends FirewallListener implements ResetI
                 $contextWrappedListeners = [];
                 $contextAuthenticatorManagerListener = null;
 
-                \Closure::bind(function () use (&$contextWrappedListeners, &$contextAuthenticatorManagerListener) {
+                \Closure::bind(function () use (&$contextWrappedListeners, &$contextAuthenticatorManagerListener): void {
                     foreach ($this->listeners as $listener) {
                         if ($listener instanceof TraceableAuthenticatorManagerListener) {
                             $contextAuthenticatorManagerListener ??= $listener;

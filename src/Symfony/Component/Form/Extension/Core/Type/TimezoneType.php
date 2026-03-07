@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,7 +40,7 @@ class TimezoneType extends AbstractType
     {
         $resolver->setDefaults([
             'intl' => false,
-            'choice_loader' => function (Options $options) {
+            'choice_loader' => function (Options $options): \Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader {
                 $input = $options['input'];
 
                 if ($options['intl']) {
@@ -48,10 +50,10 @@ class TimezoneType extends AbstractType
 
                     $choiceTranslationLocale = $options['choice_translation_locale'];
 
-                    return ChoiceList::loader($this, new IntlCallbackChoiceLoader(static fn () => self::getIntlTimezones($input, $choiceTranslationLocale)), [$input, $choiceTranslationLocale]);
+                    return ChoiceList::loader($this, new IntlCallbackChoiceLoader(static fn (): array => self::getIntlTimezones($input, $choiceTranslationLocale)), [$input, $choiceTranslationLocale]);
                 }
 
-                return ChoiceList::lazy($this, static fn () => self::getPhpTimezones($input), $input);
+                return ChoiceList::lazy($this, static fn (): array => self::getPhpTimezones($input), $input);
             },
             'choice_translation_domain' => false,
             'choice_translation_locale' => null,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -48,7 +50,7 @@ class BinaryUtil
 
     public static function toBase(string $bytes, array $map): string
     {
-        $base = \strlen($alphabet = $map['']);
+        $base = \strlen((string) $alphabet = $map['']);
         $bytes = array_values(unpack(\PHP_INT_SIZE >= 8 ? 'n*' : 'C*', $bytes));
         $digits = '';
 
@@ -75,7 +77,7 @@ class BinaryUtil
 
     public static function fromBase(string $digits, array $map): string
     {
-        $base = \strlen($map['']);
+        $base = \strlen((string) $map['']);
         $count = \strlen($digits);
         $bytes = [];
 
@@ -141,7 +143,7 @@ class BinaryUtil
         }
 
         if (9 > \strlen($time)) {
-            $time = '-' === $time[0] ? '-'.str_pad(substr($time, 1), 8, '0', \STR_PAD_LEFT) : str_pad($time, 8, '0', \STR_PAD_LEFT);
+            return '-' === $time[0] ? '-'.str_pad(substr($time, 1), 8, '0', \STR_PAD_LEFT) : str_pad($time, 8, '0', \STR_PAD_LEFT);
         }
 
         return $time;
@@ -187,5 +189,3 @@ class BinaryUtil
         return bin2hex($time);
     }
 }
-
-// @php-cs-fixer-ignore long_to_shorthand_operator To prevent false positive causing "Cannot use assign-op operators with string offsets" error

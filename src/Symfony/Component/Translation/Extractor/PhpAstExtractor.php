@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ use Symfony\Component\Translation\MessageCatalogue;
  */
 final class PhpAstExtractor extends AbstractFileExtractor implements ExtractorInterface
 {
-    private Parser $parser;
+    private readonly Parser $parser;
 
     public function __construct(
         /**
@@ -36,7 +38,7 @@ final class PhpAstExtractor extends AbstractFileExtractor implements ExtractorIn
         private string $prefix = '',
     ) {
         if (!class_exists(ParserFactory::class)) {
-            throw new \LogicException(\sprintf('You cannot use "%s" as the "nikic/php-parser" package is not installed. Try running "composer require nikic/php-parser".', static::class));
+            throw new \LogicException(\sprintf('You cannot use "%s" as the "nikic/php-parser" package is not installed. Try running "composer require nikic/php-parser".', self::class));
         }
 
         $this->parser = (new ParserFactory())->createForHostVersion();
@@ -76,7 +78,7 @@ final class PhpAstExtractor extends AbstractFileExtractor implements ExtractorIn
     protected function extractFromDirectory(array|string $resource): iterable|Finder
     {
         if (!class_exists(Finder::class)) {
-            throw new \LogicException(\sprintf('You cannot use "%s" as the "symfony/finder" package is not installed. Try running "composer require symfony/finder".', static::class));
+            throw new \LogicException(\sprintf('You cannot use "%s" as the "symfony/finder" package is not installed. Try running "composer require symfony/finder".', self::class));
         }
 
         return (new Finder())->files()->name('*.php')->in($resource);

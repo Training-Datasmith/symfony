@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,6 @@ class Unique extends Constraint
     public const IS_NOT_UNIQUE = '7911c98d-b845-4da0-94b7-a8dac36bc55a';
 
     public array|string $fields = [];
-    public ?string $errorPath = null;
     public bool $stopOnFirstError = true;
 
     protected const ERROR_NAMES = [
@@ -47,7 +48,7 @@ class Unique extends Constraint
         ?array $groups = null,
         mixed $payload = null,
         array|string|null $fields = null,
-        ?string $errorPath = null,
+        public ?string $errorPath = null,
         ?bool $stopOnFirstError = null,
     ) {
         if (null !== $options) {
@@ -59,7 +60,6 @@ class Unique extends Constraint
         $this->message = $message ?? $this->message;
         $this->normalizer = $normalizer;
         $this->fields = $fields ?? $this->fields;
-        $this->errorPath = $errorPath;
         $this->stopOnFirstError = $stopOnFirstError ?? $this->stopOnFirstError;
 
         if (null !== $this->normalizer && !\is_callable($this->normalizer)) {

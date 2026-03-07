@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,8 +28,8 @@ class StopWorkerOnTimeLimitListener implements EventSubscriberInterface
     private float $endTime = 0;
 
     public function __construct(
-        private int $timeLimitInSeconds,
-        private ?LoggerInterface $logger = null,
+        private readonly int $timeLimitInSeconds,
+        private readonly ?LoggerInterface $logger = null,
     ) {
         if ($timeLimitInSeconds <= 0) {
             throw new InvalidArgumentException('Time limit must be greater than zero.');

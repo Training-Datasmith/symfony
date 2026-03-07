@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,8 +31,8 @@ final class RocketChatTransport extends AbstractTransport
     protected const HOST = 'rocketchat.com';
 
     public function __construct(
-        #[\SensitiveParameter] private string $accessToken,
-        private ?string $chatChannel = null,
+        #[\SensitiveParameter] private readonly string $accessToken,
+        private readonly ?string $chatChannel = null,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -53,7 +55,7 @@ final class RocketChatTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof ChatMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, ChatMessage::class, $message);
         }
 
         $options = $message->getOptions()?->toArray() ?? [];

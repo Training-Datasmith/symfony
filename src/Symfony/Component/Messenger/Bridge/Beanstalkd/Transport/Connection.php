@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,10 +41,10 @@ class Connection
         'bury_on_reject' => false,
     ];
 
-    private TubeName $tube;
-    private int $timeout;
-    private int $ttr;
-    private bool $buryOnReject;
+    private readonly TubeName $tube;
+    private readonly int $timeout;
+    private readonly int $ttr;
+    private readonly bool $buryOnReject;
 
     private bool $usingTube = false;
     private bool $watchingTube = false;
@@ -59,7 +61,7 @@ class Connection
      */
     public function __construct(
         private array $configuration,
-        private PheanstalkSubscriberInterface&PheanstalkPublisherInterface&PheanstalkManagerInterface $client,
+        private readonly PheanstalkSubscriberInterface&PheanstalkPublisherInterface&PheanstalkManagerInterface $client,
     ) {
         $this->configuration = array_replace_recursive(self::DEFAULT_OPTIONS, $configuration);
         $this->tube = new TubeName($this->configuration['tube_name']);
@@ -168,7 +170,7 @@ class Connection
         $data = $job->getData();
 
         try {
-            $beanstalkdEnvelope = json_decode($data, true, flags: \JSON_THROW_ON_ERROR);
+            $beanstalkdEnvelope = json_decode((string) $data, true, flags: \JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }
@@ -182,7 +184,7 @@ class Connection
 
     public function ack(string $id): void
     {
-        $this->withReconnect(function () use ($id) {
+        $this->withReconnect(function () use ($id): void {
             $this->useTube();
             $this->client->delete(new JobId($id));
         });
@@ -190,7 +192,7 @@ class Connection
 
     public function reject(string $id, ?int $priority = null, bool $forceDelete = false): void
     {
-        $this->withReconnect(function () use ($id, $priority, $forceDelete) {
+        $this->withReconnect(function () use ($id, $priority, $forceDelete): void {
             $this->useTube();
 
             if (!$forceDelete && $this->buryOnReject) {
@@ -203,7 +205,7 @@ class Connection
 
     public function keepalive(string $id): void
     {
-        $this->withReconnect(function () use ($id) {
+        $this->withReconnect(function () use ($id): void {
             $this->useTube();
             $this->client->touch(new JobId($id));
         });

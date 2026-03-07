@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ class AutowiringFailedException extends RuntimeException
     private ?\Closure $messageCallback = null;
 
     public function __construct(
-        private string $serviceId,
+        private readonly string $serviceId,
         string|\Closure $message = '',
         int $code = 0,
         ?\Throwable $previous = null,
@@ -37,9 +39,9 @@ class AutowiringFailedException extends RuntimeException
         $this->messageCallback = $message;
         parent::__construct('', $code, $previous);
 
-        $this->message = new class($this->message, $this->messageCallback) {
+        $this->message = new class ($this->message, $this->messageCallback) {
             private string|self $message;
-            private ?\Closure $messageCallback;
+            private ?\Closure $messageCallback = null;
 
             public function __construct(&$message, &$messageCallback)
             {

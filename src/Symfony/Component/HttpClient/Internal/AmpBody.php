@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,6 @@ use Symfony\Component\HttpClient\Exception\TransportException;
 class AmpBody implements HttpContent, ReadableStream, \IteratorAggregate
 {
     private ReadableStream $body;
-    private ?string $content;
     private array $info;
     private ?int $offset = 0;
     private int $length = -1;
@@ -39,7 +40,7 @@ class AmpBody implements HttpContent, ReadableStream, \IteratorAggregate
     public function __construct(
         $body,
         &$info,
-        private \Closure $onProgress,
+        private readonly \Closure $onProgress,
     ) {
         $this->info = &$info;
 
@@ -50,7 +51,6 @@ class AmpBody implements HttpContent, ReadableStream, \IteratorAggregate
         } elseif (\is_string($body)) {
             $this->length = \strlen($body);
             $this->body = new ReadableBuffer($body);
-            $this->content = $body;
         } else {
             $this->body = new ReadableIterableStream((static function () use ($body) {
                 while ('' !== $data = ($body)(16372)) {

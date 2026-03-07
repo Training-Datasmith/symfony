@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class FormEvent extends Event
 {
     public function __construct(
-        private FormInterface $form,
+        private readonly FormInterface $form,
         protected mixed $data,
     ) {
     }

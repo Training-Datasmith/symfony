@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ use Symfony\Component\Messenger\Exception\MessageDecodingFailedException;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class SigningSerializer implements SerializerInterface
+final readonly class SigningSerializer implements SerializerInterface
 {
     /**
      * @param list<class-string> $signedMessageTypes

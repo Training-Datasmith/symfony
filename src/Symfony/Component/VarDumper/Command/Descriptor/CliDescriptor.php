@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,7 @@ class CliDescriptor implements DumpDescriptorInterface
     private mixed $lastIdentifier = null;
 
     public function __construct(
-        private CliDumper $dumper,
+        private readonly CliDumper $dumper,
     ) {
     }
 
@@ -48,7 +50,7 @@ class CliDescriptor implements DumpDescriptorInterface
             $this->lastIdentifier = $request['identifier'];
             $section = \sprintf('%s %s', $request['method'], $request['uri']);
             if ($controller = $request['controller']) {
-                $rows[] = ['controller', rtrim($this->dumper->dump($controller, true), "\n")];
+                $rows[] = ['controller', rtrim((string) $this->dumper->dump($controller, true), "\n")];
             }
         } elseif (isset($context['cli'])) {
             $this->lastIdentifier = $context['cli']['identifier'];

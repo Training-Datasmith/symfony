@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'America/Araguaina' => 'Saa za Brazili (Araguaína)',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,9 +23,9 @@ use Symfony\Component\DependencyInjection\Exception\EnvParameterException;
  */
 class Compiler
 {
-    private PassConfig $passConfig;
+    private readonly PassConfig $passConfig;
     private array $log = [];
-    private ServiceReferenceGraph $serviceReferenceGraph;
+    private readonly ServiceReferenceGraph $serviceReferenceGraph;
 
     public function __construct()
     {

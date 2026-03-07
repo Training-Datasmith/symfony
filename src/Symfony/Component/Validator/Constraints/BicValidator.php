@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -135,7 +137,7 @@ class BicValidator extends ConstraintValidator
         if (!$iban) {
             return;
         }
-        $ibanCountryCode = substr($iban, 0, 2);
+        $ibanCountryCode = substr((string) $iban, 0, 2);
         if (ctype_alpha($ibanCountryCode) && !$this->bicAndIbanCountriesMatch($bicCountryCode, $ibanCountryCode)) {
             $this->context->buildViolation($constraint->ibanMessage)
                 ->setParameter('{{ value }}', $this->formatValue($value))

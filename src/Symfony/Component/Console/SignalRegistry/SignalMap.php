@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,7 @@ class SignalMap
         if (!isset(self::$map)) {
             $r = new \ReflectionExtension('pcntl');
             $c = $r->getConstants();
-            $map = array_filter($c, static fn ($k) => str_starts_with($k, 'SIG') && !str_starts_with($k, 'SIG_') && 'SIGBABY' !== $k, \ARRAY_FILTER_USE_KEY);
+            $map = array_filter($c, static fn ($k): bool => str_starts_with((string) $k, 'SIG') && !str_starts_with((string) $k, 'SIG_') && 'SIGBABY' !== $k, \ARRAY_FILTER_USE_KEY);
             self::$map = array_flip($map);
         }
 

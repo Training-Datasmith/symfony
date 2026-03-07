@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'se póškajucy pórik: dorosćony, dorosćony, swětła barwa kóže a srjejźnoswětła barwa kóže',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'se póškajucy pórik: dorosćony, dorosćony, swětła barwa kóže a wósrědna barwa kóže',

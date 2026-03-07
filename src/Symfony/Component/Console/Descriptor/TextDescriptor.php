@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,7 +41,8 @@ class TextDescriptor extends Descriptor
         $totalWidth = $options['total_width'] ?? Helper::width($argument->getName());
         $spacingWidth = $totalWidth - \strlen($argument->getName());
 
-        $this->writeText(\sprintf('  <info>%s</info>  %s%s%s',
+        $this->writeText(\sprintf(
+            '  <info>%s</info>  %s%s%s',
             $argument->getName(),
             str_repeat(' ', $spacingWidth),
             // + 4 = 2 spaces before <info>, 2 spaces after </info>
@@ -66,14 +69,16 @@ class TextDescriptor extends Descriptor
         }
 
         $totalWidth = $options['total_width'] ?? $this->calculateTotalWidthForOptions([$option]);
-        $synopsis = \sprintf('%s%s',
+        $synopsis = \sprintf(
+            '%s%s',
             $option->getShortcut() ? \sprintf('-%s, ', $option->getShortcut()) : '    ',
             \sprintf($option->isNegatable() ? '--%1$s|--no-%1$s' : '--%1$s%2$s', $option->getName(), $value)
         );
 
         $spacingWidth = $totalWidth - Helper::width($synopsis);
 
-        $this->writeText(\sprintf('  <info>%s</info>  %s%s%s%s',
+        $this->writeText(\sprintf(
+            '  <info>%s</info>  %s%s%s%s',
             $synopsis,
             str_repeat(' ', $spacingWidth),
             // + 4 = 2 spaces before <info>, 2 spaces after </info>
@@ -193,7 +198,7 @@ class TextDescriptor extends Descriptor
             }
 
             // calculate max. width based on available commands per namespace
-            $width = $this->getColumnWidth(array_merge(...array_values(array_map(static fn ($namespace) => array_intersect($namespace['commands'], array_keys($commands)), array_values($namespaces)))));
+            $width = $this->getColumnWidth(array_merge(...array_values(array_map(static fn (array $namespace): array => array_intersect($namespace['commands'], array_keys($commands)), array_values($namespaces)))));
 
             if ($describedNamespace) {
                 $this->writeText(\sprintf('<comment>Available commands for the "%s" namespace:</comment>', $describedNamespace), $options);
@@ -202,7 +207,7 @@ class TextDescriptor extends Descriptor
             }
 
             foreach ($namespaces as $namespace) {
-                $namespace['commands'] = array_filter($namespace['commands'], static fn ($name) => isset($commands[$name]));
+                $namespace['commands'] = array_filter($namespace['commands'], static fn ($name): bool => isset($commands[$name]));
 
                 if (!$namespace['commands']) {
                     continue;
@@ -243,7 +248,7 @@ class TextDescriptor extends Descriptor
         $aliases = $command->getAliases();
 
         if ($aliases) {
-            $text = '['.implode('|', $aliases).'] ';
+            return '['.implode('|', $aliases).'] ';
         }
 
         return $text;

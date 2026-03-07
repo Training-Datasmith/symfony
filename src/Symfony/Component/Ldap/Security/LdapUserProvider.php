@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,20 +37,20 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  */
 class LdapUserProvider implements UserProviderInterface, PasswordUpgraderInterface
 {
-    private string $uidKey;
-    private string $defaultSearch;
-    private RoleFetcherInterface $roleFetcher;
+    private readonly string $uidKey;
+    private readonly string $defaultSearch;
+    private readonly RoleFetcherInterface $roleFetcher;
 
     public function __construct(
-        private LdapInterface $ldap,
-        private string $baseDn,
-        private ?string $searchDn = null,
-        #[\SensitiveParameter] private ?string $searchPassword = null,
+        private readonly LdapInterface $ldap,
+        private readonly string $baseDn,
+        private readonly ?string $searchDn = null,
+        #[\SensitiveParameter] private readonly ?string $searchPassword = null,
         array|RoleFetcherInterface $defaultRoles = [],
         ?string $uidKey = null,
         ?string $filter = null,
-        private ?string $passwordAttribute = null,
-        private array $extraFields = [],
+        private readonly ?string $passwordAttribute = null,
+        private readonly array $extraFields = [],
     ) {
         $uidKey ??= 'sAMAccountName';
         $filter ??= '({uid_key}={user_identifier})';

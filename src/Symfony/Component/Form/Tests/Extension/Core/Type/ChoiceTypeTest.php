@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -1893,9 +1895,11 @@ class ChoiceTypeTest extends BaseTypeTestCase
     public function testInitializeWithEmptyChoices()
     {
         $this->assertInstanceOf(
-            FormInterface::class, $this->factory->createNamed('name', static::TESTED_TYPE, null, [
+            FormInterface::class,
+            $this->factory->createNamed('name', static::TESTED_TYPE, null, [
                 'choices' => [],
-            ]));
+            ])
+        );
     }
 
     public function testInitializeWithDefaultObjectChoice()

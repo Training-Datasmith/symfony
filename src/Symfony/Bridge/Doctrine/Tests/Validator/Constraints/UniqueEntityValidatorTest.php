@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -809,7 +811,7 @@ class UniqueEntityValidatorTest extends ConstraintValidatorTestCase
         $entity = new SingleIntIdEntity(1, 'foo');
 
         return [
-            [$entity, new class implements \Iterator {
+            [$entity, new class () implements \Iterator {
                 public function current(): mixed
                 {
                     return null;
@@ -833,7 +835,7 @@ class UniqueEntityValidatorTest extends ConstraintValidatorTestCase
                 {
                 }
             }],
-            [$entity, new class implements \Iterator {
+            [$entity, new class () implements \Iterator {
                 public function current(): mixed
                 {
                     return false;

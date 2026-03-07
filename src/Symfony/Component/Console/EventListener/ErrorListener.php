@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class ErrorListener implements EventSubscriberInterface
 {
     public function __construct(
-        private ?LoggerInterface $logger = null,
+        private readonly ?LoggerInterface $logger = null,
     ) {
     }
 

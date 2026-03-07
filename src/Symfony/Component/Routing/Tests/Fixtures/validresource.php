@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /** @var \Symfony\Component\Routing\Loader\PhpFileLoader $loader */
 /** @var \Symfony\Component\Routing\RouteCollection $collection */
 $collection = $loader->import('validpattern.php');

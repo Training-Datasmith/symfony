@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -96,7 +98,7 @@ class CodePointString extends AbstractUnicodeString
             return preg_match('{'.preg_quote($suffix).'$}iuD', $this->string);
         }
 
-        return \strlen($this->string) >= \strlen($suffix) && 0 === substr_compare($this->string, $suffix, -\strlen($suffix));
+        return \strlen($this->string) >= \strlen($suffix) && str_ends_with($this->string, $suffix);
     }
 
     public function equalsTo(string|iterable|AbstractString $string): bool
@@ -255,6 +257,6 @@ class CodePointString extends AbstractUnicodeString
             return 0 === mb_stripos($this->string, $prefix, 0, 'UTF-8');
         }
 
-        return 0 === strncmp($this->string, $prefix, \strlen($prefix));
+        return str_starts_with($this->string, $prefix);
     }
 }

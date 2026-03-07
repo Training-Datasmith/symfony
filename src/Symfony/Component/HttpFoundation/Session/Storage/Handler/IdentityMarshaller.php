@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,7 @@ class IdentityMarshaller implements MarshallerInterface
 {
     public function marshall(array $values, ?array &$failed): array
     {
-        foreach ($values as $key => $value) {
+        foreach ($values as $value) {
             if (!\is_string($value)) {
                 throw new \LogicException(\sprintf('%s accepts only string as data.', __METHOD__));
             }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'en_CC' => 'انگریزی (جزائر [کیلنگ] کوکوس)',

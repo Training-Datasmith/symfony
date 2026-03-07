@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // This script should be run after adding a new message to translate.
 // It will ensure that all messages in "*.en.xlf" files are propagated to all languages.
 // The resulting diff should then be submitted as a PR on the lowest maintained branch,

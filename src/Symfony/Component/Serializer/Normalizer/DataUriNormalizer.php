@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
  *
  * @author Kévin Dunglas <dunglas@gmail.com>
  */
-final class DataUriNormalizer implements NormalizerInterface, DenormalizerInterface
+final readonly class DataUriNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     private const SUPPORTED_TYPES = [
         \SplFileInfo::class => true,
@@ -31,7 +33,7 @@ final class DataUriNormalizer implements NormalizerInterface, DenormalizerInterf
         File::class => true,
     ];
 
-    private readonly ?MimeTypeGuesserInterface $mimeTypeGuesser;
+    private ?MimeTypeGuesserInterface $mimeTypeGuesser;
 
     public function __construct(?MimeTypeGuesserInterface $mimeTypeGuesser = null)
     {
@@ -85,7 +87,7 @@ final class DataUriNormalizer implements NormalizerInterface, DenormalizerInterf
      */
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): \SplFileInfo
     {
-        if (null === $data || !preg_match('/^data:([a-z0-9][a-z0-9\!\#\$\&\-\^\_\+\.]{0,126}\/[a-z0-9][a-z0-9\!\#\$\&\-\^\_\+\.]{0,126}(;[a-z0-9\-]+\=[a-z0-9\-]+)?)?(;base64)?,[a-z0-9\!\$\&\\\'\,\(\)\*\+\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i', $data)) {
+        if (null === $data || !preg_match('/^data:([a-z0-9][a-z0-9\!\#\$\&\-\^\_\+\.]{0,126}\/[a-z0-9][a-z0-9\!\#\$\&\-\^\_\+\.]{0,126}(;[a-z0-9\-]+\=[a-z0-9\-]+)?)?(;base64)?,[a-z0-9\!\$\&\\\'\,\(\)\*\+\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i', (string) $data)) {
             throw NotNormalizableValueException::createForUnexpectedDataType('The provided "data:" URI is not valid.', $data, ['string'], $context['deserialization_path'] ?? null, true);
         }
 

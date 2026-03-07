@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -126,7 +128,8 @@ class OptionsResolverTest extends TestCase
 
     public function testSetLazyReturnsThis()
     {
-        $this->assertSame($this->resolver, $this->resolver->setDefault('foo', static function (Options $options) {}));
+        $this->assertSame($this->resolver, $this->resolver->setDefault('foo', static function (Options $options) {
+        }));
     }
 
     public function testSetLazyClosure()
@@ -432,7 +435,8 @@ class OptionsResolverTest extends TestCase
     public function testLazyOptionsAreDefined()
     {
         $this->assertFalse($this->resolver->isDefined('foo'));
-        $this->resolver->setDefault('foo', static function (Options $options) {});
+        $this->resolver->setDefault('foo', static function (Options $options) {
+        });
         $this->assertTrue($this->resolver->isDefined('foo'));
     }
 
@@ -1314,7 +1318,8 @@ class OptionsResolverTest extends TestCase
     public function testSetNormalizerReturnsThis()
     {
         $this->resolver->setDefault('foo', 'bar');
-        $this->assertSame($this->resolver, $this->resolver->setNormalizer('foo', static function () {}));
+        $this->assertSame($this->resolver, $this->resolver->setNormalizer('foo', static function () {
+        }));
     }
 
     public function testSetNormalizerClosure()
@@ -1328,14 +1333,16 @@ class OptionsResolverTest extends TestCase
     public function testSetNormalizerFailsIfUnknownOption()
     {
         $this->expectException(UndefinedOptionsException::class);
-        $this->resolver->setNormalizer('foo', static function () {});
+        $this->resolver->setNormalizer('foo', static function () {
+        });
     }
 
     public function testFailIfSetNormalizerFromLazyOption()
     {
         $this->expectException(AccessException::class);
         $this->resolver->setDefault('foo', static function (Options $options) {
-            $options->setNormalizer('foo', static function () {});
+            $options->setNormalizer('foo', static function () {
+            });
         });
 
         $this->resolver->setDefault('bar', 'baz');
@@ -1544,7 +1551,8 @@ class OptionsResolverTest extends TestCase
     {
         $this->resolver->setDefault('foo', 'bar');
 
-        $this->assertSame($this->resolver, $this->resolver->addNormalizer('foo', static function () {}));
+        $this->assertSame($this->resolver, $this->resolver->addNormalizer('foo', static function () {
+        }));
     }
 
     public function testAddNormalizerClosure()
@@ -1581,14 +1589,16 @@ class OptionsResolverTest extends TestCase
     public function testAddNormalizerFailsIfUnknownOption()
     {
         $this->expectException(UndefinedOptionsException::class);
-        $this->resolver->addNormalizer('foo', static function () {});
+        $this->resolver->addNormalizer('foo', static function () {
+        });
     }
 
     public function testFailIfAddNormalizerFromLazyOption()
     {
         $this->expectException(AccessException::class);
         $this->resolver->setDefault('foo', static function (Options $options) {
-            $options->addNormalizer('foo', static function () {});
+            $options->addNormalizer('foo', static function () {
+            });
         });
 
         $this->resolver->resolve();
@@ -1887,7 +1897,8 @@ class OptionsResolverTest extends TestCase
         $this->resolver->setDefault('default', 0);
         $this->resolver->setRequired('required');
         $this->resolver->setDefined('defined');
-        $this->resolver->setDefault('lazy1', static function () {});
+        $this->resolver->setDefault('lazy1', static function () {
+        });
 
         $this->resolver->setDefault('lazy2', static function (Options $options) {
             Assert::assertCount(4, $options);
@@ -1907,7 +1918,8 @@ class OptionsResolverTest extends TestCase
         $this->resolver->setDefault('foo', 0);
         $this->resolver->setRequired('bar');
         $this->resolver->setDefined('bar');
-        $this->resolver->setDefault('lazy1', static function () {});
+        $this->resolver->setDefault('lazy1', static function () {
+        });
 
         \count($this->resolver);
     }
@@ -2281,7 +2293,8 @@ class OptionsResolverTest extends TestCase
         $this->expectExceptionMessage('Nested options cannot be defined from a lazy option or normalizer.');
 
         $this->resolver->setDefault('foo', static function (Options $options) {
-            $options->setOptions('foo', static function () {});
+            $options->setOptions('foo', static function () {
+            });
         });
 
         $this->resolver->resolve();

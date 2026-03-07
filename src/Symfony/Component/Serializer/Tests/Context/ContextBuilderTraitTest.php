@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ class ContextBuilderTraitTest extends TestCase
 {
     public function testWithContext()
     {
-        $contextBuilder = new class implements ContextBuilderInterface {
+        $contextBuilder = new class () implements ContextBuilderInterface {
             use ContextBuilderTrait;
         };
 
@@ -37,7 +39,7 @@ class ContextBuilderTraitTest extends TestCase
 
     public function testWith()
     {
-        $contextBuilder = new class {
+        $contextBuilder = new class () {
             use ContextBuilderTrait;
 
             public function withFoo(string $value): static

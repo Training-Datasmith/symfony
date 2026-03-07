@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ use Symfony\Component\Mime\Email;
 #[AsCommand(name: 'mailer:test', description: 'Test Mailer transports by sending an email')]
 final class MailerTestCommand extends Command
 {
-    public function __construct(private TransportInterface $transport)
+    public function __construct(private readonly TransportInterface $transport)
     {
         parent::__construct();
     }
@@ -39,7 +41,8 @@ final class MailerTestCommand extends Command
             ->addOption('subject', null, InputOption::VALUE_REQUIRED, 'The subject of the message', 'Testing transport')
             ->addOption('body', null, InputOption::VALUE_REQUIRED, 'The body of the message', 'Testing body')
             ->addOption('transport', null, InputOption::VALUE_REQUIRED, 'The transport to be used')
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command tests a Mailer transport by sending a simple email message:
 
                 <info>php %command.full_name% to@example.com</info>

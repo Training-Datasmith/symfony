@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -214,7 +216,7 @@ class RedirectableUrlMatcherTest extends UrlMatcherTest
     protected function getUrlMatcher(RouteCollection $routes, ?RequestContext $context = null, bool $mock = false)
     {
         if (!$mock) {
-            return new class($routes, $context ?? new RequestContext()) extends RedirectableUrlMatcher {
+            return new class ($routes, $context ?? new RequestContext()) extends RedirectableUrlMatcher {
                 public function redirect(string $path, string $route, ?string $scheme = null): array
                 {
                     return [];

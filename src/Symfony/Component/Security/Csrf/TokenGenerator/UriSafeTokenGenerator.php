@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ class UriSafeTokenGenerator implements TokenGeneratorInterface
      * @param int $entropy The amount of entropy collected for each token (in bits)
      */
     public function __construct(
-        private int $entropy = 256,
+        private readonly int $entropy = 256,
     ) {
         if ($entropy <= 7) {
             throw new \InvalidArgumentException('Entropy should be greater than 7.');

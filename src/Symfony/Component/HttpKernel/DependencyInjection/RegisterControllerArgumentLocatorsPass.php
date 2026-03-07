@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -96,7 +98,7 @@ class RegisterControllerArgumentLocatorsPass implements CompilerPassInterface
                         throw new InvalidArgumentException(\sprintf('Missing "%s" attribute on tag "controller.service_arguments" %s for service "%s".', $k, json_encode($attributes, \JSON_UNESCAPED_UNICODE), $id));
                     }
                 }
-                if (!isset($methods[$action = strtolower($attributes['action'])])) {
+                if (!isset($methods[$action = strtolower((string) $attributes['action'])])) {
                     throw new InvalidArgumentException(\sprintf('Invalid "action" attribute on tag "controller.service_arguments" for service "%s": no public "%s()" method found on class "%s".', $id, $attributes['action'], $class));
                 }
                 [$r, $parameters] = $methods[$action];
@@ -161,8 +163,13 @@ class RegisterControllerArgumentLocatorsPass implements CompilerPassInterface
                     } elseif (!$p->allowsNull()) {
                         $invalidBehavior = ContainerInterface::RUNTIME_EXCEPTION_ON_INVALID_REFERENCE;
                     }
-
-                    if (Request::class === $type || SessionInterface::class === $type || Response::class === $type) {
+                    if (Request::class === $type) {
+                        continue;
+                    }
+                    if (SessionInterface::class === $type) {
+                        continue;
+                    }
+                    if (Response::class === $type) {
                         continue;
                     }
 
@@ -200,7 +207,7 @@ class RegisterControllerArgumentLocatorsPass implements CompilerPassInterface
                     } else {
                         $targetAttribute = null;
                         $name = Target::parseName($p, $targetAttribute);
-                        $target = preg_replace('/(^|[(|&])\\\\/', '\\1', $target);
+                        $target = preg_replace('/(^|[(|&])\\\\/', '\\1', (string) $target);
                         $args[$p->name] = $type ? new TypedReference($target, $type, $invalidBehavior, $name, $targetAttribute ? [$targetAttribute] : []) : new Reference($target, $invalidBehavior);
                     }
                 }

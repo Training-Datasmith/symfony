@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -687,7 +689,7 @@ class Finder implements \IteratorAggregate, \Countable
         } else {
             $iterator = new \AppendIterator();
             foreach ($this->dirs as $dir) {
-                $iterator->append(new \IteratorIterator(new LazyIterator(fn () => $this->searchInDirectory($dir))));
+                $iterator->append(new \IteratorIterator(new LazyIterator(fn (): \Iterator => $this->searchInDirectory($dir))));
             }
 
             foreach ($this->iterators as $it) {
@@ -708,7 +710,7 @@ class Finder implements \IteratorAggregate, \Countable
         }
 
         if ($this->sort || $this->reverseSorting) {
-            $iterator = (new SortableIterator($iterator, $this->sort, $this->reverseSorting))->getIterator();
+            return (new SortableIterator($iterator, $this->sort, $this->reverseSorting))->getIterator();
         }
 
         return $iterator;
@@ -840,7 +842,7 @@ class Finder implements \IteratorAggregate, \Countable
         }
 
         if (static::IGNORE_VCS_IGNORED_FILES === (static::IGNORE_VCS_IGNORED_FILES & $this->ignore)) {
-            $iterator = new Iterator\VcsIgnoredFilterIterator($iterator, $dir);
+            return new Iterator\VcsIgnoredFilterIterator($iterator, $dir);
         }
 
         return $iterator;

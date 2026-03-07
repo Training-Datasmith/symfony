@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -259,7 +261,8 @@ class PropertyNormalizerTest extends TestCase
     {
         $obj = $this->normalizer->denormalize(
             ['foo' => null, 'bar' => 'bar'],
-            PropertyConstructorDummy::class, '
+            PropertyConstructorDummy::class,
+            '
             any'
         );
         $this->assertNull($obj->getFoo());
@@ -373,7 +376,8 @@ class PropertyNormalizerTest extends TestCase
                     'symfony' => '@coopTilleuls',
                     'coop_tilleuls' => 'les-tilleuls.coop',
                 ],
-                GroupDummy::class, null,
+                GroupDummy::class,
+                null,
                 [PropertyNormalizer::GROUPS => ['name_converter']]
             )
         );

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,7 +35,6 @@ class StaticMethodLoader implements LoaderInterface
 
     public function loadClassMetadata(ClassMetadata $metadata): bool
     {
-        /** @var \ReflectionClass $reflClass */
         $reflClass = $metadata->getReflectionClass();
 
         if (!$reflClass->isInterface() && $reflClass->hasMethod($this->methodName)) {

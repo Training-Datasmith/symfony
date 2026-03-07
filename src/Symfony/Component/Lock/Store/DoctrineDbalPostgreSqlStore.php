@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,7 +46,7 @@ class DoctrineDbalPostgreSqlStore implements BlockingSharedLockStoreInterface, B
     {
         if ($connOrUrl instanceof Connection) {
             if (!$connOrUrl->getDatabasePlatform() instanceof PostgreSQLPlatform) {
-                throw new InvalidArgumentException(\sprintf('The adapter "%s" does not support the "%s" platform.', __CLASS__, $connOrUrl->getDatabasePlatform()::class));
+                throw new InvalidArgumentException(\sprintf('The adapter "%s" does not support the "%s" platform.', self::class, $connOrUrl->getDatabasePlatform()::class));
             }
             $this->conn = $connOrUrl;
         } else {
@@ -269,7 +271,7 @@ class DoctrineDbalPostgreSqlStore implements BlockingSharedLockStoreInterface, B
         [$scheme, $rest] = explode(':', $dsn, 2);
         $driver = substr($scheme, 0, strpos($scheme, '+') ?: null);
         if (!\in_array($driver, ['pgsql', 'postgres', 'postgresql'], true)) {
-            throw new InvalidArgumentException(\sprintf('The adapter "%s" does not support the "%s" driver.', __CLASS__, $driver));
+            throw new InvalidArgumentException(\sprintf('The adapter "%s" does not support the "%s" driver.', self::class, $driver));
         }
 
         return \sprintf('%s:%s', $driver, $rest);

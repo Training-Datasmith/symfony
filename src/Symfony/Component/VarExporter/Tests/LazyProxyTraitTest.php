@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -224,7 +226,7 @@ class LazyProxyTraitTest extends TestCase
 
     public function testWither()
     {
-        $obj = new class extends \stdClass {
+        $obj = new class () extends \stdClass {
             public $foo = 123;
 
             public function withFoo($foo): static
@@ -245,7 +247,7 @@ class LazyProxyTraitTest extends TestCase
 
     public function testFluent()
     {
-        $obj = new class extends \stdClass {
+        $obj = new class () extends \stdClass {
             public $foo = 123;
 
             public function setFoo($foo): static
@@ -263,7 +265,7 @@ class LazyProxyTraitTest extends TestCase
 
     public function testIndirectModification()
     {
-        $obj = new class extends \stdClass {
+        $obj = new class () extends \stdClass {
             public array $foo;
         };
         $proxy = $this->createLazyProxy($obj::class, static fn () => $obj);
@@ -347,7 +349,7 @@ class LazyProxyTraitTest extends TestCase
         $object = $this->createLazyProxy(AbstractHooked::class, static function () use (&$initialized) {
             $initialized = true;
 
-            return new class extends AbstractHooked {
+            return new class () extends AbstractHooked {
                 public string $foo = 'Foo';
                 public string $bar = 'Bar';
             };
@@ -361,7 +363,7 @@ class LazyProxyTraitTest extends TestCase
         $object = $this->createLazyProxy(AbstractHooked::class, static function () use (&$initialized) {
             $initialized = true;
 
-            return new class extends AbstractHooked {
+            return new class () extends AbstractHooked {
                 public string $foo = 'Foo';
                 public string $bar = 'Bar';
             };

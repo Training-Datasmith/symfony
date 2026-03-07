@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 class RoleHierarchyVoter extends RoleVoter
 {
     public function __construct(
-        private RoleHierarchyInterface $roleHierarchy,
+        private readonly RoleHierarchyInterface $roleHierarchy,
         string $prefix = 'ROLE_',
     ) {
         parent::__construct($prefix);

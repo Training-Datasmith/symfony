@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,10 +18,10 @@ namespace Symfony\Component\DependencyInjection;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class Reference
+class Reference implements \Stringable
 {
     public function __construct(
-        private string $id,
+        private readonly string $id,
         private int $invalidBehavior = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
     ) {
     }
@@ -41,8 +43,8 @@ class Reference
     {
         $data = [];
         foreach ((array) $this as $k => $v) {
-            if (false !== $i = strrpos($k, "\0")) {
-                $k = substr($k, 1 + $i);
+            if (false !== $i = strrpos((string) $k, "\0")) {
+                $k = substr((string) $k, 1 + $i);
             }
             if ('invalidBehavior' === $k && ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE === $v) {
                 continue;

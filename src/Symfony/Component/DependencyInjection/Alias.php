@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -13,18 +15,13 @@ namespace Symfony\Component\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
-class Alias
+class Alias implements \Stringable
 {
     private const DEFAULT_DEPRECATION_TEMPLATE = 'The "%alias_id%" service alias is deprecated. You should stop using it, as it will be removed in the future.';
-
-    private bool $public = false;
     private array $deprecation = [];
 
-    public function __construct(
-        private string $id,
-        bool $public = false,
-    ) {
-        $this->public = $public;
+    public function __construct(private readonly string $id, private bool $public = false)
+    {
     }
 
     /**
@@ -113,8 +110,8 @@ class Alias
             if (!$v) {
                 continue;
             }
-            if (false !== $i = strrpos($k, "\0")) {
-                $k = substr($k, 1 + $i);
+            if (false !== $i = strrpos((string) $k, "\0")) {
+                $k = substr((string) $k, 1 + $i);
             }
             $data[$k] = $v;
         }

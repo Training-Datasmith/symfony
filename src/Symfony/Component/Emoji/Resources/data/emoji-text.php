@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '👨🏿‍❤️‍💋‍👨🏿' => ':kiss-man-man-dark-skin-tone:',
     '👨🏿‍❤️‍💋‍👨🏻' => ':kiss-man-man-dark-skin-tone-light-skin-tone:',

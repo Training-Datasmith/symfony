@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ use Symfony\Component\Mime\Message;
 class SmimeSignedMessageListener implements EventSubscriberInterface
 {
     public function __construct(
-        private SMimeSigner $signer,
+        private readonly SMimeSigner $signer,
     ) {
     }
 

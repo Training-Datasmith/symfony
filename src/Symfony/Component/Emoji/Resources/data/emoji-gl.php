@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'parella bicándose: persoa, persoa, ton de pel moi claro, ton de pel claro',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'parella bicándose: persoa, persoa, ton de pel moi claro, ton de pel medio',

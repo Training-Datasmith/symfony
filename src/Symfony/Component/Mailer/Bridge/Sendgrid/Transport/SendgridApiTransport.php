@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,11 +39,11 @@ class SendgridApiTransport extends AbstractApiTransport
     private const HOST = 'api.%region_dot%sendgrid.com';
 
     public function __construct(
-        #[\SensitiveParameter] private string $key,
+        #[\SensitiveParameter] private readonly string $key,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
         ?LoggerInterface $logger = null,
-        private ?string $region = null,
+        private readonly ?string $region = null,
     ) {
         parent::__construct($client, $dispatcher, $logger);
     }
@@ -81,7 +83,7 @@ class SendgridApiTransport extends AbstractApiTransport
 
     private function getPayload(Email $email, Envelope $envelope): array
     {
-        $addressStringifier = static function (Address $address) {
+        $addressStringifier = static function (Address $address): array {
             $stringified = ['email' => $address->getAddress()];
 
             if ($address->getName()) {

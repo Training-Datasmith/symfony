@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,8 +38,8 @@ class MetadataBag implements SessionBagInterface
      * @param int    $updateThreshold The time to wait between two UPDATED updates
      */
     public function __construct(
-        private string $storageKey = '_sf2_meta',
-        private int $updateThreshold = 0,
+        private readonly string $storageKey = '_sf2_meta',
+        private readonly int $updateThreshold = 0,
     ) {
     }
 

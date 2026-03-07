@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,9 +32,9 @@ final class MessageMediaTransport extends AbstractTransport
     protected const HOST = 'api.messagemedia.com';
 
     public function __construct(
-        #[\SensitiveParameter] private string $apiKey,
-        #[\SensitiveParameter] private string $apiSecret,
-        private ?string $from = null,
+        #[\SensitiveParameter] private readonly string $apiKey,
+        #[\SensitiveParameter] private readonly string $apiSecret,
+        private readonly ?string $from = null,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -56,7 +58,7 @@ final class MessageMediaTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $options = $message->getOptions()?->toArray() ?? [];

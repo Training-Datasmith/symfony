@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ trait PrefixTrait
     {
         if (\is_array($prefix)) {
             foreach ($prefix as $locale => $localePrefix) {
-                $prefix[$locale] = trim(trim($localePrefix), '/');
+                $prefix[$locale] = trim(trim((string) $localePrefix), '/');
             }
             $aliases = [];
             foreach ($routes->getAliases() as $name => $alias) {
@@ -41,7 +43,7 @@ trait PrefixTrait
                     foreach ($prefix as $locale => $localePrefix) {
                         $localizedRoute = clone $route;
                         $localizedRoute->setDefault('_locale', $locale);
-                        $localizedRoute->setRequirement('_locale', preg_quote($locale));
+                        $localizedRoute->setRequirement('_locale', preg_quote((string) $locale));
                         $localizedRoute->setDefault('_canonical_route', $name);
                         $localizedRoute->setPath($localePrefix.(!$trailingSlashOnRoot && '/' === $route->getPath() ? '' : $route->getPath()));
                         $routes->add($name.'.'.$locale, $localizedRoute, $priority);

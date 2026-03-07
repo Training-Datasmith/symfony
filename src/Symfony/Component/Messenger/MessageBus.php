@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,11 +37,11 @@ class MessageBus implements MessageBusInterface
         } else {
             // $this->middlewareAggregate should be an instance of IteratorAggregate.
             // When $middlewareHandlers is an Iterator, we wrap it to ensure it is lazy-loaded and can be rewound.
-            $this->middlewareAggregate = new class($middlewareHandlers) implements \IteratorAggregate {
+            $this->middlewareAggregate = new class ($middlewareHandlers) implements \IteratorAggregate {
                 private \ArrayObject $cachedIterator;
 
                 public function __construct(
-                    private \Traversable $middlewareHandlers,
+                    private readonly \Traversable $middlewareHandlers,
                 ) {
                 }
 

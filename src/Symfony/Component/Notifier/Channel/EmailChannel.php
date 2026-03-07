@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,13 +31,13 @@ use Symfony\Component\Notifier\Recipient\RecipientInterface;
  */
 class EmailChannel implements ChannelInterface
 {
-    private string|Address|null $from;
+    private readonly string|Address|null $from;
 
     public function __construct(
-        private ?TransportInterface $transport = null,
-        private ?MessageBusInterface $bus = null,
+        private readonly ?TransportInterface $transport = null,
+        private readonly ?MessageBusInterface $bus = null,
         ?string $from = null,
-        private ?Envelope $envelope = null,
+        private readonly ?Envelope $envelope = null,
     ) {
         if (null === $transport && null === $bus) {
             throw new LogicException(\sprintf('"%s" needs a Transport or a Bus but both cannot be "null".', static::class));

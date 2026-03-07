@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'UserAssignedNames' => [
         'XK' => '𞤑𞤮𞥅𞤧𞤮𞤾𞤮𞥅',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,9 +34,9 @@ final class LoginLinkHandler implements LoginLinkHandlerInterface
     private array $options;
 
     public function __construct(
-        private UrlGeneratorInterface $urlGenerator,
-        private UserProviderInterface $userProvider,
-        private SignatureHasher $signatureHasher,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly UserProviderInterface $userProvider,
+        private readonly SignatureHasher $signatureHasher,
         array $options,
     ) {
         $this->options = array_merge([

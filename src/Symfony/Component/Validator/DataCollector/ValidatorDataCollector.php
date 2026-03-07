@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ use Symfony\Component\VarDumper\Cloner\Stub;
 class ValidatorDataCollector extends DataCollector implements LateDataCollectorInterface
 {
     public function __construct(
-        private TraceableValidator $validator,
+        private readonly TraceableValidator $validator,
     ) {
         $this->reset();
     }
@@ -52,7 +54,7 @@ class ValidatorDataCollector extends DataCollector implements LateDataCollectorI
     {
         $collected = $this->validator->getCollectedData();
         $this->data['calls'] = $this->cloneVar($collected);
-        $this->data['violations_count'] = array_reduce($collected, static fn ($previous, $item) => $previous + \count($item['violations']), 0);
+        $this->data['violations_count'] = array_reduce($collected, static fn ($previous, $item): float|int => $previous + \count($item['violations']), 0);
     }
 
     public function getCalls(): Data
@@ -73,7 +75,7 @@ class ValidatorDataCollector extends DataCollector implements LateDataCollectorI
     protected function getCasters(): array
     {
         return parent::getCasters() + [
-            \Exception::class => static function (\Exception $e, array $a, Stub $s) {
+            \Exception::class => static function (\Exception $e, array $a, Stub $s): array {
                 foreach (["\0Exception\0previous", "\0Exception\0trace"] as $k) {
                     if (isset($a[$k])) {
                         unset($a[$k]);
@@ -83,7 +85,7 @@ class ValidatorDataCollector extends DataCollector implements LateDataCollectorI
 
                 return $a;
             },
-            FormInterface::class => static fn (FormInterface $f, array $a) => [
+            FormInterface::class => static fn (FormInterface $f, array $a): array => [
                 Caster::PREFIX_VIRTUAL.'name' => $f->getName(),
                 Caster::PREFIX_VIRTUAL.'type_class' => new ClassStub($f->getConfig()->getType()->getInnerType()::class),
                 Caster::PREFIX_VIRTUAL.'data' => $f->getData(),

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -60,7 +62,9 @@ abstract class AdapterTestCase extends CachePoolTest
         $this->assertSame($value, $item->get());
 
         $isHit = true;
-        $this->assertSame($value, $cache->get('foo', static function (CacheItem $item) use (&$isHit) { $isHit = false; }, 0));
+        $this->assertSame($value, $cache->get('foo', static function (CacheItem $item) use (&$isHit) {
+            $isHit = false;
+        }, 0));
         $this->assertTrue($isHit);
 
         $this->assertNull($cache->get('foo', function (CacheItem $item) use (&$isHit, $value) {
@@ -70,7 +74,7 @@ abstract class AdapterTestCase extends CachePoolTest
         }, \INF));
         $this->assertFalse($isHit);
 
-        $this->assertSame($value, $cache->get('bar', new class($value) implements CallbackInterface {
+        $this->assertSame($value, $cache->get('bar', new class ($value) implements CallbackInterface {
             private int $value;
 
             public function __construct(int $value)
@@ -96,8 +100,12 @@ abstract class AdapterTestCase extends CachePoolTest
         $cache = $this->createCachePool(0, __FUNCTION__);
 
         $v = $cache->get('k1', static function () use (&$counter, $cache) {
-            $cache->get('k2', static function () use (&$counter) { return ++$counter; });
-            $v = $cache->get('k2', static function () use (&$counter) { return ++$counter; }); // ensure the callback is called once
+            $cache->get('k2', static function () use (&$counter) {
+                return ++$counter;
+            });
+            $v = $cache->get('k2', static function () use (&$counter) {
+                return ++$counter;
+            }); // ensure the callback is called once
 
             return $v;
         });

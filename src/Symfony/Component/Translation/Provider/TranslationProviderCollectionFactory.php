@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,8 +24,8 @@ class TranslationProviderCollectionFactory
      * @param iterable<mixed, ProviderFactoryInterface> $factories
      */
     public function __construct(
-        private iterable $factories,
-        private array $enabledLocales,
+        private readonly iterable $factories,
+        private readonly array $enabledLocales,
     ) {
     }
 

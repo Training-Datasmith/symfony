@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'fóon: nit, nit, xeesaayu der bu woyof, xeesaayu der bu xeereer',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'fóon: nit, nit, xeesaayu der bu woyof, xeesaayu der bu yam',

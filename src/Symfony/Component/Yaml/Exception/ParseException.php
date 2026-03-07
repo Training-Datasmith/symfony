@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ class ParseException extends RuntimeException
      * @param string|null $parsedFile The file name where the error occurred
      */
     public function __construct(
-        private string $rawMessage,
+        private readonly string $rawMessage,
         private int $parsedLine = -1,
         private ?string $snippet = null,
         private ?string $parsedFile = null,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,13 +18,13 @@ namespace Symfony\Component\JsonPath;
  *
  * @immutable
  */
-final class JsonPath
+final readonly class JsonPath implements \Stringable
 {
     /**
      * @param non-empty-string $path
      */
     public function __construct(
-        private readonly string $path = '$',
+        private string $path = '$',
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -51,7 +53,7 @@ trait TesterTrait
         $display = stream_get_contents($this->output->getStream());
 
         if ($normalize) {
-            $display = str_replace(\PHP_EOL, "\n", $display);
+            return str_replace(\PHP_EOL, "\n", $display);
         }
 
         return $display;
@@ -73,7 +75,7 @@ trait TesterTrait
         $display = stream_get_contents($this->output->getErrorOutput()->getStream());
 
         if ($normalize) {
-            $display = str_replace(\PHP_EOL, "\n", $display);
+            return str_replace(\PHP_EOL, "\n", $display);
         }
 
         return $display;

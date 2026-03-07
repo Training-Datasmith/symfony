@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,14 +46,14 @@ final class SignalRegistry
         }
 
         if (!isset($this->signalHandlers[$signal])) {
-            if (\is_callable($previous) && [$this, 'handle'] !== $previous) {
+            if (\is_callable($previous) && $this->handle(...) !== $previous) {
                 $this->signalHandlers[$signal][] = $previous;
             }
         }
 
         $this->signalHandlers[$signal][] = $signalHandler;
 
-        pcntl_signal($signal, [$this, 'handle']);
+        pcntl_signal($signal, $this->handle(...));
     }
 
     public static function isSupported(): bool

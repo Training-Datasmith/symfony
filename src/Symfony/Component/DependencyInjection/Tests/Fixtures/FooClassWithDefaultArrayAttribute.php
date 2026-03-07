@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\DependencyInjection\Tests\Fixtures;
 
 class FooClassWithDefaultArrayAttribute
@@ -8,5 +10,6 @@ class FooClassWithDefaultArrayAttribute
         array $array = ['a', 'b', 'c'],
         bool $firstOptional = false,
         bool $secondOptional = false,
-    ) {}
+    ) {
+    }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,9 +37,6 @@ class Notification
     public const IMPORTANCE_HIGH = 'high';
     public const IMPORTANCE_MEDIUM = 'medium';
     public const IMPORTANCE_LOW = 'low';
-
-    private array $channels = [];
-    private string $subject = '';
     private string $content = '';
     private string $emoji = '';
     private ?FlattenException $exception = null;
@@ -47,10 +46,8 @@ class Notification
     /**
      * @param list<string> $channels
      */
-    public function __construct(string $subject = '', array $channels = [])
+    public function __construct(private string $subject = '', private array $channels = [])
     {
-        $this->subject = $subject;
-        $this->channels = $channels;
     }
 
     /**

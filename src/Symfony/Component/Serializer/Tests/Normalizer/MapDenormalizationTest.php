@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -59,7 +61,9 @@ class MapDenormalizationTest extends TestCase
                 'map' => [
                     'assertNull' => null,
                 ],
-            ], DummyMapOfStringToNullableAbstractObject::class);
+            ],
+            DummyMapOfStringToNullableAbstractObject::class
+        );
 
         $this->assertInstanceOf(DummyMapOfStringToNullableAbstractObject::class, $normalizedData);
 
@@ -78,7 +82,9 @@ class MapDenormalizationTest extends TestCase
                     ],
                     'assertEmptyDummyMapValue' => null,
                 ],
-            ], DummyMapOfStringToObject::class);
+            ],
+            DummyMapOfStringToObject::class
+        );
 
         $this->assertInstanceOf(DummyMapOfStringToObject::class, $normalizedData);
 
@@ -104,7 +110,9 @@ class MapDenormalizationTest extends TestCase
                         'value' => 'foo',
                     ],
                 ],
-            ], DummyMapOfStringToNotNullableAbstractObject::class);
+            ],
+            DummyMapOfStringToNotNullableAbstractObject::class
+        );
 
         $this->assertInstanceOf(DummyMapOfStringToNotNullableAbstractObject::class, $normalizedData);
 
@@ -126,7 +134,9 @@ class MapDenormalizationTest extends TestCase
                 'map' => [
                     'assertEmptyDummyMapValue' => null,
                 ],
-            ], DummyMapOfStringToNotNullableAbstractObject::class);
+            ],
+            DummyMapOfStringToNotNullableAbstractObject::class
+        );
     }
 
     public function testNullableObject()
@@ -137,7 +147,9 @@ class MapDenormalizationTest extends TestCase
                     'value' => 'foo',
                 ],
                 'nullObject' => null,
-            ], DummyNullableObjectValue::class);
+            ],
+            DummyNullableObjectValue::class
+        );
 
         $this->assertInstanceOf(DummyNullableObjectValue::class, $normalizedData);
 
@@ -155,7 +167,9 @@ class MapDenormalizationTest extends TestCase
                     'value' => 'foo',
                 ],
                 'nullObject' => null,
-            ], DummyNotNullableObjectValue::class);
+            ],
+            DummyNotNullableObjectValue::class
+        );
 
         $this->assertInstanceOf(DummyNotNullableObjectValue::class, $normalizedData);
 
@@ -175,7 +189,9 @@ class MapDenormalizationTest extends TestCase
                     'value' => 'foo',
                 ],
                 'nullObject' => null,
-            ], DummyNullableAbstractObjectValue::class);
+            ],
+            DummyNullableAbstractObjectValue::class
+        );
 
         $this->assertInstanceOf(DummyNullableAbstractObjectValue::class, $normalizedData);
 
@@ -187,7 +203,7 @@ class MapDenormalizationTest extends TestCase
 
     private function getSerializer()
     {
-        $loaderMock = new class implements ClassMetadataFactoryInterface {
+        $loaderMock = new class () implements ClassMetadataFactoryInterface {
             public function getMetadataFor($value): ClassMetadataInterface
             {
                 if (AbstractDummyValue::class === $value) {

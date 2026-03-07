@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -71,7 +73,7 @@ abstract class CompoundConstraintTestCase extends TestCase
         $context = $this->createContext();
         $validator->initialize($context);
 
-        $validator->validate($this->validatedValue, new class($constraints) extends Compound {
+        $validator->validate($this->validatedValue, new class ($constraints) extends Compound {
             public function __construct(private array $testedConstraints)
             {
                 parent::__construct();
@@ -102,7 +104,8 @@ abstract class CompoundConstraintTestCase extends TestCase
         $this->assertSame(
             [],
             $failedToAssertViolations,
-            \sprintf('Expected violation(s) for constraint(s) %s to be raised by compound.',
+            \sprintf(
+                'Expected violation(s) for constraint(s) %s to be raised by compound.',
                 implode(', ', array_map(static fn ($violation) => ($violation->getConstraint())::class, $failedToAssertViolations))
             )
         );

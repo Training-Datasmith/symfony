@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,8 @@ class DebugCommandTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute(['class' => DummyClassOne::class], ['decorated' => false]);
 
-        $this->assertSame(<<<TXT
+        $this->assertSame(
+            <<<TXT
 
             Symfony\Component\Serializer\Tests\Dummy\DummyClassOne
             ------------------------------------------------------
@@ -86,7 +89,8 @@ class DebugCommandTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute(['class' => DummyClassWithDiscriminatorMap::class], ['decorated' => false]);
 
-        $this->assertSame(<<<TXT
+        $this->assertSame(
+            <<<TXT
 
             Symfony\Component\Serializer\Tests\Dummy\DummyClassWithDiscriminatorMap
             -----------------------------------------------------------------------
@@ -121,7 +125,9 @@ class DebugCommandTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute(['class' => 'App\\NotFoundResource'], ['decorated' => false]);
 
-        $this->assertStringContainsString('[ERROR] Class "App\NotFoundResource" was not found.', $tester->getDisplay(true)
+        $this->assertStringContainsString(
+            '[ERROR] Class "App\NotFoundResource" was not found.',
+            $tester->getDisplay(true)
         );
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -276,7 +278,9 @@ class ObjectNormalizerTest extends TestCase
     {
         $obj = $this->normalizer->denormalize(
             ['foo' => 'foo', 'bar' => 'bar', 'baz' => true, 'fooBar' => 'foobar'],
-            ObjectConstructorDummy::class, 'any');
+            ObjectConstructorDummy::class,
+            'any'
+        );
         $this->assertEquals('foo', $obj->getFoo());
         $this->assertEquals('bar', $obj->bar);
         $this->assertTrue($obj->isBaz());
@@ -286,7 +290,9 @@ class ObjectNormalizerTest extends TestCase
     {
         $obj = $this->normalizer->denormalize(
             ['foo' => 'foo', 'bar' => null, 'baz' => true],
-            ObjectConstructorDummy::class, 'any');
+            ObjectConstructorDummy::class,
+            'any'
+        );
         $this->assertEquals('foo', $obj->getFoo());
         $this->assertNull($obj->bar);
         $this->assertTrue($obj->isBaz());
@@ -296,7 +302,9 @@ class ObjectNormalizerTest extends TestCase
     {
         $obj = $this->normalizer->denormalize(
             ['foo' => 'test', 'baz' => [1, 2, 3]],
-            ObjectConstructorOptionalArgsDummy::class, 'any');
+            ObjectConstructorOptionalArgsDummy::class,
+            'any'
+        );
         $this->assertEquals('test', $obj->getFoo());
         $this->assertEquals([], $obj->bar);
         $this->assertEquals([1, 2, 3], $obj->getBaz());
@@ -306,7 +314,9 @@ class ObjectNormalizerTest extends TestCase
     {
         $obj = $this->normalizer->denormalize(
             ['bar' => 'test'],
-            ObjectConstructorArgsWithDefaultValueDummy::class, 'any');
+            ObjectConstructorArgsWithDefaultValueDummy::class,
+            'any'
+        );
         $this->assertEquals([], $obj->getFoo());
         $this->assertEquals('test', $obj->getBar());
     }
@@ -341,7 +351,7 @@ class ObjectNormalizerTest extends TestCase
 
     public function testConstructorParameterTypeIsUsedWhenPropertyTypeExtractorReturnsDifferentType()
     {
-        $propertyInfoExtractor = new class implements PropertyInfoExtractorInterface {
+        $propertyInfoExtractor = new class () implements PropertyInfoExtractorInterface {
             public function getType(string $class, string $property, array $context = []): ?Type
             {
                 if (SerializerConstructorTypeConversionDummy::class === $class && 'attributes' === $property) {
@@ -400,7 +410,7 @@ class ObjectNormalizerTest extends TestCase
 
     public function testCollectionPropertyTypeNotOverriddenByNullableConstructorParameterType()
     {
-        $extractor = new class implements PropertyTypeExtractorInterface {
+        $extractor = new class () implements PropertyTypeExtractorInterface {
             public function getTypes(string $class, string $property, array $context = []): ?array
             {
                 return null;
@@ -915,7 +925,7 @@ class ObjectNormalizerTest extends TestCase
         $normalizer = new ObjectNormalizer(null, null, null, $extractor);
         $serializer = new Serializer([new ArrayDenormalizer(), new DateTimeNormalizer(), $normalizer]);
 
-        $this->assertSame('bar', $serializer->denormalize(['foo' => 'bar'], (new class {
+        $this->assertSame('bar', $serializer->denormalize(['foo' => 'bar'], (new class () {
             public const TEST = 'me';
 
             /** @var self::*|null */
@@ -952,7 +962,7 @@ class ObjectNormalizerTest extends TestCase
 
     public function testNameConverterProperties()
     {
-        $nameConverter = new class implements NameConverterInterface {
+        $nameConverter = new class () implements NameConverterInterface {
             public function normalize(string $propertyName, ?string $class = null, ?string $format = null, array $context = []): string
             {
                 return \sprintf('%s-%s-%s-%s', $propertyName, $class, $format, $context['foo']);
@@ -1124,7 +1134,7 @@ class ObjectNormalizerTest extends TestCase
 
     public function testObjectNormalizerWithAttributeLoaderAndObjectHasStaticProperty()
     {
-        $class = new class {
+        $class = new class () {
             public static string $foo;
         };
 

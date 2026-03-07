@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ class IncompleteDsnException extends InvalidArgumentException
 {
     public function __construct(
         string $message,
-        private ?string $dsn = null,
+        private readonly ?string $dsn = null,
         ?\Throwable $previous = null,
     ) {
         if ($dsn) {

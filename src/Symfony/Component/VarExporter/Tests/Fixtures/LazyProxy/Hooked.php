@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,12 +16,20 @@ namespace Symfony\Component\VarExporter\Tests\Fixtures\LazyProxy;
 class Hooked extends \stdClass
 {
     public int $notBacked {
-        get { return 123; }
-        set { throw \LogicException('Cannot set value.'); }
+        get {
+            return 123;
+        }
+        set {
+            throw \LogicException('Cannot set value.');
+        }
     }
 
     public int $backed {
-        get { return $this->backed ??= 234; }
-        set { $this->backed = $value; }
+        get {
+            return $this->backed ??= 234;
+        }
+        set {
+            $this->backed = $value;
+        }
     }
 }

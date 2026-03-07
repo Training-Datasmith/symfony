@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -75,9 +77,11 @@ final class TelegramTransportTest extends TransportTestCase
         $client = new MockHttpClient(new MockResponse(json_encode(['description' => 'testDescription', 'error_code' => 404]), ['http_code' => 400]));
 
         $transport = $this->createTransport($client, 'testChannel');
-        $transport->send(new ChatMessage(
-            'testMessage',
-            (new TelegramOptions())->edit(123))
+        $transport->send(
+            new ChatMessage(
+                'testMessage',
+                (new TelegramOptions())->edit(123)
+            )
         );
     }
 

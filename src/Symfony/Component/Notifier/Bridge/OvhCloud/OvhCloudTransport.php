@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,10 +34,10 @@ final class OvhCloudTransport extends AbstractTransport
     private bool $noStopClause = false;
 
     public function __construct(
-        #[\SensitiveParameter] private string $applicationKey,
-        #[\SensitiveParameter] private string $applicationSecret,
-        #[\SensitiveParameter] private string $consumerKey,
-        private string $serviceName,
+        #[\SensitiveParameter] private readonly string $applicationKey,
+        #[\SensitiveParameter] private readonly string $applicationSecret,
+        #[\SensitiveParameter] private readonly string $consumerKey,
+        private readonly string $serviceName,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -78,7 +80,7 @@ final class OvhCloudTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $endpoint = \sprintf('https://%s/1.0/sms/%s/jobs', $this->getEndpoint(), $this->serviceName);

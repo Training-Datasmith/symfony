@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -227,7 +229,7 @@ class TwigExtension extends Extension
     private function normalizeBundleName(string $name): string
     {
         if (str_ends_with($name, 'Bundle')) {
-            $name = substr($name, 0, -6);
+            return substr($name, 0, -6);
         }
 
         return $name;

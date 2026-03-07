@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,9 +32,9 @@ final class OneSignalTransport extends AbstractTransport
     protected const HOST = 'onesignal.com';
 
     public function __construct(
-        private string $appId,
-        #[\SensitiveParameter] private string $apiKey,
-        private ?string $defaultRecipientId = null,
+        private readonly string $appId,
+        #[\SensitiveParameter] private readonly string $apiKey,
+        private readonly ?string $defaultRecipientId = null,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -59,7 +61,7 @@ final class OneSignalTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof PushMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, PushMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, PushMessage::class, $message);
         }
 
         if (!($options = $message->getOptions()) && $notification = $message->getNotification()) {
@@ -69,7 +71,7 @@ final class OneSignalTransport extends AbstractTransport
         $recipientId = $message->getRecipientId() ?? $this->defaultRecipientId;
 
         if (null === $recipientId) {
-            throw new LogicException(\sprintf('The "%s" transport should have configured `defaultRecipientId` via DSN or provided with message options.', __CLASS__));
+            throw new LogicException(\sprintf('The "%s" transport should have configured `defaultRecipientId` via DSN or provided with message options.', self::class));
         }
 
         $options = $options?->toArray() ?? [];

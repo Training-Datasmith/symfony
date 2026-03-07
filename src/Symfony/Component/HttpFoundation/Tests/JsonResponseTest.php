@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -171,7 +173,7 @@ class JsonResponseTest extends TestCase
 
     public function testConstructorWithObjectWithToStringMethod()
     {
-        $class = new class {
+        $class = new class () {
             public function __toString(): string
             {
                 return '{}';

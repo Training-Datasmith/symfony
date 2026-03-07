@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ final class WordCountValidator extends ConstraintValidator
     public function validate(mixed $value, Constraint $constraint): void
     {
         if (!class_exists(\IntlBreakIterator::class)) {
-            throw new \RuntimeException(\sprintf('The "%s" constraint requires the "intl" PHP extension.', __CLASS__));
+            throw new \RuntimeException(\sprintf('The "%s" constraint requires the "intl" PHP extension.', self::class));
         }
 
         if (!$constraint instanceof WordCount) {
@@ -44,7 +46,7 @@ final class WordCountValidator extends ConstraintValidator
         $words = iterator_to_array($iterator->getPartsIterator());
 
         // erase "blank words" and don't count them as words
-        $wordsCount = \count(array_filter(array_map(trim(...), $words), static fn ($word) => '' !== $word));
+        $wordsCount = \count(array_filter(array_map(trim(...), $words), static fn (string $word): bool => '' !== $word));
 
         if (null !== $constraint->min && $wordsCount < $constraint->min) {
             $this->context->buildViolation($constraint->minMessage)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -369,7 +371,7 @@ class AuthenticatorManagerTest extends TestCase
             ->with($this->anything(), $this->token, 'main')
             ->willReturn($this->response);
 
-        $logger = new class extends AbstractLogger {
+        $logger = new class () extends AbstractLogger {
             public array $logContexts = [];
 
             public function log($level, $message, array $context = []): void

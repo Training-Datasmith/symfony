@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -80,7 +82,8 @@ class SecurityTokenValueResolverTest extends TestCase
         $tokenStorage->setToken($token);
 
         $argumentResolver = new ArgumentResolver(null, [new SecurityTokenValueResolver($tokenStorage)]);
-        $this->assertSame([$token], $argumentResolver->getArguments(Request::create('/'), static function (TokenInterface $token) {}));
+        $this->assertSame([$token], $argumentResolver->getArguments(Request::create('/'), static function (TokenInterface $token) {
+        }));
     }
 
     public function testIntegrationNoToken()
@@ -88,7 +91,8 @@ class SecurityTokenValueResolverTest extends TestCase
         $tokenStorage = new TokenStorage();
 
         $argumentResolver = new ArgumentResolver(null, [new SecurityTokenValueResolver($tokenStorage), new DefaultValueResolver()]);
-        $this->assertSame([null], $argumentResolver->getArguments(Request::create('/'), static function (?TokenInterface $token) {}));
+        $this->assertSame([null], $argumentResolver->getArguments(Request::create('/'), static function (?TokenInterface $token) {
+        }));
     }
 
     public function testIntegrationNonNullablwWithNoToken()
@@ -100,6 +104,7 @@ class SecurityTokenValueResolverTest extends TestCase
         $this->expectException(HttpException::class);
         $this->expectExceptionMessage('A security token is required but the token storage is empty.');
 
-        $argumentResolver->getArguments(Request::create('/'), static function (TokenInterface $token) {});
+        $argumentResolver->getArguments(Request::create('/'), static function (TokenInterface $token) {
+        });
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,8 +30,8 @@ use Symfony\Component\Intl\Data\Util\LocaleScanner;
 abstract class AbstractDataGenerator
 {
     public function __construct(
-        private BundleCompilerInterface $compiler,
-        private string $dirName,
+        private readonly BundleCompilerInterface $compiler,
+        private readonly string $dirName,
     ) {
     }
 

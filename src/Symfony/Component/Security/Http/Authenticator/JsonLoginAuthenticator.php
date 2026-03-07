@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -45,14 +47,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class JsonLoginAuthenticator implements InteractiveAuthenticatorInterface
 {
     private array $options;
-    private PropertyAccessorInterface $propertyAccessor;
+    private readonly PropertyAccessorInterface $propertyAccessor;
     private ?TranslatorInterface $translator = null;
 
     public function __construct(
-        private HttpUtils $httpUtils,
-        private UserProviderInterface $userProvider,
-        private ?AuthenticationSuccessHandlerInterface $successHandler = null,
-        private ?AuthenticationFailureHandlerInterface $failureHandler = null,
+        private readonly HttpUtils $httpUtils,
+        private readonly UserProviderInterface $userProvider,
+        private readonly ?AuthenticationSuccessHandlerInterface $successHandler = null,
+        private readonly ?AuthenticationFailureHandlerInterface $failureHandler = null,
         array $options = [],
         ?PropertyAccessorInterface $propertyAccessor = null,
     ) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,13 +23,13 @@ namespace Symfony\Component\DependencyInjection\Compiler;
 class ServiceReferenceGraphEdge
 {
     public function __construct(
-        private ServiceReferenceGraphNode $sourceNode,
-        private ServiceReferenceGraphNode $destNode,
-        private mixed $value = null,
-        private bool $lazy = false,
-        private bool $weak = false,
-        private bool $byConstructor = false,
-        private bool $byMultiUseArgument = false,
+        private readonly ServiceReferenceGraphNode $sourceNode,
+        private readonly ServiceReferenceGraphNode $destNode,
+        private readonly mixed $value = null,
+        private readonly bool $lazy = false,
+        private readonly bool $weak = false,
+        private readonly bool $byConstructor = false,
+        private readonly bool $byMultiUseArgument = false,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,8 +39,8 @@ class RouterMatchCommand extends Command
      * @param iterable<mixed, ExpressionFunctionProviderInterface> $expressionLanguageProviders
      */
     public function __construct(
-        private RouterInterface $router,
-        private iterable $expressionLanguageProviders = [],
+        private readonly RouterInterface $router,
+        private readonly iterable $expressionLanguageProviders = [],
     ) {
         parent::__construct();
     }
@@ -52,7 +54,8 @@ class RouterMatchCommand extends Command
                 new InputOption('scheme', null, InputOption::VALUE_REQUIRED, 'Set the URI scheme (usually http or https)'),
                 new InputOption('host', null, InputOption::VALUE_REQUIRED, 'Set the URI host'),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> shows which routes match a given request and which don't and for what reason:
 
                   <info>php %command.full_name% /foo</info>
@@ -93,7 +96,7 @@ class RouterMatchCommand extends Command
         $matches = false;
         foreach ($traces as $trace) {
             if (TraceableUrlMatcher::ROUTE_ALMOST_MATCHES == $trace['level']) {
-                $io->text(\sprintf('Route <info>"%s"</> almost matches but %s', $trace['name'], lcfirst($trace['log'])));
+                $io->text(\sprintf('Route <info>"%s"</> almost matches but %s', $trace['name'], lcfirst((string) $trace['log'])));
             } elseif (TraceableUrlMatcher::ROUTE_MATCHES == $trace['level']) {
                 $io->success(\sprintf('Route "%s" matches', $trace['name']));
 

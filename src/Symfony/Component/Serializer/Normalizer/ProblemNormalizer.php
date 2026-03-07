@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -47,7 +49,7 @@ class ProblemNormalizer implements NormalizerInterface, SerializerAwareInterface
     public function getSupportedTypes(?string $format): array
     {
         return [
-            FlattenException::class => __CLASS__ === self::class,
+            FlattenException::class => self::class === self::class,
         ];
     }
 
@@ -65,13 +67,13 @@ class ProblemNormalizer implements NormalizerInterface, SerializerAwareInterface
             $exception = $exception->getPrevious();
 
             if ($exception instanceof PartialDenormalizationException) {
-                $trans = $this->translator ? $this->translator->trans(...) : static fn ($m, $p) => strtr($m, $p);
+                $trans = $this->translator ? $this->translator->trans(...) : strtr(...);
                 $template = 'This value should be of type {{ type }}.';
                 $error = [
                     self::TYPE => 'https://symfony.com/errors/validation',
                     self::TITLE => 'Validation Failed',
                     'violations' => array_map(
-                        static fn ($e) => [
+                        static fn (\Symfony\Component\Serializer\Exception\NotNormalizableValueException $e): array => [
                             'propertyPath' => $e->getPath(),
                             'title' => $trans($template, [
                                 '{{ type }}' => implode('|', $e->getExpectedTypes() ?? ['?']),
@@ -84,7 +86,7 @@ class ProblemNormalizer implements NormalizerInterface, SerializerAwareInterface
                         $exception->getErrors()
                     ),
                 ];
-                $error['detail'] = implode("\n", array_map(static fn ($e) => $e['propertyPath'].': '.$e['title'], $error['violations']));
+                $error['detail'] = implode("\n", array_map(static fn (array $e): string => $e['propertyPath'].': '.$e['title'], $error['violations']));
             } elseif (($exception instanceof ValidationFailedException || $exception instanceof MessageValidationFailedException)
                 && $this->serializer instanceof NormalizerInterface
                 && $this->serializer->supportsNormalization($exception->getViolations(), $format, $context)

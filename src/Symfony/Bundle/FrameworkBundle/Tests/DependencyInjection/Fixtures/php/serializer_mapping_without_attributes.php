@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $container->loadFromExtension('framework', [
     'serializer' => [
         'enable_attributes' => true,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,6 @@ use Symfony\Component\Config\Definition\NodeInterface;
  */
 abstract class NodeDefinition implements NodeParentInterface
 {
-    protected ?string $name = null;
     /**
      * @var NormalizationBuilder<$this>
      */
@@ -47,19 +48,13 @@ abstract class NodeDefinition implements NodeParentInterface
     protected mixed $trueEquivalent = true;
     protected mixed $falseEquivalent = false;
     protected string $pathSeparator = BaseNode::DEFAULT_PATH_SEPARATOR;
-    /**
-     * @var TParent|NodeInterface
-     */
-    protected NodeParentInterface|NodeInterface|null $parent;
     protected array $attributes = [];
 
     /**
      * @param TParent $parent
      */
-    public function __construct(?string $name, ?NodeParentInterface $parent = null)
+    public function __construct(protected ?string $name, protected NodeParentInterface|NodeInterface|null $parent = null)
     {
-        $this->parent = $parent;
-        $this->name = $name;
     }
 
     /**

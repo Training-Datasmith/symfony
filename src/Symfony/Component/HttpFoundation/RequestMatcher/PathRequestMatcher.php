@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ use Symfony\Component\HttpFoundation\RequestMatcherInterface;
  */
 class PathRequestMatcher implements RequestMatcherInterface
 {
-    public function __construct(private string $regexp)
+    public function __construct(private readonly string $regexp)
     {
     }
 

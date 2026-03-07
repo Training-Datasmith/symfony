@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -52,7 +54,7 @@ final class EventSourceHttpClient implements HttpClientInterface, ResetInterface
 
     public function request(string $method, string $url, array $options = []): ResponseInterface
     {
-        $state = new class {
+        $state = new class () {
             public ?string $buffer = null;
             public ?string $lastEventId = null;
             public float $reconnectionTime;

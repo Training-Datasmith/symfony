@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,8 +29,6 @@ class MockResponse implements ResponseInterface, StreamableInterface
 {
     use CommonResponseTrait;
     use TransportResponseTrait;
-
-    private string|iterable|null $body;
     private array $requestOptions = [];
     private string $requestUrl;
     private string $requestMethod;
@@ -43,9 +43,8 @@ class MockResponse implements ResponseInterface, StreamableInterface
      *
      * @see ResponseInterface::getInfo() for possible info, e.g. "response_headers"
      */
-    public function __construct(string|iterable $body = '', array $info = [])
+    public function __construct(private string|iterable|null $body = '', array $info = [])
     {
-        $this->body = $body;
         $this->info = $info + ['http_code' => 200] + $this->info;
 
         if (!isset($info['response_headers'])) {
@@ -108,11 +107,12 @@ class MockResponse implements ResponseInterface, StreamableInterface
         $this->info['error'] = 'Response has been canceled.';
         try {
             $this->body = null;
-        } catch (TransportException $e) {
+        } catch (TransportException) {
             // ignore errors when canceling
         }
 
-        $onProgress = $this->requestOptions['on_progress'] ?? static function () {};
+        $onProgress = $this->requestOptions['on_progress'] ?? static function (): void {
+        };
         $dlSize = isset($this->headers['content-encoding']) || 'HEAD' === ($this->info['http_method'] ?? null) || \in_array($this->info['http_code'], [204, 304], true) ? 0 : (int) ($this->headers['content-length'][0] ?? 0);
         $onProgress($this->offset, $dlSize, $this->info);
     }
@@ -137,7 +137,7 @@ class MockResponse implements ResponseInterface, StreamableInterface
         $response->requestOptions = $options;
         $response->id = ++self::$idSequence;
         $response->shouldBuffer = $options['buffer'] ?? true;
-        $response->initializer = static fn (self $response) => \is_array($response->body[0] ?? null);
+        $response->initializer = static fn (self $response): bool => \is_array($response->body[0] ?? null);
 
         $response->info['redirect_count'] = 0;
         $response->info['redirect_url'] = null;
@@ -225,7 +225,8 @@ class MockResponse implements ResponseInterface, StreamableInterface
      */
     private static function writeRequest(self $response, array $options, ResponseInterface $mock): void
     {
-        $onProgress = $options['on_progress'] ?? static function () {};
+        $onProgress = $options['on_progress'] ?? static function (): void {
+        };
         $response->info += $mock->getInfo() ?: [];
         if (null !== $mock->getInfo('start_time')) {
             $response->info['start_time'] = $mock->getInfo('start_time');
@@ -271,7 +272,8 @@ class MockResponse implements ResponseInterface, StreamableInterface
      */
     private static function readResponse(self $response, array $options, ResponseInterface $mock, int &$offset): void
     {
-        $onProgress = $options['on_progress'] ?? static function () {};
+        $onProgress = $options['on_progress'] ?? static function (): void {
+        };
 
         // populate info related to headers
         $info = $mock->getInfo() ?: [];

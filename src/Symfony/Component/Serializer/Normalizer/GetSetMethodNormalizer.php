@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,7 +39,7 @@ use Symfony\Component\Serializer\Attribute\Ignore;
  */
 final class GetSetMethodNormalizer extends AbstractObjectNormalizer
 {
-    private static $reflectionCache = [];
+    private static array $reflectionCache = [];
     private static array $setterAccessibleCache = [];
 
     public function getSupportedTypes(?string $format): array
@@ -88,7 +90,8 @@ final class GetSetMethodNormalizer extends AbstractObjectNormalizer
             && !($method->getAttributes(Ignore::class) || $method->getAttributes(LegacyIgnore::class))
             && !$method->getNumberOfRequiredParameters()
             && !\in_array((string) $method->getReturnType(), ['void', 'never'], true)
-            && ((2 < ($methodLength = \strlen($method->name)) && str_starts_with($method->name, 'is') && !ctype_lower($method->name[2]))
+            && (
+                (2 < ($methodLength = \strlen($method->name)) && str_starts_with($method->name, 'is') && !ctype_lower($method->name[2]))
                 || (3 < $methodLength && (str_starts_with($method->name, 'has') || str_starts_with($method->name, 'get') || str_starts_with($method->name, 'can')) && !ctype_lower($method->name[3]))
             );
     }
@@ -162,7 +165,7 @@ final class GetSetMethodNormalizer extends AbstractObjectNormalizer
         }
     }
 
-    protected function isAllowedAttribute($classOrObject, string $attribute, ?string $format = null, array $context = []): bool
+    protected function isAllowedAttribute(object|string $classOrObject, string $attribute, ?string $format = null, array $context = []): bool
     {
         if (!parent::isAllowedAttribute($classOrObject, $attribute, $format, $context)) {
             return false;

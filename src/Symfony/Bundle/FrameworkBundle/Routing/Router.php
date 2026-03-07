@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -43,16 +45,15 @@ final class Router extends BaseRouter implements WarmableInterface, ServiceSubsc
      * @param mixed $resource The main resource to load
      */
     public function __construct(
-        private ContainerInterface $container,
+        private readonly ContainerInterface $container,
         mixed $resource,
         array $options = [],
-        ?RequestContext $context = null,
+        ?RequestContext $context = new RequestContext(),
         ?ContainerInterface $parameters = null,
         ?LoggerInterface $logger = null,
         ?string $defaultLocale = null,
     ) {
         $this->resource = $resource;
-        $this->context = $context ?? new RequestContext();
         $this->logger = $logger;
         $this->setOptions($options);
 
@@ -132,13 +133,13 @@ final class Router extends BaseRouter implements WarmableInterface, ServiceSubsc
 
             $schemes = [];
             foreach ($route->getSchemes() as $scheme) {
-                $schemes[] = explode('|', $this->resolve($scheme));
+                $schemes[] = explode('|', (string) $this->resolve($scheme));
             }
             $route->setSchemes(array_merge([], ...$schemes));
 
             $methods = [];
             foreach ($route->getMethods() as $method) {
-                $methods[] = explode('|', $this->resolve($method));
+                $methods[] = explode('|', (string) $this->resolve($method));
             }
             $route->setMethods(array_merge([], ...$methods));
             $route->setCondition($this->resolve($route->getCondition()));
@@ -165,13 +166,13 @@ final class Router extends BaseRouter implements WarmableInterface, ServiceSubsc
             return $value;
         }
 
-        $escapedValue = preg_replace_callback('/%%|%([^%\s]++)%/', function ($match) use ($value) {
+        $escapedValue = preg_replace_callback('/%%|%([^%\s]++)%/', function ($match) use ($value): string {
             // skip %%
             if (!isset($match[1])) {
                 return '%%';
             }
 
-            if (preg_match('/^env\((?:\w++:)*+\w++\)$/', $match[1])) {
+            if (preg_match('/^env\((?:\w++:)*+\w++\)$/', (string) $match[1])) {
                 throw new RuntimeException(\sprintf('Using "%%%s%%" is not allowed in routing configuration.', $match[1]));
             }
 

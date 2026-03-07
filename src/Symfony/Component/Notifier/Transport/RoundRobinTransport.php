@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,13 +31,12 @@ class RoundRobinTransport implements TransportInterface
      */
     private \SplObjectStorage $deadTransports;
     private array $transports = [];
-    private int $retryPeriod;
     private int $cursor = -1;
 
     /**
      * @param TransportInterface[] $transports
      */
-    public function __construct(array $transports, int $retryPeriod = 60)
+    public function __construct(array $transports, private readonly int $retryPeriod = 60)
     {
         if (!$transports) {
             throw new LogicException(\sprintf('"%s" must have at least one transport configured.', static::class));
@@ -43,12 +44,11 @@ class RoundRobinTransport implements TransportInterface
 
         $this->transports = $transports;
         $this->deadTransports = new \SplObjectStorage();
-        $this->retryPeriod = $retryPeriod;
     }
 
     public function __toString(): string
     {
-        return implode(' '.$this->getNameSymbol().' ', array_map('strval', $this->transports));
+        return implode(' '.$this->getNameSymbol().' ', array_map(strval(...), $this->transports));
     }
 
     public function supports(MessageInterface $message): bool

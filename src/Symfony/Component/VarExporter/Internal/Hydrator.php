@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,7 +38,7 @@ class Hydrator
     ) {
     }
 
-    public static function hydrate($objects, $values, $properties, $value, $wakeups)
+    public static function hydrate(array $objects, $values, $properties, $value, $wakeups)
     {
         foreach ($properties as $class => $vars) {
             (self::$hydrators[$class] ??= self::getHydrator($class))($vars, $objects);
@@ -54,7 +56,7 @@ class Hydrator
 
     public static function getHydrator($class)
     {
-        $baseHydrator = self::$hydrators['stdClass'] ??= static function ($properties, $objects) {
+        $baseHydrator = self::$hydrators['stdClass'] ??= static function ($properties, array $objects): void {
             foreach ($properties as $name => $values) {
                 foreach ($values as $i => $v) {
                     $objects[$i]->$name = $v;
@@ -67,15 +69,15 @@ class Hydrator
                 return $baseHydrator;
 
             case 'ErrorException':
-                return $baseHydrator->bindTo(null, new class extends \ErrorException {
+                return $baseHydrator->bindTo(null, new class () extends \ErrorException {
                 });
 
             case 'TypeError':
-                return $baseHydrator->bindTo(null, new class extends \Error {
+                return $baseHydrator->bindTo(null, new class () extends \Error {
                 });
 
             case 'SplObjectStorage':
-                return static function ($properties, $objects) {
+                return static function ($properties, array $objects): void {
                     foreach ($properties as $name => $values) {
                         if ("\0" === $name) {
                             foreach ($values as $i => $v) {
@@ -102,7 +104,7 @@ class Hydrator
             case 'ArrayObject':
                 $constructor = $classReflector->getConstructor()->invokeArgs(...);
 
-                return static function ($properties, $objects) use ($constructor) {
+                return static function (array $properties, array $objects) use ($constructor): void {
                     foreach ($properties as $name => $values) {
                         if ("\0" !== $name) {
                             foreach ($values as $i => $v) {
@@ -135,7 +137,7 @@ class Hydrator
             return $baseHydrator;
         }
 
-        return static function ($properties, $objects) use ($propertySetters) {
+        return static function ($properties, array $objects) use ($propertySetters): void {
             foreach ($properties as $name => $values) {
                 if ($setValue = $propertySetters[$name] ?? null) {
                     foreach ($values as $i => $v) {
@@ -152,7 +154,7 @@ class Hydrator
 
     public static function getSimpleHydrator($class)
     {
-        $baseHydrator = self::$simpleHydrators['stdClass'] ??= (function ($properties, $object) {
+        $baseHydrator = self::$simpleHydrators['stdClass'] ??= (function ($properties, $object): void {
             $notByRef = (array) $this;
 
             foreach ($properties as $name => &$value) {
@@ -172,15 +174,15 @@ class Hydrator
                 return $baseHydrator;
 
             case 'ErrorException':
-                return $baseHydrator->bindTo(new \stdClass(), new class extends \ErrorException {
+                return $baseHydrator->bindTo(new \stdClass(), new class () extends \ErrorException {
                 });
 
             case 'TypeError':
-                return $baseHydrator->bindTo(new \stdClass(), new class extends \Error {
+                return $baseHydrator->bindTo(new \stdClass(), new class () extends \Error {
                 });
 
             case 'SplObjectStorage':
-                return static function ($properties, $object) {
+                return static function ($properties, array $object): void {
                     foreach ($properties as $name => &$value) {
                         if ("\0" !== $name) {
                             $object->$name = $value;
@@ -204,7 +206,7 @@ class Hydrator
             case 'ArrayObject':
                 $constructor = $classReflector->getConstructor()->invokeArgs(...);
 
-                return static function ($properties, $object) use ($constructor) {
+                return static function ($properties, $object) use ($constructor): void {
                     foreach ($properties as $name => &$value) {
                         if ("\0" === $name) {
                             $constructor($object, $value);
@@ -247,7 +249,7 @@ class Hydrator
             return $baseHydrator;
         }
 
-        return static function ($properties, $object) use ($propertySetters) {
+        return static function ($properties, $object) use ($propertySetters): void {
             foreach ($properties as $name => &$value) {
                 if ($setValue = $propertySetters[$name] ?? null) {
                     $setValue($object, $value);

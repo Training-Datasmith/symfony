@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -192,7 +194,7 @@ class ExpressionLanguageTest extends TestCase
 
     public static function shortCircuitProviderEvaluate()
     {
-        $object = new class(static::fail(...)) {
+        $object = new class (static::fail(...)) {
             private \Closure $fail;
 
             public function __construct(\Closure $fail)
@@ -331,7 +333,7 @@ class ExpressionLanguageTest extends TestCase
 
     public static function provideNullSafe()
     {
-        $foo = new class extends \stdClass {
+        $foo = new class () extends \stdClass {
             public function bar()
             {
                 return null;
@@ -417,7 +419,7 @@ class ExpressionLanguageTest extends TestCase
 
     public static function provideNullCoalescing()
     {
-        $foo = new class extends \stdClass {
+        $foo = new class () extends \stdClass {
             public function bar()
             {
                 return null;
@@ -511,12 +513,16 @@ class ExpressionLanguageTest extends TestCase
         return [
             [
                 static function (ExpressionLanguage $el) {
-                    $el->register('fn', static function () {}, static function () {});
+                    $el->register('fn', static function () {
+                    }, static function () {
+                    });
                 },
             ],
             [
                 static function (ExpressionLanguage $el) {
-                    $el->addFunction(new ExpressionFunction('fn', static function () {}, static function () {}));
+                    $el->addFunction(new ExpressionFunction('fn', static function () {
+                    }, static function () {
+                    }));
                 },
             ],
             [

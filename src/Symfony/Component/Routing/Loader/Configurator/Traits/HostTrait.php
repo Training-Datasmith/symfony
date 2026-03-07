@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,7 +35,7 @@ trait HostTrait
                 foreach ($hosts as $locale => $host) {
                     $localizedRoute = clone $route;
                     $localizedRoute->setDefault('_locale', $locale);
-                    $localizedRoute->setRequirement('_locale', preg_quote($locale));
+                    $localizedRoute->setRequirement('_locale', preg_quote((string) $locale));
                     $localizedRoute->setDefault('_canonical_route', $name);
                     $localizedRoute->setHost($host);
                     $routes->add($name.'.'.$locale, $localizedRoute, $priority);
@@ -42,7 +44,7 @@ trait HostTrait
                 throw new \InvalidArgumentException(\sprintf('Route "%s" with locale "%s" is missing a corresponding host in its parent collection.', $name, $locale));
             } else {
                 $route->setHost($hosts[$locale]);
-                $route->setRequirement('_locale', preg_quote($locale));
+                $route->setRequirement('_locale', preg_quote((string) $locale));
                 $routes->add($name, $route, $routes->getPriority($name) ?? 0);
             }
         }

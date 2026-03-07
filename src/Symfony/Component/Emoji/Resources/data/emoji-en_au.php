@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'kiss: person, person, light skin tone, medium-light skin tone',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'kiss: person, person, light skin tone, medium skin tone',

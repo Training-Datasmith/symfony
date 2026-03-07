@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -148,7 +150,7 @@ class Message extends RawMessage
             throw new LogicException('An email must have a "From" or a "Sender" header.');
         }
 
-        return bin2hex(random_bytes(16)).strstr($sender->getAddress(), '@');
+        return bin2hex(random_bytes(16)).strstr((string) $sender->getAddress(), '@');
     }
 
     public function __serialize(): array

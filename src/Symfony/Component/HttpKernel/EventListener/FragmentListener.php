@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,8 +39,8 @@ class FragmentListener implements EventSubscriberInterface
      * @param string $fragmentPath The path that triggers this listener
      */
     public function __construct(
-        private UriSigner $signer,
-        private string $fragmentPath = '/_fragment',
+        private readonly UriSigner $signer,
+        private readonly string $fragmentPath = '/_fragment',
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -73,7 +75,8 @@ class DoctrineChoiceLoaderTest extends TestCase
         );
 
         $choices = [$this->obj1, $this->obj2, $this->obj3];
-        $value = static function () {};
+        $value = static function () {
+        };
         $choiceList = new ArrayChoiceList($choices, $value);
 
         $this->repository->expects($this->once())

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,8 +43,8 @@ final class Dotenv
     private bool $resolveVars = true;
 
     public function __construct(
-        private string $envKey = 'APP_ENV',
-        private string $debugKey = 'APP_DEBUG',
+        private readonly string $envKey = 'APP_ENV',
+        private readonly string $debugKey = 'APP_DEBUG',
     ) {
     }
 
@@ -211,10 +213,10 @@ final class Dotenv
     public function populate(array $values, bool $overrideExistingVars = false): void
     {
         $updateLoadedVars = false;
-        $loadedVars = array_flip(explode(',', $_SERVER['SYMFONY_DOTENV_VARS'] ?? $_ENV['SYMFONY_DOTENV_VARS'] ?? ''));
+        $loadedVars = array_flip(explode(',', (string) ($_SERVER['SYMFONY_DOTENV_VARS'] ?? $_ENV['SYMFONY_DOTENV_VARS'] ?? '')));
 
         foreach ($values as $name => $value) {
-            $notHttpName = !str_starts_with($name, 'HTTP_');
+            $notHttpName = !str_starts_with((string) $name, 'HTTP_');
             if (isset($_SERVER[$name]) && $notHttpName && !isset($_ENV[$name])) {
                 $_ENV[$name] = $_SERVER[$name];
             }
@@ -337,7 +339,7 @@ final class Dotenv
             throw $this->createFormatException('Whitespace are not supported before the value');
         }
 
-        $loadedVars = array_flip(explode(',', $_SERVER['SYMFONY_DOTENV_VARS'] ?? $_ENV['SYMFONY_DOTENV_VARS'] ?? ''));
+        $loadedVars = array_flip(explode(',', (string) ($_SERVER['SYMFONY_DOTENV_VARS'] ?? $_ENV['SYMFONY_DOTENV_VARS'] ?? '')));
         unset($loadedVars['']);
         $v = '';
 
@@ -474,9 +476,9 @@ final class Dotenv
             )
         /x';
 
-        return preg_replace_callback($regex, function ($matches) use ($loadedVars) {
+        return preg_replace_callback($regex, function ($matches) use ($loadedVars): string {
             if ('\\' === $matches[1]) {
-                return substr($matches[0], 1);
+                return substr((string) $matches[0], 1);
             }
 
             if ('\\' === \DIRECTORY_SEPARATOR) {
@@ -524,10 +526,10 @@ final class Dotenv
             (?P<closing_brace>\})?             # optional closing brace
         /x';
 
-        return preg_replace_callback($regex, function ($matches) use ($loadedVars) {
+        return preg_replace_callback($regex, function (array $matches) use ($loadedVars): string {
             // odd number of backslashes means the $ character is escaped
-            if (1 === \strlen($matches['backslashes']) % 2) {
-                return substr($matches[0], 1);
+            if (1 === \strlen((string) $matches['backslashes']) % 2) {
+                return substr((string) $matches[0], 1);
             }
 
             // unescaped $ not followed by variable name
@@ -553,12 +555,12 @@ final class Dotenv
             }
 
             if ('' === $value && isset($matches['default_value']) && '' !== $matches['default_value']) {
-                $unsupportedChars = strpbrk($matches['default_value'], '\'"{$');
+                $unsupportedChars = strpbrk((string) $matches['default_value'], '\'"{$');
                 if (false !== $unsupportedChars) {
                     throw $this->createFormatException(\sprintf('Unsupported character "%s" found in the default value of variable "$%s".', $unsupportedChars[0], $name));
                 }
 
-                $value = substr($matches['default_value'], 2);
+                $value = substr((string) $matches['default_value'], 2);
 
                 if ('=' === $matches['default_value'][1]) {
                     $this->values[$name] = $value;
@@ -593,7 +595,7 @@ final class Dotenv
 
             $data = file_get_contents($path);
 
-            if ("\xEF\xBB\xBF" === substr($data, 0, 3)) {
+            if (str_starts_with($data, "\xEF\xBB\xBF")) {
                 throw new FormatException('Loading files starting with a byte-order-mark (BOM) is not supported.', new FormatExceptionContext($data, $path, 1, 0));
             }
 
@@ -607,7 +609,7 @@ final class Dotenv
 
     private function resolveLoadedVars(): void
     {
-        $loadedVars = array_flip(explode(',', $_SERVER['SYMFONY_DOTENV_VARS'] ?? $_ENV['SYMFONY_DOTENV_VARS'] ?? ''));
+        $loadedVars = array_flip(explode(',', (string) ($_SERVER['SYMFONY_DOTENV_VARS'] ?? $_ENV['SYMFONY_DOTENV_VARS'] ?? '')));
         unset($loadedVars['']);
 
         $this->values = [];
@@ -623,7 +625,7 @@ final class Dotenv
                 if ('SYMFONY_DOTENV_VARS' === $name) {
                     continue;
                 }
-                if (!str_contains($value = $_ENV[$name] ?? '', '$')) {
+                if (!str_contains((string) $value = $_ENV[$name] ?? '', '$')) {
                     continue;
                 }
                 $resolvedValue = $this->resolveCommands($value, $loadedVars);
@@ -639,13 +641,13 @@ final class Dotenv
             $this->populate($resolved, true);
         }
         if (5 === $pass && $resolved) {
-            throw new class('Too many levels of variable indirection in env vars: '.implode(', ', array_keys($resolved)).'.') extends \LogicException implements ExceptionInterface {};
+            throw new class ('Too many levels of variable indirection in env vars: '.implode(', ', array_keys($resolved)).'.') extends \LogicException implements ExceptionInterface {};
         }
 
         // Restore literal $ signs that were protected from resolution (from single-quoted strings)
         $restored = [];
         foreach ($loadedVars as $name => $_) {
-            if ('SYMFONY_DOTENV_VARS' !== $name && str_contains($value = $_ENV[$name] ?? '', "\x00")) {
+            if ('SYMFONY_DOTENV_VARS' !== $name && str_contains((string) $value = $_ENV[$name] ?? '', "\x00")) {
                 $restored[$name] = str_replace("\x00", '$', $value);
             }
         }

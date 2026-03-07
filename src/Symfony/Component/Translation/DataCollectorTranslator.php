@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ final class DataCollectorTranslator implements TranslatorInterface, TranslatorBa
     private array $messages = [];
 
     public function __construct(
-        private TranslatorInterface&TranslatorBagInterface&LocaleAwareInterface $translator,
+        private readonly TranslatorInterface&TranslatorBagInterface&LocaleAwareInterface $translator,
     ) {
     }
 

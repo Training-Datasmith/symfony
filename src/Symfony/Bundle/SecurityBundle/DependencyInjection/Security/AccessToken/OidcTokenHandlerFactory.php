@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,9 @@ class OidcTokenHandlerFactory implements TokenHandlerFactoryInterface
 {
     public function create(ContainerBuilder $container, string $id, array|string $config): void
     {
-        $tokenHandlerDefinition = $container->setDefinition($id, (new ChildDefinition('security.access_token_handler.oidc'))
+        $tokenHandlerDefinition = $container->setDefinition(
+            $id,
+            (new ChildDefinition('security.access_token_handler.oidc'))
             ->replaceArgument(2, $config['audience'])
             ->replaceArgument(3, $config['issuers'])
             ->replaceArgument(4, $config['claim'])
@@ -121,7 +125,7 @@ class OidcTokenHandlerFactory implements TokenHandlerFactoryInterface
         $node
             ->arrayNode($this->getKey())
                 ->validate()
-                    ->ifTrue(static fn ($v) => !isset($v['discovery']) && !isset($v['keyset']))
+                    ->ifTrue(static fn ($v): bool => !isset($v['discovery']) && !isset($v['keyset']))
                     ->thenInvalid('You must set either "discovery" or "keyset".')
                 ->end()
                 ->children()

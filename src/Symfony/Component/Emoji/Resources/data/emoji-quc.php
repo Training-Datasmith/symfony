@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'Tz’umanik: nim, nim, saq ub’antajik b’aqilal, retal saq ub’antajik b’aqilal',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'Tz’umanik: nim, nim, saq ub’antajik b’aqilal, retal ub’antajik b’aqilal',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ class HeaderRequestMatcher implements RequestMatcherInterface
     /**
      * @var string[]
      */
-    private array $headers;
+    private readonly array $headers;
 
     /**
      * @param string[]|string $headers A header or a list of headers
@@ -32,7 +34,7 @@ class HeaderRequestMatcher implements RequestMatcherInterface
      */
     public function __construct(array|string $headers)
     {
-        $this->headers = array_reduce((array) $headers, static fn (array $headers, string $header) => array_merge($headers, preg_split('/\s*,\s*/', $header)), []);
+        $this->headers = array_reduce((array) $headers, static fn (array $headers, string $header): array => array_merge($headers, preg_split('/\s*,\s*/', $header)), []);
     }
 
     public function matches(Request $request): bool

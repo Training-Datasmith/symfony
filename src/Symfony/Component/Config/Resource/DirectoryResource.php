@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,7 @@ namespace Symfony\Component\Config\Resource;
  */
 class DirectoryResource implements SelfCheckingResourceInterface
 {
-    private string $resource;
+    private readonly string $resource;
 
     /**
      * @param string      $resource The file path to the resource
@@ -30,7 +32,7 @@ class DirectoryResource implements SelfCheckingResourceInterface
      */
     public function __construct(
         string $resource,
-        private ?string $pattern = null,
+        private readonly ?string $pattern = null,
     ) {
         $resolvedResource = realpath($resource) ?: (file_exists($resource) ? $resource : false);
 
@@ -68,13 +70,13 @@ class DirectoryResource implements SelfCheckingResourceInterface
 
         foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->resource), \RecursiveIteratorIterator::SELF_FIRST) as $file) {
             // if regex filtering is enabled only check matching files
-            if ($this->pattern && $file->isFile() && !preg_match($this->pattern, $file->getBasename())) {
+            if ($this->pattern && $file->isFile() && !preg_match($this->pattern, (string) $file->getBasename())) {
                 continue;
             }
 
             // always monitor directories for changes, except the .. entries
             // (otherwise deleted files wouldn't get detected)
-            if ($file->isDir() && str_ends_with($file, '/..')) {
+            if ($file->isDir() && str_ends_with((string) $file, '/..')) {
                 continue;
             }
 

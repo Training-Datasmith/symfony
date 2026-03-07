@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ use Symfony\Component\RateLimiter\Exception\ReserveNotSupportedException;
 /**
  * @author Wouter de Jong <wouter@wouterj.nl>
  */
-final class CompoundLimiter implements LimiterInterface
+final readonly class CompoundLimiter implements LimiterInterface
 {
     /**
      * @param LimiterInterface[] $limiters
@@ -31,7 +33,7 @@ final class CompoundLimiter implements LimiterInterface
 
     public function reserve(int $tokens = 1, ?float $maxTime = null): Reservation
     {
-        throw new ReserveNotSupportedException(__CLASS__);
+        throw new ReserveNotSupportedException(self::class);
     }
 
     public function consume(int $tokens = 1): RateLimit

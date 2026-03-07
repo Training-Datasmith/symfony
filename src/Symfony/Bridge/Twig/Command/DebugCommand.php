@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -42,11 +44,11 @@ class DebugCommand extends Command
     private array $filesystemLoaders;
 
     public function __construct(
-        private Environment $twig,
-        private ?string $projectDir = null,
-        private array $bundlesMetadata = [],
-        private ?string $twigDefaultPath = null,
-        private ?FileLinkFormatter $fileLinkFormatter = null,
+        private readonly Environment $twig,
+        private readonly ?string $projectDir = null,
+        private readonly array $bundlesMetadata = [],
+        private readonly ?string $twigDefaultPath = null,
+        private readonly ?FileLinkFormatter $fileLinkFormatter = null,
     ) {
         parent::__construct();
     }
@@ -59,7 +61,8 @@ class DebugCommand extends Command
                 new InputOption('filter', null, InputOption::VALUE_REQUIRED, 'Show details for all entries matching this filter'),
                 new InputOption('format', null, InputOption::VALUE_REQUIRED, \sprintf('The output format ("%s")', implode('", "', $this->getAvailableFormatOptions())), 'txt'),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command outputs a list of twig functions,
                 filters, globals and tests.
 
@@ -154,7 +157,7 @@ class DebugCommand extends Command
                 [$namespace, $shortname] = $this->parseTemplateName($name);
                 $alternatives = $this->findAlternatives($shortname, $shortnames);
                 if (FilesystemLoader::MAIN_NAMESPACE !== $namespace) {
-                    $alternatives = array_map(static fn ($shortname) => '@'.$namespace.'/'.$shortname, $alternatives);
+                    $alternatives = array_map(static fn ($shortname): string => '@'.$namespace.'/'.$shortname, $alternatives);
                 }
             }
 
@@ -210,10 +213,10 @@ class DebugCommand extends Command
     {
         $decorated = $io->isDecorated();
         $types = ['functions', 'filters', 'tests', 'globals'];
-        foreach ($types as $index => $type) {
+        foreach ($types as $type) {
             $items = [];
             foreach ($this->twig->{'get'.ucfirst($type)}() as $name => $entity) {
-                if (!$filter || str_contains($name, $filter)) {
+                if (!$filter || str_contains((string) $name, $filter)) {
                     $items[$name] = $name.$this->getPrettyMetadata($type, $entity, $decorated);
                 }
             }
@@ -247,7 +250,7 @@ class DebugCommand extends Command
         $data = [];
         foreach ($types as $type) {
             foreach ($this->twig->{'get'.ucfirst($type)}() as $name => $entity) {
-                if (!$filter || str_contains($name, $filter)) {
+                if (!$filter || str_contains((string) $name, $filter)) {
                     $data[$type][$name] = $this->getMetadata($type, $entity);
                 }
             }
@@ -338,7 +341,7 @@ class DebugCommand extends Command
             }
 
             // format args
-            return array_map(static function (\ReflectionParameter $param) {
+            return array_map(static function (\ReflectionParameter $param): string {
                 if ($param->isDefaultValueAvailable()) {
                     return $param->getName().' = '.json_encode($param->getDefaultValue());
                 }
@@ -394,8 +397,8 @@ class DebugCommand extends Command
         if ($this->twigDefaultPath && $this->projectDir) {
             $folders = glob($this->twigDefaultPath.'/bundles/*', \GLOB_ONLYDIR);
             $relativePath = ltrim(substr($this->twigDefaultPath.'/bundles/', \strlen($this->projectDir)), \DIRECTORY_SEPARATOR);
-            $bundleNames = array_reduce($folders, function ($carry, $absolutePath) use ($relativePath) {
-                if (str_starts_with($absolutePath, $this->projectDir)) {
+            $bundleNames = array_reduce($folders, function (array $carry, $absolutePath) use ($relativePath): array {
+                if (str_starts_with($absolutePath, (string) $this->projectDir)) {
                     $name = basename($absolutePath);
                     $path = ltrim($relativePath.$name, \DIRECTORY_SEPARATOR);
                     $carry[$name] = $path;
@@ -524,13 +527,13 @@ class DebugCommand extends Command
         $alternatives = [];
         foreach ($collection as $item) {
             $lev = levenshtein($name, $item);
-            if ($lev <= \strlen($name) / 3 || str_contains($item, $name)) {
+            if ($lev <= \strlen($name) / 3 || str_contains((string) $item, $name)) {
                 $alternatives[$item] = isset($alternatives[$item]) ? $alternatives[$item] - $lev : $lev;
             }
         }
 
         $threshold = 1e3;
-        $alternatives = array_filter($alternatives, static fn ($lev) => $lev < 2 * $threshold);
+        $alternatives = array_filter($alternatives, static fn (int $lev): bool => $lev < 2 * $threshold);
         ksort($alternatives, \SORT_NATURAL | \SORT_FLAG_CASE);
 
         return array_keys($alternatives);

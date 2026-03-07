@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -108,7 +110,7 @@ class Filesystem
         $maxPathLength = \PHP_MAXPATHLEN - 2;
 
         foreach ($this->toIterable($files) as $file) {
-            if (\strlen($file) > $maxPathLength) {
+            if (\strlen((string) $file) > $maxPathLength) {
                 throw new IOException(\sprintf('Could not check if file exist because path length exceeds %d characters.', $maxPathLength), 0, null, $file);
             }
 
@@ -451,11 +453,11 @@ class Filesystem
             $startPath = str_replace('\\', '/', $startPath);
         }
 
-        $splitDriveLetter = static fn ($path) => (\strlen($path) > 2 && ':' === $path[1] && '/' === $path[2] && ctype_alpha($path[0]))
-            ? [substr($path, 2), strtoupper($path[0])]
+        $splitDriveLetter = static fn ($path): array => (\strlen((string) $path) > 2 && ':' === $path[1] && '/' === $path[2] && ctype_alpha((string) $path[0]))
+            ? [substr((string) $path, 2), strtoupper((string) $path[0])]
             : [$path, null];
 
-        $splitPath = static function ($path) {
+        $splitPath = static function ($path): array {
             $result = [];
 
             foreach (explode('/', trim($path, '/')) as $segment) {
@@ -549,7 +551,7 @@ class Filesystem
             }
             $targetDirLen = \strlen($targetDir);
             foreach ($deleteIterator as $file) {
-                $origin = $originDir.substr($file->getPathname(), $targetDirLen);
+                $origin = $originDir.substr((string) $file->getPathname(), $targetDirLen);
                 if (!$this->exists($origin)) {
                     $this->remove($file);
                 }
@@ -567,11 +569,16 @@ class Filesystem
         $filesCreatedWhileMirroring = [];
 
         foreach ($iterator as $file) {
-            if ($file->getPathname() === $targetDir || $file->getRealPath() === $targetDir || isset($filesCreatedWhileMirroring[$file->getRealPath()])) {
+            if ($file->getPathname() === $targetDir) {
                 continue;
             }
-
-            $target = $targetDir.substr($file->getPathname(), $originDirLen);
+            if ($file->getRealPath() === $targetDir) {
+                continue;
+            }
+            if (isset($filesCreatedWhileMirroring[$file->getRealPath()])) {
+                continue;
+            }
+            $target = $targetDir.substr((string) $file->getPathname(), $originDirLen);
             $filesCreatedWhileMirroring[$target] = true;
 
             if (!$followSymlinks && is_link($file)) {

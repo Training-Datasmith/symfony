@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,11 +26,8 @@ class OutputFormatterStyleStack implements ResetInterface
      */
     private array $styles = [];
 
-    private OutputFormatterStyleInterface $emptyStyle;
-
-    public function __construct(?OutputFormatterStyleInterface $emptyStyle = null)
+    public function __construct(private ?OutputFormatterStyleInterface $emptyStyle = new OutputFormatterStyle())
     {
-        $this->emptyStyle = $emptyStyle ?? new OutputFormatterStyle();
         $this->reset();
     }
 

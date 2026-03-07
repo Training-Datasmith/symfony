@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,7 +39,7 @@ class InstanceofConfigurator extends AbstractServiceConfigurator
         string $id,
         private ?string $path = null,
     ) {
-        parent::__construct($parent, $definition, $id, []);
+        parent::__construct($parent, $definition, $id);
     }
 
     /**

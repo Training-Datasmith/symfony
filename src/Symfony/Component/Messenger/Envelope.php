@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,6 @@ final class Envelope
     private array $stamps = [];
 
     /**
-     * @param object|Envelope  $message
      * @param StampInterface[] $stamps
      */
     public function __construct(

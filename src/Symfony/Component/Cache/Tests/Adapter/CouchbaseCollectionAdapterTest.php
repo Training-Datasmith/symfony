@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,8 @@ class CouchbaseCollectionAdapterTest extends AdapterTestCase
 
     public function createCachePool($defaultLifetime = 0): CacheItemPoolInterface
     {
-        $client = AbstractAdapter::createConnection('couchbase://'.getenv('COUCHBASE_HOST').'/cache',
+        $client = AbstractAdapter::createConnection(
+            'couchbase://'.getenv('COUCHBASE_HOST').'/cache',
             ['username' => getenv('COUCHBASE_USER'), 'password' => getenv('COUCHBASE_PASS')]
         );
 

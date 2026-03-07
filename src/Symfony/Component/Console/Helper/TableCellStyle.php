@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -67,7 +69,7 @@ class TableCellStyle
     {
         return array_filter(
             $this->getOptions(),
-            fn ($key) => \in_array($key, self::TAG_OPTIONS, true) && isset($this->options[$key]),
+            fn ($key): bool => \in_array($key, self::TAG_OPTIONS, true) && isset($this->options[$key]),
             \ARRAY_FILTER_USE_KEY
         );
     }

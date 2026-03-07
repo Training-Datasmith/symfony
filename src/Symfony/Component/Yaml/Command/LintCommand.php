@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,8 +41,8 @@ class LintCommand extends Command
     private Parser $parser;
     private ?string $format = null;
     private bool $displayCorrectFiles;
-    private ?\Closure $directoryIteratorProvider;
-    private ?\Closure $isReadableProvider;
+    private readonly ?\Closure $directoryIteratorProvider;
+    private readonly ?\Closure $isReadableProvider;
 
     public function __construct(?string $name = null, ?callable $directoryIteratorProvider = null, ?callable $isReadableProvider = null)
     {
@@ -56,8 +58,9 @@ class LintCommand extends Command
             ->addArgument('filename', InputArgument::IS_ARRAY, 'A file, a directory or "-" for reading from STDIN')
             ->addOption('format', null, InputOption::VALUE_REQUIRED, \sprintf('The output format ("%s")', implode('", "', $this->getAvailableFormatOptions())))
             ->addOption('exclude', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Path(s) to exclude')
-            ->addOption('parse-tags', null, InputOption::VALUE_NEGATABLE, 'Parse custom tags', null)
-            ->setHelp(<<<EOF
+            ->addOption('parse-tags', null, InputOption::VALUE_NEGATABLE, 'Parse custom tags')
+            ->setHelp(
+                <<<EOF
                 The <info>%command.name%</info> command lints a YAML file and outputs to STDOUT
                 the first encountered syntax error.
 
@@ -176,7 +179,7 @@ class LintCommand extends Command
                 $io->text('<error> ERROR </error>'.($info['file'] ? \sprintf(' in %s', $info['file']) : ''));
                 $io->text(\sprintf('<error> >> %s</error>', $info['message']));
 
-                if (str_contains($info['message'], 'PARSE_CUSTOM_TAGS')) {
+                if (str_contains((string) $info['message'], 'PARSE_CUSTOM_TAGS')) {
                     $suggestTagOption = true;
                 }
 
@@ -199,13 +202,13 @@ class LintCommand extends Command
     {
         $errors = 0;
 
-        array_walk($filesInfo, static function (&$v) use (&$errors) {
+        array_walk($filesInfo, static function (array &$v) use (&$errors): void {
             $v['file'] = (string) $v['file'];
             if (!$v['valid']) {
                 ++$errors;
             }
 
-            if (isset($v['message']) && str_contains($v['message'], 'PARSE_CUSTOM_TAGS')) {
+            if (isset($v['message']) && str_contains((string) $v['message'], 'PARSE_CUSTOM_TAGS')) {
                 $v['message'] .= ' Use the --parse-tags option if you want parse custom tags.';
             }
         });
@@ -239,7 +242,7 @@ class LintCommand extends Command
 
     private function getDirectoryIterator(string $directory): iterable
     {
-        $default = static fn ($directory) => new \RecursiveIteratorIterator(
+        $default = static fn ($directory): \RecursiveIteratorIterator => new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($directory, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::FOLLOW_SYMLINKS),
             \RecursiveIteratorIterator::LEAVES_ONLY
         );

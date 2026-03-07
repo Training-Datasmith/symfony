@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ class DefaultsConfigurator extends AbstractServiceConfigurator
         Definition $definition,
         private ?string $path = null,
     ) {
-        parent::__construct($parent, $definition, null, []);
+        parent::__construct($parent, $definition);
     }
 
     /**

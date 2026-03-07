@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,8 +33,8 @@ use Symfony\Component\Dotenv\Dotenv;
 final class DebugCommand extends Command
 {
     public function __construct(
-        private string $kernelEnvironment,
-        private string $projectDir,
+        private readonly string $kernelEnvironment,
+        private readonly string $projectDir,
     ) {
         parent::__construct();
     }
@@ -43,7 +45,8 @@ final class DebugCommand extends Command
             ->setDefinition([
                 new InputArgument('filter', InputArgument::OPTIONAL, 'The name of an environment variable or a filter.', null, $this->getAvailableVars(...)),
             ])
-            ->setHelp(<<<'EOT'
+            ->setHelp(
+                <<<'EOT'
                 The <info>%command.full_name%</info> command displays all the environment variables configured by dotenv:
 
                   <info>php %command.full_name%</info>
@@ -70,7 +73,7 @@ final class DebugCommand extends Command
         $dotenvPath = $this->getDotenvPath();
 
         $envFiles = $this->getEnvFiles($dotenvPath);
-        $availableFiles = array_filter($envFiles, 'is_file');
+        $availableFiles = array_filter($envFiles, is_file(...));
 
         if (\in_array(\sprintf('%s.local.php', $dotenvPath), $availableFiles, true)) {
             $io->warning(\sprintf('Due to existing dump file (%s.local.php) all other dotenv files are skipped.', $this->getRelativeName($dotenvPath)));
@@ -81,7 +84,7 @@ final class DebugCommand extends Command
         }
 
         $io->section('Scanned Files (in descending priority)');
-        $io->listing(array_map(fn (string $envFile) => \in_array($envFile, $availableFiles, true)
+        $io->listing(array_map(fn (string $envFile): string => \in_array($envFile, $availableFiles, true)
             ? \sprintf('<fg=green>✓</> %s', $this->getRelativeName($envFile))
             : \sprintf('<fg=red>⨯</> %s', $this->getRelativeName($envFile)), $envFiles));
 
@@ -123,7 +126,7 @@ final class DebugCommand extends Command
         }
 
         foreach ($variables as $var => $varDetails) {
-            if (null !== $nameFilter && 0 !== stripos($var, $nameFilter)) {
+            if (null !== $nameFilter && 0 !== stripos((string) $var, $nameFilter)) {
                 unset($variables[$var]);
                 continue;
             }
@@ -155,7 +158,7 @@ final class DebugCommand extends Command
     {
         $envFiles = $this->getEnvFiles($this->getDotenvPath());
 
-        return array_keys($this->getVariables(array_filter($envFiles, 'is_file'), null));
+        return array_keys($this->getVariables(array_filter($envFiles, is_file(...)), null));
     }
 
     private function getDotenvPath(): string

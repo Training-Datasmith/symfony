@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,8 +25,8 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 class UserPasswordValidator extends ConstraintValidator
 {
     public function __construct(
-        private TokenStorageInterface $tokenStorage,
-        private PasswordHasherFactoryInterface $hasherFactory,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly PasswordHasherFactoryInterface $hasherFactory,
     ) {
     }
 

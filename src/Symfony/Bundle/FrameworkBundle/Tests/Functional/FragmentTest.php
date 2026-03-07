@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,8 @@ class FragmentTest extends AbstractWebTestCase
 
         $client->request('GET', '/fragment_home');
 
-        $this->assertEquals(<<<TXT
+        $this->assertEquals(
+            <<<TXT
             bar txt
             --
             html

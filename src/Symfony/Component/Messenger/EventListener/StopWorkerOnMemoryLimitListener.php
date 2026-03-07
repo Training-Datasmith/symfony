@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,14 +23,14 @@ use Symfony\Component\Messenger\Event\WorkerRunningEvent;
  */
 class StopWorkerOnMemoryLimitListener implements EventSubscriberInterface
 {
-    private \Closure $memoryResolver;
+    private readonly \Closure $memoryResolver;
 
     public function __construct(
-        private int $memoryLimit,
-        private ?LoggerInterface $logger = null,
+        private readonly int $memoryLimit,
+        private readonly ?LoggerInterface $logger = null,
         ?callable $memoryResolver = null,
     ) {
-        $memoryResolver ??= static fn () => memory_get_usage(true);
+        $memoryResolver ??= static fn (): int => memory_get_usage(true);
         $this->memoryResolver = $memoryResolver(...);
     }
 

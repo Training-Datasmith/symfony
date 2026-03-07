@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -43,7 +45,7 @@ class AttributeRouteControllerLoader extends AttributeClassLoader
         $name = preg_replace('/(bundle|controller)_/', '_', parent::getDefaultRouteName($class, $method));
 
         if (str_ends_with($method->name, 'Action') || str_ends_with($method->name, '_action')) {
-            $name = preg_replace('/action(_\d+)?$/', '\\1', $name);
+            $name = preg_replace('/action(_\d+)?$/', '\\1', (string) $name);
         }
 
         return str_replace('__', '_', $name);

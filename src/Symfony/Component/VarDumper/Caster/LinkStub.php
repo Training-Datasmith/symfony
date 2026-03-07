@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -82,7 +84,7 @@ class LinkStub extends ConstStub
         }
 
         foreach (self::$vendorRoots as $root) {
-            if ($inVendor = str_starts_with($file, $root)) {
+            if ($inVendor = str_starts_with($file, (string) $root)) {
                 return $root;
             }
         }

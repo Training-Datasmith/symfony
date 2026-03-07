@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -91,7 +93,7 @@ class RegisterListenersPass implements CompilerPassInterface
                     $event['method'] = 'on'.preg_replace_callback([
                         '/(?<=\b|_)[a-z]/i',
                         '/[^a-z0-9]/i',
-                    ], static fn ($matches) => strtoupper($matches[0]), $event['event']);
+                    ], static fn ($matches) => strtoupper($matches[0]), (string) $event['event']);
                     $event['method'] = preg_replace('/[^a-z0-9]/i', '', $event['method']);
 
                     if (null !== ($class = $container->getDefinition($id)->getClass()) && ($r = $container->getReflectionClass($class, false)) && !$r->hasMethod($event['method'])) {
@@ -140,10 +142,12 @@ class RegisterListenersPass implements CompilerPassInterface
 
             $dispatcherDefinitions = [];
             foreach ($tags as $attributes) {
-                if (!isset($attributes['dispatcher']) || isset($dispatcherDefinitions[$attributes['dispatcher']])) {
+                if (!isset($attributes['dispatcher'])) {
                     continue;
                 }
-
+                if (isset($dispatcherDefinitions[$attributes['dispatcher']])) {
+                    continue;
+                }
                 $dispatcherDefinitions[$attributes['dispatcher']] = $container->findDefinition($attributes['dispatcher']);
             }
 
@@ -194,13 +198,15 @@ class RegisterListenersPass implements CompilerPassInterface
 
         $names = [];
         foreach ($types as $type) {
-            if (!$type instanceof \ReflectionNamedType
-                || $type->isBuiltin()
-                || Event::class === ($name = $type->getName())
-            ) {
+            if (!$type instanceof \ReflectionNamedType) {
                 continue;
             }
-
+            if ($type->isBuiltin()) {
+                continue;
+            }
+            if (Event::class === ($name = $type->getName())) {
+                continue;
+            }
             $names[] = $name;
         }
 

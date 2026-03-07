@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ use Symfony\Component\Mime\Header\UnstructuredHeader;
 final class MetadataHeader extends UnstructuredHeader
 {
     public function __construct(
-        private string $key,
+        private readonly string $key,
         string $value,
     ) {
         parent::__construct('X-Metadata-'.$key, $value);

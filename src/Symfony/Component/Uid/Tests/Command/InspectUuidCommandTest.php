@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,8 @@ final class InspectUuidCommandTest extends TestCase
         $commandTester = new CommandTester(new InspectUuidCommand());
 
         $this->assertSame(0, $commandTester->execute(['uuid' => '00000000-0000-0000-0000-000000000000']));
-        $this->assertSame(<<<EOF
+        $this->assertSame(
+            <<<EOF
              ----------------------- -------------------------------------- 
               Label                   Value                                 
              ----------------------- -------------------------------------- 
@@ -52,7 +55,8 @@ final class InspectUuidCommandTest extends TestCase
         $commandTester = new CommandTester(new InspectUuidCommand());
 
         $this->assertSame(0, $commandTester->execute(['uuid' => '461cc9b9-2397-0dba-91e9-33af4c63f7ec']));
-        $this->assertSame(<<<EOF
+        $this->assertSame(
+            <<<EOF
              ----------------------- -------------------------------------- 
               Label                   Value                                 
              ----------------------- -------------------------------------- 
@@ -69,7 +73,8 @@ final class InspectUuidCommandTest extends TestCase
         );
 
         $this->assertSame(0, $commandTester->execute(['uuid' => '461cc9b9-2397-2dba-91e9-33af4c63f7ec']));
-        $this->assertSame(<<<EOF
+        $this->assertSame(
+            <<<EOF
              ----------------------- -------------------------------------- 
               Label                   Value                                 
              ----------------------- -------------------------------------- 
@@ -86,7 +91,8 @@ final class InspectUuidCommandTest extends TestCase
         );
 
         $this->assertSame(0, $commandTester->execute(['uuid' => '461cc9b9-2397-adba-91e9-33af4c63f7ec']));
-        $this->assertSame(<<<EOF
+        $this->assertSame(
+            <<<EOF
              ----------------------- -------------------------------------- 
               Label                   Value                                 
              ----------------------- -------------------------------------- 
@@ -103,7 +109,8 @@ final class InspectUuidCommandTest extends TestCase
         );
 
         $this->assertSame(0, $commandTester->execute(['uuid' => '461cc9b9-2397-cdba-91e9-33af4c63f7ec']));
-        $this->assertSame(<<<EOF
+        $this->assertSame(
+            <<<EOF
              ----------------------- -------------------------------------- 
               Label                   Value                                 
              ----------------------- -------------------------------------- 
@@ -125,7 +132,8 @@ final class InspectUuidCommandTest extends TestCase
         $commandTester = new CommandTester(new InspectUuidCommand());
 
         $this->assertSame(0, $commandTester->execute(['uuid' => '4c8e3a2a-5993-11eb-a861-2bf05af69e52']));
-        $this->assertSame(<<<EOF
+        $this->assertSame(
+            <<<EOF
              ----------------------- -------------------------------------- 
               Label                   Value                                 
              ----------------------- -------------------------------------- 
@@ -149,7 +157,8 @@ final class InspectUuidCommandTest extends TestCase
         $commandTester = new CommandTester(new InspectUuidCommand());
 
         $this->assertSame(0, $commandTester->execute(['uuid' => 'd108a1a0-957e-3c77-b110-d3f912374439']));
-        $this->assertSame(<<<EOF
+        $this->assertSame(
+            <<<EOF
              ----------------------- -------------------------------------- 
               Label                   Value                                 
              ----------------------- -------------------------------------- 
@@ -171,7 +180,8 @@ final class InspectUuidCommandTest extends TestCase
         $commandTester = new CommandTester(new InspectUuidCommand());
 
         $this->assertSame(0, $commandTester->execute(['uuid' => '705c6eab-a535-4f49-bd51-436d0e81206a']));
-        $this->assertSame(<<<EOF
+        $this->assertSame(
+            <<<EOF
              ----------------------- -------------------------------------- 
               Label                   Value                                 
              ----------------------- -------------------------------------- 
@@ -193,7 +203,8 @@ final class InspectUuidCommandTest extends TestCase
         $commandTester = new CommandTester(new InspectUuidCommand());
 
         $this->assertSame(0, $commandTester->execute(['uuid' => '4ec6c3ad-de94-5f75-b5f0-ad56661a30c4']));
-        $this->assertSame(<<<EOF
+        $this->assertSame(
+            <<<EOF
              ----------------------- -------------------------------------- 
               Label                   Value                                 
              ----------------------- -------------------------------------- 
@@ -215,7 +226,8 @@ final class InspectUuidCommandTest extends TestCase
         $commandTester = new CommandTester(new InspectUuidCommand());
 
         $this->assertSame(0, $commandTester->execute(['uuid' => '1eb59937-b0a7-6288-a861-db3dc2d8d4db']));
-        $this->assertSame(<<<EOF
+        $this->assertSame(
+            <<<EOF
              ----------------------- -------------------------------------- 
               Label                   Value                                 
              ----------------------- -------------------------------------- 
@@ -239,7 +251,8 @@ final class InspectUuidCommandTest extends TestCase
         $commandTester = new CommandTester(new InspectUuidCommand());
 
         $this->assertSame(0, $commandTester->execute(['uuid' => '017f22e2-79b0-7cc3-98c4-dc0c0c07398f']));
-        $this->assertSame(<<<EOF
+        $this->assertSame(
+            <<<EOF
              ----------------------- -------------------------------------- 
               Label                   Value                                 
              ----------------------- -------------------------------------- 
@@ -263,7 +276,8 @@ final class InspectUuidCommandTest extends TestCase
         $commandTester = new CommandTester(new InspectUuidCommand());
 
         $this->assertSame(0, $commandTester->execute(['uuid' => '017f22e2-79b0-8cc3-98c4-dc0c0c07398f']));
-        $this->assertSame(<<<EOF
+        $this->assertSame(
+            <<<EOF
              ----------------------- -------------------------------------- 
               Label                   Value                                 
              ----------------------- -------------------------------------- 

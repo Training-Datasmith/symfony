@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'sumba: babba, babba, launin fata mai haske, launin fata mai madaidaicin haske',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'sumba: babba, babba, launin fata mai haske, madaidaicin launin fata',

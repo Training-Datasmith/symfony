@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -104,10 +106,10 @@ class ExecutionContext implements ExecutionContextInterface
      * @param mixed $root the root value of the validated object graph
      */
     public function __construct(
-        private ValidatorInterface $validator,
-        private mixed $root,
-        private TranslatorInterface $translator,
-        private string|false|null $translationDomain = null,
+        private readonly ValidatorInterface $validator,
+        private readonly mixed $root,
+        private readonly TranslatorInterface $translator,
+        private readonly string|false|null $translationDomain = null,
     ) {
         $this->violations = new ConstraintViolationList();
         $this->cachedObjectsRefs = new \SplObjectStorage();

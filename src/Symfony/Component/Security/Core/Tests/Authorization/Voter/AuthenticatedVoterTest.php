@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -122,7 +124,7 @@ class AuthenticatedVoterTest extends TestCase
         $user = new InMemoryUser('wouter', '', ['ROLE_USER']);
 
         if ('fully' === $authenticated) {
-            $token = new class extends AbstractToken {
+            $token = new class () extends AbstractToken {
                 public function getCredentials()
                 {
                 }
@@ -141,7 +143,7 @@ class AuthenticatedVoterTest extends TestCase
         }
 
         if ('offline' === $authenticated) {
-            return new class($user->getRoles()) extends AbstractToken implements OfflineTokenInterface {};
+            return new class ($user->getRoles()) extends AbstractToken implements OfflineTokenInterface {};
         }
 
         return new NullToken();

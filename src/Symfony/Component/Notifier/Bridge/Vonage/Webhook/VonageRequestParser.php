@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,7 +43,7 @@ final class VonageRequestParser extends AbstractRequestParser
         if (!$request->headers->has('Authorization')) {
             throw new RejectWebhookException(406, 'Missing "Authorization" header.');
         }
-        $this->validateSignature(substr($request->headers->get('Authorization'), \strlen('Bearer ')), $secret);
+        $this->validateSignature(substr((string) $request->headers->get('Authorization'), \strlen('Bearer ')), $secret);
 
         // Statuses: https://developer.vonage.com/en/api/messages-olympus#message-status
         $payload = $request->toArray();

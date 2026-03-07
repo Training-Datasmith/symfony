@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,6 @@ class Regex extends Constraint
 
     public string $message = 'This value is not valid.';
     public ?string $pattern = null;
-    public ?string $htmlPattern = null;
     public bool $match = true;
     /** @var callable|null */
     public $normalizer;
@@ -45,7 +46,7 @@ class Regex extends Constraint
     public function __construct(
         ?string $pattern,
         ?string $message = null,
-        ?string $htmlPattern = null,
+        public ?string $htmlPattern = null,
         ?bool $match = null,
         ?callable $normalizer = null,
         ?array $groups = null,
@@ -59,7 +60,6 @@ class Regex extends Constraint
 
         $this->pattern = $pattern;
         $this->message = $message ?? $this->message;
-        $this->htmlPattern = $htmlPattern;
         $this->match = $match ?? $this->match;
         $this->normalizer = $normalizer;
 
@@ -83,14 +83,14 @@ class Regex extends Constraint
         }
 
         // Quit if delimiters not at very beginning/end (e.g. when options are passed)
-        if ($this->pattern[0] !== $this->pattern[\strlen($this->pattern) - 1]) {
+        if ($this->pattern[0] !== $this->pattern[\strlen((string) $this->pattern) - 1]) {
             return null;
         }
 
         $delimiter = $this->pattern[0];
 
         // Unescape the delimiter
-        $pattern = str_replace('\\'.$delimiter, $delimiter, substr($this->pattern, 1, -1));
+        $pattern = str_replace('\\'.$delimiter, $delimiter, substr((string) $this->pattern, 1, -1));
 
         // If the pattern is inverted, we can wrap it in
         // ((?!pattern).)*

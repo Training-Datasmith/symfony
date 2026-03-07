@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,8 +39,8 @@ class Firewall implements EventSubscriberInterface
     private \SplObjectStorage $exceptionListeners;
 
     public function __construct(
-        private FirewallMapInterface $map,
-        private EventDispatcherInterface $dispatcher,
+        private readonly FirewallMapInterface $map,
+        private readonly EventDispatcherInterface $dispatcher,
     ) {
         $this->exceptionListeners = new \SplObjectStorage();
     }

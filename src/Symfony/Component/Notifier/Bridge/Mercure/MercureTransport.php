@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,14 +32,14 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 final class MercureTransport extends AbstractTransport
 {
-    private string|array $topics;
+    private readonly string|array $topics;
 
     /**
      * @param string|string[]|null $topics
      */
     public function __construct(
-        private HubInterface $hub,
-        private string $hubId,
+        private readonly HubInterface $hub,
+        private readonly string $hubId,
         string|array|null $topics = null,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
@@ -63,11 +65,11 @@ final class MercureTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof ChatMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, ChatMessage::class, $message);
         }
 
         if (($options = $message->getOptions()) && !$options instanceof MercureOptions) {
-            throw new UnsupportedOptionsException(__CLASS__, MercureOptions::class, $options);
+            throw new UnsupportedOptionsException(self::class, MercureOptions::class, $options);
         }
 
         $options ??= new MercureOptions($this->topics);

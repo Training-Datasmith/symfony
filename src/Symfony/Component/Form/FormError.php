@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -42,11 +44,11 @@ class FormError
      * @see Translator
      */
     public function __construct(
-        private string $message,
+        private readonly string $message,
         ?string $messageTemplate = null,
         protected array $messageParameters = [],
         protected ?int $messagePluralization = null,
-        private mixed $cause = null,
+        private readonly mixed $cause = null,
     ) {
         $this->messageTemplate = $messageTemplate ?: $message;
     }

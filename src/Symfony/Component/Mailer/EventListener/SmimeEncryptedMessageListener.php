@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,11 +23,11 @@ use Symfony\Component\Mime\Message;
  *
  * @author Elías Fernández
  */
-final class SmimeEncryptedMessageListener implements EventSubscriberInterface
+final readonly class SmimeEncryptedMessageListener implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly SmimeCertificateRepositoryInterface $smimeRepository,
-        private readonly ?int $cipher = null,
+        private SmimeCertificateRepositoryInterface $smimeRepository,
+        private ?int $cipher = null,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,13 +22,10 @@ use Symfony\Component\Messenger\Envelope;
  */
 final class WorkerMessageFailedEvent extends AbstractWorkerMessageEvent
 {
-    private \Throwable $throwable;
     private bool $willRetry = false;
 
-    public function __construct(Envelope $envelope, string $receiverName, \Throwable $error)
+    public function __construct(Envelope $envelope, string $receiverName, private readonly \Throwable $throwable)
     {
-        $this->throwable = $error;
-
         parent::__construct($envelope, $receiverName);
     }
 

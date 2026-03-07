@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -88,7 +90,7 @@ class HeaderUtils
     {
         $assoc = [];
         foreach ($parts as $part) {
-            $name = strtolower($part[0]);
+            $name = strtolower((string) $part[0]);
             $value = $part[1] ?? true;
             $assoc[$name] = $value;
         }
@@ -243,10 +245,10 @@ class HeaderUtils
         $query = [];
 
         foreach ($q as $k => $v) {
-            if (false !== $i = strpos($k, '_')) {
-                $query[substr_replace($k, hex2bin(substr($k, 0, $i)).'[', 0, 1 + $i)] = $v;
+            if (false !== $i = strpos((string) $k, '_')) {
+                $query[substr_replace($k, hex2bin(substr((string) $k, 0, $i)).'[', 0, 1 + $i)] = $v;
             } else {
-                $query[hex2bin($k)] = $v;
+                $query[hex2bin((string) $k)] = $v;
             }
         }
 

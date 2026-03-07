@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -50,7 +52,7 @@ class AutowirePass extends AbstractRecursivePass
     public function __construct(
         private bool $throwOnAutowiringException = true,
     ) {
-        $this->defaultArgument = new class {
+        $this->defaultArgument = new class () {
             public $value;
             public $names;
             public $bag;
@@ -340,10 +342,10 @@ class AutowirePass extends AbstractRecursivePass
                         $value ??= $getValue();
 
                         if (!\is_array($lazy)) {
-                            if (str_contains($type, '|')) {
+                            if (str_contains((string) $type, '|')) {
                                 throw new AutowiringFailedException($this->currentId, \sprintf('Cannot use #[Autowire] with option "lazy: true" on union types for service "%s"; set the option to the interface(s) that should be proxied instead.', $this->currentId));
                             }
-                            $lazy = str_contains($type, '&') ? explode('&', $type) : [];
+                            $lazy = str_contains((string) $type, '&') ? explode('&', (string) $type) : [];
                         }
 
                         $proxyType = $lazy ? $type : $this->resolveProxyType($type, $value);
@@ -415,7 +417,7 @@ class AutowirePass extends AbstractRecursivePass
                 } else {
                     $arguments[$index] = new TypedReference($this->decoratedId, $this->decoratedClass);
                     $argumentAtIndex = &$arguments[$index];
-                    $this->restorePreviousValue = static function () use (&$argumentAtIndex, $getValue) {
+                    $this->restorePreviousValue = static function () use (&$argumentAtIndex, $getValue): void {
                         $argumentAtIndex = $getValue();
                     };
 
@@ -462,7 +464,7 @@ class AutowirePass extends AbstractRecursivePass
             $type = implode($m[0], $types);
         }
 
-        $name = $target = (array_filter($reference->getAttributes(), static fn ($a) => $a instanceof Target)[0] ?? null)?->name;
+        $name = $target = (array_filter($reference->getAttributes(), static fn ($a): bool => $a instanceof Target)[0] ?? null)?->name;
 
         if (null !== $name ??= $reference->getName()) {
             if (null !== ($alias = $this->getCombinedAlias($type, $name, $target)) && $this->canDefinitionBeAutowired($alias)) {
@@ -578,7 +580,7 @@ class AutowirePass extends AbstractRecursivePass
         }
         $currentId = $this->currentId;
 
-        return (fn () => $this->createTypeNotFoundMessage($reference, $label, $currentId))->bindTo($this->typesClone);
+        return (fn (): string => $this->createTypeNotFoundMessage($reference, $label, $currentId))->bindTo($this->typesClone);
     }
 
     private function createTypeNotFoundMessage(TypedReference $reference, string $label, string $currentId): string
@@ -614,7 +616,7 @@ class AutowirePass extends AbstractRecursivePass
         } else {
             $alternatives = $this->createTypeAlternatives($this->container, $reference);
 
-            if (null !== $target = (array_filter($reference->getAttributes(), static fn ($a) => $a instanceof Target)[0] ?? null)) {
+            if (null !== $target = (array_filter($reference->getAttributes(), static fn ($a): bool => $a instanceof Target)[0] ?? null)) {
                 $target = null !== $target->name ? "('{$target->name}')" : '';
                 $message = \sprintf('has "#[Target%s]" but no such target exists.%s', $target, $alternatives);
             } else {
@@ -654,10 +656,11 @@ class AutowirePass extends AbstractRecursivePass
         if ($autowiringAliases) {
             return \sprintf(' Did you mean to target%s "%s" instead?', 1 < \count($autowiringAliases) ? ' one of' : '', implode('", "', $autowiringAliases));
         }
-
-        if (!$container->has($type) && false !== $key = array_search(strtolower($type), array_map('strtolower', $servicesAndAliases))) {
+        if (!$container->has($type) && false !== $key = array_search(strtolower($type), array_map(strtolower(...), $servicesAndAliases))) {
             return \sprintf(' Did you mean "%s"?', $servicesAndAliases[$key]);
-        } elseif (isset($this->ambiguousServiceTypes[$type])) {
+        }
+
+        if (isset($this->ambiguousServiceTypes[$type])) {
             $message = \sprintf('one of these existing services: "%s"', implode('", "', $this->ambiguousServiceTypes[$type]));
         } elseif (isset($this->types[$type])) {
             $message = \sprintf('the existing "%s" service', $this->types[$type]);

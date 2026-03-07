@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,9 +24,9 @@ use Symfony\Component\Stopwatch\Stopwatch;
 class TraceableMiddleware implements MiddlewareInterface
 {
     public function __construct(
-        private Stopwatch $stopwatch,
-        private string $busName,
-        private string $eventCategory = 'messenger.middleware',
+        private readonly Stopwatch $stopwatch,
+        private readonly string $busName,
+        private readonly string $eventCategory = 'messenger.middleware',
     ) {
     }
 
@@ -49,9 +51,9 @@ class TraceableStack implements StackInterface
 
     public function __construct(
         private StackInterface $stack,
-        private Stopwatch $stopwatch,
-        private string $busName,
-        private string $eventCategory,
+        private readonly Stopwatch $stopwatch,
+        private readonly string $busName,
+        private readonly string $eventCategory,
     ) {
     }
 

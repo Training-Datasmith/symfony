@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -85,14 +87,14 @@ class FormFlow extends Form implements FormFlowInterface
             return;
         }
 
-        if (!$this->move(static fn (FormFlowCursor $cursor) => $cursor->getPreviousStep())) {
+        if (!$this->move(static fn (FormFlowCursor $cursor): ?string => $cursor->getPreviousStep())) {
             throw new RuntimeException('Cannot determine previous step.');
         }
     }
 
     public function moveNext(): void
     {
-        if (!$this->move(static fn (FormFlowCursor $cursor) => $cursor->getNextStep())) {
+        if (!$this->move(static fn (FormFlowCursor $cursor): ?string => $cursor->getNextStep())) {
             throw new RuntimeException('Cannot determine next step.');
         }
     }

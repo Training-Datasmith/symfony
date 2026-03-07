@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -57,17 +59,17 @@ class Connection
 
     private \Redis|Relay|\RedisCluster|null $redis = null;
     private \Closure $redisInitializer;
-    private string $stream;
-    private string $queue;
-    private string $group;
-    private string $consumer;
+    private readonly string $stream;
+    private readonly string $queue;
+    private readonly string $group;
+    private readonly string $consumer;
     private bool $autoSetup;
-    private int $maxEntries;
-    private int $redeliverTimeout;
+    private readonly int $maxEntries;
+    private readonly int $redeliverTimeout;
     private float $nextClaim = 0.0;
-    private float $claimInterval;
-    private bool $deleteAfterAck;
-    private bool $deleteAfterReject;
+    private readonly float $claimInterval;
+    private readonly bool $deleteAfterAck;
+    private readonly bool $deleteAfterReject;
     private bool $couldHavePendingMessages = true;
 
     public function __construct(array $options, \Redis|Relay|\RedisCluster|null $redis = null)
@@ -96,9 +98,9 @@ class Connection
 
         if ((\is_array($host) && null === $sentinelMaster) || $redis instanceof \RedisCluster || filter_var($options['cluster'], \FILTER_VALIDATE_BOOLEAN)) {
             $hosts = \is_string($host) ? [$host.':'.$port] : $host; // Always ensure we have an array
-            $this->redisInitializer = static fn () => self::initializeRedisCluster($redis, $hosts, $auth, $options);
+            $this->redisInitializer = static fn (): \RedisCluster => self::initializeRedisCluster($redis, $hosts, $auth, $options);
         } else {
-            $this->redisInitializer = static function () use ($redis, $sentinelMaster, $host, $port, $options, $auth, $sentinelAuth) {
+            $this->redisInitializer = static function () use ($redis, $sentinelMaster, $host, $port, $options, $sentinelAuth): \Redis|\Relay\Relay {
                 if (null !== $sentinelMaster) {
                     $sentinelClass = \extension_loaded('redis') ? \RedisSentinel::class : Sentinel::class;
                     $hostIndex = 0;
@@ -142,7 +144,7 @@ class Connection
                             if ($address = @$sentinel->getMasterAddrByName($sentinelMaster)) {
                                 [$host, $port] = $address;
                             }
-                        } catch (\RedisException|\Relay\Exception $redisException) {
+                        } catch (\RedisException|\Relay\Exception) {
                         }
                     } while (++$hostIndex < \count($hosts) && !$address);
 
@@ -151,7 +153,7 @@ class Connection
                     }
                 }
 
-                return self::initializeRedis($redis ?? (\extension_loaded('redis') ? new \Redis() : new Relay()), $host, $port, $auth, $options);
+                return self::initializeRedis($redis ?? (\extension_loaded('redis') ? new \Redis() : new Relay()), $host, $port, $options);
             };
         }
 
@@ -177,10 +179,7 @@ class Connection
         $this->claimInterval = $options['claim_interval'] / 1000;
     }
 
-    /**
-     * @param string|string[]|null $auth
-     */
-    private static function initializeRedis(\Redis|Relay $redis, string $host, int $port, string|array|null $auth, array $params): \Redis|Relay
+    private static function initializeRedis(\Redis|Relay $redis, string $host, int $port, array $params): \Redis|Relay
     {
         if ($redis->isConnected()) {
             return $redis;
@@ -191,29 +190,16 @@ class Connection
         @$redis->{$connect}($host, $port, $params['timeout'], $params['persistent_id'], $params['retry_interval'], $params['read_timeout'], ...(\defined('Redis::SCAN_PREFIX') || \extension_loaded('relay')) ? [['stream' => $params['ssl'] ?? null]] : []);
 
         $error = null;
-        set_error_handler(static function ($type, $msg) use (&$error) { $error = $msg; });
+        set_error_handler(static function ($type, $msg) use (&$error): void {
+            $error = $msg;
+        });
 
         try {
             $isConnected = $redis->isConnected();
         } finally {
             restore_error_handler();
         }
-
-        if (!$isConnected) {
-            throw new InvalidArgumentException('Redis connection failed: '.(preg_match('/^Redis::p?connect\(\): (.*)/', $error ?? $redis->getLastError() ?? '', $matches) ? \sprintf(' (%s)', $matches[1]) : ''));
-        }
-
-        $redis->setOption($redis instanceof \Redis ? \Redis::OPT_SERIALIZER : Relay::OPT_SERIALIZER, $params['serializer']);
-
-        if (null !== $auth && !$redis->auth($auth)) {
-            throw new InvalidArgumentException('Redis connection failed: '.$redis->getLastError());
-        }
-
-        if (($params['dbindex'] ?? false) && !$redis->select($params['dbindex'])) {
-            throw new InvalidArgumentException('Redis connection failed: '.$redis->getLastError());
-        }
-
-        return $redis;
+        throw new InvalidArgumentException('Redis connection failed: '.(preg_match('/^Redis::p?connect\(\): (.*)/', $error ?? $redis->getLastError() ?? '', $matches) ? \sprintf(' (%s)', $matches[1]) : ''));
     }
 
     /**
@@ -237,7 +223,7 @@ class Connection
             }
         } else {
             $dsns = explode(',', $dsn);
-            $paramss = array_map(static function ($dsn) use (&$options) {
+            $paramss = array_map(static function (string $dsn) use (&$options): array {
                 return self::parseDsn($dsn, $options);
             }, $dsns);
 
@@ -246,7 +232,7 @@ class Connection
             $tls = 'rediss' === $params['scheme'] || 'valkeys' === $params['scheme'];
 
             // Regroup all the hosts in an array interpretable by RedisCluster
-            $params['host'] = array_map(static function ($params) use ($tls) {
+            $params['host'] = array_map(static function (array $params) use ($tls): string {
                 if (!isset($params['host'])) {
                     throw new InvalidArgumentException('Missing host in DSN, it must be defined when using Redis Cluster.');
                 }
@@ -285,8 +271,8 @@ class Connection
             };
         }
 
-        $pass = '' !== ($params['pass'] ?? '') ? rawurldecode($params['pass']) : null;
-        $user = '' !== ($params['user'] ?? '') ? rawurldecode($params['user']) : null;
+        $pass = '' !== ($params['pass'] ?? '') ? rawurldecode((string) $params['pass']) : null;
+        $user = '' !== ($params['user'] ?? '') ? rawurldecode((string) $params['user']) : null;
         $auth = null !== $pass && null !== $user ? [$user, $pass] : ($pass ?? $user);
         if (null === $options['sentinel']) {
             $options['auth'] ??= $auth;
@@ -310,12 +296,12 @@ class Connection
                     if (\is_string($parameters)) {
                         parse_str($parameters, $parameters);
                     }
-                    if (false === $i = strrpos($host, ':')) {
+                    if (false === $i = strrpos((string) $host, ':')) {
                         $hosts[$host] = ['scheme' => $tcpScheme, 'host' => $host, 'port' => 6379] + $parameters;
-                    } elseif ($port = (int) substr($host, 1 + $i)) {
-                        $hosts[$host] = ['scheme' => $tcpScheme, 'host' => substr($host, 0, $i), 'port' => $port] + $parameters;
+                    } elseif ($port = (int) substr((string) $host, 1 + $i)) {
+                        $hosts[$host] = ['scheme' => $tcpScheme, 'host' => substr((string) $host, 0, $i), 'port' => $port] + $parameters;
                     } else {
-                        $hosts[$host] = ['scheme' => 'unix', 'host' => substr($host, 0, $i)] + $parameters;
+                        $hosts[$host] = ['scheme' => 'unix', 'host' => substr((string) $host, 0, $i)] + $parameters;
                     }
                 }
                 $params['host'] = array_values($hosts);
@@ -353,7 +339,7 @@ class Connection
             $url = str_replace($scheme.':', 'file:', $dsn);
         }
 
-        $url = preg_replace_callback('#^'.$scheme.':(//)?(?:(?:(?<user>[^:@]*+):)?(?<password>[^@]*+)@)?#', static function ($m) use (&$auth) {
+        $url = preg_replace_callback('#^'.$scheme.':(//)?(?:(?:(?<user>[^:@]*+):)?(?<password>[^@]*+)@)?#', static function (array $m) use (&$auth): string {
             if (isset($m['password'])) {
                 if (!\in_array($m['user'], ['', 'default'], true)) {
                     $auth['user'] = rawurldecode($m['user']);
@@ -365,7 +351,7 @@ class Connection
             return 'file:'.($m[1] ?? '');
         }, $url);
 
-        if (false === $params = parse_url($url)) {
+        if (false === $params = parse_url((string) $url)) {
             throw new InvalidArgumentException('The given Redis DSN is invalid.');
         }
 
@@ -443,7 +429,7 @@ class Connection
 
             [$queuedMessage, $expiry] = $message;
 
-            if (\strlen($expiry) === \strlen($now) ? $expiry > $now : \strlen($expiry) < \strlen($now)) {
+            if (\strlen((string) $expiry) === \strlen($now) ? $expiry > $now : \strlen((string) $expiry) < \strlen($now)) {
                 // if a future-placed message is popped because of a race condition with
                 // another running consumer, the message is readded to the queue
 
@@ -454,7 +440,7 @@ class Connection
                 break;
             }
 
-            $decodedQueuedMessage = json_decode($queuedMessage, true);
+            $decodedQueuedMessage = json_decode((string) $queuedMessage, true);
             $this->add(\array_key_exists('body', $decodedQueuedMessage) ? $decodedQueuedMessage['body'] : $queuedMessage, $decodedQueuedMessage['headers'] ?? [], 0);
         }
 
@@ -726,14 +712,14 @@ class Connection
             $total += \count($range);
 
             if ($useExclusiveRangeInterval) {
-                $lastDeliveredId = preg_replace_callback('#\d+$#', static fn (array $matches) => (int) $matches[0] + 1, array_key_last($range));
+                $lastDeliveredId = preg_replace_callback('#\d+$#', static fn (array $matches): int => (int) $matches[0] + 1, (string) array_key_last($range));
             } else {
                 $lastDeliveredId = '('.array_key_last($range);
             }
         }
     }
 
-    private function rawCommand(string $command, ...$arguments): mixed
+    private function rawCommand(string $command, int|string ...$arguments): mixed
     {
         $redis = $this->getRedis();
 

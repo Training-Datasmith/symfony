@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -86,14 +88,16 @@ class File extends \SplFileInfo
     {
         $target = $this->getTargetFile($directory, $name);
 
-        set_error_handler(static function ($type, $msg) use (&$error) { $error = $msg; });
+        set_error_handler(static function ($type, $msg) use (&$error): void {
+            $error = $msg;
+        });
         try {
             $renamed = rename($this->getPathname(), $target);
         } finally {
             restore_error_handler();
         }
         if (!$renamed) {
-            throw new FileException(\sprintf('Could not move the file "%s" to "%s" (%s).', $this->getPathname(), $target, strip_tags($error)));
+            throw new FileException(\sprintf('Could not move the file "%s" to "%s" (%s).', $this->getPathname(), $target, strip_tags((string) $error)));
         }
 
         @chmod($target, 0o666 & ~umask());
@@ -119,7 +123,8 @@ class File extends \SplFileInfo
                 throw new FileException(\sprintf('Unable to create the "%s" directory: a similarly-named file exists.', $directory));
             }
             throw new FileException(\sprintf('Unable to create the "%s" directory.', $directory));
-        } elseif (!is_writable($directory)) {
+        }
+        if (!is_writable($directory)) {
             throw new FileException(\sprintf('Unable to write in the "%s" directory.', $directory));
         }
 

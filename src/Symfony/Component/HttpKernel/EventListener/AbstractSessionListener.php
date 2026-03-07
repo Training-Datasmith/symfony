@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -46,9 +48,9 @@ abstract class AbstractSessionListener implements EventSubscriberInterface, Rese
      * @internal
      */
     public function __construct(
-        private ?ContainerInterface $container = null,
-        private bool $debug = false,
-        private array $sessionOptions = [],
+        private readonly ?ContainerInterface $container = null,
+        private readonly bool $debug = false,
+        private readonly array $sessionOptions = [],
     ) {
     }
 

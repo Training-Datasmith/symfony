@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -161,7 +163,8 @@ class CachePoolPass implements CompilerPassInterface
                     $pool->addMethodCall('setCallbackWrapper', [(new Definition(EarlyExpirationDispatcher::class))
                         ->addArgument(new Reference($tags[0]['early_expiration_message_bus']))
                         ->addArgument(new Reference('reverse_container'))
-                        ->addArgument((new Definition('callable'))
+                        ->addArgument(
+                            (new Definition('callable'))
                             ->setFactory([new Reference($id), 'setCallbackWrapper'])
                             ->addArgument(null)
                         ),
@@ -174,7 +177,7 @@ class CachePoolPass implements CompilerPassInterface
 
                     if ('default_lifetime' === $attr && !is_numeric($argument)) {
                         $argument = (new Definition('int', [$argument]))
-                            ->setFactory([ParameterNormalizer::class, 'normalizeDuration']);
+                            ->setFactory(ParameterNormalizer::normalizeDuration(...));
                     }
 
                     $pool->replaceArgument($i++, $argument);
@@ -258,7 +261,7 @@ class CachePoolPass implements CompilerPassInterface
 
             if (!$container->hasDefinition($name = '.cache_connection.'.ContainerBuilder::hash($dsn))) {
                 $definition = new Definition(AbstractAdapter::class);
-                $definition->setFactory([AbstractAdapter::class, 'createConnection']);
+                $definition->setFactory(AbstractAdapter::createConnection(...));
                 $definition->setArguments([$dsn, ['lazy' => true]]);
                 $container->setDefinition($name, $definition);
             }

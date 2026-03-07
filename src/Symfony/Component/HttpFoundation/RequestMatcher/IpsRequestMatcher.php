@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ use Symfony\Component\HttpFoundation\RequestMatcherInterface;
  */
 class IpsRequestMatcher implements RequestMatcherInterface
 {
-    private array $ips;
+    private readonly array $ips;
 
     /**
      * @param string[]|string $ips A specific IP address or a range specified using IP/netmask like 192.168.1.0/24
@@ -30,7 +32,7 @@ class IpsRequestMatcher implements RequestMatcherInterface
      */
     public function __construct(array|string $ips)
     {
-        $this->ips = array_reduce((array) $ips, static fn (array $ips, string $ip) => array_merge($ips, preg_split('/\s*,\s*/', $ip)), []);
+        $this->ips = array_reduce((array) $ips, static fn (array $ips, string $ip): array => array_merge($ips, preg_split('/\s*,\s*/', $ip)), []);
     }
 
     public function matches(Request $request): bool

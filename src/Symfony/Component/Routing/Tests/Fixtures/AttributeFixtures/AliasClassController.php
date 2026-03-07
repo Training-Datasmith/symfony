@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -11,7 +13,6 @@
 
 namespace Symfony\Component\Routing\Tests\Fixtures\AttributeFixtures;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/hello', alias: ['alias', 'completely_different_name'])]

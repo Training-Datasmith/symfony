@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,12 +32,12 @@ use Symfony\Contracts\EventDispatcher\Event;
 class LoginFailureEvent extends Event
 {
     public function __construct(
-        private AuthenticationException $exception,
-        private AuthenticatorInterface $authenticator,
-        private Request $request,
+        private readonly AuthenticationException $exception,
+        private readonly AuthenticatorInterface $authenticator,
+        private readonly Request $request,
         private ?Response $response,
-        private string $firewallName,
-        private ?Passport $passport = null,
+        private readonly string $firewallName,
+        private readonly ?Passport $passport = null,
     ) {
     }
 

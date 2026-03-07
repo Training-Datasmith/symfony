@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,8 +31,8 @@ final class ClickatellTransport extends AbstractTransport
     protected const HOST = 'api.clickatell.com';
 
     public function __construct(
-        #[\SensitiveParameter] private string $authToken,
-        private ?string $from = null,
+        #[\SensitiveParameter] private readonly string $authToken,
+        private readonly ?string $from = null,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -54,7 +56,7 @@ final class ClickatellTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $endpoint = \sprintf('https://%s/rest/message', $this->getEndpoint());

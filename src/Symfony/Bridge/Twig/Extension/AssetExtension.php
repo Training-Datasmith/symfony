@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Twig\TwigFunction;
 final class AssetExtension extends AbstractExtension
 {
     public function __construct(
-        private Packages $packages,
+        private readonly Packages $packages,
     ) {
     }
 

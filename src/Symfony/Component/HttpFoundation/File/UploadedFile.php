@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,10 +33,10 @@ use Symfony\Component\Mime\MimeTypes;
  */
 class UploadedFile extends File
 {
-    private string $originalName;
-    private string $mimeType;
-    private int $error;
-    private string $originalPath;
+    private readonly string $originalName;
+    private readonly string $mimeType;
+    private readonly int $error;
+    private readonly string $originalPath;
 
     /**
      * Accepts the information of the uploaded file as provided by the PHP global $_FILES.
@@ -65,7 +67,7 @@ class UploadedFile extends File
         string $originalName,
         ?string $mimeType = null,
         ?int $error = null,
-        private bool $test = false,
+        private readonly bool $test = false,
     ) {
         $this->originalName = $this->getName($originalName);
         $this->originalPath = strtr($originalName, '\\', '/');
@@ -187,14 +189,16 @@ class UploadedFile extends File
 
             $target = $this->getTargetFile($directory, $name);
 
-            set_error_handler(static function ($type, $msg) use (&$error) { $error = $msg; });
+            set_error_handler(static function ($type, $msg) use (&$error): void {
+                $error = $msg;
+            });
             try {
                 $moved = move_uploaded_file($this->getPathname(), $target);
             } finally {
                 restore_error_handler();
             }
             if (!$moved) {
-                throw new FileException(\sprintf('Could not move the file "%s" to "%s" (%s).', $this->getPathname(), $target, strip_tags($error)));
+                throw new FileException(\sprintf('Could not move the file "%s" to "%s" (%s).', $this->getPathname(), $target, strip_tags((string) $error)));
             }
 
             @chmod($target, 0o666 & ~umask());
@@ -243,7 +247,7 @@ class UploadedFile extends File
         return min($sizePostMax ?: \PHP_INT_MAX, $sizeUploadMax ?: \PHP_INT_MAX);
     }
 
-    private static function parseFilesize(string $size): int|float
+    private static function parseFilesize(string $size): int
     {
         if ('' === $size) {
             return 0;

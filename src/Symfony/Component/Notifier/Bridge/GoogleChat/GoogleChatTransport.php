@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -40,10 +42,10 @@ final class GoogleChatTransport extends AbstractTransport
      *                                 {@see https://developers.google.com/hangouts/chat/reference/rest/v1/spaces.messages/create#query-parameters}
      */
     public function __construct(
-        private string $space,
-        #[\SensitiveParameter] private string $accessKey,
-        #[\SensitiveParameter] private string $accessToken,
-        private ?string $threadKey = null,
+        private readonly string $space,
+        #[\SensitiveParameter] private readonly string $accessKey,
+        #[\SensitiveParameter] private readonly string $accessToken,
+        private readonly ?string $threadKey = null,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -52,7 +54,8 @@ final class GoogleChatTransport extends AbstractTransport
 
     public function __toString(): string
     {
-        return \sprintf('googlechat://%s/%s%s',
+        return \sprintf(
+            'googlechat://%s/%s%s',
             $this->getEndpoint(),
             $this->space,
             $this->threadKey ? '?thread_key='.urlencode($this->threadKey) : ''
@@ -70,11 +73,11 @@ final class GoogleChatTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof ChatMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, ChatMessage::class, $message);
         }
 
         if (($options = $message->getOptions()) && !$options instanceof GoogleChatOptions) {
-            throw new UnsupportedOptionsException(__CLASS__, GoogleChatOptions::class, $options);
+            throw new UnsupportedOptionsException(self::class, GoogleChatOptions::class, $options);
         }
 
         if (!$options) {
@@ -87,7 +90,8 @@ final class GoogleChatTransport extends AbstractTransport
 
         $threadKey = $options->getThreadKey() ?: $this->threadKey;
 
-        $url = \sprintf('https://%s/v1/spaces/%s/messages?key=%s&token=%s%s',
+        $url = \sprintf(
+            'https://%s/v1/spaces/%s/messages?key=%s&token=%s%s',
             $this->getEndpoint(),
             $this->space,
             urlencode($this->accessKey),

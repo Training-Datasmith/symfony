@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '👨‍👩‍👧‍👦' => 'familh : gwaz, maouez, placʼh, paotr',
     '👨‍👩‍👦‍👦' => 'familh : gwaz, maouez, paotr, paotr',

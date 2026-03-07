@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -48,7 +50,8 @@ class JsonPathUtilsTest extends TestCase
 
         fclose($resource);
 
-        $this->assertSame(<<<JSON
+        $this->assertSame(
+            <<<JSON
             {"book": [
                 {"category": "reference", "author": "Nigel Rees", "title": "Sayings", "price": 8.95},
                 {"category": "fiction", "author": "Evelyn Waugh", "title": "Sword", "price": 12.99}
@@ -71,7 +74,8 @@ class JsonPathUtilsTest extends TestCase
 
         fclose($resource);
 
-        $this->assertSame(<<<JSON
+        $this->assertSame(
+            <<<JSON
             {"book": [
                 {"category": "reference", "author": "Nigel Rees", "title": "Sayings", "price": 8.95},
                 {"category": "fiction", "author": "Evelyn Waugh", "title": "Sword", "price": 12.99}
@@ -115,7 +119,8 @@ class JsonPathUtilsTest extends TestCase
 
         fclose($resource);
 
-        $this->assertSame(<<<JSON
+        $this->assertSame(
+            <<<JSON
             [
                 {"category": "reference", "author": "Nigel Rees", "title": "Sayings", "price": 8.95},
                 {"category": "fiction", "author": "Evelyn Waugh", "title": "Sword", "price": 12.99}
@@ -160,7 +165,8 @@ class JsonPathUtilsTest extends TestCase
 
         fclose($resource);
 
-        $this->assertSame(<<<JSON
+        $this->assertSame(
+            <<<JSON
             [
                 {"category": "reference", "author": "Nigel Rees", "title": "Sayings", "price": 8.95},
                 {"category": "fiction", "author": "Evelyn Waugh", "title": "Sword", "price": 12.99}

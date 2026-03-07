@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -68,7 +70,8 @@ class FormExtensionBootstrap3LayoutTest extends AbstractBootstrap3LayoutTestCase
             ->createView()
         ;
 
-        $this->assertSame(<<<'HTML'
+        $this->assertSame(
+            <<<'HTML'
             <div class="input-group">
                                         <span class="input-group-addon">&euro; </span>
                         <input type="text" id="name" name="name" required="required" inputmode="decimal" class="form-control" />        </div>

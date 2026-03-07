@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,7 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
  */
 class EnumNode extends ScalarNode
 {
-    private array $values;
+    private readonly array $values;
     private ?string $enumFqcn = null;
 
     /**
@@ -46,16 +48,18 @@ class EnumNode extends ScalarNode
         }
 
         foreach ($values as $value) {
-            if (null === $value || \is_scalar($value)) {
+            if (null === $value) {
                 continue;
             }
-
+            if (\is_scalar($value)) {
+                continue;
+            }
             if (!$value instanceof \UnitEnum) {
-                throw new \InvalidArgumentException(\sprintf('"%s" only supports scalar, enum, or null values, "%s" given.', __CLASS__, get_debug_type($value)));
+                throw new \InvalidArgumentException(\sprintf('"%s" only supports scalar, enum, or null values, "%s" given.', self::class, get_debug_type($value)));
             }
 
             if ($value::class !== ($enumClass ??= $value::class)) {
-                throw new \InvalidArgumentException(\sprintf('"%s" only supports one type of enum, "%s" and "%s" passed.', __CLASS__, $enumClass, $value::class));
+                throw new \InvalidArgumentException(\sprintf('"%s" only supports one type of enum, "%s" and "%s" passed.', self::class, $enumClass, $value::class));
             }
         }
 
@@ -85,7 +89,7 @@ class EnumNode extends ScalarNode
 
             $values = array_column($this->enumFqcn::cases(), 'value');
 
-            return implode($separator, array_map(static fn ($value) => json_encode($value, \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE), $values));
+            return implode($separator, array_map(static fn (int|string $value) => json_encode($value, \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE), $values));
         }
 
         return implode($separator, array_unique(array_map(static function ($value) use ($trim) {

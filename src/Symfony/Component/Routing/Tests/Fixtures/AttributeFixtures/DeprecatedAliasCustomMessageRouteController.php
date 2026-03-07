@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class DeprecatedAliasCustomMessageRouteController
 {
-
     #[Route('/path', name: 'action_with_deprecated_alias', alias: new DeprecatedAlias('my_other_alias_deprecated', 'MyBundleFixture', '1.0', message: '%alias_id% alias is deprecated.'))]
     public function action()
     {

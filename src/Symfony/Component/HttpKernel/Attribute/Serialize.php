@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,7 +19,7 @@ namespace Symfony\Component\HttpKernel\Attribute;
  * @author Konstantin Myakshin <molodchick@gmail.com>
  */
 #[\Attribute(\Attribute::TARGET_METHOD)]
-final class Serialize
+final readonly class Serialize
 {
     /**
      * @param int                  $code    The HTTP status code (200 "OK" by default)
@@ -25,9 +27,9 @@ final class Serialize
      * @param array<string, mixed> $context The serialization context passed to the serializer
      */
     public function __construct(
-        public readonly int $code = 200,
-        public readonly array $headers = [],
-        public readonly array $context = [],
+        public int $code = 200,
+        public array $headers = [],
+        public array $context = [],
     ) {
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ use Symfony\Component\Notifier\Message\MessageOptionsInterface;
 /**
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
  */
-final class MercureOptions implements MessageOptionsInterface
+final readonly class MercureOptions implements MessageOptionsInterface
 {
     private ?array $topics;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,7 +43,8 @@ class Esi extends AbstractSurrogate
 
     public function renderIncludeTag(string $uri, ?string $alt = null, bool $ignoreErrors = true, string $comment = ''): string
     {
-        $html = \sprintf('<esi:include src="%s"%s%s />',
+        $html = \sprintf(
+            '<esi:include src="%s"%s%s />',
             $uri,
             $ignoreErrors ? ' onerror="continue"' : '',
             $alt ? \sprintf(' alt="%s"', $alt) : ''
@@ -69,10 +72,10 @@ class Esi extends AbstractSurrogate
         // we don't use a proper XML parser here as we can have ESI tags in a plain text response
         $content = $response->getContent();
         $content = preg_replace('#<esi\:remove>.*?</esi\:remove>#s', '', $content);
-        $content = preg_replace('#<esi\:comment[^>]+>#s', '', $content);
+        $content = preg_replace('#<esi\:comment[^>]+>#s', '', (string) $content);
 
         $boundary = self::generateBodyEvalBoundary();
-        $chunks = preg_split('#<esi\:include\s+(.*?)\s*(?:/|</esi\:include)>#', $content, -1, \PREG_SPLIT_DELIM_CAPTURE);
+        $chunks = preg_split('#<esi\:include\s+(.*?)\s*(?:/|</esi\:include)>#', (string) $content, -1, \PREG_SPLIT_DELIM_CAPTURE);
 
         $i = 1;
         while (isset($chunks[$i])) {

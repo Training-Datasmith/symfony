@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ namespace Symfony\Component\Security\Core\Authentication\RememberMe;
  *
  * @internal
  */
-final class PersistentToken implements PersistentTokenInterface
+final readonly class PersistentToken implements PersistentTokenInterface
 {
     private \DateTimeImmutable $lastUsed;
 

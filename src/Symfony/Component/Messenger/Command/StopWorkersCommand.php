@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ use Symfony\Component\Messenger\EventListener\StopWorkerOnRestartSignalListener;
 class StopWorkersCommand extends Command
 {
     public function __construct(
-        private CacheItemPoolInterface $restartSignalCachePool,
+        private readonly CacheItemPoolInterface $restartSignalCachePool,
     ) {
         parent::__construct();
     }
@@ -35,7 +37,8 @@ class StopWorkersCommand extends Command
     {
         $this
             ->setDefinition([])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command sends a signal to stop any <info>messenger:consume</info> processes that are running.
 
                     <info>php %command.full_name%</info>

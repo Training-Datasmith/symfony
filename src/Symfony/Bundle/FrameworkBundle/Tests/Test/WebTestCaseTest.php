@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -440,7 +442,7 @@ class WebTestCaseTest extends TestCase
 
     private function getTester(KernelBrowser $client): WebTestCase
     {
-        $tester = new class(method_exists($this, 'name') ? $this->name() : $this->getName()) extends WebTestCase {
+        $tester = new class (method_exists($this, 'name') ? $this->name() : $this->getName()) extends WebTestCase {
             use WebTestAssertionsTrait {
                 getClient as public;
             }

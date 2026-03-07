@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,10 +28,8 @@ use Symfony\Component\Validator\Exception\MissingOptionsException;
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_PROPERTY | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
 class When extends Composite
 {
-    public string|Expression|\Closure $expression;
     public array|Constraint $constraints = [];
     public array $values = [];
-    public array|Constraint $otherwise = [];
 
     /**
      * @param string|Expression|\Closure(object): bool $expression  The condition to evaluate, either as a closure or using the ExpressionLanguage syntax
@@ -38,10 +38,10 @@ class When extends Composite
      * @param string[]|null                            $groups
      * @param Constraint[]|Constraint                  $otherwise   One or multiple constraints that are applied if the expression returns false
      */
-    public function __construct(string|Expression|\Closure $expression, array|Constraint|null $constraints = null, ?array $values = null, ?array $groups = null, $payload = null, ?array $options = null, array|Constraint $otherwise = [])
+    public function __construct(public string|Expression|\Closure $expression, array|Constraint|null $constraints = null, ?array $values = null, ?array $groups = null, mixed $payload = null, ?array $options = null, public array|Constraint $otherwise = [])
     {
         if (!class_exists(ExpressionLanguage::class)) {
-            throw new LogicException(\sprintf('The "symfony/expression-language" component is required to use the "%s" constraint. Try running "composer require symfony/expression-language".', __CLASS__));
+            throw new LogicException(\sprintf('The "symfony/expression-language" component is required to use the "%s" constraint. Try running "composer require symfony/expression-language".', self::class));
         }
 
         if (null !== $options) {
@@ -51,10 +51,7 @@ class When extends Composite
         if (null === $constraints) {
             throw new MissingOptionsException(\sprintf('The options "constraints" must be set for constraint "%s".', self::class), ['constraints']);
         }
-
-        $this->expression = $expression;
         $this->constraints = $constraints;
-        $this->otherwise = $otherwise;
 
         parent::__construct(null, $groups, $payload);
 

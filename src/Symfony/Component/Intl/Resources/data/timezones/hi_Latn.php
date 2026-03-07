@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Africa/Asmera' => 'पूर्वी अफ़्रीका समय (Asmera)',

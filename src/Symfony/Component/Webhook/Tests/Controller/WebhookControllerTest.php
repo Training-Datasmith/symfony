@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -84,7 +86,7 @@ class WebhookControllerTest extends TestCase
             ->method('createSuccessfulResponse')
             ->with($request)
             ->willReturn(new Response('', 202));
-        $bus = new class implements MessageBusInterface {
+        $bus = new class () implements MessageBusInterface {
             public ?object $message = null;
 
             public function dispatch(object $message, array $stamps = []): Envelope
@@ -124,7 +126,7 @@ class WebhookControllerTest extends TestCase
             ->method('createSuccessfulResponse')
             ->with($request)
             ->willReturn(new Response('', 202));
-        $bus = new class implements MessageBusInterface {
+        $bus = new class () implements MessageBusInterface {
             public array $messages = [];
 
             public function dispatch(object $message, array $stamps = []): Envelope

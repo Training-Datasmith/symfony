@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -111,7 +113,7 @@ class TimezoneValidator extends ConstraintValidator
                 continue;
             }
 
-            $filtered[] = array_filter($timezones, static fn ($id) => 0 === stripos($id, $const.'/'));
+            $filtered[] = array_filter($timezones, static fn (string $id): bool => 0 === stripos($id, $const.'/'));
         }
 
         return $filtered ? array_merge(...$filtered) : [];

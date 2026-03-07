@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -11,8 +13,6 @@
 
 namespace Symfony\Component\VarDumper\Caster;
 
-use Symfony\Component\VarDumper\Cloner\Stub;
-
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  * @author Alexandre Daubois <alex.daubois@gmail.com>
@@ -21,7 +21,7 @@ use Symfony\Component\VarDumper\Cloner\Stub;
  */
 final class SocketCaster
 {
-    public static function castSocket(\Socket $socket, array $a, Stub $stub, bool $isNested): array
+    public static function castSocket(\Socket $socket, array $a): array
     {
         socket_getsockname($socket, $addr, $port);
         $info = stream_get_meta_data(socket_export_stream($socket));
@@ -30,7 +30,7 @@ final class SocketCaster
         if (str_starts_with($uri, 'unix://')) {
             $uri .= $addr;
         } else {
-            $uri .= \sprintf(str_contains($addr, ':') ? '[%s]:%s' : '%s:%s', $addr, $port);
+            $uri .= \sprintf(str_contains((string) $addr, ':') ? '[%s]:%s' : '%s:%s', $addr, $port);
         }
 
         $a[Caster::PREFIX_VIRTUAL.'uri'] = $uri;
@@ -52,7 +52,7 @@ final class SocketCaster
 
         if (!$errors) {
             $errors = get_defined_constants(true)['sockets'] ?? [];
-            $errors = array_flip(array_filter($errors, static fn ($k) => str_starts_with($k, 'SOCKET_E'), \ARRAY_FILTER_USE_KEY));
+            $errors = array_flip(array_filter($errors, static fn ($k): bool => str_starts_with((string) $k, 'SOCKET_E'), \ARRAY_FILTER_USE_KEY));
         }
 
         $a[Caster::PREFIX_VIRTUAL.'last_error'] = new ConstStub($errors[$lastError], socket_strerror($lastError));

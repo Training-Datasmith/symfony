@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,7 +39,7 @@ class BundleEntryReader implements BundleEntryReaderInterface
      * Creates an entry reader based on the given resource bundle reader.
      */
     public function __construct(
-        private BundleReaderInterface $reader,
+        private readonly BundleReaderInterface $reader,
     ) {
     }
 

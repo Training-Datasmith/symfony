@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -12,7 +14,6 @@
 namespace Symfony\Component\VarDumper\Caster;
 
 use Ramsey\Uuid\UuidInterface;
-use Symfony\Component\VarDumper\Cloner\Stub;
 
 /**
  * @author Grégoire Pineau <lyrixx@lyrixx.info>
@@ -21,12 +22,10 @@ use Symfony\Component\VarDumper\Cloner\Stub;
  */
 final class UuidCaster
 {
-    public static function castRamseyUuid(UuidInterface $c, array $a, Stub $stub, bool $isNested): array
+    public static function castRamseyUuid(UuidInterface $c, array $a): array
     {
-        $a += [
+        return $a + [
             Caster::PREFIX_VIRTUAL.'uuid' => (string) $c,
         ];
-
-        return $a;
     }
 }

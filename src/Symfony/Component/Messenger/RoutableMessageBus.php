@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,8 +28,8 @@ use Symfony\Component\Messenger\Stamp\BusNameStamp;
 class RoutableMessageBus implements MessageBusInterface
 {
     public function __construct(
-        private ContainerInterface $busLocator,
-        private ?MessageBusInterface $fallbackBus = null,
+        private readonly ContainerInterface $busLocator,
+        private readonly ?MessageBusInterface $fallbackBus = null,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'bozk: dospelý, dospelý, svetlý tón pleti, stredne svetlý tón pleti',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'bozk: dospelý, dospelý, svetlý tón pleti, stredný tón pleti',

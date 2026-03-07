@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,10 +32,10 @@ use Symfony\Contracts\Service\ServiceProviderInterface;
 #[AsCommand(name: 'cache:pool:invalidate-tags', description: 'Invalidate cache tags for all or a specific pool')]
 final class CachePoolInvalidateTagsCommand extends Command
 {
-    private array $poolNames;
+    private readonly array $poolNames;
 
     public function __construct(
-        private ServiceProviderInterface $pools,
+        private readonly ServiceProviderInterface $pools,
     ) {
         parent::__construct();
 

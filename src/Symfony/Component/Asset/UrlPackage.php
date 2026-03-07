@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -114,9 +116,9 @@ class UrlPackage extends Package
     {
         $sslUrls = [];
         foreach ($urls as $url) {
-            if (str_starts_with($url, 'https://') || str_starts_with($url, '//') || '' === $url) {
+            if (str_starts_with((string) $url, 'https://') || str_starts_with((string) $url, '//') || '' === $url) {
                 $sslUrls[] = $url;
-            } elseif (!parse_url($url, \PHP_URL_SCHEME)) {
+            } elseif (!parse_url((string) $url, \PHP_URL_SCHEME)) {
                 throw new InvalidArgumentException(\sprintf('"%s" is not a valid URL.', $url));
             }
         }

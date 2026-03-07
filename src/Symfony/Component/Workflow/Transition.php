@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,19 +22,19 @@ class Transition
     /**
      * @var Arc[]
      */
-    private array $fromArcs;
+    private readonly array $fromArcs;
 
     /**
      * @var Arc[]
      */
-    private array $toArcs;
+    private readonly array $toArcs;
 
     /**
      * @param string|string[]|Arc[] $froms
      * @param string|string[]|Arc[] $tos
      */
     public function __construct(
-        private string $name,
+        private readonly string $name,
         string|array $froms,
         string|array $tos,
     ) {

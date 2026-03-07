@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -54,8 +56,10 @@ final class ProxyHelper
         foreach ($propertyScopes as $key => [$scope, $name, , $access]) {
             $propertyScopes[$k = "\0$scope\0$name"] ?? $propertyScopes[$k = "\0*\0$name"] ?? $k = $name;
             $flags = $access >> 2;
-
-            if ($k !== $key || $flags & \ReflectionProperty::IS_PRIVATE) {
+            if ($k !== $key) {
+                continue;
+            }
+            if ($flags & \ReflectionProperty::IS_PRIVATE) {
                 continue;
             }
 
@@ -141,7 +145,10 @@ final class ProxyHelper
         $methodReflectors = array_merge(...$methodReflectors);
 
         foreach ($methodReflectors as $method) {
-            if ('__get' !== strtolower($method->name) || 'mixed' === ($type = self::exportType($method) ?? 'mixed')) {
+            if ('__get' !== strtolower($method->name)) {
+                continue;
+            }
+            if ('mixed' === ($type = self::exportType($method) ?? 'mixed')) {
                 continue;
             }
             $trait = new \ReflectionMethod(LazyDecoratorTrait::class, '__get');
@@ -155,7 +162,10 @@ final class ProxyHelper
         }
 
         foreach ($methodReflectors as $method) {
-            if (($method->isStatic() && !$method->isAbstract()) || isset($methods[$lcName = strtolower($method->name)])) {
+            if ($method->isStatic() && !$method->isAbstract()) {
+                continue;
+            }
+            if (isset($methods[$lcName = strtolower($method->name)])) {
                 continue;
             }
             if ($method->isFinal()) {
@@ -388,7 +398,7 @@ final class ProxyHelper
 
     private static function exportPropertyScopes(string $parent, array $propertyScopes): string
     {
-        uksort($propertyScopes, 'strnatcmp');
+        uksort($propertyScopes, strnatcmp(...));
         foreach ($propertyScopes as $k => $v) {
             unset($propertyScopes[$k][4]);
         }
@@ -399,7 +409,7 @@ final class ProxyHelper
         return str_replace("\n", "\n    ", $propertyScopes);
     }
 
-    private static function exportDefault(\ReflectionParameter $param, $namespace): string
+    private static function exportDefault(\ReflectionParameter $param, string $namespace): string
     {
         $default = rtrim(substr(explode('$'.$param->name.' = ', (string) $param, 2)[1] ?? '', 0, -2));
 
@@ -415,7 +425,7 @@ final class ProxyHelper
 
         $regexp = '/([\[\( ]|^)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+(?:\\\\[a-zA-Z0-9_\x7f-\xff]++)*+)(\(?)(?!: )/';
         $callback = (false !== strpbrk($default, "\\:('") && $class = $param->getDeclaringClass())
-            ? static fn ($m) => $m[1].match ($m[2]) {
+            ? static fn ($m): string => $m[1].match ($m[2]) {
                 'new', 'false', 'true', 'null' => $m[2],
                 'NULL' => 'null',
                 'self' => '\\'.$class->name,
@@ -423,16 +433,16 @@ final class ProxyHelper
                 'parent' => ($parent = $class->getParentClass()) ? '\\'.$parent->name : 'parent',
                 default => self::exportSymbol($m[2], '(' !== $m[3], $namespace),
             }.$m[3]
-            : static fn ($m) => $m[1].match ($m[2]) {
+            : static fn ($m): string => $m[1].match ($m[2]) {
                 'new', 'false', 'true', 'null', 'self', 'parent' => $m[2],
                 'NULL' => 'null',
                 default => self::exportSymbol($m[2], '(' !== $m[3], $namespace),
             }.$m[3];
 
-        return implode('', array_map(static fn ($part) => match ($part[0]) {
+        return implode('', array_map(static fn (array $part): string|array|null => match ($part[0]) {
             '"' => $part, // for internal classes only
-            "'" => false !== strpbrk($part, "\\\0\r\n") ? '"'.substr(str_replace(['$', "\0", "\r", "\n"], ['\$', '\0', '\r', '\n'], $part), 1, -1).'"' : $part,
-            default => preg_replace_callback($regexp, $callback, $part),
+            "'" => false !== strpbrk((string) $part, "\\\0\r\n") ? '"'.substr(str_replace(['$', "\0", "\r", "\n"], ['\$', '\0', '\r', '\n'], $part), 1, -1).'"' : $part,
+            default => preg_replace_callback($regexp, $callback, (string) $part),
         }, $parts));
     }
 

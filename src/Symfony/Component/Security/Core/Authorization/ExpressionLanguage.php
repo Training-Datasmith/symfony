@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,29 +18,27 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage as BaseExpressionLan
 
 if (!class_exists(BaseExpressionLanguage::class)) {
     throw new \LogicException(\sprintf('The "%s" class requires the "ExpressionLanguage" component. Try running "composer require symfony/expression-language".', ExpressionLanguage::class));
-} else {
-    // Help opcache.preload discover always-needed symbols
-    class_exists(ExpressionLanguageProvider::class);
-
-    /**
-     * Adds some function to the default ExpressionLanguage.
-     *
-     * @author Fabien Potencier <fabien@symfony.com>
-     *
-     * @see ExpressionLanguageProvider
-     */
-    class ExpressionLanguage extends BaseExpressionLanguage
+}
+// Help opcache.preload discover always-needed symbols
+class_exists(ExpressionLanguageProvider::class);
+/**
+ * Adds some function to the default ExpressionLanguage.
+ *
+ * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @see ExpressionLanguageProvider
+ */
+class ExpressionLanguage extends BaseExpressionLanguage
+{
+    public function __construct(?CacheItemPoolInterface $cache = null, iterable $providers = [])
     {
-        public function __construct(?CacheItemPoolInterface $cache = null, iterable $providers = [])
-        {
-            if (!\is_array($providers)) {
-                $providers = iterator_to_array($providers, false);
-            }
-
-            // prepend the default provider to let users override it easily
-            array_unshift($providers, new ExpressionLanguageProvider());
-
-            parent::__construct($cache, $providers);
+        if (!\is_array($providers)) {
+            $providers = iterator_to_array($providers, false);
         }
+
+        // prepend the default provider to let users override it easily
+        array_unshift($providers, new ExpressionLanguageProvider());
+
+        parent::__construct($cache, $providers);
     }
 }

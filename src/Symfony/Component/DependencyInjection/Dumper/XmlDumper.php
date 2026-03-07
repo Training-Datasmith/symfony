@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -134,7 +136,7 @@ class XmlDumper extends Dumper
         $xml = [];
 
         $tags = $definition->getTags();
-        $tags['container.error'] = array_map(static fn ($e) => ['message' => $e], $definition->getErrors());
+        $tags['container.error'] = array_map(static fn ($e): array => ['message' => $e], $definition->getErrors());
         foreach ($tags as $name => $tags) {
             foreach ($tags as $attributes) {
                 // Check if we have recursive attributes
@@ -308,7 +310,7 @@ class XmlDumper extends Dumper
                 if (null !== $tag->getIndexAttribute()) {
                     $xmlAttr .= \sprintf(' index-by="%s"', $this->encode($tag->getIndexAttribute()));
 
-                    $defaultPrefix = 'getDefault'.str_replace(' ', '', ucwords(preg_replace('/[^a-zA-Z0-9\x7f-\xff]++/', ' ', $tag->getIndexAttribute())));
+                    $defaultPrefix = 'getDefault'.str_replace(' ', '', ucwords((string) preg_replace('/[^a-zA-Z0-9\x7f-\xff]++/', ' ', $tag->getIndexAttribute())));
 
                     if ($tag->getDefaultIndexMethod(false) !== $defaultPrefix.'Name') {
                         $xmlAttr .= \sprintf(' default-index-method="%s"', $this->encode($tag->getDefaultIndexMethod(false)));

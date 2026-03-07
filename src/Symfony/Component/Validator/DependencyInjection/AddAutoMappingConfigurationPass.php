@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -66,7 +68,7 @@ class AddAutoMappingConfigurationPass implements CompilerPassInterface
         $regexps = [];
         foreach ($patterns as $pattern) {
             // Escape namespace
-            $regex = preg_quote(ltrim($pattern, '\\'));
+            $regex = preg_quote(ltrim((string) $pattern, '\\'));
 
             // Wildcards * and **
             $regex = strtr($regex, ['\\*\\*' => '.*?', '\\*' => '[^\\\\]*?']);

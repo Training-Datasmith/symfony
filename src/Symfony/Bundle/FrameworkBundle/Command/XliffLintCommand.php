@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,7 +38,7 @@ class XliffLintCommand extends BaseLintCommand
             return $default($directory);
         };
 
-        $isReadableProvider = static fn ($fileOrDirectory, $default) => str_starts_with($fileOrDirectory, '@') || $default($fileOrDirectory);
+        $isReadableProvider = static fn ($fileOrDirectory, $default): bool => str_starts_with((string) $fileOrDirectory, '@') || $default($fileOrDirectory);
 
         parent::__construct(null, $directoryIteratorProvider, $isReadableProvider);
     }
@@ -45,7 +47,8 @@ class XliffLintCommand extends BaseLintCommand
     {
         parent::configure();
 
-        $this->setHelp($this->getHelp().<<<'EOF'
+        $this->setHelp(
+            $this->getHelp().<<<'EOF'
 
             Or find all files in a bundle:
 

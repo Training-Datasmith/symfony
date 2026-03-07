@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -105,7 +107,7 @@ class RegionDataGenerator extends AbstractDataGenerator
         }
 
         // WORLD/CONTINENT/SUBCONTINENT/GROUPING
-        if (\is_int($region) || ctype_digit($region)) {
+        if (\is_int($region) || ctype_digit((string) $region)) {
             return false;
         }
 
@@ -230,7 +232,7 @@ class RegionDataGenerator extends AbstractDataGenerator
         foreach ($aliases as $alias => $data) {
             $country = $data['replacement'];
 
-            if (2 === \strlen($country) && 3 === \strlen($alias) && 'overlong' === $data['reason']) {
+            if (2 === \strlen((string) $country) && 3 === \strlen((string) $alias) && 'overlong' === $data['reason']) {
                 if (isset($countries[$country]) && self::isUserAssignedCountryCode($country)) {
                     $alpha2ToAlpha3[$country] = $alias;
                 } elseif (isset($countries[$country]) && !self::isUserAssignedCountryCode($country) && isset(self::PREFERRED_ALPHA2_TO_ALPHA3_MAPPING[$country])) {

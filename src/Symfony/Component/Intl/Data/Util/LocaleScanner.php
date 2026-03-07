@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -43,10 +45,12 @@ class LocaleScanner
         $locales = glob($sourceDir.'/*.txt', \GLOB_NOSORT);
 
         // Remove file extension and sort
-        array_walk($locales, static function (&$locale) { $locale = basename($locale, '.txt'); });
+        array_walk($locales, static function (&$locale): void {
+            $locale = basename($locale, '.txt');
+        });
 
         // Remove non-locales
-        $locales = array_filter($locales, static fn ($locale) => preg_match('/^[a-z]{2}(_.+)?$/', $locale));
+        $locales = array_filter($locales, static fn ($locale): int|false => preg_match('/^[a-z]{2}(_.+)?$/', (string) $locale));
 
         sort($locales);
 

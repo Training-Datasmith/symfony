@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Africa/Cairo' => 'hora de Europa del Este (El Cairo)',

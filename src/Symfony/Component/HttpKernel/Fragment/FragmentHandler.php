@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,9 +39,9 @@ class FragmentHandler
      * @param bool                        $debug     Whether the debug mode is enabled or not
      */
     public function __construct(
-        private RequestStack $requestStack,
+        private readonly RequestStack $requestStack,
         array $renderers = [],
-        private bool $debug = false,
+        private readonly bool $debug = false,
     ) {
         foreach ($renderers as $renderer) {
             $this->addRenderer($renderer);

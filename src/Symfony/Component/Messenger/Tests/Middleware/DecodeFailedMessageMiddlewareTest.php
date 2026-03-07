@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,7 +43,7 @@ class DecodeFailedMessageMiddlewareTest extends TestCase
         $locator = new InMemoryLocator(['async' => $serializer]);
         $middleware = new DecodeFailedMessageMiddleware($locator);
 
-        $nextMiddleware = new class implements MiddlewareInterface {
+        $nextMiddleware = new class () implements MiddlewareInterface {
             public ?Envelope $envelope = null;
 
             public function handle(Envelope $envelope, StackInterface $stack): Envelope
@@ -77,7 +79,7 @@ class DecodeFailedMessageMiddlewareTest extends TestCase
         $locator = new InMemoryLocator(['async' => $serializer]);
         $middleware = new DecodeFailedMessageMiddleware($locator);
 
-        $nextMiddleware = new class implements MiddlewareInterface {
+        $nextMiddleware = new class () implements MiddlewareInterface {
             public ?Envelope $envelope = null;
 
             public function handle(Envelope $envelope, StackInterface $stack): Envelope
@@ -148,7 +150,7 @@ class InMemoryLocator implements ContainerInterface
     public function get(string $id): mixed
     {
         if (!$this->has($id)) {
-            throw new class(\sprintf('Service "%s" not found.', $id)) extends \RuntimeException implements NotFoundExceptionInterface {
+            throw new class (\sprintf('Service "%s" not found.', $id)) extends \RuntimeException implements NotFoundExceptionInterface {
             };
         }
 

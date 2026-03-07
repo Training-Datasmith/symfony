@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ class Adapter implements AdapterInterface
     private EntryManagerInterface $entryManager;
 
     public function __construct(
-        private array $config = [],
+        private readonly array $config = [],
     ) {
         if (!\extension_loaded('ldap')) {
             throw new LdapException('The LDAP PHP extension is not enabled.');

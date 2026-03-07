@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,9 +31,9 @@ final class FortySixElksTransport extends AbstractTransport
     protected const HOST = 'api.46elks.com';
 
     public function __construct(
-        private string $apiUsername,
-        #[\SensitiveParameter] private string $apiPassword,
-        private string $from,
+        private readonly string $apiUsername,
+        #[\SensitiveParameter] private readonly string $apiPassword,
+        private readonly string $from,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -51,7 +53,7 @@ final class FortySixElksTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $options = [];

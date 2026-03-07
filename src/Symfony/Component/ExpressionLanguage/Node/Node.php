@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,19 +20,14 @@ use Symfony\Component\ExpressionLanguage\Compiler;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class Node
+class Node implements \Stringable
 {
-    public array $nodes = [];
-    public array $attributes = [];
-
     /**
      * @param array $nodes      An array of nodes
      * @param array $attributes An array of attributes
      */
-    public function __construct(array $nodes = [], array $attributes = [])
+    public function __construct(public array $nodes = [], public array $attributes = [])
     {
-        $this->nodes = $nodes;
-        $this->attributes = $attributes;
     }
 
     public function __toString(): string

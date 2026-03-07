@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,8 +28,6 @@ use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
  */
 class CsrfTokenManager implements CsrfTokenManagerInterface
 {
-    private TokenGeneratorInterface $generator;
-    private TokenStorageInterface $storage;
     private \Closure|string $namespace;
 
     /**
@@ -37,17 +37,14 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
      *                   * RequestStack: generates a namespace using the current main request
      *                   * callable: uses the result of this callable (must return a string)
      */
-    public function __construct(?TokenGeneratorInterface $generator = null, ?TokenStorageInterface $storage = null, string|RequestStack|callable|null $namespace = null)
+    public function __construct(private readonly ?TokenGeneratorInterface $generator = new UriSafeTokenGenerator(), private readonly ?TokenStorageInterface $storage = new NativeSessionTokenStorage(), string|RequestStack|callable|null $namespace = null)
     {
-        $this->generator = $generator ?? new UriSafeTokenGenerator();
-        $this->storage = $storage ?? new NativeSessionTokenStorage();
-
-        $superGlobalNamespaceGenerator = static fn () => !empty($_SERVER['HTTPS']) && 'off' !== strtolower($_SERVER['HTTPS']) ? 'https-' : '';
+        $superGlobalNamespaceGenerator = static fn (): string => !empty($_SERVER['HTTPS']) && 'off' !== strtolower((string) $_SERVER['HTTPS']) ? 'https-' : '';
 
         if (null === $namespace) {
             $this->namespace = $superGlobalNamespaceGenerator;
         } elseif ($namespace instanceof RequestStack) {
-            $this->namespace = static function () use ($namespace, $superGlobalNamespaceGenerator) {
+            $this->namespace = static function () use ($namespace, $superGlobalNamespaceGenerator): string {
                 if ($request = $namespace->getMainRequest()) {
                     return $request->isSecure() ? 'https-' : '';
                 }

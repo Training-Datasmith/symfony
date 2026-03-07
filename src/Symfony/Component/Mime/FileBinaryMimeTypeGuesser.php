@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ class FileBinaryMimeTypeGuesser implements MimeTypeGuesserInterface
      * @param string $cmd The command to run to get the MIME type of a file
      */
     public function __construct(
-        private string $cmd = 'file -b --mime -- %s 2>/dev/null',
+        private readonly string $cmd = 'file -b --mime -- %s 2>/dev/null',
     ) {
     }
 
@@ -60,7 +62,7 @@ class FileBinaryMimeTypeGuesser implements MimeTypeGuesserInterface
         }
 
         if (!$this->isGuesserSupported()) {
-            throw new LogicException(\sprintf('The "%s" guesser is not supported.', __CLASS__));
+            throw new LogicException(\sprintf('The "%s" guesser is not supported.', self::class));
         }
 
         ob_start();

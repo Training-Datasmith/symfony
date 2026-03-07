@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class PreAssetsCompileEvent extends Event
 {
     public function __construct(
-        private OutputInterface $output,
+        private readonly OutputInterface $output,
     ) {
     }
 

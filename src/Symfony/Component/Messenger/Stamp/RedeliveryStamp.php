@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,7 +19,7 @@ use Symfony\Component\Messenger\Envelope;
 /**
  * Stamp applied when a messages needs to be redelivered.
  */
-final class RedeliveryStamp implements StampInterface
+final readonly class RedeliveryStamp implements StampInterface
 {
     private \DateTimeInterface $redeliveredAt;
 

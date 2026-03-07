@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,8 +32,8 @@ class TraceableSerializer implements SerializerInterface, NormalizerInterface, D
     public const DEBUG_TRACE_ID = 'debug_trace_id';
 
     public function __construct(
-        private SerializerInterface&NormalizerInterface&DenormalizerInterface&EncoderInterface&DecoderInterface $serializer,
-        private SerializerDataCollector $dataCollector,
+        private readonly SerializerInterface&NormalizerInterface&DenormalizerInterface&EncoderInterface&DecoderInterface $serializer,
+        private readonly SerializerDataCollector $dataCollector,
         private readonly string $serializerName = 'default',
     ) {
     }

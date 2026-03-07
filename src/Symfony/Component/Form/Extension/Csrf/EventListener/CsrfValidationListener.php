@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,8 +27,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class CsrfValidationListener implements EventSubscriberInterface
 {
-    private ServerParams $serverParams;
-
     public static function getSubscribedEvents(): array
     {
         return [
@@ -34,16 +34,8 @@ class CsrfValidationListener implements EventSubscriberInterface
         ];
     }
 
-    public function __construct(
-        private string $fieldName,
-        private CsrfTokenManagerInterface $tokenManager,
-        private string $tokenId,
-        private string $errorMessage,
-        private ?TranslatorInterface $translator = null,
-        private ?string $translationDomain = null,
-        ?ServerParams $serverParams = null,
-    ) {
-        $this->serverParams = $serverParams ?? new ServerParams();
+    public function __construct(private readonly string $fieldName, private readonly CsrfTokenManagerInterface $tokenManager, private readonly string $tokenId, private readonly string $errorMessage, private readonly ?TranslatorInterface $translator = null, private readonly ?string $translationDomain = null, private readonly ?ServerParams $serverParams = new ServerParams())
+    {
     }
 
     public function preSubmit(FormEvent $event): void

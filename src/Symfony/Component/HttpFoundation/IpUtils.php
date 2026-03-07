@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -185,11 +187,11 @@ class IpUtils
      */
     public static function anonymize(string $ip, int $v4Bytes = 1, int $v6Bytes = 8): string
     {
-        if ($v4Bytes < 0 || $v6Bytes < 0) {
+        if ($v6Bytes < 0) {
             throw new \InvalidArgumentException('Cannot anonymize less than 0 bytes.');
         }
 
-        if ($v4Bytes > 4 || $v6Bytes > 16) {
+        if ($v6Bytes > 16) {
             throw new \InvalidArgumentException('Cannot anonymize more than 4 bytes for IPv4 and 16 bytes for IPv6.');
         }
 
@@ -209,7 +211,7 @@ class IpUtils
             $ip = substr($ip, 1, -1);
         }
 
-        $mappedIpV4MaskGenerator = static function (string $mask, int $bytesToAnonymize) {
+        $mappedIpV4MaskGenerator = static function (string $mask, int $bytesToAnonymize): string {
             $mask .= str_repeat('ff', 4 - $bytesToAnonymize);
             $mask .= str_repeat('00', $bytesToAnonymize);
 
@@ -230,7 +232,7 @@ class IpUtils
         $ip = inet_ntop($packedAddress & inet_pton($mask));
 
         if ($wrappedIPv6) {
-            $ip = '['.$ip.']';
+            return '['.$ip.']';
         }
 
         return $ip;

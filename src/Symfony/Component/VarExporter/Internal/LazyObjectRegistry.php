@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -45,7 +47,10 @@ class LazyObjectRegistry
      */
     public static array $parentGet = [];
 
-    public static function getClassResetters($class)
+    /**
+     * @return \Closure[]|null[]
+     */
+    public static function getClassResetters($class): array
     {
         $classProperties = [];
         $hookedProperties = [];
@@ -58,8 +63,10 @@ class LazyObjectRegistry
 
         foreach ($propertyScopes as $key => [$scope, $name, $writeScope, $access]) {
             $propertyScopes[$k = "\0$scope\0$name"] ?? $propertyScopes[$k = "\0*\0$name"] ?? $k = $name;
-
-            if ($k !== $key || "\0$class\0lazyObjectState" === $k) {
+            if ($k !== $key) {
+                continue;
+            }
+            if ("\0$class\0lazyObjectState" === $k) {
                 continue;
             }
 
@@ -72,7 +79,7 @@ class LazyObjectRegistry
 
         $resetters = [];
         foreach ($classProperties as $scope => $properties) {
-            $resetters[] = \Closure::bind(static function ($instance, $skippedProperties) use ($properties) {
+            $resetters[] = \Closure::bind(static function ($instance, $skippedProperties) use ($properties): void {
                 foreach ($properties as $name => $key) {
                     if (!\array_key_exists($key, $skippedProperties)) {
                         unset($instance->$name);

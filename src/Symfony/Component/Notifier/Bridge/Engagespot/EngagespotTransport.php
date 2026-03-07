@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,8 +32,8 @@ final class EngagespotTransport extends AbstractTransport
     protected const HOST = 'api.engagespot.co/2/campaigns';
 
     public function __construct(
-        #[\SensitiveParameter] private string $apiKey,
-        private string $campaignName,
+        #[\SensitiveParameter] private readonly string $apiKey,
+        private readonly string $campaignName,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -51,7 +53,7 @@ final class EngagespotTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof PushMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, PushMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, PushMessage::class, $message);
         }
 
         $endpoint = \sprintf('https://%s', $this->getEndpoint());
@@ -64,7 +66,7 @@ final class EngagespotTransport extends AbstractTransport
             if (null !== $options['to']) {
                 $identifiers = [$options['to']];
             } elseif (!\is_array($options['identifiers'] ?? null)) {
-                throw new InvalidArgumentException(\sprintf('The "%s" transport required the "to" or "identifiers" option to be set when not sending to everyone.', __CLASS__));
+                throw new InvalidArgumentException(\sprintf('The "%s" transport required the "to" or "identifiers" option to be set when not sending to everyone.', self::class));
             } else {
                 $identifiers = $options['identifiers'];
             }

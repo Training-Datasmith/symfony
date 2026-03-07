@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -55,7 +57,7 @@ final class FileInputHelper
                 $output->write(self::BPM_ENABLE);
                 shell_exec('stty -icanon -echo');
 
-                $file = $this->readWithPasteDetection($inputStream, $output, $question, $inputHelper);
+                $file = $this->readWithPasteDetection($inputStream, $question, $inputHelper);
             } elseif ($question->isPathAllowed()) {
                 $file = $this->readPathInput($inputStream);
             } else {
@@ -95,7 +97,7 @@ final class FileInputHelper
     /**
      * @param resource $inputStream
      */
-    private function readWithPasteDetection($inputStream, OutputInterface $output, FileQuestion $question, TerminalInputHelper $inputHelper): InputFile
+    private function readWithPasteDetection($inputStream, FileQuestion $question, TerminalInputHelper $inputHelper): InputFile
     {
         $buffer = '';
         $inPaste = false;

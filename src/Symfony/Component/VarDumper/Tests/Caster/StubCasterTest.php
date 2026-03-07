@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -236,7 +238,7 @@ class StubCasterTest extends TestCase
 
     public function testClassStubWithAnonymousClass()
     {
-        $var = [new ClassStub((new class extends \Exception {
+        $var = [new ClassStub((new class () extends \Exception {
         })::class)];
 
         $cloner = new VarCloner();

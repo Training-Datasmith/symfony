@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,6 @@ class SingleAssociationToIntIdEntity
         #[Id, OneToOne(cascade: ['ALL'])]
         #[JoinColumn()]
         protected SingleIntIdNoToStringEntity $entity,
-
         #[Column(nullable: true)]
         public ?string $name,
     ) {

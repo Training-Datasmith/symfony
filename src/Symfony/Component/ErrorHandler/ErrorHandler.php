@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -89,7 +91,7 @@ class ErrorHandler
     private int $tracedErrors = 0x77FB; // E_ALL - E_STRICT - E_PARSE
     private int $screamedErrors = 0x55; // E_ERROR + E_CORE_ERROR + E_COMPILE_ERROR + E_PARSE
     private int $loggedErrors = 0;
-    private \Closure $configureException;
+    private readonly \Closure $configureException;
 
     private bool $isRecursive = false;
     private bool $isRoot = false;
@@ -118,10 +120,10 @@ class ErrorHandler
 
         if (null === $prev = get_error_handler()) {
             // Specifying the error types earlier would expose us to https://bugs.php.net/63206
-            set_error_handler([$handler, 'handleError'], $handler->thrownErrors | $handler->loggedErrors);
+            set_error_handler($handler->handleError(...), $handler->thrownErrors | $handler->loggedErrors);
             $handler->isRoot = true;
         } else {
-            set_error_handler([$handler, 'handleError']);
+            set_error_handler($handler->handleError(...));
         }
 
         if ($handlerIsNew && \is_array($prev) && $prev[0] instanceof self) {
@@ -134,12 +136,12 @@ class ErrorHandler
         } else {
             $handlerIsRegistered = true;
         }
-        if (\is_array($prev = set_exception_handler([$handler, 'handleException'])) && $prev[0] instanceof self) {
+        if (\is_array($prev = set_exception_handler($handler->handleException(...))) && $prev[0] instanceof self) {
             restore_exception_handler();
             if (!$handlerIsRegistered) {
                 $handler = $prev[0];
             } elseif ($handler !== $prev[0] && $replace) {
-                set_exception_handler([$handler, 'handleException']);
+                set_exception_handler($handler->handleException(...));
                 $p = $prev[0]->setExceptionHandler(null);
                 $handler->setExceptionHandler($p);
                 $prev[0]->setExceptionHandler($p);
@@ -160,7 +162,7 @@ class ErrorHandler
      */
     public static function call(callable $function, mixed ...$arguments): mixed
     {
-        set_error_handler(static function (int $type, string $message, string $file, int $line) {
+        set_error_handler(static function (int $type, string $message, string $file, int $line): void {
             if (__FILE__ === $file) {
                 $trace = debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 3);
                 $file = $trace[2]['file'] ?? $file;
@@ -179,18 +181,18 @@ class ErrorHandler
 
     public function __construct(
         ?BufferingLogger $bootstrappingLogger = null,
-        private bool $debug = false,
+        private readonly bool $debug = false,
     ) {
         if ($bootstrappingLogger) {
             $this->bootstrappingLogger = $bootstrappingLogger;
             $this->setDefaultLogger($bootstrappingLogger);
         }
         $traceReflector = new \ReflectionProperty(\Exception::class, 'trace');
-        $this->configureException = \Closure::bind(static function ($e, $trace, $file = null, $line = null) use ($traceReflector) {
+        $this->configureException = \Closure::bind(static function ($e, $trace, $file = null, $line = null) use ($traceReflector): void {
             $traceReflector->setValue($e, $trace);
             $e->file = $file ?? $e->file;
             $e->line = $line ?? $e->line;
-        }, null, new class extends \Exception {
+        }, null, new class () extends \Exception {
         });
     }
 
@@ -363,9 +365,9 @@ class ErrorHandler
             if ($handler === $this) {
                 restore_error_handler();
                 if ($this->isRoot) {
-                    set_error_handler([$this, 'handleError'], $this->thrownErrors | $this->loggedErrors);
+                    set_error_handler($this->handleError(...), $this->thrownErrors | $this->loggedErrors);
                 } else {
-                    set_error_handler([$this, 'handleError']);
+                    set_error_handler($this->handleError(...));
                 }
             }
         }
@@ -396,7 +398,7 @@ class ErrorHandler
         $type &= $level | $this->screamedErrors;
 
         // Never throw on warnings triggered by assert()
-        if (\E_WARNING === $type && 'a' === $message[0] && 0 === strncmp($message, 'assert(): ', 10)) {
+        if (\E_WARNING === $type && 'a' === $message[0] && str_starts_with($message, 'assert(): ')) {
             $throw = 0;
         }
 
@@ -499,14 +501,14 @@ class ErrorHandler
 
             try {
                 $this->loggers[$type][0]->log($this->loggers[$type][1], $message, ['exception' => $exception]);
-            } catch (\Throwable $handlerException) {
+            } catch (\Throwable) {
             }
         }
 
         $exception = $this->enhanceError($exception);
 
         $exceptionHandler = $this->exceptionHandler;
-        $this->exceptionHandler = [$this, 'renderException'];
+        $this->exceptionHandler = $this->renderException(...);
 
         if (null === $exceptionHandler || $exceptionHandler === $this->exceptionHandler) {
             $this->exceptionHandler = null;
@@ -557,7 +559,7 @@ class ErrorHandler
         $sameHandlerLimit = 10;
 
         while (!\is_array($handler) || !$handler[0] instanceof self) {
-            $handler = set_exception_handler('is_int');
+            $handler = set_exception_handler(is_int(...));
             restore_exception_handler();
 
             if (!$handler) {
@@ -578,7 +580,9 @@ class ErrorHandler
         }
         if (!$handler) {
             if (null === $error && $exitCode = self::$exitCode) {
-                register_shutdown_function('register_shutdown_function', static function () use ($exitCode) { exit($exitCode); });
+                register_shutdown_function(register_shutdown_function(...), static function () use ($exitCode): void {
+                    exit($exitCode);
+                });
             }
 
             return;
@@ -587,7 +591,6 @@ class ErrorHandler
             $handler[0]->setExceptionHandler($h);
         }
         $handler = $handler[0];
-        $handlers = [];
 
         if ($exit = null === $error) {
             $error = error_get_last();
@@ -598,7 +601,7 @@ class ErrorHandler
             $handler->throwAt(0, true);
             $trace = $error['backtrace'] ?? null;
 
-            if (str_starts_with($error['message'], 'Allowed memory') || str_starts_with($error['message'], 'Out of memory')) {
+            if (str_starts_with((string) $error['message'], 'Allowed memory') || str_starts_with((string) $error['message'], 'Out of memory')) {
                 $fatalError = new OutOfMemoryError($handler->levels[$error['type']].': '.$error['message'], 0, $error, 2, false, $trace);
             } else {
                 $fatalError = new FatalError($handler->levels[$error['type']].': '.$error['message'], 0, $error, 2, true, $trace);
@@ -617,7 +620,9 @@ class ErrorHandler
         }
 
         if ($exit && $exitCode = self::$exitCode) {
-            register_shutdown_function('register_shutdown_function', static function () use ($exitCode) { exit($exitCode); });
+            register_shutdown_function(register_shutdown_function(...), static function () use ($exitCode): void {
+                exit($exitCode);
+            });
         }
     }
 
@@ -721,6 +726,6 @@ class ErrorHandler
      */
     private function parseAnonymousClass(string $message): string
     {
-        return preg_replace_callback('/[a-zA-Z_\x7f-\xff][\\\\a-zA-Z0-9_\x7f-\xff]*+@anonymous\x00.*?\.php(?:0x?|:[0-9]++\$)?[0-9a-fA-F]++/', static fn ($m) => class_exists($m[0], false) ? (get_parent_class($m[0]) ?: key(class_implements($m[0])) ?: 'class').'@anonymous' : $m[0], $message);
+        return preg_replace_callback('/[a-zA-Z_\x7f-\xff][\\\\a-zA-Z0-9_\x7f-\xff]*+@anonymous\x00.*?\.php(?:0x?|:[0-9]++\$)?[0-9a-fA-F]++/', static fn ($m): string => class_exists($m[0], false) ? (get_parent_class($m[0]) ?: key(class_implements($m[0])) ?: 'class').'@anonymous' : $m[0], $message);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -238,7 +240,8 @@ class AmqpExtIntegrationTest extends TestCase
         // make sure the process exited, after consuming only the 1 message
         $this->assertFalse($process->isRunning());
         $this->assertLessThan($amqpReadTimeout, microtime(true) - $signalTime);
-        $this->assertSame($expectedOutput.<<<'TXT'
+        $this->assertSame(
+            $expectedOutput.<<<'TXT'
             Get envelope with message: Symfony\Component\Messenger\Bridge\Amqp\Tests\Fixtures\DummyMessage
             with stamps: [
                 "Symfony\\Component\\Messenger\\Stamp\\SerializedMessageStamp",

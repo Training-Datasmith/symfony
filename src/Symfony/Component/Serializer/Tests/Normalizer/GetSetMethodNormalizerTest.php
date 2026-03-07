@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -181,7 +183,9 @@ class GetSetMethodNormalizerTest extends TestCase
     {
         $obj = $this->normalizer->denormalize(
             ['foo' => 'foo', 'bar' => 'bar', 'baz' => true, 'fooBar' => 'foobar'],
-            GetConstructorDummy::class, 'any');
+            GetConstructorDummy::class,
+            'any'
+        );
         $this->assertEquals('foo', $obj->getFoo());
         $this->assertEquals('bar', $obj->getBar());
         $this->assertTrue($obj->isBaz());
@@ -191,7 +195,9 @@ class GetSetMethodNormalizerTest extends TestCase
     {
         $obj = $this->normalizer->denormalize(
             ['foo' => 'foo', 'bar' => null, 'baz' => true],
-            GetConstructorDummy::class, 'any');
+            GetConstructorDummy::class,
+            'any'
+        );
         $this->assertEquals('foo', $obj->getFoo());
         $this->assertNull($obj->getBar());
         $this->assertTrue($obj->isBaz());
@@ -201,7 +207,9 @@ class GetSetMethodNormalizerTest extends TestCase
     {
         $obj = $this->normalizer->denormalize(
             ['foo' => 'test', 'baz' => [1, 2, 3]],
-            GetConstructorOptionalArgsDummy::class, 'any');
+            GetConstructorOptionalArgsDummy::class,
+            'any'
+        );
         $this->assertEquals('test', $obj->getFoo());
         $this->assertEquals([], $obj->getBar());
         $this->assertEquals([1, 2, 3], $obj->getBaz());
@@ -211,7 +219,9 @@ class GetSetMethodNormalizerTest extends TestCase
     {
         $obj = $this->normalizer->denormalize(
             ['bar' => 'test'],
-            GetConstructorArgsWithDefaultValueDummy::class, 'any');
+            GetConstructorArgsWithDefaultValueDummy::class,
+            'any'
+        );
         $this->assertEquals([], $obj->getFoo());
         $this->assertEquals('test', $obj->getBar());
     }
@@ -220,7 +230,9 @@ class GetSetMethodNormalizerTest extends TestCase
     {
         $obj = $this->normalizer->denormalize(
             ['foo' => [1, 2, 3]],
-            'Symfony\Component\Serializer\Tests\Fixtures\VariadicConstructorArgsDummy', 'any');
+            'Symfony\Component\Serializer\Tests\Fixtures\VariadicConstructorArgsDummy',
+            'any'
+        );
         $this->assertEquals([1, 2, 3], $obj->getFoo());
     }
 
@@ -228,7 +240,9 @@ class GetSetMethodNormalizerTest extends TestCase
     {
         $obj = $this->normalizer->denormalize(
             [],
-            'Symfony\Component\Serializer\Tests\Fixtures\VariadicConstructorArgsDummy', 'any');
+            'Symfony\Component\Serializer\Tests\Fixtures\VariadicConstructorArgsDummy',
+            'any'
+        );
         $this->assertEquals([], $obj->getFoo());
     }
 

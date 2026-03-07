@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -167,7 +169,7 @@ class FailedMessagesRemoveCommandTest extends TestCase
         $globalFailureReceiverName = 'failure_receiver';
         $receiver = $this->createMock(ListableReceiverInterface::class);
 
-        $anotherClass = new class extends \stdClass {};
+        $anotherClass = new class () extends \stdClass {};
 
         $series = [
             new Envelope(new \stdClass(), [new TransportMessageIdStamp(10)]),

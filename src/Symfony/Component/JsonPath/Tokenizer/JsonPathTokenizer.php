@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -305,7 +307,7 @@ final class JsonPathTokenizer
         $comparisonOps = ['==', '!=', '>=', '<=', '>', '<'];
         foreach ($comparisonOps as $op) {
             if (str_contains($filterExpr, $op)) {
-                [$left, $right] = array_map('trim', explode($op, $filterExpr, 2));
+                [$left, $right] = array_map(trim(...), explode($op, $filterExpr, 2));
 
                 // check if either side contains non-singular queries
                 if (self::isNonSingularQuery($left) || self::isNonSingularQuery($right)) {
@@ -330,16 +332,21 @@ final class JsonPathTokenizer
         }
 
         foreach ($tokens as $token) {
-            if (
-                '' === ($token = trim($token))
-                || \in_array($token, ['true', 'false', 'null'], true)
-                || false !== strpbrk($token[0], '@"\'')
-                || false !== strpbrk($token, '()[]$')
-                || (str_contains($token, '.') && !preg_match('/^[\d+\-.eE\s]*\./', $token))
-            ) {
+            if ('' === ($token = trim($token))) {
                 continue;
             }
-
+            if (\in_array($token, ['true', 'false', 'null'], true)) {
+                continue;
+            }
+            if (false !== strpbrk($token[0], '@"\'')) {
+                continue;
+            }
+            if (false !== strpbrk($token, '()[]$')) {
+                continue;
+            }
+            if (str_contains($token, '.') && !preg_match('/^[\d+\-.eE\s]*\./', $token)) {
+                continue;
+            }
             // strict JSON number format validation
             if (
                 preg_match('/^(?=[\d+\-.eE\s]+$)(?=.*\d)/', $token)
@@ -375,7 +382,7 @@ final class JsonPathTokenizer
                 throw new InvalidJsonPathException('Function requires exactly one argument.', $position);
             }
 
-            $arg = trim($argParts[0]);
+            $arg = trim((string) $argParts[0]);
 
             if ('count' === $functionName && preg_match('/^'.self::BARE_LITERAL_REGEX.'$/', $arg)) {
                 throw new InvalidJsonPathException('count() function requires a query argument, not a literal.', $position);

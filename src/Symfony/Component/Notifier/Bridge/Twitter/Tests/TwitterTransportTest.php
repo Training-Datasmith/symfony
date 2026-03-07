@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -117,7 +119,8 @@ class TwitterTransportTest extends TransportTestCase
             };
         })()));
 
-        $result = $transport->send(new ChatMessage('Hello World!', (new TwitterOptions())
+        $result = $transport->send(
+            new ChatMessage('Hello World!', (new TwitterOptions())
             ->attachImage(new File(__DIR__.'/fixtures.gif'), 'A fixture'))
         );
 
@@ -198,7 +201,8 @@ class TwitterTransportTest extends TransportTestCase
             };
         })()));
 
-        $result = $transport->send(new ChatMessage('Hello World!', (new TwitterOptions())
+        $result = $transport->send(
+            new ChatMessage('Hello World!', (new TwitterOptions())
             ->attachVideo(new File(__DIR__.'/fixtures.gif'), '', new File(__DIR__.'/fixtures.gif', 'English.en.srt')))
         );
 

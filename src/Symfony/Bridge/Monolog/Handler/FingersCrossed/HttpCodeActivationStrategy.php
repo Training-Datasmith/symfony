@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
  * @author Shaun Simmons <shaun@envysphere.com>
  * @author Pierrick Vignand <pierrick.vignand@gmail.com>
  */
-final class HttpCodeActivationStrategy implements ActivationStrategyInterface
+final readonly class HttpCodeActivationStrategy implements ActivationStrategyInterface
 {
     /**
      * @param array $exclusions each exclusion must have a "code" and "urls" keys

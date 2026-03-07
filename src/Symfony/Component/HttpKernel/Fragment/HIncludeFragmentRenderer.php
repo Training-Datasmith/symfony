@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,10 +30,10 @@ class HIncludeFragmentRenderer extends RoutableFragmentRenderer
      * @param string|null $globalDefaultTemplate The global default content (it can be a template name or the content)
      */
     public function __construct(
-        private ?Environment $twig = null,
-        private ?UriSigner $signer = null,
-        private ?string $globalDefaultTemplate = null,
-        private string $charset = 'utf-8',
+        private readonly ?Environment $twig = null,
+        private readonly ?UriSigner $signer = null,
+        private readonly ?string $globalDefaultTemplate = null,
+        private readonly string $charset = 'utf-8',
     ) {
     }
 
@@ -76,8 +78,8 @@ class HIncludeFragmentRenderer extends RoutableFragmentRenderer
             foreach ($attributes as $attribute => $value) {
                 $renderedAttributes .= \sprintf(
                     ' %s="%s"',
-                    htmlspecialchars($attribute, $flags, $this->charset, false),
-                    htmlspecialchars($value, $flags, $this->charset, false)
+                    htmlspecialchars((string) $attribute, $flags, $this->charset, false),
+                    htmlspecialchars((string) $value, $flags, $this->charset, false)
                 );
             }
         }

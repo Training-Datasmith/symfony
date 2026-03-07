@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -42,7 +44,7 @@ namespace Symfony\Component\Console\Helper;
  *
  * @see https://stackoverflow.com/a/20434776/1476819
  */
-final class OutputWrapper
+final readonly class OutputWrapper
 {
     private const TAG_OPEN_REGEX_SEGMENT = '[a-z](?:[^\\\\<>]*+ | \\\\.)*';
     private const TAG_CLOSE_REGEX_SEGMENT = '[a-z][^<>]*+';
@@ -69,7 +71,7 @@ final class OutputWrapper
         $blocks = implode('|', $patternBlocks);
         $rowPattern = "(?:$blocks)$limitPattern";
         $pattern = \sprintf('#(?:((?>(%1$s)((?<=[^\S\r\n])[^\S\r\n]?|(?=\r?\n)|$|[^\S\r\n]))|(%1$s))(?:\r?\n)?|(?:\r?\n|$))#imux', $rowPattern);
-        $output = rtrim(preg_replace($pattern, '\\1'.$break, $text), $break);
+        $output = rtrim((string) preg_replace($pattern, '\\1'.$break, $text), $break);
 
         return str_replace(' '.$break, $break, $output);
     }

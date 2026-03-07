@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -70,7 +72,7 @@ class TypeValidator extends ConstraintValidator
         $types = (array) $constraint->type;
 
         foreach ($types as $type) {
-            $type = strtolower($type);
+            $type = strtolower((string) $type);
             if (isset(self::VALIDATION_FUNCTIONS[$type]) && match ($type) {
                 'finite-float' => \is_float($value) && is_finite($value),
                 'finite-number' => \is_int($value) || \is_float($value) && is_finite($value),

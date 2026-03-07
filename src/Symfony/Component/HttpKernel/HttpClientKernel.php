@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,14 +31,14 @@ class_exists(ResponseHeaderBag::class);
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class HttpClientKernel implements HttpKernelInterface
+final readonly class HttpClientKernel implements HttpKernelInterface
 {
     private HttpClientInterface $client;
 
     public function __construct(?HttpClientInterface $client = null)
     {
         if (null === $client && !class_exists(HttpClient::class)) {
-            throw new \LogicException(\sprintf('You cannot use "%s" as the HttpClient component is not installed. Try running "composer require symfony/http-client".', __CLASS__));
+            throw new \LogicException(\sprintf('You cannot use "%s" as the HttpClient component is not installed. Try running "composer require symfony/http-client".', self::class));
         }
 
         $this->client = $client ?? HttpClient::create();
@@ -55,7 +57,7 @@ final class HttpClientKernel implements HttpKernelInterface
             'body' => $body,
         ] + $request->attributes->get('http_client_options', []));
 
-        $headers = new class($response->getHeaders(!$catch)) extends ResponseHeaderBag {
+        $headers = new class ($response->getHeaders(!$catch)) extends ResponseHeaderBag {
             protected function computeCacheControlValue(): string
             {
                 return $this->getCacheControlHeader(); // preserve the original value

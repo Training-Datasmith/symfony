@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -66,7 +68,7 @@ while (false !== $file = fgets(\STDIN)) {
 
         echo "        '$class' => [\n";
 
-        preg_replace_callback('{@tentative-return-type.*?[\s]function ([^(]++)[^)]++\)\s*+:\s*+([^\n;\{]++)}s', static function ($m) {
+        preg_replace_callback('{@tentative-return-type.*?[\s]function ([^(]++)[^)]++\)\s*+:\s*+([^\n;\{]++)}s', static function ($m): string {
             $m[2] = str_replace(' ', '', $m[2]);
             echo "            '$m[1]' => '$m[2]',\n";
 

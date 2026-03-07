@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -198,10 +200,13 @@ abstract class AttributeClassLoader implements LoaderInterface
         }
 
         foreach ($method->getParameters() as $param) {
-            if (isset($defaults[$param->name]) || !$param->isDefaultValueAvailable()) {
+            if (isset($defaults[$param->name])) {
                 continue;
             }
-            foreach ($paths as $locale => $path) {
+            if (!$param->isDefaultValueAvailable()) {
+                continue;
+            }
+            foreach ($paths as $path) {
                 if (preg_match(\sprintf('/\{(?|([^\}:<]++):%s(?:\.[^\}<]++)?|(%1$s))(?:<.*?>)?\}/', preg_quote($param->name)), $path, $matches)) {
                     if (\is_scalar($defaultValue = $param->getDefaultValue()) || null === $defaultValue) {
                         $defaults[$matches[1]] = $defaultValue;
@@ -218,7 +223,7 @@ abstract class AttributeClassLoader implements LoaderInterface
             $this->configureRoute($route, $class, $method, $attr);
             if (0 !== $locale) {
                 $route->setDefault('_locale', $locale);
-                $route->setRequirement('_locale', preg_quote($locale));
+                $route->setRequirement('_locale', preg_quote((string) $locale));
                 $route->setDefault('_canonical_route', $name);
                 $collection->add($name.'.'.$locale, $route, $priority);
             } else {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -379,10 +381,8 @@ class TargetedBindingsService
     public function __construct(
         #[Target('targetName')]
         public $arg1,
-
         #[Target('unusedTarget')]
         public $variableName,
-
         #[Target('commonName')]
         public $commonName,
     ) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -40,7 +42,8 @@ final class ImportMapUpdateCommand extends Command
     {
         $this
             ->addArgument('packages', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'List of packages\' names')
-            ->setHelp(<<<'EOT'
+            ->setHelp(
+                <<<'EOT'
                 The <info>%command.name%</info> command will update all from the 3rd part packages
                 in <comment>importmap.php</comment> to their latest version, including downloaded packages.
 

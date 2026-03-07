@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,7 +37,7 @@ class BaseNodeTest extends TestCase
             }
         }
 
-        $node = new class(...$constructorArgs) extends BaseNode {
+        $node = new class (...$constructorArgs) extends BaseNode {
             protected function validateType($value): void
             {
             }

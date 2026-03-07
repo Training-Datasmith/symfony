@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,14 +27,13 @@ final class Definition
     private array $places = [];
     private array $transitions = [];
     private array $initialPlaces = [];
-    private MetadataStoreInterface $metadataStore;
 
     /**
      * @param string[]             $places
      * @param Transition[]         $transitions
      * @param string|string[]|null $initialPlaces
      */
-    public function __construct(array $places, array $transitions, string|array|null $initialPlaces = null, ?MetadataStoreInterface $metadataStore = null)
+    public function __construct(array $places, array $transitions, string|array|null $initialPlaces = null, private readonly ?MetadataStoreInterface $metadataStore = new InMemoryMetadataStore())
     {
         foreach ($places as $place) {
             $this->addPlace($place);
@@ -43,8 +44,6 @@ final class Definition
         }
 
         $this->setInitialPlaces($initialPlaces);
-
-        $this->metadataStore = $metadataStore ?? new InMemoryMetadataStore();
     }
 
     /**

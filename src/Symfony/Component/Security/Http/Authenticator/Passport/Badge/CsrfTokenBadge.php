@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,8 +34,8 @@ class CsrfTokenBadge implements BadgeInterface
      * @param string|null $csrfToken   The CSRF token presented in the request, if any
      */
     public function __construct(
-        private string $csrfTokenId,
-        #[\SensitiveParameter] private ?string $csrfToken,
+        private readonly string $csrfTokenId,
+        #[\SensitiveParameter] private readonly ?string $csrfToken,
     ) {
     }
 

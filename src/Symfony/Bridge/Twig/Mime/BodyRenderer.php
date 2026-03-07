@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ use Twig\Environment;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class BodyRenderer implements BodyRendererInterface
+final readonly class BodyRenderer implements BodyRendererInterface
 {
     private HtmlToTextConverterInterface $converter;
 
@@ -48,7 +50,7 @@ final class BodyRenderer implements BodyRendererInterface
             return;
         }
 
-        $callback = function () use ($message) {
+        $callback = function () use ($message): void {
             $messageContext = $message->getContext();
 
             if (isset($messageContext['email'])) {

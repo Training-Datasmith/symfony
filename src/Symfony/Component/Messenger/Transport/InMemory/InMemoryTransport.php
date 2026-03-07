@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -51,8 +53,8 @@ class InMemoryTransport implements TransportInterface, ResetInterface
     private array $availableAt = [];
 
     public function __construct(
-        private ?SerializerInterface $serializer = null,
-        private ?ClockInterface $clock = null,
+        private readonly ?SerializerInterface $serializer = null,
+        private readonly ?ClockInterface $clock = null,
     ) {
     }
 

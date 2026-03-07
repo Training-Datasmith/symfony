@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,15 +32,15 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
  *  * Identifiers refer to Symfony's translation keys;
  *  * Translations refer to Symfony's translated messages
  */
-final class CrowdinProvider implements ProviderInterface
+final readonly class CrowdinProvider implements ProviderInterface
 {
     public function __construct(
-        private readonly HttpClientInterface $client,
-        private readonly LoaderInterface $loader,
-        private readonly LoggerInterface $logger,
-        private readonly XliffFileDumper $xliffFileDumper,
-        private readonly string $defaultLocale,
-        private readonly string $endpoint,
+        private HttpClientInterface $client,
+        private LoaderInterface $loader,
+        private LoggerInterface $logger,
+        private XliffFileDumper $xliffFileDumper,
+        private string $defaultLocale,
+        private string $endpoint,
     ) {
     }
 

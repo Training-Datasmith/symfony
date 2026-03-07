@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'bacio tra coppia: persona, persona, carnagione chiara e carnagione abbastanza chiara',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'bacio tra coppia: persona, persona, carnagione chiara e carnagione olivastra',

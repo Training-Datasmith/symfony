@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,17 +38,13 @@ final class AccessDecisionManager implements AccessDecisionManagerInterface
 
     private array $votersCacheAttributes = [];
     private array $votersCacheObject = [];
-    private AccessDecisionStrategyInterface $strategy;
     private array $accessDecisionStack = [];
 
     /**
      * @param iterable<mixed, VoterInterface> $voters An array or an iterator of VoterInterface instances
      */
-    public function __construct(
-        private iterable $voters = [],
-        ?AccessDecisionStrategyInterface $strategy = null,
-    ) {
-        $this->strategy = $strategy ?? new AffirmativeStrategy();
+    public function __construct(private readonly iterable $voters = [], private readonly ?AccessDecisionStrategyInterface $strategy = new AffirmativeStrategy())
+    {
     }
 
     /**
@@ -111,7 +109,7 @@ final class AccessDecisionManager implements AccessDecisionManagerInterface
             $keyAttributes[] = \is_string($attribute) ? $attribute : null;
         }
         // use `get_class` to handle anonymous classes
-        $keyObject = \is_object($object) ? $object::class : get_debug_type($object);
+        $keyObject = get_debug_type($object);
         foreach ($this->voters as $key => $voter) {
             if (!$voter instanceof CacheableVoterInterface) {
                 yield $voter;

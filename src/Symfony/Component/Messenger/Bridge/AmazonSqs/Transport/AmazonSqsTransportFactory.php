@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,8 +27,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class AmazonSqsTransportFactory implements TransportFactoryInterface
 {
     public function __construct(
-        private ?LoggerInterface $logger = null,
-        private ?HttpClientInterface $httpClient = null,
+        private readonly ?LoggerInterface $logger = null,
+        private readonly ?HttpClientInterface $httpClient = null,
     ) {
     }
 

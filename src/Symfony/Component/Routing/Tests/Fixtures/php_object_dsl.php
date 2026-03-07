@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\Routing\Loader\Configurator;
 
-return new class {
+return new class () {
     public function __invoke(RoutingConfigurator $routes)
     {
         $routes

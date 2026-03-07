@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ use Symfony\Component\TypeInfo\Type;
  *
  * @internal
  */
-final class StreamerCacheWarmer implements CacheWarmerInterface
+final readonly class StreamerCacheWarmer implements CacheWarmerInterface
 {
     private StreamWriterGenerator $streamWriterGenerator;
     private StreamReaderGenerator $streamReaderGenerator;

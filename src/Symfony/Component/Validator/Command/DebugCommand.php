@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,7 +41,7 @@ use Symfony\Component\Validator\Mapping\TraversalStrategy;
 class DebugCommand extends Command
 {
     public function __construct(
-        private MetadataFactoryInterface $validator,
+        private readonly MetadataFactoryInterface $validator,
     ) {
         parent::__construct();
     }
@@ -49,7 +51,8 @@ class DebugCommand extends Command
         $this
             ->addArgument('class', InputArgument::REQUIRED, 'A fully qualified class name or a path')
             ->addOption('show-all', null, InputOption::VALUE_NONE, 'Show all classes even if they have no validation constraints')
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name% 'App\Entity\Dummy'</info> command dumps the validators for the dummy class.
 
                 The <info>%command.name% src/</info> command dumps the validators for the `src` directory.

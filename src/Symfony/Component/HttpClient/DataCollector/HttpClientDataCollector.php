@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -141,8 +143,8 @@ final class HttpClientDataCollector extends DataCollector implements LateDataCol
                 $contentType = 'application/octet-stream';
 
                 foreach ($info['response_headers'] ?? [] as $h) {
-                    if (0 === stripos($h, 'content-type: ')) {
-                        $contentType = substr($h, \strlen('content-type: '));
+                    if (0 === stripos((string) $h, 'content-type: ')) {
+                        $contentType = substr((string) $h, \strlen('content-type: '));
                         break;
                     }
                 }
@@ -186,7 +188,7 @@ final class HttpClientDataCollector extends DataCollector implements LateDataCol
         $command = ['curl', '--compressed'];
 
         if (isset($trace['options']['resolve'])) {
-            $port = parse_url($url, \PHP_URL_PORT) ?: (str_starts_with('http:', $url) ? 80 : 443);
+            $port = parse_url((string) $url, \PHP_URL_PORT) ?: (str_starts_with('http:', (string) $url) ? 80 : 443);
             foreach ($trace['options']['resolve'] as $host => $ip) {
                 if (null !== $ip) {
                     $command[] = '--resolve '.escapeshellarg("$host:$port:$ip");
@@ -232,14 +234,16 @@ final class HttpClientDataCollector extends DataCollector implements LateDataCol
                 // When the curl client disables debug info due to a curl bug, we cannot build the command.
                 return null;
             }
-
-            if ('' === $line || preg_match('/^[*<]|(Host: )/', $line)) {
+            if ('' === $line) {
+                continue;
+            }
+            if (preg_match('/^[*<]|(Host: )/', $line)) {
                 continue;
             }
 
             if (preg_match('/^> ([A-Z]+)/', $line, $match)) {
                 $command[] = \sprintf('--request %s', $match[1]);
-                $command[] = \sprintf('--url %s', escapeshellarg($url));
+                $command[] = \sprintf('--url %s', escapeshellarg((string) $url));
                 continue;
             }
 

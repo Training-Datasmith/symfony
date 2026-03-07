@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ use Symfony\Component\HttpFoundation\Response;
 class LazyResponseException extends \Exception implements ExceptionInterface
 {
     public function __construct(
-        private Response $response,
+        private readonly Response $response,
     ) {
     }
 

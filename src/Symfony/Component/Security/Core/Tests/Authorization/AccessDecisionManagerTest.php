@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,7 +41,7 @@ class AccessDecisionManagerTest extends TestCase
             $this->getUnexpectedVoter(),
         ];
 
-        $strategy = new class implements AccessDecisionStrategyInterface {
+        $strategy = new class () implements AccessDecisionStrategyInterface {
             public function decide(\Traversable $results, ?AccessDecision $accessDecision = null): bool
             {
                 $i = 0;
@@ -255,7 +257,7 @@ class AccessDecisionManagerTest extends TestCase
 
     protected static function getVoter($vote)
     {
-        return new class($vote) implements VoterInterface {
+        return new class ($vote) implements VoterInterface {
             private int $vote;
 
             public function __construct(int $vote)

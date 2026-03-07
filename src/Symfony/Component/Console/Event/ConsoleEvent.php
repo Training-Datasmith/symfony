@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,8 +27,8 @@ class ConsoleEvent extends Event
 {
     public function __construct(
         protected ?Command $command,
-        private InputInterface $input,
-        private OutputInterface $output,
+        private readonly InputInterface $input,
+        private readonly OutputInterface $output,
     ) {
     }
 

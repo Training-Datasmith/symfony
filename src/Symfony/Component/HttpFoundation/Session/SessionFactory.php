@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,11 +24,11 @@ class_exists(Session::class);
  */
 class SessionFactory implements SessionFactoryInterface
 {
-    private ?\Closure $usageReporter;
+    private readonly ?\Closure $usageReporter;
 
     public function __construct(
-        private RequestStack $requestStack,
-        private SessionStorageFactoryInterface $storageFactory,
+        private readonly RequestStack $requestStack,
+        private readonly SessionStorageFactoryInterface $storageFactory,
         ?callable $usageReporter = null,
     ) {
         $this->usageReporter = null === $usageReporter ? null : $usageReporter(...);

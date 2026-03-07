@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,11 +26,6 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 class DateTimeToStringTransformer extends BaseDateTimeTransformer
 {
     /**
-     * Format used for generating strings.
-     */
-    private string $generateFormat;
-
-    /**
      * Format used for parsing strings.
      *
      * Different than the {@link $generateFormat} because formats for parsing
@@ -44,15 +41,13 @@ class DateTimeToStringTransformer extends BaseDateTimeTransformer
      *
      * @param string|null $inputTimezone  The name of the input timezone
      * @param string|null $outputTimezone The name of the output timezone
-     * @param string      $format         The date format
+     * @param string $generateFormat The date format
      * @param string|null $parseFormat    The parse format when different from $format
      */
-    public function __construct(?string $inputTimezone = null, ?string $outputTimezone = null, string $format = 'Y-m-d H:i:s', ?string $parseFormat = null)
+    public function __construct(?string $inputTimezone = null, ?string $outputTimezone = null, private readonly string $generateFormat = 'Y-m-d H:i:s', ?string $parseFormat = null)
     {
         parent::__construct($inputTimezone, $outputTimezone);
-
-        $this->generateFormat = $format;
-        $this->parseFormat = $parseFormat ?? $format;
+        $this->parseFormat = $parseFormat ?? $this->generateFormat;
 
         // See https://php.net/datetime.createfromformat
         // The character "|" in the format makes sure that the parts of a date

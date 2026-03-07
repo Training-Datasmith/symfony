@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,6 +20,6 @@ class DefaultHtmlToTextConverter implements HtmlToTextConverterInterface
 {
     public function convert(string $html, string $charset): string
     {
-        return strip_tags(preg_replace('{<(head|style)\b.*?</\1>}is', '', $html));
+        return strip_tags((string) preg_replace('{<(head|style)\b.*?</\1>}is', '', $html));
     }
 }

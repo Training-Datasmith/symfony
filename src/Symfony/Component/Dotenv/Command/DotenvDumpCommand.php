@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,8 +38,8 @@ use Symfony\Component\Dotenv\Dotenv;
 final class DotenvDumpCommand extends Command
 {
     public function __construct(
-        private string $projectDir,
-        private ?string $defaultEnv = null,
+        private readonly string $projectDir,
+        private readonly ?string $defaultEnv = null,
     ) {
         parent::__construct();
     }
@@ -49,7 +51,8 @@ final class DotenvDumpCommand extends Command
                 new InputArgument('env', null === $this->defaultEnv ? InputArgument::REQUIRED : InputArgument::OPTIONAL, 'The application environment to dump .env files for - e.g. "prod".'),
             ])
             ->addOption('empty', null, InputOption::VALUE_NONE, 'Ignore the content of .env files')
-            ->setHelp(<<<'EOT'
+            ->setHelp(
+                <<<'EOT'
                 The <info>%command.name%</info> command compiles .env files into a PHP-optimized file called .env.local.php.
 
                     <info>%command.full_name%</info>

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,9 +34,9 @@ use Symfony\Component\Security\Http\Event\LazyResponseEvent;
 class AccessListener extends AbstractListener
 {
     public function __construct(
-        private TokenStorageInterface $tokenStorage,
-        private AccessDecisionManagerInterface $accessDecisionManager,
-        private AccessMapInterface $map,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly AccessDecisionManagerInterface $accessDecisionManager,
+        private readonly AccessMapInterface $map,
         bool $exceptionOnNoToken = false,
     ) {
         if (false !== $exceptionOnNoToken) {

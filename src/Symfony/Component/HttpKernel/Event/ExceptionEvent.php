@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,7 +39,7 @@ final class ExceptionEvent extends RequestEvent
         Request $request,
         int $requestType,
         \Throwable $e,
-        private bool $isKernelTerminating = false,
+        private readonly bool $isKernelTerminating = false,
         public readonly ?ControllerMetadata $controllerMetadata = null,
     ) {
         parent::__construct($kernel, $request, $requestType);

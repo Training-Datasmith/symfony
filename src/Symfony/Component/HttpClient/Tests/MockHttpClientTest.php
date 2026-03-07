@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -111,7 +113,9 @@ class MockHttpClientTest extends HttpClientTestCase
             [[new MockResponse()]],
             [new \ArrayIterator([new MockResponse()])],
             [null],
-            [(static function (): \Generator { yield new MockResponse(); })()],
+            [(static function (): \Generator {
+                yield new MockResponse();
+            })()],
         ];
     }
 
@@ -165,9 +169,13 @@ class MockHttpClientTest extends HttpClientTestCase
     public static function invalidResponseFactoryProvider()
     {
         return [
-            [static function (): \Generator { yield new MockResponse(); }, 'The response factory passed to MockHttpClient must return/yield an instance of ResponseInterface, "Generator" given.'],
+            [static function (): \Generator {
+                yield new MockResponse();
+            }, 'The response factory passed to MockHttpClient must return/yield an instance of ResponseInterface, "Generator" given.'],
             [static fn (): array => [new MockResponse()], 'The response factory passed to MockHttpClient must return/yield an instance of ResponseInterface, "array" given.'],
-            [(static function (): \Generator { yield 'ccc'; })(), 'The response factory passed to MockHttpClient must return/yield an instance of ResponseInterface, "string" given.'],
+            [(static function (): \Generator {
+                yield 'ccc';
+            })(), 'The response factory passed to MockHttpClient must return/yield an instance of ResponseInterface, "string" given.'],
         ];
     }
 
@@ -421,7 +429,9 @@ class MockHttpClientTest extends HttpClientTestCase
             case 'testResolve':
                 $responses[] = new MockResponse($body, ['response_headers' => $headers]);
                 $responses[] = new MockResponse($body, ['response_headers' => $headers]);
-                $responses[] = new MockResponse((static function () { yield ''; })(), ['response_headers' => $headers]);
+                $responses[] = new MockResponse((static function () {
+                    yield '';
+                })(), ['response_headers' => $headers]);
                 break;
 
             case 'testTimeoutOnStream':
@@ -524,7 +534,7 @@ class MockHttpClientTest extends HttpClientTestCase
     {
         $client = new MockHttpClient();
 
-        $param = new class {
+        $param = new class () {
             public function __toString(): string
             {
                 return 'bar';

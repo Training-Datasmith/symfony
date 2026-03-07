@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -45,7 +47,7 @@ class ReflectionMember
     public function getAttributes(string $class): array
     {
         return array_map(
-            static fn (\ReflectionAttribute $attribute) => $attribute->newInstance(),
+            static fn (\ReflectionAttribute $attribute): object => $attribute->newInstance(),
             $this->member->getAttributes($class, \ReflectionAttribute::IS_INSTANCEOF)
         );
     }

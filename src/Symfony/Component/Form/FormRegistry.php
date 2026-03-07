@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -43,7 +45,7 @@ class FormRegistry implements FormRegistryInterface
      */
     public function __construct(
         array $extensions,
-        private ResolvedFormTypeFactoryInterface $resolvedTypeFactory,
+        private readonly ResolvedFormTypeFactoryInterface $resolvedTypeFactory,
     ) {
         foreach ($extensions as $extension) {
             if (!$extension instanceof FormExtensionInterface) {

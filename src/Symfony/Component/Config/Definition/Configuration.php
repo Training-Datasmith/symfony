@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,9 +27,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class Configuration implements ConfigurationInterface
 {
     public function __construct(
-        private ConfigurableInterface $subject,
-        private ?ContainerBuilder $container,
-        private string $alias,
+        private readonly ConfigurableInterface $subject,
+        private readonly ?ContainerBuilder $container,
+        private readonly string $alias,
     ) {
     }
 

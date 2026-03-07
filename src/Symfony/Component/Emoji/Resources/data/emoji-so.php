@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'shumis: qof, qof, jidh fudud, jidh fudud oo dhexe',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'shumis: qof, qof, jidh fudud, jidh nooc dhexe',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,6 @@ class_exists(ParsedExpression::class);
  */
 class ExpressionLanguage
 {
-    private CacheItemPoolInterface $cache;
     private Lexer $lexer;
     private Parser $parser;
     private Compiler $compiler;
@@ -34,9 +35,8 @@ class ExpressionLanguage
     /**
      * @param iterable<ExpressionFunctionProviderInterface> $providers
      */
-    public function __construct(?CacheItemPoolInterface $cache = null, iterable $providers = [])
+    public function __construct(private readonly ?CacheItemPoolInterface $cache = new ArrayAdapter(), iterable $providers = [])
     {
-        $this->cache = $cache ?? new ArrayAdapter();
         $this->registerFunctions();
         foreach ($providers as $provider) {
             $this->registerProvider($provider);
@@ -145,9 +145,10 @@ class ExpressionLanguage
             $this->addFunction(ExpressionFunction::fromPhp($function));
         }
 
-        $this->addFunction(new ExpressionFunction('enum',
-            static fn ($str): string => \sprintf("(\constant(\$v = (%s))) instanceof \UnitEnum ? \constant(\$v) : throw new \TypeError(\sprintf('The string \"%%s\" is not the name of a valid enum case.', \$v))", $str),
-            static function ($arguments, $str): \UnitEnum {
+        $this->addFunction(new ExpressionFunction(
+            'enum',
+            static fn (string $str): string => \sprintf("(\constant(\$v = (%s))) instanceof \UnitEnum ? \constant(\$v) : throw new \TypeError(\sprintf('The string \"%%s\" is not the name of a valid enum case.', \$v))", $str),
+            static function ($arguments, string $str): \UnitEnum {
                 $value = \constant($str);
 
                 if (!$value instanceof \UnitEnum) {

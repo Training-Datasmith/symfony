@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ final class Dumper
     private \Closure $handler;
 
     public function __construct(
-        private OutputInterface $output,
+        private readonly OutputInterface $output,
         private ?CliDumper $dumper = null,
         private ?ClonerInterface $cloner = null,
     ) {
@@ -33,7 +35,7 @@ final class Dumper
                 $dumper = $this->dumper ??= new CliDumper(null, null, CliDumper::DUMP_LIGHT_ARRAY | CliDumper::DUMP_COMMA_SEPARATOR);
                 $dumper->setColors($this->output->isDecorated());
 
-                return rtrim($dumper->dump(($this->cloner ??= new VarCloner())->cloneVar($var)->withRefHandles(false), true));
+                return rtrim((string) $dumper->dump(($this->cloner ??= new VarCloner())->cloneVar($var)->withRefHandles(false), true));
             };
         } else {
             $this->handler = static fn ($var): string => match (true) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ final class NtfyTransportFactory extends AbstractTransportFactory
         }
 
         $host = 'default' === $dsn->getHost() ? null : $dsn->getHost();
-        $topic = substr($dsn->getPath(), 1);
+        $topic = substr((string) $dsn->getPath(), 1);
 
         if (\in_array($dsn->getOption('secureHttp', true), [0, false, 'false', 'off', 'no'], true)) {
             $secureHttp = false;

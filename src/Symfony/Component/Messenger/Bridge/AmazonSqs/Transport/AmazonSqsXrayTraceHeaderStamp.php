@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -13,7 +15,7 @@ namespace Symfony\Component\Messenger\Bridge\AmazonSqs\Transport;
 
 use Symfony\Component\Messenger\Stamp\NonSendableStampInterface;
 
-final class AmazonSqsXrayTraceHeaderStamp implements NonSendableStampInterface
+final readonly class AmazonSqsXrayTraceHeaderStamp implements NonSendableStampInterface
 {
     public function __construct(
         private string $traceId,

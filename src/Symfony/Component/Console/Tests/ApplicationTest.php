@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -296,7 +298,7 @@ class ApplicationTest extends TestCase
         yield 'a function' => ['strlen', InvalidArgumentException::class, \sprintf('The command must be an instance of "%s", an invokable object or a method of an object.', Command::class)];
         yield 'a closure' => [static function () {
         }, InvalidArgumentException::class, \sprintf('The command must be an instance of "%s", an invokable object or a method of an object.', Command::class)];
-        yield 'without the #[AsCommand] attribute' => [new class {
+        yield 'without the #[AsCommand] attribute' => [new class () {
             public function __invoke()
             {
             }
@@ -1045,7 +1047,7 @@ class ApplicationTest extends TestCase
 
     public function testRenderExceptionLineBreaks()
     {
-        $application = new class extends MockableAppliationWithTerminalWidth {
+        $application = new class () extends MockableAppliationWithTerminalWidth {
             public function getTerminalWidth(): int
             {
                 return 120;
@@ -1067,7 +1069,7 @@ class ApplicationTest extends TestCase
         $application = new Application();
         $application->setAutoExit(false);
         $application->register('foo')->setCode(static function () {
-            throw new class('') extends \InvalidArgumentException {};
+            throw new class ('') extends \InvalidArgumentException {};
         });
         $tester = new ApplicationTester($application);
 
@@ -1077,7 +1079,7 @@ class ApplicationTest extends TestCase
         $application = new Application();
         $application->setAutoExit(false);
         $application->register('foo')->setCode(static function () {
-            throw new \InvalidArgumentException(\sprintf('Dummy type "%s" is invalid.', (new class {})::class));
+            throw new \InvalidArgumentException(\sprintf('Dummy type "%s" is invalid.', (new class () {})::class));
         });
         $tester = new ApplicationTester($application);
 
@@ -1091,7 +1093,7 @@ class ApplicationTest extends TestCase
         $application = new Application();
         $application->setAutoExit(false);
         $application->register('foo')->setCode(static function () {
-            throw new class('') extends \InvalidArgumentException {};
+            throw new class ('') extends \InvalidArgumentException {};
         });
         $tester = new ApplicationTester($application);
 
@@ -1101,7 +1103,7 @@ class ApplicationTest extends TestCase
         $application = new Application();
         $application->setAutoExit(false);
         $application->register('foo')->setCode(static function () {
-            throw new \InvalidArgumentException(\sprintf('Dummy type "%s" is invalid.', (new class {})::class));
+            throw new \InvalidArgumentException(\sprintf('Dummy type "%s" is invalid.', (new class () {})::class));
         });
         $tester = new ApplicationTester($application);
 
@@ -2423,7 +2425,7 @@ class ApplicationTest extends TestCase
     {
         $command = new Command();
         $command->setName('signal-invokable');
-        $command->setCode($invokable = new class implements SignalableCommandInterface {
+        $command->setCode($invokable = new class () implements SignalableCommandInterface {
             use SignalableInvokableCommandTrait;
         });
 
@@ -2437,7 +2439,7 @@ class ApplicationTest extends TestCase
     #[RequiresPhpExtension('pcntl')]
     public function testSignalHandlersCleanupOnException()
     {
-        $command = new class('signal:exception') extends Command implements SignalableCommandInterface {
+        $command = new class ('signal:exception') extends Command implements SignalableCommandInterface {
             public function getSubscribedSignals(): array
             {
                 return [\SIGUSR1];
@@ -2471,7 +2473,7 @@ class ApplicationTest extends TestCase
     #[RequiresPhpExtension('pcntl')]
     public function testSignalableInvokableCommandThatExtendsBaseCommand()
     {
-        $command = new class extends Command implements SignalableCommandInterface {
+        $command = new class () extends Command implements SignalableCommandInterface {
             use SignalableInvokableCommandTrait;
         };
         $command->setName('signal-invokable');
@@ -2577,7 +2579,7 @@ class ApplicationTest extends TestCase
         $signalRegistry = $application->getSignalRegistry();
         $self = $this;
 
-        $innerCommand = new class('signal:inner') extends Command implements SignalableCommandInterface {
+        $innerCommand = new class ('signal:inner') extends Command implements SignalableCommandInterface {
             public $signalRegistry;
             public $self;
 
@@ -2601,7 +2603,7 @@ class ApplicationTest extends TestCase
             }
         };
 
-        $outerCommand = new class('signal:outer') extends Command implements SignalableCommandInterface {
+        $outerCommand = new class ('signal:outer') extends Command implements SignalableCommandInterface {
             public $signalRegistry;
             public $self;
 
@@ -2741,7 +2743,7 @@ class ApplicationTest extends TestCase
     {
         $command = new BaseSignableCommand(signal: \SIGALRM);
 
-        $subscriber1 = new class($exitCode) extends SignalEventSubscriber {
+        $subscriber1 = new class ($exitCode) extends SignalEventSubscriber {
             public function __construct(private int|false $exitCode)
             {
             }
@@ -2757,7 +2759,7 @@ class ApplicationTest extends TestCase
                 }
             }
         };
-        $subscriber2 = new class($exitCode) extends AlarmEventSubscriber {
+        $subscriber2 = new class ($exitCode) extends AlarmEventSubscriber {
             public function __construct(private int|false $exitCode)
             {
             }

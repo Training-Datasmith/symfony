@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -79,8 +81,6 @@ class NoSuspiciousCharacters extends Constraint
     public string $hiddenOverlayMessage = 'Using hidden overlay characters is not allowed.';
 
     public int $checks = self::CHECK_INVISIBLE | self::CHECK_MIXED_NUMBERS | self::CHECK_HIDDEN_OVERLAY;
-    public ?int $restrictionLevel = null;
-    public ?array $locales = null;
 
     /**
      * @param int-mask-of<self::CHECK_*>|null             $checks           A bitmask of the checks to perform on the string (defaults to all checks)
@@ -96,8 +96,8 @@ class NoSuspiciousCharacters extends Constraint
         ?string $mixedNumbersMessage = null,
         ?string $hiddenOverlayMessage = null,
         ?int $checks = null,
-        ?int $restrictionLevel = null,
-        ?array $locales = null,
+        public ?int $restrictionLevel = null,
+        public ?array $locales = null,
         ?array $groups = null,
         mixed $payload = null,
     ) {
@@ -116,7 +116,5 @@ class NoSuspiciousCharacters extends Constraint
         $this->mixedNumbersMessage = $mixedNumbersMessage ?? $this->mixedNumbersMessage;
         $this->hiddenOverlayMessage = $hiddenOverlayMessage ?? $this->hiddenOverlayMessage;
         $this->checks = $checks ?? $this->checks;
-        $this->restrictionLevel = $restrictionLevel;
-        $this->locales = $locales;
     }
 }

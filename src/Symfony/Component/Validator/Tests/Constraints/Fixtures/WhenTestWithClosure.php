@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,9 +18,11 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\When;
 
-#[When(expression: static function () {
+#[When(
+    expression: static function () {
         return true;
-    }, constraints: new Callback('isValid')
+    },
+    constraints: new Callback('isValid')
 )]
 class WhenTestWithClosure
 {

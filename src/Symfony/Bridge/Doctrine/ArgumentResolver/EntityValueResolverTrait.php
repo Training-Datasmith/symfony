@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -144,7 +146,7 @@ trait EntityValueResolverTrait
         }
 
         if ($options->stripNull) {
-            $criteria = array_filter($criteria, static fn ($value) => null !== $value);
+            return array_filter($criteria, static fn ($value): bool => null !== $value);
         }
 
         return $criteria;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ namespace Symfony\Component\CssSelector\Parser;
  *
  * @internal
  */
-class Token
+class Token implements \Stringable
 {
     public const TYPE_FILE_END = 'eof';
     public const TYPE_DELIMITER = 'delimiter';
@@ -35,9 +37,9 @@ class Token
      * @param self::TYPE_*|null $type
      */
     public function __construct(
-        private ?string $type,
-        private ?string $value,
-        private ?int $position,
+        private readonly ?string $type,
+        private readonly ?string $value,
+        private readonly ?int $position,
     ) {
     }
 

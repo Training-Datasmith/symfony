@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,10 +31,10 @@ final class OctopushTransport extends AbstractTransport
     protected const HOST = 'www.octopush-dm.com';
 
     public function __construct(
-        private string $userLogin,
-        #[\SensitiveParameter] private string $apiKey,
-        private string $from,
-        private string $type,
+        private readonly string $userLogin,
+        #[\SensitiveParameter] private readonly string $apiKey,
+        private readonly string $from,
+        private readonly string $type,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -52,7 +54,7 @@ final class OctopushTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $from = $message->getFrom() ?: $this->from;

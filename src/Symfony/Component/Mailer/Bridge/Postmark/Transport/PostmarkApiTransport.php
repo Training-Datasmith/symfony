@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,9 +40,9 @@ class PostmarkApiTransport extends AbstractApiTransport
     private ?string $messageStream = null;
 
     public function __construct(
-        #[\SensitiveParameter] private string $key,
+        #[\SensitiveParameter] private readonly string $key,
         ?HttpClientInterface $client = null,
-        private ?EventDispatcherInterface $dispatcher = null,
+        private readonly ?EventDispatcherInterface $dispatcher = null,
         ?LoggerInterface $logger = null,
     ) {
         parent::__construct($client, $dispatcher, $logger);
@@ -174,7 +176,7 @@ class PostmarkApiTransport extends AbstractApiTransport
         return $attachments;
     }
 
-    private function getEndpoint(): ?string
+    private function getEndpoint(): string
     {
         return ($this->host ?: self::HOST).($this->port ? ':'.$this->port : '');
     }

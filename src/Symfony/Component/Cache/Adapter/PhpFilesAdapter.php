@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -52,7 +54,7 @@ class PhpFilesAdapter extends AbstractAdapter implements PruneableInterface
         self::$startTime ??= $_SERVER['REQUEST_TIME'] ?? time();
         parent::__construct('', $defaultLifetime);
         $this->init($namespace, $directory);
-        $this->includeHandler = static function ($type, $msg, $file, $line) {
+        $this->includeHandler = static function ($type, $msg, $file, $line): void {
             throw new \ErrorException($msg, 0, $type, $file, $line);
         };
     }
@@ -77,7 +79,7 @@ class PhpFilesAdapter extends AbstractAdapter implements PruneableInterface
                     if (\is_array($expiresAt = include $file)) {
                         $expiresAt = $expiresAt[0];
                     }
-                } catch (\ErrorException $e) {
+                } catch (\ErrorException) {
                     $expiresAt = $time;
                 }
 
@@ -154,7 +156,7 @@ class PhpFilesAdapter extends AbstractAdapter implements PruneableInterface
                         if ($now >= $expiresAt) {
                             unset($this->values[$id], $missingIds[$k], self::$valuesCache[$file]);
                         }
-                    } catch (\ErrorException $e) {
+                    } catch (\ErrorException) {
                         unset($missingIds[$k]);
                     }
                 }
@@ -233,7 +235,7 @@ class PhpFilesAdapter extends AbstractAdapter implements PruneableInterface
                 $value = var_export($value, true);
             }
 
-            $encodedKey = rawurlencode($key);
+            $encodedKey = rawurlencode((string) $key);
 
             if ($isStaticValue) {
                 $value = "return [{$expiry}, {$value}];";

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ namespace Symfony\Component\DependencyInjection;
  */
 class TypedReference extends Reference
 {
-    private ?string $name;
+    private readonly ?string $name;
 
     /**
      * @param string      $id              The service identifier
@@ -29,10 +31,10 @@ class TypedReference extends Reference
      */
     public function __construct(
         string $id,
-        private string $type,
+        private readonly string $type,
         int $invalidBehavior = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
         ?string $name = null,
-        private array $attributes = [],
+        private readonly array $attributes = [],
     ) {
         $this->name = $type === $id ? $name : null;
         parent::__construct($id, $invalidBehavior);

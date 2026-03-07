@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,14 +27,14 @@ class LocaleType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'choice_loader' => function (Options $options) {
+            'choice_loader' => function (Options $options): \Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader {
                 if (!class_exists(Intl::class)) {
                     throw new LogicException(\sprintf('The "symfony/intl" component is required to use "%s". Try running "composer require symfony/intl".', static::class));
                 }
 
                 $choiceTranslationLocale = $options['choice_translation_locale'];
 
-                return ChoiceList::loader($this, new IntlCallbackChoiceLoader(static fn () => array_flip(Locales::getNames($choiceTranslationLocale))), $choiceTranslationLocale);
+                return ChoiceList::loader($this, new IntlCallbackChoiceLoader(static fn (): array => array_flip(Locales::getNames($choiceTranslationLocale))), $choiceTranslationLocale);
             },
             'choice_translation_domain' => false,
             'choice_translation_locale' => null,

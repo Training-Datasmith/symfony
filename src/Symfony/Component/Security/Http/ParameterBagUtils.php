@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -80,7 +82,7 @@ final class ParameterBagUtils
             $value = self::$propertyAccessor->getValue($value, substr($path, $pos));
 
             if (null === $value && isset($parameters[$root]) && null !== $value = $get($root)) {
-                $value = self::$propertyAccessor->getValue($value, substr($path, $pos));
+                return self::$propertyAccessor->getValue($value, substr($path, $pos));
             }
 
             return $value;

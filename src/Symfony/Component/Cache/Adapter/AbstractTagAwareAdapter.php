@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -46,7 +48,7 @@ abstract class AbstractTagAwareAdapter implements TagAwareAdapterInterface, TagA
     protected function __construct(string $namespace = '', int $defaultLifetime = 0)
     {
         if ('' !== $namespace) {
-            if (str_contains($namespace, static::NS_SEPARATOR)) {
+            if (str_contains($namespace, (string) static::NS_SEPARATOR)) {
                 if (str_contains($namespace, static::NS_SEPARATOR.static::NS_SEPARATOR)) {
                     throw new InvalidArgumentException(\sprintf('Cache namespace "%s" contains empty sub-namespace.', $namespace));
                 }
@@ -63,7 +65,7 @@ abstract class AbstractTagAwareAdapter implements TagAwareAdapterInterface, TagA
             throw new InvalidArgumentException(\sprintf('Namespace must be %d chars max, %d given ("%s").', $this->maxIdLength - 24, \strlen($namespace), $namespace));
         }
         self::$createCacheItem ??= \Closure::bind(
-            static function ($key, $value, $isHit) {
+            static function ($key, $value, $isHit): \Symfony\Component\Cache\CacheItem {
                 $item = new CacheItem();
                 $item->key = $key;
                 $item->isTaggable = true;
@@ -77,7 +79,7 @@ abstract class AbstractTagAwareAdapter implements TagAwareAdapterInterface, TagA
                 $item->metadata[CacheItem::METADATA_TAGS] = isset($value['tags']) ? array_combine($value['tags'], $value['tags']) : [];
                 if (isset($value['meta'])) {
                     // For compactness these values are packed, & expiry is offset to reduce size
-                    $v = unpack('Ve/Nc', $value['meta']);
+                    $v = unpack('Ve/Nc', (string) $value['meta']);
                     $item->metadata[CacheItem::METADATA_EXPIRY] = $v['e'] + CacheItem::METADATA_EXPIRY_OFFSET;
                     $item->metadata[CacheItem::METADATA_CTIME] = $v['c'];
                 }
@@ -88,7 +90,7 @@ abstract class AbstractTagAwareAdapter implements TagAwareAdapterInterface, TagA
             CacheItem::class
         );
         self::$mergeByLifetime ??= \Closure::bind(
-            static function ($deferred, &$expiredIds, $getId, $tagPrefix, $defaultLifetime, $rootNamespace) {
+            static function ($deferred, &$expiredIds, $getId, string $tagPrefix, $defaultLifetime, $rootNamespace): array {
                 $byLifetime = [];
                 $now = microtime(true);
                 $expiredIds = [];
@@ -213,7 +215,7 @@ abstract class AbstractTagAwareAdapter implements TagAwareAdapterInterface, TagA
                     $v = $values[$id];
                     $type = get_debug_type($v);
                     $message = \sprintf('Failed to save key "{key}" of type %s%s', $type, $e instanceof \Exception ? ': '.$e->getMessage() : '.');
-                    CacheItem::log($this->logger, $message, ['key' => substr($id, \strlen($this->rootNamespace)), 'exception' => $e instanceof \Exception ? $e : null, 'cache-adapter' => get_debug_type($this)]);
+                    CacheItem::log($this->logger, $message, ['key' => substr((string) $id, \strlen($this->rootNamespace)), 'exception' => $e instanceof \Exception ? $e : null, 'cache-adapter' => get_debug_type($this)]);
                 }
             } else {
                 foreach ($values as $id => $v) {
@@ -237,7 +239,7 @@ abstract class AbstractTagAwareAdapter implements TagAwareAdapterInterface, TagA
                 $ok = false;
                 $type = get_debug_type($v);
                 $message = \sprintf('Failed to save key "{key}" of type %s%s', $type, $e instanceof \Exception ? ': '.$e->getMessage() : '.');
-                CacheItem::log($this->logger, $message, ['key' => substr($id, \strlen($this->rootNamespace)), 'exception' => $e instanceof \Exception ? $e : null, 'cache-adapter' => get_debug_type($this)]);
+                CacheItem::log($this->logger, $message, ['key' => substr((string) $id, \strlen($this->rootNamespace)), 'exception' => $e instanceof \Exception ? $e : null, 'cache-adapter' => get_debug_type($this)]);
             }
         }
 
@@ -326,7 +328,7 @@ abstract class AbstractTagAwareAdapter implements TagAwareAdapterInterface, TagA
                 $addTagData[$tagId][] = $id;
             }
 
-            foreach ($value['tag-operations']['remove'] as $tag => $tagId) {
+            foreach ($value['tag-operations']['remove'] as $tagId) {
                 $removeTagData[$tagId][] = $id;
             }
 

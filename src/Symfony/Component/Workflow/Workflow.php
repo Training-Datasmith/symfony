@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -52,22 +54,14 @@ class Workflow implements WorkflowInterface
         WorkflowEvents::ANNOUNCE => self::DISABLE_ANNOUNCE_EVENT,
     ];
 
-    private MarkingStoreInterface $markingStore;
-
     /**
      * @param array|string[]|null $eventsToDispatch When `null` fire all events (the default behaviour).
      *                                              Setting this to an empty array `[]` means no events are dispatched (except the {@see GuardEvent}).
      *                                              Passing an array with WorkflowEvents will allow only those events to be dispatched plus
      *                                              the {@see GuardEvent}.
      */
-    public function __construct(
-        private Definition $definition,
-        ?MarkingStoreInterface $markingStore = null,
-        private ?EventDispatcherInterface $dispatcher = null,
-        private string $name = 'unnamed',
-        private ?array $eventsToDispatch = null,
-    ) {
-        $this->markingStore = $markingStore ?? new MethodMarkingStore();
+    public function __construct(private readonly Definition $definition, private readonly ?MarkingStoreInterface $markingStore = new MethodMarkingStore(), private readonly ?EventDispatcherInterface $dispatcher = null, private readonly string $name = 'unnamed', private readonly ?array $eventsToDispatch = null)
+    {
     }
 
     public function getMarking(object $subject, array $context = []): Marking

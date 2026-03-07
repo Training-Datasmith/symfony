@@ -1,7 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
 use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
@@ -370,8 +371,8 @@ class ProjectServiceContainer extends Container
         $container->services['method_call1'] = $instance = new \Bar\FooClass();
 
         $instance->setBar(($container->services['foo'] ?? self::getFooService($container)));
-        $instance->setBar(NULL);
-        $instance->setBar((($container->services['foo'] ?? self::getFooService($container))->foo() . (($container->hasParameter("foo")) ? ($container->getParameter("foo")) : ("default"))));
+        $instance->setBar(null);
+        $instance->setBar((($container->services['foo'] ?? self::getFooService($container))->foo() . (($container->hasParameter('foo')) ? ($container->getParameter('foo')) : ('default'))));
 
         return $instance;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -40,7 +42,7 @@ class SpecificityAdjustmentNode extends AbstractNode
     public function __toString(): string
     {
         $selectorArguments = array_map(
-            static fn ($n) => ltrim((string) $n, '*'),
+            static fn (\Symfony\Component\CssSelector\Node\NodeInterface $n): string => ltrim((string) $n, '*'),
             $this->arguments,
         );
 

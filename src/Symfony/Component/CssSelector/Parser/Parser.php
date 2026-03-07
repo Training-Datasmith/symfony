@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,11 +30,8 @@ use Symfony\Component\CssSelector\Parser\Tokenizer\Tokenizer;
  */
 class Parser implements ParserInterface
 {
-    private Tokenizer $tokenizer;
-
-    public function __construct(?Tokenizer $tokenizer = null)
+    public function __construct(private readonly ?Tokenizer $tokenizer = new Tokenizer())
     {
-        $this->tokenizer = $tokenizer ?? new Tokenizer();
     }
 
     public function parse(string $source): array
@@ -58,9 +57,9 @@ class Parser implements ParserInterface
             }
         }
 
-        $joined = trim(implode('', array_map(static fn (Token $token) => $token->getValue(), $tokens)));
+        $joined = trim(implode('', array_map(static fn (Token $token): ?string => $token->getValue(), $tokens)));
 
-        $int = static function ($string) {
+        $int = static function ($string): int {
             if (!is_numeric($string)) {
                 throw SyntaxErrorException::stringAsFunctionArgument();
             }
@@ -239,7 +238,8 @@ class Parser implements ParserInterface
                     $result = new Node\PseudoNode($result, $identifier);
                     if ('Pseudo[Element[*]:scope]' === $result->__toString()) {
                         $used = \count($stream->getUsed());
-                        if (!(2 === $used
+                        if (!(
+                            2 === $used
                            || 3 === $used && $stream->getUsed()[0]->isWhiteSpace()
                            || $used >= 3 && $stream->getUsed()[$used - 3]->isDelimiter([','])
                            || $used >= 4
@@ -386,10 +386,11 @@ class Parser implements ParserInterface
         if (null === $operator) {
             $stream->skipWhitespace();
             $next = $stream->getNext();
-
             if ($next->isDelimiter([']'])) {
                 return new Node\AttributeNode($selector, $namespace, $attribute, 'exists', null);
-            } elseif ($next->isDelimiter(['='])) {
+            }
+
+            if ($next->isDelimiter(['='])) {
                 $operator = '=';
             } elseif ($next->isDelimiter(['^', '$', '*', '~', '|', '!'])
                 && $stream->getPeek()->isDelimiter(['='])

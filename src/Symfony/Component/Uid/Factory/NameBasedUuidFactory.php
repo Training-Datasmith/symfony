@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,8 +20,8 @@ use Symfony\Component\Uid\UuidV5;
 class NameBasedUuidFactory
 {
     public function __construct(
-        private string $class,
-        private Uuid $namespace,
+        private readonly string $class,
+        private readonly Uuid $namespace,
     ) {
     }
 

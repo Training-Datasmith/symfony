@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -51,7 +53,7 @@ class UnicodeStringTest extends AbstractUnicodeTestCase
 
         yield 'array' => ['abc', $nfc.'abc', [$nfd]];
 
-        yield 'stringable' => ['abc', $nfc.'abc', new class($nfd) implements \Stringable {
+        yield 'stringable' => ['abc', $nfc.'abc', new class ($nfd) implements \Stringable {
             public function __construct(private string $s)
             {
             }

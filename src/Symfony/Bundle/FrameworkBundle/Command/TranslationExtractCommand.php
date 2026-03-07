@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -49,14 +51,14 @@ class TranslationExtractCommand extends Command
     private const NO_FILL_PREFIX = "\0NoFill\0";
 
     public function __construct(
-        private TranslationWriterInterface $writer,
-        private TranslationReaderInterface $reader,
-        private ExtractorInterface $extractor,
-        private string $defaultLocale,
-        private ?string $defaultTransPath = null,
-        private ?string $defaultViewsPath = null,
-        private array $transPaths = [],
-        private array $codePaths = [],
+        private readonly TranslationWriterInterface $writer,
+        private readonly TranslationReaderInterface $reader,
+        private readonly ExtractorInterface $extractor,
+        private readonly string $defaultLocale,
+        private readonly ?string $defaultTransPath = null,
+        private readonly ?string $defaultViewsPath = null,
+        private readonly array $transPaths = [],
+        private readonly array $codePaths = [],
         private array $enabledLocales = [],
     ) {
         $this->enabledLocales = array_filter($enabledLocales);
@@ -83,7 +85,8 @@ class TranslationExtractCommand extends Command
                 new InputOption('sort', null, InputOption::VALUE_REQUIRED, 'Return list of messages sorted alphabetically'),
                 new InputOption('as-tree', null, InputOption::VALUE_REQUIRED, 'Dump the messages as a tree-like structure: The given value defines the level where to switch to inline YAML'),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command extracts translation strings from templates
                 of a given bundle or the default translations directory. It can display them or merge
                 the new ones into the translation files.
@@ -211,7 +214,7 @@ class TranslationExtractCommand extends Command
         $operation->moveMessagesToIntlDomainsIfPossible('new');
 
         if ($sort = $input->getOption('sort')) {
-            $sort = strtolower($sort);
+            $sort = strtolower((string) $sort);
             if (!\in_array($sort, self::SORT_ORDERS, true)) {
                 $errorIo->error(['Wrong sort order', 'Supported formats are: '.implode(', ', self::SORT_ORDERS).'.']);
 
@@ -229,8 +232,8 @@ class TranslationExtractCommand extends Command
 
                 $list = array_merge(
                     array_diff($allKeys, $newKeys),
-                    array_map(static fn ($id) => \sprintf('<fg=green>%s</>', $id), $newKeys),
-                    array_map(static fn ($id) => \sprintf('<fg=red>%s</>', $id), array_keys($operation->getObsoleteMessages($domain)))
+                    array_map(static fn (int|string $id): string => \sprintf('<fg=green>%s</>', $id), $newKeys),
+                    array_map(static fn (int|string $id): string => \sprintf('<fg=red>%s</>', $id), array_keys($operation->getObsoleteMessages($domain)))
                 );
 
                 $domainMessagesCount = \count($list);
@@ -441,7 +444,7 @@ class TranslationExtractCommand extends Command
 
     private function filterDuplicateTransPaths(array $transPaths): array
     {
-        $transPaths = array_filter(array_map('realpath', $transPaths));
+        $transPaths = array_filter(array_map(realpath(...), $transPaths));
 
         sort($transPaths);
 
@@ -496,7 +499,7 @@ class TranslationExtractCommand extends Command
     private function removeNoFillTranslations(MessageCatalogueInterface $operation): void
     {
         foreach ($operation->all('messages') as $key => $message) {
-            if (str_starts_with($message, self::NO_FILL_PREFIX)) {
+            if (str_starts_with((string) $message, self::NO_FILL_PREFIX)) {
                 $operation->set($key, '', 'messages');
             }
         }

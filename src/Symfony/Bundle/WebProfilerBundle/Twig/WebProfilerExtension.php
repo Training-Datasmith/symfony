@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,8 +30,6 @@ use Twig\TwigFunction;
  */
 class WebProfilerExtension extends ProfilerExtension
 {
-    private HtmlDumper $dumper;
-
     /**
      * @var resource
      */
@@ -37,9 +37,8 @@ class WebProfilerExtension extends ProfilerExtension
 
     private int $stackLevel = 0;
 
-    public function __construct(?HtmlDumper $dumper = null)
+    public function __construct(private readonly ?HtmlDumper $dumper = new HtmlDumper())
     {
-        $this->dumper = $dumper ?? new HtmlDumper();
         $this->dumper->setOutput($this->output = fopen('php://memory', 'r+'));
     }
 
@@ -85,7 +84,7 @@ class WebProfilerExtension extends ProfilerExtension
         $replacements = [];
         foreach ($context ?? [] as $k => $v) {
             $k = '{'.self::escape($env, $k).'}';
-            if (str_contains($message, $k)) {
+            if (str_contains((string) $message, $k)) {
                 $replacements[$k] = $v;
             }
         }

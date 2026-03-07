@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -74,8 +76,8 @@ class FlockStore implements BlockingStoreInterface, SharedLockStoreInterface
     {
         $handle = null;
         // The lock is maybe already acquired.
-        if ($key->hasState(__CLASS__)) {
-            [$stateRead, $handle] = $key->getState(__CLASS__);
+        if ($key->hasState(self::class)) {
+            [$stateRead, $handle] = $key->getState(self::class);
             // Check for promotion or demotion
             if ($stateRead === $read) {
                 return;
@@ -83,14 +85,17 @@ class FlockStore implements BlockingStoreInterface, SharedLockStoreInterface
         }
 
         if (!$handle) {
-            $fileName = \sprintf('%s/sf.%s.%s.lock',
+            $fileName = \sprintf(
+                '%s/sf.%s.%s.lock',
                 $this->lockPath,
                 substr(preg_replace('/[^a-z0-9\._-]+/i', '-', $key), 0, 50),
                 strtr(substr(base64_encode(hash('sha256', $key, true)), 0, 7), '/', '_')
             );
 
             // Silence error reporting
-            set_error_handler(static function ($type, $msg) use (&$error) { $error = $msg; });
+            set_error_handler(static function ($type, $msg) use (&$error): void {
+                $error = $msg;
+            });
             try {
                 if (!$handle = fopen($fileName, 'r+') ?: fopen($fileName, 'r')) {
                     if ($handle = fopen($fileName, 'x')) {
@@ -106,7 +111,7 @@ class FlockStore implements BlockingStoreInterface, SharedLockStoreInterface
         }
 
         if (!$handle) {
-            throw new LockStorageException($error, 0, null);
+            throw new LockStorageException($error, 0);
         }
 
         // On Windows, even if PHP doc says the contrary, LOCK_NB works, see
@@ -116,7 +121,7 @@ class FlockStore implements BlockingStoreInterface, SharedLockStoreInterface
             throw new LockConflictedException();
         }
 
-        $key->setState(__CLASS__, [$read, $handle]);
+        $key->setState(self::class, [$read, $handle]);
         $key->markUnserializable();
     }
 
@@ -128,20 +133,20 @@ class FlockStore implements BlockingStoreInterface, SharedLockStoreInterface
     public function delete(Key $key): void
     {
         // The lock is maybe not acquired.
-        if (!$key->hasState(__CLASS__)) {
+        if (!$key->hasState(self::class)) {
             return;
         }
 
-        $handle = $key->getState(__CLASS__)[1];
+        $handle = $key->getState(self::class)[1];
 
         flock($handle, \LOCK_UN | \LOCK_NB);
         fclose($handle);
 
-        $key->removeState(__CLASS__);
+        $key->removeState(self::class);
     }
 
     public function exists(Key $key): bool
     {
-        return $key->hasState(__CLASS__);
+        return $key->hasState(self::class);
     }
 }

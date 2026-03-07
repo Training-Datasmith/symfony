@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -1168,7 +1170,7 @@ class PhpDumperTest extends TestCase
 
         $container->register(TestDefinition1::class, TestDefinition1::class)->setPublic(true);
 
-        $container->addCompilerPass(new class implements CompilerPassInterface {
+        $container->addCompilerPass(new class () implements CompilerPassInterface {
             public function process(ContainerBuilder $container): void
             {
                 $container->setDefinition('late_alias', new Definition(TestDefinition1::class))->setPublic(true);
@@ -1489,7 +1491,8 @@ class PhpDumperTest extends TestCase
         $this->assertSame(FooUnitEnum::BAR, $container->get('foo')->getBar());
         $this->assertSame(FooUnitEnum::BAR, $container->getParameter('unit_enum'));
         $this->assertSame([FooUnitEnum::BAR, FooUnitEnum::FOO], $container->getParameter('enum_array'));
-        $this->assertStringMatchesFormat(<<<'PHP'
+        $this->assertStringMatchesFormat(
+            <<<'PHP'
             %A
                 protected static function getBarService($container)
                 {
@@ -2570,40 +2573,28 @@ class InlineAdapterConsumer
     public function __construct(
         #[AutowireInline(MyInlineService::class)]
         public MyInlineService $inlined,
-
         #[AutowireInline(MyInlineService::class, ['bar'])]
         public MyInlineService $inlinedWithParams,
-
         #[AutowireInline([MyFactory::class, 'staticCreateFoo'])]
         public MyInlineService $factoredFromClass,
-
         #[AutowireInline([MyFactory::class, 'staticCreateFooWithParam'], ['someParam'])]
         public MyInlineService $factoredFromClassWithParams,
-
         #[AutowireInline([new Reference('factory'), 'createFoo'])]
         public MyInlineService $factoredFromService,
-
         #[AutowireInline([new Reference('factory'), 'createFooWithParam'], ['someParam'])]
         public MyInlineService $factoredFromServiceWithParam,
-
         #[AutowireInline([new Reference('factory')])]
         public MyInlineService $factoredFromClassWithoutMethod,
-
         #[AutowireInline([new Reference('factory')], ['someParam'])]
         public MyInlineService $factoredFromClassWithoutMethodWithParams,
-
         #[AutowireInline(MyInlineService::class, calls: [['someMethod', []]])]
         public MyInlineService $inlinedWithCall,
-
         #[AutowireInline(MyInlineService::class, calls: [['someMethod1', []], ['someMethod2', []]])]
         public MyInlineService $inlinedWithCalls,
-
         #[AutowireInline(MyInlineService::class, calls: [['someMethod1', ['someArg']], ['someMethod2', []]])]
         public MyInlineService $inlinedWithCallsWithArgument,
-
         #[AutowireInline(MyInlineService::class, calls: [['someMethod1', [new Reference('factory')]], ['someMethod2', []]])]
         public MyInlineService $inlinedWithCallsWithReferenceArgument,
-
         #[AutowireInline(MyInlineService::class, calls: [['someMethod1', ['%someParam%']], ['someMethod2', []]])]
         public MyInlineService $inlinedWithCallsWithParamArgument,
     ) {

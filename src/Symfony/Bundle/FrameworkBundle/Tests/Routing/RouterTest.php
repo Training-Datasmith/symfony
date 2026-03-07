@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -50,7 +52,12 @@ class RouterTest extends TestCase
             ],
             [
                 '_locale' => 'en|es',
-            ], [], '', [], [], '"%foo%" == "bar"'
+            ],
+            [],
+            '',
+            [],
+            [],
+            '"%foo%" == "bar"'
         ));
 
         $sc = $this->getPsr11ServiceContainer($routes);
@@ -77,7 +84,12 @@ class RouterTest extends TestCase
             ],
             [
                 '_locale' => 'en|es',
-            ], [], '', [], [], '"%foo%" == "bar"'
+            ],
+            [],
+            '',
+            [],
+            [],
+            '"%foo%" == "bar"'
         ));
 
         $sc = $this->getServiceContainer($routes);

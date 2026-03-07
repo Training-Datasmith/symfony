@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -303,7 +305,7 @@ abstract class FrameworkExtensionTestCase extends TestCase
 
     public function testProfilerWithoutConsole()
     {
-        $extension = new class extends FrameworkExtension {
+        $extension = new class () extends FrameworkExtension {
             protected function hasConsole(): bool
             {
                 return false;

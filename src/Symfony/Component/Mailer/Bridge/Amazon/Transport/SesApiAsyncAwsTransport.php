@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ class SesApiAsyncAwsTransport extends SesHttpAsyncAwsTransport
     {
         $configuration = $this->sesClient->getConfiguration();
         if (!$configuration->isDefault('endpoint')) {
-            $endpoint = parse_url($configuration->get('endpoint'));
+            $endpoint = parse_url((string) $configuration->get('endpoint'));
             $host = $endpoint['host'].($endpoint['port'] ?? null ? ':'.$endpoint['port'] : '');
         } else {
             $host = $configuration->get('region');
@@ -46,7 +48,7 @@ class SesApiAsyncAwsTransport extends SesHttpAsyncAwsTransport
         try {
             $email = MessageConverter::toEmail($message->getOriginalMessage());
         } catch (\Exception $e) {
-            throw new RuntimeException(\sprintf('Unable to send message with the "%s" transport: ', __CLASS__).$e->getMessage(), 0, $e);
+            throw new RuntimeException(\sprintf('Unable to send message with the "%s" transport: ', self::class).$e->getMessage(), 0, $e);
         }
 
         if ($email->getAttachments()) {
@@ -100,7 +102,7 @@ class SesApiAsyncAwsTransport extends SesHttpAsyncAwsTransport
         }
         if ($header = $email->getHeaders()->get('X-SES-LIST-MANAGEMENT-OPTIONS')) {
             if (preg_match('/^(contactListName=)*(?<ContactListName>[^;]+)(;\s?topicName=(?<TopicName>.+))?$/ix', $header->getBodyAsString(), $listManagementOptions)) {
-                $request['ListManagementOptions'] = array_filter($listManagementOptions, static fn ($e) => \in_array($e, ['ContactListName', 'TopicName'], true), \ARRAY_FILTER_USE_KEY);
+                $request['ListManagementOptions'] = array_filter($listManagementOptions, static fn ($e): bool => \in_array($e, ['ContactListName', 'TopicName'], true), \ARRAY_FILTER_USE_KEY);
             }
         }
         if ($email->getReturnPath()) {
@@ -124,7 +126,7 @@ class SesApiAsyncAwsTransport extends SesHttpAsyncAwsTransport
     {
         $emailRecipients = array_merge($email->getCc(), $email->getBcc());
 
-        return array_filter($envelope->getRecipients(), static fn (Address $address) => !\in_array($address, $emailRecipients, true));
+        return array_filter($envelope->getRecipients(), static fn (Address $address): bool => !\in_array($address, $emailRecipients, true));
     }
 
     private function getCustomHeaders(Headers $headers): array
@@ -146,8 +148,8 @@ class SesApiAsyncAwsTransport extends SesHttpAsyncAwsTransport
             // AWS SES Simple message headers only accept printable ASCII (char codes 32-126).
             // getBodyAsString() may produce encoded words with \r\n line folding, so we
             // re-encode using RFC 2047 base64 encoding when non-printable characters are present.
-            if (preg_match('/[^\x20-\x7E]/', $value)) {
-                $value = '=?UTF-8?B?'.base64_encode($header->getBody()).'?=';
+            if (preg_match('/[^\x20-\x7E]/', (string) $value)) {
+                $value = '=?UTF-8?B?'.base64_encode((string) $header->getBody()).'?=';
             }
 
             $headersPrepared[] = [
@@ -161,14 +163,15 @@ class SesApiAsyncAwsTransport extends SesHttpAsyncAwsTransport
 
     protected function stringifyAddresses(array $addresses): array
     {
-        return array_map(fn (Address $a) => $this->stringifyAddress($a), $addresses);
+        return array_map($this->stringifyAddress(...), $addresses);
     }
 
     protected function stringifyAddress(Address $a): string
     {
         // AWS does not support UTF-8 address
         if (preg_match('~[\x00-\x08\x10-\x19\x7F-\xFF\r\n]~', $name = $a->getName())) {
-            return \sprintf('=?UTF-8?B?%s?= <%s>',
+            return \sprintf(
+                '=?UTF-8?B?%s?= <%s>',
                 base64_encode($name),
                 $a->getEncodedAddress()
             );

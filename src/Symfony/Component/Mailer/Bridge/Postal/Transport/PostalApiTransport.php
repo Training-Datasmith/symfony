@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,8 +29,8 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 final class PostalApiTransport extends AbstractApiTransport
 {
     public function __construct(
-        #[\SensitiveParameter] private string $apiToken,
-        private string $hostName,
+        #[\SensitiveParameter] private readonly string $apiToken,
+        string $hostName,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
         ?LoggerInterface $logger = null,
@@ -54,7 +56,7 @@ final class PostalApiTransport extends AbstractApiTransport
         try {
             $statusCode = $response->getStatusCode();
             $result = $response->toArray(false);
-        } catch (DecodingExceptionInterface $e) {
+        } catch (DecodingExceptionInterface) {
             throw new HttpTransportException('Unable to send an email: '.$response->getContent(false).\sprintf(' (code %d).', $statusCode), $response);
         } catch (TransportExceptionInterface $e) {
             throw new HttpTransportException('Could not reach the remote Postal server.', $response, 0, $e);
@@ -73,14 +75,14 @@ final class PostalApiTransport extends AbstractApiTransport
     {
         $payload = [
             'from' => $envelope->getSender()->getAddress(),
-            'to' => array_map(static fn (Address $address) => $address->getAddress(), $this->getRecipients($email, $envelope)),
+            'to' => array_map(static fn (Address $address): string => $address->getAddress(), $this->getRecipients($email, $envelope)),
             'subject' => $email->getSubject(),
         ];
         if ($emails = $email->getCc()) {
-            $payload['cc'] = array_map(static fn (Address $address) => $address->getAddress(), $emails);
+            $payload['cc'] = array_map(static fn (Address $address): string => $address->getAddress(), $emails);
         }
         if ($emails = $email->getBcc()) {
-            $payload['bcc'] = array_map(static fn (Address $address) => $address->getAddress(), $emails);
+            $payload['bcc'] = array_map(static fn (Address $address): string => $address->getAddress(), $emails);
         }
         if ($email->getTextBody()) {
             $payload['plain_body'] = $email->getTextBody();

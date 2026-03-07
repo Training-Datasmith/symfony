@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ namespace Symfony\Component\Messenger\Stamp;
  *
  * @author Ryan Weaver <ryan@symfonycasts.com>
  */
-final class TransportMessageIdStamp implements StampInterface
+final readonly class TransportMessageIdStamp implements StampInterface
 {
     /**
      * @param mixed $id some "identifier" of the message in a transport

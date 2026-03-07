@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -372,7 +374,7 @@ class UnicodeString extends AbstractUnicodeString
 
     public function trimPrefix($prefix): static
     {
-        if (\is_array($prefix) || $prefix instanceof \Traversable) {
+        if (is_iterable($prefix)) {
             return parent::trimPrefix($prefix);
         }
 
@@ -391,7 +393,7 @@ class UnicodeString extends AbstractUnicodeString
 
     public function trimSuffix($suffix): static
     {
-        if (\is_array($suffix) || $suffix instanceof \Traversable) {
+        if (is_iterable($suffix)) {
             return parent::trimSuffix($suffix);
         }
 
@@ -413,7 +415,7 @@ class UnicodeString extends AbstractUnicodeString
         $this->string = $data['string'] ?? $data["\0*\0string"];
 
         if (!\is_string($this->string)) {
-            throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+            throw new \BadMethodCallException('Cannot unserialize '.self::class);
         }
 
         normalizer_is_normalized($this->string) ?: $this->string = normalizer_normalize($this->string);

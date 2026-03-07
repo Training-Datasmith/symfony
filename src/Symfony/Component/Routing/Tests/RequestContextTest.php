@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -47,7 +49,7 @@ class RequestContextTest extends TestCase
 
     public function testConstructParametersBcLayer()
     {
-        $requestContext = new class extends RequestContext {
+        $requestContext = new class () extends RequestContext {
             public function __construct()
             {
                 $this->setParameters(['foo' => 'bar']);

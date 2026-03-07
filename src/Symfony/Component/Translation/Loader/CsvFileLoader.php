@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,7 +43,7 @@ class CsvFileLoader extends FileLoader
                 continue;
             }
 
-            if (!str_starts_with($data[0], '#') && isset($data[1]) && 2 === \count($data)) {
+            if (!str_starts_with((string) $data[0], '#') && isset($data[1]) && 2 === \count($data)) {
                 $messages[$data[0]] = $data[1];
             }
         }

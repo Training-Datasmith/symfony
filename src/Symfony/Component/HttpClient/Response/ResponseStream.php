@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ use Symfony\Contracts\HttpClient\ResponseStreamInterface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class ResponseStream implements ResponseStreamInterface
+final readonly class ResponseStream implements ResponseStreamInterface
 {
     public function __construct(
         private \Generator $generator,

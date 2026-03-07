@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\DependencyInjection\Tests\Fixtures\Container33;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;

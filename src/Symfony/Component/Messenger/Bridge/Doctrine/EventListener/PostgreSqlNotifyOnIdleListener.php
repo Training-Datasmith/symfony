@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,8 +40,8 @@ class PostgreSqlNotifyOnIdleListener implements EventSubscriberInterface
     private array $queueNames = [];
 
     public function __construct(
-        private ?LoggerInterface $logger = null,
-        private ?ClockInterface $clock = null,
+        private readonly ?LoggerInterface $logger = null,
+        private readonly ?ClockInterface $clock = null,
     ) {
     }
 

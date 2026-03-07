@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,9 +36,9 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 class HttpBasicAuthenticator implements AuthenticatorInterface, AuthenticationEntryPointInterface
 {
     public function __construct(
-        private string $realmName,
-        private UserProviderInterface $userProvider,
-        private ?LoggerInterface $logger = null,
+        private readonly string $realmName,
+        private readonly UserProviderInterface $userProvider,
+        private readonly ?LoggerInterface $logger = null,
     ) {
     }
 

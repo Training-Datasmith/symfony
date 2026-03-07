@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'Kis: Pẹ́sin, Pẹ́sin, Laít Skín Ton, Mídíọ́m-Laít Skín Ton',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'Kis: Pẹ́sin, Pẹ́sin, Laít Skín Ton, Mídíọ́m Skín Ton',

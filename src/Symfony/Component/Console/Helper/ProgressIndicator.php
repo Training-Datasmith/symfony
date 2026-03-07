@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -52,9 +54,9 @@ class ProgressIndicator
      * @param array|null $indicatorValues         Animated indicator characters
      */
     public function __construct(
-        private OutputInterface $output,
+        private readonly OutputInterface $output,
         ?string $format = null,
-        private int $indicatorChangeInterval = 100,
+        private readonly int $indicatorChangeInterval = 100,
         ?array $indicatorValues = null,
         ?string $finishedIndicatorValue = null,
     ) {
@@ -185,7 +187,7 @@ class ProgressIndicator
             return;
         }
 
-        $this->overwrite(preg_replace_callback('{%([a-z\-_]+)(?:\:([^%]+))?%}i', function ($matches) {
+        $this->overwrite(preg_replace_callback('{%([a-z\-_]+)(?:\:([^%]+))?%}i', function (array $matches) {
             if ($formatter = self::getPlaceholderFormatterDefinition($matches[1])) {
                 return $formatter($this);
             }
@@ -232,9 +234,9 @@ class ProgressIndicator
     {
         return [
             'indicator' => static fn (self $indicator) => $indicator->finished ? $indicator->finishedIndicatorValue : $indicator->indicatorValues[$indicator->indicatorCurrent % \count($indicator->indicatorValues)],
-            'message' => static fn (self $indicator) => $indicator->message,
-            'elapsed' => static fn (self $indicator) => Helper::formatTime(time() - $indicator->startTime, 2),
-            'memory' => static fn () => Helper::formatMemory(memory_get_usage(true)),
+            'message' => static fn (self $indicator): ?string => $indicator->message,
+            'elapsed' => static fn (self $indicator): string => Helper::formatTime(time() - $indicator->startTime, 2),
+            'memory' => static fn (): string => Helper::formatMemory(memory_get_usage(true)),
         ];
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,11 +24,8 @@ use Symfony\Component\Form\RequestHandlerInterface;
  */
 class FormTypeHttpFoundationExtension extends AbstractTypeExtension
 {
-    private RequestHandlerInterface $requestHandler;
-
-    public function __construct(?RequestHandlerInterface $requestHandler = null)
+    public function __construct(private readonly ?RequestHandlerInterface $requestHandler = new HttpFoundationRequestHandler())
     {
-        $this->requestHandler = $requestHandler ?? new HttpFoundationRequestHandler();
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void

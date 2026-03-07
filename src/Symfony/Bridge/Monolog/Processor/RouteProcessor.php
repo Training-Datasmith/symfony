@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ class RouteProcessor implements EventSubscriberInterface, ResetInterface, Resett
     private array $routeData = [];
 
     public function __construct(
-        private bool $includeParams = true,
+        private readonly bool $includeParams = true,
     ) {
         $this->reset();
     }

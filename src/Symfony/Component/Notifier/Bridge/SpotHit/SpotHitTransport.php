@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,8 +39,8 @@ final class SpotHitTransport extends AbstractTransport
     private ?int $smsLongNBr = null;
 
     public function __construct(
-        #[\SensitiveParameter] private string $token,
-        private ?string $from = null,
+        #[\SensitiveParameter] private readonly string $token,
+        private readonly ?string $from = null,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -76,7 +78,6 @@ final class SpotHitTransport extends AbstractTransport
     }
 
     /**
-     * @param MessageInterface|SmsMessage $message
      *
      * @throws TransportExceptionInterface
      * @throws ClientExceptionInterface
@@ -86,7 +87,7 @@ final class SpotHitTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$this->supports($message)) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $endpoint = \sprintf('https://www.%s/api/envoyer/sms', $this->getEndpoint());

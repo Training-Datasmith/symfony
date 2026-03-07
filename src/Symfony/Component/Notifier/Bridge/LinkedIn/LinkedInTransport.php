@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,8 +35,8 @@ final class LinkedInTransport extends AbstractTransport
     protected const HOST = 'api.linkedin.com';
 
     public function __construct(
-        #[\SensitiveParameter] private string $authToken,
-        private string $accountId,
+        #[\SensitiveParameter] private readonly string $authToken,
+        private readonly string $accountId,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -57,11 +59,11 @@ final class LinkedInTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof ChatMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, ChatMessage::class, $message);
         }
 
         if (($options = $message->getOptions()) && !$options instanceof LinkedInOptions) {
-            throw new UnsupportedOptionsException(__CLASS__, LinkedInOptions::class, $options);
+            throw new UnsupportedOptionsException(self::class, LinkedInOptions::class, $options);
         }
 
         if (!$options && $notification = $message->getNotification()) {

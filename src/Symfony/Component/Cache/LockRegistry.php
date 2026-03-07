@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -158,7 +160,7 @@ final class LockRegistry
         if (null !== $h = self::$openedFiles[$key] ?? null) {
             return $h;
         }
-        set_error_handler(static fn () => null);
+        set_error_handler(static fn (): null => null);
         try {
             $h = fopen(self::$files[$key], 'r+');
         } finally {

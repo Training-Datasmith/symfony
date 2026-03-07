@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'öpüş: böyük, böyük, açıq dəri tonu, orta-açıq dəri tonu',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'öpüş: böyük, böyük, açıq dəri tonu, orta dəri tonu',

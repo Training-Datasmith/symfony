@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -148,7 +150,7 @@ abstract class Descriptor implements DescriptorInterface
             }
         }
 
-        $filterByDeprecated = static function (array $options) use ($deprecatedOptions) {
+        $filterByDeprecated = static function (array $options) use ($deprecatedOptions): array {
             foreach ($options as $class => $opts) {
                 if ($deprecated = array_intersect($deprecatedOptions, $opts)) {
                     $options[$class] = $deprecated;

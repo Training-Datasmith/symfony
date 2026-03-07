@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,8 +30,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 final class SecretsEncryptFromLocalCommand extends Command
 {
     public function __construct(
-        private AbstractVault $vault,
-        private ?AbstractVault $localVault = null,
+        private readonly AbstractVault $vault,
+        private readonly ?AbstractVault $localVault = null,
     ) {
         parent::__construct();
     }
@@ -37,7 +39,8 @@ final class SecretsEncryptFromLocalCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command encrypts all locally overridden secrets to the vault.
 
                     <info>%command.full_name%</info>

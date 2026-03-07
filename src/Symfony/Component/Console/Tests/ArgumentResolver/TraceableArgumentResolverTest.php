@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ class TraceableArgumentResolverTest extends TestCase
     public function testTimingsInGetArguments()
     {
         $stopwatch = new Stopwatch();
-        $innerResolver = new class implements ArgumentResolverInterface {
+        $innerResolver = new class () implements ArgumentResolverInterface {
             public function getArguments(InputInterface $input, callable $command, ?\ReflectionFunctionAbstract $reflector = null): array
             {
                 return ['arg1', 'arg2'];
@@ -45,7 +47,7 @@ class TraceableArgumentResolverTest extends TestCase
     public function testTimingsAreRecordedOnException()
     {
         $stopwatch = new Stopwatch();
-        $innerResolver = new class implements ArgumentResolverInterface {
+        $innerResolver = new class () implements ArgumentResolverInterface {
             public function getArguments(InputInterface $input, callable $command, ?\ReflectionFunctionAbstract $reflector = null): array
             {
                 throw new \RuntimeException('Test exception');

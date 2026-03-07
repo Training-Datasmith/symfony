@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,9 +31,9 @@ final class ScalewayApiTransport extends AbstractApiTransport
     private const HOST = 'api.scaleway.com';
 
     public function __construct(
-        private string $projectId,
-        #[\SensitiveParameter] private string $token,
-        private ?string $region = null,
+        private readonly string $projectId,
+        #[\SensitiveParameter] private readonly string $token,
+        private readonly ?string $region = null,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
         ?LoggerInterface $logger = null,
@@ -61,7 +63,7 @@ final class ScalewayApiTransport extends AbstractApiTransport
         try {
             $statusCode = $response->getStatusCode();
             $result = $response->toArray(false);
-        } catch (DecodingExceptionInterface $e) {
+        } catch (DecodingExceptionInterface) {
             throw new HttpTransportException('Unable to send an email: '.$response->getContent(false).\sprintf(' (code %d).', $statusCode), $response);
         } catch (TransportExceptionInterface $e) {
             throw new HttpTransportException('Could not reach the remote Scaleway server.', $response, 0, $e);
@@ -153,10 +155,10 @@ final class ScalewayApiTransport extends AbstractApiTransport
 
     protected function formatAddresses(array $addresses): array
     {
-        return array_map(fn (Address $address) => $this->formatAddress($address), $addresses);
+        return array_map($this->formatAddress(...), $addresses);
     }
 
-    private function getEndpoint(): ?string
+    private function getEndpoint(): string
     {
         return ($this->host ?: self::HOST).($this->port ? ':'.$this->port : '');
     }

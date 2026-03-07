@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'sich küssendes Paar: Person, Person, helle Hautfarbe und mittelhelle Hautfarbe',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'sich küssendes Paar: Person, Person, helle Hautfarbe und mittlere Hautfarbe',

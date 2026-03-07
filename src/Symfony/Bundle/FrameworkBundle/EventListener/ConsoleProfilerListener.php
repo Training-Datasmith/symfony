@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -135,11 +137,13 @@ final class ConsoleProfilerListener implements EventSubscriberInterface
 
         // attach children to parents
         foreach ($this->profiles as $request) {
-            if (null !== $parentRequest = $this->parents[$request]) {
-                if (isset($this->profiles[$parentRequest])) {
-                    $this->profiles[$parentRequest]->addChild($this->profiles[$request]);
-                }
+            if (null === $parentRequest = $this->parents[$request]) {
+                continue;
             }
+            if (!isset($this->profiles[$parentRequest])) {
+                continue;
+            }
+            $this->profiles[$parentRequest]->addChild($this->profiles[$request]);
         }
 
         $output = $event->getOutput();

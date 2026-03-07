@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,9 +39,9 @@ class ApplicationDescription
     private array $aliases = [];
 
     public function __construct(
-        private Application $application,
-        private ?string $namespace = null,
-        private bool $showHidden = false,
+        private readonly Application $application,
+        private readonly ?string $namespace = null,
+        private readonly bool $showHidden = false,
     ) {
     }
 
@@ -86,10 +88,12 @@ class ApplicationDescription
             $names = [];
 
             foreach ($commands as $name => $command) {
-                if (!$command->getName() || (!$this->showHidden && $command->isHidden())) {
+                if (!$command->getName()) {
                     continue;
                 }
-
+                if (!$this->showHidden && $command->isHidden()) {
+                    continue;
+                }
                 if ($command->getName() === $name) {
                     $this->commands[$name] = $command;
                 } else {

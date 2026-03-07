@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -45,7 +47,7 @@ class SortFirewallListenersPass implements CompilerPassInterface
         $prioritiesByServiceId = $this->getListenerPriorities($listenerIteratorArgument, $container);
 
         $listeners = $listenerIteratorArgument->getValues();
-        usort($listeners, static fn (Reference $a, Reference $b) => $prioritiesByServiceId[(string) $b] <=> $prioritiesByServiceId[(string) $a]);
+        usort($listeners, static fn (Reference $a, Reference $b): int => $prioritiesByServiceId[(string) $b] <=> $prioritiesByServiceId[(string) $a]);
 
         $listenerIteratorArgument->setValues(array_values($listeners));
     }

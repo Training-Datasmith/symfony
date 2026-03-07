@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -94,7 +96,7 @@ class CsvEncoder implements EncoderInterface, DecoderInterface
         if (!($context[self::NO_HEADERS_KEY] ?? $this->defaultContext[self::NO_HEADERS_KEY])) {
             fputcsv($handle, $headers, $delimiter, $enclosure, '');
             if ("\n" !== $endOfLine && 0 === fseek($handle, -1, \SEEK_CUR)) {
-                fwrite($handle, $endOfLine);
+                fwrite($handle, (string) $endOfLine);
             }
         }
 
@@ -102,7 +104,7 @@ class CsvEncoder implements EncoderInterface, DecoderInterface
         foreach ($data as $row) {
             fputcsv($handle, array_replace($headers, $row), $delimiter, $enclosure, '');
             if ("\n" !== $endOfLine && 0 === fseek($handle, -1, \SEEK_CUR)) {
-                fwrite($handle, $endOfLine);
+                fwrite($handle, (string) $endOfLine);
             }
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -40,7 +42,7 @@ class_exists(ServerBag::class);
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class Request
+class Request implements \Stringable
 {
     public const HEADER_FORWARDED = 0b000001; // When using RFC 7239
     public const HEADER_X_FORWARDED_FOR = 0b000010;
@@ -116,7 +118,7 @@ class Request
      */
     public ParameterBag $attributes {
         set {
-            trigger_deprecation('symfony/http-foundation', '8.1', 'Directly setting property "attributes" of "%s" is deprecated; pass attributes as a constructor argument or call "initialize()" instead.', __CLASS__);
+            trigger_deprecation('symfony/http-foundation', '8.1', 'Directly setting property "attributes" of "%s" is deprecated; pass attributes as a constructor argument or call "initialize()" instead.', self::class);
 
             $this->attributes = $value;
         }
@@ -129,7 +131,7 @@ class Request
      */
     public InputBag $request {
         set {
-            trigger_deprecation('symfony/http-foundation', '8.1', 'Directly setting property "request" of "%s" is deprecated; pass the POST data as a constructor argument or call "initialize()" instead.', __CLASS__);
+            trigger_deprecation('symfony/http-foundation', '8.1', 'Directly setting property "request" of "%s" is deprecated; pass the POST data as a constructor argument or call "initialize()" instead.', self::class);
 
             $this->request = $value;
         }
@@ -142,7 +144,7 @@ class Request
      */
     public InputBag $query {
         set {
-            trigger_deprecation('symfony/http-foundation', '8.1', 'Directly setting property "query" of "%s" is deprecated; pass query parameters as a constructor argument or call "initialize()" instead.', __CLASS__);
+            trigger_deprecation('symfony/http-foundation', '8.1', 'Directly setting property "query" of "%s" is deprecated; pass query parameters as a constructor argument or call "initialize()" instead.', self::class);
 
             $this->query = $value;
         }
@@ -153,7 +155,7 @@ class Request
      */
     public ServerBag $server {
         set {
-            trigger_deprecation('symfony/http-foundation', '8.1', 'Directly setting property "server" of "%s" is deprecated; pass server parameters as a constructor argument or call "initialize()" instead.', __CLASS__);
+            trigger_deprecation('symfony/http-foundation', '8.1', 'Directly setting property "server" of "%s" is deprecated; pass server parameters as a constructor argument or call "initialize()" instead.', self::class);
 
             $this->server = $value;
         }
@@ -164,7 +166,7 @@ class Request
      */
     public FileBag $files {
         set {
-            trigger_deprecation('symfony/http-foundation', '8.1', 'Directly setting property "files" of "%s" is deprecated; pass files as a constructor argument or call "initialize()" instead.', __CLASS__);
+            trigger_deprecation('symfony/http-foundation', '8.1', 'Directly setting property "files" of "%s" is deprecated; pass files as a constructor argument or call "initialize()" instead.', self::class);
 
             $this->files = $value;
         }
@@ -177,7 +179,7 @@ class Request
      */
     public InputBag $cookies {
         set {
-            trigger_deprecation('symfony/http-foundation', '8.1', 'Directly setting property "cookies" of "%s" is deprecated; pass cookies as a constructor argument or call "initialize()" instead.', __CLASS__);
+            trigger_deprecation('symfony/http-foundation', '8.1', 'Directly setting property "cookies" of "%s" is deprecated; pass cookies as a constructor argument or call "initialize()" instead.', self::class);
 
             $this->cookies = $value;
         }
@@ -188,7 +190,7 @@ class Request
      */
     public HeaderBag $headers {
         set {
-            trigger_deprecation('symfony/http-foundation', '8.1', 'Directly setting property "headers" of "%s" is deprecated; pass header parameters as a constructor argument or call "initialize()" instead.', __CLASS__);
+            trigger_deprecation('symfony/http-foundation', '8.1', 'Directly setting property "headers" of "%s" is deprecated; pass header parameters as a constructor argument or call "initialize()" instead.', self::class);
 
             $this->headers = $value;
         }
@@ -683,7 +685,7 @@ class Request
      */
     public static function setTrustedHosts(array $hostPatterns): void
     {
-        self::$trustedHostPatterns = array_map(static fn ($hostPattern) => \sprintf('{%s}i', $hostPattern), $hostPatterns);
+        self::$trustedHostPatterns = array_map(static fn (string $hostPattern): string => \sprintf('{%s}i', $hostPattern), $hostPatterns);
         // we need to reset trusted hosts on trusted host patterns change
         self::$trustedHosts = [];
     }
@@ -929,7 +931,7 @@ class Request
 
         // the proxy prefix must be prepended to any prefix being needed at the webserver level
         if ($this->isFromTrustedProxy() && $trustedPrefixValues = $this->getTrustedValues(self::HEADER_X_FORWARDED_PREFIX)) {
-            $trustedPrefix = rtrim($trustedPrefixValues[0], '/');
+            $trustedPrefix = rtrim((string) $trustedPrefixValues[0], '/');
         }
 
         return $trustedPrefix.$this->getBaseUrlReal();
@@ -975,12 +977,12 @@ class Request
         }
 
         if ('[' === $host[0]) {
-            $pos = strpos($host, ':', strrpos($host, ']'));
+            $pos = strpos((string) $host, ':', strrpos((string) $host, ']'));
         } else {
-            $pos = strrpos($host, ':');
+            $pos = strrpos((string) $host, ':');
         }
 
-        if (false !== $pos && $port = substr($host, $pos + 1)) {
+        if (false !== $pos && $port = substr((string) $host, $pos + 1)) {
             return (int) $port;
         }
 
@@ -1157,7 +1159,7 @@ class Request
     public function isSecure(): bool
     {
         if ($this->isFromTrustedProxy() && $proto = $this->getTrustedValues(self::HEADER_X_FORWARDED_PROTO)) {
-            return \in_array(strtolower($proto[0]), ['https', 'on', 'ssl', '1'], true);
+            return \in_array(strtolower((string) $proto[0]), ['https', 'on', 'ssl', '1'], true);
         }
 
         $https = $this->server->get('HTTPS');
@@ -1185,7 +1187,7 @@ class Request
 
         // trim and remove port number from host
         // host is lowercase as per RFC 952/2181
-        $host = strtolower(preg_replace('/:\d+$/', '', trim($host)));
+        $host = strtolower((string) preg_replace('/:\d+$/', '', trim((string) $host)));
 
         // the host can come from the user (HTTP_HOST and depending on the configuration, SERVER_NAME too can come from the user)
         if ($host && !self::isHostValid($host)) {
@@ -1251,7 +1253,7 @@ class Request
             return $this->method;
         }
 
-        $this->method = strtoupper($this->server->get('REQUEST_METHOD', 'GET'));
+        $this->method = strtoupper((string) $this->server->get('REQUEST_METHOD', 'GET'));
 
         if ('POST' !== $this->method || !(self::$allowedHttpMethodOverride ?? true)) {
             return $this->method;
@@ -1291,7 +1293,7 @@ class Request
      */
     public function getRealMethod(): string
     {
-        return strtoupper($this->server->get('REQUEST_METHOD', 'GET'));
+        return strtoupper((string) $this->server->get('REQUEST_METHOD', 'GET'));
     }
 
     /**
@@ -1636,12 +1638,15 @@ class Request
      */
     public function getETags(): array
     {
-        return preg_split('/\s*,\s*/', $this->headers->get('If-None-Match', ''), -1, \PREG_SPLIT_NO_EMPTY);
+        return preg_split('/\s*,\s*/', (string) $this->headers->get('If-None-Match', ''), -1, \PREG_SPLIT_NO_EMPTY);
     }
 
     public function isNoCache(): bool
     {
-        return $this->headers->hasCacheControlDirective('no-cache') || 'no-cache' == $this->headers->get('Pragma');
+        if ($this->headers->hasCacheControlDirective('no-cache')) {
+            return true;
+        }
+        return 'no-cache' == $this->headers->get('Pragma');
     }
 
     /**
@@ -1808,7 +1813,7 @@ class Request
      */
     public function getCharsets(): array
     {
-        return $this->charsets ??= array_map('strval', array_keys(AcceptHeader::fromString($this->headers->get('Accept-Charset'))->all()));
+        return $this->charsets ??= array_map(strval(...), array_keys(AcceptHeader::fromString($this->headers->get('Accept-Charset'))->all()));
     }
 
     /**
@@ -1818,7 +1823,7 @@ class Request
      */
     public function getEncodings(): array
     {
-        return $this->encodings ??= array_map('strval', array_keys(AcceptHeader::fromString($this->headers->get('Accept-Encoding'))->all()));
+        return $this->encodings ??= array_map(strval(...), array_keys(AcceptHeader::fromString($this->headers->get('Accept-Encoding'))->all()));
     }
 
     /**
@@ -1828,7 +1833,7 @@ class Request
      */
     public function getAcceptableContentTypes(): array
     {
-        return $this->acceptableContentTypes ??= array_map('strval', array_keys(AcceptHeader::fromString($this->headers->get('Accept'))->all()));
+        return $this->acceptableContentTypes ??= array_map(strval(...), array_keys(AcceptHeader::fromString($this->headers->get('Accept'))->all()));
     }
 
     /**
@@ -1884,13 +1889,13 @@ class Request
 
             if ('' !== $requestUri && '/' === $requestUri[0]) {
                 // To only use path and query remove the fragment.
-                if (false !== $pos = strpos($requestUri, '#')) {
-                    $requestUri = substr($requestUri, 0, $pos);
+                if (false !== $pos = strpos((string) $requestUri, '#')) {
+                    $requestUri = substr((string) $requestUri, 0, $pos);
                 }
             } else {
                 // HTTP proxy reqs setup request URI with scheme and host [and port] + the URL path,
                 // only use URL path.
-                $uriComponents = parse_url($requestUri);
+                $uriComponents = parse_url((string) $requestUri);
 
                 if (isset($uriComponents['path'])) {
                     $requestUri = $uriComponents['path'];
@@ -1920,20 +1925,20 @@ class Request
      */
     protected function prepareBaseUrl(): string
     {
-        $filename = basename($this->server->get('SCRIPT_FILENAME', ''));
+        $filename = basename((string) $this->server->get('SCRIPT_FILENAME', ''));
 
-        if (basename($this->server->get('SCRIPT_NAME', '')) === $filename) {
+        if (basename((string) $this->server->get('SCRIPT_NAME', '')) === $filename) {
             $baseUrl = $this->server->get('SCRIPT_NAME');
-        } elseif (basename($this->server->get('PHP_SELF', '')) === $filename) {
+        } elseif (basename((string) $this->server->get('PHP_SELF', '')) === $filename) {
             $baseUrl = $this->server->get('PHP_SELF');
-        } elseif (basename($this->server->get('ORIG_SCRIPT_NAME', '')) === $filename) {
+        } elseif (basename((string) $this->server->get('ORIG_SCRIPT_NAME', '')) === $filename) {
             $baseUrl = $this->server->get('ORIG_SCRIPT_NAME'); // 1and1 shared hosting compatibility
         } else {
             // Backtrack up the script_filename to find the portion matching
             // php_self
             $path = $this->server->get('PHP_SELF', '');
             $file = $this->server->get('SCRIPT_FILENAME', '');
-            $segs = explode('/', trim($file, '/'));
+            $segs = explode('/', trim((string) $file, '/'));
             $segs = array_reverse($segs);
             $index = 0;
             $last = \count($segs);
@@ -1942,7 +1947,7 @@ class Request
                 $seg = $segs[$index];
                 $baseUrl = '/'.$seg.$baseUrl;
                 ++$index;
-            } while ($last > $index && (false !== $pos = strpos($path, $baseUrl)) && 0 != $pos);
+            } while ($last > $index && (false !== $pos = strpos((string) $path, $baseUrl)) && 0 != $pos);
         }
 
         // Does the baseUrl have anything in common with the request_uri?
@@ -1956,7 +1961,7 @@ class Request
             return $prefix;
         }
 
-        if ($baseUrl && null !== $prefix = $this->getUrlencodedPrefix($requestUri, rtrim(\dirname($baseUrl), '/'.\DIRECTORY_SEPARATOR).'/')) {
+        if ($baseUrl && null !== $prefix = $this->getUrlencodedPrefix($requestUri, rtrim(\dirname((string) $baseUrl), '/'.\DIRECTORY_SEPARATOR).'/')) {
             // directory portion of $baseUrl matches
             return rtrim($prefix, '/'.\DIRECTORY_SEPARATOR);
         }
@@ -1975,11 +1980,11 @@ class Request
         // If using mod_rewrite or ISAPI_Rewrite strip the script filename
         // out of baseUrl. $pos !== 0 makes sure it is not matching a value
         // from PATH_INFO or QUERY_STRING
-        if (\strlen($requestUri) >= \strlen($baseUrl) && (false !== $pos = strpos($requestUri, $baseUrl)) && 0 !== $pos) {
-            $baseUrl = substr($requestUri, 0, $pos + \strlen($baseUrl));
+        if (\strlen($requestUri) >= \strlen((string) $baseUrl) && (false !== $pos = strpos($requestUri, (string) $baseUrl)) && 0 !== $pos) {
+            $baseUrl = substr($requestUri, 0, $pos + \strlen((string) $baseUrl));
         }
 
-        return rtrim($baseUrl, '/'.\DIRECTORY_SEPARATOR);
+        return rtrim((string) $baseUrl, '/'.\DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -1992,7 +1997,7 @@ class Request
             return '';
         }
 
-        $filename = basename($this->server->get('SCRIPT_FILENAME'));
+        $filename = basename((string) $this->server->get('SCRIPT_FILENAME'));
         if (basename($baseUrl) === $filename) {
             $basePath = \dirname($baseUrl);
         } else {
@@ -2145,7 +2150,7 @@ class Request
         $forwardedValues = [];
 
         if ((self::$trustedHeaderSet & $type) && $this->headers->has(self::TRUSTED_HEADERS[$type])) {
-            foreach (explode(',', $this->headers->get(self::TRUSTED_HEADERS[$type])) as $v) {
+            foreach (explode(',', (string) $this->headers->get(self::TRUSTED_HEADERS[$type])) as $v) {
                 $clientValues[] = (self::HEADER_X_FORWARDED_PORT === $type ? '0.0.0.0:' : '').trim($v);
             }
         }
@@ -2198,17 +2203,17 @@ class Request
         $firstTrustedIp = null;
 
         foreach ($clientIps as $key => $clientIp) {
-            if (strpos($clientIp, '.')) {
+            if (strpos((string) $clientIp, '.')) {
                 // Strip :port from IPv4 addresses. This is allowed in Forwarded
                 // and may occur in X-Forwarded-For.
-                $i = strpos($clientIp, ':');
+                $i = strpos((string) $clientIp, ':');
                 if ($i) {
-                    $clientIps[$key] = $clientIp = substr($clientIp, 0, $i);
+                    $clientIps[$key] = $clientIp = substr((string) $clientIp, 0, $i);
                 }
-            } elseif (str_starts_with($clientIp, '[')) {
+            } elseif (str_starts_with((string) $clientIp, '[')) {
                 // Strip brackets and :port from IPv6 addresses.
-                $i = strpos($clientIp, ']', 1);
-                $clientIps[$key] = $clientIp = substr($clientIp, 1, $i - 1);
+                $i = strpos((string) $clientIp, ']', 1);
+                $clientIps[$key] = $clientIp = substr((string) $clientIp, 1, $i - 1);
             }
 
             if (!filter_var($clientIp, \FILTER_VALIDATE_IP)) {

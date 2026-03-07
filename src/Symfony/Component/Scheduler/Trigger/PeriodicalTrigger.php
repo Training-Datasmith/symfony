@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,7 +19,7 @@ class PeriodicalTrigger implements StatefulTriggerInterface
 {
     private float $intervalInSeconds = 0.0;
     private ?\DateTimeImmutable $from;
-    private \DateTimeImmutable $until;
+    private readonly \DateTimeImmutable $until;
     private \DatePeriod $period;
     private string $description;
     private string|int|float|\DateInterval $interval;
@@ -124,7 +126,7 @@ class PeriodicalTrigger implements StatefulTriggerInterface
     {
         $a = (array) $interval;
         if ($a['from_string']) {
-            return preg_match('#^\s*\d+\s*(sec|second|min|minute|hour)s?\s*$#', $a['date_string']);
+            return preg_match('#^\s*\d+\s*(sec|second|min|minute|hour)s?\s*$#', (string) $a['date_string']);
         }
 
         return !$interval->y && !$interval->m && !$interval->d;

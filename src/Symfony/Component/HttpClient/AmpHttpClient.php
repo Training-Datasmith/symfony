@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -84,11 +86,11 @@ final class AmpHttpClient implements HttpClientInterface, LoggerAwareInterface, 
         }
 
         if ($options['bindto']) {
-            if (str_starts_with($options['bindto'], 'if!')) {
-                throw new TransportException(__CLASS__.' cannot bind to network interfaces, use e.g. CurlHttpClient instead.');
+            if (str_starts_with((string) $options['bindto'], 'if!')) {
+                throw new TransportException(self::class.' cannot bind to network interfaces, use e.g. CurlHttpClient instead.');
             }
-            if (str_starts_with($options['bindto'], 'host!')) {
-                $options['bindto'] = substr($options['bindto'], 5);
+            if (str_starts_with((string) $options['bindto'], 'host!')) {
+                $options['bindto'] = substr((string) $options['bindto'], 5);
             }
         }
 
@@ -109,7 +111,7 @@ final class AmpHttpClient implements HttpClientInterface, LoggerAwareInterface, 
         }
 
         if ($options['peer_fingerprint'] && !isset($options['peer_fingerprint']['pin-sha256'])) {
-            throw new TransportException(__CLASS__.' supports only "pin-sha256" fingerprints.');
+            throw new TransportException(self::class.' supports only "pin-sha256" fingerprints.');
         }
 
         $request = new Request(implode('', $url), $method);
@@ -124,7 +126,7 @@ final class AmpHttpClient implements HttpClientInterface, LoggerAwareInterface, 
         }
 
         foreach ($options['headers'] as $v) {
-            $h = explode(': ', $v, 2);
+            $h = explode(': ', (string) $v, 2);
             $request->addHeader($h[0], $h[1]);
         }
 
@@ -134,8 +136,8 @@ final class AmpHttpClient implements HttpClientInterface, LoggerAwareInterface, 
         $request->setInactivityTimeout(0);
 
         if ('' !== $request->getUri()->getUserInfo() && !$request->hasHeader('authorization')) {
-            $auth = explode(':', $request->getUri()->getUserInfo(), 2);
-            $auth = array_map('rawurldecode', $auth) + [1 => ''];
+            $auth = explode(':', (string) $request->getUri()->getUserInfo(), 2);
+            $auth = array_map(rawurldecode(...), $auth) + [1 => ''];
             $request->setHeader('Authorization', 'Basic '.base64_encode(implode(':', $auth)));
         }
 

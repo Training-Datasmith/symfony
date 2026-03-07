@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -11,13 +13,16 @@
 
 namespace Symfony\Component\PropertyInfo\Tests\Fixtures;
 
-interface IFace {}
+interface IFace
+{
+}
 
-class Clazz {}
+class Clazz
+{
+}
 
 class DummyGeneric
 {
-
     /**
      * @var Clazz<Dummy>
      */

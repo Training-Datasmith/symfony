@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,9 +33,9 @@ final class DefaultLoginRateLimiter extends AbstractRequestRateLimiter
      * @param non-empty-string $secret A secret to use for hashing the IP address and username
      */
     public function __construct(
-        private RateLimiterFactory $globalFactory,
-        private RateLimiterFactory $localFactory,
-        #[\SensitiveParameter] private string $secret,
+        private readonly RateLimiterFactory $globalFactory,
+        private readonly RateLimiterFactory $localFactory,
+        #[\SensitiveParameter] private readonly string $secret,
     ) {
         if (!$secret) {
             throw new InvalidArgumentException('A non-empty secret is required.');
@@ -43,7 +45,7 @@ final class DefaultLoginRateLimiter extends AbstractRequestRateLimiter
     protected function getLimiters(Request $request): array
     {
         $username = $request->attributes->get(SecurityRequestAttributes::LAST_USERNAME, '');
-        $username = preg_match('//u', $username) ? mb_strtolower($username, 'UTF-8') : strtolower($username);
+        $username = preg_match('//u', (string) $username) ? mb_strtolower((string) $username, 'UTF-8') : strtolower((string) $username);
 
         return [
             $this->globalFactory->create($this->hash($request->getClientIp())),

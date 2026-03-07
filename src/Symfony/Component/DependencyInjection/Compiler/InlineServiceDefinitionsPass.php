@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,7 +37,7 @@ class InlineServiceDefinitionsPass extends AbstractRecursivePass
     private ?ServiceReferenceGraph $graph = null;
 
     public function __construct(
-        private ?AnalyzeServiceReferencesPass $analyzingPass = null,
+        private readonly ?AnalyzeServiceReferencesPass $analyzingPass = null,
     ) {
     }
 
@@ -126,10 +128,11 @@ class InlineServiceDefinitionsPass extends AbstractRecursivePass
             }
             $value = clone $value;
         }
-
         if (!$value instanceof Reference) {
             return parent::processValue($value, $isRoot);
-        } elseif (!$this->container->hasDefinition($id = (string) $value)) {
+        }
+
+        if (!$this->container->hasDefinition($id = (string) $value)) {
             return $value;
         }
 

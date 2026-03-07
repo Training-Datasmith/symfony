@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -66,8 +68,8 @@ final class ConsoleHandler extends AbstractProcessingHandler implements EventSub
         private ?OutputInterface $output = null,
         bool $bubble = true,
         array $verbosityLevelMap = [],
-        private array $consoleFormatterOptions = [],
-        private bool $interactiveOnly = false,
+        private readonly array $consoleFormatterOptions = [],
+        private readonly bool $interactiveOnly = false,
     ) {
         parent::__construct(Level::Debug, $bubble);
 

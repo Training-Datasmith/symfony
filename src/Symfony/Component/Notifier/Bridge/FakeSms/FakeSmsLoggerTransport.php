@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ final class FakeSmsLoggerTransport extends AbstractTransport
     protected const HOST = 'default';
 
     public function __construct(
-        private LoggerInterface $logger,
+        private readonly LoggerInterface $logger,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -45,13 +47,10 @@ final class FakeSmsLoggerTransport extends AbstractTransport
         return $message instanceof SmsMessage;
     }
 
-    /**
-     * @param MessageInterface|SmsMessage $message
-     */
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$this->supports($message)) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $this->logger->info(\sprintf('New SMS on phone number: %s', $message->getPhone()));

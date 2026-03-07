@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,7 +37,7 @@ class AbstractRecursivePassTest extends TestCase
             ->register('foo', \stdClass::class)
             ->setFactory([new Reference('child'), 'createFactory']);
 
-        $pass = new class extends AbstractRecursivePass {
+        $pass = new class () extends AbstractRecursivePass {
             public \ReflectionMethod $actual;
 
             protected function processValue($value, $isRoot = false): mixed
@@ -61,7 +63,7 @@ class AbstractRecursivePassTest extends TestCase
             ->setAbstract(true);
         $container->setDefinition('foo', new ChildDefinition('parent'));
 
-        $pass = new class extends AbstractRecursivePass {
+        $pass = new class () extends AbstractRecursivePass {
             public \ReflectionMethod $actual;
 
             protected function processValue($value, $isRoot = false): mixed
@@ -87,7 +89,7 @@ class AbstractRecursivePassTest extends TestCase
             ->setAbstract(true);
         $container->setDefinition('foo', new ChildDefinition('parent'));
 
-        $pass = new class extends AbstractRecursivePass {
+        $pass = new class () extends AbstractRecursivePass {
             public \ReflectionMethod $actual;
 
             protected function processValue($value, $isRoot = false): mixed
@@ -113,7 +115,7 @@ class AbstractRecursivePassTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Invalid service "foo": the class is not set.');
 
-        (new class extends AbstractRecursivePass {
+        (new class () extends AbstractRecursivePass {
             protected function processValue($value, $isRoot = false): mixed
             {
                 if ($value instanceof Definition && 'foo' === $this->currentId) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -40,7 +42,7 @@ class SesHttpAsyncAwsTransport extends AbstractTransport
     {
         $configuration = $this->sesClient->getConfiguration();
         if (!$configuration->isDefault('endpoint')) {
-            $endpoint = parse_url($configuration->get('endpoint'));
+            $endpoint = parse_url((string) $configuration->get('endpoint'));
             $host = $endpoint['host'].($endpoint['port'] ?? null ? ':'.$endpoint['port'] : '');
         } else {
             $host = $configuration->get('region');
@@ -87,8 +89,8 @@ class SesHttpAsyncAwsTransport extends AbstractTransport
                 $request['FromEmailAddressIdentityArn'] = $sourceArnHeader->getBodyAsString();
             }
             if ($header = $message->getOriginalMessage()->getHeaders()->get('X-SES-LIST-MANAGEMENT-OPTIONS')) {
-                if (preg_match('/^(contactListName=)*(?<ContactListName>[^;]+)(;\s?topicName=(?<TopicName>.+))?$/ix', $header->getBodyAsString(), $listManagementOptions)) {
-                    $request['ListManagementOptions'] = array_filter($listManagementOptions, static fn ($e) => \in_array($e, ['ContactListName', 'TopicName'], true), \ARRAY_FILTER_USE_KEY);
+                if (preg_match('/^(contactListName=)*(?<ContactListName>[^;]+)(;\s?topicName=(?<TopicName>.+))?$/ix', (string) $header->getBodyAsString(), $listManagementOptions)) {
+                    $request['ListManagementOptions'] = array_filter($listManagementOptions, static fn ($e): bool => \in_array($e, ['ContactListName', 'TopicName'], true), \ARRAY_FILTER_USE_KEY);
                 }
             }
             foreach ($originalMessage->getHeaders()->all() as $header) {

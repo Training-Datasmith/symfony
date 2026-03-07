@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -60,7 +62,7 @@ class TimeType extends AbstractType
         }
 
         if ('single_text' === $options['widget']) {
-            $builder->addEventListener(FormEvents::PRE_SUBMIT, static function (FormEvent $e) use ($options) {
+            $builder->addEventListener(FormEvents::PRE_SUBMIT, static function (FormEvent $e) use ($options): void {
                 $data = $e->getData();
                 if ($data && preg_match('/^(?P<hours>\d{2}):(?P<minutes>\d{2})(?::(?P<seconds>\d{2})(?:\.\d+)?)?$/', $data, $matches)) {
                     if ($options['with_seconds']) {
@@ -78,7 +80,7 @@ class TimeType extends AbstractType
             if (null !== $options['reference_date']) {
                 $parseFormat = 'Y-m-d '.$format;
 
-                $builder->addEventListener(FormEvents::PRE_SUBMIT, static function (FormEvent $event) use ($options) {
+                $builder->addEventListener(FormEvents::PRE_SUBMIT, static function (FormEvent $event) use ($options): void {
                     $data = $event->getData();
 
                     if (preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $data)) {
@@ -98,7 +100,7 @@ class TimeType extends AbstractType
             $emptyData = $builder->getEmptyData() ?: [];
 
             if ($emptyData instanceof \Closure) {
-                $lazyEmptyData = static fn ($option) => static function (FormInterface $form) use ($emptyData, $option) {
+                $lazyEmptyData = static fn ($option): \Closure => static function (FormInterface $form) use ($emptyData, $option) {
                     $emptyData = $emptyData($form->getParent());
 
                     return $emptyData[$option] ?? '';
@@ -125,7 +127,7 @@ class TimeType extends AbstractType
                 $hours = $minutes = [];
 
                 foreach ($options['hours'] as $hour) {
-                    $hours[str_pad($hour, 2, '0', \STR_PAD_LEFT)] = $hour;
+                    $hours[str_pad((string) $hour, 2, '0', \STR_PAD_LEFT)] = $hour;
                 }
 
                 // Only pass a subset of the options to children
@@ -135,7 +137,7 @@ class TimeType extends AbstractType
 
                 if ($options['with_minutes']) {
                     foreach ($options['minutes'] as $minute) {
-                        $minutes[str_pad($minute, 2, '0', \STR_PAD_LEFT)] = $minute;
+                        $minutes[str_pad((string) $minute, 2, '0', \STR_PAD_LEFT)] = $minute;
                     }
 
                     $minuteOptions['choices'] = $minutes;
@@ -147,7 +149,7 @@ class TimeType extends AbstractType
                     $seconds = [];
 
                     foreach ($options['seconds'] as $second) {
-                        $seconds[str_pad($second, 2, '0', \STR_PAD_LEFT)] = $second;
+                        $seconds[str_pad((string) $second, 2, '0', \STR_PAD_LEFT)] = $second;
                     }
 
                     $secondOptions['choices'] = $seconds;
@@ -258,11 +260,11 @@ class TimeType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $compound = static fn (Options $options) => 'single_text' !== $options['widget'];
+        $compound = static fn (Options $options): bool => 'single_text' !== $options['widget'];
 
-        $placeholderDefault = static fn (Options $options) => $options['required'] ? null : '';
+        $placeholderDefault = static fn (Options $options): ?string => $options['required'] ? null : '';
 
-        $placeholderNormalizer = static function (Options $options, $placeholder) use ($placeholderDefault) {
+        $placeholderNormalizer = static function (Options $options, $placeholder) use ($placeholderDefault): array {
             if (\is_array($placeholder)) {
                 $default = $placeholderDefault($options);
 
@@ -279,7 +281,7 @@ class TimeType extends AbstractType
             ];
         };
 
-        $choiceTranslationDomainNormalizer = static function (Options $options, $choiceTranslationDomain) {
+        $choiceTranslationDomainNormalizer = static function (Options $options, $choiceTranslationDomain): array {
             if (\is_array($choiceTranslationDomain)) {
                 return array_replace(
                     ['hour' => false, 'minute' => false, 'second' => false],
@@ -341,7 +343,7 @@ class TimeType extends AbstractType
             // representation is not \DateTime, but an array, we need to unset
             // this option.
             'data_class' => null,
-            'empty_data' => static fn (Options $options) => $options['compound'] ? [] : '',
+            'empty_data' => static fn (Options $options): array|string => $options['compound'] ? [] : '',
             'compound' => $compound,
             'choice_translation_domain' => false,
             'invalid_message' => 'Please enter a valid time.',

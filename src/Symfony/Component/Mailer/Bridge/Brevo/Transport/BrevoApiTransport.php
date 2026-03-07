@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,7 +35,7 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 final class BrevoApiTransport extends AbstractApiTransport
 {
     public function __construct(
-        #[\SensitiveParameter] private string $key,
+        #[\SensitiveParameter] private readonly string $key,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
         ?LoggerInterface $logger = null,
@@ -112,7 +114,7 @@ final class BrevoApiTransport extends AbstractApiTransport
             $payload['htmlContent'] = $email->getHtmlBody();
         }
         if ($headersAndTags = $this->prepareHeadersAndTags($email->getHeaders())) {
-            $payload = array_merge($payload, $headersAndTags);
+            return array_merge($payload, $headersAndTags);
         }
 
         return $payload;
@@ -180,7 +182,7 @@ final class BrevoApiTransport extends AbstractApiTransport
         return $formattedAddress;
     }
 
-    private function getEndpoint(): ?string
+    private function getEndpoint(): string
     {
         return ($this->host ?: 'api.brevo.com').($this->port ? ':'.$this->port : '');
     }

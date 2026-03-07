@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,9 +31,9 @@ class UpdateOperation
      * @throws UpdateOperationException on consistency errors during construction
      */
     public function __construct(
-        private int $operationType,
-        private string $attribute,
-        private ?array $values,
+        private readonly int $operationType,
+        private readonly string $attribute,
+        private readonly ?array $values,
     ) {
         if (!\in_array($operationType, self::VALID_OPERATION_TYPES, true)) {
             throw new UpdateOperationException(\sprintf('"%s" is not a valid modification type.', $operationType));

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -48,28 +50,32 @@ class FilecontentFilterIteratorTest extends IteratorTestCase
     {
         $inner = new MockFileListIterator();
 
-        $inner[] = new MockSplFileInfo([
+        $inner[] = new MockSplFileInfo(
+            [
             'name' => 'a.txt',
             'contents' => 'Lorem ipsum...',
             'type' => 'file',
             'mode' => 'r+', ]
         );
 
-        $inner[] = new MockSplFileInfo([
+        $inner[] = new MockSplFileInfo(
+            [
             'name' => 'b.yml',
             'contents' => 'dolor sit...',
             'type' => 'file',
             'mode' => 'r+', ]
         );
 
-        $inner[] = new MockSplFileInfo([
+        $inner[] = new MockSplFileInfo(
+            [
             'name' => 'some/other/dir/third.php',
             'contents' => 'amet...',
             'type' => 'file',
             'mode' => 'r+', ]
         );
 
-        $inner[] = new MockSplFileInfo([
+        $inner[] = new MockSplFileInfo(
+            [
             'name' => 'unreadable-file.txt',
             'contents' => '',
             'type' => 'file',

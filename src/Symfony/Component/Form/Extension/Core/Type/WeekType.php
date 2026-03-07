@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -90,11 +92,11 @@ class WeekType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $compound = static fn (Options $options) => 'single_text' !== $options['widget'];
+        $compound = static fn (Options $options): bool => 'single_text' !== $options['widget'];
 
-        $placeholderDefault = static fn (Options $options) => $options['required'] ? null : '';
+        $placeholderDefault = static fn (Options $options): ?string => $options['required'] ? null : '';
 
-        $placeholderNormalizer = static function (Options $options, $placeholder) use ($placeholderDefault) {
+        $placeholderNormalizer = static function (Options $options, $placeholder) use ($placeholderDefault): array {
             if (\is_array($placeholder)) {
                 $default = $placeholderDefault($options);
 
@@ -110,7 +112,7 @@ class WeekType extends AbstractType
             ];
         };
 
-        $choiceTranslationDomainNormalizer = static function (Options $options, $choiceTranslationDomain) {
+        $choiceTranslationDomainNormalizer = static function (Options $options, $choiceTranslationDomain): array {
             if (\is_array($choiceTranslationDomain)) {
                 return array_replace(
                     ['year' => false, 'week' => false],
@@ -130,9 +132,9 @@ class WeekType extends AbstractType
             'widget' => 'single_text',
             'input' => 'array',
             'placeholder' => $placeholderDefault,
-            'html5' => static fn (Options $options) => 'single_text' === $options['widget'],
+            'html5' => static fn (Options $options): bool => 'single_text' === $options['widget'],
             'error_bubbling' => false,
-            'empty_data' => static fn (Options $options) => $options['compound'] ? [] : '',
+            'empty_data' => static fn (Options $options): array|string => $options['compound'] ? [] : '',
             'compound' => $compound,
             'choice_translation_domain' => false,
             'invalid_message' => 'Please enter a valid week.',

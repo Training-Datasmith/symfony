@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -88,12 +90,12 @@ class RemotePackageStorage
         [$packageName, $packagePathString] = ImportMapEntry::splitPackageNameAndFilePath($packageModuleSpecifier);
         $filename = $packageName;
         if ($packagePathString) {
-            $filename .= '/'.ltrim($packagePathString, '/');
+            $filename .= '/'.ltrim((string) $packagePathString, '/');
         } else {
             // if we're requiring a bare package, we put it into the directory
             // (in case we also import other files from the package) and arbitrarily
             // name it the same as the package name + ".index"
-            $filename .= '/'.basename($packageName).'.index';
+            $filename .= '/'.basename((string) $packageName).'.index';
         }
 
         if (!str_ends_with($filename, '.'.$importMapType->value)) {

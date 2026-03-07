@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,17 +27,15 @@ class Exporter
      *
      * For performance this method is public and has no type-hints.
      *
-     * @param array             &$values
      * @param \SplObjectStorage $objectsPool
      * @param array             &$refsPool
      * @param int               &$objectsCount
      * @param bool              &$valuesAreStatic
      *
-     * @return array
      *
      * @throws NotInstantiableTypeException When a value cannot be serialized
      */
-    public static function prepare($values, $objectsPool, &$refsPool, &$objectsCount, &$valuesAreStatic)
+    public static function prepare(array $values, $objectsPool, &$refsPool, &$objectsCount, &$valuesAreStatic): array
     {
         $refs = $values;
         foreach ($values as $k => $value) {
@@ -200,7 +200,7 @@ class Exporter
         return $values;
     }
 
-    public static function export($value, $indent = '')
+    public static function export($value, string $indent = '')
     {
         switch (true) {
             case \is_int($value) || \is_float($value): return var_export($value, true);
@@ -241,7 +241,7 @@ class Exporter
         if (\is_string($value)) {
             $code = \sprintf("'%s'", addcslashes($value, "'\\"));
 
-            $code = preg_replace_callback("/((?:[\\0\\r\\n]|\u{202A}|\u{202B}|\u{202D}|\u{202E}|\u{2066}|\u{2067}|\u{2068}|\u{202C}|\u{2069})++)(.)/", static function ($m) use ($subIndent) {
+            $code = preg_replace_callback("/((?:[\\0\\r\\n]|\u{202A}|\u{202B}|\u{202D}|\u{202E}|\u{2066}|\u{2067}|\u{2068}|\u{202C}|\u{2069})++)(.)/", static function ($m) use ($subIndent): string {
                 $m[1] = \sprintf('\'."%s".\'', str_replace(
                     ["\0", "\r", "\n", "\u{202A}", "\u{202B}", "\u{202D}", "\u{202E}", "\u{2066}", "\u{2067}", "\u{2068}", "\u{202C}", "\u{2069}", '\n\\'],
                     ['\0', '\r', '\n', '\u{202A}', '\u{202B}', '\u{202D}', '\u{202E}', '\u{2066}', '\u{2067}', '\u{2068}', '\u{202C}', '\u{2069}', '\n"'."\n".$subIndent.'."\\'],
@@ -259,8 +259,8 @@ class Exporter
                 return $m[1].$m[2];
             }, $code, -1, $count);
 
-            if ($count && str_starts_with($code, "''.")) {
-                $code = substr($code, 3);
+            if ($count && str_starts_with((string) $code, "''.")) {
+                return substr((string) $code, 3);
             }
 
             return $code;
@@ -394,10 +394,9 @@ class Exporter
     }
 
     /**
-     * @param \ArrayIterator|\ArrayObject $value
      * @param \ArrayIterator|\ArrayObject $proto
      */
-    private static function getArrayObjectProperties($value, $proto): array
+    private static function getArrayObjectProperties(\ArrayIterator|\ArrayObject $value, $proto): array
     {
         $reflector = $value instanceof \ArrayIterator ? 'ArrayIterator' : 'ArrayObject';
         $reflector = Registry::$reflectors[$reflector] ??= Registry::getClassReflector($reflector);

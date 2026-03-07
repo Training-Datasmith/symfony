@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'musi: täiskasvanu, täiskasvanu, hele nahatoon, keskmiselt hele nahatoon',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'musi: täiskasvanu, täiskasvanu, hele nahatoon, keskmine nahatoon',

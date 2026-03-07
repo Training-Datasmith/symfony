@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -85,7 +87,7 @@ class FormFlowType extends AbstractFlowType
             ->allowedTypes('null', DataStorageInterface::class);
 
         $resolver->define('step_accessor')
-            ->default(function (Options $options) {
+            ->default(function (Options $options): \Symfony\Component\Form\Flow\StepAccessor\PropertyPathStepAccessor {
                 if (!isset($options['step_property_path'])) {
                     throw new MissingOptionsException('Option "step_property_path" is required.');
                 }
@@ -104,7 +106,7 @@ class FormFlowType extends AbstractFlowType
             ->default(true)
             ->allowedTypes('bool');
 
-        $resolver->setDefault('validation_groups', static fn (FormFlowInterface $flow) => ['Default', $flow->getCursor()->getCurrentStep()]);
+        $resolver->setDefault('validation_groups', static fn (FormFlowInterface $flow): array => ['Default', $flow->getCursor()->getCurrentStep()]);
     }
 
     public function getParent(): string

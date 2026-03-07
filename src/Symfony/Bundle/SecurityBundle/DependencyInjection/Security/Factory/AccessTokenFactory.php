@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -60,14 +62,14 @@ final class AccessTokenFactory extends AbstractFactory implements StatelessAuthe
                 ->acceptAndWrap(['string'], 'id')
 
                 ->validate()
-                    ->ifTrue(static fn ($v) => \is_array($v) && 1 < \count($v))
+                    ->ifTrue(static fn ($v): bool => \is_array($v) && 1 < \count($v))
                     ->then(static fn () => throw new InvalidConfigurationException('You cannot configure multiple token handlers.'))
                 ->end()
 
                 // "isRequired" must be set otherwise the following custom validation is not called
                 ->isRequired()
                 ->validate()
-                    ->ifTrue(static fn ($v) => \is_array($v) && !$v)
+                    ->ifTrue(static fn ($v): bool => \is_array($v) && !$v)
                     ->then(static fn () => throw new InvalidConfigurationException('You must set a token handler.'))
                 ->end()
 
@@ -122,7 +124,7 @@ final class AccessTokenFactory extends AbstractFactory implements StatelessAuthe
             'request_body' => 'security.access_token_extractor.request_body',
             'header' => 'security.access_token_extractor.header',
         ];
-        $extractors = array_map(static fn ($extractor) => $aliases[$extractor] ?? $extractor, $extractors);
+        $extractors = array_map(static fn (string $extractor): string => $aliases[$extractor] ?? $extractor, $extractors);
 
         if (1 === \count($extractors)) {
             return current($extractors);

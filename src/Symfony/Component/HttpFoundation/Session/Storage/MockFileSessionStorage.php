@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ namespace Symfony\Component\HttpFoundation\Session\Storage;
  */
 class MockFileSessionStorage extends MockArraySessionStorage
 {
-    private string $savePath;
+    private readonly string $savePath;
 
     /**
      * @param string|null $savePath Path of directory to save session files
@@ -114,7 +116,8 @@ class MockFileSessionStorage extends MockArraySessionStorage
      */
     private function destroy(): void
     {
-        set_error_handler(static function () {});
+        set_error_handler(static function (): void {
+        });
         try {
             unlink($this->getFilePath());
         } finally {
@@ -135,7 +138,8 @@ class MockFileSessionStorage extends MockArraySessionStorage
      */
     private function read(): void
     {
-        set_error_handler(static function () {});
+        set_error_handler(static function (): void {
+        });
         try {
             $data = file_get_contents($this->getFilePath());
         } finally {

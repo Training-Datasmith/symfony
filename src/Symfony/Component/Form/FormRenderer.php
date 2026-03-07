@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,8 +32,8 @@ class FormRenderer implements FormRendererInterface
     private array $variableStack = [];
 
     public function __construct(
-        private FormRendererEngineInterface $engine,
-        private ?CsrfTokenManagerInterface $csrfTokenManager = null,
+        private readonly FormRendererEngineInterface $engine,
+        private readonly ?CsrfTokenManagerInterface $csrfTokenManager = null,
     ) {
     }
 
@@ -262,7 +264,7 @@ class FormRenderer implements FormRendererInterface
 
     public function humanize(string $text): string
     {
-        return ucfirst(strtolower(trim(preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], $text))));
+        return ucfirst(strtolower(trim((string) preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], $text))));
     }
 
     /**

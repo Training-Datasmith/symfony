@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,12 +20,8 @@ use Symfony\Component\Validator\Constraint;
  */
 abstract class Existence extends Composite
 {
-    public array|Constraint $constraints = [];
-
-    public function __construct(array|Constraint $constraints = [], ?array $groups = null, mixed $payload = null)
+    public function __construct(public array|Constraint $constraints = [], ?array $groups = null, mixed $payload = null)
     {
-        $this->constraints = $constraints;
-
         parent::__construct(null, $groups, $payload);
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,8 +32,8 @@ namespace Symfony\Component\ExpressionLanguage;
  */
 class ExpressionFunction
 {
-    private \Closure $compiler;
-    private \Closure $evaluator;
+    private readonly \Closure $compiler;
+    private readonly \Closure $evaluator;
 
     /**
      * @param string   $name      The function name
@@ -39,7 +41,7 @@ class ExpressionFunction
      * @param callable $evaluator A callable able to evaluate the function
      */
     public function __construct(
-        private string $name,
+        private readonly string $name,
         callable $compiler,
         callable $evaluator,
     ) {
@@ -83,7 +85,7 @@ class ExpressionFunction
             throw new \InvalidArgumentException(\sprintf('An expression function name must be defined when PHP function "%s" is namespaced.', $phpFunctionName));
         }
 
-        $compiler = static fn (...$args) => \sprintf('\%s(%s)', $phpFunctionName, implode(', ', $args));
+        $compiler = static fn (...$args): string => \sprintf('\%s(%s)', $phpFunctionName, implode(', ', $args));
 
         $evaluator = static fn ($p, ...$args) => $phpFunctionName(...$args);
 

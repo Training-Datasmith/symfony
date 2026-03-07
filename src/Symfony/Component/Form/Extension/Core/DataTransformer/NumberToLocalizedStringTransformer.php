@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,10 +31,10 @@ class NumberToLocalizedStringTransformer implements DataTransformerInterface
     protected int $roundingMode;
 
     public function __construct(
-        private ?int $scale = null,
+        private readonly ?int $scale = null,
         ?bool $grouping = false,
         ?int $roundingMode = \NumberFormatter::ROUND_HALFUP,
-        private ?string $locale = null,
+        private readonly ?string $locale = null,
     ) {
         $this->grouping = $grouping ?? false;
         $this->roundingMode = $roundingMode ?? \NumberFormatter::ROUND_HALFUP;

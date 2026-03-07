@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -62,7 +64,10 @@ class CheckExceptionOnInvalidReferenceBehaviorPass extends AbstractRecursivePass
 
         if ('.' === $currentId[0] && $graph->hasNode($currentId)) {
             foreach ($graph->getNode($currentId)->getInEdges() as $edge) {
-                if (!$edge->getValue() instanceof Reference || ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE < $edge->getValue()->getInvalidBehavior()) {
+                if (!$edge->getValue() instanceof Reference) {
+                    continue;
+                }
+                if (ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE < $edge->getValue()->getInvalidBehavior()) {
                     continue;
                 }
                 $sourceId = $edge->getSourceNode()->getId();
@@ -88,17 +93,22 @@ class CheckExceptionOnInvalidReferenceBehaviorPass extends AbstractRecursivePass
         $id = (string) $ref;
         $alternatives = [];
         foreach ($this->container->getServiceIds() as $knownId) {
-            if ('' === $knownId || '.' === $knownId[0] || $knownId === $this->currentId) {
+            if ('' === $knownId) {
                 continue;
             }
-
+            if ('.' === $knownId[0]) {
+                continue;
+            }
+            if ($knownId === $this->currentId) {
+                continue;
+            }
             $lev = levenshtein($id, $knownId);
             if ($lev <= \strlen($id) / 3 || str_contains($knownId, $id)) {
                 $alternatives[] = $knownId;
             }
         }
 
-        $pass = new class extends AbstractRecursivePass {
+        $pass = new class () extends AbstractRecursivePass {
             public Reference $ref;
             public string $sourceId;
             public array $alternatives;

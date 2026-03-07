@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,7 +41,7 @@ use Symfony\Component\PasswordHasher\LegacyPasswordHasherInterface;
 class UserPasswordHashCommand extends Command
 {
     public function __construct(
-        private PasswordHasherFactoryInterface $hasherFactory,
+        private readonly PasswordHasherFactoryInterface $hasherFactory,
         private array $userClasses = [],
     ) {
         parent::__construct();
@@ -51,7 +53,8 @@ class UserPasswordHashCommand extends Command
             ->addArgument('password', InputArgument::OPTIONAL, 'The plain password to hash.')
             ->addArgument('user-class', InputArgument::OPTIONAL, 'The User entity class path associated with the hasher used to hash the password.')
             ->addOption('empty-salt', null, InputOption::VALUE_NONE, 'Do not generate a salt or let the hasher generate one.')
-            ->setHelp(<<<EOF
+            ->setHelp(
+                <<<EOF
 
                 The <info>%command.name%</info> command hashes passwords according to your
                 security configuration. This command is mainly used to generate passwords for
@@ -148,7 +151,7 @@ class UserPasswordHashCommand extends Command
         $io->table(['Key', 'Value'], $rows);
 
         if (!$emptySalt) {
-            $errorIo->note(\sprintf('Make sure that your salt storage field fits the salt length: %s chars', \strlen($salt)));
+            $errorIo->note(\sprintf('Make sure that your salt storage field fits the salt length: %s chars', \strlen((string) $salt)));
         } elseif ($saltlessWithoutEmptySalt) {
             $errorIo->note('Self-salting hasher used: the hasher generated its own built-in salt.');
         }

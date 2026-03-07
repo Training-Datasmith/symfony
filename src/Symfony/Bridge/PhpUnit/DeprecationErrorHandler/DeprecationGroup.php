@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,12 +18,12 @@ namespace Symfony\Bridge\PhpUnit\DeprecationErrorHandler;
  */
 final class DeprecationGroup
 {
-    private $count = 0;
+    private int $count = 0;
 
     /**
      * @var DeprecationNotice[] keys are messages
      */
-    private $deprecationNotices = [];
+    private array $deprecationNotices = [];
 
     public function addNoticeFromObject(string $message, string $class, string $method): void
     {

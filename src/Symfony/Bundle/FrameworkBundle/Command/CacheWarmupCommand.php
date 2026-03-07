@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 class CacheWarmupCommand extends Command
 {
     public function __construct(
-        private CacheWarmerAggregate $cacheWarmer,
+        private readonly CacheWarmerAggregate $cacheWarmer,
     ) {
         parent::__construct();
     }
@@ -43,7 +45,8 @@ class CacheWarmupCommand extends Command
             ->setDefinition([
                 new InputOption('no-optional-warmers', '', InputOption::VALUE_NONE, 'Skip optional cache warmers (faster)'),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command warms up the cache.
 
                 Before running this command, the cache must be empty.

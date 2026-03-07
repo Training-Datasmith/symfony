@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,15 +39,15 @@ use Symfony\Component\VarDumper\Cloner\Data;
  */
 class SecurityDataCollector extends DataCollector implements LateDataCollectorInterface
 {
-    private bool $hasVarDumper;
+    private readonly bool $hasVarDumper;
 
     public function __construct(
-        private ?TokenStorageInterface $tokenStorage = null,
-        private ?RoleHierarchyInterface $roleHierarchy = null,
-        private ?LogoutUrlGenerator $logoutUrlGenerator = null,
-        private ?AccessDecisionManagerInterface $accessDecisionManager = null,
-        private ?FirewallMapInterface $firewallMap = null,
-        private ?TraceableFirewallListener $firewall = null,
+        private readonly ?TokenStorageInterface $tokenStorage = null,
+        private readonly ?RoleHierarchyInterface $roleHierarchy = null,
+        private readonly ?LogoutUrlGenerator $logoutUrlGenerator = null,
+        private readonly ?AccessDecisionManagerInterface $accessDecisionManager = null,
+        private readonly ?FirewallMapInterface $firewallMap = null,
+        private readonly ?TraceableFirewallListener $firewall = null,
     ) {
         $this->hasVarDumper = class_exists(ClassStub::class);
     }
@@ -186,7 +188,7 @@ class SecurityDataCollector extends DataCollector implements LateDataCollectorIn
                 if ($this->data['impersonated'] && null !== $switchUserConfig = $firewallConfig->getSwitchUser()) {
                     $exitPath = $request->getRequestUri();
                     $exitPath .= null === $request->getQueryString() ? '?' : '&';
-                    $exitPath .= \sprintf('%s=%s', urlencode($switchUserConfig['parameter']), SwitchUserListener::EXIT_VALUE);
+                    $exitPath .= \sprintf('%s=%s', urlencode((string) $switchUserConfig['parameter']), SwitchUserListener::EXIT_VALUE);
 
                     $this->data['impersonation_exit_path'] = $exitPath;
                 }

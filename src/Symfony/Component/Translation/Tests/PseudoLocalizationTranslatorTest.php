@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -78,5 +80,3 @@ final class PseudoLocalizationTranslatorTest extends TestCase
         ], $options);
     }
 }
-
-// @php-cs-fixer-ignore random_api_migration As logic is coupled with mt_rand() in src

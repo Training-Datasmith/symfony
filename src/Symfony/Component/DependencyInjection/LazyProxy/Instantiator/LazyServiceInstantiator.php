@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,9 @@ final class LazyServiceInstantiator implements InstantiatorInterface
         }
 
         if ($asGhostObject) {
-            return new \ReflectionClass($definition->getClass())->newLazyGhost(static function ($ghost) use ($realInstantiator) { $realInstantiator($ghost); });
+            return new \ReflectionClass($definition->getClass())->newLazyGhost(static function ($ghost) use ($realInstantiator): void {
+                $realInstantiator($ghost);
+            });
         }
 
         $class = null;

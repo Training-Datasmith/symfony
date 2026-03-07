@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -59,7 +61,8 @@ class VarDumperTestTraitTest extends TestCase
         $this->assertSame(CliDumper::DUMP_LIGHT_ARRAY | CliDumper::DUMP_COMMA_SEPARATOR, $this->varDumperConfig['flags']);
         $this->assertSame($casters, $this->varDumperConfig['casters']);
 
-        $this->assertDumpEquals(<<<DUMP
+        $this->assertDumpEquals(
+            <<<DUMP
             [
               1,
               2,

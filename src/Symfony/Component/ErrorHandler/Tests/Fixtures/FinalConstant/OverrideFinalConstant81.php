@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\ErrorHandler\Tests\Fixtures\FinalConstant;
 
 class OverrideFinalConstant81 implements FinalConstantsInterface2

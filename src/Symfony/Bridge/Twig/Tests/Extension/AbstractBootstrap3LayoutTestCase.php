@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,8 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
         $this->renderWidget($view, ['label' => 'foo']);
         $html = $this->renderLabel($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/label
     [@class="control-label required"]
     [.="[trans]Name[/trans]"]
@@ -40,7 +43,8 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             ],
         ]);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/label
     [@for="name"]
     [@class="control-label required"]
@@ -57,7 +61,8 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             ],
         ]);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/label
     [@for="name"]
     [@class="my&class control-label required"]
@@ -74,7 +79,8 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             ],
         ]);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/label
     [@for="name"]
     [@class="my&class control-label required"]
@@ -94,7 +100,8 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             ],
         ]);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/label
     [@for="name"]
     [@class="my&class control-label required"]
@@ -144,7 +151,8 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
         $view = $form->createView();
         $html = $this->renderHelp($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/span
     [@id="name_help"]
     [@class="help-block"]
@@ -164,7 +172,8 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
         $view = $form->createView();
         $html = $this->renderHelp($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/span
     [@id="name_help"]
     [@class="class-test help-block"]
@@ -182,7 +191,8 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
         $view = $form->createView();
         $html = $this->renderHelp($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/span
     [@id="name_help"]
     [@class="help-block"]
@@ -190,13 +200,15 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
 '
         );
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/span
     [@id="name_help"]
     [@class="help-block"]
     /b
     [.="text"]
-', 0
+',
+            0
         );
     }
 
@@ -210,7 +222,8 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
         $view = $form->createView();
         $html = $this->renderHelp($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/span
     [@id="name_help"]
     [@class="help-block"]
@@ -218,13 +231,15 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
 '
         );
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/span
     [@id="name_help"]
     [@class="help-block"]
     /b
     [.="text"]
-', 0
+',
+            0
         );
     }
 
@@ -238,15 +253,18 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
         $view = $form->createView();
         $html = $this->renderHelp($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/span
     [@id="name_help"]
     [@class="help-block"]
     [.="[trans]Help <b>text</b> test![/trans]"]
-', 0
+',
+            0
         );
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/span
     [@id="name_help"]
     [@class="help-block"]
@@ -264,7 +282,8 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
         $view = $form->createView();
         $html = $this->renderErrors($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@class="alert alert-danger"]
     [
@@ -294,7 +313,8 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
         $form = $this->factory->createNamed('text_id', 'Symfony\Component\Form\Extension\Core\Type\TextType');
         $html = $this->renderWidget($form->createView());
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [
         ./input
@@ -311,7 +331,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', true);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
             '/div
     [@class="checkbox"]
     [
@@ -329,7 +351,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', false);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
             '/div
     [@class="checkbox"]
     [
@@ -349,7 +373,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'value' => 'foo&bar',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
             '/div
     [@class="checkbox"]
     [
@@ -368,7 +394,8 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType');
         $html = $this->renderRow($form->createView(), ['label' => 'foo', 'help' => 'really helpful text']);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@class="form-group"]
     [
@@ -386,7 +413,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -409,7 +438,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'attr' => ['class' => 'bar&baz'],
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'bar&baz']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'bar&baz']],
             '/select
     [@name="name"]
     [@class="bar&baz form-control"]
@@ -432,7 +463,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'attr' => ['class' => 'bar&baz'],
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'bar&baz']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'bar&baz']],
             '/div
     [@class="bar&baz"]
     [
@@ -469,7 +502,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'attr' => ['size' => 2],
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => '']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => '']],
             '/select
     [@name="name"]
     [@required="required"]
@@ -488,7 +523,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'choice_translation_domain' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -513,7 +550,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'placeholder' => 'Placeholder&Not&Translated',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -537,7 +576,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -560,7 +601,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['separator' => '-- sep --', 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['separator' => '-- sep --', 'attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -586,7 +629,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['separator' => '-- sep --', 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['separator' => '-- sep --', 'attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -610,7 +655,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['separator' => '-- sep --', 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['separator' => '-- sep --', 'attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -635,7 +682,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['separator' => null, 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['separator' => null, 'attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -659,7 +708,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['separator' => '', 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['separator' => '', 'attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -684,7 +735,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@class="my&class form-control"]
     [count(./option)=5]
@@ -701,7 +754,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -725,7 +780,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -750,7 +807,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'placeholder' => 'Select&Anything&Not&Me',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -775,7 +834,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'placeholder' => 'Test&Me',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -799,7 +860,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['placeholder' => '', 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['placeholder' => '', 'attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -825,7 +888,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -854,7 +919,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name[]"]
     [@class="my&class form-control"]
@@ -879,7 +946,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name[]"]
     [@class="my&class form-control"]
@@ -903,7 +972,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'placeholder' => 'Test&Me',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name[]"]
     [@class="my&class form-control"]
@@ -926,7 +997,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name[]"]
     [@class="my&class form-control"]
@@ -948,7 +1021,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -984,7 +1059,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -1024,7 +1101,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -1068,7 +1147,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -1102,7 +1183,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'choice_translation_domain' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -1138,7 +1221,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -1175,7 +1260,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'required' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -1222,7 +1309,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'placeholder' => 'Placeholder&Not&Translated',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -1266,7 +1355,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -1302,7 +1393,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'required' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -1347,7 +1440,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -1387,7 +1482,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -1431,7 +1528,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'expanded' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -1466,7 +1565,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'choice_translation_domain' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -1512,7 +1613,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'required' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), [],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            [],
             '/div
     [
         ./div
@@ -1552,7 +1655,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\CountryType', 'AT');
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -1569,7 +1674,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'required' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -1588,7 +1695,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'choice',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [
         ./select
@@ -1626,7 +1735,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'choice',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [@class="my&class form-inline"]
     [
@@ -1666,7 +1777,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'choice',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [@class="my&class form-inline"]
     [
@@ -1704,7 +1817,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'choice',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [@class="my&class form-inline"]
     [
@@ -1746,7 +1861,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'time_widget' => 'single_text',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [@class="my&class form-inline"]
     [
@@ -1776,7 +1893,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'view_timezone' => 'UTC',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="datetime-local"]
     [@name="name"]
@@ -1798,7 +1917,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'choice',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [@class="my&class form-inline"]
     [
@@ -1829,7 +1950,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'required' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [@class="my&class form-inline"]
     [
@@ -1860,7 +1983,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'placeholder' => ['year' => 'Change&Me'],
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [@class="my&class form-inline"]
     [
@@ -1889,7 +2014,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'text',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [@class="my&class form-inline"]
     [
@@ -1921,7 +2048,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'single_text',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="date"]
     [@name="name"]
@@ -1938,7 +2067,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'choice',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [@class="my&class form-inline"]
     [
@@ -1969,7 +2100,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'choice',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [@class="my&class form-inline"]
     [
@@ -1998,7 +2131,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\EmailType', 'foo&bar');
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="email"]
     [@name="name"]
@@ -2015,7 +2150,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'attr' => ['maxlength' => 123],
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="email"]
     [@name="name"]
@@ -2030,7 +2167,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', 'foo&bar');
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="hidden"]
     [@name="name"]
@@ -2046,7 +2185,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'disabled' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="text"]
     [@name="name"]
@@ -2060,7 +2201,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', 123);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="number"]
     [@name="name"]
@@ -2076,7 +2219,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'grouping' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="text"]
     [@name="name"]
@@ -2090,7 +2235,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\LanguageType', 'de');
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -2104,7 +2251,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\LocaleType', 'de_AT');
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -2120,7 +2269,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'currency' => 'EUR',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
             '/div
     [@class="input-group"]
     [
@@ -2144,7 +2295,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'currency' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
             '/input
     [@id="my&id"]
     [@type="text"]
@@ -2161,7 +2314,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\NumberType', 1234.56);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="text"]
     [@name="name"]
@@ -2177,7 +2332,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'html5' => true,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="number"]
     [@step="any"]
@@ -2195,7 +2352,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'attr' => ['step' => '0.1'],
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="number"]
     [@step="0.1"]
@@ -2210,7 +2369,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\PasswordType', 'foo&bar');
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="password"]
     [@name="name"]
@@ -2226,7 +2387,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
         ]);
         $form->submit('foo&bar');
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="password"]
     [@name="name"]
@@ -2242,7 +2405,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'attr' => ['maxlength' => 123],
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="password"]
     [@name="name"]
@@ -2256,7 +2421,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\PercentType', 0.1, ['rounding_mode' => \NumberFormatter::ROUND_CEILING]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
             '/div
     [@class="input-group"]
     [
@@ -2277,7 +2444,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     public function testPercentNoSymbol()
     {
         $form = $this->factory->createNamed('name', PercentType::class, 0.1, ['symbol' => false, 'rounding_mode' => \NumberFormatter::ROUND_CEILING]);
-        $this->assertWidgetMatchesXpath($form->createView(), ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
             '/input
     [@id="my&id"]
     [@type="text"]
@@ -2291,7 +2460,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     public function testPercentCustomSymbol()
     {
         $form = $this->factory->createNamed('name', PercentType::class, 0.1, ['symbol' => '‱', 'rounding_mode' => \NumberFormatter::ROUND_CEILING]);
-        $this->assertWidgetMatchesXpath($form->createView(), ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
             '/div
     [@class="input-group"]
     [
@@ -2313,7 +2484,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\RadioType', true);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
             '/div
     [@class="radio"]
     [
@@ -2337,7 +2510,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\RadioType', false);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
             '/div
     [@class="radio"]
     [
@@ -2362,7 +2537,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'value' => 'foo&bar',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['id' => 'my&id', 'attr' => ['class' => 'my&class']],
             '/div
     [@class="radio"]
     [
@@ -2386,7 +2563,8 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\RadioType', false);
         $html = $this->renderRow($form->createView(), ['label' => 'foo', 'help' => 'really helpful text']);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@class="form-group"]
     [
@@ -2400,7 +2578,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\RangeType', 42, ['attr' => ['min' => 5]]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="range"]
     [@name="name"]
@@ -2415,7 +2595,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\RangeType', 42, ['attr' => ['min' => 5, 'max' => 57]]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="range"]
     [@name="name"]
@@ -2433,7 +2615,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'attr' => ['pattern' => 'foo'],
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/textarea
     [@name="name"]
     [not(@pattern)]
@@ -2447,7 +2631,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\TextType', 'foo&bar');
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="text"]
     [@name="name"]
@@ -2464,7 +2650,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'attr' => ['maxlength' => 123],
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="text"]
     [@name="name"]
@@ -2479,7 +2667,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\SearchType', 'foo&bar');
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="search"]
     [@name="name"]
@@ -2498,7 +2688,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'choice',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [@class="my&class form-inline"]
     [
@@ -2526,7 +2718,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'choice',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [@class="my&class form-inline"]
     [
@@ -2561,7 +2755,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'text',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [@class="my&class form-inline"]
     [
@@ -2594,7 +2790,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'single_text',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="time"]
     [@name="name"]
@@ -2614,7 +2812,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'choice',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [@class="my&class form-inline"]
     [
@@ -2642,7 +2842,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'choice',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [@class="my&class form-inline"]
     [
@@ -2665,7 +2867,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\TimezoneType', 'Europe/Vienna');
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@name="name"]
     [@class="my&class form-control"]
@@ -2683,7 +2887,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'required' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/select
     [@class="my&class form-control"]
     [./option[@value=""][not(@selected)][not(@disabled)][.="[trans]Select&Timezone[/trans]"]]
@@ -2697,7 +2903,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
         $url = 'http://www.example.com?foo1=bar1&foo2=bar2';
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\UrlType', $url, ['default_protocol' => 'http']);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="text"]
     [@name="name"]
@@ -2713,7 +2921,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
         $url = 'http://www.example.com?foo1=bar1&foo2=bar2';
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\UrlType', $url, ['default_protocol' => null]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="url"]
     [@name="name"]
@@ -2727,7 +2937,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\ButtonType');
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/button[@type="button"][@name="name"][.="[trans]Name[/trans]"][@class="my&class btn"]'
         );
     }
@@ -2738,7 +2950,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'translation_domain' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/button[@type="button"][@name="name"][.="Name"][@class="my&class btn"]'
         );
     }
@@ -2772,7 +2986,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\SubmitType');
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/button[@type="submit"][@name="name"][@class="my&class btn"]'
         );
     }
@@ -2781,7 +2997,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
     {
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\ResetType');
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/button[@type="reset"][@name="name"][@class="my&class btn"]'
         );
     }
@@ -2842,7 +3060,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
         $tel = '0102030405';
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\TelType', $tel);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="tel"]
     [@name="name"]
@@ -2857,7 +3077,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
         $color = '#0000ff';
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\ColorType', $color);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="color"]
     [@name="name"]
@@ -2874,7 +3096,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'single_text',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="week"]
     [@name="holidays"]
@@ -2893,7 +3117,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'html5' => false,
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/input
     [@type="text"]
     [@name="holidays"]
@@ -2913,7 +3139,9 @@ abstract class AbstractBootstrap3LayoutTestCase extends AbstractLayoutTestCase
             'widget' => 'choice',
         ]);
 
-        $this->assertWidgetMatchesXpath($form->createView(), ['attr' => ['class' => 'my&class']],
+        $this->assertWidgetMatchesXpath(
+            $form->createView(),
+            ['attr' => ['class' => 'my&class']],
             '/div
     [@class="my&class"]
     [

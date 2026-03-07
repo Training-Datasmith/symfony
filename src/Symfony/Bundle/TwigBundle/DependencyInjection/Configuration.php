@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -53,8 +55,8 @@ class Configuration implements ConfigurationInterface
                     ->prototype('scalar')->defaultValue('form_div_layout.html.twig')->end()
                     ->example(['@My/form.html.twig'])
                     ->validate()
-                        ->ifTrue(static fn ($v) => !\in_array('form_div_layout.html.twig', $v, true))
-                        ->then(static fn ($v) => array_merge(['form_div_layout.html.twig'], $v))
+                        ->ifTrue(static fn ($v): bool => !\in_array('form_div_layout.html.twig', $v, true))
+                        ->then(static fn ($v): array => array_merge(['form_div_layout.html.twig'], $v))
                     ->end()
                 ->end()
             ->end()
@@ -72,8 +74,8 @@ class Configuration implements ConfigurationInterface
                     ->prototype('array')
                         ->normalizeKeys(false)
                         ->beforeNormalization()
-                            ->ifTrue(static fn ($v) => \is_string($v) && str_starts_with($v, '@'))
-                            ->then(static function ($v) {
+                            ->ifTrue(static fn ($v): bool => \is_string($v) && str_starts_with($v, '@'))
+                            ->then(static function ($v): string|array {
                                 if (str_starts_with($v, '@@')) {
                                     return substr($v, 1);
                                 }
@@ -82,7 +84,7 @@ class Configuration implements ConfigurationInterface
                             })
                         ->end()
                         ->beforeNormalization()
-                            ->ifTrue(static function ($v) {
+                            ->ifTrue(static function ($v): bool {
                                 if (\is_array($v)) {
                                     $keys = array_keys($v);
                                     sort($keys);
@@ -92,7 +94,7 @@ class Configuration implements ConfigurationInterface
 
                                 return true;
                             })
-                            ->then(static fn ($v) => ['value' => $v])
+                            ->then(static fn ($v): array => ['value' => $v])
                         ->end()
                         ->children()
                             ->scalarNode('id')->end()
@@ -137,7 +139,7 @@ class Configuration implements ConfigurationInterface
                     ->useAttributeAsKey('paths')
                     ->beforeNormalization()
                         ->ifArray()
-                        ->then(static function ($paths) {
+                        ->then(static function ($paths): array {
                             $normalized = [];
                             foreach ($paths as $path => $namespace) {
                                 if (\is_array($namespace)) {

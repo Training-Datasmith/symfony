@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -60,12 +62,13 @@ final class PlivoTransportTest extends TransportTestCase
     public function testNoInvalidArgumentExceptionIsThrownIfFromIsValid(string $from)
     {
         $message = new SmsMessage('+33612345678', 'Hello!');
-        $client = new MockHttpClient(static function (string $method, string $url): ResponseInterface {
-            self::assertSame('POST', $method);
-            self::assertSame('https://api.plivo.com/v1/Account/authId/Message/', $url);
+        $client = new MockHttpClient(
+            static function (string $method, string $url): ResponseInterface {
+                self::assertSame('POST', $method);
+                self::assertSame('https://api.plivo.com/v1/Account/authId/Message/', $url);
 
-            return new MockResponse(json_encode(['message' => 'message(s) queued', 'message_uuid' => ['foo'], 'api_id' => 'bar']), ['http_code' => 202]);
-        }
+                return new MockResponse(json_encode(['message' => 'message(s) queued', 'message_uuid' => ['foo'], 'api_id' => 'bar']), ['http_code' => 202]);
+            }
         );
         $transport = $this->createTransport($client, $from);
         $sentMessage = $transport->send($message);

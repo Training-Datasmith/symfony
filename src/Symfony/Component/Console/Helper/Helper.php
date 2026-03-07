@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -94,7 +96,6 @@ abstract class Helper implements HelperInterface
     public static function formatTime(int|float $secs, int $precision = 1): string
     {
         $ms = (int) ($secs * 1000);
-        $secs = (int) floor($secs);
 
         if (0 === $ms) {
             return '< 1 ms';

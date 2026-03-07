@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ class TraceableControllerResolverTest extends TestCase
         $stopwatch = $this->createStub(Stopwatch::class);
         $stopwatch->method('start')->willReturn($stopwatchEvent);
 
-        $resolver = new class implements ControllerResolverInterface {
+        $resolver = new class () implements ControllerResolverInterface {
             public function getController(Request $request): callable|false
             {
                 throw new \Exception();

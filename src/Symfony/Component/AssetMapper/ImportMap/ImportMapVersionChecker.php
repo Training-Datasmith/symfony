@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,8 +26,8 @@ class ImportMapVersionChecker
     private readonly HttpClientInterface $httpClient;
 
     public function __construct(
-        private ImportMapConfigReader $importMapConfigReader,
-        private RemotePackageDownloader $packageDownloader,
+        private readonly ImportMapConfigReader $importMapConfigReader,
+        private readonly RemotePackageDownloader $packageDownloader,
         ?HttpClientInterface $httpClient = null,
     ) {
         $this->httpClient = new BatchHttpClient($httpClient ?? HttpClient::create());
@@ -130,7 +132,7 @@ class ImportMapVersionChecker
 
         // remove whitespace around hyphens
         $versionConstraint = preg_replace('/\s?-\s?/', '-', $versionConstraint);
-        $segments = explode(' ', $versionConstraint);
+        $segments = explode(' ', (string) $versionConstraint);
         $processedSegments = [];
 
         foreach ($segments as $segment) {
@@ -171,7 +173,7 @@ class ImportMapVersionChecker
             }
 
             return Semver::satisfies($version, $versionConstraint);
-        } catch (\UnexpectedValueException $e) {
+        } catch (\UnexpectedValueException) {
             return false;
         }
     }

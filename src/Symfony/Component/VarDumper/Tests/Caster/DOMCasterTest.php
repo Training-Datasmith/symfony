@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,8 @@ class DOMCasterTest extends TestCase
     {
         $implementation = new \DOMImplementation();
 
-        $this->assertDumpEquals(<<<'EODUMP'
+        $this->assertDumpEquals(
+            <<<'EODUMP'
             DOMImplementation {
               Core: "1.0"
               XML: "2.0"
@@ -36,7 +39,8 @@ class DOMCasterTest extends TestCase
     {
         $implementation = new \Dom\Implementation();
 
-        $this->assertDumpEquals(<<<'EODUMP'
+        $this->assertDumpEquals(
+            <<<'EODUMP'
             Dom\Implementation {
               Core: "1.0"
               XML: "2.0"
@@ -52,7 +56,8 @@ class DOMCasterTest extends TestCase
         $doc->loadXML('<foo><bar/></foo>');
         $node = $doc->documentElement->firstChild;
 
-        $this->assertDumpMatchesFormat(<<<'EODUMP'
+        $this->assertDumpMatchesFormat(
+            <<<'EODUMP'
             DOMElement {%A
               +parentNode: DOMElement {%a…}
             %A}
@@ -66,7 +71,8 @@ class DOMCasterTest extends TestCase
         $doc = \Dom\XMLDocument::createFromString('<foo><bar/></foo>');
         $node = $doc->documentElement->firstChild;
 
-        $this->assertDumpMatchesFormat(<<<'EODUMP'
+        $this->assertDumpMatchesFormat(
+            <<<'EODUMP'
             Dom\Element {%A
               +parentElement: Dom\Element {#1 …}
             %A}
@@ -80,7 +86,8 @@ class DOMCasterTest extends TestCase
         $doc = new \DOMDocument();
         $doc->loadXML('<foo><bar/></foo>');
 
-        $this->assertDumpMatchesFormat(<<<'EODUMP'
+        $this->assertDumpMatchesFormat(
+            <<<'EODUMP'
             DOMDocument {%A
               xml: """
                 <?xml version="1.0"?>\n
@@ -98,7 +105,8 @@ class DOMCasterTest extends TestCase
     {
         $doc = \Dom\XMLDocument::createFromString('<foo><bar/></foo>');
 
-        $this->assertDumpMatchesFormat(<<<'EODUMP'
+        $this->assertDumpMatchesFormat(
+            <<<'EODUMP'
             Dom\XMLDocument {%A
               xml: """
                 <?xml version="1.0" encoding="UTF-8"?>\n
@@ -116,7 +124,8 @@ class DOMCasterTest extends TestCase
     {
         $doc = \Dom\HTMLDocument::createFromString('<!DOCTYPE html><html><body><p>foo</p></body></html>');
 
-        $this->assertDumpMatchesFormat(<<<'EODUMP'
+        $this->assertDumpMatchesFormat(
+            <<<'EODUMP'
             Dom\HTMLDocument {%A
               html: "<!DOCTYPE html><html><head></head><body><p>foo</p></body></html>"
             }
@@ -129,7 +138,8 @@ class DOMCasterTest extends TestCase
     {
         $doc = new \DOMText('foo');
 
-        $this->assertDumpMatchesFormat(<<<'EODUMP'
+        $this->assertDumpMatchesFormat(
+            <<<'EODUMP'
             DOMText {%A
               +nodeName: "#text"
             %A}
@@ -141,7 +151,8 @@ class DOMCasterTest extends TestCase
     public function testCastModernText()
     {
         $text = \Dom\HTMLDocument::createEmpty()->createTextNode('foo');
-        $this->assertDumpMatchesFormat(<<<'EODUMP'
+        $this->assertDumpMatchesFormat(
+            <<<'EODUMP'
             Dom\Text {%A
               +nodeName: "#text"
             %A}
@@ -154,7 +165,8 @@ class DOMCasterTest extends TestCase
     {
         $attr = new \DOMAttr('attr', 'value');
 
-        $this->assertDumpMatchesFormat(<<<'EODUMP'
+        $this->assertDumpMatchesFormat(
+            <<<'EODUMP'
             DOMAttr {%A
               +nodeName: "attr"
             %A}
@@ -167,7 +179,8 @@ class DOMCasterTest extends TestCase
     {
         $attr = \Dom\HTMLDocument::createEmpty()->createAttribute('attr');
 
-        $this->assertDumpMatchesFormat(<<<'EODUMP'
+        $this->assertDumpMatchesFormat(
+            <<<'EODUMP'
             Dom\Attr {%A
               +nodeName: "attr"
             %A}
@@ -180,7 +193,8 @@ class DOMCasterTest extends TestCase
     {
         $attr = new \DOMElement('foo');
 
-        $this->assertDumpMatchesFormat(<<<'EODUMP'
+        $this->assertDumpMatchesFormat(
+            <<<'EODUMP'
             DOMElement {%A
               +tagName: "foo"
             %A}
@@ -193,7 +207,8 @@ class DOMCasterTest extends TestCase
     {
         $attr = \Dom\HTMLDocument::createEmpty()->createElement('foo');
 
-        $this->assertDumpMatchesFormat(<<<'EODUMP'
+        $this->assertDumpMatchesFormat(
+            <<<'EODUMP'
             Dom\HTMLElement {%A
               +tagName: "FOO"
             %A}
@@ -207,7 +222,8 @@ class DOMCasterTest extends TestCase
         $implementation = new \DOMImplementation();
         $type = $implementation->createDocumentType('html', 'publicId', 'systemId');
 
-        $this->assertDumpMatchesFormat(<<<'EODUMP'
+        $this->assertDumpMatchesFormat(
+            <<<'EODUMP'
             DOMDocumentType {
               +nodeName: "html"
               +nodeValue: null
@@ -223,7 +239,8 @@ class DOMCasterTest extends TestCase
         $implementation = new \Dom\Implementation();
         $type = $implementation->createDocumentType('html', 'publicId', 'systemId');
 
-        $this->assertDumpMatchesFormat(<<<'EODUMP'
+        $this->assertDumpMatchesFormat(
+            <<<'EODUMP'
             Dom\DocumentType {
               +nodeType: XML_DOCUMENT_TYPE_NODE
             %A}
@@ -236,7 +253,8 @@ class DOMCasterTest extends TestCase
     {
         $entity = new \DOMProcessingInstruction('target', 'data');
 
-        $this->assertDumpMatchesFormat(<<<'EODUMP'
+        $this->assertDumpMatchesFormat(
+            <<<'EODUMP'
             DOMProcessingInstruction {%A
               +data: "data"
             }
@@ -249,7 +267,8 @@ class DOMCasterTest extends TestCase
     {
         $entity = \Dom\HTMLDocument::createEmpty()->createProcessingInstruction('target', 'data');
 
-        $this->assertDumpMatchesFormat(<<<'EODUMP'
+        $this->assertDumpMatchesFormat(
+            <<<'EODUMP'
             Dom\ProcessingInstruction {%A
               +target: "target"
             }
@@ -262,7 +281,8 @@ class DOMCasterTest extends TestCase
     {
         $xpath = new \DOMXPath(new \DOMDocument());
 
-        $this->assertDumpEquals(<<<'EODUMP'
+        $this->assertDumpEquals(
+            <<<'EODUMP'
             DOMXPath {
               +document: DOMDocument { …}
               +registerNodeNamespaces: true

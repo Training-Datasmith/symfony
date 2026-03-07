@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ class RepeatedTypeValidatorExtension extends AbstractTypeExtension
     public function configureOptions(OptionsResolver $resolver): void
     {
         // Map errors to the first field
-        $errorMapping = static fn (Options $options) => ['.' => $options['first_name']];
+        $errorMapping = static fn (Options $options): array => ['.' => $options['first_name']];
 
         $resolver->setDefaults([
             'error_mapping' => $errorMapping,

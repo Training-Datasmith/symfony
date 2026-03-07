@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,8 +37,8 @@ class Profiler implements ResetInterface
     private bool $initiallyEnabled = true;
 
     public function __construct(
-        private ProfilerStorageInterface $storage,
-        private ?LoggerInterface $logger = null,
+        private readonly ProfilerStorageInterface $storage,
+        private readonly ?LoggerInterface $logger = null,
         private bool $enabled = true,
     ) {
         $this->initiallyEnabled = $enabled;

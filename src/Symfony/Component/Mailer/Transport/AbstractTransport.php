@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,12 +32,12 @@ use Symfony\Component\Mime\RawMessage;
  */
 abstract class AbstractTransport implements TransportInterface
 {
-    private LoggerInterface $logger;
+    private readonly LoggerInterface $logger;
     private float $rate = 0;
     private float $lastSent = 0;
 
     public function __construct(
-        private ?EventDispatcherInterface $dispatcher = null,
+        private readonly ?EventDispatcherInterface $dispatcher = null,
         ?LoggerInterface $logger = null,
     ) {
         $this->logger = $logger ?? new NullLogger();
@@ -112,7 +114,7 @@ abstract class AbstractTransport implements TransportInterface
      */
     protected function stringifyAddresses(array $addresses): array
     {
-        return array_map(static fn (Address $a) => $a->toString(), $addresses);
+        return array_map(static fn (Address $a): string => $a->toString(), $addresses);
     }
 
     protected function getLogger(): LoggerInterface
@@ -128,7 +130,7 @@ abstract class AbstractTransport implements TransportInterface
 
         $sleep = (1 / $this->rate) - (microtime(true) - $this->lastSent);
         if (0 < $sleep) {
-            $this->logger->debug(\sprintf('Email transport "%s" sleeps for %.2f seconds', __CLASS__, $sleep));
+            $this->logger->debug(\sprintf('Email transport "%s" sleeps for %.2f seconds', self::class, $sleep));
             usleep((int) ($sleep * 1000000));
         }
         $this->lastSent = microtime(true);

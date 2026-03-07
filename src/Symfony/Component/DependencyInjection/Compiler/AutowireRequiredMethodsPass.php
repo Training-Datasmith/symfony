@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,13 +40,15 @@ class AutowireRequiredMethodsPass extends AbstractRecursivePass
         $withers = [];
 
         foreach ($value->getMethodCalls() as [$method]) {
-            $alreadyCalledMethods[strtolower($method)] = true;
+            $alreadyCalledMethods[strtolower((string) $method)] = true;
         }
 
         foreach ($reflectionClass->getMethods() as $reflectionMethod) {
             $r = $reflectionMethod;
-
-            if ($r->isConstructor() || isset($alreadyCalledMethods[strtolower($r->name)])) {
+            if ($r->isConstructor()) {
+                continue;
+            }
+            if (isset($alreadyCalledMethods[strtolower($r->name)])) {
                 continue;
             }
 

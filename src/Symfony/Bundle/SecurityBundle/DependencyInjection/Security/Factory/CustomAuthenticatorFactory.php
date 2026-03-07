@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -42,8 +44,8 @@ class CustomAuthenticatorFactory implements AuthenticatorFactoryInterface
         $factoryRootNode
             ->fixXmlConfig('custom_authenticator')
             ->validate()
-                ->ifTrue(static fn ($v) => isset($v['custom_authenticators']) && !$v['custom_authenticators'])
-                ->then(static function ($v) {
+                ->ifTrue(static fn ($v): bool => isset($v['custom_authenticators']) && !$v['custom_authenticators'])
+                ->then(static function (array $v): array {
                     unset($v['custom_authenticators']);
 
                     return $v;

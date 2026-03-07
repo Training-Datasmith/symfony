@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -129,7 +131,7 @@ abstract class Output implements OutputInterface
                 case OutputInterface::OUTPUT_RAW:
                     break;
                 case OutputInterface::OUTPUT_PLAIN:
-                    $message = strip_tags($this->formatter->format($message));
+                    $message = strip_tags((string) $this->formatter->format($message));
                     break;
             }
 

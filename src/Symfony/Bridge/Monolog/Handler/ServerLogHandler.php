@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ use Symfony\Bridge\Monolog\Formatter\VarDumperFormatter;
  */
 final class ServerLogHandler extends AbstractProcessingHandler
 {
-    private string $host;
+    private readonly string $host;
 
     /**
      * @var resource
@@ -54,7 +56,7 @@ final class ServerLogHandler extends AbstractProcessingHandler
             return false;
         }
 
-        set_error_handler(static fn () => null);
+        set_error_handler(static fn (): null => null);
 
         try {
             if (!$this->socket = $this->socket ?: $this->createSocket()) {
@@ -71,7 +73,7 @@ final class ServerLogHandler extends AbstractProcessingHandler
     {
         $recordFormatted = $this->formatRecord($record);
 
-        set_error_handler(static fn () => null);
+        set_error_handler(static fn (): null => null);
 
         try {
             if (-1 === stream_socket_sendto($this->socket, $recordFormatted)) {

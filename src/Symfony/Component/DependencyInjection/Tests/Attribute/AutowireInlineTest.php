@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -179,7 +181,7 @@ class AutowireInlineTest extends TestCase
 
     private function createReflectionParameter()
     {
-        $class = new class('someValue') {
+        $class = new class ('someValue') {
             public function __construct($someParameter)
             {
             }

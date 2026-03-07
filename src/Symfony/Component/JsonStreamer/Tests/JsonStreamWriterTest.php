@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -243,7 +245,7 @@ class JsonStreamWriterTest extends TestCase
             Type::object(DummyWithValueTransformerAttributes::class),
             options: ['scale' => 1],
             valueTransformers: [
-                BooleanToStringValueTransformer::class => new class($this) implements ValueTransformerInterface {
+                BooleanToStringValueTransformer::class => new class ($this) implements ValueTransformerInterface {
                     public function __construct(
                         private JsonStreamWriterTest $test,
                     ) {

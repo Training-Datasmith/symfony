@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -90,10 +92,10 @@ abstract class AbstractUnicodeString extends AbstractString
         $rules[] = 'nfkd';
         $rules[] = '[:nonspacing mark:] remove';
 
-        while (\strlen($s) - 1 > $i = strspn($s, self::ASCII)) {
+        while (\strlen((string) $s) - 1 > $i = strspn((string) $s, self::ASCII)) {
             if (0 < --$i) {
-                $str->string .= substr($s, 0, $i);
-                $s = substr($s, $i);
+                $str->string .= substr((string) $s, 0, $i);
+                $s = substr((string) $s, $i);
             }
 
             if (!$rule = array_shift($rules)) {
@@ -106,15 +108,15 @@ abstract class AbstractUnicodeString extends AbstractString
                 $s = $rule($s);
             } elseif ($rule) {
                 if ('nfd' === $rule = strtolower($rule)) {
-                    normalizer_is_normalized($s, self::NFD) ?: $s = normalizer_normalize($s, self::NFD);
+                    normalizer_is_normalized((string) $s, self::NFD) ?: $s = normalizer_normalize((string) $s, self::NFD);
                 } elseif ('nfkd' === $rule) {
-                    normalizer_is_normalized($s, self::NFKD) ?: $s = normalizer_normalize($s, self::NFKD);
+                    normalizer_is_normalized((string) $s, self::NFKD) ?: $s = normalizer_normalize((string) $s, self::NFKD);
                 } elseif ('[:nonspacing mark:] remove' === $rule) {
-                    $s = preg_replace('/\p{Mn}++/u', '', $s);
+                    $s = preg_replace('/\p{Mn}++/u', '', (string) $s);
                 } elseif ('latin-ascii' === $rule) {
                     $s = str_replace(self::TRANSLIT_FROM, self::TRANSLIT_TO, $s);
                 } elseif ('de-ascii' === $rule) {
-                    $s = preg_replace("/([AUO])\u{0308}(?=\p{Ll})/u", '$1e', $s);
+                    $s = preg_replace("/([AUO])\u{0308}(?=\p{Ll})/u", '$1e', (string) $s);
                     $s = str_replace(["a\u{0308}", "o\u{0308}", "u\u{0308}", "A\u{0308}", "O\u{0308}", "U\u{0308}"], ['ae', 'oe', 'ue', 'AE', 'OE', 'UE'], $s);
                 } elseif (\function_exists('transliterator_transliterate')) {
                     if (null === $transliterator = self::$transliterators[$rule] ??= \Transliterator::create($rule)) {
@@ -133,20 +135,20 @@ abstract class AbstractUnicodeString extends AbstractString
                     $s = $transliterator->transliterate($s);
                 }
             } elseif (!\function_exists('iconv')) {
-                $s = preg_replace('/[^\x00-\x7F]/u', '?', $s);
+                $s = preg_replace('/[^\x00-\x7F]/u', '?', (string) $s);
             } else {
                 $previousLocale = setlocale(\LC_CTYPE, 0);
                 try {
                     setlocale(\LC_CTYPE, 'C');
-                    $s = @preg_replace_callback('/[^\x00-\x7F]/u', static function ($c) {
-                        $c = (string) iconv('UTF-8', 'ASCII//TRANSLIT', $c[0]);
+                    $s = @preg_replace_callback('/[^\x00-\x7F]/u', static function ($c): string {
+                        $c = (string) iconv('UTF-8', 'ASCII//TRANSLIT', (string) $c[0]);
 
                         if ('' === $c && '' === iconv('UTF-8', 'ASCII//TRANSLIT', '²')) {
                             throw new \LogicException(\sprintf('"%s" requires a translit-able iconv implementation, try installing "gnu-libiconv" if you\'re using Alpine Linux.', static::class));
                         }
 
                         return 1 < \strlen($c) ? ltrim($c, '\'`"^~') : ('' !== $c ? $c : '?');
-                    }, $s);
+                    }, (string) $s);
                 } finally {
                     setlocale(\LC_CTYPE, $previousLocale);
                 }
@@ -161,11 +163,11 @@ abstract class AbstractUnicodeString extends AbstractString
     public function camel(): static
     {
         $str = clone $this;
-        $str->string = str_replace(' ', '', preg_replace_callback('/\b.(?!\p{Lu})/u', static function ($m) {
+        $str->string = str_replace(' ', '', preg_replace_callback('/\b.(?!\p{Lu})/u', static function ($m): string {
             static $i = 0;
 
-            return 1 === ++$i ? ('İ' === $m[0] ? 'i̇' : mb_strtolower($m[0], 'UTF-8')) : mb_convert_case($m[0], \MB_CASE_TITLE, 'UTF-8');
-        }, preg_replace('/[^\pL0-9]++/u', ' ', $this->string)));
+            return 1 === ++$i ? ('İ' === $m[0] ? 'i̇' : mb_strtolower((string) $m[0], 'UTF-8')) : mb_convert_case((string) $m[0], \MB_CASE_TITLE, 'UTF-8');
+        }, (string) preg_replace('/[^\pL0-9]++/u', ' ', $this->string)));
 
         return $str;
     }
@@ -368,7 +370,7 @@ abstract class AbstractUnicodeString extends AbstractString
     public function snake(): static
     {
         $str = $this->camel();
-        $str->string = mb_strtolower(preg_replace(['/(\p{Lu}+)(\p{Lu}\p{Ll})/u', '/([\p{Ll}0-9])(\p{Lu})/u'], '\1_\2', $str->string), 'UTF-8');
+        $str->string = mb_strtolower((string) preg_replace(['/(\p{Lu}+)(\p{Lu}\p{Ll})/u', '/([\p{Ll}0-9])(\p{Lu})/u'], '\1_\2', $str->string), 'UTF-8');
 
         return $str;
     }
@@ -439,7 +441,7 @@ abstract class AbstractUnicodeString extends AbstractString
             $prefix = $prefix->string;
         }
 
-        $prefix = implode('|', array_map('preg_quote', (array) $prefix));
+        $prefix = implode('|', array_map(preg_quote(...), (array) $prefix));
         $str->string = preg_replace("{^(?:$prefix)}iuD", '', $this->string);
 
         return $str;
@@ -472,7 +474,7 @@ abstract class AbstractUnicodeString extends AbstractString
             $suffix = $suffix->string;
         }
 
-        $suffix = implode('|', array_map('preg_quote', (array) $suffix));
+        $suffix = implode('|', array_map(preg_quote(...), (array) $suffix));
         $str->string = preg_replace("{(?:$suffix)$}iuD", '', $this->string);
 
         return $str;
@@ -514,7 +516,7 @@ abstract class AbstractUnicodeString extends AbstractString
             $s = preg_replace('/[\p{Cc}\x7F]++/u', '', $s);
         }
 
-        foreach (explode("\n", $s) as $s) {
+        foreach (explode("\n", (string) $s) as $s) {
             if ($ignoreAnsiDecoration) {
                 $s = preg_replace('/(?:\x1B(?:
                     \[ [\x30-\x3F]*+ [\x20-\x2F]*+ [\x40-\x7E]
@@ -580,15 +582,25 @@ abstract class AbstractUnicodeString extends AbstractString
 
         foreach (preg_split('//u', $string, -1, \PREG_SPLIT_NO_EMPTY) as $c) {
             $codePoint = mb_ord($c, 'UTF-8');
-
-            if (0 === $codePoint // NULL
-                || 0x034F === $codePoint // COMBINING GRAPHEME JOINER
-                || (0x200B <= $codePoint && 0x200F >= $codePoint) // ZERO WIDTH SPACE to RIGHT-TO-LEFT MARK
-                || 0x2028 === $codePoint // LINE SEPARATOR
-                || 0x2029 === $codePoint // PARAGRAPH SEPARATOR
-                || (0x202A <= $codePoint && 0x202E >= $codePoint) // LEFT-TO-RIGHT EMBEDDING to RIGHT-TO-LEFT OVERRIDE
-                || (0x2060 <= $codePoint && 0x2063 >= $codePoint) // WORD JOINER to INVISIBLE SEPARATOR
-            ) {
+            if (0 === $codePoint) {
+                continue;
+            }
+            if (0x034F === $codePoint) {
+                continue;
+            }
+            if (0x200B <= $codePoint && 0x200F >= $codePoint) {
+                continue;
+            }
+            if (0x2028 === $codePoint) {
+                continue;
+            }
+            if (0x2029 === $codePoint) {
+                continue;
+            }
+            if (0x202A <= $codePoint && 0x202E >= $codePoint) {
+                continue;
+            }
+            if (0x2060 <= $codePoint && 0x2063 >= $codePoint) {
                 continue;
             }
 
@@ -600,7 +612,7 @@ abstract class AbstractUnicodeString extends AbstractString
             }
 
             if (0xFE0F === $codePoint) {
-                if (\PCRE_VERSION_MAJOR < 10 || \PCRE_VERSION_MAJOR === 10 && \PCRE_VERSION_MINOR < 40) {
+                if (\PCRE_VERSION_MINOR < 40) {
                     $regex = '/\p{So}/u';
                 } else {
                     $regex = '/\p{Emoji}/u';

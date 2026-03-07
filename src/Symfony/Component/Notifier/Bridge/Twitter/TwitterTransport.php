@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,10 +39,10 @@ final class TwitterTransport extends AbstractTransport
     private static string $nonce;
 
     public function __construct(
-        #[\SensitiveParameter] private string $apiKey,
-        #[\SensitiveParameter] private string $apiSecret,
-        #[\SensitiveParameter] private string $accessToken,
-        #[\SensitiveParameter] private string $accessSecret,
+        #[\SensitiveParameter] private readonly string $apiKey,
+        #[\SensitiveParameter] private readonly string $apiSecret,
+        #[\SensitiveParameter] private readonly string $accessToken,
+        #[\SensitiveParameter] private readonly string $accessSecret,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -91,16 +93,16 @@ final class TwitterTransport extends AbstractTransport
 
         $oauth['oauth_signature'] = base64_encode(hash_hmac(
             'sha1',
-            implode('&', array_map('rawurlencode', [
+            implode('&', array_map(rawurlencode(...), [
                 $method,
                 $url,
-                implode('&', array_map(static fn ($k) => rawurlencode($k).'='.rawurlencode($sign[$k]), array_keys($sign))),
+                implode('&', array_map(static fn ($k): string => rawurlencode((string) $k).'='.rawurlencode((string) $sign[$k]), array_keys($sign))),
             ])),
             rawurlencode($this->apiSecret).'&'.rawurlencode($this->accessSecret),
             true
         ));
 
-        $options['headers'][] = 'Authorization: OAuth '.implode(', ', array_map(static fn ($k) => $k.'="'.rawurlencode($oauth[$k]).'"', array_keys($oauth)));
+        $options['headers'][] = 'Authorization: OAuth '.implode(', ', array_map(static fn (string $k): string => $k.'="'.rawurlencode((string) $oauth[$k]).'"', array_keys($oauth)));
 
         return $this->client->request($method, $url, $options);
     }
@@ -108,7 +110,7 @@ final class TwitterTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof ChatMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, ChatMessage::class, $message);
         }
 
         $options = $message->getOptions()?->toArray() ?? [];
@@ -125,10 +127,7 @@ final class TwitterTransport extends AbstractTransport
             $statusCode = $response->getStatusCode();
             $result = $response->toArray(false);
         } catch (ExceptionInterface $e) {
-            if (null !== $response) {
-                throw new TransportException($e->getMessage(), $response, 0, $e);
-            }
-            throw new RuntimeException($e->getMessage(), 0, $e);
+            throw new TransportException($e->getMessage(), $response, 0, $e);
         }
 
         if (400 <= $statusCode) {
@@ -210,7 +209,7 @@ final class TwitterTransport extends AbstractTransport
         }
 
         foreach (array_filter($subtitlesVideoIds) as $videoId => $subtitles) {
-            $name = pathinfo($subtitles->getFilename(), \PATHINFO_FILENAME);
+            $name = pathinfo((string) $subtitles->getFilename(), \PATHINFO_FILENAME);
             $subtitlesVideoIds[$videoId] = $this->request('POST', '/1.1/media/subtitles/create.json', [
                 'json' => [
                     'media_id' => $videoId,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ class StrictSessionHandler extends AbstractSessionHandler
     private bool $doDestroy;
 
     public function __construct(
-        private \SessionHandlerInterface $handler,
+        private readonly \SessionHandlerInterface $handler,
     ) {
         if ($handler instanceof \SessionUpdateTimestampHandlerInterface) {
             throw new \LogicException(\sprintf('"%s" is already an instance of "SessionUpdateTimestampHandlerInterface", you cannot wrap it with "%s".', get_debug_type($handler), self::class));

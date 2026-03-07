@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -62,7 +64,7 @@ trait LocalizedRouteTrait
             $routes->add($name.'.'.$locale, $route = $this->createRoute($path));
             $collection->add($namePrefix.$name.'.'.$locale, $route);
             $route->setDefault('_locale', $locale);
-            $route->setRequirement('_locale', preg_quote($locale));
+            $route->setRequirement('_locale', preg_quote((string) $locale));
             $route->setDefault('_canonical_route', $namePrefix.$name);
         }
 

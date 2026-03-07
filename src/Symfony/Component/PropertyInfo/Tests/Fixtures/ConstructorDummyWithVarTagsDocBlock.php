@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +12,6 @@
  */
 
 namespace Symfony\Component\PropertyInfo\Tests\Fixtures;
-
 
 class ConstructorDummyWithVarTagsDocBlock
 {
@@ -24,7 +25,6 @@ class ConstructorDummyWithVarTagsDocBlock
         public $mixed,
         /** @var ConstructorDummy[] */
         public array $objectsArray,
-    )
-    {
+    ) {
     }
 }

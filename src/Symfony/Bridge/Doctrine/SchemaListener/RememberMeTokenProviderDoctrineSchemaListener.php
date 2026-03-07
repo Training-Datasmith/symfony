@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -40,7 +42,7 @@ class RememberMeTokenProviderDoctrineSchemaListener extends AbstractSchemaListen
                 && ($tokenProvider = $rememberMeHandler->getTokenProvider()) instanceof DoctrineTokenProvider
             ) {
                 $isSameDatabaseChecker = $this->getIsSameDatabaseChecker($connection);
-                $this->filterSchemaChanges($schema, $connection, static function () use ($tokenProvider, $schema, $connection, $isSameDatabaseChecker) {
+                $this->filterSchemaChanges($schema, $connection, static function () use ($tokenProvider, $schema, $connection, $isSameDatabaseChecker): void {
                     /* @var DoctrineTokenProvider $tokenProvider */
                     $tokenProvider->configureSchema($schema, $connection, $isSameDatabaseChecker);
                 });

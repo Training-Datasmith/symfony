@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 /**
  * @internal
  */
-final class WcswidthDataGenerator
+final readonly class WcswidthDataGenerator
 {
     private HttpClientInterface $client;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,10 +35,10 @@ class HttpUtils
      * @throws \InvalidArgumentException
      */
     public function __construct(
-        private ?UrlGeneratorInterface $urlGenerator = null,
-        private UrlMatcherInterface|RequestMatcherInterface|null $urlMatcher = null,
-        private ?string $domainRegexp = null,
-        private ?string $secureDomainRegexp = null,
+        private readonly ?UrlGeneratorInterface $urlGenerator = null,
+        private readonly UrlMatcherInterface|RequestMatcherInterface|null $urlMatcher = null,
+        private readonly ?string $domainRegexp = null,
+        private readonly ?string $secureDomainRegexp = null,
     ) {
     }
 
@@ -87,7 +89,9 @@ class HttpUtils
 
         static $setSession;
 
-        $setSession ??= \Closure::bind(static function ($newRequest, $request) { $newRequest->session = $request->session; }, null, Request::class);
+        $setSession ??= \Closure::bind(static function ($newRequest, $request): void {
+            $newRequest->session = $request->session;
+        }, null, Request::class);
         $setSession($newRequest, $request);
 
         if ($request->attributes->has(SecurityRequestAttributes::AUTHENTICATION_ERROR)) {

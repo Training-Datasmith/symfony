@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -88,7 +90,8 @@ class ConfigDumpReferenceCommandTest extends AbstractWebTestCase
         ]);
 
         $this->assertSame(0, $ret, 'Returns 0 in case of success');
-        $this->assertSame(<<<'EOL'
+        $this->assertSame(
+            <<<'EOL'
             # Default configuration for extension with alias: "test" at path "array"
             array:
                 child1:               ~

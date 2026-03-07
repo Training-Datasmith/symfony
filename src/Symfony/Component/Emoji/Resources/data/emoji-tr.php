@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'öpücük: yetişkin yetişkin açık cilt tonu orta açık cilt tonu',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'öpücük: yetişkin yetişkin açık cilt tonu orta cilt tonu',

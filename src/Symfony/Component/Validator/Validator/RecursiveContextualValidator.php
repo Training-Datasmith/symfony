@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -47,7 +49,7 @@ use Symfony\Component\Validator\Util\PropertyPath;
 class RecursiveContextualValidator implements ContextualValidatorInterface
 {
     private string $defaultPropertyPath;
-    private array $defaultGroups;
+    private readonly array $defaultGroups;
 
     /**
      * Creates a validator for the given context.
@@ -55,12 +57,12 @@ class RecursiveContextualValidator implements ContextualValidatorInterface
      * @param ObjectInitializerInterface[] $objectInitializers The object initializers
      */
     public function __construct(
-        private ExecutionContextInterface $context,
-        private MetadataFactoryInterface $metadataFactory,
-        private ConstraintValidatorFactoryInterface $validatorFactory,
-        private array $objectInitializers = [],
-        private ?ContainerInterface $groupProviderLocator = null,
-        private bool $propertyMetadataExistenceCheck = false,
+        private readonly ExecutionContextInterface $context,
+        private readonly MetadataFactoryInterface $metadataFactory,
+        private readonly ConstraintValidatorFactoryInterface $validatorFactory,
+        private readonly array $objectInitializers = [],
+        private readonly ?ContainerInterface $groupProviderLocator = null,
+        private readonly bool $propertyMetadataExistenceCheck = false,
     ) {
         $this->defaultPropertyPath = $context->getPropertyPath();
         $this->defaultGroups = [$context->getGroup() ?: Constraint::DEFAULT_GROUP];
@@ -507,7 +509,7 @@ class RecursiveContextualValidator implements ContextualValidatorInterface
                 }
 
                 if ($propertyMetadata instanceof GetterMetadata) {
-                    $propertyValue = new LazyProperty(static fn () => $propertyMetadata->getPropertyValue($object));
+                    $propertyValue = new LazyProperty(static fn (): mixed => $propertyMetadata->getPropertyValue($object));
                 } else {
                     $propertyValue = $propertyMetadata->getPropertyValue($object);
                 }

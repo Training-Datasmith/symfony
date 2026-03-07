@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,10 +29,10 @@ final class IsendproTransport extends AbstractTransport
     protected const HOST = 'apirest.isendpro.com';
 
     public function __construct(
-        #[\SensitiveParameter] private string $keyid,
-        private ?string $from = null,
-        private bool $noStop = false,
-        private bool $sandbox = false,
+        #[\SensitiveParameter] private readonly string $keyid,
+        private readonly ?string $from = null,
+        private readonly bool $noStop = false,
+        private readonly bool $sandbox = false,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -54,7 +56,7 @@ final class IsendproTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $messageId = bin2hex(random_bytes(7));

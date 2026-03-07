@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -79,8 +81,8 @@ class Caster
                     if (!isset($classProperties[$k])) {
                         $prefixedKeys[$i] = self::PREFIX_DYNAMIC.$k;
                     }
-                } elseif ($debugClass !== $class && 1 === strpos($k, $class)) {
-                    $prefixedKeys[$i] = "\0".$debugClass.strrchr($k, "\0");
+                } elseif ($debugClass !== $class && 1 === strpos((string) $k, $class)) {
+                    $prefixedKeys[$i] = "\0".$debugClass.strrchr((string) $k, "\0");
                 }
                 ++$i;
             }

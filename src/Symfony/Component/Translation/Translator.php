@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -52,11 +54,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     private array $resources = [];
 
-    private MessageFormatterInterface $formatter;
+    private readonly MessageFormatterInterface $formatter;
 
-    private ?ConfigCacheFactoryInterface $configCacheFactory;
+    private ?ConfigCacheFactoryInterface $configCacheFactory = null;
 
-    private bool $hasIntlFormatter;
+    private readonly bool $hasIntlFormatter;
 
     private LocaleFallbackProvider $localeFallbackProvider;
 
@@ -76,8 +78,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     public function __construct(
         string $locale,
         ?MessageFormatterInterface $formatter = null,
-        private ?string $cacheDir = null,
-        private bool $debug = false,
+        private readonly ?string $cacheDir = null,
+        private readonly bool $debug = false,
         private array $cacheVary = [],
     ) {
         $this->setLocale($locale);
@@ -284,8 +286,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         }
 
         $this->assertValidLocale($locale);
-        $cache = $this->getConfigCacheFactory()->cache($this->getCatalogueCachePath($locale),
-            function (ConfigCacheInterface $cache) use ($locale) {
+        $cache = $this->getConfigCacheFactory()->cache(
+            $this->getCatalogueCachePath($locale),
+            function (ConfigCacheInterface $cache) use ($locale): void {
                 $this->dumpCatalogue($locale, $cache);
             }
         );
@@ -304,7 +307,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $this->initializeCatalogue($locale);
         $fallbackContent = $this->getFallbackContent($this->catalogues[$locale]);
 
-        $content = \sprintf(<<<EOF
+        $content = \sprintf(
+            <<<EOF
             <?php
 
             use Symfony\Component\Translation\MessageCatalogue;
@@ -331,10 +335,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $fallbackCatalogue = $catalogue->getFallbackCatalogue();
         while ($fallbackCatalogue) {
             $fallback = $fallbackCatalogue->getLocale();
-            $fallbackSuffix = ucfirst(preg_replace($replacementPattern, '_', $fallback));
-            $currentSuffix = ucfirst(preg_replace($replacementPattern, '_', $current));
+            $fallbackSuffix = ucfirst((string) preg_replace($replacementPattern, '_', $fallback));
+            $currentSuffix = ucfirst((string) preg_replace($replacementPattern, '_', $current));
 
-            $fallbackContent .= \sprintf(<<<'EOF'
+            $fallbackContent .= \sprintf(
+                <<<'EOF'
                 $catalogue%s = new MessageCatalogue('%s', %s);
                 $catalogue%s->addFallbackCatalogue($catalogue%s);
 

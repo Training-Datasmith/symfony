@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
  * @author Grégoire Pineau <lyrixx@lyrixx.info>
  * @author Kévin Dunglas <dunglas@gmail.com>
  */
-final class ConstraintViolationListNormalizer implements NormalizerInterface
+final readonly class ConstraintViolationListNormalizer implements NormalizerInterface
 {
     public const INSTANCE = 'instance';
     public const STATUS = 'status';
@@ -31,8 +33,8 @@ final class ConstraintViolationListNormalizer implements NormalizerInterface
     public const PAYLOAD_FIELDS = 'payload_fields';
 
     public function __construct(
-        private readonly array $defaultContext = [],
-        private readonly ?NameConverterInterface $nameConverter = null,
+        private array $defaultContext = [],
+        private ?NameConverterInterface $nameConverter = null,
     ) {
     }
 
@@ -63,7 +65,7 @@ final class ConstraintViolationListNormalizer implements NormalizerInterface
             $propertyPath = $violation->getPropertyPath();
 
             if (null !== $this->nameConverter) {
-                $propertyPath = $this->normalizePropertyPath($propertyPath, \is_object($violation->getRoot()) ? \get_class($violation->getRoot()) : null, $format, $context);
+                $propertyPath = $this->normalizePropertyPath($propertyPath, \is_object($violation->getRoot()) ? $violation->getRoot()::class : null, $format, $context);
             }
 
             $violationEntry = [

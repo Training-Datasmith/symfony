@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,8 @@ class HandlerFailedException extends RuntimeException implements WrappedExceptio
         $message = \sprintf('Handling "%s" failed: ', $envelope->getMessage()::class);
 
         parent::__construct(
-            $message.(1 === \count($exceptions)
+            $message.(
+                1 === \count($exceptions)
                 ? $firstFailure->getMessage()
                 : \sprintf('%d handlers failed. First failure is: %s', \count($exceptions), $firstFailure->getMessage())
             ),

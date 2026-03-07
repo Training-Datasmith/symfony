@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
  *
  * @internal
  */
-final class CachePoolClearerCacheWarmer implements CacheWarmerInterface
+final readonly class CachePoolClearerCacheWarmer implements CacheWarmerInterface
 {
     /**
      * @param string[] $pools

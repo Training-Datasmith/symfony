@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -42,7 +44,8 @@ class FFICasterTest extends TestCase
 
     public function testCastAnonymousStruct()
     {
-        $this->assertDumpEquals(<<<'PHP'
+        $this->assertDumpEquals(
+            <<<'PHP'
             FFI\CData<struct <anonymous>> size 4 align 4 {
               uint32_t x: 0
             }
@@ -53,7 +56,8 @@ class FFICasterTest extends TestCase
 
     public function testCastNamedStruct()
     {
-        $this->assertDumpEquals(<<<'PHP'
+        $this->assertDumpEquals(
+            <<<'PHP'
             FFI\CData<struct Example> size 4 align 4 {
               uint32_t x: 0
             }
@@ -64,7 +68,8 @@ class FFICasterTest extends TestCase
 
     public function testCastAnonymousUnion()
     {
-        $this->assertDumpEquals(<<<'PHP'
+        $this->assertDumpEquals(
+            <<<'PHP'
             FFI\CData<union <anonymous>> size 4 align 4 {
               uint32_t x: 0
               uint32_t y: 0
@@ -76,7 +81,8 @@ class FFICasterTest extends TestCase
 
     public function testCastNamedUnion()
     {
-        $this->assertDumpEquals(<<<'PHP'
+        $this->assertDumpEquals(
+            <<<'PHP'
             FFI\CData<union Example> size 4 align 4 {
               uint32_t x: 0
               uint32_t y: 0
@@ -88,7 +94,8 @@ class FFICasterTest extends TestCase
 
     public function testCastAnonymousEnum()
     {
-        $this->assertDumpEquals(<<<'PHP'
+        $this->assertDumpEquals(
+            <<<'PHP'
             FFI\CData<enum <anonymous>> size 4 align 4 {
               cdata: 0
             }
@@ -99,7 +106,8 @@ class FFICasterTest extends TestCase
 
     public function testCastNamedEnum()
     {
-        $this->assertDumpEquals(<<<'PHP'
+        $this->assertDumpEquals(
+            <<<'PHP'
             FFI\CData<enum Example> size 4 align 4 {
               cdata: 0
             }
@@ -130,7 +138,8 @@ class FFICasterTest extends TestCase
     #[DataProvider('scalarsDataProvider')]
     public function testCastScalar(string $type, string $value, int $size, int $align)
     {
-        $this->assertDumpEquals(<<<PHP
+        $this->assertDumpEquals(
+            <<<PHP
             FFI\CData<$type> size $size align $align {
               cdata: $value
             }
@@ -143,7 +152,8 @@ class FFICasterTest extends TestCase
     {
         $abi = \PHP_OS_FAMILY === 'Windows' ? '[cdecl]' : '[fastcall]';
 
-        $this->assertDumpEquals(<<<PHP
+        $this->assertDumpEquals(
+            <<<PHP
             $abi callable(): void {
               returnType: FFI\CType<void> size 1 align 1 {}
             }
@@ -156,7 +166,8 @@ class FFICasterTest extends TestCase
     {
         $abi = \PHP_OS_FAMILY === 'Windows' ? '[cdecl]' : '[fastcall]';
 
-        $this->assertDumpEquals(<<<PHP
+        $this->assertDumpEquals(
+            <<<PHP
             $abi callable(): uint64_t {
               returnType: FFI\CType<uint64_t> size 8 align 8 {}
             }
@@ -169,7 +180,8 @@ class FFICasterTest extends TestCase
     {
         $abi = \PHP_OS_FAMILY === 'Windows' ? '[cdecl]' : '[fastcall]';
 
-        $this->assertDumpEquals(<<<PHP
+        $this->assertDumpEquals(
+            <<<PHP
             $abi callable(int32_t, char*): void {
               returnType: FFI\CType<void> size 1 align 1 {}
             }
@@ -186,7 +198,8 @@ class FFICasterTest extends TestCase
         $pointer = \FFI::addr($string[0]);
         \FFI::memcpy($pointer, $actualMessage, \strlen($actualMessage));
 
-        $this->assertDumpEquals(<<<'PHP'
+        $this->assertDumpEquals(
+            <<<'PHP'
             FFI\CData<char*> size 8 align 8 {
               cdata: "Hello World!\x00"
             }
@@ -208,7 +221,8 @@ class FFICasterTest extends TestCase
         // the max length is platform-dependent and can be less than 255,
         // so we need to cut the expected message to the maximum length
         // allowed by pages size of the current system
-        $ffi = \FFI::cdef(<<<C
+        $ffi = \FFI::cdef(
+            <<<C
                 size_t zend_get_page_size(void);
             C
         );
@@ -218,7 +232,8 @@ class FFICasterTest extends TestCase
         $max = min(self::MAX_STRING_LENGTH, ($start | ($pageSize - 1)) - $start);
         $expectedMessage = substr($expectedMessage, 0, $max);
 
-        $this->assertDumpEquals(<<<PHP
+        $this->assertDumpEquals(
+            <<<PHP
             FFI\CData<char*> size 8 align 8 {
               cdata: "$expectedMessage"…
             }
@@ -239,7 +254,8 @@ class FFICasterTest extends TestCase
         $pointer = \FFI::cdef()->cast('char*', \FFI::cdef()->cast('void*', $pointer));
         $pointer[$actualLength] = "\x01";
 
-        $this->assertDumpMatchesFormat(<<<PHP
+        $this->assertDumpMatchesFormat(
+            <<<PHP
             FFI\CData<char*> size 8 align 8 {
               cdata: %A"$actualMessage%s"
             }
@@ -250,7 +266,8 @@ class FFICasterTest extends TestCase
 
     public function testCastUnionWithDirectReferencedFields()
     {
-        $ffi = \FFI::cdef(<<<'CPP'
+        $ffi = \FFI::cdef(
+            <<<'CPP'
             typedef union Event {
                 int32_t x;
                 float y;
@@ -258,7 +275,8 @@ class FFICasterTest extends TestCase
             CPP
         );
 
-        $this->assertDumpEquals(<<<'OUTPUT'
+        $this->assertDumpEquals(
+            <<<'OUTPUT'
             FFI\CData<union Event> size 4 align 4 {
               int32_t x: 0
               float y: 0.0
@@ -270,7 +288,8 @@ class FFICasterTest extends TestCase
 
     public function testCastUnionWithPointerReferencedFields()
     {
-        $ffi = \FFI::cdef(<<<'CPP'
+        $ffi = \FFI::cdef(
+            <<<'CPP'
             typedef union Event {
                 void* something;
                 char* string;
@@ -278,7 +297,8 @@ class FFICasterTest extends TestCase
             CPP
         );
 
-        $this->assertDumpEquals(<<<'OUTPUT'
+        $this->assertDumpEquals(
+            <<<'OUTPUT'
             FFI\CData<union Event> size 8 align 8 {
               something?: FFI\CType<void*> size 8 align 8 {
                 0: FFI\CType<void> size 1 align 1 {}
@@ -294,7 +314,8 @@ class FFICasterTest extends TestCase
 
     public function testCastUnionWithMixedFields()
     {
-        $ffi = \FFI::cdef(<<<'CPP'
+        $ffi = \FFI::cdef(
+            <<<'CPP'
             typedef union Event {
                 void* a;
                 int32_t b;
@@ -304,7 +325,8 @@ class FFICasterTest extends TestCase
             CPP
         );
 
-        $this->assertDumpEquals(<<<'OUTPUT'
+        $this->assertDumpEquals(
+            <<<'OUTPUT'
             FFI\CData<union Event> size 8 align 8 {
               a?: FFI\CType<void*> size 8 align 8 {
                 0: FFI\CType<void> size 1 align 1 {}
@@ -322,7 +344,8 @@ class FFICasterTest extends TestCase
 
     public function testCastPointerToEmptyScalars()
     {
-        $ffi = \FFI::cdef(<<<'CPP'
+        $ffi = \FFI::cdef(
+            <<<'CPP'
             typedef struct {
                 int8_t *a;
                 uint8_t *b;
@@ -335,7 +358,8 @@ class FFICasterTest extends TestCase
             CPP
         );
 
-        $this->assertDumpEquals(<<<'OUTPUT'
+        $this->assertDumpEquals(
+            <<<'OUTPUT'
             FFI\CData<struct <anonymous>> size 56 align 8 {
               int8_t* a: null
               uint8_t* b: null
@@ -352,7 +376,8 @@ class FFICasterTest extends TestCase
 
     public function testCastPointerToNonEmptyScalars()
     {
-        $ffi = \FFI::cdef(<<<'CPP'
+        $ffi = \FFI::cdef(
+            <<<'CPP'
             typedef struct {
                 int8_t *a;
                 uint8_t *b;
@@ -385,7 +410,8 @@ class FFICasterTest extends TestCase
         $struct->f = \FFI::addr(\FFI::cdef()->cast('double', $double));
         $struct->g = \FFI::addr(\FFI::cdef()->cast('bool', $bool));
 
-        $this->assertDumpEquals(<<<'OUTPUT'
+        $this->assertDumpEquals(
+            <<<'OUTPUT'
             FFI\CData<struct <anonymous>> size 56 align 8 {
               a: FFI\CData<int8_t*> size 8 align 8 {
                 cdata: 42
@@ -416,7 +442,8 @@ class FFICasterTest extends TestCase
 
     public function testCastPointerToStruct()
     {
-        $ffi = \FFI::cdef(<<<'CPP'
+        $ffi = \FFI::cdef(
+            <<<'CPP'
             typedef struct {
                 int8_t a;
             } Example;
@@ -425,7 +452,8 @@ class FFICasterTest extends TestCase
 
         $struct = $ffi->new('Example', false);
 
-        $this->assertDumpEquals(<<<'OUTPUT'
+        $this->assertDumpEquals(
+            <<<'OUTPUT'
             FFI\CData<struct <anonymous>*> size 8 align 8 {
               cdata: FFI\CData<struct <anonymous>> size 1 align 1 {
                 int8_t a: 0
@@ -439,7 +467,8 @@ class FFICasterTest extends TestCase
         // it is not cleaned up by the GC
         $pointer = \FFI::addr($struct);
 
-        $this->assertDumpEquals(<<<'OUTPUT'
+        $this->assertDumpEquals(
+            <<<'OUTPUT'
             FFI\CData<struct <anonymous>**> size 8 align 8 {
               cdata: FFI\CData<struct <anonymous>*> size 8 align 8 {
                 cdata: FFI\CData<struct <anonymous>> size 1 align 1 {
@@ -456,7 +485,8 @@ class FFICasterTest extends TestCase
 
     public function testCastComplexType()
     {
-        $ffi = \FFI::cdef(<<<'CPP'
+        $ffi = \FFI::cdef(
+            <<<'CPP'
             typedef struct {
                 int x;
                 int y;

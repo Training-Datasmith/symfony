@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -58,7 +60,7 @@ use Symfony\Component\Validator\Mapping\Factory\MetadataFactoryInterface;
 class ValidatorTypeGuesser implements FormTypeGuesserInterface
 {
     public function __construct(
-        private MetadataFactoryInterface $metadataFactory,
+        private readonly MetadataFactoryInterface $metadataFactory,
     ) {
     }
 

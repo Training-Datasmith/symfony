@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -11,7 +13,6 @@
 
 namespace Symfony\Component\Form\Extension\Validator\Constraints;
 
-use Symfony\Component\Validator\Attribute\HasNamedArguments;
 use Symfony\Component\Validator\Constraint;
 
 /**
@@ -27,12 +28,6 @@ class Form extends Constraint
         self::NOT_SYNCHRONIZED_ERROR => 'NOT_SYNCHRONIZED_ERROR',
         self::NO_SUCH_FIELD_ERROR => 'NO_SUCH_FIELD_ERROR',
     ];
-
-    #[HasNamedArguments]
-    public function __construct(mixed $options = null, ?array $groups = null, mixed $payload = null)
-    {
-        parent::__construct($options, $groups, $payload);
-    }
 
     public function getTargets(): string|array
     {

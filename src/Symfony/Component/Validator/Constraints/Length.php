@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -97,7 +99,7 @@ class Length extends Constraint
         $this->charsetMessage = $charsetMessage ?? $this->charsetMessage;
 
         if (null === $this->min && null === $this->max) {
-            throw new MissingOptionsException(\sprintf('Either option "min" or "max" must be given for constraint "%s".', __CLASS__), ['min', 'max']);
+            throw new MissingOptionsException(\sprintf('Either option "min" or "max" must be given for constraint "%s".', self::class), ['min', 'max']);
         }
 
         if (null !== $this->normalizer && !\is_callable($this->normalizer)) {
@@ -105,7 +107,7 @@ class Length extends Constraint
         }
 
         if (!\in_array($this->countUnit, self::VALID_COUNT_UNITS, true)) {
-            throw new InvalidArgumentException(\sprintf('The "countUnit" option must be one of the "%s"::COUNT_* constants ("%s" given).', __CLASS__, $this->countUnit));
+            throw new InvalidArgumentException(\sprintf('The "countUnit" option must be one of the "%s"::COUNT_* constants ("%s" given).', self::class, $this->countUnit));
         }
     }
 }

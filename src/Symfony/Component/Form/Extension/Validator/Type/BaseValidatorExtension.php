@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,7 @@ abstract class BaseValidatorExtension extends AbstractTypeExtension
     public function configureOptions(OptionsResolver $resolver): void
     {
         // Make sure that validation groups end up as null, closure or array
-        $validationGroupsNormalizer = static function (Options $options, $groups) {
+        $validationGroupsNormalizer = static function (Options $options, $groups): array|null|callable|\Symfony\Component\Validator\Constraints\GroupSequence {
             if (false === $groups) {
                 return [];
             }

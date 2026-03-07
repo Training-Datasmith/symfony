@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -40,7 +42,7 @@ final class SchedulerTriggerNormalizer implements DenormalizerInterface, Normali
 
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): TriggerInterface
     {
-        return new class($data) implements TriggerInterface {
+        return new class ($data) implements TriggerInterface {
             public function __construct(private readonly string $description)
             {
             }

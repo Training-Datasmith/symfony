@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,7 +16,7 @@ if ('cli' !== \PHP_SAPI) {
 }
 
 $operators = ['not', '!', 'or', '||', 'xor', '&&', 'and', '|', '^', '&', '==', '===', '!=', '!==', '<', '>', '>=', '<=', 'not in', 'in', '..', '+', '-', '~', '*', '/', '%', 'contains', 'starts with', 'ends with', 'matches', '**', '<<', '>>'];
-$operators = array_combine($operators, array_map('strlen', $operators));
+$operators = array_combine($operators, array_map(strlen(...), $operators));
 arsort($operators);
 
 $regex = [];

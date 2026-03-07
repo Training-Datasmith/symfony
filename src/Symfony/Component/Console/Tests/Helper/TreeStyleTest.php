@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,8 @@ class TreeStyleTest extends TestCase
 
         $tree->render();
 
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             root
             ├── A
             │   ├── A1
@@ -51,7 +54,8 @@ class TreeStyleTest extends TestCase
         $output = new BufferedOutput();
         $this->createTree($output, TreeStyle::box())->render();
 
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             root
             ┃╸ A
             ┃  ┃╸ A1
@@ -75,7 +79,8 @@ class TreeStyleTest extends TestCase
         $output = new BufferedOutput();
         $this->createTree($output, TreeStyle::boxDouble())->render();
 
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             root
             ╠═ A
             ║  ╠═ A1
@@ -99,7 +104,8 @@ class TreeStyleTest extends TestCase
         $output = new BufferedOutput();
         $this->createTree($output, TreeStyle::compact())->render();
 
-        $this->assertSame(<<<'TREE'
+        $this->assertSame(
+            <<<'TREE'
             root
             ├ A
             │ ├ A1
@@ -123,7 +129,8 @@ class TreeStyleTest extends TestCase
         $output = new BufferedOutput();
         $this->createTree($output, TreeStyle::light())->render();
 
-        $this->assertSame(<<<'TREE'
+        $this->assertSame(
+            <<<'TREE'
             root
             |-- A
             |   |-- A1
@@ -147,7 +154,8 @@ class TreeStyleTest extends TestCase
         $output = new BufferedOutput();
         $this->createTree($output, TreeStyle::minimal())->render();
 
-        $this->assertSame(<<<'TREE'
+        $this->assertSame(
+            <<<'TREE'
             root
             . A
             . . A1
@@ -171,7 +179,8 @@ class TreeStyleTest extends TestCase
         $output = new BufferedOutput();
         $this->createTree($output, TreeStyle::rounded())->render();
 
-        $this->assertSame(<<<'TREE'
+        $this->assertSame(
+            <<<'TREE'
             root
             ├─ A
             │  ├─ A1
@@ -196,7 +205,8 @@ class TreeStyleTest extends TestCase
         $output = new BufferedOutput();
         self::createTree($output, $style)->render();
 
-        $this->assertSame(<<<'TREE'
+        $this->assertSame(
+            <<<'TREE'
             root
             C A F A
             C D A F A1
@@ -219,17 +229,22 @@ class TreeStyleTest extends TestCase
     {
         $root = new TreeNode('root');
         $root
-            ->addChild((new TreeNode('A'))
+            ->addChild(
+                (new TreeNode('A'))
                 ->addChild(new TreeNode('A1'))
-                ->addChild((new TreeNode('A2'))
-                    ->addChild((new TreeNode('A2.1'))
+                ->addChild(
+                    (new TreeNode('A2'))
+                    ->addChild(
+                        (new TreeNode('A2.1'))
                         ->addChild(new TreeNode('A2.1.1'))
                         ->addChild(new TreeNode('A2.1.2'))
                     )
                 )
             )
-            ->addChild((new TreeNode('B'))
-                ->addChild((new TreeNode('B1'))
+            ->addChild(
+                (new TreeNode('B'))
+                ->addChild(
+                    (new TreeNode('B1'))
                     ->addChild(new TreeNode('B11'))
                     ->addChild(new TreeNode('B12'))
                 )

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -238,7 +240,7 @@ class InvokableCommandTest extends TestCase
 
     public function testExecuteHasPriorityOverInvokeMethod()
     {
-        $command = new class extends Command {
+        $command = new class () extends Command {
             public string $called;
 
             protected function execute(InputInterface $input, OutputInterface $output): int
@@ -262,7 +264,7 @@ class InvokableCommandTest extends TestCase
 
     public function testCallInvokeMethodWhenExtendingCommandClass()
     {
-        $command = new class extends Command {
+        $command = new class () extends Command {
             public string $called;
 
             public function __invoke(): int
@@ -280,7 +282,7 @@ class InvokableCommandTest extends TestCase
     public function testInvalidReturnType()
     {
         $command = new Command('foo');
-        $command->setCode(new class {
+        $command->setCode(new class () {
             public function __invoke()
             {
             }
@@ -421,38 +423,48 @@ class InvokableCommandTest extends TestCase
     public static function provideInvalidOptionDefinitions(): \Generator
     {
         yield 'no-default' => [
-            static function (#[Option] string $a) {},
+            static function (#[Option] string $a) {
+            },
         ];
         yield 'nullable-bool-default-true' => [
-            static function (#[Option] ?bool $a = true) {},
+            static function (#[Option] ?bool $a = true) {
+            },
         ];
         yield 'nullable-bool-default-false' => [
-            static function (#[Option] ?bool $a = false) {},
+            static function (#[Option] ?bool $a = false) {
+            },
         ];
         yield 'invalid-union-type' => [
-            static function (#[Option] array|bool $a = false) {},
+            static function (#[Option] array|bool $a = false) {
+            },
         ];
         yield 'union-type-cannot-allow-null' => [
-            static function (#[Option] string|bool|null $a = null) {},
+            static function (#[Option] string|bool|null $a = null) {
+            },
         ];
         yield 'union-type-default-true' => [
-            static function (#[Option] string|bool $a = true) {},
+            static function (#[Option] string|bool $a = true) {
+            },
         ];
         yield 'union-type-default-string' => [
-            static function (#[Option] string|bool $a = 'foo') {},
+            static function (#[Option] string|bool $a = 'foo') {
+            },
         ];
         yield 'nullable-string-not-null-default' => [
-            static function (#[Option] ?string $a = 'foo') {},
+            static function (#[Option] ?string $a = 'foo') {
+            },
         ];
         yield 'nullable-array-not-null-default' => [
-            static function (#[Option] ?array $a = []) {},
+            static function (#[Option] ?array $a = []) {
+            },
         ];
     }
 
     public function testInvalidRequiredValueOptionEvenWithDefault()
     {
         $command = new Command('foo');
-        $command->setCode(static function (#[Option] string $a = 'a') {});
+        $command->setCode(static function (#[Option] string $a = 'a') {
+        });
 
         $this->expectException(InvalidOptionException::class);
         $this->expectExceptionMessage('The "--a" option requires a value.');

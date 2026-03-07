@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -126,7 +128,8 @@ class DebugHandlersListenerTest extends TestCase
 
     public function testReplaceExistingExceptionHandler()
     {
-        $userHandler = static function () {};
+        $userHandler = static function () {
+        };
         $listener = new DebugHandlersListener($userHandler);
         $eHandler = new ErrorHandler();
         $eHandler->setExceptionHandler('var_dump');

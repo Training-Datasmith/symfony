@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,7 @@ use Symfony\Component\Form\Flow\FormFlowTypeInterface;
 class FormFactory implements FormFactoryInterface
 {
     public function __construct(
-        private FormRegistryInterface $registry,
+        private readonly FormRegistryInterface $registry,
     ) {
     }
 

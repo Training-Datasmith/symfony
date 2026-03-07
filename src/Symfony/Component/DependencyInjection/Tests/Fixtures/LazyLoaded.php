@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\DependencyInjection\Tests\Fixtures;
 
 use Symfony\Component\DependencyInjection\Attribute\Lazy;
@@ -7,5 +9,4 @@ use Symfony\Component\DependencyInjection\Attribute\Lazy;
 #[Lazy]
 class LazyLoaded
 {
-
 }

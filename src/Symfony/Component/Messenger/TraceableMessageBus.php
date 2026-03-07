@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ class TraceableMessageBus implements MessageBusInterface
     private array $dispatchedMessages = [];
 
     public function __construct(
-        private MessageBusInterface $decoratedBus,
+        private readonly MessageBusInterface $decoratedBus,
         protected readonly ?\Closure $disabled = null,
     ) {
     }

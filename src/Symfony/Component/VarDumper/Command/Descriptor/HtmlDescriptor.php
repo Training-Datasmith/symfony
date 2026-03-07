@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,7 @@ class HtmlDescriptor implements DumpDescriptorInterface
     private bool $initialized = false;
 
     public function __construct(
-        private HtmlDumper $dumper,
+        private readonly HtmlDumper $dumper,
     ) {
     }
 
@@ -69,7 +71,8 @@ class HtmlDescriptor implements DumpDescriptorInterface
             'project dir' => $projectDir ?? null,
         ]);
 
-        $output->writeln(<<<HTML
+        $output->writeln(
+            <<<HTML
             <article data-dedup-id="$dedupIdentifier">
                 <header>
                     <div class="row">

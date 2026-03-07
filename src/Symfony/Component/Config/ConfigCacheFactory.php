@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ class ConfigCacheFactory implements ConfigCacheFactoryInterface
      * @param bool $debug The debug flag to pass to ConfigCache
      */
     public function __construct(
-        private bool $debug,
+        private readonly bool $debug,
     ) {
     }
 

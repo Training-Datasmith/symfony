@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -64,7 +66,7 @@ class MemoryDataCollector extends DataCollector implements LateDataCollectorInte
         return 'memory';
     }
 
-    private function convertToBytes(string $memoryLimit): int|float
+    private function convertToBytes(string $memoryLimit): int
     {
         if ('-1' === $memoryLimit) {
             return -1;

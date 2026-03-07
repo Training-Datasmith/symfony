@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -58,9 +60,8 @@ abstract class AbstractMultipartPart extends AbstractPart
         foreach ($parts as $part) {
             $string .= '--'.$this->getBoundary()."\r\n".$part->toString()."\r\n";
         }
-        $string .= '--'.$this->getBoundary()."--\r\n";
 
-        return $string;
+        return $string . ('--' . $this->getBoundary() . "--\r\n");
     }
 
     public function bodyToIterable(): iterable

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,11 +20,8 @@ namespace Symfony\Component\Cache\Marshaller;
  */
 class TagAwareMarshaller implements MarshallerInterface
 {
-    private MarshallerInterface $marshaller;
-
-    public function __construct(?MarshallerInterface $marshaller = null)
+    public function __construct(private readonly ?MarshallerInterface $marshaller = new DefaultMarshaller())
     {
-        $this->marshaller = $marshaller ?? new DefaultMarshaller();
     }
 
     public function marshall(array $values, ?array &$failed): array
@@ -44,7 +43,7 @@ class TagAwareMarshaller implements MarshallerInterface
                         $v['tags'] = '';
                     }
 
-                    $serialized[$id] = "\x9D".($value['meta'] ?? "\0\0\0\0\0\0\0\0").pack('N', \strlen($v['tags'])).$v['tags'].$v['value'];
+                    $serialized[$id] = "\x9D".($value['meta'] ?? "\0\0\0\0\0\0\0\0").pack('N', \strlen((string) $v['tags'])).$v['tags'].$v['value'];
                     $serialized[$id][9] = "\x5F";
                 }
             } else {

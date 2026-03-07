@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,6 @@ use Symfony\Component\VarDumper\Dumper\ContextProvider\SourceContextProvider;
  */
 class Data implements \ArrayAccess, \Countable, \IteratorAggregate, \Stringable
 {
-    private array $data;
     private int $position = 0;
     private int|string $key = 0;
     private int $maxDepth = 20;
@@ -30,9 +31,8 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate, \Stringable
     /**
      * @param array $data An array as returned by ClonerInterface::cloneVar()
      */
-    public function __construct(array $data)
+    public function __construct(private array $data)
     {
-        $this->data = $data;
     }
 
     public function getType(): ?string
@@ -417,8 +417,6 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate, \Stringable
 
         $stub = new Stub();
         $stub->type = Stub::TYPE_ARRAY;
-        foreach ($item as $stub->class => $stub->position) {
-        }
         if (isset($item[0])) {
             $stub->cut = $item[0];
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,11 +40,11 @@ class AmpListener implements EventListener
      */
     public function __construct(
         array &$info,
-        private array $pinSha256,
-        private \Closure $onProgress,
+        private readonly array $pinSha256,
+        private readonly \Closure $onProgress,
         private &$handle,
-        private float $maxConnectDuration,
-        private DeferredCancellation $canceller,
+        private readonly float $maxConnectDuration,
+        private readonly DeferredCancellation $canceller,
     ) {
         $info += [
             'connect_time' => 0.0,
@@ -92,7 +94,7 @@ class AmpListener implements EventListener
 
         $this->info['primary_ip'] = $host;
 
-        if (str_contains($host, ':')) {
+        if (str_contains((string) $host, ':')) {
             $host = '['.$host.']';
         }
 
@@ -107,7 +109,7 @@ class AmpListener implements EventListener
             if ($this->pinSha256) {
                 $pin = openssl_pkey_get_public($this->info['peer_certificate_chain'][0]);
                 $pin = openssl_pkey_get_details($pin)['key'];
-                $pin = \array_slice(explode("\n", $pin), 1, -2);
+                $pin = \array_slice(explode("\n", (string) $pin), 1, -2);
                 $pin = base64_decode(implode('', $pin));
                 $pin = base64_encode(hash('sha256', $pin, true));
 

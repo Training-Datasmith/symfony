@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @param list<Symfony\Component\JsonStreamer\Tests\Fixtures\Model\DummyWithList> $data
  */
 return static function (mixed $data, \Psr\Container\ContainerInterface $valueTransformers, array $options): \Traversable {
     try {
-        yield "[";
+        yield '[';
         $prefix1 = '';
         foreach ($data as $value1) {
             $prefix2 = '';
             yield "{$prefix1}{{$prefix2}\"dummies\":";
-            yield "[";
+            yield '[';
             $prefix3 = '';
             foreach ($value1->dummies as $value2) {
                 $prefix4 = '';
@@ -19,16 +21,16 @@ return static function (mixed $data, \Psr\Container\ContainerInterface $valueTra
                 $prefix4 = ',';
                 yield "{$prefix4}\"name\":";
                 yield \json_encode($value2->name, \JSON_THROW_ON_ERROR, 508);
-                yield "}";
+                yield '}';
                 $prefix3 = ',';
             }
             $prefix2 = ',';
             yield "]{$prefix2}\"customProperty\":";
             yield \json_encode($value1->customProperty, \JSON_THROW_ON_ERROR, 510);
-            yield "}";
+            yield '}';
             $prefix1 = ',';
         }
-        yield "]";
+        yield ']';
     } catch (\JsonException $e) {
         throw new \Symfony\Component\JsonStreamer\Exception\NotEncodableValueException($e->getMessage(), 0, $e);
     }

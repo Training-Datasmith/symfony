@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -77,7 +79,7 @@ class UuidV1 extends Uuid implements TimeBasedUidInterface
         }
 
         if ($node) {
-            $uuid = substr($uuid, 0, 24).substr($node->uid, 24);
+            return substr($uuid, 0, 24).substr($node->uid, 24);
         }
 
         return $uuid;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -66,7 +68,7 @@ abstract class AccessDecisionStrategyTestCase extends TestCase
 
     final protected static function getVoter(int $vote): VoterInterface
     {
-        return new class($vote) implements VoterInterface {
+        return new class ($vote) implements VoterInterface {
             public function __construct(
                 private int $vote,
             ) {

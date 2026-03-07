@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -49,7 +51,7 @@ class FailedMessageEventTest extends TestCase
         $eventDispatcherMock = $this->createMock(EventDispatcherInterface::class);
         $clientMock = new MockHttpClient();
 
-        $transport = new class($clientMock, $eventDispatcherMock) extends AbstractTransport {
+        $transport = new class ($clientMock, $eventDispatcherMock) extends AbstractTransport {
             public NullTransportException $exception;
 
             public function __construct($client, ?EventDispatcherInterface $dispatcher = null)

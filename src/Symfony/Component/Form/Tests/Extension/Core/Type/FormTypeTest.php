@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -155,25 +157,31 @@ class FormTypeTest extends BaseTypeTestCase
     public function testDataClassMayBeNull()
     {
         $this->assertInstanceOf(
-            FormBuilderInterface::class, $this->factory->createBuilder(static::TESTED_TYPE, null, [
+            FormBuilderInterface::class,
+            $this->factory->createBuilder(static::TESTED_TYPE, null, [
                 'data_class' => null,
-            ]));
+            ])
+        );
     }
 
     public function testDataClassMayBeAbstractClass()
     {
         $this->assertInstanceOf(
-            FormBuilderInterface::class, $this->factory->createBuilder(static::TESTED_TYPE, null, [
+            FormBuilderInterface::class,
+            $this->factory->createBuilder(static::TESTED_TYPE, null, [
                 'data_class' => 'Symfony\Component\Form\Tests\Fixtures\AbstractAuthor',
-            ]));
+            ])
+        );
     }
 
     public function testDataClassMayBeInterface()
     {
         $this->assertInstanceOf(
-            FormBuilderInterface::class, $this->factory->createBuilder(static::TESTED_TYPE, null, [
+            FormBuilderInterface::class,
+            $this->factory->createBuilder(static::TESTED_TYPE, null, [
                 'data_class' => 'Symfony\Component\Form\Tests\Fixtures\AuthorInterface',
-            ]));
+            ])
+        );
     }
 
     public function testDataClassMustBeValidClassOrInterface()
@@ -438,7 +446,8 @@ class FormTypeTest extends BaseTypeTestCase
         $builder = $this->factory->createBuilder(static::TESTED_TYPE, $author);
         $builder->add('referenceCopy', static::TESTED_TYPE);
         $builder->get('referenceCopy')->addViewTransformer(new CallbackTransformer(
-            static function () {},
+            static function () {
+            },
             static fn ($value) => // reverseTransform
 'foobar'
         ));
@@ -462,7 +471,8 @@ class FormTypeTest extends BaseTypeTestCase
         $builder->setData($author);
         $builder->add('referenceCopy', static::TESTED_TYPE);
         $builder->get('referenceCopy')->addViewTransformer(new CallbackTransformer(
-            static function () {},
+            static function () {
+            },
             static fn ($value) => // reverseTransform
 $ref2
         ));

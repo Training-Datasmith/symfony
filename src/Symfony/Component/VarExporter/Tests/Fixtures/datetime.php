@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
     $o = [
         clone (($p = &\Symfony\Component\VarExporter\Internal\Registry::$prototypes)['DateTime'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('DateTime')),

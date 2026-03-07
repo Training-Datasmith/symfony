@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,10 +43,12 @@ class ControllerAttributesListenerPass implements CompilerPassInterface
         $attributesWithListeners = [];
 
         foreach ($dispatcherDefinition->getMethodCalls() as [$method, $arguments]) {
-            if ('addListener' !== $method || !\is_string($eventName = $arguments[0] ?? null)) {
+            if ('addListener' !== $method) {
                 continue;
             }
-
+            if (!\is_string($eventName = $arguments[0] ?? null)) {
+                continue;
+            }
             foreach (self::ATTRIBUTE_EVENTS as $kernelEvent) {
                 if ('.' === ($eventName[\strlen($kernelEvent)] ?? null) && str_starts_with($eventName, $kernelEvent)) {
                     $attributesWithListeners[$kernelEvent][substr($eventName, \strlen($kernelEvent) + 1)] = true;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,20 +22,17 @@ use Symfony\Component\Notifier\Exception\MissingRequiredOptionException;
  */
 final class Dsn
 {
-    private string $scheme;
-    private string $host;
-    private ?string $user;
-    private ?string $password;
-    private ?int $port;
-    private ?string $path;
+    private readonly string $scheme;
+    private readonly string $host;
+    private readonly ?string $user;
+    private readonly ?string $password;
+    private readonly ?int $port;
+    private readonly ?string $path;
     private array $options = [];
-    private string $originalDsn;
 
-    public function __construct(#[\SensitiveParameter] string $dsn)
+    public function __construct(#[\SensitiveParameter] private readonly string $originalDsn)
     {
-        $this->originalDsn = $dsn;
-
-        if (false === $params = parse_url($dsn)) {
+        if (false === $params = parse_url($this->originalDsn)) {
             throw new InvalidArgumentException('The notifier DSN is invalid.');
         }
 
@@ -86,7 +85,7 @@ final class Dsn
 
     public function getRequiredOption(string $key): mixed
     {
-        if (!\array_key_exists($key, $this->options) || '' === trim($this->options[$key])) {
+        if (!\array_key_exists($key, $this->options) || '' === trim((string) $this->options[$key])) {
             throw new MissingRequiredOptionException($key);
         }
 

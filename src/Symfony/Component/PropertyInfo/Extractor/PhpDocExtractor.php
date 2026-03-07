@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -54,13 +56,13 @@ class PhpDocExtractor implements PropertyDescriptionExtractorInterface, Property
      */
     private array $contexts = [];
 
-    private DocBlockFactoryInterface $docBlockFactory;
-    private ContextFactory $contextFactory;
-    private TypeContextFactory $typeContextFactory;
-    private PhpDocTypeHelper $phpDocTypeHelper;
-    private array $mutatorPrefixes;
-    private array $accessorPrefixes;
-    private array $arrayMutatorPrefixes;
+    private readonly DocBlockFactoryInterface $docBlockFactory;
+    private readonly ContextFactory $contextFactory;
+    private readonly TypeContextFactory $typeContextFactory;
+    private readonly PhpDocTypeHelper $phpDocTypeHelper;
+    private readonly array $mutatorPrefixes;
+    private readonly array $accessorPrefixes;
+    private readonly array $arrayMutatorPrefixes;
 
     /**
      * @param string[]|null $mutatorPrefixes
@@ -70,7 +72,7 @@ class PhpDocExtractor implements PropertyDescriptionExtractorInterface, Property
     public function __construct(?DocBlockFactoryInterface $docBlockFactory = null, ?array $mutatorPrefixes = null, ?array $accessorPrefixes = null, ?array $arrayMutatorPrefixes = null)
     {
         if (!class_exists(DocBlockFactory::class)) {
-            throw new \LogicException(\sprintf('Unable to use the "%s" class as the "phpdocumentor/reflection-docblock" package is not installed. Try running composer require "phpdocumentor/reflection-docblock".', __CLASS__));
+            throw new \LogicException(\sprintf('Unable to use the "%s" class as the "phpdocumentor/reflection-docblock" package is not installed. Try running composer require "phpdocumentor/reflection-docblock".', self::class));
         }
 
         $this->docBlockFactory = $docBlockFactory ?: DocBlockFactory::createInstance();
@@ -139,10 +141,12 @@ class PhpDocExtractor implements PropertyDescriptionExtractorInterface, Property
         $types = [];
         /** @var DocBlock\Tags\Var_|DocBlock\Tags\Return_|DocBlock\Tags\Param $tag */
         foreach ($docBlock->getTagsByName('param') as $tag) {
-            if ($tag instanceof InvalidTag || !$tagType = $tag->getType()) {
+            if ($tag instanceof InvalidTag) {
                 continue;
             }
-
+            if (!$tagType = $tag->getType()) {
+                continue;
+            }
             $types[] = $this->phpDocTypeHelper->getType($tagType);
         }
 
@@ -176,10 +180,17 @@ class PhpDocExtractor implements PropertyDescriptionExtractorInterface, Property
 
     private function filterDocBlockParams(DocBlock $docBlock, string $allowedParam): DocBlock
     {
-        $tags = array_values(array_filter($docBlock->getTagsByName('param'), static fn ($tag) => $tag instanceof DocBlock\Tags\Param && $allowedParam === $tag->getVariableName()));
+        $tags = array_values(array_filter($docBlock->getTagsByName('param'), static fn ($tag): bool => $tag instanceof DocBlock\Tags\Param && $allowedParam === $tag->getVariableName()));
 
-        return new DocBlock($docBlock->getSummary(), $docBlock->getDescription(), $tags, $docBlock->getContext(),
-            $docBlock->getLocation(), $docBlock->isTemplateStart(), $docBlock->isTemplateEnd());
+        return new DocBlock(
+            $docBlock->getSummary(),
+            $docBlock->getDescription(),
+            $tags,
+            $docBlock->getContext(),
+            $docBlock->getLocation(),
+            $docBlock->isTemplateStart(),
+            $docBlock->isTemplateEnd()
+        );
     }
 
     /**
@@ -384,10 +395,12 @@ class PhpDocExtractor implements PropertyDescriptionExtractorInterface, Property
 
         /** @var DocBlock\Tags\Var_|DocBlock\Tags\Return_|DocBlock\Tags\Param $tag */
         foreach ($docBlock->getTagsByName($tag) as $tag) {
-            if ($tag instanceof InvalidTag || !$tagType = $tag->getType()) {
+            if ($tag instanceof InvalidTag) {
                 continue;
             }
-
+            if (!$tagType = $tag->getType()) {
+                continue;
+            }
             $type = $this->phpDocTypeHelper->getType($tagType);
 
             if (!$type instanceof ObjectType) {

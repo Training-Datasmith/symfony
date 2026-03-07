@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -974,7 +976,8 @@ class FormTest extends TestCase
     public function testGetPhpValuesWithEmptyTextarea()
     {
         $dom = new \DOMDocument();
-        $dom->loadHTML('
+        $dom->loadHTML(
+            '
             <html>
                 <form>
                     <textarea name="example"></textarea>
@@ -990,7 +993,8 @@ class FormTest extends TestCase
     public function testGetReturnTypes()
     {
         $dom = new \DOMDocument();
-        $dom->loadHTML('
+        $dom->loadHTML(
+            '
             <html>
                 <form>
                     <textarea name="foo[collection][0][bar]">item 0</textarea>

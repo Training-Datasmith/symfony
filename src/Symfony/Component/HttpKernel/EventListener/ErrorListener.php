@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -52,7 +54,10 @@ class ErrorListener implements EventSubscriberInterface
         $logChannel = $this->resolveLogChannel($throwable);
 
         foreach ($this->exceptionsMapping as $class => $config) {
-            if (!$throwable instanceof $class || !$config['status_code']) {
+            if (!$throwable instanceof $class) {
+                continue;
+            }
+            if (!$config['status_code']) {
                 continue;
             }
             if (!$throwable instanceof HttpExceptionInterface || $throwable->getStatusCode() !== $config['status_code']) {
@@ -86,7 +91,7 @@ class ErrorListener implements EventSubscriberInterface
 
         $throwable = $event->getThrowable();
 
-        $exceptionHandler = set_exception_handler('var_dump');
+        $exceptionHandler = set_exception_handler(var_dump(...));
         restore_exception_handler();
 
         if (\is_array($exceptionHandler) && $exceptionHandler[0] instanceof ErrorHandler) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -146,7 +148,7 @@ class DateTimeValueResolverTest extends TestCase
             new InputArgument('created-at', InputArgument::OPTIONAL),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(\DateTimeInterface $createdAt)
             {
             }
@@ -273,7 +275,7 @@ class DateTimeValueResolverTest extends TestCase
             new InputArgument('created-at'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[MapDateTime(format: 'm-d-y H:i:s')]
                 \DateTimeInterface $createdAt,
@@ -301,7 +303,7 @@ class DateTimeValueResolverTest extends TestCase
             new InputOption('created-at'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[MapDateTime(option: 'created-at')]
                 \DateTimeImmutable $createdAt,

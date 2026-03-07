@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,6 @@ class SingleIntIdStringWrapperNameEntity
     public function __construct(
         #[Id, Column]
         protected int $id,
-
         #[Column(type: 'string_wrapper', nullable: true)]
         public ?StringWrapper $name,
     ) {

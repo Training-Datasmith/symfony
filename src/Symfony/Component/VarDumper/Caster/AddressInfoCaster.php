@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +12,6 @@
  */
 
 namespace Symfony\Component\VarDumper\Caster;
-
-use Symfony\Component\VarDumper\Cloner\Stub;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
@@ -53,7 +53,7 @@ final class AddressInfoCaster
         ],
     ];
 
-    public static function castAddressInfo(\AddressInfo $h, array $a, Stub $stub, bool $isNested): array
+    public static function castAddressInfo(\AddressInfo $h, array $a): array
     {
         static $resolvedMaps;
 

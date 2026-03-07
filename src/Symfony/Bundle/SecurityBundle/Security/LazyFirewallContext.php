@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ class LazyFirewallContext extends FirewallContext implements FirewallListenerInt
         ?ExceptionListener $exceptionListener,
         ?LogoutListener $logoutListener,
         ?FirewallConfig $config,
-        private TokenStorage $tokenStorage,
+        private readonly TokenStorage $tokenStorage,
     ) {
         parent::__construct($listeners, $exceptionListener, $logoutListener, $config);
     }
@@ -71,7 +73,7 @@ class LazyFirewallContext extends FirewallContext implements FirewallListenerInt
             return;
         }
 
-        $this->tokenStorage->setInitializer(static function () use ($event, $listeners) {
+        $this->tokenStorage->setInitializer(static function () use ($event, $listeners): void {
             $event = new LazyResponseEvent($event);
             foreach ($listeners as $listener) {
                 $listener->authenticate($event);

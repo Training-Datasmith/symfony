@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -117,7 +119,8 @@ class EventDispatcherTest extends TestCase
         $this->assertSame(-10, $this->dispatcher->getListenerPriority('pre.foo', $listener1));
         $this->assertSame(0, $this->dispatcher->getListenerPriority('pre.foo', $listener2));
         $this->assertNull($this->dispatcher->getListenerPriority('pre.bar', $listener2));
-        $this->assertNull($this->dispatcher->getListenerPriority('pre.foo', static function () {}));
+        $this->assertNull($this->dispatcher->getListenerPriority('pre.foo', static function () {
+        }));
     }
 
     public function testDispatch()
@@ -274,13 +277,15 @@ class EventDispatcherTest extends TestCase
     {
         $dispatcher = $this->createEventDispatcher();
         $dispatcher->addListener('bug.62976', new CallableClass());
-        $dispatcher->removeListener('bug.62976', static function () {});
+        $dispatcher->removeListener('bug.62976', static function () {
+        });
         $this->assertTrue($dispatcher->hasListeners('bug.62976'));
     }
 
     public function testHasListenersWhenAddedCallbackListenerIsRemoved()
     {
-        $listener = static function () {};
+        $listener = static function () {
+        };
         $this->dispatcher->addListener('foo', $listener);
         $this->dispatcher->removeListener('foo', $listener);
         $this->assertFalse($this->dispatcher->hasListeners());
@@ -288,7 +293,8 @@ class EventDispatcherTest extends TestCase
 
     public function testGetListenersWhenAddedCallbackListenerIsRemoved()
     {
-        $listener = static function () {};
+        $listener = static function () {
+        };
         $this->dispatcher->addListener('foo', $listener);
         $this->dispatcher->removeListener('foo', $listener);
         $this->assertSame([], $this->dispatcher->getListeners());
@@ -303,7 +309,9 @@ class EventDispatcherTest extends TestCase
     public function testHasListenersIsLazy()
     {
         $called = 0;
-        $listener = [static function () use (&$called) { ++$called; }, 'onFoo'];
+        $listener = [static function () use (&$called) {
+            ++$called;
+        }, 'onFoo'];
         $this->dispatcher->addListener('foo', $listener);
         $this->assertTrue($this->dispatcher->hasListeners());
         $this->assertTrue($this->dispatcher->hasListeners('foo'));

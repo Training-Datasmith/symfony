@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,7 @@ use Symfony\Component\PropertyAccess\PropertyPath;
 class RelativePath extends PropertyPath
 {
     public function __construct(
-        private FormInterface $root,
+        private readonly FormInterface $root,
         string $propertyPath,
     ) {
         parent::__construct($propertyPath);

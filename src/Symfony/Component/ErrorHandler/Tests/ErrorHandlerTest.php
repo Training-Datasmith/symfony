@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -341,7 +343,7 @@ class ErrorHandlerTest extends TestCase
     #[WithoutErrorHandler]
     public function testHandleErrorWithAnonymousClass()
     {
-        $anonymousObject = new class extends \stdClass {
+        $anonymousObject = new class () extends \stdClass {
         };
 
         $handler = ErrorHandler::register();
@@ -428,9 +430,9 @@ class ErrorHandlerTest extends TestCase
     {
         return [
             ['Uncaught Exception: foo', new \Exception('foo')],
-            ['Uncaught Exception: foo', new class('foo') extends \RuntimeException {
+            ['Uncaught Exception: foo', new class ('foo') extends \RuntimeException {
             }],
-            ['Uncaught Exception: foo stdClass@anonymous bar', new \RuntimeException('foo '.(new class extends \stdClass {
+            ['Uncaught Exception: foo stdClass@anonymous bar', new \RuntimeException('foo '.(new class () extends \stdClass {
             })::class.' bar')],
             ['Uncaught Error: bar', new \Error('bar')],
             ['Uncaught ccc', new \ErrorException('ccc')],
@@ -651,7 +653,8 @@ class ErrorHandlerTest extends TestCase
             $this->markTestSkipped('zend.assertions is forcibly disabled');
         }
 
-        set_error_handler(static function () {});
+        set_error_handler(static function () {
+        });
         $ini = [
             ini_set('zend.assertions', 1),
             ini_set('assert.active', 1),

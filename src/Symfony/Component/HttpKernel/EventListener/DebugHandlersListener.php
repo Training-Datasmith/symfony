@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,9 +32,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class DebugHandlersListener implements EventSubscriberInterface
 {
-    private string|object|null $earlyHandler;
+    private readonly string|object|null $earlyHandler;
     private ?\Closure $exceptionHandler;
-    private bool $webMode;
+    private readonly bool $webMode;
     private bool $firstCall = true;
     private bool $hasTerminatedWithException = false;
 
@@ -41,7 +43,7 @@ class DebugHandlersListener implements EventSubscriberInterface
      */
     public function __construct(?callable $exceptionHandler = null, ?bool $webMode = null)
     {
-        $handler = set_exception_handler('var_dump');
+        $handler = set_exception_handler(var_dump(...));
         $this->earlyHandler = \is_array($handler) ? $handler[0] : null;
         restore_exception_handler();
 
@@ -68,7 +70,7 @@ class DebugHandlersListener implements EventSubscriberInterface
                 if (method_exists($kernel = $event->getKernel(), 'terminateWithException')) {
                     $request = $event->getRequest();
                     $hasRun = &$this->hasTerminatedWithException;
-                    $this->exceptionHandler = static function (\Throwable $e) use ($kernel, $request, &$hasRun) {
+                    $this->exceptionHandler = static function (\Throwable $e) use ($kernel, $request, &$hasRun): void {
                         if ($hasRun) {
                             throw $e;
                         }
@@ -82,13 +84,13 @@ class DebugHandlersListener implements EventSubscriberInterface
                 if ($output instanceof ConsoleOutputInterface) {
                     $output = $output->getErrorOutput();
                 }
-                $this->exceptionHandler = static function (\Throwable $e) use ($app, $output) {
+                $this->exceptionHandler = static function (\Throwable $e) use ($app, $output): void {
                     $app->renderThrowable($e, $output);
                 };
             }
         }
         if ($this->exceptionHandler) {
-            $handler = set_exception_handler('var_dump');
+            $handler = set_exception_handler(var_dump(...));
             $handler = \is_array($handler) ? $handler[0] : null;
             restore_exception_handler();
 

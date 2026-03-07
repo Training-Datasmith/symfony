@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Africa/Abidjan' => 'ម៉ោងនៅគ្រីនវិច (អាប៊ីដ្យាន)',

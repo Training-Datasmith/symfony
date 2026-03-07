@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -51,7 +53,7 @@ class TextDescriptor extends Descriptor
     ];
 
     public function __construct(
-        private ?FileLinkFormatter $fileLinkFormatter = null,
+        private readonly ?FileLinkFormatter $fileLinkFormatter = null,
     ) {
     }
 
@@ -96,13 +98,17 @@ class TextDescriptor extends Descriptor
         if ($shouldShowScheme) {
             $tableHeaders[] = 'Scheme';
         } else {
-            array_walk($tableRows, static function (&$row) { unset($row['Scheme']); });
+            array_walk($tableRows, static function (array &$row): void {
+                unset($row['Scheme']);
+            });
         }
 
         if ($shouldShowHost) {
             $tableHeaders[] = 'Host';
         } else {
-            array_walk($tableRows, static function (&$row) { unset($row['Host']); });
+            array_walk($tableRows, static function (array &$row): void {
+                unset($row['Host']);
+            });
         }
 
         $tableHeaders[] = 'Path';
@@ -266,14 +272,14 @@ class TextDescriptor extends Descriptor
                     foreach ($tags as $tag) {
                         foreach ($tag as $key => $value) {
                             if (!isset($maxTags[$key])) {
-                                $maxTags[$key] = \strlen($key);
+                                $maxTags[$key] = \strlen((string) $key);
                             }
                             if (\is_array($value)) {
                                 $value = $this->formatParameter($value);
                             }
 
-                            if (\strlen($value) > $maxTags[$key]) {
-                                $maxTags[$key] = \strlen($value);
+                            if (\strlen((string) $value) > $maxTags[$key]) {
+                                $maxTags[$key] = \strlen((string) $value);
                             }
                         }
                     }
@@ -342,7 +348,7 @@ class TextDescriptor extends Descriptor
             $tagInformation = [];
             foreach ($tags as $tagName => $tagData) {
                 foreach ($tagData as $tagParameters) {
-                    $parameters = array_map(fn ($key, $value) => \sprintf('<info>%s</info>: %s', $key, \is_array($value) ? $this->formatParameter($value) : $value), array_keys($tagParameters), array_values($tagParameters));
+                    $parameters = array_map(fn (string $key, $value): string => \sprintf('<info>%s</info>: %s', $key, \is_array($value) ? $this->formatParameter($value) : $value), array_keys($tagParameters), array_values($tagParameters));
                     $parameters = implode(', ', $parameters);
 
                     if ('' === $parameters) {
@@ -438,7 +444,7 @@ class TextDescriptor extends Descriptor
 
             if (\count($stack) > 1) {
                 $options['output']->section('Decoration Stack');
-                $options['output']->table(['ID', 'Class', 'Priority'], array_map(static fn ($item) => array_values($item), $stack));
+                $options['output']->table(['ID', 'Class', 'Priority'], array_map(array_values(...), $stack));
             }
         }
     }
@@ -511,7 +517,7 @@ class TextDescriptor extends Descriptor
 
             $matches = false;
             foreach ($envs as $env) {
-                if ($name === $env['name'] || false !== stripos($env['name'], $name)) {
+                if ($name === $env['name'] || false !== stripos((string) $env['name'], (string) $name)) {
                     $matches = true;
                     $options['output']->section('%env('.$env['processor'].':'.$env['name'].')%');
                     $options['output']->table([], [
@@ -580,7 +586,7 @@ class TextDescriptor extends Descriptor
         } else {
             $title .= ' Grouped by Event';
             // Try to see if "events" exists
-            $registeredListeners = \array_key_exists('events', $options) ? array_combine($options['events'], array_map(static fn ($event) => $eventDispatcher->getListeners($event), $options['events'])) : $eventDispatcher->getListeners();
+            $registeredListeners = \array_key_exists('events', $options) ? array_combine($options['events'], array_map($eventDispatcher->getListeners(...), $options['events'])) : $eventDispatcher->getListeners();
         }
 
         $options['output']->title($title);
@@ -655,16 +661,17 @@ class TextDescriptor extends Descriptor
         try {
             if (null === $controller) {
                 return $anchorText;
-            } elseif (\is_array($controller)) {
+            }
+            if (\is_array($controller)) {
                 $r = new \ReflectionMethod($controller[0], $controller[1]);
             } elseif ($controller instanceof \Closure) {
                 $r = new \ReflectionFunction($controller);
             } elseif (method_exists($controller, '__invoke')) {
                 $r = new \ReflectionMethod($controller, '__invoke');
+            } elseif (str_contains((string) $controller, '::')) {
+                $r = new \ReflectionMethod(...explode('::', (string) $controller, 2));
             } elseif (!\is_string($controller)) {
                 return $anchorText;
-            } elseif (str_contains($controller, '::')) {
-                $r = new \ReflectionMethod(...explode('::', $controller, 2));
             } else {
                 $r = new \ReflectionFunction($controller);
             }

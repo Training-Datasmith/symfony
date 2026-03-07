@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,8 +26,8 @@ class ProcessTimedOutException extends RuntimeException
     public const TYPE_IDLE = 2;
 
     public function __construct(
-        private Process $process,
-        private int $timeoutType,
+        private readonly Process $process,
+        private readonly int $timeoutType,
     ) {
         parent::__construct(\sprintf(
             'The process "%s" exceeded the timeout of %s seconds.',

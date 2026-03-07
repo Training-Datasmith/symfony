@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,15 +27,15 @@ use Symfony\Component\CssSelector\Parser\Token;
  */
 class FunctionNode extends AbstractNode
 {
-    private string $name;
+    private readonly string $name;
 
     /**
      * @param Token[] $arguments
      */
     public function __construct(
-        private NodeInterface $selector,
+        private readonly NodeInterface $selector,
         string $name,
-        private array $arguments = [],
+        private readonly array $arguments = [],
     ) {
         $this->name = strtolower($name);
     }
@@ -63,7 +65,7 @@ class FunctionNode extends AbstractNode
 
     public function __toString(): string
     {
-        $arguments = implode(', ', array_map(static fn (Token $token) => "'".$token->getValue()."'", $this->arguments));
+        $arguments = implode(', ', array_map(static fn (Token $token): string => "'".$token->getValue()."'", $this->arguments));
 
         return \sprintf('%s[%s:%s(%s)]', $this->getNodeName(), $this->selector, $this->name, $arguments ? '['.$arguments.']' : '');
     }

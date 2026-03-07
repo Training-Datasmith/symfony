@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,7 +43,7 @@ class MailerTest extends TestCase
 
     public function testSendMessageToBus()
     {
-        $bus = new class implements MessageBusInterface {
+        $bus = new class () implements MessageBusInterface {
             public array $messages = [];
             public array $stamps = [];
 
@@ -54,7 +56,7 @@ class MailerTest extends TestCase
             }
         };
 
-        $stamp = new class implements StampInterface {};
+        $stamp = new class () implements StampInterface {};
 
         $dispatcher = $this->createMock(EventDispatcherInterface::class);
         $dispatcher->expects($this->once())
@@ -92,7 +94,7 @@ class MailerTest extends TestCase
         $dispatcher->addListener(MessageEvent::class, static fn (MessageEvent $event) => $event->reject(), 255);
         $dispatcher->addListener(MessageEvent::class, static fn () => throw new \RuntimeException('Should never be called.'));
 
-        $transport = new class($dispatcher, $this) extends AbstractTransport {
+        $transport = new class ($dispatcher, $this) extends AbstractTransport {
             public function __construct(EventDispatcherInterface $dispatcher, private TestCase $test)
             {
                 parent::__construct($dispatcher);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,7 +46,7 @@ class IntlFormatter implements IntlFormatterInterface
         foreach ($parameters as $key => $value) {
             if (\in_array($key[0] ?? null, ['%', '{'], true)) {
                 unset($parameters[$key]);
-                $parameters[trim($key, '%{ }')] = $value;
+                $parameters[trim((string) $key, '%{ }')] = $value;
             }
         }
 

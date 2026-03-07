@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,13 +26,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * @author Kévin Dunglas <dunglas@gmail.com>
  * @author Alexander M. Turek <me@derrabus.de>
  */
-final class PsrResponseListener implements EventSubscriberInterface
+final readonly class PsrResponseListener implements EventSubscriberInterface
 {
-    private readonly HttpFoundationFactoryInterface $httpFoundationFactory;
-
-    public function __construct(?HttpFoundationFactoryInterface $httpFoundationFactory = null)
+    public function __construct(private ?HttpFoundationFactoryInterface $httpFoundationFactory = new HttpFoundationFactory())
     {
-        $this->httpFoundationFactory = $httpFoundationFactory ?? new HttpFoundationFactory();
     }
 
     /**

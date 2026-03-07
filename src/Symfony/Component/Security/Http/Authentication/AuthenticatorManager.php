@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -50,14 +52,13 @@ class AuthenticatorManager implements AuthenticatorManagerInterface, UserAuthent
      * @param iterable<mixed, AuthenticatorInterface> $authenticators
      */
     public function __construct(
-        private iterable $authenticators,
-        private TokenStorageInterface $tokenStorage,
-        private EventDispatcherInterface $eventDispatcher,
-        private string $firewallName,
-        private ?LoggerInterface $logger = null,
-        private bool $eraseCredentials = true,
-        private ExposeSecurityLevel $exposeSecurityErrors = ExposeSecurityLevel::None,
-        private array $requiredBadges = [],
+        private readonly iterable $authenticators,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly string $firewallName,
+        private readonly ?LoggerInterface $logger = null,
+        private readonly ExposeSecurityLevel $exposeSecurityErrors = ExposeSecurityLevel::None,
+        private readonly array $requiredBadges = [],
     ) {
     }
 
@@ -68,7 +69,7 @@ class AuthenticatorManager implements AuthenticatorManagerInterface, UserAuthent
     public function authenticateUser(UserInterface $user, AuthenticatorInterface $authenticator, Request $request, array $badges = [], array $attributes = []): ?Response
     {
         // create an authentication token for the User
-        $passport = new SelfValidatingPassport(new UserBadge($user->getUserIdentifier(), static fn () => $user), $badges);
+        $passport = new SelfValidatingPassport(new UserBadge($user->getUserIdentifier(), static fn (): \Symfony\Component\Security\Core\User\UserInterface => $user), $badges);
         foreach ($attributes as $k => $v) {
             $passport->setAttribute($k, $v);
         }

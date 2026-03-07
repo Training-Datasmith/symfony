@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,8 +25,8 @@ class ContextualizedDumper implements DataDumperInterface
      * @param ContextProviderInterface[] $contextProviders
      */
     public function __construct(
-        private DataDumperInterface $wrappedDumper,
-        private array $contextProviders,
+        private readonly DataDumperInterface $wrappedDumper,
+        private readonly array $contextProviders,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,8 @@ class DkimSignedMessageListenerTest extends TestCase
     #[RequiresPhpExtension('openssl')]
     public function testDkimMessageSigningProcess()
     {
-        $signer = new DkimSigner(<<<KEY
+        $signer = new DkimSigner(
+            <<<KEY
             -----BEGIN RSA PRIVATE KEY-----
             MIICXAIBAAKBgQDbESTusnjpHAlqnU/zIcNcI1dskQBEG8N4mQo408n33M5FGLxo
             WoCQyqnnyujc2gkpG8aiPJFFnToWkbE8H+ursRRLBgdrCQOJh+akPEt4aNqiD/JK

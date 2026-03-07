@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'bitsch: persuna, persuna, pel clera, pel mez clera',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'bitsch: persuna, persuna, pel clera, pel media',

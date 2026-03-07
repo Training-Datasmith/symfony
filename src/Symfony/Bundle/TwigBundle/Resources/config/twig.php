@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -54,7 +56,7 @@ use Twig\RuntimeLoader\ContainerRuntimeLoader;
 use Twig\Template;
 use Twig\TemplateWrapper;
 
-return static function (ContainerConfigurator $container) {
+return static function (ContainerConfigurator $container): void {
     $container->services()
         ->set('twig', Environment::class)
             ->args([service('twig.loader'), abstract_arg('Twig options')])

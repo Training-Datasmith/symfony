@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'baxo: persoña, persoña, carnaxon ciæa e carnaxon assæ ciæa',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'baxo: persoña, persoña, carnaxon ciæa e carnaxon cô d’öiva',

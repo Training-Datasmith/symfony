@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,20 +32,18 @@ use Symfony\Contracts\Service\ServiceProviderInterface;
  *
  * @author Iltar van der Berg <kjarli@gmail.com>
  */
-final class ArgumentResolver implements ArgumentResolverInterface
+final readonly class ArgumentResolver implements ArgumentResolverInterface
 {
-    private ArgumentMetadataFactoryInterface $argumentMetadataFactory;
     private iterable $argumentValueResolvers;
 
     /**
      * @param iterable<mixed, ValueResolverInterface> $argumentValueResolvers
      */
     public function __construct(
-        ?ArgumentMetadataFactoryInterface $argumentMetadataFactory = null,
+        private ?ArgumentMetadataFactoryInterface $argumentMetadataFactory = new ArgumentMetadataFactory(),
         iterable $argumentValueResolvers = [],
         private ?ContainerInterface $namedResolvers = null,
     ) {
-        $this->argumentMetadataFactory = $argumentMetadataFactory ?? new ArgumentMetadataFactory();
         $this->argumentValueResolvers = $argumentValueResolvers ?: self::getDefaultArgumentValueResolvers();
     }
 
@@ -106,7 +106,7 @@ final class ArgumentResolver implements ArgumentResolverInterface
                 }
             }
 
-            $reasons = array_map(static fn (NearMissValueResolverException $e) => $e->getMessage(), $valueResolverExceptions);
+            $reasons = array_map(static fn (NearMissValueResolverException $e): string => $e->getMessage(), $valueResolverExceptions);
             if (!$reasons) {
                 $reasons[] = 'Either the argument is nullable and no null value has been provided, no default value has been provided or there is a non-optional argument after this one.';
             }

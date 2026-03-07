@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -40,14 +42,12 @@ class AccessDecision
         $message = $this->isGranted ? 'Access Granted.' : 'Access Denied.';
         $access = $this->isGranted ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 
-        if ($this->votes) {
-            foreach ($this->votes as $vote) {
-                if ($vote->result !== $access) {
-                    continue;
-                }
-                foreach ($vote->reasons as $reason) {
-                    $message .= ' '.$reason;
-                }
+        foreach ($this->votes as $vote) {
+            if ($vote->result !== $access) {
+                continue;
+            }
+            foreach ($vote->reasons as $reason) {
+                $message .= ' '.$reason;
             }
         }
 

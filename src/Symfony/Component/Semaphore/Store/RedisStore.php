@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ class RedisStore implements PersistingStoreInterface
     private const NO_SCRIPT_ERROR_MESSAGE_PREFIX = 'NOSCRIPT';
 
     public function __construct(
-        private \Redis|Relay|RelayCluster|\RedisArray|\RedisCluster|\Predis\ClientInterface $redis,
+        private readonly \Redis|Relay|RelayCluster|\RedisArray|\RedisCluster|\Predis\ClientInterface $redis,
     ) {
     }
 
@@ -242,12 +244,12 @@ class RedisStore implements PersistingStoreInterface
 
     private function getUniqueToken(Key $key): string
     {
-        if (!$key->hasState(__CLASS__)) {
+        if (!$key->hasState(self::class)) {
             $token = base64_encode(random_bytes(32));
-            $key->setState(__CLASS__, $token);
+            $key->setState(self::class, $token);
         }
 
-        return $key->getState(__CLASS__);
+        return $key->getState(self::class);
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,10 +40,11 @@ class IcuDatFileLoader extends IcuResFileLoader
         } catch (\Exception) {
             $rb = null;
         }
-
         if (!$rb) {
             throw new InvalidResourceException(\sprintf('Cannot load resource "%s".', $resource));
-        } elseif (intl_is_failure($rb->getErrorCode())) {
+        }
+
+        if (intl_is_failure($rb->getErrorCode())) {
             throw new InvalidResourceException($rb->getErrorMessage(), $rb->getErrorCode());
         }
 

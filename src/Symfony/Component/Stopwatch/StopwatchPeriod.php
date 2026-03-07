@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,11 +18,11 @@ namespace Symfony\Component\Stopwatch;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class StopwatchPeriod
+class StopwatchPeriod implements \Stringable
 {
-    private int|float $start;
-    private int|float $end;
-    private int $memory;
+    private readonly int|float $start;
+    private readonly int|float $end;
+    private readonly int $memory;
 
     /**
      * @param int|float $start         The relative time of the start of the period (in milliseconds)

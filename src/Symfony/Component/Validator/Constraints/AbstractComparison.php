@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,16 +27,12 @@ use Symfony\Component\Validator\Exception\LogicException;
 abstract class AbstractComparison extends Constraint
 {
     public string $message;
-    public mixed $value = null;
-    public ?string $propertyPath = null;
 
-    public function __construct(mixed $value = null, ?string $propertyPath = null, ?string $message = null, ?array $groups = null, mixed $payload = null)
+    public function __construct(public mixed $value = null, public ?string $propertyPath = null, ?string $message = null, ?array $groups = null, mixed $payload = null)
     {
         parent::__construct(null, $groups, $payload);
 
         $this->message = $message ?? $this->message;
-        $this->value = $value;
-        $this->propertyPath = $propertyPath;
 
         if (null === $this->value && null === $this->propertyPath) {
             throw new ConstraintDefinitionException(\sprintf('The "%s" constraint requires either the "value" or "propertyPath" option to be set.', static::class));

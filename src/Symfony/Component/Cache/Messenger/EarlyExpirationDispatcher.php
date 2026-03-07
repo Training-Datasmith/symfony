@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,11 +25,11 @@ use Symfony\Component\Messenger\Stamp\HandledStamp;
  */
 class EarlyExpirationDispatcher
 {
-    private ?\Closure $callbackWrapper;
+    private readonly ?\Closure $callbackWrapper;
 
     public function __construct(
-        private MessageBusInterface $bus,
-        private ReverseContainer $reverseContainer,
+        private readonly MessageBusInterface $bus,
+        private readonly ReverseContainer $reverseContainer,
         ?callable $callbackWrapper = null,
     ) {
         $this->callbackWrapper = null === $callbackWrapper ? null : $callbackWrapper(...);

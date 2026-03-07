@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 class UserPasswordHasher implements UserPasswordHasherInterface
 {
     public function __construct(
-        private PasswordHasherFactoryInterface $hasherFactory,
+        private readonly PasswordHasherFactoryInterface $hasherFactory,
     ) {
     }
 

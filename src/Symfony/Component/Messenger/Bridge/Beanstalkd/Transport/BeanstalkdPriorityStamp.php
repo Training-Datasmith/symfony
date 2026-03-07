@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -13,10 +15,10 @@ namespace Symfony\Component\Messenger\Bridge\Beanstalkd\Transport;
 
 use Symfony\Component\Messenger\Stamp\StampInterface;
 
-final class BeanstalkdPriorityStamp implements StampInterface
+final readonly class BeanstalkdPriorityStamp implements StampInterface
 {
     public function __construct(
-        public readonly int $priority,
+        public int $priority,
     ) {
     }
 }

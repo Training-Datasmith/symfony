@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'tvey íð mussast: persónur, persónur, ljósur húðarlitur, miðalljósur húðarlitur',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'tvey íð mussast: persónur, persónur, ljósur húðarlitur, miðal húðarlitur',

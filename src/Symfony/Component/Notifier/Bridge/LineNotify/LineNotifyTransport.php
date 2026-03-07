@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ final class LineNotifyTransport extends AbstractTransport
     protected const HOST = 'notify-api.line.me';
 
     public function __construct(
-        #[\SensitiveParameter] private string $token,
+        #[\SensitiveParameter] private readonly string $token,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -38,7 +40,7 @@ final class LineNotifyTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof ChatMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, ChatMessage::class, $message);
         }
 
         $endpoint = \sprintf('https://%s/api/notify', $this->getEndpoint());
@@ -60,7 +62,7 @@ final class LineNotifyTransport extends AbstractTransport
 
             $originalContent = $message->getSubject();
             $errorCode = $result['status'];
-            $errorMessage = trim($result['message']);
+            $errorMessage = trim((string) $result['message']);
             throw new TransportException(\sprintf('Unable to post the Line message: "%s" (%d: "%s").', $originalContent, $errorCode, $errorMessage), $response);
         }
 

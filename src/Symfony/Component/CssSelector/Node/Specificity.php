@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,9 +32,9 @@ class Specificity
     public const C_FACTOR = 1;
 
     public function __construct(
-        private int $a,
-        private int $b,
-        private int $c,
+        private readonly int $a,
+        private readonly int $b,
+        private readonly int $c,
     ) {
     }
 

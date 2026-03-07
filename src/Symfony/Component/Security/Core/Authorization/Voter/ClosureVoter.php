@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Symfony\Component\Security\Http\Attribute\IsGrantedContext;
  *
  * @author Alexandre Daubois <alex.daubois@gmail.com>
  */
-final class ClosureVoter implements CacheableVoterInterface
+final readonly class ClosureVoter implements CacheableVoterInterface
 {
     public function __construct(
         private AuthorizationCheckerInterface $authorizationChecker,

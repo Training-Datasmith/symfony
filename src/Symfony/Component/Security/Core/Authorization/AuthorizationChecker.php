@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,8 +37,8 @@ class AuthorizationChecker implements AuthorizationCheckerInterface, UserAuthori
     private array $accessDecisionStack = [];
 
     public function __construct(
-        private TokenStorageInterface $tokenStorage,
-        private AccessDecisionManagerInterface $accessDecisionManager,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly AccessDecisionManagerInterface $accessDecisionManager,
     ) {
     }
 
@@ -59,7 +61,7 @@ class AuthorizationChecker implements AuthorizationCheckerInterface, UserAuthori
 
     final public function isGrantedForUser(UserInterface $user, mixed $attribute, mixed $subject = null, ?AccessDecision $accessDecision = null): bool
     {
-        $token = new class($user->getRoles()) extends AbstractToken implements OfflineTokenInterface {};
+        $token = new class ($user->getRoles()) extends AbstractToken implements OfflineTokenInterface {};
         $token->setUser($user);
         $this->tokenStack[] = $token;
 

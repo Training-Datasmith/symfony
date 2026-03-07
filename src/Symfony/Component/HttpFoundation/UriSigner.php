@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,10 +35,10 @@ class UriSigner
      * @param string $expirationParameter Query string parameter to use for expiration
      */
     public function __construct(
-        #[\SensitiveParameter] private string $secret,
-        private string $hashParameter = '_hash',
-        private string $expirationParameter = '_expiration',
-        private ?ClockInterface $clock = null,
+        #[\SensitiveParameter] private readonly string $secret,
+        private readonly string $hashParameter = '_hash',
+        private readonly string $expirationParameter = '_expiration',
+        private readonly ?ClockInterface $clock = null,
     ) {
         if (!$secret) {
             throw new \InvalidArgumentException('A non-empty secret is required.');

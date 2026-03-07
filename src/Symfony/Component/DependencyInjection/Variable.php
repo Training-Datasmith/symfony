@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,10 +26,10 @@ namespace Symfony\Component\DependencyInjection;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class Variable
+class Variable implements \Stringable
 {
     public function __construct(
-        private string $name,
+        private readonly string $name,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -129,7 +131,7 @@ final class ArrayShapeGenerator
             $comment .= ' // Default: '.json_encode($node->getDefaultValue(), \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION);
         }
 
-        return rtrim(preg_replace('/\s+/', ' ', $comment));
+        return rtrim((string) preg_replace('/\s+/', ' ', $comment));
     }
 
     /**

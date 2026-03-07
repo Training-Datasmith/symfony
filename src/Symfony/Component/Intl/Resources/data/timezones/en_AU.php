@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Indian/Kerguelen' => 'French Southern and Antarctic Time (Kerguelen Islands)',

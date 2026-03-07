@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,12 +30,12 @@ use Symfony\Component\VarDumper\Cloner\Stub;
  */
 class DoctrineDataCollector extends DataCollector
 {
-    private array $connections;
-    private array $managers;
+    private readonly array $connections;
+    private readonly array $managers;
 
     public function __construct(
-        private ManagerRegistry $registry,
-        private DebugDataHolder $debugDataHolder,
+        private readonly ManagerRegistry $registry,
+        private readonly DebugDataHolder $debugDataHolder,
     ) {
         $this->connections = $registry->getConnectionNames();
         $this->managers = $registry->getManagerNames();
@@ -77,7 +79,7 @@ class DoctrineDataCollector extends DataCollector
 
     public function getQueryCount(): int
     {
-        return array_sum(array_map('count', $this->data['queries']));
+        return array_sum(array_map(count(...), $this->data['queries']));
     }
 
     public function getQueries(): array

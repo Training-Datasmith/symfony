@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -343,7 +345,8 @@ class SendFailedMessageForRetryListenerTest extends TestCase
                 $this->assertNotNull($transportIdStamp);
 
                 return $retriedEvent;
-            });
+            }
+        );
 
         $senderLocator = new Container();
         $senderLocator->set('my_receiver', $sender);

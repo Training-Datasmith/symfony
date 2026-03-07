@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -43,7 +45,7 @@ class FormFactoryBuilder implements FormFactoryBuilderInterface
     private array $typeGuessers = [];
 
     public function __construct(
-        private bool $forceCoreExtension = false,
+        private readonly bool $forceCoreExtension = false,
     ) {
     }
 

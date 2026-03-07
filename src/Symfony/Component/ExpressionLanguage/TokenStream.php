@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ namespace Symfony\Component\ExpressionLanguage;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class TokenStream
+class TokenStream implements \Stringable
 {
     public Token $current;
 
@@ -24,7 +26,7 @@ class TokenStream
 
     public function __construct(
         private array $tokens,
-        private string $expression = '',
+        private readonly string $expression = '',
     ) {
         $this->current = $tokens[0];
     }

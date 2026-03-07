@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -203,9 +205,9 @@ class FormValidator extends ConstraintValidator
     /**
      * Returns the validation groups of the given form.
      *
-     * @return string|GroupSequence|array<string|GroupSequence>
+     * @return GroupSequence|string[]|\Symfony\Component\Validator\Constraints\GroupSequence[]
      */
-    private function getValidationGroups(FormInterface $form): string|GroupSequence|array
+    private function getValidationGroups(FormInterface $form): \Symfony\Component\Validator\Constraints\GroupSequence|array
     {
         // Determine the clicked button of the complete form tree
         $clickedButton = null;
@@ -263,7 +265,7 @@ class FormValidator extends ConstraintValidator
     {
         $groups = (array) $group;
 
-        return array_filter($constraints, static function (Constraint $constraint) use ($groups) {
+        return array_filter($constraints, static function (Constraint $constraint) use ($groups): bool {
             foreach ($groups as $group) {
                 if (\in_array($group, $constraint->groups, true)) {
                     return true;

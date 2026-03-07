@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -55,9 +57,6 @@ class Process implements \IteratorAggregate
 
     /** @var \Closure('out'|'err', string):bool|null */
     private ?\Closure $callback = null;
-    /** @var list<string>|string */
-    private array|string $commandline;
-    private ?string $cwd;
     /** @var EnvArray */
     private array $env = [];
     /** @var resource|string|\Iterator|null */
@@ -140,7 +139,7 @@ class Process implements \IteratorAggregate
     ];
 
     /**
-     * @param list<string>   $command The command to run and its arguments listed as separate entries
+     * @param list<string> $commandline The command to run and its arguments listed as separate entries
      * @param string|null    $cwd     The working directory or null to use the working dir of the current PHP process
      * @param EnvArray|null  $env     The environment variables or null to use the same environment as the current PHP process
      * @param mixed          $input   The input as stream resource, scalar or \Traversable, or null for no input
@@ -148,14 +147,11 @@ class Process implements \IteratorAggregate
      *
      * @throws LogicException When proc_open is not installed
      */
-    public function __construct(array $command, ?string $cwd = null, ?array $env = null, mixed $input = null, ?float $timeout = 60)
+    public function __construct(private array|string $commandline, private ?string $cwd = null, ?array $env = null, mixed $input = null, ?float $timeout = 60)
     {
         if (!\function_exists('proc_open')) {
             throw new LogicException('The Process class relies on proc_open, which is not available on your PHP installation.');
         }
-
-        $this->commandline = $command;
-        $this->cwd = $cwd;
 
         // on Windows, if the cwd changed via chdir(), proc_open defaults to the dir where PHP was started
         // on Gnu/Linux, PHP builds with --enable-maintainer-zts are also affected
@@ -204,12 +200,12 @@ class Process implements \IteratorAggregate
 
     public function __serialize(): array
     {
-        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot serialize '.self::class);
     }
 
     public function __unserialize(array $data): void
     {
-        throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot unserialize '.self::class);
     }
 
     public function __destruct()
@@ -358,7 +354,7 @@ class Process implements \IteratorAggregate
         }
 
         $lastError = null;
-        set_error_handler(static function ($type, $msg) use (&$lastError) {
+        set_error_handler(static function ($type, $msg) use (&$lastError): true {
             $lastError = $msg;
 
             return true;
@@ -1324,7 +1320,7 @@ class Process implements \IteratorAggregate
             return static fn ($type, $data): bool => null !== $callback && $callback($type, $data);
         }
 
-        return function ($type, $data) use ($callback): bool {
+        return function ($type, string $data) use ($callback): bool {
             match ($type) {
                 self::OUT => $this->addOutput($data),
                 self::ERR => $this->addErrorOutput($data),
@@ -1677,7 +1673,7 @@ class Process implements \IteratorAggregate
      */
     private function replacePlaceholders(string $commandline, array $env): string
     {
-        return preg_replace_callback('/"\$\{:([_a-zA-Z]++[_a-zA-Z0-9]*+)\}"/', function ($matches) use ($commandline, $env) {
+        return preg_replace_callback('/"\$\{:([_a-zA-Z]++[_a-zA-Z0-9]*+)\}"/', function ($matches) use ($commandline, $env): string {
             if (!isset($env[$matches[1]]) || false === $env[$matches[1]]) {
                 throw new InvalidArgumentException(\sprintf('Command line is missing a value for parameter "%s": ', $matches[1]).$commandline);
             }

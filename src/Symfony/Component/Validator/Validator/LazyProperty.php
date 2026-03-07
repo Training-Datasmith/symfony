@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ namespace Symfony\Component\Validator\Validator;
 class LazyProperty
 {
     public function __construct(
-        private \Closure $propertyValueCallback,
+        private readonly \Closure $propertyValueCallback,
     ) {
     }
 

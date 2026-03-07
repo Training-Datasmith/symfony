@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,7 +46,8 @@ class DebugCommandTest extends TestCase
         $ret = $tester->execute(['--show-deprecated' => true], ['decorated' => false]);
 
         $this->assertEquals(0, $ret, 'Returns 0 in case of success');
-        $this->assertSame(<<<TXT
+        $this->assertSame(
+            <<<TXT
 
             Service form types
             ------------------
@@ -125,7 +128,8 @@ class DebugCommandTest extends TestCase
 
         $tester->assertCommandIsSuccessful('Returns 0 in case of success');
         $output = $tester->getDisplay(true);
-        $this->assertStringMatchesFormat(<<<TXT
+        $this->assertStringMatchesFormat(
+            <<<TXT
 
              The type "AmbiguousType" is ambiguous.
 
@@ -152,7 +156,8 @@ class DebugCommandTest extends TestCase
         $ret = $tester->execute(['class' => FooType::class, 'option' => 'foo'], ['decorated' => false]);
 
         $this->assertEquals(0, $ret, 'Returns 0 in case of success');
-        $this->assertStringMatchesFormat(<<<'TXT'
+        $this->assertStringMatchesFormat(
+            <<<'TXT'
 
             Symfony\Component\Form\Tests\Command\FooType (foo)
             ==================================================

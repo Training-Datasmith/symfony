@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,36 +33,27 @@ use Symfony\Component\VarDumper\Server\Connection;
  */
 class DumpDataCollector extends DataCollector implements DataDumperInterface
 {
-    private string|FileLinkFormatter|false $fileLinkFormat;
+    private readonly string|FileLinkFormatter|false $fileLinkFormat;
     private int $dataCount = 0;
     private bool $isCollected = true;
     private int $clonesCount = 0;
     private int $clonesIndex = 0;
-    private array $rootRefs;
-    private string $charset;
-    private mixed $sourceContextProvider;
-    private bool $webMode;
+    private readonly string $charset;
+    private readonly mixed $sourceContextProvider;
+    private readonly bool $webMode;
 
     public function __construct(
-        private ?Stopwatch $stopwatch = null,
+        private readonly ?Stopwatch $stopwatch = null,
         string|FileLinkFormatter|null $fileLinkFormat = null,
         ?string $charset = null,
-        private ?RequestStack $requestStack = null,
-        private DataDumperInterface|Connection|null $dumper = null,
+        private readonly ?RequestStack $requestStack = null,
+        private readonly DataDumperInterface|Connection|null $dumper = null,
         ?bool $webMode = null,
     ) {
         $fileLinkFormat = $fileLinkFormat ?: \ini_get('xdebug.file_link_format') ?: get_cfg_var('xdebug.file_link_format');
         $this->fileLinkFormat = $fileLinkFormat instanceof FileLinkFormatter && false === $fileLinkFormat->format('', 0) ? false : $fileLinkFormat;
         $this->charset = $charset ?: \ini_get('php.output_encoding') ?: \ini_get('default_charset') ?: 'UTF-8';
         $this->webMode = $webMode ?? !\in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true);
-
-        // All clones share these properties by reference:
-        $this->rootRefs = [
-            &$this->data,
-            &$this->dataCount,
-            &$this->isCollected,
-            &$this->clonesCount,
-        ];
 
         $this->sourceContextProvider = $dumper instanceof Connection && isset($dumper->getContextProviders()['source']) ? $dumper->getContextProviders()['source'] : new SourceContextProvider($this->charset);
     }
@@ -169,7 +162,7 @@ class DumpDataCollector extends DataCollector implements DataDumperInterface
         $this->dataCount = \count($this->data);
         foreach ($this->data as $dump) {
             if (!\is_string($dump['name']) || !\is_string($dump['file']) || !\is_int($dump['line'])) {
-                throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+                throw new \BadMethodCallException('Cannot unserialize '.self::class);
             }
         }
 
@@ -247,7 +240,7 @@ class DumpDataCollector extends DataCollector implements DataDumperInterface
     private function doDump(DataDumperInterface $dumper, Data $data, string $name, string $file, int $line, string $label): void
     {
         if ($dumper instanceof CliDumper) {
-            $contextDumper = function ($name, $file, $line, $fmt, $label) {
+            $contextDumper = function ($name, $file, $line, $fmt, $label): void {
                 $this->line = '' !== $label ? $this->style('meta', $label).' in ' : '';
 
                 if ($this instanceof HtmlDumper) {

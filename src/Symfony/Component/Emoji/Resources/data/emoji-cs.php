@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'polibek: dospělý člověk, dospělý člověk, světlý odstín pleti a středně světlý odstín pleti',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'polibek: dospělý člověk, dospělý člověk, světlý odstín pleti a střední odstín pleti',

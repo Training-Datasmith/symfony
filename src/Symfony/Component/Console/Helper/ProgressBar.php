@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -47,7 +49,7 @@ final class ProgressBar
     private float $lastWriteTime = 0;
     private float $minSecondsBetweenRedraws = 0;
     private float $maxSecondsBetweenRedraws = 1;
-    private OutputInterface $output;
+    private readonly OutputInterface $output;
     private int $step = 0;
     private int $startingStep = 0;
     private ?int $max = null;
@@ -56,9 +58,9 @@ final class ProgressBar
     private float $percent = 0.0;
     private array $messages = [];
     private bool $overwrite = true;
-    private Terminal $terminal;
+    private readonly Terminal $terminal;
     private ?string $previousMessage = null;
-    private Cursor $cursor;
+    private readonly Cursor $cursor;
     private array $placeholders = [];
 
     private static array $formatters;
@@ -566,7 +568,7 @@ final class ProgressBar
     private static function initPlaceholderFormatters(): array
     {
         return [
-            'bar' => static function (self $bar, OutputInterface $output) {
+            'bar' => static function (self $bar, OutputInterface $output): string {
                 $completeBars = $bar->getBarOffset();
                 $display = str_repeat($bar->getBarCharacter(), $completeBars);
                 if ($completeBars < $bar->getBarWidth()) {
@@ -576,25 +578,25 @@ final class ProgressBar
 
                 return $display;
             },
-            'elapsed' => static fn (self $bar) => Helper::formatTime(time() - $bar->getStartTime(), 2),
-            'remaining' => static function (self $bar) {
+            'elapsed' => static fn (self $bar): string => Helper::formatTime(time() - $bar->getStartTime(), 2),
+            'remaining' => static function (self $bar): string {
                 if (null === $bar->max) {
                     throw new LogicException('Unable to display the remaining time if the maximum number of steps is not set.');
                 }
 
                 return Helper::formatTime($bar->getRemaining(), 2);
             },
-            'estimated' => static function (self $bar) {
+            'estimated' => static function (self $bar): string {
                 if (null === $bar->max) {
                     throw new LogicException('Unable to display the estimated time if the maximum number of steps is not set.');
                 }
 
                 return Helper::formatTime($bar->getEstimated(), 2);
             },
-            'memory' => static fn (self $bar) => Helper::formatMemory(memory_get_usage(true)),
-            'current' => static fn (self $bar) => str_pad($bar->getProgress(), $bar->getStepWidth(), ' ', \STR_PAD_LEFT),
-            'max' => static fn (self $bar) => $bar->getMaxSteps(),
-            'percent' => static fn (self $bar) => floor($bar->getProgressPercent() * 100),
+            'memory' => static fn (self $bar): string => Helper::formatMemory(memory_get_usage(true)),
+            'current' => static fn (self $bar): string => str_pad($bar->getProgress(), $bar->getStepWidth(), ' ', \STR_PAD_LEFT),
+            'max' => static fn (self $bar): int => $bar->getMaxSteps(),
+            'percent' => static fn (self $bar): float => floor($bar->getProgressPercent() * 100),
         ];
     }
 
@@ -630,7 +632,7 @@ final class ProgressBar
             }
 
             if (isset($matches[2])) {
-                $text = \sprintf('%'.$matches[2], $text);
+                return \sprintf('%'.$matches[2], $text);
             }
 
             return $text;
@@ -638,7 +640,7 @@ final class ProgressBar
         $line = preg_replace_callback($regex, $callback, $this->format);
 
         // gets string length for each sub line with multiline format
-        $linesLength = array_map(fn ($subLine) => Helper::width(Helper::removeDecoration($this->output->getFormatter(), rtrim($subLine, "\r"))), explode("\n", $line));
+        $linesLength = array_map(fn ($subLine): int => Helper::width(Helper::removeDecoration($this->output->getFormatter(), rtrim((string) $subLine, "\r"))), explode("\n", (string) $line));
 
         $linesWidth = max($linesLength);
 
@@ -649,6 +651,6 @@ final class ProgressBar
 
         $this->setBarWidth($this->barWidth - $linesWidth + $terminalWidth);
 
-        return preg_replace_callback($regex, $callback, $this->format);
+        return preg_replace_callback($regex, $callback, (string) $this->format);
     }
 }

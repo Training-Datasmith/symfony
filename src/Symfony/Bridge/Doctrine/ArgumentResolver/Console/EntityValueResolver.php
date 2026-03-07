@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -83,8 +85,8 @@ final class EntityValueResolver implements ValueResolverInterface
             if (null === $object = $this->findViaExpression($this->expressionLanguage, $manager, $options, $variables)) {
                 $message = \sprintf(' The expression "%s" returned null.', $options->expr);
             }
-        } elseif (false === $object = $this->findById($manager, $options, $this->getIdentifier($inputName, $input, $options, $member))) {
-            if (!$criteria = $this->getCriteria($inputName, $input, $options, $manager, $member)) {
+        } elseif (false === $object = $this->findById($manager, $options, $this->getIdentifier($inputName, $input, $options))) {
+            if (!$criteria = $this->getCriteria($inputName, $input, $options, $manager)) {
                 throw new NearMissValueResolverException(\sprintf('Cannot find mapping for "%s": use the #[MapEntity] attribute to configure entity resolution.', $options->class));
             }
             $object = $this->findOneByCriteria($manager, $options, $criteria);
@@ -97,7 +99,7 @@ final class EntityValueResolver implements ValueResolverInterface
         return [$object];
     }
 
-    private function getIdentifier(string $argumentName, InputInterface $input, MapEntity $options, ReflectionMember $member): mixed
+    private function getIdentifier(string $argumentName, InputInterface $input, MapEntity $options): mixed
     {
         if (\is_array($options->id)) {
             $id = [];
@@ -142,7 +144,7 @@ final class EntityValueResolver implements ValueResolverInterface
         return false;
     }
 
-    private function getCriteria(string $argumentName, InputInterface $input, MapEntity $options, ObjectManager $manager, ReflectionMember $member): array
+    private function getCriteria(string $argumentName, InputInterface $input, MapEntity $options, ObjectManager $manager): array
     {
         $mapping = $options->mapping;
 
@@ -152,7 +154,7 @@ final class EntityValueResolver implements ValueResolverInterface
             }
 
             if ($options->stripNull) {
-                $criteria = array_filter($criteria, static fn ($value) => null !== $value);
+                return array_filter($criteria, static fn ($value): bool => null !== $value);
             }
 
             return $criteria;

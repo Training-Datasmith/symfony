@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,7 +19,7 @@ use Symfony\Component\ObjectMapper\Metadata\ReverseClassObjectMapperMetadataFact
 use Symfony\Component\ObjectMapper\ObjectMapper;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
-return static function (ContainerConfigurator $container) {
+return static function (ContainerConfigurator $container): void {
     $container->services()
         ->set('object_mapper.metadata_factory', ReflectionObjectMapperMetadataFactory::class)
         ->alias(ObjectMapperMetadataFactoryInterface::class, 'object_mapper.metadata_factory')

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,9 +34,9 @@ final class TemplateCacheWarmer implements CacheWarmerInterface, ServiceSubscrib
      * As this cache warmer is optional, dependencies should be lazy-loaded, that's why a container should be injected.
      */
     public function __construct(
-        private ContainerInterface $container,
-        private iterable $iterator,
-        private ?CacheInterface $cache = null,
+        private readonly ContainerInterface $container,
+        private readonly iterable $iterator,
+        private readonly ?CacheInterface $cache = null,
     ) {
     }
 

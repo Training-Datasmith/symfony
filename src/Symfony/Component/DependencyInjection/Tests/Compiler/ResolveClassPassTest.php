@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -119,7 +121,7 @@ class ResolveClassPassTest extends TestCase
 
         $autoloader = static function (string $class) {
             if ('Acme\ClassImplementsUnavailableInterface' === $class) {
-                new class implements UnavailableInterface {};
+                new class () implements UnavailableInterface {};
             }
         };
 

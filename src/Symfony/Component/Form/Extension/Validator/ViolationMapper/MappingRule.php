@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,9 +22,9 @@ use Symfony\Component\Form\FormInterface;
 class MappingRule
 {
     public function __construct(
-        private FormInterface $origin,
+        private readonly FormInterface $origin,
         private string $propertyPath,
-        private string $targetPath,
+        private readonly string $targetPath,
     ) {
     }
 

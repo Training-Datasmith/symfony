@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -125,7 +127,7 @@ class TextPartTest extends TestCase
 
     public function testCustomEncoding()
     {
-        TextPart::addEncoder(new class implements ContentEncoderInterface {
+        TextPart::addEncoder(new class () implements ContentEncoderInterface {
             public function encodeByteStream($stream, int $maxLineLength = 0): iterable
             {
                 $filter = stream_filter_append($stream, 'string.toupper', \STREAM_FILTER_READ);

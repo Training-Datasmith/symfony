@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,8 +30,8 @@ use Symfony\Component\Serializer\SerializerInterface;
 class TraceableEncoder implements EncoderInterface, DecoderInterface, SerializerAwareInterface
 {
     public function __construct(
-        private EncoderInterface|DecoderInterface $encoder,
-        private SerializerDataCollector $dataCollector,
+        private readonly EncoderInterface|DecoderInterface $encoder,
+        private readonly SerializerDataCollector $dataCollector,
         private readonly string $serializerName = 'default',
     ) {
     }

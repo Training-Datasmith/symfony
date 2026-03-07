@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,8 +31,8 @@ final class SevenIoTransport extends AbstractTransport
     protected const HOST = 'gateway.seven.io';
 
     public function __construct(
-        #[\SensitiveParameter] private string $apiKey,
-        private ?string $from = null,
+        #[\SensitiveParameter] private readonly string $apiKey,
+        private readonly ?string $from = null,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -50,7 +52,7 @@ final class SevenIoTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $response = $this->client->request('POST', \sprintf('https://%s/api/sms', $this->getEndpoint()), [

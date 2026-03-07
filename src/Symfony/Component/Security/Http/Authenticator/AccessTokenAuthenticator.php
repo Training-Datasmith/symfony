@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -112,7 +114,10 @@ class AccessTokenAuthenticator implements AuthenticatorInterface
         ];
         $values = [];
         foreach ($data as $k => $v) {
-            if (null === $v || '' === $v) {
+            if (null === $v) {
+                continue;
+            }
+            if ('' === $v) {
                 continue;
             }
             $values[] = \sprintf('%s="%s"', $k, $v);

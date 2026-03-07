@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -94,7 +96,7 @@ final class OidcTokenHandler implements AccessTokenHandlerInterface
 
         $jwkset = $this->signatureKeyset;
         if ($this->discoveryClients) {
-            $keys = $this->discoveryCache->get($this->oidcConfigurationCacheKey, [$this, 'computeDiscoveryKeys']);
+            $keys = $this->discoveryCache->get($this->oidcConfigurationCacheKey, $this->computeDiscoveryKeys(...));
 
             $jwkset = JWKSet::createFromKeyData(['keys' => $keys]);
         }
@@ -109,7 +111,7 @@ final class OidcTokenHandler implements AccessTokenHandlerInterface
             }
 
             // UserLoader argument can be overridden by a UserProvider on AccessTokenAuthenticator::authenticate
-            return new UserBadge($claims[$this->claim], new FallbackUserLoader(function () use ($claims) {
+            return new UserBadge($claims[$this->claim], new FallbackUserLoader(function () use ($claims): \Symfony\Component\Security\Core\User\OidcUser {
                 $claims['user_identifier'] = $claims[$this->claim];
 
                 return $this->createUser($claims);
@@ -216,7 +218,7 @@ final class OidcTokenHandler implements AccessTokenHandlerInterface
         // if this check fails, an InvalidHeaderException is thrown
         $headerCheckerManager->check($jws, 0);
 
-        return json_decode($jws->getPayload(), true);
+        return json_decode((string) $jws->getPayload(), true);
     }
 
     private function verifyClaims(array $claims): array
@@ -246,8 +248,8 @@ final class OidcTokenHandler implements AccessTokenHandlerInterface
         $jweHeaderChecker = new Checker\HeaderCheckerManager(
             [
                 new Checker\AlgorithmChecker($this->decryptionAlgorithms->list()),
-                new Checker\CallableChecker('enc', fn ($value) => \in_array($value, $this->decryptionAlgorithms->list())),
-                new Checker\CallableChecker('cty', static fn ($value) => 'JWT' === $value),
+                new Checker\CallableChecker('enc', fn ($value): bool => \in_array($value, $this->decryptionAlgorithms->list())),
+                new Checker\CallableChecker('cty', static fn ($value): bool => 'JWT' === $value),
                 new Checker\IssuedAtChecker(clock: $this->clock, allowedTimeDrift: 0, protectedHeaderOnly: true),
                 new Checker\NotBeforeChecker(clock: $this->clock, allowedTimeDrift: 0, protectedHeaderOnly: true),
                 new Checker\ExpirationTimeChecker(clock: $this->clock, allowedTimeDrift: 0, protectedHeaderOnly: true),

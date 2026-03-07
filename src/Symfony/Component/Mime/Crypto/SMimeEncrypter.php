@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,7 @@ use Symfony\Component\Mime\Message;
 final class SMimeEncrypter extends SMime
 {
     private string|array $certs;
-    private int $cipher;
+    private readonly int $cipher;
 
     /**
      * @param string|string[] $certificate The path (or array of paths) of the file(s) containing the X.509 certificate(s)

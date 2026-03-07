@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class AddEventAliasesPass implements CompilerPassInterface
 {
     public function __construct(
-        private array $eventAliases,
+        private readonly array $eventAliases,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Twig\Template;
  * @author Nicolas Grekas <p@tchwork.com>
  * @author Maxime Steinhausser <maxime.steinhausser@gmail.com>
  */
-final class SourceContextProvider implements ContextProviderInterface
+final readonly class SourceContextProvider implements ContextProviderInterface
 {
     public function __construct(
         private ?string $charset = null,
@@ -33,7 +35,7 @@ final class SourceContextProvider implements ContextProviderInterface
     ) {
     }
 
-    public function getContext(): ?array
+    public function getContext(): array
     {
         $trace = debug_backtrace(\DEBUG_BACKTRACE_PROVIDE_OBJECT | \DEBUG_BACKTRACE_IGNORE_ARGS, $this->limit);
 
@@ -66,7 +68,7 @@ final class SourceContextProvider implements ContextProviderInterface
                             $file = method_exists($template, 'getSourceContext') ? $template->getSourceContext()->getPath() : null;
 
                             if ($src) {
-                                $src = explode("\n", $src);
+                                $src = explode("\n", (string) $src);
                                 $fileExcerpt = [];
 
                                 for ($i = max($line - 3, 1), $max = min($line + 3, \count($src)); $i <= $max; ++$i) {
@@ -93,8 +95,8 @@ final class SourceContextProvider implements ContextProviderInterface
 
         if (null !== $this->projectDir) {
             $context['project_dir'] = $this->projectDir;
-            if (str_starts_with($file, $this->projectDir)) {
-                $context['file_relative'] = ltrim(substr($file, \strlen($this->projectDir)), \DIRECTORY_SEPARATOR);
+            if (str_starts_with((string) $file, $this->projectDir)) {
+                $context['file_relative'] = ltrim(substr((string) $file, \strlen($this->projectDir)), \DIRECTORY_SEPARATOR);
             }
         }
 
@@ -109,7 +111,9 @@ final class SourceContextProvider implements ContextProviderInterface
     {
         $html = '';
 
-        $dumper = new HtmlDumper(static function ($line) use (&$html) { $html .= $line; }, $this->charset);
+        $dumper = new HtmlDumper(static function (string $line) use (&$html): void {
+            $html .= $line;
+        }, $this->charset);
         $dumper->setDumpHeader('');
         $dumper->setDumpBoundaries('', '');
 

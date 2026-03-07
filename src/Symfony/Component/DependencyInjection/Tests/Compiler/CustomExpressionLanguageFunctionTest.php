@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,7 @@ class CustomExpressionLanguageFunctionTest extends TestCase
             ->setPublic(true)
             ->setArguments([new Expression('custom_func("foobar")')]);
 
-        $container->addExpressionLanguageProvider(new class implements ExpressionFunctionProviderInterface {
+        $container->addExpressionLanguageProvider(new class () implements ExpressionFunctionProviderInterface {
             public function getFunctions(): array
             {
                 return [

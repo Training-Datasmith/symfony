@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,22 +18,22 @@ namespace Symfony\Component\Stopwatch;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class StopwatchEvent
+class StopwatchEvent implements \Stringable
 {
     /**
      * @var StopwatchPeriod[]
      */
     private array $periods = [];
 
-    private float $origin;
-    private string $category;
+    private readonly float $origin;
+    private readonly string $category;
 
     /**
      * @var float[]
      */
     private array $started = [];
 
-    private string $name;
+    private readonly string $name;
 
     /**
      * @param float       $origin        The origin time in milliseconds
@@ -42,7 +44,7 @@ class StopwatchEvent
     public function __construct(
         float $origin,
         ?string $category = null,
-        private bool $morePrecision = false,
+        private readonly bool $morePrecision = false,
         ?string $name = null,
     ) {
         $this->origin = $this->formatTime($origin);

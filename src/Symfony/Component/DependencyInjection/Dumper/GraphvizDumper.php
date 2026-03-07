@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -155,8 +157,8 @@ class GraphvizDumper extends Dumper
         foreach ($container->getDefinitions() as $id => $definition) {
             $class = $definition->getClass();
 
-            if (str_starts_with($class, '\\')) {
-                $class = substr($class, 1);
+            if (str_starts_with((string) $class, '\\')) {
+                $class = substr((string) $class, 1);
             }
 
             try {
@@ -198,7 +200,8 @@ class GraphvizDumper extends Dumper
 
     private function startDot(): string
     {
-        return \sprintf("digraph sc {\n  %s\n  node [%s];\n  edge [%s];\n\n",
+        return \sprintf(
+            "digraph sc {\n  %s\n  node [%s];\n  edge [%s];\n\n",
             $this->addOptions($this->options['graph']),
             $this->addOptions($this->options['node']),
             $this->addOptions($this->options['edge'])

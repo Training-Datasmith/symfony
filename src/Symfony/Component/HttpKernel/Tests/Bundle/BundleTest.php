@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -49,7 +51,7 @@ class BundleTest extends TestCase
 
     public function testBundleAsCompilerPass()
     {
-        $kernel = new class('test', true) extends Kernel {
+        $kernel = new class ('test', true) extends Kernel {
             public function registerBundles(): iterable
             {
                 yield new BundleAsCompilerPassBundle();

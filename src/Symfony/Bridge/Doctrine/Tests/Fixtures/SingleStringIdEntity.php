@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,6 @@ class SingleStringIdEntity
     public function __construct(
         #[Id, Column]
         protected string $id,
-
         #[Column]
         public string $name,
     ) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +12,12 @@
  */
 
 namespace A {
-    class Property {
-
+    class Property
+    {
     }
 
-    class Dummy {
+    class Dummy
+    {
         /**
          * @var Property
          */
@@ -23,7 +26,7 @@ namespace A {
 }
 
 namespace B {
-    class Dummy extends \A\Dummy {
-
+    class Dummy extends \A\Dummy
+    {
     }
 }

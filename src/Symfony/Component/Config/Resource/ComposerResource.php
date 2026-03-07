@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,7 @@ namespace Symfony\Component\Config\Resource;
  */
 class ComposerResource implements SelfCheckingResourceInterface
 {
-    private array $vendors;
+    private readonly array $vendors;
 
     private static array $runtimeVendors;
 
@@ -37,7 +39,7 @@ class ComposerResource implements SelfCheckingResourceInterface
 
     public function __toString(): string
     {
-        return __CLASS__;
+        return self::class;
     }
 
     public function isFresh(int $timestamp): bool

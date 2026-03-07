@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,7 +46,7 @@ final class NoPrivateNetworkHttpClient implements HttpClientInterface, ResetInte
     public function __construct(HttpClientInterface $client, string|array|null $subnets = null)
     {
         if (!class_exists(IpUtils::class)) {
-            throw new \LogicException(\sprintf('You cannot use "%s" if the HttpFoundation component is not installed. Try running "composer require symfony/http-foundation".', __CLASS__));
+            throw new \LogicException(\sprintf('You cannot use "%s" if the HttpFoundation component is not installed. Try running "composer require symfony/http-foundation".', self::class));
         }
 
         if (null === $subnets) {
@@ -52,7 +54,7 @@ final class NoPrivateNetworkHttpClient implements HttpClientInterface, ResetInte
         } else {
             $ipFlags = 0;
             foreach ((array) $subnets as $subnet) {
-                $ipFlags |= str_contains($subnet, ':') ? \FILTER_FLAG_IPV6 : \FILTER_FLAG_IPV4;
+                $ipFlags |= str_contains((string) $subnet, ':') ? \FILTER_FLAG_IPV6 : \FILTER_FLAG_IPV4;
             }
         }
 
@@ -70,7 +72,7 @@ final class NoPrivateNetworkHttpClient implements HttpClientInterface, ResetInte
     {
         [$url, $options] = self::prepareRequest($method, $url, $options, $this->defaultOptions, true);
 
-        $redirectHeaders = parse_url($url['authority']);
+        $redirectHeaders = parse_url((string) $url['authority']);
         $host = $redirectHeaders['host'];
         $url = implode('', $url);
         $dnsCache = $this->dnsCache;
@@ -101,7 +103,7 @@ final class NoPrivateNetworkHttpClient implements HttpClientInterface, ResetInte
         $redirectHeaders['with_auth'] = $redirectHeaders['no_auth'] = $options['headers'];
 
         if (isset($options['normalized_headers']['host']) || isset($options['normalized_headers']['authorization']) || isset($options['normalized_headers']['cookie'])) {
-            $redirectHeaders['no_auth'] = array_filter($redirectHeaders['no_auth'], static fn ($h) => 0 !== stripos($h, 'Host:') && 0 !== stripos($h, 'Authorization:') && 0 !== stripos($h, 'Cookie:'));
+            $redirectHeaders['no_auth'] = array_filter($redirectHeaders['no_auth'], static fn ($h): bool => 0 !== stripos((string) $h, 'Host:') && 0 !== stripos((string) $h, 'Authorization:') && 0 !== stripos((string) $h, 'Cookie:'));
         }
 
         return new AsyncResponse($this->client, $method, $url, $options, static function (ChunkInterface $chunk, AsyncContext $context) use (&$method, &$options, $maxRedirects, &$redirectHeaders, $subnets, $ipFlags, $dnsCache): \Generator {
@@ -121,7 +123,7 @@ final class NoPrivateNetworkHttpClient implements HttpClientInterface, ResetInte
                 return;
             }
 
-            $host = parse_url($url, \PHP_URL_HOST);
+            $host = parse_url((string) $url, \PHP_URL_HOST);
             $ip = self::dnsResolve($dnsCache, $host, $ipFlags, $options);
             self::ipCheck($ip, $subnets, $ipFlags, $host, $url);
 
@@ -131,7 +133,7 @@ final class NoPrivateNetworkHttpClient implements HttpClientInterface, ResetInte
                 unset($options['body'], $options['json']);
 
                 if (isset($options['normalized_headers']['content-length']) || isset($options['normalized_headers']['content-type']) || isset($options['normalized_headers']['transfer-encoding'])) {
-                    $filterContentHeaders = static fn ($h) => 0 !== stripos($h, 'Content-Length:') && 0 !== stripos($h, 'Content-Type:') && 0 !== stripos($h, 'Transfer-Encoding:');
+                    $filterContentHeaders = static fn ($h): bool => 0 !== stripos($h, 'Content-Length:') && 0 !== stripos($h, 'Content-Type:') && 0 !== stripos($h, 'Transfer-Encoding:');
                     $options['headers'] = array_filter($options['headers'], $filterContentHeaders);
                     $redirectHeaders['no_auth'] = array_filter($redirectHeaders['no_auth'], $filterContentHeaders);
                     $redirectHeaders['with_auth'] = array_filter($redirectHeaders['with_auth'], $filterContentHeaders);
@@ -139,7 +141,7 @@ final class NoPrivateNetworkHttpClient implements HttpClientInterface, ResetInte
             }
 
             // Authorization and Cookie headers MUST NOT follow except for the initial host name
-            $port = parse_url($url, \PHP_URL_PORT);
+            $port = parse_url((string) $url, \PHP_URL_PORT);
             $options['headers'] = $redirectHeaders['host'] === $host && ($redirectHeaders['port'] ?? null) === $port ? $redirectHeaders['with_auth'] : $redirectHeaders['no_auth'];
 
             static $redirectCount = 0;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,10 +28,10 @@ class NativeSessionStorageFactory implements SessionStorageFactoryInterface
      * @see NativeSessionStorage constructor.
      */
     public function __construct(
-        private array $options = [],
-        private AbstractProxy|\SessionHandlerInterface|null $handler = null,
-        private ?MetadataBag $metaBag = null,
-        private bool $secure = false,
+        private readonly array $options = [],
+        private readonly AbstractProxy|\SessionHandlerInterface|null $handler = null,
+        private readonly ?MetadataBag $metaBag = null,
+        private readonly bool $secure = false,
     ) {
     }
 

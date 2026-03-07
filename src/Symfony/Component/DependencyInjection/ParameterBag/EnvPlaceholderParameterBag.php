@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -65,7 +67,9 @@ class EnvPlaceholderParameterBag extends ParameterBag
     {
         if (!isset($this->envPlaceholderUniquePrefix)) {
             $reproducibleEntropy = unserialize(serialize($this->parameters));
-            array_walk_recursive($reproducibleEntropy, static function (&$v) { $v = null; });
+            array_walk_recursive($reproducibleEntropy, static function (&$v): void {
+                $v = null;
+            });
             $this->envPlaceholderUniquePrefix = 'env_'.substr(hash('xxh128', serialize($reproducibleEntropy)), -16);
         }
 

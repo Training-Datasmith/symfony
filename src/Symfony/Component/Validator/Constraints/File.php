@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -61,12 +63,8 @@ class File extends Constraint
         self::FILENAME_TOO_LONG => 'FILENAME_TOO_LONG',
         self::FILENAME_INVALID_CHARACTERS => 'FILENAME_INVALID_CHARACTERS',
     ];
-
-    public ?bool $binaryFormat = null;
     public array|string $mimeTypes = [];
-    public ?int $filenameMaxLength = null;
     public array|string $extensions = [];
-    public ?string $filenameCharset = null;
     /** @var self::FILENAME_COUNT_* */
     public string $filenameCountUnit = self::FILENAME_COUNT_BYTES;
 
@@ -87,8 +85,6 @@ class File extends Constraint
     public string $uploadCantWriteErrorMessage = 'Cannot write temporary file to disk.';
     public string $uploadExtensionErrorMessage = 'A PHP extension caused the upload to fail.';
     public string $uploadErrorMessage = 'The file could not be uploaded.';
-
-    protected int|string|null $maxSize = null;
 
     /**
      * @param positive-int|string|null           $maxSize                     The max size of the underlying file
@@ -111,17 +107,16 @@ class File extends Constraint
      */
     public function __construct(
         ?array $options = null,
-        int|string|null $maxSize = null,
-        ?bool $binaryFormat = null,
+        protected int|string|null $maxSize = null,
+        public ?bool $binaryFormat = null,
         array|string|null $mimeTypes = null,
-        ?int $filenameMaxLength = null,
+        public ?int $filenameMaxLength = null,
         ?string $notFoundMessage = null,
         ?string $notReadableMessage = null,
         ?string $maxSizeMessage = null,
         ?string $mimeTypesMessage = null,
         ?string $disallowEmptyMessage = null,
         ?string $filenameTooLongMessage = null,
-
         ?string $uploadIniSizeErrorMessage = null,
         ?string $uploadFormSizeErrorMessage = null,
         ?string $uploadPartialErrorMessage = null,
@@ -134,7 +129,7 @@ class File extends Constraint
         mixed $payload = null,
         array|string|null $extensions = null,
         ?string $extensionsMessage = null,
-        ?string $filenameCharset = null,
+        public ?string $filenameCharset = null,
         ?string $filenameCountUnit = null,
         ?string $filenameCharsetMessage = null,
     ) {
@@ -143,12 +138,7 @@ class File extends Constraint
         }
 
         parent::__construct(null, $groups, $payload);
-
-        $this->maxSize = $maxSize;
-        $this->binaryFormat = $binaryFormat;
         $this->mimeTypes = $mimeTypes ?? $this->mimeTypes;
-        $this->filenameMaxLength = $filenameMaxLength;
-        $this->filenameCharset = $filenameCharset;
         $this->filenameCountUnit = $filenameCountUnit ?? $this->filenameCountUnit;
         $this->extensions = $extensions ?? $this->extensions;
         $this->notFoundMessage = $notFoundMessage ?? $this->notFoundMessage;
@@ -173,7 +163,7 @@ class File extends Constraint
         }
 
         if (!\in_array($this->filenameCountUnit, self::FILENAME_VALID_COUNT_UNITS, true)) {
-            throw new InvalidArgumentException(\sprintf('The "filenameCountUnit" option must be one of the "%s::FILENAME_COUNT_*" constants ("%s" given).', __CLASS__, $this->filenameCountUnit));
+            throw new InvalidArgumentException(\sprintf('The "filenameCountUnit" option must be one of the "%s::FILENAME_COUNT_*" constants ("%s" given).', self::class, $this->filenameCountUnit));
         }
     }
 
@@ -219,7 +209,7 @@ class File extends Constraint
         if (ctype_digit((string) $maxSize)) {
             $this->maxSize = (int) $maxSize;
             $this->binaryFormat ??= false;
-        } elseif (preg_match('/^(\d++)('.implode('|', array_keys($factors)).')$/i', $maxSize, $matches)) {
+        } elseif (preg_match('/^(\d++)('.implode('|', array_keys($factors)).')$/i', (string) $maxSize, $matches)) {
             $this->maxSize = $matches[1] * $factors[$unit = strtolower($matches[2])];
             $this->binaryFormat ??= 2 === \strlen($unit);
         } else {

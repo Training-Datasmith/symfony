@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ use Symfony\Component\TypeInfo\Type;
  *
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
  */
-final class PropertyMetadata
+final readonly class PropertyMetadata
 {
     /**
      * @param list<string|\Closure> $valueTransformers

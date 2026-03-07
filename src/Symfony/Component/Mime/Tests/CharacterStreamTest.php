@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,12 +21,18 @@ class CharacterStreamTest extends TestCase
     public function testReadCharactersAreInTact()
     {
         $stream = new CharacterStream(pack('C*', 0xD0, 0x94, 0xD0, 0xB6, 0xD0, 0xBE));
-        $stream->write(pack('C*',
-            0xD0, 0xBB,
-            0xD1, 0x8E,
-            0xD0, 0xB1,
-            0xD1, 0x8B,
-            0xD1, 0x85
+        $stream->write(pack(
+            'C*',
+            0xD0,
+            0xBB,
+            0xD1,
+            0x8E,
+            0xD0,
+            0xB1,
+            0xD1,
+            0x8B,
+            0xD1,
+            0x85
         ));
         $this->assertSame(pack('C*', 0xD0, 0x94), $stream->read(1));
         $this->assertSame(pack('C*', 0xD0, 0xB6, 0xD0, 0xBE), $stream->read(2));
@@ -37,12 +45,18 @@ class CharacterStreamTest extends TestCase
     public function testCharactersCanBeReadAsByteArrays()
     {
         $stream = new CharacterStream(pack('C*', 0xD0, 0x94, 0xD0, 0xB6, 0xD0, 0xBE));
-        $stream->write(pack('C*',
-            0xD0, 0xBB,
-            0xD1, 0x8E,
-            0xD0, 0xB1,
-            0xD1, 0x8B,
-            0xD1, 0x85
+        $stream->write(pack(
+            'C*',
+            0xD0,
+            0xBB,
+            0xD1,
+            0x8E,
+            0xD0,
+            0xB1,
+            0xD1,
+            0x8B,
+            0xD1,
+            0x85
         ));
         $this->assertEquals([0xD0, 0x94], $stream->readBytes(1));
         $this->assertEquals([0xD0, 0xB6, 0xD0, 0xBE], $stream->readBytes(2));

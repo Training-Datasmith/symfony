@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'af_ZA' => 'Èdè Afrikani (Gúúshù Áfíríkà)',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,7 +39,7 @@ class TokenStream
     private array $used = [];
 
     private int $cursor = 0;
-    private ?Token $peeked;
+    private ?Token $peeked = null;
     private bool $peeking = false;
 
     /**

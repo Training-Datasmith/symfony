@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -69,7 +71,10 @@ class JsonPathAssertionsTraitTest extends TestCase
 
     public function testAssertJsonPathCountOkWithFilter()
     {
-        self::assertJsonPathCount(2, '$.book[?(@.price > 25)]', <<<JSON
+        self::assertJsonPathCount(
+            2,
+            '$.book[?(@.price > 25)]',
+            <<<JSON
             {
                 "book": [
                     { "price":  10 },

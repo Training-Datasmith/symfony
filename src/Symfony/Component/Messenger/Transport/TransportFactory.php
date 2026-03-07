@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ class TransportFactory implements TransportFactoryInterface
      * @param iterable<mixed, TransportFactoryInterface> $factories
      */
     public function __construct(
-        private iterable $factories,
+        private readonly iterable $factories,
     ) {
     }
 

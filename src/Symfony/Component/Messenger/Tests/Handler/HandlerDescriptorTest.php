@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,17 +30,20 @@ class HandlerDescriptorTest extends TestCase
 
     public static function provideHandlers(): iterable
     {
-        yield [static function () {}, 'Closure'];
+        yield [static function () {
+        }, 'Closure'];
         yield ['var_dump', 'var_dump'];
         yield [new DummyCommandHandler(), DummyCommandHandler::class.'::__invoke'];
         yield [
             [new DummyCommandHandlerWithSpecificMethod(), 'handle'],
             DummyCommandHandlerWithSpecificMethod::class.'::handle',
         ];
-        yield [\Closure::fromCallable(static function () {}), 'Closure'];
+        yield [\Closure::fromCallable(static function () {
+        }), 'Closure'];
         yield [\Closure::fromCallable(new DummyCommandHandler()), DummyCommandHandler::class.'::__invoke'];
-        yield [\Closure::bind(\Closure::fromCallable(function () {}), new \stdClass()), 'Closure'];
-        yield [new class {
+        yield [\Closure::bind(\Closure::fromCallable(function () {
+        }), new \stdClass()), 'Closure'];
+        yield [new class () {
             public function __invoke()
             {
             }
@@ -48,7 +53,8 @@ class HandlerDescriptorTest extends TestCase
     public function testGetOptions()
     {
         $options = ['option1' => 'value1', 'option2' => 'value2'];
-        $descriptor = new HandlerDescriptor(static function () {}, $options);
+        $descriptor = new HandlerDescriptor(static function () {
+        }, $options);
 
         $this->assertSame($options, $descriptor->getOptions());
     }
@@ -60,5 +66,3 @@ class DummyCommandHandlerWithSpecificMethod
     {
     }
 }
-
-// @php-cs-fixer-ignore static_lambda Lambda explicitly binded to an object, cannot be static

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,7 +41,7 @@ class XliffUtils
 
             $namespace = $xliff->attributes->getNamedItem('xmlns');
             if ($namespace) {
-                if (0 !== substr_compare('urn:oasis:names:tc:xliff:document:', $namespace->nodeValue, 0, 34)) {
+                if (0 !== substr_compare('urn:oasis:names:tc:xliff:document:', (string) $namespace->nodeValue, 0, 34)) {
                     throw new InvalidArgumentException(\sprintf('Not a valid XLIFF namespace "%s".', $namespace));
                 }
 
@@ -90,7 +92,7 @@ class XliffUtils
             $dom->loadXML('<?xml version="1.0"?><test/>');
 
             $tmpfile = tempnam(sys_get_temp_dir(), 'symfony');
-            register_shutdown_function(static function () use ($tmpfile) {
+            register_shutdown_function(static function () use ($tmpfile): void {
                 @unlink($tmpfile);
             });
             $schema = '<?xml version="1.0" encoding="utf-8"?>
@@ -112,7 +114,8 @@ class XliffUtils
         $errorsAsString = '';
 
         foreach ($xmlErrors as $error) {
-            $errorsAsString .= \sprintf("[%s %s] %s (in %s - line %d, column %d)\n",
+            $errorsAsString .= \sprintf(
+                "[%s %s] %s (in %s - line %d, column %d)\n",
                 \LIBXML_ERR_WARNING === $error['level'] ? 'WARNING' : 'ERROR',
                 $error['code'],
                 $error['message'],
@@ -163,7 +166,7 @@ class XliffUtils
         }
 
         $drive = '\\' === \DIRECTORY_SEPARATOR ? array_shift($parts).'/' : '';
-        $newPath = $locationstart.$drive.implode('/', array_map('rawurlencode', $parts));
+        $newPath = $locationstart.$drive.implode('/', array_map(rawurlencode(...), $parts));
 
         return str_replace($xmlUri, $newPath, $schemaSource);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,8 +33,8 @@ class CamelCaseToSnakeCaseNameConverter implements NameConverterInterface
      * @param bool          $lowerCamelCase Use lowerCamelCase style
      */
     public function __construct(
-        private ?array $attributes = null,
-        private bool $lowerCamelCase = true,
+        private readonly ?array $attributes = null,
+        private readonly bool $lowerCamelCase = true,
     ) {
     }
 
@@ -43,7 +45,7 @@ class CamelCaseToSnakeCaseNameConverter implements NameConverterInterface
     public function normalize(string $propertyName, ?string $class = null, ?string $format = null, array $context = []): string
     {
         if (null === $this->attributes || \in_array($propertyName, $this->attributes, true)) {
-            return strtolower(preg_replace('/[A-Z]/', '_\\0', lcfirst($propertyName)));
+            return strtolower((string) preg_replace('/[A-Z]/', '_\\0', lcfirst($propertyName)));
         }
 
         return $propertyName;
@@ -66,7 +68,7 @@ class CamelCaseToSnakeCaseNameConverter implements NameConverterInterface
         $camelCasedName = preg_replace_callback('/(^|_|\.)++(.)/', static fn ($match) => ('.' === $match[1] ? '_' : '').strtoupper($match[2]), $propertyName);
 
         if ($this->lowerCamelCase) {
-            $camelCasedName = lcfirst($camelCasedName);
+            $camelCasedName = lcfirst((string) $camelCasedName);
         }
 
         if (null === $this->attributes || \in_array($camelCasedName, $this->attributes, true)) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,7 +39,7 @@ class EventDispatcher implements EventDispatcherInterface
 
     public function __construct()
     {
-        if (__CLASS__ === static::class) {
+        if (self::class === static::class) {
             $this->optimized = [];
         }
     }
@@ -238,7 +240,7 @@ class EventDispatcher implements EventDispatcherInterface
             foreach ($listeners as &$listener) {
                 $closure = &$this->optimized[$eventName][];
                 if (\is_array($listener) && isset($listener[0]) && $listener[0] instanceof \Closure && 2 >= \count($listener)) {
-                    $closure = static function (...$args) use (&$listener, &$closure) {
+                    $closure = static function (...$args) use (&$listener, &$closure): void {
                         if ($listener[0] instanceof \Closure) {
                             $listener[0] = $listener[0]();
                             $listener[1] ??= '__invoke';

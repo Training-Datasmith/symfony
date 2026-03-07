@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,7 +46,8 @@ class UploadedFileValueResolverTest extends TestCase
         );
         $event = new ControllerArgumentsEvent(
             $this->createStub(HttpKernelInterface::class),
-            static function () {},
+            static function () {
+            },
             $resolver->resolve($request, $argument),
             $request,
             HttpKernelInterface::MAIN_REQUEST
@@ -74,7 +77,8 @@ class UploadedFileValueResolverTest extends TestCase
         );
         $event = new ControllerArgumentsEvent(
             $this->createStub(HttpKernelInterface::class),
-            static function () {},
+            static function () {
+            },
             $resolver->resolve($request, $argument),
             $request,
             HttpKernelInterface::MAIN_REQUEST
@@ -112,7 +116,8 @@ class UploadedFileValueResolverTest extends TestCase
         );
         $event = new ControllerArgumentsEvent(
             $this->createStub(HttpKernelInterface::class),
-            static function () {},
+            static function () {
+            },
             $resolver->resolve($request, $argument),
             $request,
             HttpKernelInterface::MAIN_REQUEST
@@ -138,7 +143,8 @@ class UploadedFileValueResolverTest extends TestCase
         );
         $event = new ControllerArgumentsEvent(
             $this->createStub(HttpKernelInterface::class),
-            static function () {},
+            static function () {
+            },
             $resolver->resolve($request, $argument),
             $request,
             HttpKernelInterface::MAIN_REQUEST
@@ -165,7 +171,8 @@ class UploadedFileValueResolverTest extends TestCase
         );
         $event = new ControllerArgumentsEvent(
             $this->createStub(HttpKernelInterface::class),
-            static function () {},
+            static function () {
+            },
             $resolver->resolve($request, $argument),
             $request,
             HttpKernelInterface::MAIN_REQUEST
@@ -195,7 +202,8 @@ class UploadedFileValueResolverTest extends TestCase
         );
         $event = new ControllerArgumentsEvent(
             $this->createStub(HttpKernelInterface::class),
-            static function () {},
+            static function () {
+            },
             $resolver->resolve($request, $argument),
             $request,
             HttpKernelInterface::MAIN_REQUEST
@@ -225,7 +233,8 @@ class UploadedFileValueResolverTest extends TestCase
         );
         $event = new ControllerArgumentsEvent(
             $this->createStub(HttpKernelInterface::class),
-            static function () {},
+            static function () {
+            },
             $resolver->resolve($request, $argument),
             $request,
             HttpKernelInterface::MAIN_REQUEST
@@ -252,7 +261,8 @@ class UploadedFileValueResolverTest extends TestCase
         );
         $event = new ControllerArgumentsEvent(
             $this->createStub(HttpKernelInterface::class),
-            static function () {},
+            static function () {
+            },
             $resolver->resolve($request, $argument),
             $request,
             HttpKernelInterface::MAIN_REQUEST
@@ -284,7 +294,8 @@ class UploadedFileValueResolverTest extends TestCase
         );
         $event = new ControllerArgumentsEvent(
             $this->createStub(HttpKernelInterface::class),
-            static function () {},
+            static function () {
+            },
             $resolver->resolve($request, $argument),
             $request,
             HttpKernelInterface::MAIN_REQUEST
@@ -311,7 +322,8 @@ class UploadedFileValueResolverTest extends TestCase
         );
         $event = new ControllerArgumentsEvent(
             $this->createStub(HttpKernelInterface::class),
-            static function () {},
+            static function () {
+            },
             $resolver->resolve($request, $argument),
             $request,
             HttpKernelInterface::MAIN_REQUEST
@@ -341,7 +353,8 @@ class UploadedFileValueResolverTest extends TestCase
         );
         $event = new ControllerArgumentsEvent(
             $this->createStub(HttpKernelInterface::class),
-            static function () {},
+            static function () {
+            },
             $resolver->resolve($request, $argument),
             $request,
             HttpKernelInterface::MAIN_REQUEST
@@ -373,7 +386,8 @@ class UploadedFileValueResolverTest extends TestCase
         );
         $event = new ControllerArgumentsEvent(
             $this->createStub(HttpKernelInterface::class),
-            static function () {},
+            static function () {
+            },
             $resolver->resolve($request, $argument),
             $request,
             HttpKernelInterface::MAIN_REQUEST
@@ -402,7 +416,8 @@ class UploadedFileValueResolverTest extends TestCase
         $httpKernel = $this->createStub(HttpKernelInterface::class);
         $event = new ControllerArgumentsEvent(
             $httpKernel,
-            static function () {},
+            static function () {
+            },
             $resolver->resolve($request, $argument),
             $request,
             HttpKernelInterface::MAIN_REQUEST
@@ -430,7 +445,8 @@ class UploadedFileValueResolverTest extends TestCase
         $httpKernel = $this->createStub(HttpKernelInterface::class);
         $event = new ControllerArgumentsEvent(
             $httpKernel,
-            static function () {},
+            static function () {
+            },
             $resolver->resolve($request, $argument),
             $request,
             HttpKernelInterface::MAIN_REQUEST
@@ -458,7 +474,8 @@ class UploadedFileValueResolverTest extends TestCase
         $httpKernel = $this->createStub(HttpKernelInterface::class);
         $event = new ControllerArgumentsEvent(
             $httpKernel,
-            static function () {},
+            static function () {
+            },
             $resolver->resolve($request, $argument),
             $request,
             HttpKernelInterface::MAIN_REQUEST

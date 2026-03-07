@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,22 +25,15 @@ final class BoundArgument implements ArgumentInterface
     public const INSTANCEOF_BINDING = 2;
 
     private static int $sequence = 0;
-
-    private mixed $value = null;
     private ?int $identifier = null;
     private ?bool $used = null;
-    private int $type = 0;
-    private ?string $file = null;
 
     public function __construct(
-        mixed $value,
+        private mixed $value,
         bool $trackUsage = true,
-        int $type = 0,
-        ?string $file = null,
+        private int $type = 0,
+        private ?string $file = null,
     ) {
-        $this->value = $value;
-        $this->type = $type;
-        $this->file = $file;
         if ($trackUsage) {
             $this->identifier = ++self::$sequence;
         } else {

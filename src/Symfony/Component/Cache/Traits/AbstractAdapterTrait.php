@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -132,7 +134,10 @@ trait AbstractAdapterTrait
         }
 
         try {
-            return $this->doClear($namespaceToClear) || $cleared;
+            if ($this->doClear($namespaceToClear)) {
+                return true;
+            }
+            return (bool) $cleared;
         } catch (\Exception $e) {
             CacheItem::log($this->logger, 'Failed to clear the cache: '.$e->getMessage(), ['exception' => $e, 'cache-adapter' => get_debug_type($this)]);
 
@@ -290,12 +295,12 @@ trait AbstractAdapterTrait
 
     public function __serialize(): array
     {
-        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot serialize '.self::class);
     }
 
     public function __unserialize(array $data): void
     {
-        throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot unserialize '.self::class);
     }
 
     public function __destruct()
@@ -377,7 +382,7 @@ trait AbstractAdapterTrait
             }
 
             // Use xxh128 to favor speed over security, which is not an issue here
-            $this->ids[$key] = $id = substr_replace(base64_encode(hash('xxh128', $key, true)), static::NS_SEPARATOR, -(\strlen($this->namespaceVersion) + 2));
+            $this->ids[$key] = $id = substr_replace(base64_encode(hash('xxh128', (string) $key, true)), static::NS_SEPARATOR, -(\strlen($this->namespaceVersion) + 2));
         }
         $id = $namespace.$id;
 

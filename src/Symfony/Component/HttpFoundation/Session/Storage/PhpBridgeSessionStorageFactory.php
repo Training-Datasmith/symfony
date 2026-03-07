@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,9 +25,9 @@ class_exists(PhpBridgeSessionStorage::class);
 class PhpBridgeSessionStorageFactory implements SessionStorageFactoryInterface
 {
     public function __construct(
-        private AbstractProxy|\SessionHandlerInterface|null $handler = null,
-        private ?MetadataBag $metaBag = null,
-        private bool $secure = false,
+        private readonly AbstractProxy|\SessionHandlerInterface|null $handler = null,
+        private readonly ?MetadataBag $metaBag = null,
+        private readonly bool $secure = false,
     ) {
     }
 

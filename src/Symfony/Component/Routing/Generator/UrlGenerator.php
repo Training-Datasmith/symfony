@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -77,7 +79,7 @@ class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInt
         protected RouteCollection $routes,
         protected RequestContext $context,
         protected ?LoggerInterface $logger = null,
-        private ?string $defaultLocale = null,
+        private readonly ?string $defaultLocale = null,
     ) {
     }
 
@@ -112,7 +114,7 @@ class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInt
                 if ($route && ($route->getDefault('_canonical_route') === $name || $this->routes->getAlias($name.'.'.$locale))) {
                     break;
                 }
-            } while (false !== $locale = strstr($locale, '_', true));
+            } while (false !== $locale = strstr((string) $locale, '_', true));
         }
 
         if (null === $route ??= $this->routes->get($name)) {
@@ -173,7 +175,7 @@ class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInt
 
                 if (!$optional || $important || !\array_key_exists($varName, $defaults) || (null !== $mergedParams[$varName] && (string) $mergedParams[$varName] !== (string) $defaults[$varName])) {
                     // check requirement (while ignoring look-around patterns)
-                    if (null !== $this->strictRequirements && !preg_match('#^'.preg_replace('/\(\?(?:=|<=|!|<!)((?:[^()\\\\]+|\\\\.|\((?1)\))*)\)/', '', $token[2]).'$#i'.(empty($token[4]) ? '' : 'u'), $mergedParams[$token[3]] ?? '')) {
+                    if (null !== $this->strictRequirements && !preg_match('#^'.preg_replace('/\(\?(?:=|<=|!|<!)((?:[^()\\\\]+|\\\\.|\((?1)\))*)\)/', '', (string) $token[2]).'$#i'.(empty($token[4]) ? '' : 'u'), $mergedParams[$token[3]] ?? '')) {
                         if ($this->strictRequirements) {
                             throw new InvalidParameterException(strtr($message, ['{parameter}' => $varName, '{route}' => $name, '{expected}' => $token[2], '{given}' => $mergedParams[$varName]]));
                         }
@@ -226,7 +228,7 @@ class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInt
             foreach ($hostTokens as $token) {
                 if ('variable' === $token[0]) {
                     // check requirement (while ignoring look-around patterns)
-                    if (null !== $this->strictRequirements && !preg_match('#^'.preg_replace('/\(\?(?:=|<=|!|<!)((?:[^()\\\\]+|\\\\.|\((?1)\))*)\)/', '', $token[2]).'$#i'.(empty($token[4]) ? '' : 'u'), $mergedParams[$token[3]])) {
+                    if (null !== $this->strictRequirements && !preg_match('#^'.preg_replace('/\(\?(?:=|<=|!|<!)((?:[^()\\\\]+|\\\\.|\((?1)\))*)\)/', '', (string) $token[2]).'$#i'.(empty($token[4]) ? '' : 'u'), (string) $mergedParams[$token[3]])) {
                         if ($this->strictRequirements) {
                             throw new InvalidParameterException(strtr($message, ['{parameter}' => $token[3], '{route}' => $name, '{expected}' => $token[2], '{given}' => $mergedParams[$token[3]]]));
                         }
@@ -271,10 +273,10 @@ class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInt
         }
 
         // add a query string if needed
-        $extra = array_udiff_assoc(array_diff_key($parameters, $variables), $defaults, static fn ($a, $b) => $a == $b ? 0 : 1);
+        $extra = array_udiff_assoc(array_diff_key($parameters, $variables), $defaults, static fn ($a, $b): int => $a == $b ? 0 : 1);
         $extra = array_replace($extra, $queryParameters);
 
-        array_walk_recursive($extra, $caster = static function (&$v) use (&$caster) {
+        array_walk_recursive($extra, $caster = static function (&$v) use (&$caster): void {
             if (\is_object($v)) {
                 if ($vars = get_object_vars($v)) {
                     array_walk_recursive($vars, $caster);
@@ -298,7 +300,7 @@ class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInt
         }
 
         if ('' !== $fragment) {
-            $url .= '#'.strtr(rawurlencode($fragment), self::QUERY_FRAGMENT_DECODED);
+            $url .= '#'.strtr(rawurlencode((string) $fragment), self::QUERY_FRAGMENT_DECODED);
         }
 
         return $url;

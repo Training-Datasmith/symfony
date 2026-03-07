@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -78,7 +80,7 @@ class ByteString extends AbstractString
     {
         $str = clone $this;
 
-        $parts = explode(' ', trim(ucwords(preg_replace('/[^a-zA-Z0-9\x7f-\xff]++/', ' ', $this->string))));
+        $parts = explode(' ', trim(ucwords((string) preg_replace('/[^a-zA-Z0-9\x7f-\xff]++/', ' ', $this->string))));
         $parts[0] = 1 !== \strlen($parts[0]) && ctype_upper($parts[0]) ? $parts[0] : lcfirst($parts[0]);
         $str->string = implode('', $parts);
 
@@ -114,7 +116,7 @@ class ByteString extends AbstractString
             return parent::endsWith($suffix);
         }
 
-        return '' !== $suffix && \strlen($this->string) >= \strlen($suffix) && 0 === substr_compare($this->string, $suffix, -\strlen($suffix), null, $this->ignoreCase);
+        return '' !== $suffix && \strlen($this->string) >= \strlen($suffix) && str_ends_with($this->string, $suffix);
     }
 
     public function equalsTo(string|iterable|AbstractString $string): bool
@@ -317,7 +319,7 @@ class ByteString extends AbstractString
     public function snake(): static
     {
         $str = $this->camel();
-        $str->string = strtolower(preg_replace(['/([A-Z]+)([A-Z][a-z])/', '/([a-z\d])([A-Z])/'], '\1_\2', $str->string));
+        $str->string = strtolower((string) preg_replace(['/([A-Z]+)([A-Z][a-z])/', '/([a-z\d])([A-Z])/'], '\1_\2', $str->string));
 
         return $str;
     }

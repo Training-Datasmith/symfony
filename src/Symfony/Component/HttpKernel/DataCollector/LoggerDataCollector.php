@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,14 +28,14 @@ use Symfony\Component\VarDumper\Cloner\Data;
  */
 class LoggerDataCollector extends DataCollector implements LateDataCollectorInterface
 {
-    private ?DebugLoggerInterface $logger;
+    private readonly ?DebugLoggerInterface $logger;
     private ?Request $currentRequest = null;
     private ?array $processedLogs = null;
 
     public function __construct(
         ?object $logger = null,
-        private ?string $containerPathPrefix = null,
-        private ?RequestStack $requestStack = null,
+        private readonly ?string $containerPathPrefix = null,
+        private readonly ?RequestStack $requestStack = null,
     ) {
         $this->logger = DebugLoggerConfigurator::getDebugLogger($logger);
     }
@@ -100,7 +102,7 @@ class LoggerDataCollector extends DataCollector implements LateDataCollectorInte
         }
 
         // sort logs from oldest to newest
-        usort($logs, static fn ($logA, $logB) => $logA['timestamp'] <=> $logB['timestamp']);
+        usort($logs, static fn (array $logA, array $logB): int => $logA['timestamp'] <=> $logB['timestamp']);
 
         return $this->processedLogs = $logs;
     }

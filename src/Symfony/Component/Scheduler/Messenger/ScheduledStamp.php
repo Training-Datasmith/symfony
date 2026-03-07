@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,9 +16,9 @@ namespace Symfony\Component\Scheduler\Messenger;
 use Symfony\Component\Messenger\Stamp\StampInterface;
 use Symfony\Component\Scheduler\Generator\MessageContext;
 
-final class ScheduledStamp implements StampInterface
+final readonly class ScheduledStamp implements StampInterface
 {
-    public function __construct(public readonly MessageContext $messageContext)
+    public function __construct(public MessageContext $messageContext)
     {
     }
 }

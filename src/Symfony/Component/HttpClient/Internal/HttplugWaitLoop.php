@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,10 +36,10 @@ final class HttplugWaitLoop
      * @param \SplObjectStorage<ResponseInterface, array{Psr7RequestInterface, Promise}>|null $promisePool
      */
     public function __construct(
-        private HttpClientInterface $client,
+        private readonly HttpClientInterface $client,
         private ?\SplObjectStorage $promisePool,
-        private ResponseFactoryInterface $responseFactory,
-        private StreamFactoryInterface $streamFactory,
+        private readonly ResponseFactoryInterface $responseFactory,
+        private readonly StreamFactoryInterface $streamFactory,
     ) {
     }
 
@@ -114,7 +116,7 @@ final class HttplugWaitLoop
         $responseParameters = [$response->getStatusCode()];
 
         foreach ($response->getInfo('response_headers') as $h) {
-            if (11 <= \strlen($h) && '/' === $h[4] && preg_match('#^HTTP/\d+(?:\.\d+)? (?:\d\d\d) (.+)#', $h, $m)) {
+            if (11 <= \strlen((string) $h) && '/' === $h[4] && preg_match('#^HTTP/\d+(?:\.\d+)? (?:\d\d\d) (.+)#', (string) $h, $m)) {
                 $responseParameters[1] = $m[1];
             }
         }
@@ -125,7 +127,7 @@ final class HttplugWaitLoop
             foreach ($values as $value) {
                 try {
                     $psrResponse = $psrResponse->withAddedHeader($name, $value);
-                } catch (\InvalidArgumentException $e) {
+                } catch (\InvalidArgumentException) {
                     // ignore invalid header
                 }
             }

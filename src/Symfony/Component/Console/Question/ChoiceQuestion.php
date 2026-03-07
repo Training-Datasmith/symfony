@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ class ChoiceQuestion extends Question
      */
     public function __construct(
         string $question,
-        private array $choices,
+        private readonly array $choices,
         string|bool|int|float|null $default = null,
     ) {
         if (!$choices) {

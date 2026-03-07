@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ final class JavascriptSequenceParser
 
     private int $cursor = 0;
 
-    private int $contentEnd;
+    private readonly int $contentEnd;
 
     private string $pattern;
 
@@ -87,7 +89,7 @@ final class JavascriptSequenceParser
                 }
 
                 $this->cursor = $this->currentSequenceEnd;
-                $this->setSequence(self::STATE_DEFAULT, null);
+                $this->setSequence(self::STATE_DEFAULT);
             }
 
             preg_match($this->pattern, $this->content, $matches, \PREG_OFFSET_CAPTURE, $this->cursor);
@@ -97,7 +99,7 @@ final class JavascriptSequenceParser
                 return;
             }
 
-            $matchPos = (int) $matches[0][1];
+            $matchPos = $matches[0][1];
             $matchChar = $matches[0][0];
 
             if ($matchPos > $position) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,7 +37,7 @@ final class Charset extends Constraint
         parent::__construct(null, $groups, $payload);
 
         if ([] === $this->encodings) {
-            throw new ConstraintDefinitionException(\sprintf('The "%s" constraint requires at least one encoding.', static::class));
+            throw new ConstraintDefinitionException(\sprintf('The "%s" constraint requires at least one encoding.', self::class));
         }
     }
 }

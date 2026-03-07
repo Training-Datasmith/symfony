@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -55,7 +57,7 @@ class PropertyAccessorTest extends TestCase
 
     public function testPrefersPropertyOverMethodWithSameNameAndRequiredArgs()
     {
-        $obj = new class {
+        $obj = new class () {
             public bool $loaded = true;
 
             // Same name as property, but requires an argument: must NOT be called for reading
@@ -154,7 +156,7 @@ class PropertyAccessorTest extends TestCase
 
     public function testGetValueThrowsExceptionIfUninitializedPropertyWithGetterOfAnonymousClass()
     {
-        $object = new class {
+        $object = new class () {
             private $uninitialized;
 
             public function getUninitialized(): array
@@ -171,7 +173,7 @@ class PropertyAccessorTest extends TestCase
 
     public function testGetValueThrowsExceptionIfUninitializedNotNullablePropertyWithGetterOfAnonymousClass()
     {
-        $object = new class {
+        $object = new class () {
             private string $uninitialized;
 
             public function getUninitialized(): string
@@ -188,7 +190,7 @@ class PropertyAccessorTest extends TestCase
 
     public function testGetValueThrowsExceptionIfUninitializedPropertyOfAnonymousClass()
     {
-        $object = new class {
+        $object = new class () {
             public string $uninitialized;
         };
 
@@ -216,7 +218,7 @@ class PropertyAccessorTest extends TestCase
 
     public function testGetValueThrowsExceptionIfUninitializedPropertyWithGetterOfAnonymousStdClass()
     {
-        $object = new class extends \stdClass {
+        $object = new class () extends \stdClass {
             private $uninitialized;
 
             public function getUninitialized(): array
@@ -233,7 +235,7 @@ class PropertyAccessorTest extends TestCase
 
     public function testGetValueThrowsExceptionIfUninitializedPropertyWithGetterOfAnonymousChildClass()
     {
-        $object = new class extends UninitializedPrivateProperty {
+        $object = new class () extends UninitializedPrivateProperty {
         };
 
         $this->expectException(UninitializedPropertyException::class);
@@ -753,7 +755,7 @@ class PropertyAccessorTest extends TestCase
 
     private function generateAnonymousClass($value)
     {
-        return new class($value) {
+        return new class ($value) {
             private $foo;
 
             public function __construct($foo)

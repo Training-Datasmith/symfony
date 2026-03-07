@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,6 @@ class InvokableWithAskCommand
 {
     public function __invoke(
         SymfonyStyle $io,
-
         #[Argument]
         #[Ask('What is your name?')]
         string $name,

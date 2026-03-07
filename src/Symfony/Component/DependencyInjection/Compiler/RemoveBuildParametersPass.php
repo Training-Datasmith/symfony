@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ class RemoveBuildParametersPass implements CompilerPassInterface
     private array $removedParameters = [];
 
     public function __construct(
-        private bool $preserveArrays = false,
+        private readonly bool $preserveArrays = false,
     ) {
     }
 

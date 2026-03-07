@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -83,9 +85,9 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
      *                            (see RFC 5861).
      */
     public function __construct(
-        private HttpKernelInterface $kernel,
-        private StoreInterface $store,
-        private ?SurrogateInterface $surrogate = null,
+        private readonly HttpKernelInterface $kernel,
+        private readonly StoreInterface $store,
+        private readonly ?SurrogateInterface $surrogate = null,
         array $options = [],
     ) {
         // needed in case there is a fatal error because the backend is too slow to respond

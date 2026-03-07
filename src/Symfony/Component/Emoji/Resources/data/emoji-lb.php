@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'Kuss: Erwuessenen, Erwuessenen, hell Hautfaarf, mëttelhell Hautfaarf',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'Kuss: Erwuessenen, Erwuessenen, hell Hautfaarf, mëttel Hautfaarf',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,11 +26,11 @@ use Symfony\Contracts\EventDispatcher\Event;
 final class VoteEvent extends Event
 {
     public function __construct(
-        private VoterInterface $voter,
-        private mixed $subject,
-        private array $attributes,
-        private int $vote,
-        private array $reasons = [],
+        private readonly VoterInterface $voter,
+        private readonly mixed $subject,
+        private readonly array $attributes,
+        private readonly int $vote,
+        private readonly array $reasons = [],
     ) {
     }
 

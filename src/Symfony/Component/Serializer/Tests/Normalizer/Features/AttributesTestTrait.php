@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -76,7 +78,11 @@ trait AttributesTestTrait
                 'bar' => 'bar',
                 'date' => '2017-02-03',
                 'inner' => ['foo' => 'innerFoo', 'bar' => 'innerBar'],
-            ], ObjectOuter::class, null, $context));
+            ],
+            ObjectOuter::class,
+            null,
+            $context
+        ));
     }
 
     public function testAttributesContextDenormalizeIgnoreExtraAttributes()
@@ -96,7 +102,11 @@ trait AttributesTestTrait
                 'bar' => 'changed',
                 'date' => '2017-02-03',
                 'inner' => ['foo' => 'innerFoo', 'bar' => 'innerBar'],
-            ], ObjectOuter::class, null, $context));
+            ],
+            ObjectOuter::class,
+            null,
+            $context
+        ));
     }
 
     public function testAttributesContextDenormalizeExceptionExtraAttributes()
@@ -112,6 +122,10 @@ trait AttributesTestTrait
             [
                 'bar' => 'bar',
                 'inner' => ['foo' => 'innerFoo', 'bar' => 'innerBar'],
-            ], ObjectOuter::class, null, $context);
+            ],
+            ObjectOuter::class,
+            null,
+            $context
+        );
     }
 }

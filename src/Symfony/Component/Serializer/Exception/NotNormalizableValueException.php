@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,22 +18,15 @@ namespace Symfony\Component\Serializer\Exception;
  */
 class NotNormalizableValueException extends UnexpectedValueException
 {
-    private ?string $currentType = null;
     private ?array $expectedTypes = null;
-    private ?string $path = null;
-    private bool $useMessageForUser = false;
 
     /**
      * @param list<string|\Stringable>|null $expectedTypes
      */
-    public function __construct(string $message = '', int $code = 0, ?\Throwable $previous = null, ?string $currentType = null, ?array $expectedTypes = null, ?string $path = null, bool $useMessageForUser = false)
+    public function __construct(string $message = '', int $code = 0, ?\Throwable $previous = null, private readonly ?string $currentType = null, ?array $expectedTypes = null, private readonly ?string $path = null, private readonly bool $useMessageForUser = false)
     {
         parent::__construct($message, $code, $previous);
-
-        $this->currentType = $currentType;
         $this->expectedTypes = $expectedTypes ? array_map(strval(...), $expectedTypes) : $expectedTypes;
-        $this->path = $path;
-        $this->useMessageForUser = $useMessageForUser;
     }
 
     /**

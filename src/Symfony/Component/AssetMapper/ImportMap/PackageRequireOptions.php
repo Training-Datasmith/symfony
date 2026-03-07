@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,19 +18,19 @@ namespace Symfony\Component\AssetMapper\ImportMap;
  *
  * @author Kévin Dunglas <kevin@dunglas.dev>
  */
-final class PackageRequireOptions
+final readonly class PackageRequireOptions
 {
-    public readonly string $importName;
+    public string $importName;
 
     public function __construct(
         /**
          * The "package-name/path" of the remote package.
          */
-        public readonly string $packageModuleSpecifier,
-        public readonly ?string $versionConstraint = null,
+        public string $packageModuleSpecifier,
+        public ?string $versionConstraint = null,
         ?string $importName = null,
-        public readonly ?string $path = null,
-        public readonly bool $entrypoint = false,
+        public ?string $path = null,
+        public bool $entrypoint = false,
     ) {
         $this->importName = $importName ?: $packageModuleSpecifier;
     }

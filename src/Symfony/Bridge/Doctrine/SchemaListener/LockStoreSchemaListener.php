@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,7 +38,7 @@ final class LockStoreSchemaListener extends AbstractSchemaListener
             }
 
             $isSameDatabaseChecker = $this->getIsSameDatabaseChecker($connection);
-            $this->filterSchemaChanges($schema, $connection, static function () use ($store, $schema, $isSameDatabaseChecker) {
+            $this->filterSchemaChanges($schema, $connection, static function () use ($store, $schema, $isSameDatabaseChecker): void {
                 $store->configureSchema($schema, $isSameDatabaseChecker);
             });
         }

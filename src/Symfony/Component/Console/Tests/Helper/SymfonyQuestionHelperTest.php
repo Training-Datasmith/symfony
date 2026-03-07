@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -153,7 +155,8 @@ class SymfonyQuestionHelperTest extends AbstractQuestionHelperTestCase
             $choiceQuestion
         );
 
-        $this->assertOutputContains(<<<EOT
+        $this->assertOutputContains(
+            <<<EOT
              qqq:
               [foo   ] foo
               [żółw  ] bar
@@ -176,7 +179,8 @@ class SymfonyQuestionHelperTest extends AbstractQuestionHelperTestCase
             $choiceQuestion
         );
 
-        $this->assertOutputContains(<<<EOT
+        $this->assertOutputContains(
+            <<<EOT
              qqq:
               [0] foo
              >ccc>

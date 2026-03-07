@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,18 +46,18 @@ class SwitchUserListener extends AbstractListener
     public const EXIT_VALUE = '_exit';
 
     public function __construct(
-        private TokenStorageInterface $tokenStorage,
-        private UserProviderInterface $provider,
-        private UserCheckerInterface $userChecker,
-        private string $firewallName,
-        private AccessDecisionManagerInterface $accessDecisionManager,
-        private ?LoggerInterface $logger = null,
-        private string $usernameParameter = '_switch_user',
-        private string $role = 'ROLE_ALLOWED_TO_SWITCH',
-        private ?EventDispatcherInterface $dispatcher = null,
-        private bool $stateless = false,
-        private ?UrlGeneratorInterface $urlGenerator = null,
-        private ?string $targetRoute = null,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly UserProviderInterface $provider,
+        private readonly UserCheckerInterface $userChecker,
+        private readonly string $firewallName,
+        private readonly AccessDecisionManagerInterface $accessDecisionManager,
+        private readonly ?LoggerInterface $logger = null,
+        private readonly string $usernameParameter = '_switch_user',
+        private readonly string $role = 'ROLE_ALLOWED_TO_SWITCH',
+        private readonly ?EventDispatcherInterface $dispatcher = null,
+        private readonly bool $stateless = false,
+        private readonly ?UrlGeneratorInterface $urlGenerator = null,
+        private readonly ?string $targetRoute = null,
     ) {
         if ('' === $firewallName) {
             throw new \InvalidArgumentException('$firewallName must not be empty.');

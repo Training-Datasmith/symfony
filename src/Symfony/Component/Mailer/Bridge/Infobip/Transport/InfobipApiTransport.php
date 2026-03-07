@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -46,7 +48,7 @@ final class InfobipApiTransport extends AbstractApiTransport
     ];
 
     public function __construct(
-        #[\SensitiveParameter] private string $key,
+        #[\SensitiveParameter] private readonly string $key,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
         ?LoggerInterface $logger = null,
@@ -99,7 +101,7 @@ final class InfobipApiTransport extends AbstractApiTransport
         return $response;
     }
 
-    private function getEndpoint(): ?string
+    private function getEndpoint(): string
     {
         return $this->host.($this->port ? ':'.$this->port : '');
     }

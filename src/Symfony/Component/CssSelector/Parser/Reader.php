@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,11 +25,11 @@ namespace Symfony\Component\CssSelector\Parser;
  */
 class Reader
 {
-    private int $length;
+    private readonly int $length;
     private int $position = 0;
 
     public function __construct(
-        private string $source,
+        private readonly string $source,
     ) {
         $this->length = \strlen($source);
     }

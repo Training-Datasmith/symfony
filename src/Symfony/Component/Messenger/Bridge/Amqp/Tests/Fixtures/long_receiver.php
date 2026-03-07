@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $componentRoot = $_SERVER['COMPONENT_ROOT'];
 
 if (!is_file($autoload = $componentRoot.'/vendor/autoload.php')) {
@@ -34,7 +36,7 @@ $receiver = new AmqpReceiver($connection, $serializer);
 $eventDispatcher = new EventDispatcher();
 $eventDispatcher->addSubscriber(new DispatchPcntlSignalListener());
 
-$worker = new Worker(['the_receiver' => $receiver], new class implements MessageBusInterface {
+$worker = new Worker(['the_receiver' => $receiver], new class () implements MessageBusInterface {
     public function dispatch($envelope, array $stamps = []): Envelope
     {
         echo 'Get envelope with message: '.$envelope->getMessage()::class."\n";

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,10 +41,10 @@ class TraceableEventDispatcher implements EventDispatcherInterface, ResetInterfa
     private string $currentRequestHash = '';
 
     public function __construct(
-        private EventDispatcherInterface $dispatcher,
+        private readonly EventDispatcherInterface $dispatcher,
         protected Stopwatch $stopwatch,
         protected ?LoggerInterface $logger = null,
-        private ?RequestStack $requestStack = null,
+        private readonly ?RequestStack $requestStack = null,
         protected readonly ?\Closure $disabled = null,
     ) {
     }
@@ -300,7 +302,7 @@ class TraceableEventDispatcher implements EventDispatcherInterface, ResetInterfa
 
     private function sortNotCalledListeners(array $a, array $b): int
     {
-        if (0 !== $cmp = strcmp($a['event'], $b['event'])) {
+        if (0 !== $cmp = strcmp((string) $a['event'], (string) $b['event'])) {
             return $cmp;
         }
 

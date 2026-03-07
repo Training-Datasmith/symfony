@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class ClosureLoader extends Loader
 {
     public function __construct(
-        private ContainerBuilder $container,
+        private readonly ContainerBuilder $container,
         ?string $env = null,
     ) {
         parent::__construct($env);

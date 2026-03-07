@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,9 +24,9 @@ final class AmqpStamp implements NonSendableStampInterface
     private bool $isRetryAttempt = false;
 
     public function __construct(
-        private ?string $routingKey = null,
-        private int $flags = \AMQP_NOPARAM,
-        private array $attributes = [],
+        private readonly ?string $routingKey = null,
+        private readonly int $flags = \AMQP_NOPARAM,
+        private readonly array $attributes = [],
     ) {
     }
 

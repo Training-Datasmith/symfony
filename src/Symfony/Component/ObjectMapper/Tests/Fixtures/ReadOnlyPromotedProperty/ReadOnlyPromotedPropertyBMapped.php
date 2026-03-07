@@ -1,8 +1,8 @@
 <?php
 
-namespace Symfony\Component\ObjectMapper\Tests\Fixtures\ReadOnlyPromotedProperty;
+declare(strict_types=1);
 
-use Symfony\Component\ObjectMapper\Attribute\Map;
+namespace Symfony\Component\ObjectMapper\Tests\Fixtures\ReadOnlyPromotedProperty;
 
 final class ReadOnlyPromotedPropertyBMapped
 {

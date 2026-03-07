@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Bridge\Twig\Tests\Extension\Fixtures;
 
 use Symfony\Component\Serializer\Attribute\Groups;

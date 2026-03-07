@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ use Symfony\Component\Cache\Exception\CacheException;
 class DeflateMarshaller implements MarshallerInterface
 {
     public function __construct(
-        private MarshallerInterface $marshaller,
+        private readonly MarshallerInterface $marshaller,
     ) {
         if (!\function_exists('gzdeflate')) {
             throw new CacheException('The "zlib" PHP extension is not loaded.');
@@ -30,7 +32,7 @@ class DeflateMarshaller implements MarshallerInterface
 
     public function marshall(array $values, ?array &$failed): array
     {
-        return array_map('gzdeflate', $this->marshaller->marshall($values, $failed));
+        return array_map(gzdeflate(...), $this->marshaller->marshall($values, $failed));
     }
 
     public function unmarshall(string $value): mixed

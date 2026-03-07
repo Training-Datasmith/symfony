@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,8 +41,6 @@ class DoctrineDbalAdapter extends AbstractAdapter implements PruneableInterface
     private const MAX_KEY_LENGTH = 255;
 
     private static int $savepointCounter = 0;
-
-    private MarshallerInterface $marshaller;
     private Connection $conn;
     private string $platformName;
     private string $table = 'cache_items';
@@ -67,10 +67,10 @@ class DoctrineDbalAdapter extends AbstractAdapter implements PruneableInterface
      */
     public function __construct(
         Connection|string $connOrDsn,
-        private string $namespace = '',
+        private readonly string $namespace = '',
         int $defaultLifetime = 0,
         array $options = [],
-        ?MarshallerInterface $marshaller = null,
+        private readonly ?MarshallerInterface $marshaller = new DefaultMarshaller(),
     ) {
         if (isset($namespace[0]) && preg_match('#[^-+.A-Za-z0-9]#', $namespace, $match)) {
             throw new InvalidArgumentException(\sprintf('Namespace contains "%s" but only characters in [-+.A-Za-z0-9] are allowed.', $match[0]));
@@ -106,7 +106,6 @@ class DoctrineDbalAdapter extends AbstractAdapter implements PruneableInterface
         $this->dataCol = $options['db_data_col'] ?? $this->dataCol;
         $this->lifetimeCol = $options['db_lifetime_col'] ?? $this->lifetimeCol;
         $this->timeCol = $options['db_time_col'] ?? $this->timeCol;
-        $this->marshaller = $marshaller ?? new DefaultMarshaller();
 
         parent::__construct($namespace, $defaultLifetime);
     }
@@ -261,7 +260,7 @@ class DoctrineDbalAdapter extends AbstractAdapter implements PruneableInterface
         return $this->doSaveInner($values, $lifetime, $failed);
     }
 
-    private function doSaveInner(array $values, int $lifetime, array $failed): array|bool
+    private function doSaveInner(array $values, int $lifetime, array $failed): array
     {
         $platformName = $this->getPlatformName();
         $insertSql = "INSERT INTO $this->table ($this->idCol, $this->dataCol, $this->lifetimeCol, $this->timeCol) VALUES (?, ?, ?, ?)";
@@ -307,7 +306,7 @@ class DoctrineDbalAdapter extends AbstractAdapter implements PruneableInterface
         }
 
         if ('sqlsrv' === $platformName || 'oci' === $platformName) {
-            $bind = static function ($id, $data) use ($stmt) {
+            $bind = static function ($id, $data) use ($stmt): void {
                 $stmt->bindValue(1, $id);
                 $stmt->bindValue(2, $id);
                 $stmt->bindValue(3, $data, ParameterType::LARGE_OBJECT);
@@ -318,7 +317,7 @@ class DoctrineDbalAdapter extends AbstractAdapter implements PruneableInterface
             $stmt->bindValue(7, $lifetime, ParameterType::INTEGER);
             $stmt->bindValue(8, $now, ParameterType::INTEGER);
         } elseif (null !== $platformName) {
-            $bind = static function ($id, $data) use ($stmt) {
+            $bind = static function ($id, $data) use ($stmt): void {
                 $stmt->bindValue(1, $id);
                 $stmt->bindValue(2, $data, ParameterType::LARGE_OBJECT);
             };
@@ -332,7 +331,7 @@ class DoctrineDbalAdapter extends AbstractAdapter implements PruneableInterface
             $insertStmt->bindValue(3, $lifetime, ParameterType::INTEGER);
             $insertStmt->bindValue(4, $now, ParameterType::INTEGER);
 
-            $bind = static function ($id, $data) use ($stmt, $insertStmt) {
+            $bind = static function ($id, $data) use ($stmt, $insertStmt): void {
                 $stmt->bindValue(1, $data, ParameterType::LARGE_OBJECT);
                 $stmt->bindValue(4, $id);
                 $insertStmt->bindValue(1, $id);
@@ -371,8 +370,8 @@ class DoctrineDbalAdapter extends AbstractAdapter implements PruneableInterface
             return parent::getId($key, $namespace);
         }
 
-        if (str_contains($key, "\0") || str_contains($key, '%') || !preg_match('//u', $key)) {
-            $key = rawurlencode($key);
+        if (str_contains((string) $key, "\0") || str_contains((string) $key, '%') || !preg_match('//u', (string) $key)) {
+            $key = rawurlencode((string) $key);
         }
 
         return parent::getId($key, $namespace);

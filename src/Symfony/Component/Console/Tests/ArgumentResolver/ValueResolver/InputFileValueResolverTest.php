@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -51,7 +53,7 @@ class InputFileValueResolverTest extends TestCase
             new InputArgument('file'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(#[Argument] string $file)
             {
             }
@@ -89,7 +91,7 @@ class InputFileValueResolverTest extends TestCase
             new InputArgument('file'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(#[Argument] InputFile $file)
             {
             }
@@ -112,7 +114,7 @@ class InputFileValueResolverTest extends TestCase
             new InputArgument('file'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(#[Argument] ?InputFile $file)
             {
             }
@@ -134,7 +136,7 @@ class InputFileValueResolverTest extends TestCase
             new InputArgument('file', InputArgument::OPTIONAL),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(#[Argument] ?InputFile $file)
             {
             }
@@ -159,7 +161,7 @@ class InputFileValueResolverTest extends TestCase
             new InputOption('file', null, InputOption::VALUE_REQUIRED),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(#[Option] ?InputFile $file = null)
             {
             }
@@ -186,7 +188,7 @@ class InputFileValueResolverTest extends TestCase
             new InputArgument('file'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(#[Argument] InputFile $file)
             {
             }
@@ -208,7 +210,7 @@ class InputFileValueResolverTest extends TestCase
             new InputArgument('file'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(#[Argument] InputFile $file)
             {
             }
@@ -232,7 +234,7 @@ class InputFileValueResolverTest extends TestCase
             new InputArgument('file'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(#[Argument] InputFile $file): string
             {
                 return $file->getContents();

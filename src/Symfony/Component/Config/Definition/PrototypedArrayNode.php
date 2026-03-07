@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -210,20 +212,17 @@ class PrototypedArrayNode extends ArrayNode
                 if (!isset($v[$this->keyAttribute]) && \is_int($k) && $isList) {
                     $ex = new InvalidConfigurationException(\sprintf('The attribute "%s" must be set for path "%s".', $this->keyAttribute, $this->getPath()));
                     $ex->setPath($this->getPath());
-
                     throw $ex;
-                } elseif (isset($v[$this->keyAttribute])) {
+                }
+                if (isset($v[$this->keyAttribute])) {
                     $k = $v[$this->keyAttribute];
-
                     if (\is_float($k)) {
                         $k = var_export($k, true);
                     }
-
                     // remove the key attribute when required
                     if ($this->removeKeyAttribute) {
                         unset($v[$this->keyAttribute]);
                     }
-
                     // if only "value" is left
                     if (array_keys($v) === ['value']) {
                         $v = $v['value'];

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -136,7 +138,7 @@ class CompiledUrlMatcherDumper extends MatcherDumper
         foreach ($staticRoutes as $path => $routes) {
             $code .= \sprintf("    %s => [\n", self::export($path));
             foreach ($routes as $route) {
-                $code .= vsprintf("        [%s, %s, %s, %s, %s, %s, %s],\n", array_map([__CLASS__, 'export'], $route));
+                $code .= vsprintf("        [%s, %s, %s, %s, %s, %s, %s],\n", array_map([self::class, 'export'], $route));
             }
             $code .= "    ],\n";
         }
@@ -148,7 +150,7 @@ class CompiledUrlMatcherDumper extends MatcherDumper
         foreach ($dynamicRoutes as $path => $routes) {
             $code .= \sprintf("    %s => [\n", self::export($path));
             foreach ($routes as $route) {
-                $code .= vsprintf("        [%s, %s, %s, %s, %s, %s, %s],\n", array_map([__CLASS__, 'export'], $route));
+                $code .= vsprintf("        [%s, %s, %s, %s, %s, %s, %s],\n", array_map([self::class, 'export'], $route));
             }
             $code .= "    ],\n";
         }
@@ -222,7 +224,7 @@ class CompiledUrlMatcherDumper extends MatcherDumper
                 if ($route->compile()->getHostVariables()) {
                     $host = $route->compile()->getHostRegex();
                 } elseif ($host = $route->getHost()) {
-                    $host = strtolower($host);
+                    $host = strtolower((string) $host);
                 }
                 $compiledRoutes[$url][] = $this->compileRoute($route, $name, $host ?: null, $hasTrailingSlash, false, $conditions);
             }
@@ -265,7 +267,7 @@ class CompiledUrlMatcherDumper extends MatcherDumper
             'hostVars' => [],
             'vars' => [],
         ];
-        $state->getVars = static function ($m) use ($state) {
+        $state->getVars = static function ($m) use ($state): string {
             if ('_route' === $m[1]) {
                 return '?:';
             }
@@ -332,7 +334,7 @@ class CompiledUrlMatcherDumper extends MatcherDumper
                     $state->vars = [];
                     $regex = preg_replace_callback('#\?P<([^>]++)>#', $state->getVars, $rx[1]);
                     if ($hasTrailingSlash = '/' !== $regex && '/' === $regex[-1]) {
-                        $regex = substr($regex, 0, -1);
+                        $regex = substr((string) $regex, 0, -1);
                     }
                     $hasTrailingVar = (bool) preg_match('#\{[\w\x80-\xFF]+\}/?$#', $route->getPath());
 
@@ -379,7 +381,7 @@ class CompiledUrlMatcherDumper extends MatcherDumper
         $prevRegex = null;
         $routes = $tree->getRoutes();
 
-        foreach ($routes as $i => $route) {
+        foreach ($routes as $route) {
             if ($route instanceof StaticPrefixCollection) {
                 $prevRegex = null;
                 $prefix = substr($route->getPrefix(), $prefixLen);
@@ -402,9 +404,9 @@ class CompiledUrlMatcherDumper extends MatcherDumper
                 continue;
             }
 
-            $state->mark += 3 + $state->markTail + \strlen($regex) - $prefixLen;
+            $state->mark += 3 + $state->markTail + \strlen((string) $regex) - $prefixLen;
             $state->markTail = 2 + \strlen($state->mark);
-            $rx = \sprintf('|%s(*:%s)', substr($regex, $prefixLen), $state->mark);
+            $rx = \sprintf('|%s(*:%s)', substr((string) $regex, $prefixLen), $state->mark);
             $code .= "\n            .".self::export($rx);
             $state->regex .= $rx;
 

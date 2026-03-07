@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,8 +33,8 @@ use Symfony\Contracts\EventDispatcher\Event;
 final class TokenDeauthenticatedEvent extends Event
 {
     public function __construct(
-        private TokenInterface $originalToken,
-        private Request $request,
+        private readonly TokenInterface $originalToken,
+        private readonly Request $request,
     ) {
     }
 

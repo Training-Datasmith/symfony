@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,7 +41,7 @@ use Symfony\Component\TypeInfo\TypeResolver\TypeResolver;
  */
 final class JsonStreamWriter implements StreamWriterInterface
 {
-    private StreamWriterGenerator $streamWriterGenerator;
+    private readonly StreamWriterGenerator $streamWriterGenerator;
 
     /**
      * @var array<string, callable>
@@ -50,11 +52,11 @@ final class JsonStreamWriter implements StreamWriterInterface
      * @param Options $defaultOptions
      */
     public function __construct(
-        private ContainerInterface $valueTransformers,
+        private readonly ContainerInterface $valueTransformers,
         PropertyMetadataLoaderInterface $propertyMetadataLoader,
         string $streamWritersDir,
         ?ConfigCacheFactoryInterface $configCacheFactory = null,
-        private array $defaultOptions = [],
+        private readonly array $defaultOptions = [],
     ) {
         $this->streamWriterGenerator = new StreamWriterGenerator($propertyMetadataLoader, $streamWritersDir, $configCacheFactory);
     }
@@ -69,12 +71,12 @@ final class JsonStreamWriter implements StreamWriterInterface
         /**
          * @implements \IteratorAggregate<int, string>
          */
-        class($chunks) implements \IteratorAggregate, \Stringable {
+        class ($chunks) implements \IteratorAggregate, \Stringable {
             /**
              * @param \Traversable<string> $chunks
              */
             public function __construct(
-                private \Traversable $chunks,
+                private readonly \Traversable $chunks,
             ) {
             }
 
@@ -105,7 +107,7 @@ final class JsonStreamWriter implements StreamWriterInterface
             'json_streamer.value_transformer.date_time_to_string' => new DateTimeToStringValueTransformer(),
         ];
 
-        $valueTransformersContainer = new class($valueTransformers) implements ContainerInterface {
+        $valueTransformersContainer = new class ($valueTransformers) implements ContainerInterface {
             public function __construct(
                 private array $valueTransformers,
             ) {

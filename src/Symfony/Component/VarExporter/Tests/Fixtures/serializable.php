@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
     $o = \Symfony\Component\VarExporter\Internal\Registry::unserialize([], [
         'C:59:"Symfony\\Component\\VarExporter\\Tests\\Fixtures\\MySerializable":3:{123}',

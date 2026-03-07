@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -12,7 +14,6 @@
 namespace Symfony\Component\VarDumper\Caster;
 
 use Imagine\Image\ImageInterface;
-use Symfony\Component\VarDumper\Cloner\Stub;
 
 /**
  * @author Grégoire Pineau <lyrixx@lyrixx.info>
@@ -21,10 +22,10 @@ use Symfony\Component\VarDumper\Cloner\Stub;
  */
 final class ImagineCaster
 {
-    public static function castImage(ImageInterface $c, array $a, Stub $stub, bool $isNested): array
+    public static function castImage(ImageInterface $c, array $a): array
     {
         $imgData = $c->get('png');
-        if (\strlen($imgData) > 1 * 1000 * 1000) {
+        if (\strlen($imgData) > 1000 * 1000) {
             $a += [
                 Caster::PREFIX_VIRTUAL.'image' => new ConstStub($c->getSize()),
             ];

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class ResourceCheckerConfigCache implements ConfigCacheInterface
 {
-    private string $metaFile;
+    private readonly string $metaFile;
 
     /**
      * @param string                                    $file             The absolute cache path
@@ -31,7 +33,7 @@ class ResourceCheckerConfigCache implements ConfigCacheInterface
      * @param string|null                               $metaFile         The absolute path to the meta file, defaults to $file.meta if null
      */
     public function __construct(
-        private string $file,
+        private readonly string $file,
         private iterable $resourceCheckers = [],
         ?string $metaFile = null,
     ) {
@@ -125,8 +127,8 @@ class ResourceCheckerConfigCache implements ConfigCacheInterface
                 // discard chmod failure (some filesystem may not support it)
             }
 
-            $ser = preg_replace_callback('/;O:(\d+):"/', static fn ($m) => ';O:'.(9 + $m[1]).':"Tracking\\', $ser);
-            $ser = preg_replace_callback('/s:(\d+):"(\0[^\0]++\0)/', static fn ($m) => 's:'.($m[1] - \strlen($m[2])).':"', $ser);
+            $ser = preg_replace_callback('/;O:(\d+):"/', static fn ($m): string => ';O:'.(9 + $m[1]).':"Tracking\\', $ser);
+            $ser = preg_replace_callback('/s:(\d+):"(\0[^\0]++\0)/', static fn ($m): string => 's:'.($m[1] - \strlen((string) $m[2])).':"', (string) $ser);
             $ser = unserialize($ser, ['allowed_classes' => false]);
             $ser = @json_encode($ser, \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE) ?: [];
             $ser = str_replace('"__PHP_Incomplete_Class_Name":"Tracking\\\\', '"@type":"', $ser);

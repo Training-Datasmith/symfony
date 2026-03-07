@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -49,11 +51,11 @@ final class Week extends Constraint
         parent::__construct(null, $groups, $payload);
 
         if (null !== $min && !preg_match('/^\d{4}-W(0[1-9]|[1-4][0-9]|5[0-3])$/', $min)) {
-            throw new ConstraintDefinitionException(\sprintf('The "%s" constraint requires the min week to be in the ISO 8601 format if set.', __CLASS__));
+            throw new ConstraintDefinitionException(\sprintf('The "%s" constraint requires the min week to be in the ISO 8601 format if set.', self::class));
         }
 
         if (null !== $max && !preg_match('/^\d{4}-W(0[1-9]|[1-4][0-9]|5[0-3])$/', $max)) {
-            throw new ConstraintDefinitionException(\sprintf('The "%s" constraint requires the max week to be in the ISO 8601 format if set.', __CLASS__));
+            throw new ConstraintDefinitionException(\sprintf('The "%s" constraint requires the max week to be in the ISO 8601 format if set.', self::class));
         }
 
         if (null !== $min && null !== $max) {
@@ -61,7 +63,7 @@ final class Week extends Constraint
             [$maxYear, $maxWeekNumber] = explode('-W', $max, 2);
 
             if ($minYear > $maxYear || ($minYear === $maxYear && $minWeekNumber > $maxWeekNumber)) {
-                throw new ConstraintDefinitionException(\sprintf('The "%s" constraint requires the min week to be less than or equal to the max week.', __CLASS__));
+                throw new ConstraintDefinitionException(\sprintf('The "%s" constraint requires the min week to be less than or equal to the max week.', self::class));
             }
         }
     }

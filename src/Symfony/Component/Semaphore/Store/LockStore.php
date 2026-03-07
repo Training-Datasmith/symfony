@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,10 +25,10 @@ use Symfony\Component\Semaphore\PersistingStoreInterface;
 /**
  * @author Alexander Schranz <alexander@sulu.io>
  */
-final class LockStore implements PersistingStoreInterface
+final readonly class LockStore implements PersistingStoreInterface
 {
     public function __construct(
-        private readonly LockFactory $lockFactory,
+        private LockFactory $lockFactory,
     ) {
     }
 
@@ -38,7 +40,7 @@ final class LockStore implements PersistingStoreInterface
 
         $locks = $this->createLocks($key, $ttlInSecond);
 
-        $key->setState(__CLASS__, $locks);
+        $key->setState(self::class, $locks);
         $key->markUnserializable();
     }
 
@@ -87,7 +89,7 @@ final class LockStore implements PersistingStoreInterface
             }
         }
 
-        $key->removeState(__CLASS__);
+        $key->removeState(self::class);
 
         if ($lockReleasingException) {
             throw new SemaphoreReleasingException($key, $lockReleasingException->getMessage());
@@ -99,7 +101,7 @@ final class LockStore implements PersistingStoreInterface
      */
     private function getExistingLocks(Key $key): array
     {
-        return $key->hasState(__CLASS__) ? $key->getState(__CLASS__) : [];
+        return $key->hasState(self::class) ? $key->getState(self::class) : [];
     }
 
     /**

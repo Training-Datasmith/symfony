@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,7 +16,7 @@ namespace Symfony\Component\Messenger\Stamp;
 /**
  * @author Maxime Steinhausser <maxime.steinhausser@gmail.com>
  */
-final class SerializerStamp implements StampInterface
+final readonly class SerializerStamp implements StampInterface
 {
     public function __construct(
         private array $context,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,6 @@ use Symfony\Component\PropertyAccess\PropertyPath;
  */
 class AttributeMetadata implements AttributeMetadataInterface
 {
-    private string $name;
     private array $groups = [];
     private ?int $maxDepth = null;
     private ?string $serializedName = null;
@@ -37,9 +38,8 @@ class AttributeMetadata implements AttributeMetadataInterface
      */
     private array $denormalizationContexts = [];
 
-    public function __construct(string $name)
+    public function __construct(private readonly string $name)
     {
-        $this->name = $name;
     }
 
     public function getName(): string

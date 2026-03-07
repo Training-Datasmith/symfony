@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException;
  *
  * @author Matthias Pigulla <mp@webfactory.de>
  */
-final class LocaleFallbackProvider
+final readonly class LocaleFallbackProvider
 {
     /**
      * @param string[] $localeFallbacks List of fallback locales to add _after_ the ones derived from ICU information
@@ -59,8 +61,8 @@ final class LocaleFallbackProvider
                     array_pop($localeSubTags);
                     $locale = locale_compose($localeSubTags) ?: null;
                 }
-            } elseif ($i = strrpos($locale, '_') ?: strrpos($locale, '-')) {
-                $locale = substr($locale, 0, $i);
+            } elseif ($i = strrpos((string) $locale, '_') ?: strrpos((string) $locale, '-')) {
+                $locale = substr((string) $locale, 0, $i);
             } else {
                 $locale = null;
             }

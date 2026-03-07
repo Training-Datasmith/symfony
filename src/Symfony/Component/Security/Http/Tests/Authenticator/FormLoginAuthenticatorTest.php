@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -162,7 +164,7 @@ class FormLoginAuthenticatorTest extends TestCase
     #[DataProvider('postOnlyDataProvider')]
     public function testHandleNonStringPasswordWithToString(bool $postOnly)
     {
-        $passwordObject = new class {
+        $passwordObject = new class () {
             public function __toString(): string
             {
                 return 's$cr$t';

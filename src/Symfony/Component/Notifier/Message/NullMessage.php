@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,13 +16,10 @@ namespace Symfony\Component\Notifier\Message;
 /**
  * @author Jan Schädlich <jan.schaedlich@sensiolabs.de>
  */
-final class NullMessage implements MessageInterface
+final readonly class NullMessage implements MessageInterface
 {
-    private MessageInterface $decoratedMessage;
-
-    public function __construct(MessageInterface $message)
+    public function __construct(private MessageInterface $decoratedMessage)
     {
-        $this->decoratedMessage = $message;
     }
 
     public function getRecipientId(): ?string

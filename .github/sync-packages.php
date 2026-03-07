@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 if ('cli' !== PHP_SAPI) {
     echo "This script can only be run from the command line.\n";
     exit(1);
@@ -16,7 +18,9 @@ foreach ($packages as $package) {
     file_put_contents($package.'/.gitattributes', $c);
 
     @mkdir($package.'/.github');
-    file_put_contents($package.'/.github/PULL_REQUEST_TEMPLATE.md', <<<EOTXT
+    file_put_contents(
+        $package.'/.github/PULL_REQUEST_TEMPLATE.md',
+        <<<EOTXT
         Please do not submit any Pull Requests here. They will be closed.
         ---
 
@@ -30,7 +34,9 @@ foreach ($packages as $package) {
     );
 
     @mkdir($package.'/.github/workflows');
-    file_put_contents($package.'/.github/workflows/close-pull-request.yml', <<<EOTXT
+    file_put_contents(
+        $package.'/.github/workflows/close-pull-request.yml',
+        <<<EOTXT
         name: Close Pull Request
 
         on:

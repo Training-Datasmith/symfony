@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ class AttributesRequestMatcher implements RequestMatcherInterface
     /**
      * @param array<string, string> $regexps
      */
-    public function __construct(private array $regexps)
+    public function __construct(private readonly array $regexps)
     {
     }
 

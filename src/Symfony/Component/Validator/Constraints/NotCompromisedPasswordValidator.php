@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,20 +34,16 @@ class NotCompromisedPasswordValidator extends ConstraintValidator
 {
     private const DEFAULT_API_ENDPOINT = 'https://api.pwnedpasswords.com/range/%s';
 
-    private HttpClientInterface $httpClient;
-    private string $charset;
-    private bool $enabled;
-    private string $endpoint;
+    private readonly HttpClientInterface $httpClient;
+    private readonly string $endpoint;
 
-    public function __construct(?HttpClientInterface $httpClient = null, string $charset = 'UTF-8', bool $enabled = true, ?string $endpoint = null)
+    public function __construct(?HttpClientInterface $httpClient = null, private readonly string $charset = 'UTF-8', private readonly bool $enabled = true, ?string $endpoint = null)
     {
         if (null === $httpClient && !class_exists(HttpClient::class)) {
             throw new LogicException(\sprintf('The "%s" class requires the "HttpClient" component. Try running "composer require symfony/http-client".', self::class));
         }
 
         $this->httpClient = $httpClient ?? HttpClient::create();
-        $this->charset = $charset;
-        $this->enabled = $enabled;
         $this->endpoint = $endpoint ?? self::DEFAULT_API_ENDPOINT;
     }
 

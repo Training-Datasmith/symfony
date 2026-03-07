@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -53,7 +55,13 @@ class CacheCollectorPass implements CompilerPassInterface
         $recorder->setArguments([new Reference($innerId = $id.'.recorder_inner'), new Reference('profiler.is_disabled_state_checker', ContainerBuilder::IGNORE_ON_INVALID_REFERENCE)]);
 
         foreach ($definition->getMethodCalls() as [$method, $args]) {
-            if ('setCallbackWrapper' !== $method || !$args[0] instanceof Definition || !($args[0]->getArguments()[2] ?? null) instanceof Definition) {
+            if ('setCallbackWrapper' !== $method) {
+                continue;
+            }
+            if (!$args[0] instanceof Definition) {
+                continue;
+            }
+            if (!($args[0]->getArguments()[2] ?? null) instanceof Definition) {
                 continue;
             }
             if ([new Reference($id), 'setCallbackWrapper'] == $args[0]->getArguments()[2]->getFactory()) {

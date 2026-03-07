@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ abstract class AbstractRememberMeHandler implements RememberMeHandlerInterface
     protected array $options;
 
     public function __construct(
-        private UserProviderInterface $userProvider,
+        private readonly UserProviderInterface $userProvider,
         protected RequestStack $requestStack,
         array $options = [],
         protected ?LoggerInterface $logger = null,

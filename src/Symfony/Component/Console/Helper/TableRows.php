@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,7 +19,7 @@ namespace Symfony\Component\Console\Helper;
 class TableRows implements \IteratorAggregate
 {
     public function __construct(
-        private \Closure $generator,
+        private readonly \Closure $generator,
     ) {
     }
 

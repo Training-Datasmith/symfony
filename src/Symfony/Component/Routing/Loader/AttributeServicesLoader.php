@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ final class AttributeServicesLoader extends Loader
      * @param class-string[] $taggedClasses
      */
     public function __construct(
-        private array $taggedClasses = [],
+        private readonly array $taggedClasses = [],
     ) {
     }
 

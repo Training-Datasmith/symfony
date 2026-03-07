@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,7 @@ final class CachePoolListCommand extends Command
      * @param string[] $poolNames
      */
     public function __construct(
-        private array $poolNames,
+        private readonly array $poolNames,
     ) {
         parent::__construct();
     }
@@ -37,7 +39,8 @@ final class CachePoolListCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command lists all available cache pools.
                 EOF
             )
@@ -48,7 +51,7 @@ final class CachePoolListCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $io->table(['Pool name'], array_map(static fn ($pool) => [$pool], $this->poolNames));
+        $io->table(['Pool name'], array_map(static fn (string $pool): array => [$pool], $this->poolNames));
 
         return 0;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\DependencyInjection\Tests\Fixtures\CheckTypeDeclarationsPass;
 
 class Foo
@@ -16,7 +18,8 @@ class Foo
 
     public static function createCallable(): callable
     {
-        return function () {};
+        return function () {
+        };
     }
 
     public static function createArray(): array

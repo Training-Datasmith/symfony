@@ -1,11 +1,10 @@
 <?php
 
-use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+declare(strict_types=1);
+
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
-use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
@@ -56,7 +55,7 @@ class Symfony_DI_PhpDumper_Test_EnvParameters extends Container
      */
     protected static function getTestService($container)
     {
-        return $container->services['test'] = new ${($_ = $container->getEnv('FOO')) && false ?: "_"}($container->getEnv('Bar'), 'foo'.$container->getEnv('string:FOO').'baz', $container->getEnv('int:Baz'));
+        return $container->services['test'] = new ${($_ = $container->getEnv('FOO')) && false ?: '_'}($container->getEnv('Bar'), 'foo'.$container->getEnv('string:FOO').'baz', $container->getEnv('int:Baz'));
     }
 
     public function getParameter(string $name): array|bool|string|int|float|\UnitEnum|null

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ use Symfony\Component\Messenger\Transport\Sender\SenderInterface;
  * sent to at least one transport. If the message was sent
  * to multiple transports, the event is dispatched only once.
  */
-final class MessageSentToTransportsEvent
+final readonly class MessageSentToTransportsEvent
 {
     /**
      * @param array<string, SenderInterface> $senders

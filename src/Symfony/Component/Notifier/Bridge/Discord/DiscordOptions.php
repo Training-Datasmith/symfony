@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -96,7 +98,7 @@ final class DiscordOptions implements MessageOptionsInterface
         }
 
         if (\count($this->options['embeds']) >= 10) {
-            throw new LogicException(\sprintf('The "%s" only supports max 10 embeds.', __CLASS__));
+            throw new LogicException(\sprintf('The "%s" only supports max 10 embeds.', self::class));
         }
 
         $this->options['embeds'][] = $embed->toArray();

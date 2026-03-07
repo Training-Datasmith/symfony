@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,7 +36,8 @@ $argc = $_SERVER['argc'];
 $argv = $_SERVER['argv'];
 
 if ($argc > 3 || 2 === $argc && '-h' === $argv[1]) {
-    bailout(<<<'MESSAGE'
+    bailout(
+        <<<'MESSAGE'
         Usage: php update-data.php <path/to/icu/source> <path/to/icu/build>
 
         Updates the ICU data for Symfony to the latest version of ICU.
@@ -77,7 +80,7 @@ if ($argc >= 2) {
     echo "Git clone to {$repoDir} complete.\n";
 }
 
-$gitTag = $git->getLastTag(static fn ($tag) => preg_match('#^release-[0-9]{1,}[.-][0-9]{1}$#', $tag));
+$gitTag = $git->getLastTag(static fn ($tag): int|false => preg_match('#^release-[0-9]{1,}[.-][0-9]{1}$#', (string) $tag));
 $shortIcuVersion = strip_minor_versions(preg_replace('#release-([0-9]{1,})[.-]([0-9]{1,})#', '$1.$2', $gitTag));
 
 echo "Checking out `{$gitTag}` for version `{$shortIcuVersion}`...\n";

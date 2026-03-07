@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -82,7 +84,7 @@ class PoFileLoader extends FileLoader
                 $item = $defaults;
                 $flags = [];
             } elseif (str_starts_with($line, '#,')) {
-                $flags = array_map('trim', explode(',', substr($line, 2)));
+                $flags = array_map(trim(...), explode(',', substr($line, 2)));
             } elseif (str_starts_with($line, 'msgid "')) {
                 // We start a new msg so save previous
                 // TODO: this fails when comments or contexts are added
@@ -95,8 +97,7 @@ class PoFileLoader extends FileLoader
                 $continues = isset($item['translated']) ? 'translated' : 'ids';
 
                 if (\is_array($item[$continues])) {
-                    end($item[$continues]);
-                    $item[$continues][key($item[$continues])] .= substr($line, 1, -1);
+                    $item[$continues][array_key_last($item[$continues])] .= substr($line, 1, -1);
                 } else {
                     $item[$continues] .= substr($line, 1, -1);
                 }
@@ -125,7 +126,7 @@ class PoFileLoader extends FileLoader
     private function addMessage(array &$messages, array $item): void
     {
         if (!empty($item['ids']['singular'])) {
-            $id = stripcslashes($item['ids']['singular']);
+            $id = stripcslashes((string) $item['ids']['singular']);
             if (isset($item['ids']['plural'])) {
                 $id .= '|'.stripcslashes($item['ids']['plural']);
             }
@@ -133,9 +134,7 @@ class PoFileLoader extends FileLoader
             $translated = (array) $item['translated'];
             // PO are by definition indexed so sort by index.
             ksort($translated);
-            // Make sure every index is filled.
-            end($translated);
-            $count = key($translated);
+            $count = array_key_last($translated);
             // Fill missing spots with '-'.
             $empties = array_fill(0, $count + 1, '-');
             $translated += $empties;

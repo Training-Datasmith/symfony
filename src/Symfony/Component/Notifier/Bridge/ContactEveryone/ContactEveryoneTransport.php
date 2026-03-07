@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,9 +32,9 @@ final class ContactEveryoneTransport extends AbstractTransport
     protected const HOST = 'contact-everyone.orange-business.com';
 
     public function __construct(
-        #[\SensitiveParameter] private string $token,
-        private ?string $diffusionName,
-        private ?string $category,
+        #[\SensitiveParameter] private readonly string $token,
+        private readonly ?string $diffusionName,
+        private readonly ?string $category,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -62,11 +64,11 @@ final class ContactEveryoneTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         if ('' !== $message->getFrom()) {
-            throw new InvalidArgumentException(\sprintf('The "%s" transport does not support "from" in "%s".', __CLASS__, SmsMessage::class));
+            throw new InvalidArgumentException(\sprintf('The "%s" transport does not support "from" in "%s".', self::class, SmsMessage::class));
         }
 
         $options = $message->getOptions()?->toArray() ?? [];

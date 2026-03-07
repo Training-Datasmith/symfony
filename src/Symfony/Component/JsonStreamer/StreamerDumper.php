@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,9 +32,9 @@ final class StreamerDumper
     private ?Filesystem $fs = null;
 
     public function __construct(
-        private PropertyMetadataLoaderInterface $propertyMetadataLoader,
-        private string $cacheDir,
-        private ?ConfigCacheFactoryInterface $cacheFactory = null,
+        private readonly PropertyMetadataLoaderInterface $propertyMetadataLoader,
+        private readonly string $cacheDir,
+        private readonly ?ConfigCacheFactoryInterface $cacheFactory = null,
     ) {
     }
 
@@ -46,11 +48,11 @@ final class StreamerDumper
         if ($this->cacheFactory) {
             $this->cacheFactory->cache(
                 $path,
-                function (ConfigCacheInterface $cache) use ($generateContent, $type) {
+                function (ConfigCacheInterface $cache) use ($generateContent, $type): void {
                     $resourceClasses = $this->getResourceClassNames($type);
                     $cache->write(
                         $generateContent(),
-                        array_map(static fn (string $c) => new ReflectionClassResource(new \ReflectionClass($c)), $resourceClasses),
+                        array_map(static fn (string $c): \Symfony\Component\Config\Resource\ReflectionClassResource => new ReflectionClassResource(new \ReflectionClass($c)), $resourceClasses),
                     );
                 },
             );

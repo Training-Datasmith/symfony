@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,7 @@ class FileTypeFilterIterator extends \FilterIterator
      */
     public function __construct(
         \Iterator $iterator,
-        private int $mode,
+        private readonly int $mode,
     ) {
         parent::__construct($iterator);
     }
@@ -42,7 +44,8 @@ class FileTypeFilterIterator extends \FilterIterator
         $fileinfo = $this->current();
         if (self::ONLY_DIRECTORIES === (self::ONLY_DIRECTORIES & $this->mode) && $fileinfo->isFile()) {
             return false;
-        } elseif (self::ONLY_FILES === (self::ONLY_FILES & $this->mode) && $fileinfo->isDir()) {
+        }
+        if (self::ONLY_FILES === (self::ONLY_FILES & $this->mode) && $fileinfo->isDir()) {
             return false;
         }
 

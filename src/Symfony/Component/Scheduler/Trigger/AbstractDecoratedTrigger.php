@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ namespace Symfony\Component\Scheduler\Trigger;
  */
 abstract class AbstractDecoratedTrigger implements StatefulTriggerInterface
 {
-    public function __construct(private TriggerInterface $inner)
+    public function __construct(private readonly TriggerInterface $inner)
     {
     }
 

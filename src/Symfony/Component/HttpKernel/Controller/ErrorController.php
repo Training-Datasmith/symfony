@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,9 +28,9 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 class ErrorController
 {
     public function __construct(
-        private HttpKernelInterface $kernel,
-        private string|object|array|null $controller,
-        private ErrorRendererInterface $errorRenderer,
+        private readonly HttpKernelInterface $kernel,
+        private readonly string|object|array|null $controller,
+        private readonly ErrorRendererInterface $errorRenderer,
     ) {
     }
 

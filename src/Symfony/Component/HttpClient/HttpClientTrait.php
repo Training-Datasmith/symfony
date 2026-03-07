@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -210,11 +212,11 @@ trait HttpClientTrait
             foreach ($resolve as $k => $v) {
                 if ('' === $v = (string) $v) {
                     $v = null;
-                } elseif ('[' === $v[0] && ']' === substr($v, -1) && str_contains($v, ':')) {
+                } elseif ('[' === $v[0] && str_ends_with($v, ']') && str_contains($v, ':')) {
                     $v = substr($v, 1, -1);
                 }
 
-                $options['resolve'][substr(self::parseUrl('http://'.$k)['authority'], 2)] = $v;
+                $options['resolve'][substr((string) self::parseUrl('http://'.$k)['authority'], 2)] = $v;
             }
         }
 
@@ -239,11 +241,11 @@ trait HttpClientTrait
             foreach ($resolve as $k => $v) {
                 if ('' === $v = (string) $v) {
                     $v = null;
-                } elseif ('[' === $v[0] && ']' === substr($v, -1) && str_contains($v, ':')) {
+                } elseif ('[' === $v[0] && str_ends_with($v, ']') && str_contains($v, ':')) {
                     $v = substr($v, 1, -1);
                 }
 
-                $options['resolve'] += [substr(self::parseUrl('http://'.$k)['authority'], 2) => $v];
+                $options['resolve'] += [substr((string) self::parseUrl('http://'.$k)['authority'], 2) => $v];
             }
         }
 
@@ -253,10 +255,12 @@ trait HttpClientTrait
 
         // Look for unsupported options
         foreach ($options as $name => $v) {
-            if (\array_key_exists($name, $defaultOptions) || 'normalized_headers' === $name) {
+            if (\array_key_exists($name, $defaultOptions)) {
                 continue;
             }
-
+            if ('normalized_headers' === $name) {
+                continue;
+            }
             if ('auth_ntlm' === $name) {
                 if (!\extension_loaded('curl')) {
                     $msg = 'try installing the "curl" extension to use "%s" instead.';
@@ -264,22 +268,22 @@ trait HttpClientTrait
                     $msg = 'try using "%s" instead.';
                 }
 
-                throw new InvalidArgumentException(\sprintf('Option "auth_ntlm" is not supported by "%s", '.$msg, __CLASS__, CurlHttpClient::class));
+                throw new InvalidArgumentException(\sprintf('Option "auth_ntlm" is not supported by "%s", '.$msg, self::class, CurlHttpClient::class));
             }
 
             if ('vars' === $name) {
-                throw new InvalidArgumentException(\sprintf('Option "vars" is not supported by "%s", try using "%s" instead.', __CLASS__, UriTemplateHttpClient::class));
+                throw new InvalidArgumentException(\sprintf('Option "vars" is not supported by "%s", try using "%s" instead.', self::class, UriTemplateHttpClient::class));
             }
 
             $alternatives = [];
 
             foreach ($defaultOptions as $k => $v) {
-                if (levenshtein($name, $k) <= \strlen($name) / 3 || str_contains($k, $name)) {
+                if (levenshtein($name, $k) <= \strlen((string) $name) / 3 || str_contains((string) $k, (string) $name)) {
                     $alternatives[] = $k;
                 }
             }
 
-            throw new InvalidArgumentException(\sprintf('Unsupported option "%s" passed to "%s", did you mean "%s"?', $name, __CLASS__, implode('", "', $alternatives ?: array_keys($defaultOptions))));
+            throw new InvalidArgumentException(\sprintf('Unsupported option "%s" passed to "%s", did you mean "%s"?', $name, self::class, implode('", "', $alternatives ?: array_keys($defaultOptions))));
         }
 
         return $options;
@@ -341,9 +345,9 @@ trait HttpClientTrait
             static $cookie;
 
             $streams = [];
-            array_walk_recursive($body, $caster = static function (&$v) use (&$caster, &$streams, &$cookie) {
+            array_walk_recursive($body, $caster = static function (&$v) use (&$caster, &$streams, &$cookie): void {
                 if (\is_resource($v) || $v instanceof StreamableInterface) {
-                    $cookie = hash('xxh128', $cookie ??= random_bytes(8), true);
+                    $cookie = hash('xxh128', (string) $cookie ??= random_bytes(8), true);
                     $k = substr(strtr(base64_encode($cookie), '+/', '-_'), 0, -2);
                     $streams[$k] = $v instanceof StreamableInterface ? $v->toStream(false) : $v;
                     $v = $k;
@@ -373,7 +377,7 @@ trait HttpClientTrait
             if (preg_match('{multipart/form-data; boundary=(?|"([^"\r\n]++)"|([-!#$%&\'*+.^_`|~_A-Za-z0-9]++))}', $normalizedHeaders['content-type'][0] ?? '', $boundary)) {
                 $boundary = $boundary[1];
             } else {
-                $boundary = substr(strtr(base64_encode($cookie ??= random_bytes(8)), '+/', '-_'), 0, -2);
+                $boundary = substr(strtr(base64_encode((string) $cookie ??= random_bytes(8)), '+/', '-_'), 0, -2);
                 $normalizedHeaders['content-type'] = ['Content-Type: multipart/form-data; boundary='.$boundary];
             }
 
@@ -485,7 +489,9 @@ trait HttpClientTrait
         }
 
         if ($body instanceof \Traversable) {
-            return $generatorToCallable((static function ($body) { yield from $body; })($body));
+            return $generatorToCallable((static function ($body) {
+                yield from $body;
+            })($body));
         }
 
         if ($body instanceof \Closure) {
@@ -698,11 +704,11 @@ trait HttpClientTrait
 
             if (str_contains($parts[$part], '%')) {
                 // https://tools.ietf.org/html/rfc3986#section-2.3
-                $parts[$part] = preg_replace_callback('/%(?:2[DE]|3[0-9]|[46][1-9A-F]|5F|[57][0-9A]|7E)++/i', static fn ($m) => rawurldecode($m[0]), $parts[$part]);
+                $parts[$part] = preg_replace_callback('/%(?:2[DE]|3[0-9]|[46][1-9A-F]|5F|[57][0-9A]|7E)++/i', static fn ($m): string => rawurldecode((string) $m[0]), $parts[$part]);
             }
 
             // https://tools.ietf.org/html/rfc3986#section-3.3
-            $parts[$part] = preg_replace_callback("#[^-A-Za-z0-9._~!$&/'()[\]*+,;=:@{}%]++#", static fn ($m) => rawurlencode($m[0]), $parts[$part]);
+            $parts[$part] = preg_replace_callback("#[^-A-Za-z0-9._~!$&/'()[\]*+,;=:@{}%]++#", static fn ($m): string => rawurlencode((string) $m[0]), (string) $parts[$part]);
         }
 
         return [
@@ -825,7 +831,7 @@ trait HttpClientTrait
         }
 
         $noProxy ??= $_SERVER['no_proxy'] ?? $_SERVER['NO_PROXY'] ?? '';
-        $noProxy = $noProxy ? preg_split('/[\s,]+/', $noProxy) : [];
+        $noProxy = $noProxy ? preg_split('/[\s,]+/', (string) $noProxy) : [];
 
         return [
             'url' => $proxyUrl,
@@ -844,7 +850,7 @@ trait HttpClientTrait
         $proxy = $_SERVER['http_proxy'] ?? (\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) ? $_SERVER['HTTP_PROXY'] ?? null : null) ?? $_SERVER['all_proxy'] ?? $_SERVER['ALL_PROXY'] ?? null;
 
         if ('https:' === $url['scheme']) {
-            $proxy = $_SERVER['https_proxy'] ?? $_SERVER['HTTPS_PROXY'] ?? $proxy;
+            return $_SERVER['https_proxy'] ?? $_SERVER['HTTPS_PROXY'] ?? $proxy;
         }
 
         return $proxy;
@@ -860,6 +866,6 @@ trait HttpClientTrait
             $contentType = substr($contentType, 0, $i);
         }
 
-        return $contentType && preg_match('#^(?:text/|application/(?:.+\+)?(?:json|xml)$)#i', $contentType);
+        return $contentType && preg_match('#^(?:text/|application/(?:.+\+)?(?:json|xml)$)#i', (string) $contentType);
     }
 }

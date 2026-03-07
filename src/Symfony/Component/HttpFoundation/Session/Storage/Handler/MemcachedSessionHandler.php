@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,12 +26,12 @@ class MemcachedSessionHandler extends AbstractSessionHandler
     /**
      * Time to live in seconds.
      */
-    private int|\Closure|null $ttl;
+    private readonly int|\Closure|null $ttl;
 
     /**
      * Key prefix for shared environments.
      */
-    private string $prefix;
+    private readonly string $prefix;
 
     /**
      * Constructor.
@@ -41,7 +43,7 @@ class MemcachedSessionHandler extends AbstractSessionHandler
      * @throws \InvalidArgumentException When unsupported options are passed
      */
     public function __construct(
-        private \Memcached $memcached,
+        private readonly \Memcached $memcached,
         array $options = [],
     ) {
         if ($diff = array_diff(array_keys($options), ['prefix', 'expiretime', 'ttl'])) {

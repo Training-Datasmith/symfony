@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -105,7 +107,7 @@ abstract class DoctrineType extends AbstractType implements ResetInterface
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $choiceLoader = function (Options $options) {
+        $choiceLoader = function (Options $options): ?\Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader {
             // Unless the choices are given explicitly, load them on demand
             if (null === $options['choices']) {
                 // If there is no QueryBuilder we can safely cache
@@ -133,12 +135,12 @@ abstract class DoctrineType extends AbstractType implements ResetInterface
             return null;
         };
 
-        $choiceName = function (Options $options) {
+        $choiceName = function (Options $options): ?\Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceFieldName {
             // If the object has a single-column, numeric ID, use that ID as
             // field name. We can only use numeric IDs as names, as we cannot
             // guarantee that a non-numeric ID contains a valid form name
             if ($options['id_reader'] instanceof IdReader && $options['id_reader']->isIntId()) {
-                return ChoiceList::fieldName($this, [__CLASS__, 'createChoiceName']);
+                return ChoiceList::fieldName($this, [self::class, 'createChoiceName']);
             }
 
             // Otherwise, an incrementing integer is used as name automatically
@@ -149,7 +151,7 @@ abstract class DoctrineType extends AbstractType implements ResetInterface
         // and DoctrineChoiceLoader), unless the ID is composite. Then they
         // are indexed by an incrementing integer.
         // Use the ID/incrementing integer as choice value.
-        $choiceValue = function (Options $options) {
+        $choiceValue = function (Options $options): ?\Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceValue {
             // If the entity has a single-column ID, use that ID as value
             if ($options['id_reader'] instanceof IdReader && $options['id_reader']->isSingleId()) {
                 $idReader = $options['id_reader'];
@@ -203,7 +205,7 @@ abstract class DoctrineType extends AbstractType implements ResetInterface
         // for equal query builders
         $queryBuilderNormalizer = static function (Options $options, $queryBuilder) {
             if (\is_callable($queryBuilder)) {
-                $queryBuilder = $queryBuilder($options['em']->getRepository($options['class']));
+                return $queryBuilder($options['em']->getRepository($options['class']));
             }
 
             return $queryBuilder;
@@ -217,14 +219,14 @@ abstract class DoctrineType extends AbstractType implements ResetInterface
         // of the field, so we store that information in the reader.
         // The reader is cached so that two choice lists for the same class
         // (and hence with the same reader) can successfully be cached.
-        $idReaderNormalizer = fn (Options $options) => $this->getCachedIdReader($options['em'], $options['class']);
+        $idReaderNormalizer = fn (Options $options): ?\Symfony\Bridge\Doctrine\Form\ChoiceList\IdReader => $this->getCachedIdReader($options['em'], $options['class']);
 
         $resolver->setDefaults([
             'em' => null,
             'query_builder' => null,
             'choices' => null,
             'choice_loader' => $choiceLoader,
-            'choice_label' => ChoiceList::label($this, [__CLASS__, 'createChoiceLabel']),
+            'choice_label' => ChoiceList::label($this, [self::class, 'createChoiceLabel']),
             'choice_name' => $choiceName,
             'choice_value' => $choiceValue,
             'id_reader' => null, // internal

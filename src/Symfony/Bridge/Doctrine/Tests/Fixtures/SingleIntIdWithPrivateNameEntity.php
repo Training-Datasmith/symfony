@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,6 @@ class SingleIntIdWithPrivateNameEntity
     public function __construct(
         #[Id, Column(type: 'integer')]
         protected int $id,
-
         #[Column(type: 'string', nullable: true)]
         private ?string $name,
     ) {

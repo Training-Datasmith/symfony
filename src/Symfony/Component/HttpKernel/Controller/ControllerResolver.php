@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,7 @@ class ControllerResolver implements ControllerResolverInterface
     private array $allowedControllerAttributes = [AsController::class => AsController::class];
 
     public function __construct(
-        private ?LoggerInterface $logger = null,
+        private readonly ?LoggerInterface $logger = null,
     ) {
     }
 
@@ -196,7 +198,7 @@ class ControllerResolver implements ControllerResolverInterface
         foreach ($collection as $item) {
             $lev = levenshtein($method, $item);
 
-            if ($lev <= \strlen($method) / 3 || str_contains($item, $method)) {
+            if ($lev <= \strlen((string) $method) / 3 || str_contains((string) $item, (string) $method)) {
                 $alternatives[] = $item;
             }
         }
@@ -218,7 +220,7 @@ class ControllerResolver implements ControllerResolverInterface
     {
         $methods = get_class_methods($classOrObject);
 
-        return array_filter($methods, static fn (string $method) => 0 !== strncmp($method, '__', 2));
+        return array_filter($methods, static fn (string $method): bool => !str_starts_with($method, '__'));
     }
 
     private function checkController(Request $request, callable $controller): callable
@@ -264,7 +266,7 @@ class ControllerResolver implements ControllerResolverInterface
         }
 
         if (str_contains($name, '@anonymous')) {
-            $name = preg_replace_callback('/[a-zA-Z_\x7f-\xff][\\\\a-zA-Z0-9_\x7f-\xff]*+@anonymous\x00.*?\.php(?:0x?|:[0-9]++\$)?[0-9a-fA-F]++/', static fn ($m) => class_exists($m[0], false) ? (get_parent_class($m[0]) ?: key(class_implements($m[0])) ?: 'class').'@anonymous' : $m[0], $name);
+            $name = preg_replace_callback('/[a-zA-Z_\x7f-\xff][\\\\a-zA-Z0-9_\x7f-\xff]*+@anonymous\x00.*?\.php(?:0x?|:[0-9]++\$)?[0-9a-fA-F]++/', static fn ($m): string => class_exists($m[0], false) ? (get_parent_class($m[0]) ?: key(class_implements($m[0])) ?: 'class').'@anonymous' : $m[0], $name);
         }
 
         throw new BadRequestException(\sprintf('Callable "%s()" is not allowed as a controller. Did you miss tagging it with "#[AsController]" or registering its type with "%s::allowControllers()"?', $name, self::class));

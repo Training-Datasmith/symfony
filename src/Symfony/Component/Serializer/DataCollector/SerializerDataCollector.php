@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -61,7 +63,7 @@ class SerializerDataCollector extends DataCollector implements LateDataCollector
 
     public function getHandledCount(?string $name = null): int
     {
-        return array_sum(array_map('count', $this->getData($name)));
+        return array_sum(array_map(count(...), $this->getData($name)));
     }
 
     public function getTotalTime(): float

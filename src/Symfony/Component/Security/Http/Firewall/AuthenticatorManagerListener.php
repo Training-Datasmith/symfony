@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticatorManagerInterface
 class AuthenticatorManagerListener extends AbstractListener
 {
     public function __construct(
-        private AuthenticatorManagerInterface $authenticatorManager,
+        private readonly AuthenticatorManagerInterface $authenticatorManager,
     ) {
     }
 

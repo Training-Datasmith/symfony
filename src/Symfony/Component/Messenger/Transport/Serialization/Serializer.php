@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,7 +39,7 @@ class Serializer implements SerializerInterface
     public const MESSENGER_SERIALIZATION_CONTEXT = 'messenger_serialization';
     private const STAMP_HEADER_PREFIX = 'X-Message-Stamp-';
 
-    private SymfonySerializerInterface $serializer;
+    private readonly SymfonySerializerInterface $serializer;
 
     /**
      * @var array<string-class, string>
@@ -49,7 +51,7 @@ class Serializer implements SerializerInterface
      */
     public function __construct(
         ?SymfonySerializerInterface $serializer = null,
-        private string $format = 'json',
+        private readonly string $format = 'json',
         private array $context = [],
         private array $typeToClassMap = [],
     ) {
@@ -61,7 +63,7 @@ class Serializer implements SerializerInterface
     public static function create(): self
     {
         if (!class_exists(SymfonySerializer::class)) {
-            throw new LogicException(\sprintf('The "%s" class requires Symfony\'s Serializer component. Try running "composer require symfony/serializer" or use "%s" instead.', __CLASS__, PhpSerializer::class));
+            throw new LogicException(\sprintf('The "%s" class requires Symfony\'s Serializer component. Try running "composer require symfony/serializer" or use "%s" instead.', self::class, PhpSerializer::class));
         }
 
         $encoders = [new XmlEncoder(), new JsonEncoder()];
@@ -144,11 +146,11 @@ class Serializer implements SerializerInterface
     {
         $stamps = [];
         foreach ($encodedEnvelope['headers'] as $name => $value) {
-            if (!str_starts_with($name, self::STAMP_HEADER_PREFIX)) {
+            if (!str_starts_with((string) $name, self::STAMP_HEADER_PREFIX)) {
                 continue;
             }
 
-            $stamps[] = $this->serializer->deserialize($value, substr($name, \strlen(self::STAMP_HEADER_PREFIX)).'[]', $this->format, $this->context);
+            $stamps[] = $this->serializer->deserialize($value, substr((string) $name, \strlen(self::STAMP_HEADER_PREFIX)).'[]', $this->format, $this->context);
         }
 
         return array_merge(...$stamps);

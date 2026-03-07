@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ class UnexpectedValueException extends UnexpectedTypeException
 {
     public function __construct(
         mixed $value,
-        private string $expectedType,
+        private readonly string $expectedType,
     ) {
         parent::__construct($value, $expectedType);
     }

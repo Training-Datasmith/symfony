@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,8 +28,8 @@ class MergeCollectionListener implements EventSubscriberInterface
      * @param bool $allowDelete Whether values might be removed from the collection
      */
     public function __construct(
-        private bool $allowAdd = false,
-        private bool $allowDelete = false,
+        private readonly bool $allowAdd = false,
+        private readonly bool $allowDelete = false,
     ) {
     }
 

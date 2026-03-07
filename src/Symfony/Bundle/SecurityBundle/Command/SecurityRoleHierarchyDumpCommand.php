@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -48,7 +50,8 @@ class SecurityRoleHierarchyDumpCommand extends Command
                     array_column(MermaidDirection::cases(), 'value')
                 ),
             ])
-            ->setHelp(<<<'USAGE'
+            ->setHelp(
+                <<<'USAGE'
                 The <info>%command.name%</info> command dumps the role hierarchy in Mermaid format.
 
                 <info>Mermaid</info>: %command.full_name% > roles.mmd

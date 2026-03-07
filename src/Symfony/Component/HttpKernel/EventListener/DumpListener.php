@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,10 +33,10 @@ class DumpListener implements EventSubscriberInterface
      *                                             If null, the default $dumper will be used instead.
      */
     public function __construct(
-        private ClonerInterface $cloner,
-        private DataDumperInterface $dumper,
-        private ?Connection $connection = null,
-        private ?DataDumperInterface $profilerDumper = null,
+        private readonly ClonerInterface $cloner,
+        private readonly DataDumperInterface $dumper,
+        private readonly ?Connection $connection = null,
+        private readonly ?DataDumperInterface $profilerDumper = null,
     ) {
     }
 
@@ -46,7 +48,7 @@ class DumpListener implements EventSubscriberInterface
         $dumper = !$this->profilerDumper || !$input?->hasOption('profile') || !$input?->getOption('profile') ? $this->dumper : $this->profilerDumper;
         $connection = $this->connection;
 
-        VarDumper::setHandler(static function ($var, ?string $label = null) use ($cloner, $dumper, $connection) {
+        VarDumper::setHandler(static function ($var, ?string $label = null) use ($cloner, $dumper, $connection): void {
             $data = $cloner->cloneVar($var);
             if (null !== $label) {
                 $data = $data->withContext(['label' => $label]);

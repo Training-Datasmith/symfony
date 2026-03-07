@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -423,7 +425,7 @@ class HtmlSanitizerConfig
         $clone = clone $this;
         $clone->attributeSanitizers = array_values(array_filter(
             $this->attributeSanitizers,
-            static fn ($current) => $current !== $sanitizer
+            static fn (\Symfony\Component\HtmlSanitizer\Visitor\AttributeSanitizer\AttributeSanitizerInterface $current): bool => $current !== $sanitizer
         ));
 
         return $clone;

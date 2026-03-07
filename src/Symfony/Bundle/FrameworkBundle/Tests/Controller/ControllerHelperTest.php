@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ class ControllerHelperTest extends AbstractControllerTest
 {
     protected function createController()
     {
-        return new class extends ControllerHelper {
+        return new class () extends ControllerHelper {
             public function __construct()
             {
             }

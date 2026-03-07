@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ final class DkimSigner
     public const ALGO_SHA256 = 'rsa-sha256';
     public const ALGO_ED25519 = 'ed25519-sha256'; // RFC 8463
 
-    private \OpenSSLAsymmetricKey $key;
+    private readonly \OpenSSLAsymmetricKey $key;
 
     /**
      * @param string $pk         The private key as a string or the path to the file containing the private key, should be prefixed with file:// (in PEM format)
@@ -38,8 +40,8 @@ final class DkimSigner
      */
     public function __construct(
         string $pk,
-        private string $domainName,
-        private string $selector,
+        private readonly string $domainName,
+        private readonly string $selector,
         private array $defaultOptions = [],
         string $passphrase = '',
     ) {
@@ -67,7 +69,7 @@ final class DkimSigner
         $headersToIgnore['return-path'] = true;
         $headersToIgnore['x-transport'] = true;
         foreach ($options['headers_to_ignore'] as $name) {
-            $headersToIgnore[strtolower($name)] = true;
+            $headersToIgnore[strtolower((string) $name)] = true;
         }
         unset($headersToIgnore['from']);
         $signedHeaderNames = [];
@@ -75,7 +77,7 @@ final class DkimSigner
         $headers = $message->getPreparedHeaders();
         foreach ($headers->getNames() as $name) {
             foreach ($headers->all($name) as $header) {
-                if (isset($headersToIgnore[strtolower($header->getName())])) {
+                if (isset($headersToIgnore[strtolower((string) $header->getName())])) {
                     continue;
                 }
 
@@ -92,7 +94,7 @@ final class DkimSigner
             'v' => '1',
             'q' => 'dns/txt',
             'a' => $options['algorithm'],
-            'bh' => base64_encode($bodyHash),
+            'bh' => base64_encode((string) $bodyHash),
             'd' => $this->domainName,
             'h' => implode(': ', $signedHeaderNames),
             'i' => '@'.$this->domainName,
@@ -121,7 +123,7 @@ final class DkimSigner
         } else {
             throw new \RuntimeException(\sprintf('The "%s" DKIM signing algorithm is not supported yet.', self::ALGO_ED25519));
         }
-        $header->setValue($value.' b='.trim(chunk_split(base64_encode($signature), 73, ' ')));
+        $header->setValue($value.' b='.trim(chunk_split(base64_encode((string) $signature), 73, ' ')));
         $headers->add($header);
 
         return new Message($headers, $message->getBody());
@@ -136,7 +138,7 @@ final class DkimSigner
         $exploded = explode(':', $header, 2);
         $name = strtolower(trim($exploded[0]));
         $value = str_replace("\r\n", '', $exploded[1]);
-        $value = trim(preg_replace("/[ \t][ \t]+/", ' ', $value));
+        $value = trim((string) preg_replace("/[ \t][ \t]+/", ' ', $value));
 
         return $name.':'.$value."\r\n";
     }
@@ -151,7 +153,7 @@ final class DkimSigner
         $length = 0;
         foreach ($body->bodyToIterable() as $chunk) {
             $canon = '';
-            for ($i = 0, $len = \strlen($chunk); $i < $len; ++$i) {
+            for ($i = 0, $len = \strlen((string) $chunk); $i < $len; ++$i) {
                 switch ($chunk[$i]) {
                     case "\r":
                         break;

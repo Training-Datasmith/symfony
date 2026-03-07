@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,8 +22,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class SwitchUserToken extends UsernamePasswordToken
 {
-    private ?string $originatedFromUri = null;
-
     /**
      * @param $user              The username (like a nickname, email address, etc.), or a UserInterface instance or an object implementing a __toString method
      * @param $originatedFromUri The URI where was the user at the switch
@@ -33,11 +33,9 @@ class SwitchUserToken extends UsernamePasswordToken
         string $firewallName,
         array $roles,
         private TokenInterface $originalToken,
-        ?string $originatedFromUri = null,
+        private ?string $originatedFromUri = null,
     ) {
         parent::__construct($user, $firewallName, $roles);
-
-        $this->originatedFromUri = $originatedFromUri;
     }
 
     public function getOriginalToken(): TokenInterface

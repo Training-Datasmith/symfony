@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -202,7 +204,7 @@ class FormFlowBuilder extends FormBuilder implements FormFlowBuilderInterface
             throw new InvalidArgumentException('Steps not configured.');
         }
 
-        uasort($this->steps, static fn (StepFlowBuilderConfigInterface $a, StepFlowBuilderConfigInterface $b) => $b->getPriority() <=> $a->getPriority());
+        uasort($this->steps, static fn (StepFlowBuilderConfigInterface $a, StepFlowBuilderConfigInterface $b): int => $b->getPriority() <=> $a->getPriority());
 
         $currentStep = $this->resolveCurrentStep();
 
@@ -240,8 +242,10 @@ class FormFlowBuilder extends FormBuilder implements FormFlowBuilderInterface
 
                 continue;
             }
-
-            if (!$child instanceof ButtonFlowBuilder || !\is_callable($include = $child->getOption('include_if'))) {
+            if (!$child instanceof ButtonFlowBuilder) {
+                continue;
+            }
+            if (!\is_callable($include = $child->getOption('include_if'))) {
                 continue;
             }
 

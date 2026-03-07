@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,7 +43,7 @@ use Symfony\Component\Routing\RequestContextAwareInterface;
  */
 class RouterListener implements EventSubscriberInterface
 {
-    private RequestContext $context;
+    private readonly RequestContext $context;
 
     /**
      * @param RequestContext|null $context The RequestContext (can be null when $matcher implements RequestContextAwareInterface)
@@ -49,12 +51,12 @@ class RouterListener implements EventSubscriberInterface
      * @throws \InvalidArgumentException
      */
     public function __construct(
-        private UrlMatcherInterface|RequestMatcherInterface $matcher,
-        private RequestStack $requestStack,
+        private readonly UrlMatcherInterface|RequestMatcherInterface $matcher,
+        private readonly RequestStack $requestStack,
         ?RequestContext $context = null,
-        private ?LoggerInterface $logger = null,
-        private ?string $projectDir = null,
-        private bool $debug = true,
+        private readonly ?LoggerInterface $logger = null,
+        private readonly ?string $projectDir = null,
+        private readonly bool $debug = true,
     ) {
         if (null === $context && !$matcher instanceof RequestContextAwareInterface) {
             throw new \InvalidArgumentException('You must either pass a RequestContext or the matcher must implement RequestContextAwareInterface.');

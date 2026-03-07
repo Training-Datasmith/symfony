@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍🧑🏼' => 'tayuga s wul: amdan, amdan, taglimt taceɛlalt, tagwlimt taceɛlalt talemmast',
     '🧑🏻‍❤‍🧑🏽' => 'tayuga s wul: amdan, amdan, taglimt taceɛlalt, taglimt talemmast',

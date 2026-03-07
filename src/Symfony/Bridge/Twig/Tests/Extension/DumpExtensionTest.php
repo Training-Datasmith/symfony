@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,7 +37,9 @@ class DumpExtensionTest extends TestCase
 
         $dumped = null;
         $exception = null;
-        $prevDumper = VarDumper::setHandler(static function ($var) use (&$dumped) { $dumped = $var; });
+        $prevDumper = VarDumper::setHandler(static function ($var) use (&$dumped) {
+            $dumped = $var;
+        });
 
         try {
             $this->assertEquals($expectedOutput, $twig->render('template'));

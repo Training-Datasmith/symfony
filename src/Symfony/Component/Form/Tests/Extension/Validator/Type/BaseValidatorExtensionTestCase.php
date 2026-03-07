@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -77,7 +79,8 @@ abstract class BaseValidatorExtensionTestCase extends TypeTestCase
     public function testValidationGroupsCanBeSetToClosure()
     {
         $form = $this->createForm([
-            'validation_groups' => static function (FormInterface $form) { },
+            'validation_groups' => static function (FormInterface $form) {
+            },
         ]);
 
         $this->assertIsCallable($form->getConfig()->getOption('validation_groups'));

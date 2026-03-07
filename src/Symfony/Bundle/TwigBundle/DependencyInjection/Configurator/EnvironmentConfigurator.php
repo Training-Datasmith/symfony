@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,12 +25,12 @@ use Twig\Extension\CoreExtension;
 class EnvironmentConfigurator
 {
     public function __construct(
-        private string $dateFormat,
-        private string $intervalFormat,
-        private ?string $timezone,
-        private int $decimals,
-        private string $decimalPoint,
-        private string $thousandsSeparator,
+        private readonly string $dateFormat,
+        private readonly string $intervalFormat,
+        private readonly ?string $timezone,
+        private readonly int $decimals,
+        private readonly string $decimalPoint,
+        private readonly string $thousandsSeparator,
     ) {
     }
 
@@ -43,7 +45,7 @@ class EnvironmentConfigurator
         $environment->getExtension(CoreExtension::class)->setNumberFormat($this->decimals, $this->decimalPoint, $this->thousandsSeparator);
 
         // wrap UndefinedCallableHandler in closures for lazy-autoloading
-        $environment->registerUndefinedFilterCallback(static fn ($name) => UndefinedCallableHandler::onUndefinedFilter($name));
-        $environment->registerUndefinedFunctionCallback(static fn ($name) => UndefinedCallableHandler::onUndefinedFunction($name));
+        $environment->registerUndefinedFilterCallback(static fn (string $name): \Twig\TwigFilter|false => UndefinedCallableHandler::onUndefinedFilter($name));
+        $environment->registerUndefinedFunctionCallback(static fn (string $name): \Twig\TwigFunction|false => UndefinedCallableHandler::onUndefinedFunction($name));
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -759,7 +761,8 @@ class ParserTest extends TestCase
     {
         $this->expectException(ParseException::class);
         $this->expectExceptionMessageMatches('/^Multiple documents are not supported.+/');
-        Yaml::parse(<<<'EOL'
+        Yaml::parse(
+            <<<'EOL'
             # Ranking of 1998 home runs
             ---
             - Mark McGwire
@@ -777,7 +780,8 @@ class ParserTest extends TestCase
     public function testSequenceInAMapping()
     {
         $this->expectException(ParseException::class);
-        Yaml::parse(<<<'EOF'
+        Yaml::parse(
+            <<<'EOF'
             yaml:
               hash: me
               - array stuff
@@ -915,7 +919,8 @@ class ParserTest extends TestCase
     public function testMappingInASequence()
     {
         $this->expectException(ParseException::class);
-        Yaml::parse(<<<'EOF'
+        Yaml::parse(
+            <<<'EOF'
             yaml:
               - array stuff
               hash: me
@@ -927,7 +932,8 @@ class ParserTest extends TestCase
     {
         $this->expectException(ParseException::class);
         $this->expectExceptionMessage('missing colon');
-        Yaml::parse(<<<'EOF'
+        Yaml::parse(
+            <<<'EOF'
             foo:
                 - bar
             "missing colon"
@@ -1087,7 +1093,8 @@ class ParserTest extends TestCase
                     'class' => 'Bar',
                 ],
             ],
-        ], Yaml::parse(<<<'EOF'
+        ], Yaml::parse(
+            <<<'EOF'
             # comment 1
             services:
             # comment 2
@@ -1115,7 +1122,8 @@ class ParserTest extends TestCase
 
             footer # comment3
             EOT
-        ], Yaml::parse(<<<'EOF'
+        ], Yaml::parse(
+            <<<'EOF'
             content: |
                 # comment 1
                 header
@@ -1143,7 +1151,8 @@ class ParserTest extends TestCase
 
             footer # comment3
             EOT
-        ]], Yaml::parse(<<<'EOF'
+        ]], Yaml::parse(
+            <<<'EOF'
             -
                 content: |
                     # comment 1
@@ -1174,7 +1183,8 @@ class ParserTest extends TestCase
 
                 footer # comment3
                 EOT,
-        ]], Yaml::parse(<<<'EOF'
+        ]], Yaml::parse(
+            <<<'EOF'
             -
                 title: some title
                 content: |
@@ -1207,7 +1217,8 @@ class ParserTest extends TestCase
             'bar' => ['foo' => 'baz'],
             'baz' => ['foo'],
             'foobar' => ['foo'],
-        ], Yaml::parse(<<<'EOF'
+        ], Yaml::parse(
+            <<<'EOF'
             var:  &var var-value
             scalar: *var
             list: [ *var ]

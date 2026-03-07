@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,7 +38,7 @@ final class PdoSessionHandlerSchemaListener extends AbstractSchemaListener
         $isSameDatabaseChecker = $this->getIsSameDatabaseChecker($connection);
         $sessionHandler = $this->sessionHandler;
 
-        $this->filterSchemaChanges($schema, $connection, static function () use ($sessionHandler, $schema, $isSameDatabaseChecker) {
+        $this->filterSchemaChanges($schema, $connection, static function () use ($sessionHandler, $schema, $isSameDatabaseChecker): void {
             $sessionHandler->configureSchema($schema, $isSameDatabaseChecker);
         });
     }

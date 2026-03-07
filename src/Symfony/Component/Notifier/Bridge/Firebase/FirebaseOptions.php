@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,17 +22,14 @@ use Symfony\Component\Notifier\Message\MessageOptionsInterface;
  */
 abstract class FirebaseOptions implements MessageOptionsInterface
 {
-    /**
-     * @see https://firebase.google.com/docs/cloud-messaging/xmpp-server-ref.html#notification-payload-support
-     */
-    protected array $options;
-
     public function __construct(
-        private string $to,
-        array $options,
-        private array $data = [],
+        private readonly string $to,
+        /**
+         * @see https://firebase.google.com/docs/cloud-messaging/xmpp-server-ref.html#notification-payload-support
+         */
+        protected array $options,
+        private array $data = []
     ) {
-        $this->options = $options;
     }
 
     public function toArray(): array

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,15 +23,15 @@ final class PseudoLocalizationTranslator implements TranslatorInterface, Transla
 {
     private const EXPANSION_CHARACTER = '~';
 
-    private bool $accents;
+    private readonly bool $accents;
     private float $expansionFactor;
-    private bool $brackets;
+    private readonly bool $brackets;
     private bool $parseHTML;
 
     /**
      * @var string[]
      */
-    private array $localizableHTMLAttributes;
+    private readonly array $localizableHTMLAttributes;
 
     /**
      * Available options:
@@ -170,7 +172,7 @@ final class PseudoLocalizationTranslator implements TranslatorInterface, Transla
                 $parts[] = [false, false, ' '.$attribute->nodeName.'="'];
 
                 $localizableAttribute = \in_array($attribute->nodeName, $this->localizableHTMLAttributes, true);
-                foreach (preg_split('/(&(?:amp|quot|#039|lt|gt);+)/', htmlspecialchars($attribute->nodeValue, \ENT_QUOTES, 'UTF-8'), -1, \PREG_SPLIT_DELIM_CAPTURE) as $i => $match) {
+                foreach (preg_split('/(&(?:amp|quot|#039|lt|gt);+)/', htmlspecialchars((string) $attribute->nodeValue, \ENT_QUOTES, 'UTF-8'), -1, \PREG_SPLIT_DELIM_CAPTURE) as $i => $match) {
                     if ('' === $match) {
                         continue;
                     }
@@ -382,5 +384,3 @@ final class PseudoLocalizationTranslator implements TranslatorInterface, Transla
         return false === ($encoding = mb_detect_encoding($s, null, true)) ? \strlen($s) : mb_strlen($s, $encoding);
     }
 }
-
-// @php-cs-fixer-ignore random_api_migration As logic is coupled with mt_srand() in tests

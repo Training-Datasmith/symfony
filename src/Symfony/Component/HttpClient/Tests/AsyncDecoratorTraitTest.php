@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,9 +38,11 @@ class AsyncDecoratorTraitTest extends NativeHttpClientTest
             return HttpClient::create();
         }
 
-        $chunkFilter ??= static function (ChunkInterface $chunk, AsyncContext $context) { yield $chunk; };
+        $chunkFilter ??= static function (ChunkInterface $chunk, AsyncContext $context) {
+            yield $chunk;
+        };
 
-        return new class($decoratedClient ?? parent::getHttpClient($testCase), $chunkFilter) implements HttpClientInterface {
+        return new class ($decoratedClient ?? parent::getHttpClient($testCase), $chunkFilter) implements HttpClientInterface {
             use AsyncDecoratorTrait;
 
             public function __construct(
@@ -158,7 +162,7 @@ class AsyncDecoratorTraitTest extends NativeHttpClientTest
 
     public function testPreflightRequest()
     {
-        $client = new class(parent::getHttpClient(__FUNCTION__)) implements HttpClientInterface {
+        $client = new class (parent::getHttpClient(__FUNCTION__)) implements HttpClientInterface {
             use AsyncDecoratorTrait;
 
             public function request(string $method, string $url, array $options = []): ResponseInterface
@@ -232,7 +236,7 @@ class AsyncDecoratorTraitTest extends NativeHttpClientTest
         $this->assertStringContainsString('SERVER_PROTOCOL', $response->getContent());
         $this->assertStringContainsString('HTTP_HOST', $response->getContent());
 
-        $client = new class(parent::getHttpClient(__FUNCTION__)) implements HttpClientInterface {
+        $client = new class (parent::getHttpClient(__FUNCTION__)) implements HttpClientInterface {
             use AsyncDecoratorTrait;
 
             public function request(string $method, string $url, array $options = []): ResponseInterface
@@ -273,7 +277,7 @@ class AsyncDecoratorTraitTest extends NativeHttpClientTest
 
     public function testRecurciveStream()
     {
-        $client = new class(parent::getHttpClient(__FUNCTION__)) implements HttpClientInterface {
+        $client = new class (parent::getHttpClient(__FUNCTION__)) implements HttpClientInterface {
             use AsyncDecoratorTrait;
 
             public function request(string $method, string $url, array $options = []): ResponseInterface
@@ -336,7 +340,7 @@ class AsyncDecoratorTraitTest extends NativeHttpClientTest
 
     public function testConsumingDecoratedClient()
     {
-        $client = $this->getHttpClient(__FUNCTION__, null, new class(parent::getHttpClient(__FUNCTION__)) implements HttpClientInterface {
+        $client = $this->getHttpClient(__FUNCTION__, null, new class (parent::getHttpClient(__FUNCTION__)) implements HttpClientInterface {
             use DecoratorTrait;
 
             public function request(string $method, string $url, array $options = []): ResponseInterface

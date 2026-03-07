@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,8 +31,8 @@ use Symfony\Component\Serializer\SerializerInterface;
 class TraceableNormalizer implements NormalizerInterface, DenormalizerInterface, SerializerAwareInterface, NormalizerAwareInterface, DenormalizerAwareInterface
 {
     public function __construct(
-        private NormalizerInterface|DenormalizerInterface $normalizer,
-        private SerializerDataCollector $dataCollector,
+        private readonly NormalizerInterface|DenormalizerInterface $normalizer,
+        private readonly SerializerDataCollector $dataCollector,
         private readonly string $serializerName = 'default',
     ) {
     }

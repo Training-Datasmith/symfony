@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ use Symfony\Component\RateLimiter\Util\TimeUtil;
  *
  * @author Wouter de Jong <wouter@wouterj.nl>
  */
-final class Rate
+final readonly class Rate implements \Stringable
 {
     public function __construct(
         private \DateInterval $refillTime,

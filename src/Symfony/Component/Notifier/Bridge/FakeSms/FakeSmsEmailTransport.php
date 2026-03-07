@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,9 +33,9 @@ final class FakeSmsEmailTransport extends AbstractTransport
     protected const HOST = 'default';
 
     public function __construct(
-        private MailerInterface $mailer,
-        private string $to,
-        private string $from,
+        private readonly MailerInterface $mailer,
+        private readonly string $to,
+        private readonly string $from,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -51,14 +53,12 @@ final class FakeSmsEmailTransport extends AbstractTransport
     }
 
     /**
-     * @param MessageInterface|SmsMessage $message
-     *
      * @throws TransportExceptionInterface
      */
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$this->supports($message)) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $email = (new Email())

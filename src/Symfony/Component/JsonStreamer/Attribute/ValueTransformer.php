@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,8 +25,8 @@ use Symfony\Component\JsonStreamer\ValueTransformer\ValueTransformerInterface;
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 class ValueTransformer
 {
-    private \Closure|string|null $streamToNative;
-    private \Closure|string|null $nativeToStream;
+    private readonly \Closure|string|null $streamToNative;
+    private readonly \Closure|string|null $nativeToStream;
 
     /**
      * @param (callable(mixed, array<string, mixed>=): mixed)|string|null $streamToNative

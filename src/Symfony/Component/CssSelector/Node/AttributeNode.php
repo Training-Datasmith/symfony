@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,11 +26,11 @@ namespace Symfony\Component\CssSelector\Node;
 class AttributeNode extends AbstractNode
 {
     public function __construct(
-        private NodeInterface $selector,
-        private ?string $namespace,
-        private string $attribute,
-        private string $operator,
-        private ?string $value,
+        private readonly NodeInterface $selector,
+        private readonly ?string $namespace,
+        private readonly string $attribute,
+        private readonly string $operator,
+        private readonly ?string $value,
     ) {
     }
 

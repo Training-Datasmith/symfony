@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,7 @@ use Symfony\Component\VarDumper\Server\DumpServer;
 #[AsCommand(name: 'server:dump', description: 'Start a dump server that collects and displays dumps in a single place')]
 class ServerDumpPlaceholderCommand extends Command
 {
-    private ServerDumpCommand $replacedCommand;
+    private readonly ServerDumpCommand $replacedCommand;
 
     public function __construct(?DumpServer $server = null, array $descriptors = [])
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,7 +38,8 @@ trait LazyDecoratorTrait
             Hydrator::$propertyScopes[$class] ??= $class::LAZY_OBJECT_PROPERTY_SCOPES;
         }
 
-        $instance ??= (Registry::$classReflectors[$class] ??= ($r = new \ReflectionClass($class))->hasProperty('lazyObjectState')
+        $instance ??= (
+            Registry::$classReflectors[$class] ??= ($r = new \ReflectionClass($class))->hasProperty('lazyObjectState')
             ? $r
             : throw new \LogicException('Cannot create a lazy proxy for a non-decorator object.')
         )->newInstanceWithoutConstructor();

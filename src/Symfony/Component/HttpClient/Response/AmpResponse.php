@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,7 +16,13 @@ namespace Symfony\Component\HttpClient\Response;
 use Amp\ByteStream\StreamException;
 use Amp\DeferredCancellation;
 use Amp\DeferredFuture;
+
+use function Amp\delay;
+
 use Amp\Future;
+
+use function Amp\Future\awaitFirst;
+
 use Amp\Http\Client\HttpException;
 use Amp\Http\Client\Request;
 use Amp\Http\Client\Response;
@@ -28,11 +36,9 @@ use Symfony\Component\HttpClient\HttpClientTrait;
 use Symfony\Component\HttpClient\Internal\AmpBody;
 use Symfony\Component\HttpClient\Internal\AmpClientState;
 use Symfony\Component\HttpClient\Internal\Canary;
+
 use Symfony\Component\HttpClient\Internal\ClientState;
 use Symfony\Contracts\HttpClient\ResponseInterface;
-
-use function Amp\delay;
-use function Amp\Future\awaitFirst;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
@@ -46,7 +52,7 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
 
     private static string $nextId = 'a';
 
-    private ?array $options;
+    private ?array $options = null;
     private \Closure $onProgress;
 
     /**
@@ -67,7 +73,7 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
             $request->setHeader('Accept-Encoding', 'gzip');
         }
 
-        $this->initializer = static fn (self $response) => null !== $response->options;
+        $this->initializer = static fn (self $response): bool => null !== $response->options;
 
         $info = &$this->info;
         $headers = &$this->headers;
@@ -90,17 +96,18 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
         $info['max_connect_duration'] = $options['max_connect_duration'];
         $info['debug'] = '';
 
-        $onProgress = $options['on_progress'] ?? static function () {};
-        $onProgress = $this->onProgress = static function () use (&$info, $onProgress) {
+        $onProgress = $options['on_progress'] ?? static function (): void {
+        };
+        $onProgress = $this->onProgress = static function () use (&$info, $onProgress): void {
             $info['total_time'] = microtime(true) - $info['start_time'];
-            $onProgress((int) $info['size_download'], ((int) (1 + $info['download_content_length']) ?: 1) - 1, (array) $info);
+            $onProgress((int) $info['size_download'], ((int) (1 + $info['download_content_length']) ?: 1) - 1, $info);
         };
 
         $pause = 0.0;
         $this->id = $id = self::$nextId;
         self::$nextId = str_increment(self::$nextId);
 
-        $info['pause_handler'] = static function (float $duration) use (&$pause) {
+        $info['pause_handler'] = static function (float $duration) use (&$pause): void {
             $pause = $duration;
         };
 
@@ -108,13 +115,13 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
         $multi->openHandles[$id] = new DeferredFuture();
         ++$multi->responseCount;
 
-        $this->canary = new Canary(static function () use ($canceller, $multi, $id) {
+        $this->canary = new Canary(static function () use ($canceller, $multi, $id): void {
             $canceller->cancel();
             $multi->openHandles[$id]?->isComplete() || $multi->openHandles[$id]?->complete();
             unset($multi->openHandles[$id], $multi->handlesActivity[$id]);
         });
 
-        EventLoop::queue(static function () use ($request, $multi, $id, &$info, &$headers, $canceller, &$options, $onProgress, &$handle, $logger, &$pause) {
+        EventLoop::queue(static function () use ($request, $multi, $id, &$info, &$headers, $canceller, &$options, $onProgress, &$handle, $logger, &$pause): void {
             self::generateResponse($request, $multi, $id, $info, $headers, $canceller, $options, $onProgress, $handle, $logger, $pause);
         });
     }
@@ -126,12 +133,12 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
 
     public function __serialize(): array
     {
-        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot serialize '.self::class);
     }
 
     public function __unserialize(array $data): void
     {
-        throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot unserialize '.self::class);
     }
 
     public function __destruct()
@@ -209,7 +216,7 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
 
     private static function generateResponse(Request $request, AmpClientState $multi, string $id, array &$info, array &$headers, DeferredCancellation $canceller, array &$options, \Closure $onProgress, &$handle, ?LoggerInterface $logger, float &$pause): void
     {
-        $request->setInformationalResponseHandler(static function (Response $response) use ($multi, $id, &$info, &$headers) {
+        $request->setInformationalResponseHandler(static function (Response $response) use ($multi, $id, &$info, &$headers): void {
             self::addResponseHeaders($response, $info, $headers);
             $multi->handlesActivity[$id][] = new InformationalChunk($response->getStatus(), $response->getHeaders());
             $multi->openHandles[$id]->complete();
@@ -272,7 +279,7 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
         }
     }
 
-    private static function followRedirects(Request $originRequest, AmpClientState $multi, array &$info, array &$headers, DeferredCancellation $canceller, array $options, \Closure $onProgress, &$handle, ?LoggerInterface $logger, float &$pause): ?Response
+    private static function followRedirects(Request $originRequest, AmpClientState $multi, array &$info, array &$headers, DeferredCancellation $canceller, array $options, \Closure $onProgress, &$handle, ?LoggerInterface $logger, float &$pause): \Amp\Http\Client\Response
     {
         if (0 < $pause) {
             delay($pause, true, $canceller->getCancellation());
@@ -290,7 +297,7 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
                 return $response;
             }
 
-            $urlResolver = new class {
+            $urlResolver = new class () {
                 use HttpClientTrait {
                     parseUrl as public;
                     resolveUrl as public;
@@ -381,7 +388,7 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
         $info['response_headers'][] = $h;
 
         foreach ($response->getHeaderPairs() as [$name, $value]) {
-            $headers[strtolower($name)][] = $value;
+            $headers[strtolower((string) $name)][] = $value;
             $h = $name.': '.$value;
             $info['debug'] .= "< {$h}\r\n";
             $info['response_headers'][] = $h;
@@ -403,10 +410,12 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
         $cancellation = $canceller->getCancellation();
 
         foreach ($multi->pushedResponses[$authority] ?? [] as $i => [$pushedUrl, $pushDeferred, $pushedRequest, $pushedResponse, $parentOptions]) {
-            if ($info['url'] !== $pushedUrl || $info['http_method'] !== $pushedRequest->getMethod()) {
+            if ($info['url'] !== $pushedUrl) {
                 continue;
             }
-
+            if ($info['http_method'] !== $pushedRequest->getMethod()) {
+                continue;
+            }
             foreach ($parentOptions as $k => $v) {
                 if ($options[$k] !== $v) {
                     continue 2;
@@ -430,7 +439,7 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
             }
 
             foreach ($response->getHeaderArray('vary') as $vary) {
-                foreach (preg_split('/\s*+,\s*+/', $vary) as $v) {
+                foreach (preg_split('/\s*+,\s*+/', (string) $vary) as $v) {
                     if ('*' === $v || ($pushedRequest->getHeaderArray($v) !== $request->getHeaderArray($v) && 'accept-encoding' !== strtolower($v))) {
                         $logger?->debug(\sprintf('Skipping pushed response: "%s"', $info['url']));
                         continue 3;

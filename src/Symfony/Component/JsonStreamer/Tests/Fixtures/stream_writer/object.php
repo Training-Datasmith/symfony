@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @param Symfony\Component\JsonStreamer\Tests\Fixtures\Model\DummyWithNameAttributes $data
  */
@@ -11,7 +13,7 @@ return static function (mixed $data, \Psr\Container\ContainerInterface $valueTra
         $prefix1 = ',';
         yield "{$prefix1}\"name\":";
         yield \json_encode($data->name, \JSON_THROW_ON_ERROR, 511);
-        yield "}";
+        yield '}';
     } catch (\JsonException $e) {
         throw new \Symfony\Component\JsonStreamer\Exception\NotEncodableValueException($e->getMessage(), 0, $e);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,9 +33,9 @@ abstract class AbstractSurrogateFragmentRenderer extends RoutableFragmentRendere
      * @param FragmentRendererInterface $inlineStrategy The inline strategy to use when the surrogate is not supported
      */
     public function __construct(
-        private ?SurrogateInterface $surrogate,
-        private FragmentRendererInterface $inlineStrategy,
-        private ?UriSigner $signer = null,
+        private readonly ?SurrogateInterface $surrogate,
+        private readonly FragmentRendererInterface $inlineStrategy,
+        private readonly ?UriSigner $signer = null,
     ) {
     }
 
@@ -88,10 +90,12 @@ abstract class AbstractSurrogateFragmentRenderer extends RoutableFragmentRendere
     private function containsNonScalars(array $values): bool
     {
         foreach ($values as $value) {
-            if (\is_scalar($value) || null === $value) {
+            if (\is_scalar($value)) {
                 continue;
             }
-
+            if (null === $value) {
+                continue;
+            }
             if (!\is_array($value) || $this->containsNonScalars($value)) {
                 return true;
             }

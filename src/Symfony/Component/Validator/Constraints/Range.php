@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -43,10 +45,6 @@ class Range extends Constraint
     public string $maxMessage = 'This value should be {{ limit }} or less.';
     public string $invalidMessage = 'This value should be a valid number.';
     public string $invalidDateTimeMessage = 'This value is not a valid datetime.';
-    public mixed $min = null;
-    public ?string $minPropertyPath = null;
-    public mixed $max = null;
-    public ?string $maxPropertyPath = null;
 
     /**
      * @param string|null                     $invalidMessage         The message if min and max values are numeric but the given value is not
@@ -64,10 +62,10 @@ class Range extends Constraint
         ?string $maxMessage = null,
         ?string $invalidMessage = null,
         ?string $invalidDateTimeMessage = null,
-        mixed $min = null,
-        ?string $minPropertyPath = null,
-        mixed $max = null,
-        ?string $maxPropertyPath = null,
+        public mixed $min = null,
+        public ?string $minPropertyPath = null,
+        public mixed $max = null,
+        public ?string $maxPropertyPath = null,
         ?array $groups = null,
         mixed $payload = null,
     ) {
@@ -82,13 +80,9 @@ class Range extends Constraint
         $this->maxMessage = $maxMessage ?? $this->maxMessage;
         $this->invalidMessage = $invalidMessage ?? $this->invalidMessage;
         $this->invalidDateTimeMessage = $invalidDateTimeMessage ?? $this->invalidDateTimeMessage;
-        $this->min = $min;
-        $this->minPropertyPath = $minPropertyPath;
-        $this->max = $max;
-        $this->maxPropertyPath = $maxPropertyPath;
 
         if (null === $this->min && null === $this->minPropertyPath && null === $this->max && null === $this->maxPropertyPath) {
-            throw new MissingOptionsException(\sprintf('Either option "min", "minPropertyPath", "max" or "maxPropertyPath" must be given for constraint "%s".', __CLASS__), ['min', 'minPropertyPath', 'max', 'maxPropertyPath']);
+            throw new MissingOptionsException(\sprintf('Either option "min", "minPropertyPath", "max" or "maxPropertyPath" must be given for constraint "%s".', self::class), ['min', 'minPropertyPath', 'max', 'maxPropertyPath']);
         }
 
         if (null !== $this->min && null !== $this->minPropertyPath) {

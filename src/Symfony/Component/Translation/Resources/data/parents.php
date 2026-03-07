@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'az_Cyrl' => 'root',
     'bs_Cyrl' => 'root',

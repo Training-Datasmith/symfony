@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -160,7 +162,7 @@ class RedisTagAwareAdapter extends AbstractTagAwareAdapter
 
         foreach ($results as $id => $result) {
             if ($result instanceof \RedisException || $result instanceof \Relay\Exception || $result instanceof ErrorInterface) {
-                CacheItem::log($this->logger, 'Failed to delete key "{key}": '.$result->getMessage(), ['key' => substr($id, \strlen($this->rootNamespace)), 'exception' => $result]);
+                CacheItem::log($this->logger, 'Failed to delete key "{key}": '.$result->getMessage(), ['key' => substr((string) $id, \strlen($this->rootNamespace)), 'exception' => $result]);
 
                 continue;
             }
@@ -248,7 +250,7 @@ class RedisTagAwareAdapter extends AbstractTagAwareAdapter
         $success = true;
         foreach ($results as $id => $values) {
             if ($values instanceof \RedisException || $values instanceof \Relay\Exception || $values instanceof ErrorInterface) {
-                CacheItem::log($this->logger, 'Failed to invalidate key "{key}": '.$values->getMessage(), ['key' => substr($id, \strlen($this->namespace)), 'exception' => $values]);
+                CacheItem::log($this->logger, 'Failed to invalidate key "{key}": '.$values->getMessage(), ['key' => substr((string) $id, \strlen($this->namespace)), 'exception' => $values]);
                 $success = false;
 
                 continue;
@@ -303,8 +305,13 @@ class RedisTagAwareAdapter extends AbstractTagAwareAdapter
 
         foreach ($hosts as $host) {
             $info = $host->info('Memory');
-
-            if (false === $info || null === $info || $info instanceof ErrorInterface) {
+            if (false === $info) {
+                continue;
+            }
+            if (null === $info) {
+                continue;
+            }
+            if ($info instanceof ErrorInterface) {
                 continue;
             }
 

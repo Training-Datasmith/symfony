@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,14 +38,14 @@ class FileType extends AbstractType
     ];
 
     public function __construct(
-        private ?TranslatorInterface $translator = null,
+        private readonly ?TranslatorInterface $translator = null,
     ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // Ensure that submitted data is always an uploaded file or an array of some
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options): void {
             /** @var PreSubmitEvent $event */
             $form = $event->getForm();
             $requestHandler = $form->getConfig()->getRequestHandler();
@@ -104,10 +106,10 @@ class FileType extends AbstractType
     {
         $dataClass = null;
         if (class_exists(File::class)) {
-            $dataClass = static fn (Options $options) => $options['multiple'] ? null : File::class;
+            $dataClass = static fn (Options $options): ?string => $options['multiple'] ? null : File::class;
         }
 
-        $emptyData = static fn (Options $options) => $options['multiple'] ? [] : null;
+        $emptyData = static fn (Options $options): ?array => $options['multiple'] ? [] : null;
 
         $resolver->setDefaults([
             'compound' => false,
@@ -155,7 +157,7 @@ class FileType extends AbstractType
      *
      * This method should be kept in sync with Symfony\Component\HttpFoundation\File\UploadedFile::getMaxFilesize().
      */
-    private static function getMaxFilesize(): int|float
+    private static function getMaxFilesize(): int
     {
         $iniMax = strtolower(\ini_get('upload_max_filesize'));
 

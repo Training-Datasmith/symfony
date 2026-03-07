@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,8 +22,8 @@ class PartialDenormalizationException extends UnexpectedValueException
      * @param NotNormalizableValueException[] $errors
      */
     public function __construct(
-        private mixed $data,
-        private array $errors,
+        private readonly mixed $data,
+        private readonly array $errors,
     ) {
     }
 

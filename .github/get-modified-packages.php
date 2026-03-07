@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * Given a list of all packages, find the package that have been modified.
  */
@@ -13,7 +15,7 @@ $allPackages = json_decode($_SERVER['argv'][1], true, 512, \JSON_THROW_ON_ERROR)
 $modifiedFiles = json_decode($_SERVER['argv'][2], true, 512, \JSON_THROW_ON_ERROR);
 
 // Sort to get the longest name first (match bridge not component)
-usort($allPackages, function($a, $b) {
+usort($allPackages, function ($a, $b) {
     return strlen($b) <=> strlen($a) ?: $a <=> $b;
 });
 

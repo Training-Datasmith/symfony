@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -69,7 +71,7 @@ final class CheckTypeDeclarationsPass extends AbstractRecursivePass
      * @param array $skippedIds An array indexed by the service ids to skip
      */
     public function __construct(
-        private bool $autoload = false,
+        private readonly bool $autoload = false,
         private array $skippedIds = [],
     ) {
     }
@@ -136,7 +138,10 @@ final class CheckTypeDeclarationsPass extends AbstractRecursivePass
 
         for ($i = 0; $i < $checksCount; ++$i) {
             $p = $reflectionParameters[$i];
-            if (!$p->hasType() || $p->isVariadic()) {
+            if (!$p->hasType()) {
+                continue;
+            }
+            if ($p->isVariadic()) {
                 continue;
             }
             $key = $i;
@@ -171,7 +176,7 @@ final class CheckTypeDeclarationsPass extends AbstractRecursivePass
                     $this->checkType($checkedDefinition, $value, $parameter, $envPlaceholderUniquePrefix, $t);
 
                     return;
-                } catch (InvalidParameterTypeException $e) {
+                } catch (InvalidParameterTypeException) {
                 }
             }
 

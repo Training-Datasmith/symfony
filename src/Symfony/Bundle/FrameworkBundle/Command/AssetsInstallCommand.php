@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,8 +43,8 @@ class AssetsInstallCommand extends Command
     public const METHOD_RELATIVE_SYMLINK = 'relative symlink';
 
     public function __construct(
-        private Filesystem $filesystem,
-        private string $projectDir,
+        private readonly Filesystem $filesystem,
+        private readonly string $projectDir,
     ) {
         parent::__construct();
     }
@@ -51,12 +53,13 @@ class AssetsInstallCommand extends Command
     {
         $this
             ->setDefinition([
-                new InputArgument('target', InputArgument::OPTIONAL, 'The target directory', null),
+                new InputArgument('target', InputArgument::OPTIONAL, 'The target directory'),
             ])
             ->addOption('symlink', null, InputOption::VALUE_NONE, 'Symlink the assets instead of copying them')
             ->addOption('relative', null, InputOption::VALUE_NONE, 'Make relative symlinks')
             ->addOption('no-cleanup', null, InputOption::VALUE_NONE, 'Do not remove the assets of the bundles that no longer exist')
-            ->setHelp(<<<'EOT'
+            ->setHelp(
+                <<<'EOT'
                 The <info>%command.name%</info> command installs bundle assets into a given
                 directory (e.g. the <comment>public</comment> directory).
 

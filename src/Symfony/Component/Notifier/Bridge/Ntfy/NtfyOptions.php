@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ final class NtfyOptions implements MessageOptionsInterface
     public const PRIORITY_LOW = 2;
     public const PRIORITY_MIN = 1;
 
-    private ClockInterface $clock;
+    private readonly ClockInterface $clock;
 
     public function __construct(
         private array $options = [],

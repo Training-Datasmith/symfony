@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ use Symfony\Component\Form\AbstractExtension;
 class DataCollectorExtension extends AbstractExtension
 {
     public function __construct(
-        private FormDataCollectorInterface $dataCollector,
+        private readonly FormDataCollectorInterface $dataCollector,
     ) {
     }
 

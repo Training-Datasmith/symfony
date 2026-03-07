@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ class DebugProcessor implements DebugLoggerInterface, ResetInterface, Resettable
     private array $errorCount = [];
 
     public function __construct(
-        private ?RequestStack $requestStack = null,
+        private readonly ?RequestStack $requestStack = null,
     ) {
     }
 

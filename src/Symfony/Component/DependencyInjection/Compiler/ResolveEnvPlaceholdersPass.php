@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ class ResolveEnvPlaceholdersPass extends AbstractRecursivePass
      *                                 true to resolve to the actual values of the referenced env vars
      */
     public function __construct(
-        private string|bool|null $format = true,
+        private readonly string|bool|null $format = true,
     ) {
     }
 
@@ -48,7 +50,7 @@ class ResolveEnvPlaceholdersPass extends AbstractRecursivePass
         $value = parent::processValue($value, $isRoot);
 
         if ($value && \is_array($value) && !$isRoot) {
-            $value = array_combine($this->container->resolveEnvPlaceholders(array_keys($value), $this->format), $value);
+            return array_combine($this->container->resolveEnvPlaceholders(array_keys($value), $this->format), $value);
         }
 
         return $value;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,8 +30,8 @@ final class ConsoleCommandProcessor implements EventSubscriberInterface, ResetIn
     private array $commandData;
 
     public function __construct(
-        private bool $includeArguments = true,
-        private bool $includeOptions = false,
+        private readonly bool $includeArguments = true,
+        private readonly bool $includeOptions = false,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,7 +38,7 @@ class ChromePhpHandler extends BaseChromePhpHandler
             return;
         }
 
-        if (!preg_match(static::USER_AGENT_REGEX, $event->getRequest()->headers->get('User-Agent', ''))) {
+        if (!preg_match(static::USER_AGENT_REGEX, (string) $event->getRequest()->headers->get('User-Agent', ''))) {
             self::$sendHeaders = false;
             $this->headers = [];
 

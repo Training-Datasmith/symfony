@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -50,7 +52,8 @@ class ArrayAdapterTest extends AdapterTestCase
 
         // Fail (should be missing from $values)
         $item = $cache->getItem('buz');
-        $cache->save($item->set(static function () {}));
+        $cache->save($item->set(static function () {
+        }));
 
         $values = $cache->getValues();
 

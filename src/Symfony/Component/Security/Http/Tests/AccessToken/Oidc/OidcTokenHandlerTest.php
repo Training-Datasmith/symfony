@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -159,7 +161,8 @@ class OidcTokenHandlerTest extends TestCase
 
     private static function buildJWS(string $payload): string
     {
-        return (new CompactSerializer())->serialize((new JWSBuilder(new AlgorithmManager([
+        return (new CompactSerializer())->serialize(
+            (new JWSBuilder(new AlgorithmManager([
             new ES256(),
         ])))->create()
             ->withPayload($payload)
@@ -304,7 +307,8 @@ class OidcTokenHandlerTest extends TestCase
 
     private static function buildJWSWithKey(string $payload, JWK $jwk): string
     {
-        return (new CompactSerializer())->serialize((new JWSBuilder(new AlgorithmManager([
+        return (new CompactSerializer())->serialize(
+            (new JWSBuilder(new AlgorithmManager([
             new ES256(),
         ])))->create()
             ->withPayload($payload)

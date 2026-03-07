@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ class RouterCacheWarmer implements CacheWarmerInterface, ServiceSubscriberInterf
      * As this cache warmer is optional, dependencies should be lazy-loaded, that's why a container should be injected.
      */
     public function __construct(
-        private ContainerInterface $container,
+        private readonly ContainerInterface $container,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -59,7 +61,7 @@ final class DomVisitor
      *                                                                               * If an element is not present as a key, the default action applies.
      */
     public function __construct(
-        private HtmlSanitizerConfig $config,
+        private readonly HtmlSanitizerConfig $config,
         private array $elementsConfig,
     ) {
         $this->forcedAttributes = $config->getForcedAttributes();

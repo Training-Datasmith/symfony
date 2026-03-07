@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,7 +41,7 @@ class CheckRememberMeConditionsListener implements EventSubscriberInterface
 
     public function __construct(
         array $options = [],
-        private ?LoggerInterface $logger = null,
+        private readonly ?LoggerInterface $logger = null,
     ) {
         $this->options = $options + ['always_remember_me' => false, 'remember_me_parameter' => '_remember_me'];
     }

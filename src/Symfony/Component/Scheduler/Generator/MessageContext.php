@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,14 +18,14 @@ use Symfony\Component\Scheduler\Trigger\TriggerInterface;
 /**
  * @author Tugdual Saunier <tugdual@saunier.tech>
  */
-final class MessageContext
+final readonly class MessageContext
 {
     public function __construct(
-        public readonly string $name,
-        public readonly string $id,
-        public readonly TriggerInterface $trigger,
-        public readonly \DateTimeImmutable $triggeredAt,
-        public readonly ?\DateTimeImmutable $nextTriggerAt = null,
+        public string $name,
+        public string $id,
+        public TriggerInterface $trigger,
+        public \DateTimeImmutable $triggeredAt,
+        public ?\DateTimeImmutable $nextTriggerAt = null,
     ) {
     }
 }

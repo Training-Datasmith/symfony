@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -283,14 +285,14 @@ final class StringTypeResolver implements TypeResolverInterface
                 if ($type instanceof GenericType) {
                     $type = $type->getWrappedType();
                 }
-
                 if (1 === \count($variableTypes)) {
                     return new CollectionType(Type::generic($type, $keyType, $variableTypes[0]), $asList);
-                } elseif (2 === \count($variableTypes)) {
+                }
+
+                if (2 === \count($variableTypes)) {
                     if ($asList) {
                         throw new \DomainException(\sprintf('"%s" type cannot have a key type defined.', $node->type));
                     }
-
                     return Type::collection($type, $variableTypes[1], $variableTypes[0], $asList);
                 }
             }

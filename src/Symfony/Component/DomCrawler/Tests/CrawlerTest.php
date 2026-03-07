@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -1308,7 +1310,8 @@ class CrawlerTest extends TestCase
         $internalErrors = libxml_use_internal_errors(true);
 
         $crawler = $this->createCrawler();
-        $crawler->addXmlContent(<<<'EOF'
+        $crawler->addXmlContent(
+            <<<'EOF'
             <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
             <html>
                 <head>

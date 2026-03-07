@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,11 +36,11 @@ class RouterController
      * @param ExpressionFunctionProviderInterface[] $expressionLanguageProviders
      */
     public function __construct(
-        private ?Profiler $profiler,
-        private Environment $twig,
-        private ?UrlMatcherInterface $matcher = null,
+        private readonly ?Profiler $profiler,
+        private readonly Environment $twig,
+        private readonly ?UrlMatcherInterface $matcher = null,
         private ?RouteCollection $routes = null,
-        private iterable $expressionLanguageProviders = [],
+        private readonly iterable $expressionLanguageProviders = [],
     ) {
         if ($this->matcher instanceof RouterInterface) {
             $this->routes ??= $this->matcher->getRouteCollection();

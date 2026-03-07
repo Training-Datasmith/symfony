@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,12 +37,12 @@ use Symfony\Component\Security\Http\EntryPoint\Exception\NotAnEntryPointExceptio
 class LdapAuthenticator implements AuthenticationEntryPointInterface, InteractiveAuthenticatorInterface
 {
     public function __construct(
-        private AuthenticatorInterface $authenticator,
-        private string $ldapServiceId,
-        private string $dnString = '{user_identifier}',
-        private string $searchDn = '',
-        private string $searchPassword = '',
-        private string $queryString = '',
+        private readonly AuthenticatorInterface $authenticator,
+        private readonly string $ldapServiceId,
+        private readonly string $dnString = '{user_identifier}',
+        private readonly string $searchDn = '',
+        private readonly string $searchPassword = '',
+        private readonly string $queryString = '',
     ) {
     }
 

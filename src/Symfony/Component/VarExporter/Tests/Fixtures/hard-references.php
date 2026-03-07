@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
     $o = [
         clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['stdClass'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('stdClass')),

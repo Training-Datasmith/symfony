@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -176,7 +178,6 @@ class RedisExtIntegrationTest extends TestCase
         $connection = Connection::fromDsn(
             getenv('MESSENGER_REDIS_DSN'),
             ['redeliver_timeout' => 0, 'claim_interval' => 500],
-
             $this->redis
         );
 
@@ -233,10 +234,13 @@ class RedisExtIntegrationTest extends TestCase
 
         $dsn = 'redis:?host['.str_replace(' ', ']&host[', $hosts).']';
 
-        $connection = Connection::fromDsn($dsn,
+        $connection = Connection::fromDsn(
+            $dsn,
             ['delete_after_ack' => true,
                 $sentinelOptionName => getenv('MESSENGER_REDIS_SENTINEL_MASTER') ?: null,
-            ], $this->redis);
+            ],
+            $this->redis
+        );
 
         $connection->add('1', []);
         $this->assertNotEmpty($message = $connection->get());
@@ -269,11 +273,14 @@ class RedisExtIntegrationTest extends TestCase
 
         $dsn = 'redis:?host['.str_replace(' ', ']&host[', $hosts).']';
 
-        $connection = Connection::fromDsn($dsn,
+        $connection = Connection::fromDsn(
+            $dsn,
             ['lazy' => true,
                 'delete_after_ack' => true,
                 'sentinel' => getenv('MESSENGER_REDIS_SENTINEL_MASTER') ?: null,
-            ], $this->redis);
+            ],
+            $this->redis
+        );
 
         $connection->add('1', []);
         $this->assertNotEmpty($message = $connection->get());

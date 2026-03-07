@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 require __DIR__.'/common.inc';
 
 session_set_save_handler(new TestSessionHandler('abc|i:123;'), false);

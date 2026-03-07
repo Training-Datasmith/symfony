@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'musu: pertsona, pertsona, 1–2. mota eta 3. mota',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'musu: pertsona, pertsona, 1–2. mota eta bitarteko azal-tonua',

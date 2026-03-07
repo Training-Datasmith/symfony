@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,14 +34,14 @@ class ConstraintViolationBuilder implements ConstraintViolationBuilderInterface
     private mixed $cause = null;
 
     public function __construct(
-        private ConstraintViolationList $violations,
-        private ?Constraint $constraint,
-        private string|\Stringable $message,
+        private readonly ConstraintViolationList $violations,
+        private readonly ?Constraint $constraint,
+        private readonly string|\Stringable $message,
         private array $parameters,
-        private mixed $root,
+        private readonly mixed $root,
         ?string $propertyPath,
         private mixed $invalidValue,
-        private TranslatorInterface $translator,
+        private readonly TranslatorInterface $translator,
         private string|false|null $translationDomain = null,
     ) {
         $this->propertyPath = $propertyPath ?? '';

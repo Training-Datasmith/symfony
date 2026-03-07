@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -33,7 +35,7 @@ $container->set('session_factory', $sessionFactory);
 
 $listener = new SessionListener($container);
 
-$kernel = new class($r) implements HttpKernelInterface {
+$kernel = new class ($r) implements HttpKernelInterface {
     private Response $response;
 
     public function __construct(Response $response)

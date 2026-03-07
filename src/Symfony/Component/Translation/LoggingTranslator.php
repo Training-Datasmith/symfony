@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,8 +23,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class LoggingTranslator implements TranslatorInterface, TranslatorBagInterface, LocaleAwareInterface
 {
     public function __construct(
-        private TranslatorInterface&TranslatorBagInterface&LocaleAwareInterface $translator,
-        private LoggerInterface $logger,
+        private readonly TranslatorInterface&TranslatorBagInterface&LocaleAwareInterface $translator,
+        private readonly LoggerInterface $logger,
     ) {
     }
 

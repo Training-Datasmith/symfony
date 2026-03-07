@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'maghahalikan: tao, tao, light na kulay ng balat, katamtamang light na kulay ng balat',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'maghahalikan: tao, tao, light na kulay ng balat, katamtamang kulay ng balat',

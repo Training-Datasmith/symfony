@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,10 +24,10 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
  *
  * @author Benjamin Eberlei <kontakt@beberlei.de>
  */
-final class ProxyCacheWarmer implements CacheWarmerInterface
+final readonly class ProxyCacheWarmer implements CacheWarmerInterface
 {
     public function __construct(
-        private readonly ManagerRegistry $registry,
+        private ManagerRegistry $registry,
     ) {
     }
 

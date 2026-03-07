@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,7 @@ class RangeValidator extends ConstraintValidator
 {
     public function __construct(
         private ?PropertyAccessorInterface $propertyAccessor = null,
-        private ?ClockInterface $clock = null,
+        private readonly ?ClockInterface $clock = null,
     ) {
     }
 

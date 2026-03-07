@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,6 @@ class CompositeObjectNoToStringIdEntity
         #[ORM\ManyToOne(cascade: ['persist'])]
         #[ORM\JoinColumn(name: 'object_one_id')]
         protected SingleIntIdNoToStringEntity $objectOne,
-
         #[ORM\Id]
         #[ORM\ManyToOne(cascade: ['persist'])]
         #[ORM\JoinColumn(name: 'object_two_id')]

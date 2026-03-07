@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ class CountryType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'choice_loader' => function (Options $options) {
+            'choice_loader' => function (Options $options): \Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader {
                 if (!class_exists(Intl::class)) {
                     throw new LogicException(\sprintf('The "symfony/intl" component is required to use "%s". Try running "composer require symfony/intl".', static::class));
                 }
@@ -33,7 +35,7 @@ class CountryType extends AbstractType
                 $choiceTranslationLocale = $options['choice_translation_locale'];
                 $alpha3 = $options['alpha3'];
 
-                return ChoiceList::loader($this, new IntlCallbackChoiceLoader(static fn () => array_flip($alpha3 ? Countries::getAlpha3Names($choiceTranslationLocale) : Countries::getNames($choiceTranslationLocale))), [$choiceTranslationLocale, $alpha3]);
+                return ChoiceList::loader($this, new IntlCallbackChoiceLoader(static fn (): array => array_flip($alpha3 ? Countries::getAlpha3Names($choiceTranslationLocale) : Countries::getNames($choiceTranslationLocale))), [$choiceTranslationLocale, $alpha3]);
             },
             'choice_translation_domain' => false,
             'choice_translation_locale' => null,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ class TraceableMiddlewareTest extends MiddlewareTestCase
         $busId = 'command_bus';
         $envelope = new Envelope(new DummyMessage('Hello'));
 
-        $middleware = new class implements MiddlewareInterface {
+        $middleware = new class () implements MiddlewareInterface {
             public int $calls = 0;
 
             public function handle(Envelope $envelope, StackInterface $stack): Envelope
@@ -117,7 +119,7 @@ class TraceableMiddlewareTest extends MiddlewareTestCase
 
         $stopwatch = new Stopwatch();
 
-        $middleware = new class($stopwatch) implements MiddlewareInterface {
+        $middleware = new class ($stopwatch) implements MiddlewareInterface {
             public int $calls = 0;
 
             public function __construct(

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -65,7 +67,7 @@ class OidcUserInfoTokenHandlerFactory implements TokenHandlerFactoryInterface
             ->arrayNode($this->getKey())
                 ->beforeNormalization()
                     ->ifString()
-                    ->then(static fn ($v) => ['claim' => 'sub', 'base_uri' => $v])
+                    ->then(static fn ($v): array => ['claim' => 'sub', 'base_uri' => $v])
                 ->end()
                 ->children()
                     ->scalarNode('base_uri')

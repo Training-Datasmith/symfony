@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -69,8 +71,8 @@ class RequestPayloadValueResolver implements ValueResolverInterface, EventSubscr
         private readonly SerializerInterface&DenormalizerInterface $serializer,
         private readonly ?ValidatorInterface $validator = null,
         private readonly ?TranslatorInterface $translator = null,
-        private string $translationDomain = 'validators',
-        private ?ExpressionLanguage $expressionLanguage = null,
+        private readonly string $translationDomain = 'validators',
+        private readonly ?ExpressionLanguage $expressionLanguage = null,
     ) {
     }
 
@@ -132,7 +134,7 @@ class RequestPayloadValueResolver implements ValueResolverInterface, EventSubscr
                 try {
                     $payload = $payloadMapper($request, $argument->metadata, $argument);
                 } catch (PartialDenormalizationException $e) {
-                    $trans = $this->translator ? $this->translator->trans(...) : static fn ($m, $p) => strtr($m, $p);
+                    $trans = $this->translator ? $this->translator->trans(...) : strtr(...);
                     foreach ($e->getErrors() as $error) {
                         $parameters = [];
                         $template = 'This value was of an unexpected type.';
@@ -162,13 +164,13 @@ class RequestPayloadValueResolver implements ValueResolverInterface, EventSubscr
                 }
 
                 if (\count($violations)) {
-                    throw HttpException::fromStatusCode($validationFailedCode, implode("\n", array_map(static fn ($e) => $e->getMessage(), iterator_to_array($violations))), new ValidationFailedException($payload, $violations));
+                    throw HttpException::fromStatusCode($validationFailedCode, implode("\n", array_map(static fn (\Symfony\Component\Validator\ConstraintViolationInterface $e): string|\Stringable => $e->getMessage(), iterator_to_array($violations))), new ValidationFailedException($payload, $violations));
                 }
             } else {
                 try {
                     $payload = $payloadMapper($request, $argument->metadata, $argument);
                 } catch (PartialDenormalizationException $e) {
-                    throw HttpException::fromStatusCode($validationFailedCode, implode("\n", array_map(static fn ($e) => $e->getMessage(), $e->getErrors())), $e);
+                    throw HttpException::fromStatusCode($validationFailedCode, implode("\n", array_map(static fn (\Symfony\Component\Serializer\Exception\NotNormalizableValueException $e): string => $e->getMessage(), $e->getErrors())), $e);
                 } catch (SerializerInvalidArgumentException $e) {
                     throw HttpException::fromStatusCode($validationFailedCode, $e->getMessage(), $e);
                 }

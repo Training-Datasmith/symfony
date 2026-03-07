@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,7 +43,10 @@ final class Builder
         $emojisCodePoints = [];
         foreach ($lines as $line) {
             $line = trim($line);
-            if (!$line || str_starts_with($line, '#')) {
+            if (!$line) {
+                continue;
+            }
+            if (str_starts_with($line, '#')) {
                 continue;
             }
 
@@ -93,12 +98,12 @@ final class Builder
                 if (str_contains($name, '↑↑')) {
                     continue;
                 }
-                $parts = preg_split('//u', $emoji, -1, \PREG_SPLIT_NO_EMPTY);
-                $emojiCodePoints = strtoupper(implode('-', array_map('dechex', array_map('mb_ord', $parts))));
+                $parts = preg_split('//u', (string) $emoji, -1, \PREG_SPLIT_NO_EMPTY);
+                $emojiCodePoints = strtoupper(implode('-', array_map(dechex(...), array_map(mb_ord(...), $parts))));
                 if (!array_key_exists($emojiCodePoints, $emojisCodePoints)) {
                     continue;
                 }
-                $codePointsCount = mb_strlen($emoji);
+                $codePointsCount = mb_strlen((string) $emoji);
                 $mapsByLocale[$locale][$codePointsCount][$emoji] = $name;
             }
         }
@@ -131,30 +136,28 @@ final class Builder
         $maps = [];
 
         foreach ($emojis as $shortCode => $url) {
-            $emojiCodePoints = strtoupper(basename(parse_url($url, \PHP_URL_PATH), '.png'));
+            $emojiCodePoints = strtoupper(basename(parse_url((string) $url, \PHP_URL_PATH), '.png'));
 
             if (!array_key_exists($emojiCodePoints, $emojisCodePoints)) {
                 continue;
             }
             $emoji = $emojisCodePoints[$emojiCodePoints];
-            $emojiPriority = mb_strlen($emoji) << 1;
+            $emojiPriority = mb_strlen((string) $emoji) << 1;
             $maps[$emojiPriority + 1][":$shortCode:"] = $emoji;
         }
 
         return $maps;
     }
 
-    public static function buildGitlabMaps(array $emojisCodePoints): array
+    public static function buildGitlabMaps(): array
     {
         $emojis = json_decode((new Filesystem())->readFile(__DIR__.'/vendor/gitlab-emojis.json'), true, flags: JSON_THROW_ON_ERROR);
         $maps = [];
-
         foreach ($emojis as $shortName => $emojiItem) {
             $emoji = $emojiItem['moji'];
-            $emojiPriority = mb_strlen($emoji) << 1;
+            $emojiPriority = mb_strlen((string) $emoji) << 1;
             $maps[$emojiPriority + 1][":$shortName:"] = $emoji;
         }
-
         return $maps;
     }
 
@@ -165,7 +168,7 @@ final class Builder
 
         foreach ($emojis as $data) {
             $emoji = $emojisCodePoints[$data['unified']];
-            $emojiPriority = mb_strlen($emoji) << 1;
+            $emojiPriority = mb_strlen((string) $emoji) << 1;
             $maps[$emojiPriority + 1][":{$data['short_name']}:"] = $emoji;
 
             foreach ($data['short_names'] as $shortName) {
@@ -197,7 +200,7 @@ final class Builder
     {
         $maps = [];
         foreach ($emojisCodePoints as $emoji) {
-            $maps[mb_strlen($emoji)][$emoji] = '';
+            $maps[mb_strlen((string) $emoji)][$emoji] = '';
         }
 
         return ['emoji-strip' => self::createRules($maps)];
@@ -218,12 +221,8 @@ final class Builder
             $fs->dumpFile(self::TARGET_DIR."/$filename.php", "<?php\n\nreturn ".VarExporter::export($rules).";\n");
 
             foreach ($rules as $k => $v) {
-                if (!str_starts_with($filename, 'emoji-')) {
+                if (!str_starts_with((string) $filename, 'emoji-')) {
                     continue;
-                }
-                for ($i = 0; ord($k[$i]) < 128 || "\xC2" === $k[$i]; ++$i) {
-                }
-                for ($j = $i; isset($k[$j]) && !isset($firstChars[$k[$j]]); ++$j) {
                 }
                 $c = $k[$j] ?? $k[$i];
                 $firstChars[$c] = $c;
@@ -250,7 +249,7 @@ final class Builder
         $emojiText = $textEmoji = [];
 
         foreach ($maps as $map) {
-            uksort($map, static fn ($a, $b) => strnatcmp(substr($a, 1, -1), substr($b, 1, -1)));
+            uksort($map, static fn ($a, $b): int => strnatcmp(substr((string) $a, 1, -1), substr((string) $b, 1, -1)));
             $textEmoji = array_merge($map, $textEmoji);
 
             $map = array_flip($map);

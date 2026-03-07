@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,7 @@ class DoctrineOpenTransactionLoggerMiddlewareTest extends MiddlewareTestCase
 
     protected function setUp(): void
     {
-        $this->logger = new class extends AbstractLogger {
+        $this->logger = new class () extends AbstractLogger {
             public array $logs = [];
 
             public function log($level, $message, $context = []): void

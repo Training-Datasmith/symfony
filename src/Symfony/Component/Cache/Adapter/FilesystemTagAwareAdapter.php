@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -46,7 +48,8 @@ class FilesystemTagAwareAdapter extends AbstractTagAwareAdapter implements Prune
     {
         $ok = $this->doPrune();
 
-        set_error_handler(static function () {});
+        set_error_handler(static function (): void {
+        });
         $chars = '+-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
         try {
@@ -62,7 +65,10 @@ class FilesystemTagAwareAdapter extends AbstractTagAwareAdapter implements Prune
                             continue;
                         }
                         foreach (scandir($d, \SCANDIR_SORT_NONE) ?: [] as $link) {
-                            if ('.' === $link || '..' === $link) {
+                            if ('.' === $link) {
+                                continue;
+                            }
+                            if ('..' === $link) {
                                 continue;
                             }
                             if ('_' !== $dir[-2] && realpath($d.\DIRECTORY_SEPARATOR.$link)) {
@@ -92,7 +98,8 @@ class FilesystemTagAwareAdapter extends AbstractTagAwareAdapter implements Prune
             return $ok;
         }
 
-        set_error_handler(static function () {});
+        set_error_handler(static function (): void {
+        });
         $chars = '+-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
         $this->tmpSuffix ??= str_replace('/', '-', base64_encode(random_bytes(6)));
@@ -172,7 +179,10 @@ class FilesystemTagAwareAdapter extends AbstractTagAwareAdapter implements Prune
     {
         foreach ($ids as $id) {
             $file = $this->getFile($id);
-            if (!is_file($file) || !$h = @fopen($file, 'r')) {
+            if (!is_file($file)) {
+                continue;
+            }
+            if (!$h = @fopen($file, 'r')) {
                 continue;
             }
 
@@ -225,7 +235,8 @@ class FilesystemTagAwareAdapter extends AbstractTagAwareAdapter implements Prune
 
             $this->tmpSuffix ??= str_replace('/', '-', base64_encode(random_bytes(6)));
 
-            set_error_handler(static function () {});
+            set_error_handler(static function (): void {
+            });
 
             try {
                 if (rename($tagFolder, $renamed = substr_replace($tagFolder, $this->tmpSuffix.'_', -10))) {

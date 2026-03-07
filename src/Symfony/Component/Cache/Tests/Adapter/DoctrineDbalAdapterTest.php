@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -58,7 +60,7 @@ class DoctrineDbalAdapterTest extends AdapterTestCase
         $middleware = $this->createStub(Middleware::class);
         $middleware
             ->method('wrap')
-            ->willReturn(new class($connection->getDriver()) extends AbstractDriverMiddleware {});
+            ->willReturn(new class ($connection->getDriver()) extends AbstractDriverMiddleware {});
 
         $config = $this->getDbalConfig();
         $config->setMiddlewares([$middleware]);

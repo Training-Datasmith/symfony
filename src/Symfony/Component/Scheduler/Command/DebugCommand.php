@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,9 +32,9 @@ use Symfony\Contracts\Service\ServiceProviderInterface;
 #[AsCommand(name: 'debug:scheduler', description: 'List schedules and their recurring messages')]
 final class DebugCommand extends Command
 {
-    private array $scheduleNames;
+    private readonly array $scheduleNames;
 
-    public function __construct(private ServiceProviderInterface $schedules)
+    public function __construct(private readonly ServiceProviderInterface $schedules)
     {
         $this->scheduleNames = array_keys($this->schedules->getProvidedServices());
 
@@ -46,7 +48,8 @@ final class DebugCommand extends Command
             ->addOption('date', null, InputOption::VALUE_REQUIRED, 'The date to use for the next run date', 'now')
             ->addOption('all', null, InputOption::VALUE_NONE, 'Display all recurring messages, including the terminated ones')
             ->addOption('sort', null, InputOption::VALUE_NONE, 'Sort recurring messages by next run date')
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> lists schedules and their recurring messages:
 
                   <info>php %command.full_name%</info>

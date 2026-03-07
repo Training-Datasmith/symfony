@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -49,9 +51,9 @@ class ButtonFlowType extends AbstractType implements ButtonFlowTypeInterface
             ->default(false)
             ->allowedTypes('bool');
 
-        $resolver->setDefault('validate', static fn (Options $options) => !$options['clear_submission']);
+        $resolver->setDefault('validate', static fn (Options $options): bool => !$options['clear_submission']);
 
-        $resolver->setDefault('validation_groups', static fn (Options $options) => $options['clear_submission'] ? false : null);
+        $resolver->setDefault('validation_groups', static fn (Options $options): ?false => $options['clear_submission'] ? false : null);
     }
 
     public function getParent(): string

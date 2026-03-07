@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,8 +23,8 @@ use Symfony\Component\VarDumper\Caster\ClassStub;
  */
 final class WrappedListener
 {
-    private string|array|object $listener;
-    private ?\Closure $optimizedListener;
+    private readonly string|array|object $listener;
+    private readonly ?\Closure $optimizedListener;
     private string $name;
     private bool $called = false;
     private bool $stoppedPropagation = false;
@@ -34,8 +36,8 @@ final class WrappedListener
     public function __construct(
         callable|array $listener,
         ?string $name,
-        private Stopwatch $stopwatch,
-        private ?EventDispatcherInterface $dispatcher = null,
+        private readonly Stopwatch $stopwatch,
+        private readonly ?EventDispatcherInterface $dispatcher = null,
         private ?int $priority = null,
     ) {
         $this->listener = $listener;

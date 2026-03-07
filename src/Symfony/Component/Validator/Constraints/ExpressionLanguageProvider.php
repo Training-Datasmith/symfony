@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ class ExpressionLanguageProvider implements ExpressionFunctionProviderInterface
     public function getFunctions(): array
     {
         return [
-            new ExpressionFunction('is_valid', static fn (...$arguments) => \sprintf(
+            new ExpressionFunction('is_valid', static fn (...$arguments): string => \sprintf(
                 '0 === $context->getValidator()->inContext($context)->validate(%s)->getViolations()->count()',
                 implode(', ', $arguments)
             ), static fn (array $variables, ...$arguments): bool => 0 === $variables['context']->getValidator()->inContext($variables['context'])->validate(...$arguments)->getViolations()->count()),

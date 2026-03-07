@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,8 +31,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 final class SecretsDecryptToLocalCommand extends Command
 {
     public function __construct(
-        private AbstractVault $vault,
-        private ?AbstractVault $localVault = null,
+        private readonly AbstractVault $vault,
+        private readonly ?AbstractVault $localVault = null,
     ) {
         parent::__construct();
     }
@@ -39,7 +41,8 @@ final class SecretsDecryptToLocalCommand extends Command
     {
         $this
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force overriding of secrets that already exist in the local vault')
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command decrypts all secrets and copies them in the local vault.
 
                     <info>%command.full_name%</info>

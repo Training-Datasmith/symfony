@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,6 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 class NoSuspiciousCharactersValidator extends ConstraintValidator
 {
     private const CHECK_RESTRICTION_LEVEL = 16;
-    private const CHECK_SINGLE_SCRIPT = 16;
     private const CHECK_CHAR_LIMIT = 64;
 
     private const CHECK_ERROR = [

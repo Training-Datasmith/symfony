@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,7 +41,6 @@ class Router implements RouterInterface, RequestMatcherInterface
 {
     protected UrlMatcherInterface|RequestMatcherInterface $matcher;
     protected UrlGeneratorInterface $generator;
-    protected RequestContext $context;
     protected RouteCollection $collection;
     protected array $options = [];
 
@@ -56,11 +57,10 @@ class Router implements RouterInterface, RequestMatcherInterface
         protected LoaderInterface $loader,
         protected mixed $resource,
         array $options = [],
-        ?RequestContext $context = null,
+        protected ?RequestContext $context = new RequestContext(),
         protected ?LoggerInterface $logger = null,
         protected ?string $defaultLocale = null,
     ) {
-        $this->context = $context ?? new RequestContext();
         $this->setOptions($options);
     }
 
@@ -213,8 +213,9 @@ class Router implements RouterInterface, RequestMatcherInterface
             return $this->matcher;
         }
 
-        $cache = $this->getConfigCacheFactory()->cache($this->options['cache_dir'].'/url_matching_routes.php',
-            function (ConfigCacheInterface $cache) {
+        $cache = $this->getConfigCacheFactory()->cache(
+            $this->options['cache_dir'].'/url_matching_routes.php',
+            function (ConfigCacheInterface $cache): void {
                 $dumper = $this->getMatcherDumperInstance();
                 if (method_exists($dumper, 'addExpressionLanguageProvider')) {
                     foreach ($this->expressionLanguageProviders as $provider) {
@@ -248,8 +249,9 @@ class Router implements RouterInterface, RequestMatcherInterface
             }
             $this->generator = new $this->options['generator_class']($routes, $this->context, $this->logger, $this->defaultLocale);
         } else {
-            $cache = $this->getConfigCacheFactory()->cache($this->options['cache_dir'].'/url_generating_routes.php',
-                function (ConfigCacheInterface $cache) {
+            $cache = $this->getConfigCacheFactory()->cache(
+                $this->options['cache_dir'].'/url_generating_routes.php',
+                function (ConfigCacheInterface $cache): void {
                     $dumper = $this->getGeneratorDumperInstance();
 
                     $cache->write($dumper->dump(), $this->getRouteCollection()->getResources());

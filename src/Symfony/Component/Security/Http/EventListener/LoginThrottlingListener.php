@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ use Symfony\Component\Security\Http\SecurityRequestAttributes;
 /**
  * @author Wouter de Jong <wouter@wouterj.nl>
  */
-final class LoginThrottlingListener implements EventSubscriberInterface
+final readonly class LoginThrottlingListener implements EventSubscriberInterface
 {
     public function __construct(
         private RequestStack $requestStack,

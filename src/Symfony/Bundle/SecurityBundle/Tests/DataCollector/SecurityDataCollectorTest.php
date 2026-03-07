@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -188,7 +190,7 @@ class SecurityDataCollectorTest extends TestCase
         $request = new Request();
         $event = new RequestEvent($this->createStub(HttpKernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST);
         $event->setResponse($response = new Response());
-        $listener = new class extends AbstractListener {
+        $listener = new class () extends AbstractListener {
             public int $callCount = 0;
 
             public function supports(Request $request): ?bool
@@ -232,7 +234,7 @@ class SecurityDataCollectorTest extends TestCase
         $voter1 = new DummyVoter();
         $voter2 = new DummyVoter();
 
-        $decoratedVoter1 = new TraceableVoter($voter1, new class implements EventDispatcherInterface {
+        $decoratedVoter1 = new TraceableVoter($voter1, new class () implements EventDispatcherInterface {
             public function dispatch(object $event, ?string $eventName = null): object
             {
                 return new \stdClass();
@@ -305,7 +307,7 @@ class SecurityDataCollectorTest extends TestCase
         $voter1 = new DummyVoter();
         $voter2 = new DummyVoter();
 
-        $decoratedVoter1 = new TraceableVoter($voter1, new class implements EventDispatcherInterface {
+        $decoratedVoter1 = new TraceableVoter($voter1, new class () implements EventDispatcherInterface {
             public function dispatch(object $event, ?string $eventName = null): object
             {
                 return new \stdClass();

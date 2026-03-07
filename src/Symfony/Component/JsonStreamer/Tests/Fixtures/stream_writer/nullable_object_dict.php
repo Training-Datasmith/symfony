@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @param array<string, Symfony\Component\JsonStreamer\Tests\Fixtures\Model\DummyWithNameAttributes>|null $data
  */
 return static function (mixed $data, \Psr\Container\ContainerInterface $valueTransformers, array $options): \Traversable {
     try {
         if (\is_array($data)) {
-            yield "{";
+            yield '{';
             $prefix1 = '';
             foreach ($data as $key1 => $value1) {
                 $key1 = \substr(\json_encode($key1), 1, -1);
@@ -16,12 +18,12 @@ return static function (mixed $data, \Psr\Container\ContainerInterface $valueTra
                 $prefix2 = ',';
                 yield "{$prefix2}\"name\":";
                 yield \json_encode($value1->name, \JSON_THROW_ON_ERROR, 510);
-                yield "}";
+                yield '}';
                 $prefix1 = ',';
             }
-            yield "}";
+            yield '}';
         } elseif (null === $data) {
-            yield "null";
+            yield 'null';
         } else {
             throw new \Symfony\Component\JsonStreamer\Exception\UnexpectedValueException(\sprintf('Unexpected "%s" value.', \get_debug_type($data)));
         }

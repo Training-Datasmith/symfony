@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,10 +23,8 @@ class CompositeStringIdEntity
     public function __construct(
         #[Id, Column]
         protected string $id1,
-
         #[Id, Column]
         protected string $id2,
-
         #[Column]
         public string $name,
     ) {

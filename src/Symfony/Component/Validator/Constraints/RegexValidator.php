@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -46,7 +48,7 @@ class RegexValidator extends ConstraintValidator
 
         $expectedResult = $constraint->match ? 1 : 0;
 
-        if (preg_match($constraint->pattern, $value) !== $expectedResult) {
+        if (preg_match($constraint->pattern, (string) $value) !== $expectedResult) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ value }}', $this->formatValue($value))
                 ->setParameter('{{ pattern }}', $constraint->pattern)

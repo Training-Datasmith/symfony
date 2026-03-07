@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,8 @@ class ControllerAttributeEventTest extends TestCase
 {
     public function testEvaluateReturnsValueForNonExpressionOrClosure()
     {
-        $controllerEvent = new ControllerEvent(new TestHttpKernel(), static function () {}, new Request(), HttpKernelInterface::MAIN_REQUEST);
+        $controllerEvent = new ControllerEvent(new TestHttpKernel(), static function () {
+        }, new Request(), HttpKernelInterface::MAIN_REQUEST);
         $event = new ControllerAttributeEvent(new \stdClass(), $controllerEvent);
 
         $this->assertSame('value', $event->evaluate('value'));

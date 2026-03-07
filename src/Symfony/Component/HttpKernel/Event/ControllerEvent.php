@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -115,7 +117,7 @@ final class ControllerEvent extends KernelEvent
         }
 
         if (null !== $className) {
-            return array_values(array_filter($attributes, static fn ($attr) => $attr instanceof $className));
+            return array_values(array_filter($attributes, static fn ($attr): bool => $attr instanceof $className));
         }
 
         $grouped = [];

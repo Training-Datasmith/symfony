@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,7 +38,8 @@ class ControllerResolverTest extends TestCase
         $resolver = $this->createControllerResolver();
 
         $request = Request::create('/');
-        $request->attributes->set('_controller', $lambda = static function () {});
+        $request->attributes->set('_controller', $lambda = static function () {
+        });
         $controller = $resolver->getController($request);
         $this->assertSame($lambda, $controller);
     }

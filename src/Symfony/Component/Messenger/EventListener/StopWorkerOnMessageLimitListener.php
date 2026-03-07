@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,8 +27,8 @@ class StopWorkerOnMessageLimitListener implements EventSubscriberInterface
     private int $receivedMessages = 0;
 
     public function __construct(
-        private int $maximumNumberOfMessages,
-        private ?LoggerInterface $logger = null,
+        private readonly int $maximumNumberOfMessages,
+        private readonly ?LoggerInterface $logger = null,
     ) {
         if ($maximumNumberOfMessages <= 0) {
             throw new InvalidArgumentException('Message limit must be greater than zero.');

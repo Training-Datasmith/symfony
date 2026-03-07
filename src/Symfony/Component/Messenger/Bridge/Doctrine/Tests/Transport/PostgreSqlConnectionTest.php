@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -71,7 +73,7 @@ class PostgreSqlConnectionTest extends TestCase
         $driverConnection = $this->createMock(Connection::class);
         $driverConnection->method('executeStatement')->willReturn(1);
 
-        $wrappedConnection = new class {
+        $wrappedConnection = new class () {
             public int $notifyCalls = 0;
 
             public function getNotify()
@@ -109,7 +111,7 @@ class PostgreSqlConnectionTest extends TestCase
             ->method('createQueryBuilder')
             ->willReturn(new QueryBuilder($driverConnection));
 
-        $wrappedConnection = new class {
+        $wrappedConnection = new class () {
             public int $notifyCalls = 0;
 
             public function getNotify()

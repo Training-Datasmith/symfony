@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -46,8 +48,8 @@ class ResolveBindingsPass extends AbstractRecursivePass
             foreach ($this->unusedBindings as [$key, $serviceId, $bindingType, $file]) {
                 $argumentType = $argumentName = $message = null;
 
-                if (str_contains($key, ' ')) {
-                    [$argumentType, $argumentName] = explode(' ', $key, 2);
+                if (str_contains((string) $key, ' ')) {
+                    [$argumentType, $argumentName] = explode(' ', (string) $key, 2);
                 } elseif ('$' === $key[0]) {
                     $argumentName = $key;
                 } else {
@@ -124,8 +126,8 @@ class ResolveBindingsPass extends AbstractRecursivePass
                 $this->unusedBindings[$bindingId ?? ''] = [$key, $this->currentId, $bindingType, $file];
             }
 
-            if (preg_match('/^(?:(?:array|bool|float|int|string|iterable|([^ $]++)) )\$/', $key, $m)) {
-                $bindingNames[substr($key, \strlen($m[0]))] = $binding;
+            if (preg_match('/^(?:(?:array|bool|float|int|string|iterable|([^ $]++)) )\$/', (string) $key, $m)) {
+                $bindingNames[substr((string) $key, \strlen($m[0]))] = $binding;
             }
 
             if (!isset($m[1])) {
@@ -133,7 +135,7 @@ class ResolveBindingsPass extends AbstractRecursivePass
             }
 
             if (is_subclass_of($m[1], \UnitEnum::class)) {
-                $bindingNames[substr($key, \strlen($m[0]))] = $binding;
+                $bindingNames[substr((string) $key, \strlen($m[0]))] = $binding;
                 continue;
             }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'puthje: fëmijë i rritur, fëmijë i rritur, nuancë lëkure e çelët e nuancë lëkure gjysmë e çelët',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'puthje: fëmijë i rritur, fëmijë i rritur, nuancë lëkure e çelët e nuancë lëkure zeshkane',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,12 +38,12 @@ use Symfony\Component\Form\FormTypeInterface;
 class DebugCommand extends Command
 {
     public function __construct(
-        private FormRegistryInterface $formRegistry,
+        private readonly FormRegistryInterface $formRegistry,
         private array $namespaces = ['Symfony\Component\Form\Extension\Core\Type'],
-        private array $types = [],
-        private array $extensions = [],
-        private array $guessers = [],
-        private ?FileLinkFormatter $fileLinkFormatter = null,
+        private readonly array $types = [],
+        private readonly array $extensions = [],
+        private readonly array $guessers = [],
+        private readonly ?FileLinkFormatter $fileLinkFormatter = null,
     ) {
         parent::__construct();
     }
@@ -55,7 +57,8 @@ class DebugCommand extends Command
                 new InputOption('show-deprecated', null, InputOption::VALUE_NONE, 'Display deprecated options in form types'),
                 new InputOption('format', null, InputOption::VALUE_REQUIRED, \sprintf('The output format ("%s")', implode('", "', $this->getAvailableFormatOptions())), 'txt'),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command displays information about form types.
 
                   <info>php %command.full_name%</info>
@@ -196,7 +199,7 @@ class DebugCommand extends Command
         $coreExtension = new CoreExtension();
         $loadTypesRefMethod = (new \ReflectionObject($coreExtension))->getMethod('loadTypes');
         $coreTypes = $loadTypesRefMethod->invoke($coreExtension);
-        $coreTypes = array_map(static fn (FormTypeInterface $type) => $type::class, $coreTypes);
+        $coreTypes = array_map(static fn (FormTypeInterface $type): string => $type::class, $coreTypes);
         sort($coreTypes);
 
         return $coreTypes;
@@ -223,13 +226,13 @@ class DebugCommand extends Command
         $alternatives = [];
         foreach ($collection as $item) {
             $lev = levenshtein($name, $item);
-            if ($lev <= \strlen($name) / 3 || str_contains($item, $name)) {
+            if ($lev <= \strlen($name) / 3 || str_contains((string) $item, $name)) {
                 $alternatives[$item] = isset($alternatives[$item]) ? $alternatives[$item] - $lev : $lev;
             }
         }
 
         $threshold = 1e3;
-        $alternatives = array_filter($alternatives, static fn ($lev) => $lev < 2 * $threshold);
+        $alternatives = array_filter($alternatives, static fn (int $lev): bool => $lev < 2 * $threshold);
         ksort($alternatives, \SORT_NATURAL | \SORT_FLAG_CASE);
 
         return array_keys($alternatives);

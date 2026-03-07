@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,10 +40,15 @@ class Lexer
                 continue;
             }
 
-            if (preg_match('/
+            if (preg_match(
+                '/
                 (?(DEFINE)(?P<LNUM>[0-9]+(_[0-9]+)*))
                 (?:\.(?&LNUM)|(?&LNUM)(?:\.(?!\.)(?&LNUM)?)?)(?:[eE][+-]?(?&LNUM))?/Ax',
-                $expression, $match, 0, $cursor)
+                $expression,
+                $match,
+                0,
+                $cursor
+            )
             ) {
                 // numbers
                 $tokens[] = new Token(Token::NUMBER_TYPE, 0 + str_replace('_', '', $match[0]), $cursor + 1);

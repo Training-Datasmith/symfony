@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -65,7 +67,7 @@ final class EntityValueResolver implements ValueResolverInterface
             if (null === $object = $this->findViaExpression($this->expressionLanguage, $manager, $options, $variables)) {
                 $message = \sprintf(' The expression "%s" returned null.', $options->expr);
             }
-        // find by identifier?
+            // find by identifier?
         } elseif (false === $object = $this->findById($manager, $options, $this->getIdentifier($request, $options, $argument))) {
             // find by criteria
             if (!$criteria = $this->getCriteria($request, $options, $manager, $argument)) {
@@ -138,7 +140,7 @@ final class EntityValueResolver implements ValueResolverInterface
             }
 
             if ($options->stripNull) {
-                $criteria = array_filter($criteria, static fn ($value) => null !== $value);
+                return array_filter($criteria, static fn ($value): bool => null !== $value);
             }
 
             return $criteria;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,8 +27,8 @@ class SingleMessageReceiver implements ReceiverInterface
     private bool $hasReceived = false;
 
     public function __construct(
-        private ReceiverInterface $receiver,
-        private Envelope $envelope,
+        private readonly ReceiverInterface $receiver,
+        private readonly Envelope $envelope,
     ) {
     }
 

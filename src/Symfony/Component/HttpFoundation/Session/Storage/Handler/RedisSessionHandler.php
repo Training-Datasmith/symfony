@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,12 +27,12 @@ class RedisSessionHandler extends AbstractSessionHandler
     /**
      * Key prefix for shared environments.
      */
-    private string $prefix;
+    private readonly string $prefix;
 
     /**
      * Time to live in seconds.
      */
-    private int|\Closure|null $ttl;
+    private readonly int|\Closure|null $ttl;
 
     /**
      * List of available options:
@@ -40,7 +42,7 @@ class RedisSessionHandler extends AbstractSessionHandler
      * @throws \InvalidArgumentException When unsupported client or options are passed
      */
     public function __construct(
-        private \Redis|Relay|\RedisArray|\RedisCluster|\Predis\ClientInterface $redis,
+        private readonly \Redis|Relay|\RedisArray|\RedisCluster|\Predis\ClientInterface $redis,
         array $options = [],
     ) {
         if ($diff = array_diff(array_keys($options), ['prefix', 'ttl'])) {

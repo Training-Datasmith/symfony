@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,13 +38,13 @@ final class Address
     private static EmailValidator $validator;
     private static IdnAddressEncoder $encoder;
 
-    private string $address;
-    private string $name;
+    private readonly string $address;
+    private readonly string $name;
 
     public function __construct(string $address, string $name = '')
     {
         if (!class_exists(EmailValidator::class)) {
-            throw new LogicException(\sprintf('The "%s" class cannot be used as it needs "%s". Try running "composer require egulias/email-validator".', __CLASS__, EmailValidator::class));
+            throw new LogicException(\sprintf('The "%s" class cannot be used as it needs "%s". Try running "composer require egulias/email-validator".', self::class, EmailValidator::class));
         }
 
         self::$validator ??= new EmailValidator();

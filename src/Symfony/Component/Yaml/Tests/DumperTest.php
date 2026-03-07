@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -689,7 +691,8 @@ class DumperTest extends TestCase
             [
                 'foo' => new TaggedValue('bar', "a\nb\n\n\n"),
             ],
-            $this->parser->parse($expected, Yaml::PARSE_CUSTOM_TAGS));
+            $this->parser->parse($expected, Yaml::PARSE_CUSTOM_TAGS)
+        );
     }
 
     public function testDumpingTaggedMultiLineTrailingNewlinesInList()
@@ -737,7 +740,10 @@ class DumperTest extends TestCase
             ],
         ];
         $yml = $this->dumper->dump($data, 2, 0, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
-        $expected = str_replace("@\n", "\n", <<<'YAML'
+        $expected = str_replace(
+            "@\n",
+            "\n",
+            <<<'YAML'
             data:
                 single_line: 'foo bar baz'
                 multi_line: |-

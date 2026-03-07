@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -75,14 +77,14 @@ class ParameterBag implements ParameterBagInterface
             $alternatives = [];
             foreach ($this->parameters as $key => $parameterValue) {
                 $lev = levenshtein($name, $key);
-                if ($lev <= \strlen($name) / 3 || str_contains($key, $name)) {
+                if ($lev <= \strlen($name) / 3 || str_contains((string) $key, $name)) {
                     $alternatives[] = $key;
                 }
             }
 
             $nonNestedAlternative = null;
             if (!\count($alternatives) && str_contains($name, '.')) {
-                $namePartsLength = array_map('strlen', explode('.', $name));
+                $namePartsLength = array_map(strlen(...), explode('.', $name));
                 $key = substr($name, 0, -1 * (1 + array_pop($namePartsLength)));
                 while (\count($namePartsLength)) {
                     if ($this->has($key)) {
@@ -233,7 +235,7 @@ class ParameterBag implements ParameterBagInterface
             return $this->resolved ? $this->get($key) : $this->resolveValue($this->get($key), $resolving);
         }
 
-        return preg_replace_callback('/%%|%([^%\s]+)%/', function ($match) use ($resolving, $value) {
+        return preg_replace_callback('/%%|%([^%\s]+)%/', function (array $match) use ($resolving, $value) {
             // skip %%
             if (!isset($match[1])) {
                 return '%%';

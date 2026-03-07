@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ use Symfony\Component\TypeInfo\TypeResolver\TypeResolverInterface;
  *
  * @internal
  */
-final class PropertyMetadataLoader implements PropertyMetadataLoaderInterface
+final readonly class PropertyMetadataLoader implements PropertyMetadataLoaderInterface
 {
     public function __construct(
         private TypeResolverInterface $typeResolver,

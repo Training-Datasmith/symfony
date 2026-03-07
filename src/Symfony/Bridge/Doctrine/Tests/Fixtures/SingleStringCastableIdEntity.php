@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,6 @@ class SingleStringCastableIdEntity
 
     public function __construct(
         int $id,
-
         #[Column(nullable: true)]
         public ?string $name,
     ) {

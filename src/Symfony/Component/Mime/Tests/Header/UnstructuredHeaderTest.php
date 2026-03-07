@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -61,7 +63,8 @@ class UnstructuredHeaderTest extends TestCase
             'X-Custom-Header: The quick brown fox jumped over the fence, he was a'.
             ' very'."\r\n".// Folding
             ' very scary brown fox with a bushy tail',
-            $header->toString(), '%s: The header should have been folded at 76th char'
+            $header->toString(),
+            '%s: The header should have been folded at 76th char'
         );
     }
 
@@ -197,9 +200,11 @@ class UnstructuredHeaderTest extends TestCase
 
         $header = new UnstructuredHeader('X-Test', $text);
         $header->setCharset('iso-8859-1');
-        $this->assertEquals('X-Test: start =?'.$header->getCharset().'?Q?'.
+        $this->assertEquals(
+            'X-Test: start =?'.$header->getCharset().'?Q?'.
             'w=8Frd_w=8Frd?= then =?'.$header->getCharset().'?Q?'.
-            'w=8Frd?=', $header->toString(),
+            'w=8Frd?=',
+            $header->toString(),
             'Adjacent encoded words should appear grouped with WSP encoded'
         );
     }

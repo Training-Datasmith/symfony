@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,7 +37,8 @@ class CacheCollectorPassTest extends TestCase
             ->addMethodCall('setCallbackWrapper', [(new Definition())
                 ->addArgument(null)
                 ->addArgument(null)
-                ->addArgument((new Definition('callable'))
+                ->addArgument(
+                    (new Definition('callable'))
                     ->setFactory([new Reference('fs'), 'setCallbackWrapper'])
                 ),
             ])

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ class AssetNotFoundException extends RuntimeException
      */
     public function __construct(
         string $message,
-        private array $alternatives = [],
+        private readonly array $alternatives = [],
         int $code = 0,
         ?\Throwable $previous = null,
     ) {

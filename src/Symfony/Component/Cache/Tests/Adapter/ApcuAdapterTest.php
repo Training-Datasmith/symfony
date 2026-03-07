@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -46,7 +48,8 @@ class ApcuAdapterTest extends AdapterTestCase
         $pool = $this->createCachePool();
 
         $item = $pool->getItem('foo');
-        $item->set(static function () {});
+        $item->set(static function () {
+        });
 
         $this->assertFalse($pool->save($item));
 

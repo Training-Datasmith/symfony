@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'beso: persona, persona, tono de piel claro, tono de piel claro medio',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'beso: persona, persona, tono de piel claro, tono de piel medio',

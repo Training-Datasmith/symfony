@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,11 +21,11 @@ use Symfony\Component\Mailer\Exception\InvalidArgumentException;
 final class Dsn
 {
     public function __construct(
-        private string $scheme,
-        private string $host,
-        private ?string $user = null,
-        #[\SensitiveParameter] private ?string $password = null,
-        private ?int $port = null,
+        private readonly string $scheme,
+        private readonly string $host,
+        private readonly ?string $user = null,
+        #[\SensitiveParameter] private readonly ?string $password = null,
+        private readonly ?int $port = null,
         private array $options = [],
     ) {
     }

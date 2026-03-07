@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,7 +36,7 @@ class IsGrantedAttributeListener implements EventSubscriberInterface
 {
     public function __construct(
         private readonly AuthorizationCheckerInterface $authChecker,
-        private ?ExpressionLanguage $expressionLanguage = null,
+        private readonly ?ExpressionLanguage $expressionLanguage = null,
     ) {
     }
 
@@ -74,7 +76,7 @@ class IsGrantedAttributeListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if ($attribute->methods && !\in_array($request->getMethod(), array_map('strtoupper', $attribute->methods), true)) {
+        if ($attribute->methods && !\in_array($request->getMethod(), array_map(strtoupper(...), $attribute->methods), true)) {
             return;
         }
 

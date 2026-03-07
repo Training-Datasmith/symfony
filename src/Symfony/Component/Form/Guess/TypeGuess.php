@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,8 +29,8 @@ class TypeGuess extends Guess
      *                           is correct
      */
     public function __construct(
-        private string $type,
-        private array $options,
+        private readonly string $type,
+        private readonly array $options,
         int $confidence,
     ) {
         parent::__construct($confidence);

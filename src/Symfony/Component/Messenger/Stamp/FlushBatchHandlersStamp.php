@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,7 +16,7 @@ namespace Symfony\Component\Messenger\Stamp;
 /**
  * Marker telling that any batch handlers bound to the envelope should be flushed.
  */
-final class FlushBatchHandlersStamp implements NonSendableStampInterface
+final readonly class FlushBatchHandlersStamp implements NonSendableStampInterface
 {
     public function __construct(
         private bool $force,

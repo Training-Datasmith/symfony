@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ namespace Symfony\Component\Security\Core\Role;
  *
  * @internal
  */
-class Role
+class Role implements \Stringable
 {
     private $role;
 
@@ -26,6 +28,6 @@ class Role
 
     public function __toString(): string
     {
-        return $this->role;
+        return (string) $this->role;
     }
 }

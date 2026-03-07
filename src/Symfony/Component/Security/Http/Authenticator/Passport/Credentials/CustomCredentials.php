@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class CustomCredentials implements CredentialsInterface
 {
-    private \Closure $customCredentialsChecker;
+    private readonly \Closure $customCredentialsChecker;
     private bool $resolved = false;
 
     /**
@@ -33,7 +35,7 @@ class CustomCredentials implements CredentialsInterface
      */
     public function __construct(
         callable $customCredentialsChecker,
-        private mixed $credentials,
+        private readonly mixed $credentials,
     ) {
         $this->customCredentialsChecker = $customCredentialsChecker(...);
     }

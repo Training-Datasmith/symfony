@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ class PreloadedExtension implements FormExtensionInterface
     public function __construct(
         array $types,
         private array $typeExtensions,
-        private ?FormTypeGuesserInterface $typeGuesser = null,
+        private readonly ?FormTypeGuesserInterface $typeGuesser = null,
     ) {
         foreach ($types as $type) {
             $this->types[$type::class] = $type;

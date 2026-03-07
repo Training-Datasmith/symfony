@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,8 @@ class EmailController
 {
     public function indexAction(MailerInterface $mailer)
     {
-        $mailer->send((new Email())->to('fabien@symfony.com')->from('fabien@symfony.com')->subject('Foo')
+        $mailer->send(
+            (new Email())->to('fabien@symfony.com')->from('fabien@symfony.com')->subject('Foo')
             ->addReplyTo('me@symfony.com')
             ->addCc('cc@symfony.com')
             ->text('Bar!')
@@ -29,7 +32,8 @@ class EmailController
             ->addPart(new DataPart(file_get_contents(__FILE__), 'foobar.php'))
         );
 
-        $mailer->send((new Email())->to('fabien@symfony.com', 'thomas@symfony.com')->from('fabien@symfony.com')->subject('Foo')
+        $mailer->send(
+            (new Email())->to('fabien@symfony.com', 'thomas@symfony.com')->from('fabien@symfony.com')->subject('Foo')
             ->addReplyTo(new Address('me@symfony.com', 'Fabien Potencier'))
             ->addCc('cc@symfony.com')
             ->text('Bar!')

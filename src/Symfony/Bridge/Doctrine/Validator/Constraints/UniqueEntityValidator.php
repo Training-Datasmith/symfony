@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -261,7 +263,7 @@ class UniqueEntityValidator extends ConstraintValidator
             return \sprintf('object("%s")', $idClass);
         }
 
-        array_walk($identifiers, function (&$id, $field) {
+        array_walk($identifiers, function (&$id, $field): void {
             if (!\is_object($id) || $id instanceof \DateTimeInterface) {
                 $idAsString = $this->formatValue($id, self::PRETTY_DATE);
             } else {

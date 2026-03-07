@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ final class ExpoOptions implements MessageOptionsInterface
      * @param array $options @see https://docs.expo.dev/push-notifications/sending-notifications/#message-request-format
      */
     public function __construct(
-        private string $to,
+        private readonly string $to,
         private array $options = [],
         private array $data = [],
     ) {
@@ -38,7 +40,7 @@ final class ExpoOptions implements MessageOptionsInterface
         ]);
     }
 
-    public function getRecipientId(): ?string
+    public function getRecipientId(): string
     {
         return $this->to;
     }

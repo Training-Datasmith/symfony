@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -97,7 +99,8 @@ final class TranslationLintCommandTest extends TestCase
         $this->assertSame(1, $commandTester->execute([], ['decorated' => false]));
 
         $display = $this->getNormalizedDisplay($commandTester);
-        $this->assertStringContainsString(<<<EOF
+        $this->assertStringContainsString(
+            <<<EOF
              -------- ---------- --------
               Locale   Domains    Valid?
              -------- ---------- --------
@@ -107,7 +110,8 @@ final class TranslationLintCommandTest extends TestCase
             EOF,
             $display
         );
-        $this->assertStringContainsString(\sprintf(<<<EOF
+        $this->assertStringContainsString(\sprintf(
+            <<<EOF
             Errors for locale "en" and domain "messages"
             --------------------------------------------
 
@@ -120,7 +124,8 @@ final class TranslationLintCommandTest extends TestCase
         ), $display);
 
         if (\PHP_VERSION_ID >= 80500) {
-            $this->assertStringContainsString(<<<EOF
+            $this->assertStringContainsString(
+                <<<EOF
                 Errors for locale "fr" and domain "messages"
                 --------------------------------------------
 
@@ -137,7 +142,8 @@ final class TranslationLintCommandTest extends TestCase
                 $display
             );
         } else {
-            $this->assertStringContainsString(<<<EOF
+            $this->assertStringContainsString(
+                <<<EOF
                 Errors for locale "fr" and domain "messages"
                 --------------------------------------------
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -154,7 +156,7 @@ class ContainerBuilderTest extends TestCase
 
     public function testDeprecateParameterThrowsWhenParameterBagIsNotInternal()
     {
-        $builder = new ContainerBuilder(new class implements ParameterBagInterface {
+        $builder = new ContainerBuilder(new class () implements ParameterBagInterface {
             public function clear(): void
             {
             }
@@ -844,9 +846,11 @@ class ContainerBuilderTest extends TestCase
     public function testMergeAttributeAutoconfiguration()
     {
         $container = new ContainerBuilder();
-        $container->registerAttributeForAutoconfiguration(AsTaggedItem::class, $c1 = static function (Definition $definition) {});
+        $container->registerAttributeForAutoconfiguration(AsTaggedItem::class, $c1 = static function (Definition $definition) {
+        });
         $config = new ContainerBuilder();
-        $config->registerAttributeForAutoconfiguration(AsTaggedItem::class, $c2 = static function (Definition $definition) {});
+        $config->registerAttributeForAutoconfiguration(AsTaggedItem::class, $c2 = static function (Definition $definition) {
+        });
 
         $container->merge($config);
         $this->assertSame([AsTaggedItem::class => [$c1, $c2]], $container->getAttributeAutoconfigurators());

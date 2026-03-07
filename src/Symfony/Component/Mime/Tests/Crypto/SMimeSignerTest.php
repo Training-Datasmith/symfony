@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -113,7 +115,8 @@ class SMimeSignerTest extends SMimeTestCase
 
     public function testSignedMessageWithAttachments()
     {
-        $message = new Email((new Headers())
+        $message = new Email(
+            (new Headers())
             ->addDateHeader('Date', new \DateTimeImmutable('2019-04-07 10:36:30', new \DateTimeZone('Europe/Paris')))
             ->addMailboxListHeader('From', ['fabien@symfony.com'])
             ->addMailboxListHeader('To', ['fabien@symfony.com'])

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'busu: mtu mzima, mtu mzima, ngozi nyeupe na ngozi nyeupe kiasi',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'busu: mtu mzima, mtu mzima, ngozi nyeupe na ngozi ya kahawia',

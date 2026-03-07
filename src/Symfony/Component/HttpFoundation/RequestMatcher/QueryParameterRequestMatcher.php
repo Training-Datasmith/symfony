@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ class QueryParameterRequestMatcher implements RequestMatcherInterface
     /**
      * @var string[]
      */
-    private array $parameters;
+    private readonly array $parameters;
 
     /**
      * @param string[]|string $parameters A parameter or a list of parameters
@@ -32,7 +34,7 @@ class QueryParameterRequestMatcher implements RequestMatcherInterface
      */
     public function __construct(array|string $parameters)
     {
-        $this->parameters = array_reduce(array_map(strtolower(...), (array) $parameters), static fn (array $parameters, string $parameter) => array_merge($parameters, preg_split('/\s*,\s*/', $parameter)), []);
+        $this->parameters = array_reduce(array_map(strtolower(...), (array) $parameters), static fn (array $parameters, string $parameter): array => array_merge($parameters, preg_split('/\s*,\s*/', $parameter)), []);
     }
 
     public function matches(Request $request): bool

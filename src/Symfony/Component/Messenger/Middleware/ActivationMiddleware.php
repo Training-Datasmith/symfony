@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,10 +22,10 @@ use Symfony\Component\Messenger\Envelope;
  */
 class ActivationMiddleware implements MiddlewareInterface
 {
-    private \Closure|bool $activated;
+    private readonly \Closure|bool $activated;
 
     public function __construct(
-        private MiddlewareInterface $inner,
+        private readonly MiddlewareInterface $inner,
         bool|callable $activated,
     ) {
         $this->activated = \is_bool($activated) ? $activated : $activated(...);

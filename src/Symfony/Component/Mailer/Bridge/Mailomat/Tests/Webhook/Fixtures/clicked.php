@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Symfony\Component\RemoteEvent\Event\Mailer\MailerEngagementEvent;
 
 $wh = new MailerEngagementEvent(MailerEngagementEvent::CLICK, '29e785c1-dd0c-4efc-9d41-909d4109769f', json_decode(file_get_contents(str_replace('.php', '.json', __FILE__)), true));

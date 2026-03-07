@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  */
 final class ControllerArgumentsEvent extends KernelEvent
 {
-    private ControllerEvent $controllerEvent;
+    private readonly ControllerEvent $controllerEvent;
     private array $namedArguments;
 
     public function __construct(

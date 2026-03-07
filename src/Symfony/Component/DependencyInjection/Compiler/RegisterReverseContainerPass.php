@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class RegisterReverseContainerPass implements CompilerPassInterface
 {
     public function __construct(
-        private bool $beforeRemoving,
+        private readonly bool $beforeRemoving,
     ) {
     }
 

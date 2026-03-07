@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'kihi: pakeke, pakeke, kiri āhua māmā, kiri āhua māmā-waenga',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'kihi: pakeke, pakeke, kiri āhua māmā, kiri āhua waenga',

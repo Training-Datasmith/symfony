@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ namespace Symfony\Component\HttpFoundation;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class Cookie
+class Cookie implements \Stringable
 {
     public const SAMESITE_NONE = 'none';
     public const SAMESITE_LAX = 'lax';
@@ -51,7 +53,7 @@ class Cookie
         $parts = HeaderUtils::split($cookie, ';=');
         $part = array_shift($parts);
 
-        $name = $decode ? urldecode($part[0]) : $part[0];
+        $name = $decode ? urldecode((string) $part[0]) : $part[0];
         $value = isset($part[1]) ? ($decode ? urldecode($part[1]) : $part[1]) : null;
 
         $data = HeaderUtils::combine($parts) + $data;
@@ -263,7 +265,7 @@ class Cookie
         if ('' === (string) $this->getValue()) {
             $str .= 'deleted; expires='.gmdate('D, d M Y H:i:s T', time() - 31536001).'; Max-Age=0';
         } else {
-            $str .= $this->isRaw() ? $this->getValue() : rawurlencode($this->getValue());
+            $str .= $this->isRaw() ? $this->getValue() : rawurlencode((string) $this->getValue());
 
             if (0 !== $this->getExpiresTime()) {
                 $str .= '; expires='.gmdate('D, d M Y H:i:s T', $this->getExpiresTime()).'; Max-Age='.$this->getMaxAge();

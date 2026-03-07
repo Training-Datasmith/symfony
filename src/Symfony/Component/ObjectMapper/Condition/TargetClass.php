@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,12 +20,12 @@ use Symfony\Component\ObjectMapper\ConditionCallableInterface;
  *
  * @implements ConditionCallableInterface<object, T>
  */
-final class TargetClass implements ConditionCallableInterface
+final readonly class TargetClass implements ConditionCallableInterface
 {
     /**
      * @param class-string<T> $className
      */
-    public function __construct(private readonly string $className)
+    public function __construct(private string $className)
     {
     }
 

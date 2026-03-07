@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ use Symfony\Component\DependencyInjection\ReverseContainer;
 /**
  * Conveys a cached value that needs to be computed.
  */
-final class EarlyExpirationMessage
+final readonly class EarlyExpirationMessage
 {
     public static function create(ReverseContainer $reverseContainer, callable $callback, CacheItem $item, AdapterInterface $pool): ?self
     {
@@ -86,7 +88,7 @@ final class EarlyExpirationMessage
             return '@' === $callback[0] ? $reverseContainer->getService(substr($callback, 1)) : $callback;
         }
         if ('@' === $callback[0][0]) {
-            $callback[0] = $reverseContainer->getService(substr($callback[0], 1));
+            $callback[0] = $reverseContainer->getService(substr((string) $callback[0], 1));
         }
 
         return $callback;

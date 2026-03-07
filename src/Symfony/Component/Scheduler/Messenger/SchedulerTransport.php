@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -52,7 +54,7 @@ class SchedulerTransport implements TransportInterface
 
     public function send(Envelope $envelope): Envelope
     {
-        throw new LogicException(\sprintf('"%s" cannot send messages.', __CLASS__));
+        throw new LogicException(\sprintf('"%s" cannot send messages.', self::class));
     }
 
     public function getMessageGenerator(): MessageGeneratorInterface

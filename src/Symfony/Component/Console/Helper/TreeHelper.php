@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @implements \RecursiveIterator<int, TreeNode>
  */
-final class TreeHelper implements \RecursiveIterator
+final readonly class TreeHelper implements \RecursiveIterator
 {
     /**
      * @var \Iterator<int, TreeNode>
@@ -28,9 +30,9 @@ final class TreeHelper implements \RecursiveIterator
     private \Iterator $children;
 
     private function __construct(
-        private readonly OutputInterface $output,
-        private readonly TreeNode $node,
-        private readonly TreeStyle $style,
+        private OutputInterface $output,
+        private TreeNode $node,
+        private TreeStyle $style,
     ) {
         $this->children = new \IteratorIterator($this->node->getChildren());
         $this->children->rewind();

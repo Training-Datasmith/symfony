@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'as_IN' => 'اسٲمؠ (हिंदोस्तान)',

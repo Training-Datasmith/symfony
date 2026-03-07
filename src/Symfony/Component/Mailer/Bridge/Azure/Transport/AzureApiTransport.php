@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,10 +37,10 @@ final class AzureApiTransport extends AbstractApiTransport
      * @param string $apiVersion      The version of API to invoke
      */
     public function __construct(
-        #[\SensitiveParameter] private string $key,
-        private string $resourceName,
-        private bool $disableTracking = false,
-        private string $apiVersion = '2023-03-31',
+        #[\SensitiveParameter] private readonly string $key,
+        private readonly string $resourceName,
+        private readonly bool $disableTracking = false,
+        private readonly string $apiVersion = '2023-03-31',
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
         ?LoggerInterface $logger = null,
@@ -93,7 +95,7 @@ final class AzureApiTransport extends AbstractApiTransport
      */
     private function getPayload(Email $email, Envelope $envelope): array
     {
-        $addressStringifier = static function (Address $address) {
+        $addressStringifier = static function (Address $address): array {
             $stringified = ['address' => $address->getAddress()];
 
             if ($address->getName()) {
@@ -257,7 +259,7 @@ final class AzureApiTransport extends AbstractApiTransport
         return $headers;
     }
 
-    private function getPriorityLevel(string $priority): ?string
+    private function getPriorityLevel(string $priority): string
     {
         return match ((int) $priority) {
             Email::PRIORITY_HIGHEST => 'highest',

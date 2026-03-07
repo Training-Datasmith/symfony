@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -56,28 +58,26 @@ class Connection
     ];
 
     private array $configuration;
-    private SqsClient $client;
     private ?ReceiveMessageResult $currentResponse = null;
     /** @var array[] */
     private array $buffer = [];
 
     public function __construct(
         array $configuration,
-        ?SqsClient $client = null,
+        private readonly ?SqsClient $client = new SqsClient([]),
         private ?string $queueUrl = null,
     ) {
         $this->configuration = array_replace_recursive(self::DEFAULT_OPTIONS, $configuration);
-        $this->client = $client ?? new SqsClient([]);
     }
 
     public function __serialize(): array
     {
-        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot serialize '.self::class);
     }
 
     public function __unserialize(array $data): void
     {
-        throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot unserialize '.self::class);
     }
 
     public function __destruct()
@@ -252,7 +252,7 @@ class Connection
             $headers = [];
             $attributes = $message->getMessageAttributes();
             if (isset($attributes[self::MESSAGE_ATTRIBUTE_NAME]) && 'String' === $attributes[self::MESSAGE_ATTRIBUTE_NAME]->getDataType()) {
-                $headers = json_decode($attributes[self::MESSAGE_ATTRIBUTE_NAME]->getStringValue(), true);
+                $headers = json_decode((string) $attributes[self::MESSAGE_ATTRIBUTE_NAME]->getStringValue(), true);
                 unset($attributes[self::MESSAGE_ATTRIBUTE_NAME]);
             }
             foreach ($attributes as $name => $attribute) {
@@ -377,7 +377,7 @@ class Connection
 
         $specialHeaders = [];
         foreach ($headers as $name => $value) {
-            if ('.' === $name[0] || self::MESSAGE_ATTRIBUTE_NAME === $name || \strlen($name) > 256 || str_ends_with($name, '.') || str_starts_with($name, 'AWS.') || str_starts_with($name, 'Amazon.') || preg_match('/([^a-zA-Z0-9_\.-]+|\.\.)/', $name)) {
+            if ('.' === $name[0] || self::MESSAGE_ATTRIBUTE_NAME === $name || \strlen((string) $name) > 256 || str_ends_with((string) $name, '.') || str_starts_with((string) $name, 'AWS.') || str_starts_with((string) $name, 'Amazon.') || preg_match('/([^a-zA-Z0-9_\.-]+|\.\.)/', (string) $name)) {
                 $specialHeaders[$name] = $value;
 
                 continue;

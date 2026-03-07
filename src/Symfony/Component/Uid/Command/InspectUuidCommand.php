@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,7 +35,8 @@ class InspectUuidCommand extends Command
             ->setDefinition([
                 new InputArgument('uuid', InputArgument::REQUIRED, 'The UUID to inspect'),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> displays information about a UUID.
 
                     <info>php %command.full_name% a7613e0a-5986-11eb-a861-2bf05af69e52</info>

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -276,7 +278,7 @@ class Connection implements ResetInterface
     {
         $configuration = $this->driverConnection->getConfiguration();
         $assetFilter = $configuration->getSchemaAssetsFilter();
-        $configuration->setSchemaAssetsFilter(function ($tableName) {
+        $configuration->setSchemaAssetsFilter(function ($tableName): bool {
             if ($tableName instanceof NamedObject) {
                 // DBAL 4.4+
                 $tableName = $tableName->getObjectName()->toString();
@@ -291,7 +293,7 @@ class Connection implements ResetInterface
 
             // SchemaAssetsFilter needs to match the messenger table name and also the messenger sequence name to make $schemaDiff work correctly in updateSchema()
             // This may also work for other databases if their sequence name is suffixed with '_seq', '_id_seq' or similar.
-            return str_starts_with($tableName, $this->configuration['table_name']); // MESSENGER_MESSAGES*
+            return str_starts_with($tableName, (string) $this->configuration['table_name']); // MESSENGER_MESSAGES*
         });
         $this->updateSchema();
         $configuration->setSchemaAssetsFilter($assetFilter);
@@ -383,7 +385,9 @@ class Connection implements ResetInterface
         // Oracle databases use UPPER CASE on tables and column identifiers.
         // Column alias is added to force the result to be lowercase even when the actual field is all caps.
 
-        return $queryBuilder->select(str_replace(', ', ', '.$alias,
+        return $queryBuilder->select(str_replace(
+            ', ',
+            ', '.$alias,
             $alias.'id AS "id", body AS "body", headers AS "headers", queue_name AS "queue_name", '.
             'created_at AS "created_at", available_at AS "available_at", '.
             'delivered_at AS "delivered_at"'
@@ -516,7 +520,7 @@ class Connection implements ResetInterface
 
     private function decodeEnvelopeHeaders(array $doctrineEnvelope): array
     {
-        $doctrineEnvelope['headers'] = json_decode($doctrineEnvelope['headers'], true);
+        $doctrineEnvelope['headers'] = json_decode((string) $doctrineEnvelope['headers'], true);
 
         return $doctrineEnvelope;
     }

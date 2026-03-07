@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,7 @@ use Symfony\Component\VarDumper\Cloner\VarCloner;
  *
  * @author Maxime Steinhausser <maxime.steinhausser@gmail.com>
  */
-final class RequestContextProvider implements ContextProviderInterface
+final readonly class RequestContextProvider implements ContextProviderInterface
 {
     private VarCloner $cloner;
 

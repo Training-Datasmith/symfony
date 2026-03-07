@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,9 +31,9 @@ final class IqsmsTransport extends AbstractTransport
     protected const HOST = 'api.iqsms.ru';
 
     public function __construct(
-        private string $login,
-        #[\SensitiveParameter] private string $password,
-        private string $from,
+        private readonly string $login,
+        #[\SensitiveParameter] private readonly string $password,
+        private readonly string $from,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -51,7 +53,7 @@ final class IqsmsTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $response = $this->client->request('POST', 'https://'.$this->getEndpoint().'/messages/v2/send.json', [

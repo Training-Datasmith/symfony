@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,13 +27,6 @@ final class MappedAsset
     public readonly string $publicPathWithoutDigest;
     public readonly string $publicExtension;
 
-    /**
-     * The final content of this asset if different from the sourcePath.
-     *
-     * If null, the content should be read from the sourcePath.
-     */
-    public readonly ?string $content;
-
     public readonly string $digest;
     public readonly bool $isPredigested;
 
@@ -45,7 +40,12 @@ final class MappedAsset
         ?string $sourcePath = null,
         ?string $publicPathWithoutDigest = null,
         ?string $publicPath = null,
-        ?string $content = null,
+        /**
+         * The final content of this asset if different from the sourcePath.
+         *
+         * If null, the content should be read from the sourcePath.
+         */
+        public readonly ?string $content = null,
         ?string $digest = null,
         ?bool $isPredigested = null,
         public readonly bool $isVendor = false,
@@ -63,7 +63,6 @@ final class MappedAsset
             $this->publicPathWithoutDigest = $publicPathWithoutDigest;
             $this->publicExtension = pathinfo($publicPathWithoutDigest, \PATHINFO_EXTENSION);
         }
-        $this->content = $content;
         if (null !== $digest) {
             $this->digest = $digest;
         }

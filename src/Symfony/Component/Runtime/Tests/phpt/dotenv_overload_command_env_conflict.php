@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,4 +18,5 @@ $_SERVER['APP_RUNTIME_OPTIONS'] = [
 
 require __DIR__.'/autoload.php';
 
-return static function (): void {};
+return static function (): void {
+};

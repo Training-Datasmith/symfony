@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,7 +38,7 @@ class MapInputValueResolverTest extends TestCase
             new InputOption('email'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[MapInput]
                 DummyInput $input,
@@ -103,7 +105,7 @@ class MapInputValueResolverTest extends TestCase
             new InputOption('status'),
         ]));
 
-        $command = new class {
+        $command = new class () {
             public function __invoke(
                 #[MapInput]
                 DummyInputWithDateTimeAndEnum $input,

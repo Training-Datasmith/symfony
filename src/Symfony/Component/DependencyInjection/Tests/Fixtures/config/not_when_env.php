@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Symfony\Component\DependencyInjection\Attribute\WhenNot;
 
 return #[WhenNot(env: 'prod')] function () {

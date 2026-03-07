@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -52,17 +54,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ChoiceType extends AbstractType
 {
-    private ChoiceListFactoryInterface $choiceListFactory;
-
-    public function __construct(
-        ?ChoiceListFactoryInterface $choiceListFactory = null,
-        private ?TranslatorInterface $translator = null,
-    ) {
-        $this->choiceListFactory = $choiceListFactory ?? new CachingFactoryDecorator(
-            new PropertyAccessDecorator(
-                new DefaultChoiceListFactory()
-            )
-        );
+    public function __construct(private readonly ?ChoiceListFactoryInterface $choiceListFactory = new CachingFactoryDecorator(
+        new PropertyAccessDecorator(
+            new DefaultChoiceListFactory()
+        )
+    ), private readonly ?TranslatorInterface $translator = null)
+    {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -100,7 +97,7 @@ class ChoiceType extends AbstractType
         if ($options['expanded'] || $options['multiple']) {
             // Make sure that scalar, submitted values are converted to arrays
             // which can be submitted to the checkboxes/radio buttons
-            $builder->addEventListener(FormEvents::PRE_SUBMIT, static function (PreSubmitEvent $event) use ($choiceList, $options, &$unknownValues) {
+            $builder->addEventListener(FormEvents::PRE_SUBMIT, static function (PreSubmitEvent $event) use ($choiceList, $options, &$unknownValues): void {
                 $form = $event->getForm();
                 $data = $event->getData();
 
@@ -170,7 +167,7 @@ class ChoiceType extends AbstractType
             $messageTemplate = $options['invalid_message'] ?? 'The value {{ value }} is not valid.';
             $translator = $this->translator;
 
-            $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event) use (&$unknownValues, $messageTemplate, $translator) {
+            $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event) use (&$unknownValues, $messageTemplate, $translator): void {
                 // Throw exception if unknown values were submitted
                 if (\count($unknownValues) > 0) {
                     $form = $event->getForm();
@@ -202,7 +199,7 @@ class ChoiceType extends AbstractType
 
         // To avoid issues when the submitted choices are arrays (i.e. array to string conversions),
         // we have to ensure that all elements of the submitted choice data are NULL, strings or ints.
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, static function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, static function (FormEvent $event): void {
             $data = $event->getData();
 
             if (!\is_array($data)) {
@@ -250,9 +247,9 @@ class ChoiceType extends AbstractType
         // closure here that is optimized for the value of the form, to
         // avoid making the type check inside the closure.
         if ($options['multiple']) {
-            $view->vars['is_selected'] = static fn ($choice, array $values) => \in_array($choice, $values, true);
+            $view->vars['is_selected'] = static fn ($choice, array $values): bool => \in_array($choice, $values, true);
         } else {
-            $view->vars['is_selected'] = static fn ($choice, $value) => $choice === $value;
+            $view->vars['is_selected'] = static fn ($choice, $value): bool => $choice === $value;
         }
 
         // Check if the choices already contain the empty value
@@ -293,7 +290,7 @@ class ChoiceType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $emptyData = static function (Options $options) {
+        $emptyData = static function (Options $options): null|array|string {
             if ($options['expanded'] && !$options['multiple']) {
                 return null;
             }
@@ -305,19 +302,22 @@ class ChoiceType extends AbstractType
             return '';
         };
 
-        $placeholderDefault = static fn (Options $options) => $options['required'] ? null : '';
+        $placeholderDefault = static fn (Options $options): ?string => $options['required'] ? null : '';
 
         $placeholderNormalizer = static function (Options $options, $placeholder) {
             if ($options['multiple']) {
                 // never use an empty value for this case
                 return null;
-            } elseif ($options['required'] && ($options['expanded'] || isset($options['attr']['size']) && $options['attr']['size'] > 1)) {
+            }
+            if ($options['required'] && ($options['expanded'] || isset($options['attr']['size']) && $options['attr']['size'] > 1)) {
                 // placeholder for required radio buttons or a select with size > 1 does not make sense
                 return null;
-            } elseif (false === $placeholder) {
+            }
+            if (false === $placeholder) {
                 // an empty value should be added but the user decided otherwise
                 return null;
-            } elseif ($options['expanded'] && '' === $placeholder) {
+            }
+            if ($options['expanded'] && '' === $placeholder) {
                 // never use an empty label for radio buttons
                 return 'None';
             }
@@ -326,7 +326,7 @@ class ChoiceType extends AbstractType
             return $placeholder;
         };
 
-        $compound = static fn (Options $options) => $options['expanded'];
+        $compound = static fn (Options $options): mixed => $options['expanded'];
 
         $choiceTranslationDomainNormalizer = static function (Options $options, $choiceTranslationDomain) {
             if (true === $choiceTranslationDomain) {
@@ -336,7 +336,7 @@ class ChoiceType extends AbstractType
             return $choiceTranslationDomain;
         };
 
-        $choiceLoaderNormalizer = static function (Options $options, ?ChoiceLoaderInterface $choiceLoader) {
+        $choiceLoaderNormalizer = static function (Options $options, ?ChoiceLoaderInterface $choiceLoader): \Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface|null|\Symfony\Component\Form\ChoiceList\Loader\LazyChoiceLoader {
             if (!$options['choice_lazy']) {
                 return $choiceLoader;
             }

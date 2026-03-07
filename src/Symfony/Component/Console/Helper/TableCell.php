@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ use Symfony\Component\Console\Exception\InvalidArgumentException;
 /**
  * @author Abdellatif Ait boudad <a.aitboudad@gmail.com>
  */
-class TableCell
+class TableCell implements \Stringable
 {
     private array $options = [
         'rowspan' => 1,
@@ -25,7 +27,7 @@ class TableCell
     ];
 
     public function __construct(
-        private string $value = '',
+        private readonly string $value = '',
         array $options = [],
     ) {
         // check option names

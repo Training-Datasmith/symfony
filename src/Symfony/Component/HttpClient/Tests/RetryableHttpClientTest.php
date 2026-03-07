@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -71,7 +73,7 @@ class RetryableHttpClientTest extends TestCase
                 new MockResponse('abc', ['http_code' => 500]),
                 new MockResponse('def', ['http_code' => 200]),
             ]),
-            new class(GenericRetryStrategy::DEFAULT_RETRY_STATUS_CODES, 0) extends GenericRetryStrategy {
+            new class (GenericRetryStrategy::DEFAULT_RETRY_STATUS_CODES, 0) extends GenericRetryStrategy {
                 public function shouldRetry(AsyncContext $context, ?string $responseContent, ?TransportExceptionInterface $exception): ?bool
                 {
                     return 500 === $context->getStatusCode() && null === $responseContent ? null : 200 !== $context->getStatusCode();
@@ -92,7 +94,7 @@ class RetryableHttpClientTest extends TestCase
             new MockHttpClient([
                 new MockResponse('my bad', ['http_code' => 400]),
             ]),
-            new class([400], 0) extends GenericRetryStrategy {
+            new class ([400], 0) extends GenericRetryStrategy {
                 public function shouldRetry(AsyncContext $context, ?string $responseContent, ?TransportExceptionInterface $exception): ?bool
                 {
                     if (null === $responseContent) {
@@ -118,7 +120,7 @@ class RetryableHttpClientTest extends TestCase
                 new MockResponse('', ['http_code' => 500]),
                 new MockResponse('', ['http_code' => 200]),
             ]),
-            new class(GenericRetryStrategy::DEFAULT_RETRY_STATUS_CODES, 0) extends GenericRetryStrategy {
+            new class (GenericRetryStrategy::DEFAULT_RETRY_STATUS_CODES, 0) extends GenericRetryStrategy {
                 public function shouldRetry(AsyncContext $context, ?string $responseContent, ?TransportExceptionInterface $exception): ?bool
                 {
                     return null;
@@ -156,7 +158,7 @@ class RetryableHttpClientTest extends TestCase
     {
         $client = new RetryableHttpClient(
             new NativeHttpClient(),
-            new class(GenericRetryStrategy::DEFAULT_RETRY_STATUS_CODES, 0) extends GenericRetryStrategy {
+            new class (GenericRetryStrategy::DEFAULT_RETRY_STATUS_CODES, 0) extends GenericRetryStrategy {
                 public function shouldRetry(AsyncContext $context, ?string $responseContent, ?TransportExceptionInterface $exception): ?bool
                 {
                     $this->fail('should not be called');
@@ -213,7 +215,7 @@ class RetryableHttpClientTest extends TestCase
             ]),
             new GenericRetryStrategy(),
             1,
-            $logger = new class extends TestLogger {
+            $logger = new class () extends TestLogger {
                 public array $context = [];
 
                 public function log($level, $message, array $context = []): void
@@ -257,7 +259,7 @@ class RetryableHttpClientTest extends TestCase
 
         TestHttpServer::start();
 
-        $strategy = new class implements RetryStrategyInterface {
+        $strategy = new class () implements RetryStrategyInterface {
             public $isCalled = false;
 
             public function shouldRetry(AsyncContext $context, ?string $responseContent, ?TransportExceptionInterface $exception): ?bool
@@ -431,7 +433,7 @@ class RetryableHttpClientTest extends TestCase
 
         TestHttpServer::start();
 
-        $strategy = new class implements RetryStrategyInterface {
+        $strategy = new class () implements RetryStrategyInterface {
             public bool $isCalled = false;
 
             public function shouldRetry(AsyncContext $context, ?string $responseContent, ?TransportExceptionInterface $exception): ?bool
@@ -448,7 +450,7 @@ class RetryableHttpClientTest extends TestCase
         };
         $client = new RetryableHttpClient($client, $strategy);
 
-        $client = new class($client) implements HttpClientInterface {
+        $client = new class ($client) implements HttpClientInterface {
             use \Symfony\Component\HttpClient\AsyncDecoratorTrait;
 
             public function request(string $method, string $url, array $options = []): ResponseInterface
@@ -477,7 +479,7 @@ class RetryableHttpClientTest extends TestCase
 
         $client = new RetryableHttpClient($client, new GenericRetryStrategy([500], 0), 1);
 
-        $client = new class($client) implements HttpClientInterface {
+        $client = new class ($client) implements HttpClientInterface {
             use \Symfony\Component\HttpClient\AsyncDecoratorTrait;
 
             public function request(string $method, string $url, array $options = []): ResponseInterface
@@ -498,7 +500,7 @@ class RetryableHttpClientTest extends TestCase
 
         TestHttpServer::start();
 
-        $strategy = new class implements RetryStrategyInterface {
+        $strategy = new class () implements RetryStrategyInterface {
             public bool $isCalled = false;
 
             public function shouldRetry(AsyncContext $context, ?string $responseContent, ?TransportExceptionInterface $exception): ?bool
@@ -517,7 +519,7 @@ class RetryableHttpClientTest extends TestCase
         $client = new RetryableHttpClient($client, $strategy);
 
         // Two nested async decorators without passthru around the RetryableHttpClient
-        $client = new class($client) implements HttpClientInterface {
+        $client = new class ($client) implements HttpClientInterface {
             use \Symfony\Component\HttpClient\AsyncDecoratorTrait;
 
             public function request(string $method, string $url, array $options = []): ResponseInterface
@@ -525,7 +527,7 @@ class RetryableHttpClientTest extends TestCase
                 return new AsyncResponse($this->client, $method, $url, $options);
             }
         };
-        $client = new class($client) implements HttpClientInterface {
+        $client = new class ($client) implements HttpClientInterface {
             use \Symfony\Component\HttpClient\AsyncDecoratorTrait;
 
             public function request(string $method, string $url, array $options = []): ResponseInterface
@@ -552,7 +554,7 @@ class RetryableHttpClientTest extends TestCase
         TestHttpServer::start();
 
         $retryCount = 0;
-        $strategy = new class($retryCount) implements RetryStrategyInterface {
+        $strategy = new class ($retryCount) implements RetryStrategyInterface {
             private int $retryCount;
 
             public function __construct(int &$retryCount)
@@ -575,7 +577,7 @@ class RetryableHttpClientTest extends TestCase
 
         $client = new RetryableHttpClient($client, $strategy, 2);
 
-        $client = new class($client) implements HttpClientInterface {
+        $client = new class ($client) implements HttpClientInterface {
             use \Symfony\Component\HttpClient\AsyncDecoratorTrait;
 
             public function request(string $method, string $url, array $options = []): ResponseInterface

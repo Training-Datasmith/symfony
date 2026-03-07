@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,9 +31,9 @@ class KazInfoTehTransport extends AbstractTransport
     protected const HOST = 'kazinfoteh.org';
 
     public function __construct(
-        private string $username,
-        #[\SensitiveParameter] private string $password,
-        private string $sender,
+        private readonly string $username,
+        #[\SensitiveParameter] private readonly string $password,
+        private readonly string $sender,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -54,7 +56,7 @@ class KazInfoTehTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage || !$this->supports($message)) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $endpoint = \sprintf('http://%s/api', $this->getEndpoint());

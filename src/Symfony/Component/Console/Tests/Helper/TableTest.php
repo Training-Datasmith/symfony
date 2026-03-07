@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -2017,7 +2019,8 @@ class TableTest extends TestCase
         ;
         $table->render();
 
-        $this->assertSame(<<<TABLE
+        $this->assertSame(
+            <<<TABLE
             ┌──── Title ┬───┐
             │ Hello │ 1 │ 3 │
             │ World │ 2 │ 4 │
@@ -2045,7 +2048,8 @@ class TableTest extends TestCase
         ;
         $table->render();
 
-        $this->assertSame(<<<TABLE
+        $this->assertSame(
+            <<<TABLE
             ┌──── Title ────┐
             │ Hello │ World │
             ├───────┼───────┤
@@ -2072,7 +2076,8 @@ class TableTest extends TestCase
         ;
         $table->render();
 
-        $this->assertSame(<<<TABLE
+        $this->assertSame(
+            <<<TABLE
             +-------------------------------- Test Title ---------------+-----------------+
             | Title                                                     | Author          |
             +-----------------------------------------------------------+-----------------+

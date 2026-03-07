@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -13,8 +15,8 @@ namespace Symfony\Component\Form;
 
 class CallbackTransformer implements DataTransformerInterface
 {
-    private \Closure $transform;
-    private \Closure $reverseTransform;
+    private readonly \Closure $transform;
+    private readonly \Closure $reverseTransform;
 
     public function __construct(callable $transform, callable $reverseTransform)
     {

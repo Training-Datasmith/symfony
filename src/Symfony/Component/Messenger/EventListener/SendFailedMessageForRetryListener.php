@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,11 +38,11 @@ use Symfony\Component\Messenger\Transport\Sender\SenderInterface;
 class SendFailedMessageForRetryListener implements EventSubscriberInterface
 {
     public function __construct(
-        private ContainerInterface $sendersLocator,
-        private ContainerInterface $retryStrategyLocator,
-        private ?LoggerInterface $logger = null,
-        private ?EventDispatcherInterface $eventDispatcher = null,
-        private int $historySize = 10,
+        private readonly ContainerInterface $sendersLocator,
+        private readonly ContainerInterface $retryStrategyLocator,
+        private readonly ?LoggerInterface $logger = null,
+        private readonly ?EventDispatcherInterface $eventDispatcher = null,
+        private readonly int $historySize = 10,
     ) {
     }
 
@@ -155,9 +157,10 @@ class SendFailedMessageForRetryListener implements EventSubscriberInterface
 
         if ($throwable instanceof HandlerFailedException) {
             foreach ($throwable->getWrappedExceptions() as $nestedException) {
-                if (!$nestedException instanceof RecoverableExceptionInterface
-                    || 0 > $retryDelay = $nestedException->getRetryDelay() ?? -1
-                ) {
+                if (!$nestedException instanceof RecoverableExceptionInterface) {
+                    continue;
+                }
+                if (0 > $retryDelay = $nestedException->getRetryDelay() ?? -1) {
                     continue;
                 }
                 if ($retryDelay < ($delay ?? \PHP_INT_MAX)) {

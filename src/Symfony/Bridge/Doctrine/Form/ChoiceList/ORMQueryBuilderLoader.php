@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -67,12 +69,12 @@ class ORMQueryBuilderLoader implements EntityLoaderInterface
 
             // Filter out non-integer values (e.g. ""). If we don't, some
             // databases such as PostgreSQL fail.
-            $values = array_values(array_filter($values, static fn ($v) => \is_string($v) && ctype_digit($v) || (string) $v === (string) (int) $v));
+            $values = array_values(array_filter($values, static fn ($v): bool => \is_string($v) && ctype_digit($v) || (string) $v === (string) (int) $v));
         } elseif (null !== $type && (\in_array($type, ['ulid', 'uuid', 'guid'], true) || (Type::hasType($type) && is_subclass_of(Type::getType($type), AbstractUidType::class)))) {
             $parameterType = ArrayParameterType::STRING;
 
             // Like above, but we just filter out empty strings.
-            $values = array_values(array_filter($values, static fn ($v) => '' !== (string) $v));
+            $values = array_values(array_filter($values, static fn ($v): bool => '' !== (string) $v));
 
             // Convert values into right type
             if (Type::hasType($type)) {

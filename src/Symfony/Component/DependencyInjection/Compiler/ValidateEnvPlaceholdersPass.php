@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -56,13 +58,14 @@ class ValidateEnvPlaceholdersPass implements CompilerPassInterface
         $processor = new Processor();
 
         foreach ($extensions as $name => $extension) {
-            if (!($extension instanceof ConfigurationExtensionInterface || $extension instanceof ConfigurationInterface)
-                || !$config = array_filter($container->getExtensionConfig($name))
-            ) {
+            if (!($extension instanceof ConfigurationExtensionInterface || $extension instanceof ConfigurationInterface)) {
                 // this extension has no semantic configuration or was not called
                 continue;
             }
-
+            if (!$config = array_filter($container->getExtensionConfig($name))) {
+                // this extension has no semantic configuration or was not called
+                continue;
+            }
             $config = $resolvingBag->resolveValue($config);
 
             if ($extension instanceof ConfigurationInterface) {

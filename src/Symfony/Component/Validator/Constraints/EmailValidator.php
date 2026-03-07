@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,7 +36,7 @@ class EmailValidator extends ConstraintValidator
         Email::VALIDATION_MODE_HTML5_ALLOW_NO_TLD => self::PATTERN_HTML5_ALLOW_NO_TLD,
     ];
 
-    private string $defaultMode;
+    private readonly string $defaultMode;
 
     public function __construct(string $defaultMode = Email::VALIDATION_MODE_HTML5)
     {
@@ -94,7 +96,7 @@ class EmailValidator extends ConstraintValidator
                     ->setCode(Email::INVALID_FORMAT_ERROR)
                     ->addViolation();
             }
-        } elseif (!preg_match(self::EMAIL_PATTERNS[$constraint->mode], $value)) {
+        } elseif (!preg_match(self::EMAIL_PATTERNS[$constraint->mode], (string) $value)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ value }}', $this->formatValue($value))
                 ->setCode(Email::INVALID_FORMAT_ERROR)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ class Tokenizer
     /**
      * @var Handler\HandlerInterface[]
      */
-    private array $handlers;
+    private readonly array $handlers;
 
     public function __construct()
     {

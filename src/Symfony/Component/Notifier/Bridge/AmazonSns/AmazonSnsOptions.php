@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ final class AmazonSnsOptions implements MessageOptionsInterface
         return $this->options;
     }
 
-    public function getRecipientId(): ?string
+    public function getRecipientId(): string
     {
         return $this->recipient;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,13 +20,10 @@ use Symfony\Component\VarDumper\Cloner\VarCloner;
 /**
  * @author Grégoire Pineau <lyrixx@lyrixx.info>
  */
-final class VarDumperFormatter implements FormatterInterface
+final readonly class VarDumperFormatter implements FormatterInterface
 {
-    private VarCloner $cloner;
-
-    public function __construct(?VarCloner $cloner = null)
+    public function __construct(private ?VarCloner $cloner = new VarCloner())
     {
-        $this->cloner = $cloner ?? new VarCloner();
     }
 
     public function format(LogRecord $record): mixed

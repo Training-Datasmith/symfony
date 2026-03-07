@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -413,7 +415,7 @@ trait ContentLoaderTrait
             $definition = new ChildDefinition('');
         } elseif (isset($service['parent'])) {
             if ('' !== $service['parent'] && '@' === $service['parent'][0]) {
-                throw new InvalidArgumentException(\sprintf('The value of the "parent" option for the "%s" service must be the id of the service without the "@" prefix (replace "%s" with "%s").', $id, $service['parent'], substr($service['parent'], 1)));
+                throw new InvalidArgumentException(\sprintf('The value of the "parent" option for the "%s" service must be the id of the service without the "@" prefix (replace "%s" with "%s").', $id, $service['parent'], substr((string) $service['parent'], 1)));
             }
 
             $definition = new ChildDefinition($service['parent']);
@@ -699,7 +701,7 @@ trait ContentLoaderTrait
     /**
      * @throws InvalidArgumentException When errors occur
      */
-    private function parseCallable(mixed $callable, string $parameter, string $id, string $file): string|array|Reference
+    private function parseCallable(mixed $callable, string $parameter, string $id, string $file): string|array
     {
         if (\is_string($callable)) {
             if (str_starts_with($callable, '@=')) {
@@ -798,7 +800,7 @@ trait ContentLoaderTrait
                 }
 
                 if ($forLocator) {
-                    $argument = new ServiceLocatorArgument($argument);
+                    return new ServiceLocatorArgument($argument);
                 }
 
                 return $argument;
@@ -882,9 +884,9 @@ trait ContentLoaderTrait
             if (\in_array($namespace, ['imports', 'parameters', 'services'], true)) {
                 continue;
             }
-            if (str_starts_with($namespace, 'when@')) {
+            if (str_starts_with((string) $namespace, 'when@')) {
                 $knownEnvs = $this->container->hasParameter('.container.known_envs') ? array_flip($this->container->getParameter('.container.known_envs')) : [];
-                $this->container->setParameter('.container.known_envs', array_keys($knownEnvs + [substr($namespace, 5) => true]));
+                $this->container->setParameter('.container.known_envs', array_keys($knownEnvs + [substr((string) $namespace, 5) => true]));
                 continue;
             }
 

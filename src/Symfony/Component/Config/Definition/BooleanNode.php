@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ class BooleanNode extends ScalarNode
         ?string $name,
         ?NodeInterface $parent = null,
         string $pathSeparator = self::DEFAULT_PATH_SEPARATOR,
-        private bool $nullable = false,
+        private readonly bool $nullable = false,
     ) {
         parent::__construct($name, $parent, $pathSeparator);
     }

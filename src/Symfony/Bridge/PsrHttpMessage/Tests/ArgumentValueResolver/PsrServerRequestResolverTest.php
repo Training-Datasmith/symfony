@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,8 @@ final class PsrServerRequestResolverTest extends TestCase
 
         $resolver = $this->bootstrapResolver($symfonyRequest, $psrRequest);
 
-        self::assertSame([$psrRequest], $resolver->getArguments($symfonyRequest, static function (ServerRequestInterface $serverRequest): void {}));
+        self::assertSame([$psrRequest], $resolver->getArguments($symfonyRequest, static function (ServerRequestInterface $serverRequest): void {
+        }));
     }
 
     public function testRequest()
@@ -42,7 +45,8 @@ final class PsrServerRequestResolverTest extends TestCase
 
         $resolver = $this->bootstrapResolver($symfonyRequest, $psrRequest);
 
-        self::assertSame([$psrRequest], $resolver->getArguments($symfonyRequest, static function (RequestInterface $request): void {}));
+        self::assertSame([$psrRequest], $resolver->getArguments($symfonyRequest, static function (RequestInterface $request): void {
+        }));
     }
 
     public function testMessage()
@@ -52,7 +56,8 @@ final class PsrServerRequestResolverTest extends TestCase
 
         $resolver = $this->bootstrapResolver($symfonyRequest, $psrRequest);
 
-        self::assertSame([$psrRequest], $resolver->getArguments($symfonyRequest, static function (MessageInterface $request): void {}));
+        self::assertSame([$psrRequest], $resolver->getArguments($symfonyRequest, static function (MessageInterface $request): void {
+        }));
     }
 
     private function bootstrapResolver(Request $symfonyRequest, ServerRequestInterface $psrRequest): ArgumentResolver

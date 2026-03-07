@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,8 +36,8 @@ class DateTimeToLocalizedStringTransformer extends BaseDateTimeTransformer
     private const NARROW_NO_BREAK_SPACE = "\u{202F}"; // Used by ICU 72+ before AM/PM
     private const THIN_SPACE = "\u{2009}";
 
-    private int $dateFormat;
-    private int $timeFormat;
+    private readonly int $dateFormat;
+    private readonly int $timeFormat;
 
     /**
      * @see BaseDateTimeTransformer::formats for available format options
@@ -54,8 +56,8 @@ class DateTimeToLocalizedStringTransformer extends BaseDateTimeTransformer
         ?string $outputTimezone = null,
         ?int $dateFormat = null,
         ?int $timeFormat = null,
-        private int|\IntlCalendar $calendar = \IntlDateFormatter::GREGORIAN,
-        private ?string $pattern = null,
+        private readonly int|\IntlCalendar $calendar = \IntlDateFormatter::GREGORIAN,
+        private readonly ?string $pattern = null,
     ) {
         parent::__construct($inputTimezone, $outputTimezone);
 
@@ -113,13 +115,15 @@ class DateTimeToLocalizedStringTransformer extends BaseDateTimeTransformer
         $dateFormatter = $this->getIntlDateFormatter($dateOnly);
 
         $timestamp = $this->parse($dateFormatter, $value);
-
         if (0 != intl_get_error_code()) {
             throw new TransformationFailedException(intl_get_error_message(), intl_get_error_code());
-        } elseif ($timestamp > 253402214400) {
+        }
+        if ($timestamp > 253402214400) {
             // This timestamp represents UTC midnight of 9999-12-31 to prevent 5+ digit years
             throw new TransformationFailedException('Years beyond 9999 are not supported.');
-        } elseif (false === $timestamp) {
+        }
+
+        if (false === $timestamp) {
             // the value couldn't be parsed but the Intl extension didn't report an error code, this
             // could be the case when the Intl polyfill is used which always returns 0 as the error code
             throw new TransformationFailedException(\sprintf('"%s" could not be parsed as a date.', $value));
@@ -180,7 +184,7 @@ class DateTimeToLocalizedStringTransformer extends BaseDateTimeTransformer
         $pattern = preg_replace("#'(.*?)'#", '', $this->pattern);
 
         // check for the absence of time-related placeholders
-        return 0 === preg_match('#[ahHkKmsSAzZOvVxX]#', $pattern);
+        return 0 === preg_match('#[ahHkKmsSAzZOvVxX]#', (string) $pattern);
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,8 +33,6 @@ class MemcachedAdapter extends AbstractAdapter
     private const RESERVED_MEMCACHED = " \n\r\t\v\f\0";
     private const RESERVED_PSR6 = '@()\{}/';
     private const MAX_KEY_LENGTH = 250;
-
-    private MarshallerInterface $marshaller;
     private \Memcached $client;
     private \Memcached $lazyClient;
 
@@ -46,7 +46,7 @@ class MemcachedAdapter extends AbstractAdapter
      *
      * Using a MemcachedAdapter as a pure items store is fine.
      */
-    public function __construct(\Memcached $client, string $namespace = '', int $defaultLifetime = 0, ?MarshallerInterface $marshaller = null)
+    public function __construct(\Memcached $client, string $namespace = '', int $defaultLifetime = 0, private readonly ?MarshallerInterface $marshaller = new DefaultMarshaller())
     {
         if (!static::isSupported()) {
             throw new CacheException('Memcached > 3.1.5 is required.');
@@ -58,7 +58,7 @@ class MemcachedAdapter extends AbstractAdapter
             if (\Memcached::SERIALIZER_PHP !== $opt && \Memcached::SERIALIZER_IGBINARY !== $opt) {
                 throw new CacheException('MemcachedAdapter: "serializer" option must be "php" or "igbinary".');
             }
-            $this->maxIdLength -= \strlen($client->getOption(\Memcached::OPT_PREFIX_KEY));
+            $this->maxIdLength -= \strlen((string) $client->getOption(\Memcached::OPT_PREFIX_KEY));
             $this->client = $client;
         } else {
             $this->lazyClient = $client;
@@ -66,7 +66,6 @@ class MemcachedAdapter extends AbstractAdapter
 
         parent::__construct($namespace, $defaultLifetime);
         $this->enableVersioning();
-        $this->marshaller = $marshaller ?? new DefaultMarshaller();
     }
 
     public static function isSupported(): bool
@@ -109,16 +108,16 @@ class MemcachedAdapter extends AbstractAdapter
                 if (!str_starts_with($dsn, 'memcached:')) {
                     throw new InvalidArgumentException('Invalid Memcached DSN: it does not start with "memcached:".');
                 }
-                $params = preg_replace_callback('#^memcached:(//)?(?:([^@]*+)@)?#', static function ($m) use (&$username, &$password) {
+                $params = preg_replace_callback('#^memcached:(//)?(?:([^@]*+)@)?#', static function ($m) use (&$username, &$password): string {
                     if (!empty($m[2])) {
                         [$username, $password] = explode(':', $m[2], 2) + [1 => null];
-                        $username = rawurldecode($username);
+                        $username = rawurldecode((string) $username);
                         $password = null !== $password ? rawurldecode($password) : null;
                     }
 
                     return 'file:'.($m[1] ?? '');
                 }, $dsn);
-                if (false === $params = parse_url($params)) {
+                if (false === $params = parse_url((string) $params)) {
                     throw new InvalidArgumentException('Invalid Memcached DSN.');
                 }
                 $query = $hosts = [];
@@ -130,10 +129,10 @@ class MemcachedAdapter extends AbstractAdapter
                             throw new InvalidArgumentException('Invalid Memcached DSN: query parameter "host" must be an array.');
                         }
                         foreach ($hosts as $host => $weight) {
-                            if (false === $port = strrpos($host, ':')) {
+                            if (false === $port = strrpos((string) $host, ':')) {
                                 $hosts[$host] = [$host, 11211, (int) $weight];
                             } else {
-                                $hosts[$host] = [substr($host, 0, $port), (int) substr($host, 1 + $port), (int) $weight];
+                                $hosts[$host] = [substr((string) $host, 0, $port), (int) substr((string) $host, 1 + $port), (int) $weight];
                             }
                         }
                         $hosts = array_values($hosts);
@@ -183,7 +182,7 @@ class MemcachedAdapter extends AbstractAdapter
                     continue;
                 }
                 if ('HASH' === $name || 'SERIALIZER' === $name || 'DISTRIBUTION' === $name) {
-                    $value = \constant('Memcached::'.$name.'_'.strtoupper($value));
+                    $value = \constant('Memcached::'.$name.'_'.strtoupper((string) $value));
                 }
                 unset($options[$name]);
 
@@ -252,7 +251,7 @@ class MemcachedAdapter extends AbstractAdapter
     protected function doFetch(array $ids): iterable
     {
         try {
-            $encodedIds = array_map([__CLASS__, 'encodeKey'], $ids);
+            $encodedIds = array_map([self::class, 'encodeKey'], $ids);
 
             $encodedResult = $this->checkResultCode($this->getClient()->getMulti($encodedIds));
 
@@ -269,13 +268,16 @@ class MemcachedAdapter extends AbstractAdapter
 
     protected function doHave(string $id): bool
     {
-        return false !== $this->getClient()->get(self::encodeKey($id)) || $this->checkResultCode(\Memcached::RES_SUCCESS === $this->client->getResultCode());
+        if (false !== $this->getClient()->get(self::encodeKey($id))) {
+            return true;
+        }
+        return (bool) $this->checkResultCode(\Memcached::RES_SUCCESS === $this->client->getResultCode());
     }
 
     protected function doDelete(array $ids): bool
     {
         $ok = true;
-        $encodedIds = array_map([__CLASS__, 'encodeKey'], $ids);
+        $encodedIds = array_map([self::class, 'encodeKey'], $ids);
         foreach ($this->checkResultCode($this->getClient()->deleteMulti($encodedIds)) as $result) {
             if (\Memcached::RES_SUCCESS !== $result && \Memcached::RES_NOTFOUND !== $result) {
                 $ok = false;

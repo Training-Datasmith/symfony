@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -229,7 +231,7 @@ final class PhpGenerator
 
             $php .= $this->line('};', $context);
 
-            foreach ($node->getProperties() as $streamedName => $property) {
+            foreach ($node->getProperties() as $property) {
                 if (!$this->canBeDecodedWithJsonDecode($property['value'], $decodeFromStream)) {
                     $php .= $this->generateProviders($property['value'], $decodeFromStream, $context);
                 }

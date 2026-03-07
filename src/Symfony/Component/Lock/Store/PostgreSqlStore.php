@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -90,9 +92,7 @@ class PostgreSqlStore implements BlockingSharedLockStoreInterface, BlockingStore
                 return;
             }
         } finally {
-            if (!$lockAcquired) {
-                $this->getInternalStore()->delete($key);
-            }
+            $this->getInternalStore()->delete($key);
         }
 
         throw new LockConflictedException();
@@ -123,9 +123,7 @@ class PostgreSqlStore implements BlockingSharedLockStoreInterface, BlockingStore
                 return;
             }
         } finally {
-            if (!$lockAcquired) {
-                $this->getInternalStore()->delete($key);
-            }
+            $this->getInternalStore()->delete($key);
         }
 
         throw new LockConflictedException();
@@ -276,7 +274,7 @@ class PostgreSqlStore implements BlockingSharedLockStoreInterface, BlockingStore
     private function checkDriver(): void
     {
         if ('pgsql' !== $driver = $this->conn->getAttribute(\PDO::ATTR_DRIVER_NAME)) {
-            throw new InvalidArgumentException(\sprintf('The adapter "%s" does not support the "%s" driver.', __CLASS__, $driver));
+            throw new InvalidArgumentException(\sprintf('The adapter "%s" does not support the "%s" driver.', self::class, $driver));
         }
     }
 

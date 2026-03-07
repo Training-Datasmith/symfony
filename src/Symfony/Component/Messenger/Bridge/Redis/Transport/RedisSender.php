@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,8 +26,8 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 class RedisSender implements SenderInterface
 {
     public function __construct(
-        private Connection $connection,
-        private SerializerInterface $serializer,
+        private readonly Connection $connection,
+        private readonly SerializerInterface $serializer,
     ) {
     }
 

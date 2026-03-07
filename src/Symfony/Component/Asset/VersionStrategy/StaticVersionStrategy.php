@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,14 +20,14 @@ namespace Symfony\Component\Asset\VersionStrategy;
  */
 class StaticVersionStrategy implements VersionStrategyInterface
 {
-    private string $format;
+    private readonly string $format;
 
     /**
      * @param string $version Version number
      * @param string $format  Url format
      */
     public function __construct(
-        private string $version,
+        private readonly string $version,
         ?string $format = null,
     ) {
         $this->format = $format ?: '%s?%s';

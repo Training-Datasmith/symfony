@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,8 +24,8 @@ class SentMessage
      * @param array $info attaches any Transport-related information to the sent message
      */
     public function __construct(
-        private MessageInterface $original,
-        private string $transport,
+        private readonly MessageInterface $original,
+        private readonly string $transport,
         private array $info = [],
     ) {
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -382,7 +384,7 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
         $class = $this->getContainerClass();
         $buildDir = $this->warmupDir ?: $this->getBuildDir();
         $skip = $_SERVER['SYMFONY_DISABLE_RESOURCE_TRACKING'] ?? '';
-        $skip = filter_var($skip, \FILTER_VALIDATE_BOOLEAN, \FILTER_NULL_ON_FAILURE) ?? explode(',', $skip);
+        $skip = filter_var($skip, \FILTER_VALIDATE_BOOLEAN, \FILTER_NULL_ON_FAILURE) ?? explode(',', (string) $skip);
         $cache = new ConfigCache($buildDir.'/'.$class.'.php', $this->debug, null, \is_array($skip) && ['*'] !== $skip ? $skip : ($skip ? [] : null));
 
         $cachePath = $cache->getPath();
@@ -685,7 +687,7 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
             'inline_factories' => $buildParameters['.container.dumper.inline_factories'] ?? false,
             'inline_class_loader' => $buildParameters['.container.dumper.inline_class_loader'] ?? $this->debug,
             'build_time' => $container->hasParameter('kernel.container_build_time') ? $container->getParameter('kernel.container_build_time') : $buildTime,
-            'preload_classes' => array_map('get_class', $this->bundles),
+            'preload_classes' => array_map(get_class(...), $this->bundles),
         ]);
 
         $rootCode = array_pop($content);
@@ -749,14 +751,14 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
             $trustedHeaders = $container->getParameter('kernel.trusted_headers');
 
             if (\is_string($trustedHeaders)) {
-                $trustedHeaders = array_map('trim', explode(',', $trustedHeaders));
+                $trustedHeaders = array_map(trim(...), explode(',', $trustedHeaders));
             }
 
             if (\is_array($trustedHeaders)) {
                 $trustedHeaderSet = 0;
 
                 foreach ($trustedHeaders as $header) {
-                    if (!\defined($const = Request::class.'::HEADER_'.strtr(strtoupper($header), '-', '_'))) {
+                    if (!\defined($const = Request::class.'::HEADER_'.strtr(strtoupper((string) $header), '-', '_'))) {
                         throw new \InvalidArgumentException(\sprintf('The trusted header "%s" is not supported.', $header));
                     }
                     $trustedHeaderSet |= \constant($const);
@@ -765,7 +767,7 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
                 $trustedHeaderSet = $trustedHeaders ?? (Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PORT | Request::HEADER_X_FORWARDED_PROTO);
             }
 
-            Request::setTrustedProxies(\is_array($trustedProxies) ? $trustedProxies : array_map('trim', explode(',', $trustedProxies)), $trustedHeaderSet);
+            Request::setTrustedProxies(\is_array($trustedProxies) ? $trustedProxies : array_map(trim(...), explode(',', $trustedProxies)), $trustedHeaderSet);
         }
 
         return $container;
@@ -785,7 +787,7 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
         $debug = $data['debug'] ?? $data["\0*\0debug"];
 
         if (\is_object($environment) || \is_object($debug)) {
-            throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+            throw new \BadMethodCallException('Cannot unserialize '.self::class);
         }
 
         $this->environment = $environment;

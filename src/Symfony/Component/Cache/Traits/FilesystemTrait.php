@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -54,7 +56,10 @@ trait FilesystemTrait
 
         foreach ($ids as $id) {
             $file = $this->getFile($id);
-            if (!is_file($file) || !$h = @fopen($file, 'r')) {
+            if (!is_file($file)) {
+                continue;
+            }
+            if (!$h = @fopen($file, 'r')) {
                 continue;
             }
             if (($expiresAt = (int) fgets($h)) && $now >= $expiresAt) {
@@ -86,7 +91,7 @@ trait FilesystemTrait
         $values = $this->marshaller->marshall($values, $failed);
 
         foreach ($values as $id => $value) {
-            if (!$this->write($this->getFile($id, true), $expiresAt."\n".rawurlencode($id)."\n".$value, $expiresAt)) {
+            if (!$this->write($this->getFile($id, true), $expiresAt."\n".rawurlencode((string) $id)."\n".$value, $expiresAt)) {
                 $failed[] = $id;
             }
         }

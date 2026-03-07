@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -33,7 +35,7 @@ class NativeSessionTokenStorage implements ClearableTokenStorageInterface
      * @param string $namespace The namespace under which the token is stored in the session
      */
     public function __construct(
-        private string $namespace = self::SESSION_NAMESPACE,
+        private readonly string $namespace = self::SESSION_NAMESPACE,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,10 +31,10 @@ class Event extends BaseEvent
      * @param T $subject
      */
     public function __construct(
-        private object $subject,
-        private Marking $marking,
-        private ?Transition $transition = null,
-        private ?WorkflowInterface $workflow = null,
+        private readonly object $subject,
+        private readonly Marking $marking,
+        private readonly ?Transition $transition = null,
+        private readonly ?WorkflowInterface $workflow = null,
     ) {
     }
 

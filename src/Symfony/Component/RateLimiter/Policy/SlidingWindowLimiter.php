@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -96,9 +98,7 @@ final class SlidingWindowLimiter implements LimiterInterface
                 $reservation = new Reservation($now + $waitDuration, new RateLimit($this->getAvailableTokens($window->getHitCount()), \DateTimeImmutable::createFromFormat('U', floor($now + $waitDuration)), false, $this->limit));
             }
 
-            if (0 !== $tokens) {
-                $this->storage->save($window);
-            }
+            $this->storage->save($window);
         } finally {
             $this->lock?->release();
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -43,21 +45,20 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class ContextListener extends AbstractListener
 {
-    private string $sessionKey;
+    private readonly string $sessionKey;
     private bool $registered = false;
-    private AuthenticationTrustResolverInterface $trustResolver;
-    private ?\Closure $sessionTrackerEnabler;
+    private readonly ?\Closure $sessionTrackerEnabler;
 
     /**
      * @param iterable<mixed, UserProviderInterface> $userProviders
      */
     public function __construct(
-        private TokenStorageInterface $tokenStorage,
-        private iterable $userProviders,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly iterable $userProviders,
         string $contextKey,
-        private ?LoggerInterface $logger = null,
-        private ?EventDispatcherInterface $dispatcher = null,
-        ?AuthenticationTrustResolverInterface $trustResolver = null,
+        private readonly ?LoggerInterface $logger = null,
+        private readonly ?EventDispatcherInterface $dispatcher = null,
+        private readonly ?AuthenticationTrustResolverInterface $trustResolver = new AuthenticationTrustResolver(),
         ?callable $sessionTrackerEnabler = null,
     ) {
         if (!$contextKey) {
@@ -65,7 +66,6 @@ class ContextListener extends AbstractListener
         }
 
         $this->sessionKey = '_security_'.$contextKey;
-        $this->trustResolver = $trustResolver ?? new AuthenticationTrustResolver();
         $this->sessionTrackerEnabler = null === $sessionTrackerEnabler ? null : $sessionTrackerEnabler(...);
     }
 
@@ -259,7 +259,7 @@ class ContextListener extends AbstractListener
     private function safelyUnserialize(string $serializedToken): mixed
     {
         $token = null;
-        $prevUnserializeHandler = ini_set('unserialize_callback_func', __CLASS__.'::handleUnserializeCallback');
+        $prevUnserializeHandler = ini_set('unserialize_callback_func', self::class.'::handleUnserializeCallback');
         $prevErrorHandler = set_error_handler(static function ($type, $msg, $file, $line, $context = []) use (&$prevErrorHandler) {
             if (__FILE__ === $file && !\in_array($type, [\E_DEPRECATED, \E_USER_DEPRECATED], true)) {
                 throw new \ErrorException($msg, 0x37313BC, $type, $file, $line);
@@ -315,7 +315,7 @@ class ContextListener extends AbstractListener
             }
         }
 
-        $refreshedRoles = array_map('strval', $refreshedUser->getRoles());
+        $refreshedRoles = array_map(strval(...), $refreshedUser->getRoles());
         $originalRoles = $refreshedToken->getRoleNames(); // This comes from cloning the original token, so it still contains the roles of the original user
 
         if (

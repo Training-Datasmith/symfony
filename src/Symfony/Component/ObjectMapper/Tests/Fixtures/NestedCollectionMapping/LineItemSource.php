@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\ObjectMapper\Tests\Fixtures\NestedCollectionMapping;
 
 use Symfony\Component\ObjectMapper\Attribute\Map;

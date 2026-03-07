@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ use Symfony\Component\ErrorHandler\ErrorHandler;
 class ErrorHandlerConfigurator
 {
     private array|int|null $levels;
-    private ?int $throwAt;
+    private readonly ?int $throwAt;
 
     /**
      * @param array|int|null $levels  An array map of E_* to LogLevel::* or an integer bit field of E_* constants
@@ -36,8 +38,8 @@ class ErrorHandlerConfigurator
         private ?LoggerInterface $logger = null,
         array|int|null $levels = \E_ALL,
         ?int $throwAt = \E_ALL,
-        private bool $scream = true,
-        private bool $scope = true,
+        private readonly bool $scream = true,
+        private readonly bool $scope = true,
         private ?LoggerInterface $deprecationLogger = null,
     ) {
         $this->levels = $levels ?? \E_ALL;

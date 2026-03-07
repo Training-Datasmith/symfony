@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,17 +21,12 @@ namespace Symfony\Component\Routing\Exception;
  */
 class MissingMandatoryParametersException extends \InvalidArgumentException implements ExceptionInterface
 {
-    private string $routeName = '';
-    private array $missingParameters = [];
-
     /**
      * @param string[] $missingParameters
      */
-    public function __construct(string $routeName = '', array $missingParameters = [], int $code = 0, ?\Throwable $previous = null)
+    public function __construct(private readonly string $routeName = '', private readonly array $missingParameters = [], int $code = 0, ?\Throwable $previous = null)
     {
-        $this->routeName = $routeName;
-        $this->missingParameters = $missingParameters;
-        $message = \sprintf('Some mandatory parameters are missing ("%s") to generate a URL for route "%s".', implode('", "', $missingParameters), $routeName);
+        $message = \sprintf('Some mandatory parameters are missing ("%s") to generate a URL for route "%s".', implode('", "', $this->missingParameters), $this->routeName);
 
         parent::__construct($message, $code, $previous);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -79,7 +81,7 @@ final class MicrosoftTeamsOptions implements MessageOptionsInterface
     public function recipient(string $path): static
     {
         if (!preg_match('/^\/webhookb2\//', $path)) {
-            throw new InvalidArgumentException(\sprintf('"%s" require recipient id format to be "/webhookb2/{uuid}@{uuid}/IncomingWebhook/{id}/{uuid}", "%s" given.', __CLASS__, $path));
+            throw new InvalidArgumentException(\sprintf('"%s" require recipient id format to be "/webhookb2/{uuid}@{uuid}/IncomingWebhook/{id}/{uuid}", "%s" given.', self::class, $path));
         }
 
         $this->options['recipient_id'] = $path;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -48,7 +50,7 @@ abstract class AbstractBrowser
     protected Crawler $crawler;
     protected string|false $wrapContentPattern = false;
     protected bool $insulated = false;
-    protected ?string $redirect;
+    protected ?string $redirect = null;
     protected bool $followRedirects = true;
     protected bool $followMetaRefresh = false;
 
@@ -346,11 +348,11 @@ abstract class AbstractBrowser
         $server = array_merge($this->server, $server);
 
         if (!empty($server['HTTP_HOST']) && !parse_url($originalUri, \PHP_URL_HOST)) {
-            $uri = preg_replace('{^(https?\://)'.preg_quote($this->extractHost($uri)).'}', '${1}'.$server['HTTP_HOST'], $uri);
+            $uri = preg_replace('{^(https?\://)'.preg_quote((string) $this->extractHost($uri)).'}', '${1}'.$server['HTTP_HOST'], $uri);
         }
 
         if (isset($server['HTTPS']) && !parse_url($originalUri, \PHP_URL_SCHEME)) {
-            $uri = preg_replace('{^'.parse_url($uri, \PHP_URL_SCHEME).'}', $server['HTTPS'] ? 'https' : 'http', $uri);
+            $uri = preg_replace('{^'.parse_url((string) $uri, \PHP_URL_SCHEME).'}', $server['HTTPS'] ? 'https' : 'http', (string) $uri);
         }
 
         if (!isset($server['HTTP_REFERER']) && !$this->history->isEmpty()) {
@@ -361,7 +363,7 @@ abstract class AbstractBrowser
             $server['HTTP_HOST'] = $this->extractHost($uri);
         }
 
-        $server['HTTPS'] = 'https' === parse_url($uri, \PHP_URL_SCHEME);
+        $server['HTTPS'] = 'https' === parse_url((string) $uri, \PHP_URL_SCHEME);
 
         $this->internalRequest = new Request($uri, $method, $parameters, $files, $this->cookieJar->allValues($uri), $server, $content);
 
@@ -425,7 +427,7 @@ abstract class AbstractBrowser
         $deprecationsFile = tempnam(sys_get_temp_dir(), 'deprec');
         putenv('SYMFONY_DEPRECATIONS_SERIALIZE='.$deprecationsFile);
         $_ENV['SYMFONY_DEPRECATIONS_SERIALIZE'] = $deprecationsFile;
-        $process = new PhpProcess($this->getScript($request), null, null);
+        $process = new PhpProcess($this->getScript($request));
         $process->run();
 
         if (file_exists($deprecationsFile)) {
@@ -502,7 +504,7 @@ abstract class AbstractBrowser
             return null;
         }
 
-        $crawler = new Crawler(null, $uri, null);
+        $crawler = new Crawler(null, $uri);
         $crawler->addContent($content, $type);
 
         return $crawler;
@@ -596,7 +598,7 @@ abstract class AbstractBrowser
     {
         $metaRefresh = $this->getCrawler()->filter('head meta[http-equiv="refresh"]');
         foreach ($metaRefresh->extract(['content']) as $content) {
-            if (preg_match('/^\s*0\s*;\s*URL\s*=\s*(?|\'([^\']++)|"([^"]++)|([^\'"].*))/i', $content, $m)) {
+            if (preg_match('/^\s*0\s*;\s*URL\s*=\s*(?|\'([^\']++)|"([^"]++)|([^\'"].*))/i', (string) $content, $m)) {
                 return str_replace("\t\r\n", '', rtrim($m[1]));
             }
         }
@@ -628,7 +630,8 @@ abstract class AbstractBrowser
         if (!$this->history->isEmpty()) {
             $currentUri = $this->history->current()->getUri();
         } else {
-            $currentUri = \sprintf('http%s://%s/',
+            $currentUri = \sprintf(
+                'http%s://%s/',
                 isset($this->server['HTTPS']) ? 's' : '',
                 $this->server['HTTP_HOST'] ?? 'localhost'
             );
@@ -688,5 +691,3 @@ abstract class AbstractBrowser
         return $host;
     }
 }
-
-// @php-cs-fixer-ignore error_suppression This file is explicitly expected to not silence each of trigger_error calls

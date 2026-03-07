@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ use Symfony\Component\Security\Http\Event\CheckPassportEvent;
 class UserCheckerListener implements EventSubscriberInterface
 {
     public function __construct(
-        private UserCheckerInterface $userChecker,
+        private readonly UserCheckerInterface $userChecker,
     ) {
     }
 

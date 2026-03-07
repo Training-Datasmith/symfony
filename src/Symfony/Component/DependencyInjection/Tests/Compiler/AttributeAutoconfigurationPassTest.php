@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,8 @@ class AttributeAutoconfigurationPassTest extends TestCase
     public function testProcessAddsNoEmptyInstanceofConditionals()
     {
         $container = new ContainerBuilder();
-        $container->registerAttributeForAutoconfiguration(AsTaggedItem::class, static function () {});
+        $container->registerAttributeForAutoconfiguration(AsTaggedItem::class, static function () {
+        });
         $container->register('foo', \stdClass::class)
             ->setAutoconfigured(true)
         ;
@@ -36,7 +39,8 @@ class AttributeAutoconfigurationPassTest extends TestCase
     public function testAttributeConfiguratorCallableMissingType()
     {
         $container = new ContainerBuilder();
-        $container->registerAttributeForAutoconfiguration(AsTaggedItem::class, static function (ChildDefinition $definition, AsTaggedItem $attribute, $reflector) {});
+        $container->registerAttributeForAutoconfiguration(AsTaggedItem::class, static function (ChildDefinition $definition, AsTaggedItem $attribute, $reflector) {
+        });
         $container->register('foo', \stdClass::class)
             ->setAutoconfigured(true)
         ;

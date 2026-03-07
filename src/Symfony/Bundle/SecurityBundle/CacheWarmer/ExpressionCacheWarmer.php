@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -15,7 +17,7 @@ use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 use Symfony\Component\Security\Core\Authorization\ExpressionLanguage;
 
-final class ExpressionCacheWarmer implements CacheWarmerInterface
+final readonly class ExpressionCacheWarmer implements CacheWarmerInterface
 {
     /**
      * @param iterable<mixed, Expression|string> $expressions

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,7 +40,7 @@ final class Checkpoint implements CheckpointInterface
         }
 
         if ($this->cache) {
-            [$this->time, $this->index, $this->from] = $this->cache->get($this->name, static fn () => [$now, -1, $now]) + [2 => $now];
+            [$this->time, $this->index, $this->from] = $this->cache->get($this->name, static fn (): array => [$now, -1, $now]) + [2 => $now];
             $this->save($this->time, $this->index);
         } elseif ($this->reset) {
             $this->reset = false;
@@ -71,7 +73,7 @@ final class Checkpoint implements CheckpointInterface
         $this->time = $time;
         $this->index = $index;
         $this->from ??= $time;
-        $this->cache?->get($this->name, fn () => [$time, $index, $this->from], \INF);
+        $this->cache?->get($this->name, fn (): array => [$time, $index, $this->from], \INF);
     }
 
     /**

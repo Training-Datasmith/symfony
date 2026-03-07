@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,18 +39,18 @@ class BufferingLogger extends AbstractLogger
 
     public function __serialize(): array
     {
-        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot serialize '.self::class);
     }
 
     public function __unserialize(array $data): void
     {
-        throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot unserialize '.self::class);
     }
 
     public function __destruct()
     {
         foreach ($this->logs as [$level, $message, $context]) {
-            if (str_contains($message, '{')) {
+            if (str_contains((string) $message, '{')) {
                 foreach ($context as $key => $val) {
                     if (null === $val || \is_scalar($val) || $val instanceof \Stringable) {
                         $message = str_replace("{{$key}}", $val, $message);

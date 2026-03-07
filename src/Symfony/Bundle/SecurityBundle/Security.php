@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -187,7 +189,7 @@ class Security implements AuthorizationCheckerInterface, UserAuthorizationChecke
         $firewallAuthenticatorLocator = $this->authenticators[$firewallName];
 
         if (!$authenticatorName) {
-            $authenticatorIds = array_filter(array_keys($firewallAuthenticatorLocator->getProvidedServices()), static fn (string $authenticatorId) => $authenticatorId !== \sprintf('security.authenticator.remember_me.%s', $firewallName));
+            $authenticatorIds = array_filter(array_keys($firewallAuthenticatorLocator->getProvidedServices()), static fn (string $authenticatorId): bool => $authenticatorId !== \sprintf('security.authenticator.remember_me.%s', $firewallName));
             if (!$authenticatorIds) {
                 throw new LogicException(\sprintf('No authenticator was found for the firewall "%s".', $firewallName));
             }

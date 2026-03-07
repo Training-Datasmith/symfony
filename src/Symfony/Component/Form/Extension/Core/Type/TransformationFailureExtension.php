@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class TransformationFailureExtension extends AbstractTypeExtension
 {
     public function __construct(
-        private ?TranslatorInterface $translator = null,
+        private readonly ?TranslatorInterface $translator = null,
     ) {
     }
 

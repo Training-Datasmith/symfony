@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,8 @@ class NodeTest extends TestCase
     {
         $node = new Node([new ConstantNode('foo')]);
 
-        $this->assertEquals(<<<'EOF'
+        $this->assertEquals(
+            <<<'EOF'
             Node(
                 ConstantNode(value: 'foo')
             )

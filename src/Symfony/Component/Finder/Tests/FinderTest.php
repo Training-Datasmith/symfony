@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -1852,7 +1854,8 @@ class FinderTest extends Iterator\RealIteratorTestCase
         chmod($testDir, 0o333);
 
         if (false === ($couldRead = is_readable($testDir))) {
-            $this->assertIterator($this->toAbsolute([
+            $this->assertIterator($this->toAbsolute(
+                [
                 'foo bar',
                 'test.php',
                 'test.py',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -60,7 +62,7 @@ class EventStreamResponse extends StreamedResponse
             return parent::setCallback($callback);
         }
 
-        $this->callback = function () use ($callback) {
+        $this->callback = function () use ($callback): void {
             if (is_iterable($events = $callback($this))) {
                 foreach ($events as $event) {
                     $this->sendEvent($event);

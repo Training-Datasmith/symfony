@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,7 +39,7 @@ class LazyObjectState
         }
     }
 
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         if ('realInstance' !== $name) {
             throw new \BadMethodCallException(\sprintf('No such property "%s::$%s"', self::class, $name));

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,22 +28,18 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class LazyCommand extends Command
 {
-    private \Closure|Command $command;
-
     public function __construct(
         string $name,
         array $aliases,
         string $description,
         bool $isHidden,
-        \Closure $commandFactory,
-        private ?bool $isEnabled = true,
+        private \Closure|Command $command,
+        private readonly ?bool $isEnabled = true,
     ) {
         $this->setName($name)
             ->setAliases($aliases)
             ->setHidden($isHidden)
             ->setDescription($description);
-
-        $this->command = $commandFactory;
     }
 
     public function ignoreValidationErrors(): void
@@ -51,18 +49,14 @@ final class LazyCommand extends Command
 
     public function setApplication(?Application $application): void
     {
-        if ($this->command instanceof parent) {
-            $this->command->setApplication($application);
-        }
+        $this->command->setApplication($application);
 
         parent::setApplication($application);
     }
 
     public function setHelperSet(HelperSet $helperSet): void
     {
-        if ($this->command instanceof parent) {
-            $this->command->setHelperSet($helperSet);
-        }
+        $this->command->setHelperSet($helperSet);
 
         parent::setHelperSet($helperSet);
     }

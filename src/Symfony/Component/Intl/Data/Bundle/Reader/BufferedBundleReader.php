@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ class BufferedBundleReader implements BundleReaderInterface
     private RingBuffer $buffer;
 
     public function __construct(
-        private BundleReaderInterface $reader,
+        private readonly BundleReaderInterface $reader,
         int $bufferSize,
     ) {
         $this->buffer = new RingBuffer($bufferSize);

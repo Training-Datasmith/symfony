@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -43,7 +45,6 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
     public const TAGS_PREFIX = "\1tags\1";
 
     private array $deferred = [];
-    private AdapterInterface $pool;
     private AdapterInterface $tags;
     private array $knownTagVersions = [];
 
@@ -53,14 +54,13 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
     private static \Closure $saveTags;
 
     public function __construct(
-        AdapterInterface $itemsPool,
+        private AdapterInterface $pool,
         ?AdapterInterface $tagsPool = null,
         private float $knownTagVersionsTtl = 0.15,
     ) {
-        $this->pool = $itemsPool;
-        $this->tags = $tagsPool ?? $itemsPool;
+        $this->tags = $tagsPool ?? $this->pool;
         self::$setCacheItemTags ??= \Closure::bind(
-            static function (array $items, array $itemTags) {
+            static function (array $items, array $itemTags): array {
                 foreach ($items as $key => $item) {
                     $item->isTaggable = true;
 
@@ -80,7 +80,7 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
             CacheItem::class
         );
         self::$setTagVersions ??= \Closure::bind(
-            static function (array $items, array $tagVersions) {
+            static function (array $items, array $tagVersions): void {
                 foreach ($items as $item) {
                     $item->newMetadata[CacheItem::METADATA_TAGS] = array_intersect_key($tagVersions, $item->newMetadata[CacheItem::METADATA_TAGS] ?? []);
                 }
@@ -89,7 +89,7 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
             CacheItem::class
         );
         self::$getTagsByKey ??= \Closure::bind(
-            static function ($deferred) {
+            static function ($deferred): array {
                 $tagsByKey = [];
                 foreach ($deferred as $key => $item) {
                     $tagsByKey[$key] = $item->newMetadata[CacheItem::METADATA_TAGS] ?? [];
@@ -196,7 +196,6 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
                 }
             }
         }
-        $tagVersions = null;
 
         return (self::$setCacheItemTags)($bufferedItems, $itemTags);
     }
@@ -205,7 +204,7 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
     {
         if ('' !== $prefix) {
             foreach ($this->deferred as $key => $item) {
-                if (str_starts_with($key, $prefix)) {
+                if (str_starts_with((string) $key, $prefix)) {
                     unset($this->deferred[$key]);
                 }
             }
@@ -311,12 +310,12 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
 
     public function __serialize(): array
     {
-        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot serialize '.self::class);
     }
 
     public function __unserialize(array $data): void
     {
-        throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+        throw new \BadMethodCallException('Cannot unserialize '.self::class);
     }
 
     public function __destruct()

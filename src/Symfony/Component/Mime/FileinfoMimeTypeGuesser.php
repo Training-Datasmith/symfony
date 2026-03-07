@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ class FileinfoMimeTypeGuesser implements MimeTypeGuesserInterface
     /**
      * @var array<string, \finfo>
      */
-    private static $finfoCache = [];
+    private static array $finfoCache = [];
 
     /**
      * @param string|null $magicFile A magic file to use with the finfo instance
@@ -33,7 +35,7 @@ class FileinfoMimeTypeGuesser implements MimeTypeGuesserInterface
      * @see https://php.net/finfo-open
      */
     public function __construct(
-        private ?string $magicFile = null,
+        private readonly ?string $magicFile = null,
     ) {
     }
 
@@ -49,7 +51,7 @@ class FileinfoMimeTypeGuesser implements MimeTypeGuesserInterface
         }
 
         if (!$this->isGuesserSupported()) {
-            throw new LogicException(\sprintf('The "%s" guesser is not supported.', __CLASS__));
+            throw new LogicException(\sprintf('The "%s" guesser is not supported.', self::class));
         }
 
         try {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,13 +26,13 @@ use Symfony\Component\TypeInfo\TypeContext\TypeContextFactory;
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
  * @author Baptiste Leduc <baptiste.leduc@gmail.com>
  */
-final class TypeResolver implements TypeResolverInterface
+final readonly class TypeResolver implements TypeResolverInterface
 {
     /**
      * @param ContainerInterface $resolvers Locator of type resolvers, keyed by supported subject type
      */
     public function __construct(
-        private readonly ContainerInterface $resolvers,
+        private ContainerInterface $resolvers,
     ) {
     }
 
@@ -84,7 +86,7 @@ final class TypeResolver implements TypeResolverInterface
             }
         }
 
-        $resolversContainer = new class($resolvers) implements ContainerInterface {
+        $resolversContainer = new class ($resolvers) implements ContainerInterface {
             public function __construct(
                 private readonly array $resolvers,
             ) {

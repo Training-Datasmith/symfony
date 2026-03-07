@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,10 +27,10 @@ use Symfony\Component\Mime\Email;
  */
 final class MailerHandler extends AbstractProcessingHandler
 {
-    private \Closure|Email $messageTemplate;
+    private readonly \Closure|Email $messageTemplate;
 
     public function __construct(
-        private MailerInterface $mailer,
+        private readonly MailerInterface $mailer,
         callable|Email $messageTemplate,
         string|int|Level $level = Level::Debug,
         bool $bubble = true,

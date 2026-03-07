@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,8 +38,9 @@ final class SecretsRevealCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('name', InputArgument::REQUIRED, 'The name of the secret to reveal', null, fn () => array_keys($this->vault->list()))
-            ->setHelp(<<<'EOF'
+            ->addArgument('name', InputArgument::REQUIRED, 'The name of the secret to reveal', null, fn (): array => array_keys($this->vault->list()))
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command reveals a stored secret.
 
                     <info>%command.full_name%</info>
@@ -60,11 +63,10 @@ final class SecretsRevealCommand extends Command
         } else {
             if (!\array_key_exists($name, $secrets)) {
                 $io->error(\sprintf('The secret "%s" does not exist.', $name));
-
                 return self::INVALID;
-            } elseif (null === $secrets[$name]) {
+            }
+            if (null === $secrets[$name]) {
                 $io->error(\sprintf('The secret "%s" could not be decrypted.', $name));
-
                 return self::INVALID;
             }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,6 @@ use Symfony\Component\PropertyInfo\PropertyDescriptionExtractorInterface;
 use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 use Symfony\Component\TypeInfo\Exception\UnsupportedException;
 use Symfony\Component\TypeInfo\Type;
-use Symfony\Component\TypeInfo\TypeContext\TypeContext;
 use Symfony\Component\TypeInfo\TypeContext\TypeContextFactory;
 use Symfony\Component\TypeInfo\TypeResolver\StringTypeResolver;
 
@@ -47,31 +48,28 @@ final class PhpStanExtractor implements PropertyDescriptionExtractorInterface, P
     private PhpDocParser $phpDocParser;
     private Lexer $lexer;
 
-    private StringTypeResolver $stringTypeResolver;
-    private TypeContextFactory $typeContextFactory;
+    private readonly StringTypeResolver $stringTypeResolver;
+    private readonly TypeContextFactory $typeContextFactory;
 
     /** @var array<string, array{PhpDocNode|null, int|null, string|null, string|null}> */
     private array $docBlocks = [];
-    private array $mutatorPrefixes;
-    private array $accessorPrefixes;
-    private array $arrayMutatorPrefixes;
-
-    /** @var array<string, TypeContext> */
-    private array $contexts = [];
+    private readonly array $mutatorPrefixes;
+    private readonly array $accessorPrefixes;
+    private readonly array $arrayMutatorPrefixes;
 
     /**
      * @param list<string>|null $mutatorPrefixes
      * @param list<string>|null $accessorPrefixes
      * @param list<string>|null $arrayMutatorPrefixes
      */
-    public function __construct(?array $mutatorPrefixes = null, ?array $accessorPrefixes = null, ?array $arrayMutatorPrefixes = null, private bool $allowPrivateAccess = true)
+    public function __construct(?array $mutatorPrefixes = null, ?array $accessorPrefixes = null, ?array $arrayMutatorPrefixes = null, private readonly bool $allowPrivateAccess = true)
     {
         if (!class_exists(ContextFactory::class)) {
-            throw new \LogicException(\sprintf('Unable to use the "%s" class as the "phpdocumentor/type-resolver" package is not installed. Try running composer require "phpdocumentor/type-resolver".', __CLASS__));
+            throw new \LogicException(\sprintf('Unable to use the "%s" class as the "phpdocumentor/type-resolver" package is not installed. Try running composer require "phpdocumentor/type-resolver".', self::class));
         }
 
         if (!class_exists(PhpDocParser::class)) {
-            throw new \LogicException(\sprintf('Unable to use the "%s" class as the "phpstan/phpdoc-parser" package is not installed. Try running composer require "phpstan/phpdoc-parser".', __CLASS__));
+            throw new \LogicException(\sprintf('Unable to use the "%s" class as the "phpstan/phpdoc-parser" package is not installed. Try running composer require "phpstan/phpdoc-parser".', self::class));
         }
 
         $this->mutatorPrefixes = $mutatorPrefixes ?? ReflectionExtractor::$defaultMutatorPrefixes;
@@ -261,7 +259,7 @@ final class PhpStanExtractor implements PropertyDescriptionExtractorInterface, P
             }
         }
 
-        $shortDescription = trim(preg_replace('/^#@[+-]{1}/m', '', $shortDescription), "\n");
+        $shortDescription = trim((string) preg_replace('/^#@[+-]{1}/m', '', $shortDescription), "\n");
         $longDescription = trim($longDescription, "\n");
 
         return [
@@ -289,10 +287,12 @@ final class PhpStanExtractor implements PropertyDescriptionExtractorInterface, P
         }
 
         foreach ($docNode->getTagsByName('@param') as $tagNode) {
-            if (!$tagNode instanceof PhpDocTagNode || !$tagNode->value instanceof ParamTagValueNode) {
+            if (!$tagNode instanceof PhpDocTagNode) {
                 continue;
             }
-
+            if (!$tagNode->value instanceof ParamTagValueNode) {
+                continue;
+            }
             if ('$'.$property !== $tagNode->value->parameterName) {
                 continue;
             }
@@ -329,7 +329,7 @@ final class PhpStanExtractor implements PropertyDescriptionExtractorInterface, P
 
     private function filterDocBlockParams(PhpDocNode $docNode, string $allowedParam): ?ParamTagValueNode
     {
-        $tags = array_values(array_filter($docNode->getTagsByName('@param'), static fn ($tagNode) => $tagNode instanceof PhpDocTagNode && ('$'.$allowedParam) === $tagNode->value->parameterName));
+        $tags = array_values(array_filter($docNode->getTagsByName('@param'), static fn (\PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode $tagNode): bool => $tagNode instanceof PhpDocTagNode && ('$'.$allowedParam) === $tagNode->value->parameterName));
 
         if (!$tags) {
             return null;

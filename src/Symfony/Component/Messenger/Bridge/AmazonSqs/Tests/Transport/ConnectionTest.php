@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -487,7 +489,8 @@ class ConnectionTest extends TestCase
             );
         }
 
-        return new MockResponse(<<<XML
+        return new MockResponse(
+            <<<XML
             <GetQueueUrlResponse>
                 <GetQueueUrlResult>
                     <QueueUrl>https://sqs.us-east-2.amazonaws.com/123456789012/MyQueue</QueueUrl>
@@ -503,7 +506,8 @@ class ConnectionTest extends TestCase
     private function getMockedReceiveMessageResponse(): MockResponse
     {
         if ($this->isAsyncAwsSqsVersion2Installed()) {
-            return new MockResponse(<<<JSON
+            return new MockResponse(
+                <<<JSON
                 {
                     "Messages": [
                         {
@@ -524,7 +528,8 @@ class ConnectionTest extends TestCase
             );
         }
 
-        return new MockResponse(<<<XML
+        return new MockResponse(
+            <<<XML
             <ReceiveMessageResponse>
               <ReceiveMessageResult>
                 <Message>

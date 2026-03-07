@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ class SerializedParsedExpression extends ParsedExpression
      */
     public function __construct(
         string $expression,
-        private string $nodes,
+        private readonly string $nodes,
     ) {
         $this->expression = $expression;
     }

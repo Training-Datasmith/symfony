@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -45,7 +47,7 @@ use Symfony\Component\RateLimiter\LimiterInterface;
 class Worker
 {
     private bool $shouldStop = false;
-    private WorkerMetadata $metadata;
+    private readonly WorkerMetadata $metadata;
     private array $acks = [];
     private ?\SplObjectStorage $unacks = null;
     /**
@@ -58,11 +60,11 @@ class Worker
      */
     public function __construct(
         private array $receivers,
-        private MessageBusInterface $bus,
-        private ?EventDispatcherInterface $eventDispatcher = null,
-        private ?LoggerInterface $logger = null,
+        private readonly MessageBusInterface $bus,
+        private readonly ?EventDispatcherInterface $eventDispatcher = null,
+        private readonly ?LoggerInterface $logger = null,
         private ?array $rateLimiters = null,
-        private ClockInterface $clock = new Clock(),
+        private readonly ClockInterface $clock = new Clock(),
     ) {
         $this->metadata = new WorkerMetadata([
             'transportNames' => array_keys($receivers),
@@ -159,7 +161,7 @@ class Worker
         }
 
         $acked = false;
-        $ack = function (Envelope $envelope, ?\Throwable $e = null) use ($transportName, &$acked) {
+        $ack = function (Envelope $envelope, ?\Throwable $e = null) use ($transportName, &$acked): void {
             $acked = true;
             $this->acks[] = [$transportName, $envelope, $e];
         };

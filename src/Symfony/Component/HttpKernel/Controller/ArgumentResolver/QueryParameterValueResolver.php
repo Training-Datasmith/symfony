@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -125,7 +127,7 @@ final class QueryParameterValueResolver implements ValueResolverInterface
             return [$value];
         }
 
-        $filtered = array_filter($value, static fn ($v) => null !== $v);
+        $filtered = array_filter($value, static fn ($v): bool => null !== $v);
 
         if ($argument->isVariadic()) {
             $filtered = array_values($filtered);

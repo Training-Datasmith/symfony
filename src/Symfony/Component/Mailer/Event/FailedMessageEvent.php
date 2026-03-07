@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,8 +22,8 @@ use Symfony\Contracts\EventDispatcher\Event;
 final class FailedMessageEvent extends Event
 {
     public function __construct(
-        private RawMessage $message,
-        private \Throwable $error,
+        private readonly RawMessage $message,
+        private readonly \Throwable $error,
     ) {
     }
 

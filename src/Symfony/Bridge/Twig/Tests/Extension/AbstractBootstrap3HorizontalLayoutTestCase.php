@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,8 @@ abstract class AbstractBootstrap3HorizontalLayoutTestCase extends AbstractBootst
         $this->renderWidget($view, ['label' => 'foo']);
         $html = $this->renderLabel($view);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/label
     [@class="col-sm-2 control-label required"]
     [.="[trans]Name[/trans]"]
@@ -37,7 +40,8 @@ abstract class AbstractBootstrap3HorizontalLayoutTestCase extends AbstractBootst
             ],
         ]);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/label
     [@for="name"]
     [@class="col-sm-2 control-label required"]
@@ -54,7 +58,8 @@ abstract class AbstractBootstrap3HorizontalLayoutTestCase extends AbstractBootst
             ],
         ]);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/label
     [@for="name"]
     [@class="my&class col-sm-2 control-label required"]
@@ -71,7 +76,8 @@ abstract class AbstractBootstrap3HorizontalLayoutTestCase extends AbstractBootst
             ],
         ]);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/label
     [@for="name"]
     [@class="my&class col-sm-2 control-label required"]
@@ -91,7 +97,8 @@ abstract class AbstractBootstrap3HorizontalLayoutTestCase extends AbstractBootst
             ],
         ]);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/label
     [@for="name"]
     [@class="my&class col-sm-2 control-label required"]
@@ -202,7 +209,8 @@ abstract class AbstractBootstrap3HorizontalLayoutTestCase extends AbstractBootst
         $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType');
         $html = $this->renderRow($form->createView(), ['label' => 'foo', 'help' => 'really helpful text']);
 
-        $this->assertMatchesXpath($html,
+        $this->assertMatchesXpath(
+            $html,
             '/div
     [@class="form-group"]
     [

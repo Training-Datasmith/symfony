@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ class CurrencyType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'choice_loader' => function (Options $options) {
+            'choice_loader' => function (Options $options): \Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader {
                 if (!class_exists(Intl::class)) {
                     throw new LogicException(\sprintf('The "symfony/intl" component is required to use "%s". Try running "composer require symfony/intl".', static::class));
                 }
@@ -50,7 +52,7 @@ class CurrencyType extends AbstractType
                 return ChoiceList::loader(
                     $this,
                     new IntlCallbackChoiceLoader(
-                        static function () use ($choiceTranslationLocale, $activeAt, $notActiveAt, $legalTender, $includeUndated) {
+                        static function () use ($choiceTranslationLocale, $activeAt, $notActiveAt, $legalTender, $includeUndated): array {
                             if (null === $activeAt && null === $notActiveAt && null === $legalTender) {
                                 return array_flip(Currencies::getNames($choiceTranslationLocale));
                             }

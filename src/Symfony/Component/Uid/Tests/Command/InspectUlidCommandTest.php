@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,8 @@ final class InspectUlidCommandTest extends TestCase
             '0171069d-593d-97d3-8b3e-23d06de5b308',
         ] as $ulid) {
             $this->assertSame(0, $commandTester->execute(['ulid' => $ulid]));
-            $this->assertSame(<<<EOF
+            $this->assertSame(
+                <<<EOF
                  ---------------------- -------------------------------------- 
                   Label                  Value                                 
                  ---------------------- -------------------------------------- 

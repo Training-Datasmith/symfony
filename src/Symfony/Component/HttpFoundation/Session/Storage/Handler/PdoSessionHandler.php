@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -88,7 +90,7 @@ class PdoSessionHandler extends AbstractSessionHandler
     /**
      * Time to live in seconds.
      */
-    private int|\Closure|null $ttl;
+    private readonly int|\Closure|null $ttl;
 
     /**
      * Username when lazy-connect.
@@ -158,7 +160,7 @@ class PdoSessionHandler extends AbstractSessionHandler
     {
         if ($pdoOrDsn instanceof \PDO) {
             if (\PDO::ERRMODE_EXCEPTION !== $pdoOrDsn->getAttribute(\PDO::ATTR_ERRMODE)) {
-                throw new \InvalidArgumentException(\sprintf('"%s" requires PDO error mode attribute be set to throw Exceptions (i.e. $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION)).', __CLASS__));
+                throw new \InvalidArgumentException(\sprintf('"%s" requires PDO error mode attribute be set to throw Exceptions (i.e. $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION)).', self::class));
             }
 
             $this->pdo = $pdoOrDsn;
@@ -357,7 +359,7 @@ class PdoSessionHandler extends AbstractSessionHandler
                     $insertStmt->execute();
                 } catch (\PDOException $e) {
                     // Handle integrity violation SQLSTATE 23000 (or a subclass like 23505 in Postgres) for duplicate keys
-                    if (str_starts_with($e->getCode(), '23')) {
+                    if (str_starts_with((string) $e->getCode(), '23')) {
                         $updateStmt->execute();
                     } else {
                         throw $e;
@@ -439,13 +441,13 @@ class PdoSessionHandler extends AbstractSessionHandler
         // (pdo_)?sqlite3?:///... => (pdo_)?sqlite3?://localhost/... or else the URL will be invalid
         $url = preg_replace('#^((?:pdo_)?sqlite3?):///#', '$1://localhost/', $dsnOrUrl);
 
-        $params = parse_url($url);
+        $params = parse_url((string) $url);
 
         if (false === $params) {
             return $dsnOrUrl; // If the URL is not valid, let's assume it might be a DSN already.
         }
 
-        $params = array_map('rawurldecode', $params);
+        $params = array_map(rawurldecode(...), $params);
 
         // Override the default username and password. Values passed through options will still win over these in the constructor.
         if (isset($params['user'])) {
@@ -660,7 +662,7 @@ class PdoSessionHandler extends AbstractSessionHandler
                 } catch (\PDOException $e) {
                     // Catch duplicate key error because other connection created the session already.
                     // It would only not be the case when the other connection destroyed the session.
-                    if (str_starts_with($e->getCode(), '23')) {
+                    if (str_starts_with((string) $e->getCode(), '23')) {
                         // Retrieve finished session data written by concurrent connection by restarting the loop.
                         // We have to start a new transaction as a failed query will mark the current transaction as
                         // aborted in PostgreSQL and disallow further queries within it.

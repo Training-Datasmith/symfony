@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -209,7 +211,7 @@ class PostgreSqlNotifyOnIdleListenerTest extends TestCase
         // Use ArrayObject so object identity survives array destructuring
         // (plain array references are lost when using [$a, $b] = ...)
         $capturedTimeouts = new \ArrayObject();
-        $wrappedConnection = new class($capturedTimeouts) {
+        $wrappedConnection = new class ($capturedTimeouts) {
             public function __construct(private \ArrayObject $captured)
             {
             }
@@ -342,7 +344,7 @@ class PostgreSqlNotifyOnIdleListenerTest extends TestCase
             ->willReturn(new Result($delayedResult, $driverConnection));
 
         $capturedTimeouts = new \ArrayObject();
-        $wrappedConnection = new class($capturedTimeouts) {
+        $wrappedConnection = new class ($capturedTimeouts) {
             public function __construct(private \ArrayObject $captured)
             {
             }

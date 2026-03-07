@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -283,12 +285,12 @@ class Serializer implements SerializerInterface, NormalizerInterface, Denormaliz
                 $supportedTypes = $normalizer->getSupportedTypes($format);
 
                 foreach ($supportedTypes as $supportedType => $isCacheable) {
-                    if (\in_array($supportedType, ['*', 'object'], true)
-                        || $type !== $supportedType && ('object' !== $genericType || !is_subclass_of($type, $supportedType))
-                    ) {
+                    if (\in_array($supportedType, ['*', 'object'], true)) {
                         continue;
                     }
-
+                    if ($type !== $supportedType && ('object' !== $genericType || !is_subclass_of($type, $supportedType))) {
+                        continue;
+                    }
                     if (null === $isCacheable) {
                         unset($supportedTypes['*'], $supportedTypes['object']);
                     } elseif ($this->normalizerCache[$format ?? ''][$type][$k] = $isCacheable && $normalizer->supportsNormalization($data, $format, $context)) {
@@ -342,13 +344,13 @@ class Serializer implements SerializerInterface, NormalizerInterface, Denormaliz
                 $doesClassRepresentCollection = str_ends_with($class, '[]');
 
                 foreach ($supportedTypes as $supportedType => $isCacheable) {
-                    if (\in_array($supportedType, ['*', 'object'], true)
-                        || $class !== $supportedType && ('object' !== $genericType || !is_subclass_of($class, $supportedType))
-                        && !($doesClassRepresentCollection && str_ends_with($supportedType, '[]') && is_subclass_of(strstr($class, '[]', true), strstr($supportedType, '[]', true)))
-                    ) {
+                    if (\in_array($supportedType, ['*', 'object'], true)) {
                         continue;
                     }
-
+                    if ($class !== $supportedType && ('object' !== $genericType || !is_subclass_of($class, $supportedType))
+                    && !($doesClassRepresentCollection && str_ends_with($supportedType, '[]') && is_subclass_of(strstr($class, '[]', true), strstr($supportedType, '[]', true)))) {
+                        continue;
+                    }
                     if (null === $isCacheable) {
                         unset($supportedTypes['*'], $supportedTypes['object']);
                     } elseif ($this->denormalizerCache[$format ?? ''][$class][$k] = $isCacheable && $normalizer->supportsDenormalization(null, $class, $format, $context)) {

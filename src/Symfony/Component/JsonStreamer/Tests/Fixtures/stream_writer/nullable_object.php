@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @param Symfony\Component\JsonStreamer\Tests\Fixtures\Model\DummyWithNameAttributes|null $data
  */
@@ -12,9 +14,9 @@ return static function (mixed $data, \Psr\Container\ContainerInterface $valueTra
             $prefix1 = ',';
             yield "{$prefix1}\"name\":";
             yield \json_encode($data->name, \JSON_THROW_ON_ERROR, 511);
-            yield "}";
+            yield '}';
         } elseif (null === $data) {
-            yield "null";
+            yield 'null';
         } else {
             throw new \Symfony\Component\JsonStreamer\Exception\UnexpectedValueException(\sprintf('Unexpected "%s" value.', \get_debug_type($data)));
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'bo‘sa olish: voyaga yetgan voyaga yetgan 1–2-teri turi 3-teri turi',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'bo‘sa olish: voyaga yetgan voyaga yetgan 1–2-teri turi 4-teri turi',

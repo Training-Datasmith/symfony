@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -40,7 +42,7 @@ class InputArgument
      */
     public const IS_ARRAY = 4;
 
-    private int $mode;
+    private readonly int $mode;
     private mixed $default;
 
     /**
@@ -53,11 +55,11 @@ class InputArgument
      * @throws InvalidArgumentException When argument mode is not valid
      */
     public function __construct(
-        private string $name,
+        private readonly string $name,
         ?int $mode = null,
-        private string $description = '',
+        private readonly string $description = '',
         mixed $default = null,
-        private \Closure|array $suggestedValues = [],
+        private readonly \Closure|array $suggestedValues = [],
     ) {
         // If not explicitly marked as required, we assume the value to be optional
         $mode = self::REQUIRED === (self::REQUIRED & $mode) ? $mode : (self::OPTIONAL | $mode);

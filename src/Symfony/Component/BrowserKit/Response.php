@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ use Symfony\Component\BrowserKit\Exception\JsonException;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class Response
+final class Response implements \Stringable
 {
     private array $jsonData;
 
@@ -29,9 +31,9 @@ final class Response
      * @param array  $headers An array of headers
      */
     public function __construct(
-        private string $content = '',
-        private int $status = 200,
-        private array $headers = [],
+        private readonly string $content = '',
+        private readonly int $status = 200,
+        private readonly array $headers = [],
     ) {
     }
 
@@ -76,7 +78,7 @@ final class Response
     {
         $normalizedHeader = str_replace('-', '_', strtolower($header));
         foreach ($this->headers as $key => $value) {
-            if (str_replace('-', '_', strtolower($key)) === $normalizedHeader) {
+            if (str_replace('-', '_', strtolower((string) $key)) === $normalizedHeader) {
                 if ($first) {
                     return \is_array($value) ? (\count($value) ? $value[0] : '') : $value;
                 }

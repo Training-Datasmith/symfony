@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -15,7 +17,7 @@ class MissingOptionsException extends ValidatorException
 {
     public function __construct(
         string $message,
-        private array $options,
+        private readonly array $options,
     ) {
         parent::__construct($message);
     }

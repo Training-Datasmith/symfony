@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,16 +25,14 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
 class ReflectionClassResource implements SelfCheckingResourceInterface
 {
     private array $files = [];
-    private string $className;
-    private array $excludedVendors = [];
+    private readonly string $className;
     private string $hash;
 
     public function __construct(
         private \ReflectionClass $classReflector,
-        array $excludedVendors = [],
+        private readonly array $excludedVendors = [],
     ) {
         $this->className = $classReflector->name;
-        $this->excludedVendors = $excludedVendors;
     }
 
     public function isFresh(int $timestamp): bool
@@ -84,7 +84,7 @@ class ReflectionClassResource implements SelfCheckingResourceInterface
             $file = $class->getFileName();
             if (false !== $file && is_file($file)) {
                 foreach ($this->excludedVendors as $vendor) {
-                    if (\in_array($file[\strlen($vendor)] ?? '', ['/', \DIRECTORY_SEPARATOR], true) && str_starts_with($file, $vendor)) {
+                    if (\in_array($file[\strlen((string) $vendor)] ?? '', ['/', \DIRECTORY_SEPARATOR], true) && str_starts_with($file, (string) $vendor)) {
                         $file = false;
                         break;
                     }
@@ -110,7 +110,7 @@ class ReflectionClassResource implements SelfCheckingResourceInterface
         $hash = hash_init('xxh128');
 
         foreach ($this->generateSignature($this->classReflector) as $info) {
-            hash_update($hash, $info);
+            hash_update($hash, (string) $info);
         }
 
         return hash_final($hash);
@@ -167,7 +167,7 @@ class ReflectionClassResource implements SelfCheckingResourceInterface
         foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED) as $m) {
             foreach ($this->excludedVendors as $vendor) {
                 $file = $m->getFileName();
-                if (\in_array($file[\strlen($vendor)] ?? '', ['/', \DIRECTORY_SEPARATOR], true) && str_starts_with($file, $vendor)) {
+                if (\in_array($file[\strlen((string) $vendor)] ?? '', ['/', \DIRECTORY_SEPARATOR], true) && str_starts_with($file, (string) $vendor)) {
                     continue 2;
                 }
             }

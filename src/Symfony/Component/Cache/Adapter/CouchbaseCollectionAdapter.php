@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,13 +31,11 @@ class CouchbaseCollectionAdapter extends AbstractAdapter
 {
     private const MAX_KEY_LENGTH = 250;
 
-    private MarshallerInterface $marshaller;
-
     public function __construct(
-        private Collection $connection,
+        private readonly Collection $connection,
         string $namespace = '',
         int $defaultLifetime = 0,
-        ?MarshallerInterface $marshaller = null,
+        private readonly ?MarshallerInterface $marshaller = new DefaultMarshaller(),
     ) {
         if (!static::isSupported()) {
             throw new CacheException('Couchbase >= 3.0.5 < 4.0.0 is required.');
@@ -45,7 +45,6 @@ class CouchbaseCollectionAdapter extends AbstractAdapter
 
         parent::__construct($namespace, $defaultLifetime);
         $this->enableVersioning();
-        $this->marshaller = $marshaller ?? new DefaultMarshaller();
     }
 
     public static function createConnection(#[\SensitiveParameter] array|string $dsn, array $options = []): Bucket|Collection
@@ -68,11 +67,11 @@ class CouchbaseCollectionAdapter extends AbstractAdapter
             $password = $options['password'] ?? '';
 
             foreach ($dsn as $server) {
-                if (!str_starts_with($server, 'couchbase:')) {
+                if (!str_starts_with((string) $server, 'couchbase:')) {
                     throw new InvalidArgumentException('Invalid Couchbase DSN: it does not start with "couchbase:".');
                 }
 
-                $params = parse_url($server);
+                $params = parse_url((string) $server);
 
                 $username = isset($params['user']) ? rawurldecode($params['user']) : $username;
                 $password = isset($params['pass']) ? rawurldecode($params['pass']) : $password;

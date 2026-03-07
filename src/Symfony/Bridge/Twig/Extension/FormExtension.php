@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -35,7 +37,7 @@ use Twig\TwigTest;
 final class FormExtension extends AbstractExtension
 {
     public function __construct(
-        private ?TranslatorInterface $translator = null,
+        private readonly ?TranslatorInterface $translator = null,
     ) {
     }
 
@@ -125,7 +127,7 @@ final class FormExtension extends AbstractExtension
         if (!$label && $labelFormat = $view->vars['label_format']) {
             $label = str_replace(['%id%', '%name%'], [$view->vars['id'], $view->vars['name']], $labelFormat);
         } elseif (!$label) {
-            $label = ucfirst(strtolower(trim(preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], $view->vars['name']))));
+            $label = ucfirst(strtolower(trim((string) preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], (string) $view->vars['name']))));
         }
 
         return $this->createFieldTranslation(

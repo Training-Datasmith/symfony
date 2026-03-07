@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -136,8 +138,10 @@ class SignalRegistryTest extends TestCase
 
         $signal = \SIGUSR1;
 
-        $handler1 = static function () {};
-        $handler2 = static function () {};
+        $handler1 = static function () {
+        };
+        $handler2 = static function () {
+        };
 
         $registry->pushCurrentHandlers();
         $registry->register($signal, $handler1);
@@ -172,7 +176,8 @@ class SignalRegistryTest extends TestCase
 
         $original = pcntl_signal_get_handler($signal);
 
-        $handler = static function () {};
+        $handler = static function () {
+        };
 
         $registry->pushCurrentHandlers();
         $registry->register($signal, $handler);

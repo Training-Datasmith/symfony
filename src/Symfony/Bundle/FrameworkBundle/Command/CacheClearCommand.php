@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,15 +39,11 @@ use Symfony\Component\HttpKernel\RebootableInterface;
 #[AsCommand(name: 'cache:clear', description: 'Clear the cache')]
 class CacheClearCommand extends Command
 {
-    private Filesystem $filesystem;
-
     public function __construct(
-        private CacheClearerInterface $cacheClearer,
-        ?Filesystem $filesystem = null,
+        private readonly CacheClearerInterface $cacheClearer,
+        private readonly ?Filesystem $filesystem = new Filesystem(),
     ) {
         parent::__construct();
-
-        $this->filesystem = $filesystem ?? new Filesystem();
     }
 
     protected function configure(): void
@@ -55,7 +53,8 @@ class CacheClearCommand extends Command
                 new InputOption('no-warmup', '', InputOption::VALUE_NONE, 'Do not warm up the cache'),
                 new InputOption('no-optional-warmers', '', InputOption::VALUE_NONE, 'Skip optional cache warmers (faster)'),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command clears and warms up the application cache for a given environment
                 and debug mode:
 
@@ -76,7 +75,7 @@ class CacheClearCommand extends Command
         $realBuildDir = $kernel->getContainer()->hasParameter('kernel.build_dir') ? $kernel->getContainer()->getParameter('kernel.build_dir') : $realCacheDir;
         // the old cache dir name must not be longer than the real one to avoid exceeding
         // the maximum length of a directory or file path within it (esp. Windows MAX_PATH)
-        $oldCacheDir = substr($realCacheDir, 0, -1).(str_ends_with($realCacheDir, '~') ? '+' : '~');
+        $oldCacheDir = substr((string) $realCacheDir, 0, -1).(str_ends_with((string) $realCacheDir, '~') ? '+' : '~');
         $fs->remove($oldCacheDir);
 
         if (!is_writable($realCacheDir)) {
@@ -84,7 +83,7 @@ class CacheClearCommand extends Command
         }
 
         $useBuildDir = $realBuildDir !== $realCacheDir;
-        $oldBuildDir = substr($realBuildDir, 0, -1).(str_ends_with($realBuildDir, '~') ? '+' : '~');
+        $oldBuildDir = substr((string) $realBuildDir, 0, -1).(str_ends_with((string) $realBuildDir, '~') ? '+' : '~');
         if ($useBuildDir) {
             $fs->remove($oldBuildDir);
 
@@ -138,7 +137,7 @@ class CacheClearCommand extends Command
                 if ($output->isVerbose()) {
                     $io->comment('Warming up cache...');
                 }
-                $this->warmup($warmupDir, $realBuildDir);
+                $this->warmup($warmupDir);
 
                 if (!$input->getOption('no-optional-warmers')) {
                     if ($output->isVerbose()) {
@@ -221,7 +220,7 @@ class CacheClearCommand extends Command
             }
         }
         foreach ($mounts as $mount) {
-            if (str_starts_with($dir, $mount)) {
+            if (str_starts_with($dir, (string) $mount)) {
                 return true;
             }
         }
@@ -229,7 +228,7 @@ class CacheClearCommand extends Command
         return false;
     }
 
-    private function warmup(string $warmupDir, string $realBuildDir): void
+    private function warmup(string $warmupDir): void
     {
         // create a temporary kernel
         $kernel = $this->getApplication()->getKernel();

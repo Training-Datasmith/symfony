@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,7 +26,7 @@ final class ConsoleSignalEvent extends ConsoleEvent
         Command $command,
         InputInterface $input,
         OutputInterface $output,
-        private int $handlingSignal,
+        private readonly int $handlingSignal,
         private int|false $exitCode = 0,
     ) {
         parent::__construct($command, $input, $output);

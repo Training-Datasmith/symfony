@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -340,7 +342,7 @@ class ExceptionCasterTest extends TestCase
 
     public function testAnonymous()
     {
-        $e = new \Exception(\sprintf('Boo "%s" ba.', (new class('Foo') extends \Exception {
+        $e = new \Exception(\sprintf('Boo "%s" ba.', (new class ('Foo') extends \Exception {
         })::class));
 
         $expectedDump = <<<'EODUMP'

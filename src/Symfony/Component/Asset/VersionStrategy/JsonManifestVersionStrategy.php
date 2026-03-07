@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,9 +40,9 @@ class JsonManifestVersionStrategy implements VersionStrategyInterface
      * @param bool   $strictMode   Throws an exception for unknown paths
      */
     public function __construct(
-        private string $manifestPath,
-        private ?HttpClientInterface $httpClient = null,
-        private bool $strictMode = false,
+        private readonly string $manifestPath,
+        private readonly ?HttpClientInterface $httpClient = null,
+        private readonly bool $strictMode = false,
     ) {
         if (null === $this->httpClient && ($scheme = parse_url($this->manifestPath, \PHP_URL_SCHEME)) && str_starts_with($scheme, 'http')) {
             throw new LogicException(\sprintf('The "%s" class needs an HTTP client to use a remote manifest. Try running "composer require symfony/http-client".', self::class));
@@ -117,13 +119,13 @@ class JsonManifestVersionStrategy implements VersionStrategyInterface
         $alternatives = [];
 
         foreach ($manifestData as $key => $value) {
-            $lev = levenshtein($path, strtolower($key));
-            if ($lev <= \strlen($path) / 3 || false !== stripos($key, $path)) {
+            $lev = levenshtein($path, strtolower((string) $key));
+            if ($lev <= \strlen($path) / 3 || false !== stripos((string) $key, $path)) {
                 $alternatives[$key] = isset($alternatives[$key]) ? min($lev, $alternatives[$key]) : $lev;
             }
 
-            $lev = levenshtein($path, strtolower($value));
-            if ($lev <= \strlen($path) / 3 || false !== stripos($key, $path)) {
+            $lev = levenshtein($path, strtolower((string) $value));
+            if ($lev <= \strlen($path) / 3 || false !== stripos((string) $key, $path)) {
                 $alternatives[$key] = isset($alternatives[$key]) ? min($lev, $alternatives[$key]) : $lev;
             }
         }

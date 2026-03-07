@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -38,9 +40,9 @@ use Symfony\Component\TypeInfo\TypeResolver\TypeResolver;
  */
 final class JsonStreamReader implements StreamReaderInterface
 {
-    private StreamReaderGenerator $streamReaderGenerator;
-    private Instantiator $instantiator;
-    private LazyInstantiator $lazyInstantiator;
+    private readonly StreamReaderGenerator $streamReaderGenerator;
+    private readonly Instantiator $instantiator;
+    private readonly LazyInstantiator $lazyInstantiator;
 
     /**
      * @var array<string, callable>
@@ -51,11 +53,11 @@ final class JsonStreamReader implements StreamReaderInterface
      * @param Options $defaultOptions
      */
     public function __construct(
-        private ContainerInterface $valueTransformers,
+        private readonly ContainerInterface $valueTransformers,
         PropertyMetadataLoaderInterface $propertyMetadataLoader,
         string $streamReadersDir,
         ?ConfigCacheFactoryInterface $configCacheFactory = null,
-        private array $defaultOptions = [],
+        private readonly array $defaultOptions = [],
     ) {
         $this->streamReaderGenerator = new StreamReaderGenerator($propertyMetadataLoader, $streamReadersDir, $configCacheFactory);
         $this->instantiator = new Instantiator();
@@ -81,7 +83,7 @@ final class JsonStreamReader implements StreamReaderInterface
             'json_streamer.value_transformer.string_to_date_time' => new StringToDateTimeValueTransformer(),
         ];
 
-        $valueTransformersContainer = new class($valueTransformers) implements ContainerInterface {
+        $valueTransformersContainer = new class ($valueTransformers) implements ContainerInterface {
             public function __construct(
                 private array $valueTransformers,
             ) {

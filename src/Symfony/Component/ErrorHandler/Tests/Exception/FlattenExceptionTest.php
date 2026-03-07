@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -232,17 +234,17 @@ class FlattenExceptionTest extends TestCase
 
     public function testAnonymousClass()
     {
-        $flattened = FlattenException::createFromThrowable(new class extends \RuntimeException {
+        $flattened = FlattenException::createFromThrowable(new class () extends \RuntimeException {
         });
 
         $this->assertSame('RuntimeException@anonymous', $flattened->getClass());
 
-        $flattened->setClass((new class('Oops') extends NotFoundHttpException {
+        $flattened->setClass((new class ('Oops') extends NotFoundHttpException {
         })::class);
 
         $this->assertSame('Symfony\Component\HttpKernel\Exception\NotFoundHttpException@anonymous', $flattened->getClass());
 
-        $flattened = FlattenException::createFromThrowable(new \Exception(\sprintf('Class "%s" blah.', (new class extends \RuntimeException {
+        $flattened = FlattenException::createFromThrowable(new \Exception(\sprintf('Class "%s" blah.', (new class () extends \RuntimeException {
         })::class)));
 
         $this->assertSame('Class "RuntimeException@anonymous" blah.', $flattened->getMessage());

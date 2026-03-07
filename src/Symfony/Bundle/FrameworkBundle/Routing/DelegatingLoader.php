@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,8 +34,8 @@ class DelegatingLoader extends BaseDelegatingLoader
 
     public function __construct(
         LoaderResolverInterface $resolver,
-        private array $defaultOptions = [],
-        private array $defaultRequirements = [],
+        private readonly array $defaultOptions = [],
+        private readonly array $defaultRequirements = [],
     ) {
         parent::__construct($resolver);
     }

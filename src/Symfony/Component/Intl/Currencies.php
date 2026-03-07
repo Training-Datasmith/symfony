@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -72,7 +74,7 @@ final class Currencies extends ResourceBundle
             $names = iterator_to_array($names);
         }
 
-        array_walk($names, static function (&$value) {
+        array_walk($names, static function (array &$value): void {
             $value = $value[self::INDEX_NAME];
         });
 
@@ -247,7 +249,7 @@ final class Currencies extends ResourceBundle
             throw new \InvalidArgumentException("The currency $currency does not exist.");
         }
 
-        foreach (self::readEntry(['Map'], 'meta') as $countryCode => $country) {
+        foreach (self::readEntry(['Map'], 'meta') as $country) {
             foreach ($country as $currencyCode => $currencyMetadata) {
                 if ($currencyCode !== $currency) {
                     continue;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,8 +30,8 @@ use Symfony\Component\Messenger\Stamp\SentToFailureTransportStamp;
 class SendFailedMessageToFailureTransportListener implements EventSubscriberInterface
 {
     public function __construct(
-        private ContainerInterface $failureSenders,
-        private ?LoggerInterface $logger = null,
+        private readonly ContainerInterface $failureSenders,
+        private readonly ?LoggerInterface $logger = null,
         private array $failureTransportsByName = [],
     ) {
     }

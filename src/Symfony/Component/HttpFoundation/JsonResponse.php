@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -159,7 +161,7 @@ class JsonResponse extends Response
     {
         $this->encodingOptions = $encodingOptions;
 
-        return $this->setData(json_decode($this->data));
+        return $this->setData(json_decode((string) $this->data));
     }
 
     /**

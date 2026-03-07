@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ use Symfony\Component\VarDumper\Server\Connection;
  */
 class ServerDumper implements DataDumperInterface
 {
-    private Connection $connection;
+    private readonly Connection $connection;
 
     /**
      * @param string                     $host             The server host
@@ -31,7 +33,7 @@ class ServerDumper implements DataDumperInterface
      */
     public function __construct(
         string $host,
-        private ?DataDumperInterface $wrappedDumper = null,
+        private readonly ?DataDumperInterface $wrappedDumper = null,
         array $contextProviders = [],
     ) {
         $this->connection = new Connection($host, $contextProviders);

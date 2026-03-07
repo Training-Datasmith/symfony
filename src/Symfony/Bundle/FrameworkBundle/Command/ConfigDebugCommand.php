@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -41,7 +43,7 @@ use Symfony\Component\Yaml\Yaml;
 class ConfigDebugCommand extends AbstractConfigCommand
 {
     public function __construct(
-        private ?ContainerInterface $envVarProcessors = null,
+        private readonly ?ContainerInterface $envVarProcessors = null,
     ) {
         parent::__construct();
     }
@@ -55,7 +57,8 @@ class ConfigDebugCommand extends AbstractConfigCommand
                 new InputOption('resolve-env', null, InputOption::VALUE_NONE, 'Display resolved environment variable values instead of placeholders'),
                 new InputOption('format', null, InputOption::VALUE_REQUIRED, \sprintf('The output format ("%s")', implode('", "', $this->getAvailableFormatOptions())), class_exists(Yaml::class) ? 'txt' : 'json'),
             ])
-            ->setHelp(<<<EOF
+            ->setHelp(
+                <<<EOF
                 The <info>%command.name%</info> command dumps the current configuration for an
                 extension/bundle.
 
@@ -260,7 +263,8 @@ class ConfigDebugCommand extends AbstractConfigCommand
         return $container->resolveEnvPlaceholders(
             $container->getParameterBag()->resolveValue(
                 $this->getConfigForExtension($extension, $container)
-            ), $resolveEnvs ?: null
+            ),
+            $resolveEnvs ?: null
         );
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -71,15 +73,20 @@ class ImportMapAuditor
 
         foreach ($response->toArray() as $advisory) {
             foreach ($advisory['vulnerabilities'] ?? [] as $vulnerability) {
-                if (
-                    null === $vulnerability['package']
-                    || 'npm' !== $vulnerability['package']['ecosystem']
-                    || !\array_key_exists($package = $vulnerability['package']['name'], $installed)
-                ) {
+                if (null === $vulnerability['package']) {
+                    continue;
+                }
+                if ('npm' !== $vulnerability['package']['ecosystem']) {
+                    continue;
+                }
+                if (!\array_key_exists($package = $vulnerability['package']['name'], $installed)) {
                     continue;
                 }
                 foreach ($installed[$package] as $version) {
-                    if (!$version || !$this->versionMatches($version, $vulnerability['vulnerable_version_range'] ?? '>= *')) {
+                    if (!$version) {
+                        continue;
+                    }
+                    if (!$this->versionMatches($version, $vulnerability['vulnerable_version_range'] ?? '>= *')) {
                         continue;
                     }
                     $packageAudits[$package.'@'.$version] = $packageAudits[$package.'@'.$version]->withVulnerability(

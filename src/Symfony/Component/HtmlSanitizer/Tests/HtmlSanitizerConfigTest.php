@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -269,7 +271,7 @@ class HtmlSanitizerConfigTest extends TestCase
     {
         $config = new HtmlSanitizerConfig();
 
-        $sanitizer = new class implements AttributeSanitizerInterface {
+        $sanitizer = new class () implements AttributeSanitizerInterface {
             public function getSupportedElements(): ?array
             {
                 return null;

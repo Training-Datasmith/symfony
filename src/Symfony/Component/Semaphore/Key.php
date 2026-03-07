@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,7 @@ use Symfony\Component\Semaphore\Exception\UnserializableKeyException;
  * @author Grégoire Pineau <lyrixx@lyrixx.info>
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
-final class Key
+final class Key implements \Stringable
 {
     private ?float $expiringTime = null;
     private array $state = [];

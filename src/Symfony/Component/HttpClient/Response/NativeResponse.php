@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -12,7 +14,6 @@
 namespace Symfony\Component\HttpClient\Response;
 
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpClient\Chunk\FirstChunk;
 use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpClient\Internal\Canary;
 use Symfony\Component\HttpClient\Internal\ClientState;
@@ -73,14 +74,14 @@ final class NativeResponse implements ResponseInterface, StreamableInterface
         $info['max_connect_duration'] = $options['max_connect_duration'];
         ++$multi->responseCount;
 
-        $this->initializer = static fn (self $response) => null === $response->remaining;
+        $this->initializer = static fn (self $response): bool => null === $response->remaining;
 
         $pauseExpiry = &$this->pauseExpiry;
-        $info['pause_handler'] = static function (float $duration) use (&$pauseExpiry) {
+        $info['pause_handler'] = static function (float $duration) use (&$pauseExpiry): void {
             $pauseExpiry = 0 < $duration ? hrtime(true) / 1E9 + $duration : 0;
         };
 
-        $this->canary = new Canary(static function () use ($multi, $id) {
+        $this->canary = new Canary(static function () use ($multi, $id): void {
             if (null !== ($host = $multi->openHandles[$id][6] ?? null) && isset($multi->hosts[$host]) && 0 >= --$multi->hosts[$host]) {
                 unset($multi->hosts[$host]);
             }
@@ -114,96 +115,6 @@ final class NativeResponse implements ResponseInterface, StreamableInterface
                 $this->multi->dnsCache = [];
             }
         }
-    }
-
-    private function open(): void
-    {
-        $url = $this->url;
-
-        set_error_handler(function ($type, $msg) use (&$url) {
-            if (\E_NOTICE !== $type || 'fopen(): Content-type not specified assuming application/x-www-form-urlencoded' !== $msg) {
-                throw new TransportException($msg);
-            }
-
-            $this->logger?->info(\sprintf('%s for "%s".', $msg, $url ?? $this->url));
-        });
-
-        try {
-            $this->info['start_time'] = microtime(true);
-
-            [$resolver, $url] = ($this->resolver)($this->multi);
-
-            while (true) {
-                $context = stream_context_get_options($this->context);
-
-                if ($proxy = $context['http']['proxy'] ?? null) {
-                    $this->info['debug'] .= "* Establish HTTP proxy tunnel to {$proxy}\n";
-                    $this->info['request_header'] = $url;
-                } else {
-                    $this->info['debug'] .= "*   Trying {$this->info['primary_ip']}...\n";
-                    $this->info['request_header'] = $this->info['url']['path'].$this->info['url']['query'];
-                }
-
-                $this->info['request_header'] = \sprintf("> %s %s HTTP/%s \r\n", $context['http']['method'], $this->info['request_header'], $context['http']['protocol_version']);
-                $this->info['request_header'] .= implode("\r\n", $context['http']['header'])."\r\n\r\n";
-
-                if (\array_key_exists('peer_name', $context['ssl']) && null === $context['ssl']['peer_name']) {
-                    unset($context['ssl']['peer_name']);
-                    $this->context = stream_context_create([], ['options' => $context] + stream_context_get_params($this->context));
-                }
-
-                // Send request and follow redirects when needed
-                $this->handle = $h = fopen($url, 'r', false, $this->context);
-                self::addResponseHeaders(stream_get_meta_data($h)['wrapper_data'], $this->info, $this->headers, $this->info['debug']);
-                $url = $resolver($this->multi, $this->headers['location'][0] ?? null, $this->context);
-
-                if (null === $url) {
-                    break;
-                }
-
-                $this->logger?->info(\sprintf('Redirecting: "%s %s"', $this->info['http_code'], $url ?? $this->url));
-            }
-        } catch (\Throwable $e) {
-            $this->close();
-            $this->multi->handlesActivity[$this->id][] = null;
-            $this->multi->handlesActivity[$this->id][] = $e;
-
-            return;
-        } finally {
-            $this->info['pretransfer_time'] = $this->info['total_time'] = microtime(true) - $this->info['start_time'];
-            restore_error_handler();
-        }
-
-        if (isset($context['ssl']['capture_peer_cert_chain']) && isset(($context = stream_context_get_options($this->context))['ssl']['peer_certificate_chain'])) {
-            $this->info['peer_certificate_chain'] = $context['ssl']['peer_certificate_chain'];
-        }
-
-        stream_set_blocking($h, false);
-        unset($this->context, $this->resolver);
-
-        // Create dechunk buffers
-        if (isset($this->headers['content-length'])) {
-            $this->remaining = (int) $this->headers['content-length'][0];
-        } elseif ('chunked' === ($this->headers['transfer-encoding'][0] ?? null)) {
-            stream_filter_append($this->buffer, 'dechunk', \STREAM_FILTER_WRITE);
-            $this->remaining = -1;
-        } else {
-            $this->remaining = -2;
-        }
-
-        $this->multi->handlesActivity[$this->id] = [new FirstChunk()];
-
-        if ('HEAD' === $context['http']['method'] || \in_array($this->info['http_code'], [204, 304], true)) {
-            $this->multi->handlesActivity[$this->id][] = null;
-            $this->multi->handlesActivity[$this->id][] = null;
-
-            return;
-        }
-
-        $host = parse_url($this->info['redirect_url'] ?? $this->url, \PHP_URL_HOST);
-        $this->multi->lastTimeout = null;
-        $this->multi->openHandles[$this->id] = [&$this->pauseExpiry, $h, $this->buffer, $this->onProgress, &$this->remaining, &$this->info, $host];
-        $this->multi->hosts[$host] = 1 + ($this->multi->hosts[$host] ?? 0);
     }
 
     private function close(): void
@@ -268,7 +179,7 @@ final class NativeResponse implements ResponseInterface, StreamableInterface
                         // the request if the stream is inactive for too long
                         $info['total_time'] = microtime(true) - $info['start_time'];
                         $onProgress();
-                    } catch (\Throwable $e) {
+                    } catch (\Throwable) {
                         // no-op
                     }
                 }
@@ -289,7 +200,7 @@ final class NativeResponse implements ResponseInterface, StreamableInterface
                 if ($onProgress) {
                     try {
                         $onProgress(-1);
-                    } catch (\Throwable $e) {
+                    } catch (\Throwable) {
                         // no-op
                     }
                 }
@@ -319,14 +230,16 @@ final class NativeResponse implements ResponseInterface, StreamableInterface
         $maxHosts = $multi->maxHostConnections;
 
         foreach ($responses as $i => $response) {
-            if (null !== $response->remaining || null === $response->buffer) {
+            if (null !== $response->remaining) {
                 continue;
             }
-
+            if (null === $response->buffer) {
+                continue;
+            }
             if ($response->pauseExpiry && hrtime(true) / 1E9 < $response->pauseExpiry) {
                 // Create empty open handles to tell we still have pending requests
                 $multi->openHandles[$i] = [\INF, null, null, null];
-            } elseif ($maxHosts && $maxHosts > ($multi->hosts[parse_url($response->url, \PHP_URL_HOST)] ?? 0)) {
+            } elseif ($maxHosts && $maxHosts > ($multi->hosts[parse_url((string) $response->url, \PHP_URL_HOST)] ?? 0)) {
                 // Open the next pending request - this is a blocking operation so we do only one of them
                 $response->open();
                 $multi->sleep = false;

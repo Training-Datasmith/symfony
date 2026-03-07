@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ namespace Symfony\Component\Finder\Iterator;
  */
 class LazyIterator implements \IteratorAggregate
 {
-    private \Closure $iteratorFactory;
+    private readonly \Closure $iteratorFactory;
 
     public function __construct(callable $iteratorFactory)
     {

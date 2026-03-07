@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,8 +31,8 @@ class LocaleAwareListener implements EventSubscriberInterface
      * @param iterable<mixed, LocaleAwareInterface> $localeAwareServices
      */
     public function __construct(
-        private iterable $localeAwareServices,
-        private RequestStack $requestStack,
+        private readonly iterable $localeAwareServices,
+        private readonly RequestStack $requestStack,
     ) {
     }
 

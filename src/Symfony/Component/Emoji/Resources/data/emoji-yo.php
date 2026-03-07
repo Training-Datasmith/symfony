@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'Ifẹnuko: àgbà, àgbà, amọ́lára, amọ́lára díẹ̀',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'Ifẹnuko: àgbà, àgbà, amọ́lára, amọ́láwọ̀ díẹ̀',

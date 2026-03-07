@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,8 +21,6 @@ use Symfony\Component\Cache\PruneableInterface;
 class PdoAdapter extends AbstractAdapter implements PruneableInterface
 {
     private const MAX_KEY_LENGTH = 255;
-
-    private MarshallerInterface $marshaller;
     private \PDO $conn;
     private string $dsn;
     private string $driver;
@@ -33,7 +33,7 @@ class PdoAdapter extends AbstractAdapter implements PruneableInterface
     private ?string $username = null;
     private ?string $password = null;
     private array $connectionOptions = [];
-    private string $namespace;
+    private readonly string $namespace;
 
     /**
      * You can either pass an existing database connection as PDO instance or
@@ -54,10 +54,10 @@ class PdoAdapter extends AbstractAdapter implements PruneableInterface
      * @throws InvalidArgumentException When PDO error mode is not PDO::ERRMODE_EXCEPTION
      * @throws InvalidArgumentException When namespace contains invalid characters
      */
-    public function __construct(#[\SensitiveParameter] \PDO|string $connOrDsn, string $namespace = '', int $defaultLifetime = 0, array $options = [], ?MarshallerInterface $marshaller = null)
+    public function __construct(#[\SensitiveParameter] \PDO|string $connOrDsn, string $namespace = '', int $defaultLifetime = 0, array $options = [], private readonly ?MarshallerInterface $marshaller = new DefaultMarshaller())
     {
         if (\is_string($connOrDsn) && str_contains($connOrDsn, '://')) {
-            throw new InvalidArgumentException(\sprintf('Usage of Doctrine DBAL URL with "%s" is not supported. Use a PDO DSN or "%s" instead.', __CLASS__, DoctrineDbalAdapter::class));
+            throw new InvalidArgumentException(\sprintf('Usage of Doctrine DBAL URL with "%s" is not supported. Use a PDO DSN or "%s" instead.', self::class, DoctrineDbalAdapter::class));
         }
 
         if (isset($namespace[0]) && preg_match('#[^-+.A-Za-z0-9]#', $namespace, $match)) {
@@ -66,7 +66,7 @@ class PdoAdapter extends AbstractAdapter implements PruneableInterface
 
         if ($connOrDsn instanceof \PDO) {
             if (\PDO::ERRMODE_EXCEPTION !== $connOrDsn->getAttribute(\PDO::ATTR_ERRMODE)) {
-                throw new InvalidArgumentException(\sprintf('"%s" requires PDO error mode attribute be set to throw Exceptions (i.e. $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION)).', __CLASS__));
+                throw new InvalidArgumentException(\sprintf('"%s" requires PDO error mode attribute be set to throw Exceptions (i.e. $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION)).', self::class));
             }
 
             $this->conn = $connOrDsn;
@@ -84,7 +84,6 @@ class PdoAdapter extends AbstractAdapter implements PruneableInterface
         $this->password = $options['db_password'] ?? $this->password;
         $this->connectionOptions = $options['db_connection_options'] ?? $this->connectionOptions;
         $this->namespace = $namespace;
-        $this->marshaller = $marshaller ?? new DefaultMarshaller();
 
         parent::__construct($namespace, $defaultLifetime);
     }
@@ -327,11 +326,11 @@ class PdoAdapter extends AbstractAdapter implements PruneableInterface
         if ('sqlsrv' === $driver) {
             $dataStream = fopen('php://memory', 'r+');
         }
-        foreach ($values as $id => $data) {
+        foreach ($values as $data) {
             if ('sqlsrv' === $driver) {
                 rewind($dataStream);
-                fwrite($dataStream, $data);
-                ftruncate($dataStream, \strlen($data));
+                fwrite($dataStream, (string) $data);
+                ftruncate($dataStream, \strlen((string) $data));
                 rewind($dataStream);
                 $data = $dataStream;
             }
@@ -364,8 +363,8 @@ class PdoAdapter extends AbstractAdapter implements PruneableInterface
             return parent::getId($key, $namespace);
         }
 
-        if (str_contains($key, "\0") || str_contains($key, '%') || !preg_match('//u', $key)) {
-            $key = rawurlencode($key);
+        if (str_contains((string) $key, "\0") || str_contains((string) $key, '%') || !preg_match('//u', (string) $key)) {
+            $key = rawurlencode((string) $key);
         }
 
         return parent::getId($key, $namespace);

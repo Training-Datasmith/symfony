@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,9 +23,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class RequestStackContext implements ContextInterface
 {
     public function __construct(
-        private RequestStack $requestStack,
-        private string $basePath = '',
-        private bool $secure = false,
+        private readonly RequestStack $requestStack,
+        private readonly string $basePath = '',
+        private readonly bool $secure = false,
     ) {
     }
 

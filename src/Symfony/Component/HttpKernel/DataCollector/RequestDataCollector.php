@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -39,7 +41,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
     private array $sessionUsages = [];
 
     public function __construct(
-        private ?RequestStack $requestStack = null,
+        private readonly ?RequestStack $requestStack = null,
     ) {
         $this->controllers = new \SplObjectStorage();
     }
@@ -82,7 +84,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
         }
 
         $dotenvVars = [];
-        foreach (explode(',', $_SERVER['SYMFONY_DOTENV_VARS'] ?? $_ENV['SYMFONY_DOTENV_VARS'] ?? '') as $name) {
+        foreach (explode(',', (string) ($_SERVER['SYMFONY_DOTENV_VARS'] ?? $_ENV['SYMFONY_DOTENV_VARS'] ?? '')) as $name) {
             if ('' !== $name && isset($_ENV[$name])) {
                 $dotenvVars[$name] = $_ENV[$name];
             }
@@ -124,7 +126,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
         }
 
         if (isset($this->data['request_request']['_password'])) {
-            $encodedPassword = rawurlencode($this->data['request_request']['_password']);
+            $encodedPassword = rawurlencode((string) $this->data['request_request']['_password']);
             $content = str_replace('_password='.$encodedPassword, '_password=******', $content);
             $this->data['request_request']['_password'] = '******';
         }
@@ -138,7 +140,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
                 continue;
             }
             if ('request_headers' === $key || 'response_headers' === $key) {
-                $this->data[$key] = array_map(static fn ($v) => isset($v[0]) && !isset($v[1]) ? $v[0] : $v, $value);
+                $this->data[$key] = array_map(static fn (array $v) => isset($v[0]) && !isset($v[1]) ? $v[0] : $v, $value);
             }
         }
 
@@ -164,7 +166,13 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
                     'status_code' => $statusCode,
                     'status_text' => Response::$statusTexts[$statusCode],
                 ]),
-                0, '/', null, $request->isSecure(), true, false, 'lax'
+                0,
+                '/',
+                null,
+                $request->isSecure(),
+                true,
+                false,
+                'lax'
             ));
         }
 
@@ -277,7 +285,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
 
     public function isJsonRequest(): bool
     {
-        return 1 === preg_match('{^application/(?:\w+\++)*json$}i', $this->data['request_headers']['content-type']);
+        return 1 === preg_match('{^application/(?:\w+\++)*json$}i', (string) $this->data['request_headers']['content-type']);
     }
 
     public function getPrettyJson(): ?string
@@ -524,7 +532,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
         if ($request->cookies->all()) {
             $cookies = [];
             foreach ($request->cookies->all() as $name => $value) {
-                $cookies[] = urlencode($name).'='.urlencode($value);
+                $cookies[] = urlencode($name).'='.urlencode((string) $value);
             }
             $command[] = '--cookie '.escapeshellarg(implode('; ', $cookies));
         }

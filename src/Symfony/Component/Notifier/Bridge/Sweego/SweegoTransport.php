@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -63,7 +65,7 @@ final class SweegoTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $options = $message->getOptions()?->toArray() ?? [];
@@ -91,7 +93,7 @@ final class SweegoTransport extends AbstractTransport
             'headers' => [
                 'Api-Key' => $this->apiKey,
             ],
-            'json' => array_filter($body, static fn ($value) => null !== $value),
+            'json' => array_filter($body, static fn ($value): bool => null !== $value),
         ]);
 
         try {

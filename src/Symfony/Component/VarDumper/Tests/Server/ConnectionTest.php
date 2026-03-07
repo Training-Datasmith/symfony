@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ class ConnectionTest extends TestCase
         $cloner = new VarCloner();
         $data = $cloner->cloneVar('foo');
         $connection = new Connection(self::VAR_DUMPER_SERVER, [
-            'foo_provider' => new class implements ContextProviderInterface {
+            'foo_provider' => new class () implements ContextProviderInterface {
                 public function getContext(): ?array
                 {
                     return ['foo'];
@@ -55,7 +57,8 @@ class ConnectionTest extends TestCase
         $process->wait();
 
         $this->assertTrue($process->isSuccessful());
-        $this->assertStringMatchesFormat(<<<'DUMP'
+        $this->assertStringMatchesFormat(
+            <<<'DUMP'
             (3) "foo"
             [
               "timestamp" => %d.%d

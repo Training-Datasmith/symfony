@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ final class InlineKeyboardMarkup extends AbstractTelegramReplyMarkup
      */
     public function inlineKeyboard(array $buttons): static
     {
-        $buttons = array_map(static fn (InlineKeyboardButton $button) => $button->toArray(), $buttons);
+        $buttons = array_map(static fn (InlineKeyboardButton $button): array => $button->toArray(), $buttons);
 
         $this->options['inline_keyboard'][] = $buttons;
 

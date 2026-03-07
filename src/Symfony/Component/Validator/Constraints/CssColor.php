@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -65,7 +67,7 @@ class CssColor extends Constraint
      * @param non-empty-string[]|non-empty-string $formats The types of CSS colors allowed ({@see https://symfony.com/doc/current/reference/constraints/CssColor.html#formats})
      * @param string[]|null                       $groups
      */
-    public function __construct(array|string $formats = [], ?string $message = null, ?array $groups = null, $payload = null)
+    public function __construct(array|string $formats = [], ?string $message = null, ?array $groups = null, mixed $payload = null)
     {
         $validationModesAsString = implode(', ', self::$validationModes);
 

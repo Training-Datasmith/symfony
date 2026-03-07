@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ class LazyServiceInstantiatorTest extends TestCase
     public function testInstantiateAbstractClassProxy()
     {
         $instantiator = new LazyServiceInstantiator();
-        $instance = new class extends AbstractSayClass {
+        $instance = new class () extends AbstractSayClass {
             public int $calls = 0;
 
             public function say(): string

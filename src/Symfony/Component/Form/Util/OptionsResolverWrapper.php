@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -67,11 +69,9 @@ class OptionsResolverWrapper extends OptionsResolver
     }
 
     /**
-     * @param string|array $allowedTypes
-     *
      * @return $this
      */
-    public function setAllowedTypes(string $option, $allowedTypes): static
+    public function setAllowedTypes(string $option, string|array $allowedTypes): static
     {
         try {
             parent::setAllowedTypes($option, $allowedTypes);
@@ -83,11 +83,9 @@ class OptionsResolverWrapper extends OptionsResolver
     }
 
     /**
-     * @param string|array $allowedTypes
-     *
      * @return $this
      */
-    public function addAllowedTypes(string $option, $allowedTypes): static
+    public function addAllowedTypes(string $option, string|array $allowedTypes): static
     {
         try {
             parent::addAllowedTypes($option, $allowedTypes);

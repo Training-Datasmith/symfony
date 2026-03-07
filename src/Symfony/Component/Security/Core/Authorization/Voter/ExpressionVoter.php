@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,10 +29,10 @@ use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 class ExpressionVoter implements CacheableVoterInterface
 {
     public function __construct(
-        private ExpressionLanguage $expressionLanguage,
-        private ?AuthenticationTrustResolverInterface $trustResolver,
-        private AuthorizationCheckerInterface $authChecker,
-        private ?RoleHierarchyInterface $roleHierarchy = null,
+        private readonly ExpressionLanguage $expressionLanguage,
+        private readonly ?AuthenticationTrustResolverInterface $trustResolver,
+        private readonly AuthorizationCheckerInterface $authChecker,
+        private readonly ?RoleHierarchyInterface $roleHierarchy = null,
     ) {
     }
 

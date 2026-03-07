@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,8 +27,8 @@ class StopWorkerOnFailureLimitListener implements EventSubscriberInterface
     private int $failedMessages = 0;
 
     public function __construct(
-        private int $maximumNumberOfFailures,
-        private ?LoggerInterface $logger = null,
+        private readonly int $maximumNumberOfFailures,
+        private readonly ?LoggerInterface $logger = null,
     ) {
         if ($maximumNumberOfFailures <= 0) {
             throw new InvalidArgumentException('Failure limit must be greater than zero.');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,7 +24,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class OptionsResolverIntrospector
 {
-    private \Closure $get;
+    private readonly \Closure $get;
 
     public function __construct(OptionsResolver $optionsResolver)
     {

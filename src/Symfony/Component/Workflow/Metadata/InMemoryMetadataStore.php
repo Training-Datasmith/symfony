@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,17 +22,11 @@ final class InMemoryMetadataStore implements MetadataStoreInterface
 {
     use GetMetadataTrait;
 
-    private \SplObjectStorage $transitionsMetadata;
-
     /**
      * @param \SplObjectStorage<Transition, array>|null $transitionsMetadata
      */
-    public function __construct(
-        private array $workflowMetadata = [],
-        private array $placesMetadata = [],
-        ?\SplObjectStorage $transitionsMetadata = null,
-    ) {
-        $this->transitionsMetadata = $transitionsMetadata ?? new \SplObjectStorage();
+    public function __construct(private array $workflowMetadata = [], private array $placesMetadata = [], private ?\SplObjectStorage $transitionsMetadata = new \SplObjectStorage())
+    {
     }
 
     public function getWorkflowMetadata(): array

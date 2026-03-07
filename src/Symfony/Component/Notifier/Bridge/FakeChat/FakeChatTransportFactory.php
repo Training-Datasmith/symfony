@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,8 +29,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 final class FakeChatTransportFactory extends AbstractTransportFactory
 {
     public function __construct(
-        private ?MailerInterface $mailer = null,
-        private ?LoggerInterface $logger = null,
+        private readonly ?MailerInterface $mailer = null,
+        private readonly ?LoggerInterface $logger = null,
         ?EventDispatcherInterface $dispatcher = null,
         ?HttpClientInterface $client = null,
     ) {
@@ -67,7 +69,7 @@ final class FakeChatTransportFactory extends AbstractTransportFactory
         return ['fakechat+email', 'fakechat+logger'];
     }
 
-    private function throwMissingDependencyException(string $scheme, string $missingDependency, string $suggestedPackage): void
+    private function throwMissingDependencyException(string $scheme, string $missingDependency, string $suggestedPackage): never
     {
         throw new LogicException(\sprintf('Cannot create a transport for scheme "%s" without providing an implementation of "%s". Try running "composer require "%s"".', $scheme, $missingDependency, $suggestedPackage));
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -31,7 +33,7 @@ class ResolveInvalidReferencesPass implements CompilerPassInterface
 {
     private ContainerBuilder $container;
     private RuntimeException $signalingException;
-    private string $currentId;
+    private readonly string $currentId;
 
     /**
      * Process the ContainerBuilder to resolve invalid references.

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ use Symfony\Component\Security\Http\Session\SessionAuthenticationStrategyInterfa
 class SessionStrategyListener implements EventSubscriberInterface
 {
     public function __construct(
-        private SessionAuthenticationStrategyInterface $sessionAuthenticationStrategy,
+        private readonly SessionAuthenticationStrategyInterface $sessionAuthenticationStrategy,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ class GlobalDefaultsClass
     {
     }
 
-    #[Route(path: '/redundant-method', name: 'redundant_method',  methods: ['GET'])]
+    #[Route(path: '/redundant-method', name: 'redundant_method', methods: ['GET'])]
     public function redundantMethod()
     {
     }

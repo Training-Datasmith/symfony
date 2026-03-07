@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -55,7 +57,7 @@ class Uuid extends AbstractUid
     {
         $uuid = self::transformToRfc9562($uuid, self::FORMAT_ALL);
 
-        if (__CLASS__ !== static::class || 36 !== \strlen($uuid)) {
+        if (self::class !== static::class || 36 !== \strlen($uuid)) {
             return new static($uuid);
         }
 
@@ -137,11 +139,11 @@ class Uuid extends AbstractUid
             return false;
         }
 
-        if (self::NIL === $uuid && \in_array(static::class, [__CLASS__, NilUuid::class], true)) {
+        if (self::NIL === $uuid && \in_array(static::class, [self::class, NilUuid::class], true)) {
             return true;
         }
 
-        if (self::MAX === strtr($uuid, 'F', 'f') && \in_array(static::class, [__CLASS__, MaxUuid::class], true)) {
+        if (self::MAX === strtr($uuid, 'F', 'f') && \in_array(static::class, [self::class, MaxUuid::class], true)) {
             return true;
         }
 
@@ -149,7 +151,7 @@ class Uuid extends AbstractUid
             return false;
         }
 
-        return __CLASS__ === static::class || static::TYPE === (int) $uuid[14];
+        return self::class === static::class || static::TYPE === (int) $uuid[14];
     }
 
     public function toBinary(): string

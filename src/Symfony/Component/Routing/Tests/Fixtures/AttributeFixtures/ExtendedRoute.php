@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\Routing\Tests\Fixtures\AttributeFixtures;
 
 use Symfony\Component\Routing\Attribute\Route;
@@ -9,6 +11,6 @@ class ExtendedRoute extends Route
 {
     public function __construct(array|string|null $path = null, ?string $name = null, array $defaults = [])
     {
-        parent::__construct("/{section<(foo|bar|baz)>}" . $path, $name, [], [], array_merge(['section' => 'foo'], $defaults));
+        parent::__construct('/{section<(foo|bar|baz)>}' . $path, $name, [], [], array_merge(['section' => 'foo'], $defaults));
     }
 }

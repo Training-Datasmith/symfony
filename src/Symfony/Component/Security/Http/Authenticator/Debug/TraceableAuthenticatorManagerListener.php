@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ final class TraceableAuthenticatorManagerListener extends AbstractListener imple
 {
     private array $authenticators = [];
 
-    public function __construct(private AuthenticatorManagerListener $authenticationManagerListener)
+    public function __construct(private readonly AuthenticatorManagerListener $authenticationManagerListener)
     {
     }
 
@@ -66,7 +68,7 @@ final class TraceableAuthenticatorManagerListener extends AbstractListener imple
     public function getAuthenticatorsInfo(): array
     {
         return array_map(
-            static fn (TraceableAuthenticator $authenticator) => $authenticator->getInfo(),
+            static fn (TraceableAuthenticator $authenticator): array => $authenticator->getInfo(),
             $this->authenticators
         );
     }

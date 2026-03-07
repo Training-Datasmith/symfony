@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,13 +36,13 @@ final class ObjectNormalizer extends AbstractObjectNormalizer
 {
     use AccessorCollisionResolverTrait;
 
-    private static $reflectionCache = [];
-    private static $isReadableCache = [];
-    private static $isWritableCache = [];
+    private static array $reflectionCache = [];
+    private static array $isReadableCache = [];
+    private static array $isWritableCache = [];
 
     protected PropertyAccessorInterface $propertyAccessor;
-    protected $propertyInfoExtractor;
-    private $writeInfoExtractor;
+    protected \Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface|\Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor $propertyInfoExtractor;
+    private \Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor $writeInfoExtractor;
 
     private readonly \Closure $objectClassResolver;
 
@@ -95,8 +97,10 @@ final class ObjectNormalizer extends AbstractObjectNormalizer
             if (!$reflProperty->isPublic()) {
                 continue;
             }
-
-            if ($reflProperty->isStatic() || !$this->isAllowedAttribute($object, $reflProperty->name, $format, $context)) {
+            if ($reflProperty->isStatic()) {
+                continue;
+            }
+            if (!$this->isAllowedAttribute($object, $reflProperty->name, $format, $context)) {
                 continue;
             }
 
@@ -124,7 +128,7 @@ final class ObjectNormalizer extends AbstractObjectNormalizer
         }
     }
 
-    protected function isAllowedAttribute($classOrObject, string $attribute, ?string $format = null, array $context = []): bool
+    protected function isAllowedAttribute(object|string $classOrObject, string $attribute, ?string $format = null, array $context = []): bool
     {
         if (!parent::isAllowedAttribute($classOrObject, $attribute, $format, $context)) {
             return false;

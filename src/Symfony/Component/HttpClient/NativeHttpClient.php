@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -72,13 +74,13 @@ final class NativeHttpClient implements HttpClientInterface, LoggerAwareInterfac
 
         if ($options['bindto']) {
             if (file_exists($options['bindto'])) {
-                throw new TransportException(__CLASS__.' cannot bind to local Unix sockets, use e.g. CurlHttpClient instead.');
+                throw new TransportException(self::class.' cannot bind to local Unix sockets, use e.g. CurlHttpClient instead.');
             }
-            if (str_starts_with($options['bindto'], 'if!')) {
-                throw new TransportException(__CLASS__.' cannot bind to network interfaces, use e.g. CurlHttpClient instead.');
+            if (str_starts_with((string) $options['bindto'], 'if!')) {
+                throw new TransportException(self::class.' cannot bind to network interfaces, use e.g. CurlHttpClient instead.');
             }
-            if (str_starts_with($options['bindto'], 'host!')) {
-                $options['bindto'] = substr($options['bindto'], 5);
+            if (str_starts_with((string) $options['bindto'], 'host!')) {
+                $options['bindto'] = substr((string) $options['bindto'], 5);
             }
         }
 
@@ -106,7 +108,7 @@ final class NativeHttpClient implements HttpClientInterface, LoggerAwareInterfac
 
         if ($options['peer_fingerprint']) {
             if (isset($options['peer_fingerprint']['pin-sha256']) && 1 === \count($options['peer_fingerprint'])) {
-                throw new TransportException(__CLASS__.' cannot verify "pin-sha256" fingerprints, please provide a "sha256" one.');
+                throw new TransportException(self::class.' cannot verify "pin-sha256" fingerprints, please provide a "sha256" one.');
             }
 
             unset($options['peer_fingerprint']['pin-sha256']);
@@ -129,7 +131,7 @@ final class NativeHttpClient implements HttpClientInterface, LoggerAwareInterfac
             'namelookup_time' => 0.0,
             'size_upload' => 0,
             'size_download' => 0,
-            'size_body' => \strlen($options['body']),
+            'size_body' => \strlen((string) $options['body']),
             'primary_ip' => '',
             'primary_port' => 'http:' === $url['scheme'] ? 80 : 443,
             'debug' => \extension_loaded('curl') ? '' : "* Enable the curl extension for better performance\n",
@@ -137,7 +139,7 @@ final class NativeHttpClient implements HttpClientInterface, LoggerAwareInterfac
 
         if ($onProgress = $options['on_progress']) {
             $maxDuration = 0 < $options['max_duration'] ? $options['max_duration'] : \INF;
-            $onProgress = static function (...$progress) use ($onProgress, &$info, $maxDuration) {
+            $onProgress = static function (...$progress) use ($onProgress, &$info, $maxDuration): void {
                 if ($info['total_time'] >= $maxDuration) {
                     throw new TransportException(\sprintf('Max duration was reached for "%s".', implode('', $info['url'])));
                 }
@@ -168,7 +170,7 @@ final class NativeHttpClient implements HttpClientInterface, LoggerAwareInterfac
         }
 
         // Always register a notification callback to compute live stats about the response
-        $notification = static function (int $code, int $severity, ?string $msg, int $msgCode, int $dlNow, int $dlSize) use ($onProgress, &$info) {
+        $notification = static function (int $code, int $severity, ?string $msg, int $msgCode, int $dlNow, int $dlSize) use ($onProgress, &$info): void {
             $info['total_time'] = microtime(true) - $info['start_time'];
 
             if (\STREAM_NOTIFY_PROGRESS === $code) {
@@ -243,7 +245,7 @@ final class NativeHttpClient implements HttpClientInterface, LoggerAwareInterfac
                 'SNI_enabled' => true,
                 'disable_compression' => true,
                 'crypto_method' => $cryptoMethod,
-            ], static fn ($v) => null !== $v),
+            ], static fn ($v): bool => null !== $v),
             'socket' => [
                 'bindto' => $options['bindto'],
                 'tcp_nodelay' => true,
@@ -252,7 +254,7 @@ final class NativeHttpClient implements HttpClientInterface, LoggerAwareInterfac
 
         $context = stream_context_create($context, ['notification' => $notification]);
 
-        $resolver = static function ($multi) use ($context, $options, $url, &$info, $onProgress) {
+        $resolver = static function (\Symfony\Component\HttpClient\Internal\NativeClientState $multi) use ($context, $options, $url, &$info, $onProgress): array {
             $authority = $url['authority'];
             [$host, $port] = self::parseHostPort($url, $info);
 
@@ -315,14 +317,14 @@ final class NativeHttpClient implements HttpClientInterface, LoggerAwareInterfac
      */
     private static function parseHostPort(array $url, array &$info): array
     {
-        if ($port = parse_url($url['authority'], \PHP_URL_PORT) ?: '') {
+        if ($port = parse_url((string) $url['authority'], \PHP_URL_PORT) ?: '') {
             $info['primary_port'] = $port;
             $port = ':'.$port;
         } else {
             $info['primary_port'] = 'http:' === $url['scheme'] ? 80 : 443;
         }
 
-        return [parse_url($url['authority'], \PHP_URL_HOST), $port];
+        return [parse_url((string) $url['authority'], \PHP_URL_HOST), $port];
     }
 
     /**
@@ -363,7 +365,7 @@ final class NativeHttpClient implements HttpClientInterface, LoggerAwareInterfac
             $info['debug'] .= "* Hostname was found in DNS cache\n";
         }
 
-        $host = str_contains($ip, ':') ? "[$ip]" : $ip;
+        $host = str_contains((string) $ip, ':') ? "[$ip]" : $ip;
         $info['namelookup_time'] = microtime(true) - ($info['start_time'] ?: $now);
         $info['primary_ip'] = $ip;
 
@@ -383,10 +385,10 @@ final class NativeHttpClient implements HttpClientInterface, LoggerAwareInterfac
         $redirectHeaders = [];
         if (0 < $maxRedirects = $options['max_redirects']) {
             $redirectHeaders = ['authority' => $authority];
-            $redirectHeaders['with_auth'] = $redirectHeaders['no_auth'] = array_filter($options['headers'], static fn ($h) => 0 !== stripos($h, 'Host:'));
+            $redirectHeaders['with_auth'] = $redirectHeaders['no_auth'] = array_filter($options['headers'], static fn ($h): bool => 0 !== stripos((string) $h, 'Host:'));
 
             if (isset($options['normalized_headers']['authorization']) || isset($options['normalized_headers']['cookie'])) {
-                $redirectHeaders['no_auth'] = array_filter($redirectHeaders['no_auth'], static fn ($h) => 0 !== stripos($h, 'Authorization:') && 0 !== stripos($h, 'Cookie:'));
+                $redirectHeaders['no_auth'] = array_filter($redirectHeaders['no_auth'], static fn ($h): bool => 0 !== stripos((string) $h, 'Authorization:') && 0 !== stripos((string) $h, 'Cookie:'));
             }
         }
 
@@ -424,7 +426,7 @@ final class NativeHttpClient implements HttpClientInterface, LoggerAwareInterfac
                 if ('POST' === $options['method'] || 303 === $info['http_code']) {
                     $info['http_method'] = $options['method'] = 'HEAD' === $options['method'] ? 'HEAD' : 'GET';
                     $options['content'] = '';
-                    $filterContentHeaders = static fn ($h) => 0 !== stripos($h, 'Content-Length:') && 0 !== stripos($h, 'Content-Type:') && 0 !== stripos($h, 'Transfer-Encoding:');
+                    $filterContentHeaders = static fn ($h): bool => 0 !== stripos($h, 'Content-Length:') && 0 !== stripos($h, 'Content-Type:') && 0 !== stripos($h, 'Transfer-Encoding:');
                     $options['header'] = array_filter($options['header'], $filterContentHeaders);
                     $redirectHeaders['no_auth'] = array_filter($redirectHeaders['no_auth'], $filterContentHeaders);
                     $redirectHeaders['with_auth'] = array_filter($redirectHeaders['with_auth'], $filterContentHeaders);
@@ -465,7 +467,7 @@ final class NativeHttpClient implements HttpClientInterface, LoggerAwareInterfac
         // Matching "no_proxy" should follow the behavior of curl
 
         foreach ($proxy['no_proxy'] as $rule) {
-            $dotRule = '.'.ltrim($rule, '.');
+            $dotRule = '.'.ltrim((string) $rule, '.');
 
             if ('*' === $rule || $host === $rule || str_ends_with($host, $dotRule)) {
                 stream_context_set_option($context, 'http', 'proxy', null);

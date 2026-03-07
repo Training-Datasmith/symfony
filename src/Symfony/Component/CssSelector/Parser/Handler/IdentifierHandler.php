@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,8 +32,8 @@ use Symfony\Component\CssSelector\Parser\TokenStream;
 class IdentifierHandler implements HandlerInterface
 {
     public function __construct(
-        private TokenizerPatterns $patterns,
-        private TokenizerEscaping $escaping,
+        private readonly TokenizerPatterns $patterns,
+        private readonly TokenizerEscaping $escaping,
     ) {
     }
 
@@ -45,7 +47,7 @@ class IdentifierHandler implements HandlerInterface
 
         $value = $this->escaping->escapeUnicode($match[0]);
         $stream->push(new Token(Token::TYPE_IDENTIFIER, $value, $reader->getPosition()));
-        $reader->moveForward(\strlen($match[0]));
+        $reader->moveForward(\strlen((string) $match[0]));
 
         return true;
     }

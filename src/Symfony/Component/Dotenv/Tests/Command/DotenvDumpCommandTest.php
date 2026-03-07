@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,13 +25,17 @@ class DotenvDumpCommandTest extends TestCase
         unset($_SERVER['SYMFONY_DOTENV_PATH']);
         unset($_SERVER['APP_RUNTIME_OPTIONS']);
 
-        file_put_contents(__DIR__.'/.env', <<<EOF
+        file_put_contents(
+            __DIR__.'/.env',
+            <<<EOF
             APP_ENV=dev
             APP_SECRET=abc123
             EOF
         );
 
-        file_put_contents(__DIR__.'/.env.local', <<<EOF
+        file_put_contents(
+            __DIR__.'/.env.local',
+            <<<EOF
             APP_LOCAL=yes
             EOF
         );
@@ -81,7 +87,9 @@ class DotenvDumpCommandTest extends TestCase
 
     public function testExecuteTestEnvs()
     {
-        file_put_contents(__DIR__.'/composer.json', <<<EOF
+        file_put_contents(
+            __DIR__.'/composer.json',
+            <<<EOF
             {"extra":{"runtime":{"test_envs":[]}}}
             EOF
         );
@@ -103,12 +111,16 @@ class DotenvDumpCommandTest extends TestCase
 
     public function testExecuteWithRuntimeOptionsDotenvPath()
     {
-        file_put_contents(__DIR__.'/.env.path', <<<EOF
+        file_put_contents(
+            __DIR__.'/.env.path',
+            <<<EOF
             APP_ENV=test
             APP_SECRET=newpath123
             EOF
         );
-        file_put_contents(__DIR__.'/.env.path.local', <<<EOF
+        file_put_contents(
+            __DIR__.'/.env.path.local',
+            <<<EOF
             LOCAL_PATH=yes
             EOF
         );

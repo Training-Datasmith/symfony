@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,7 @@ class CookieClearingLogoutListener implements EventSubscriberInterface
      * @param array $cookies An array of cookies (keys are names, values contain path and domain) to unset
      */
     public function __construct(
-        private array $cookies,
+        private readonly array $cookies,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -40,7 +42,8 @@ class ChoiceTypeTranslationTest extends TypeTestCase
     {
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')
-            ->willReturnCallback(static fn ($key, $params) => strtr(\sprintf('Translation of: %s', $key), $params)
+            ->willReturnCallback(
+                static fn ($key, $params) => strtr(\sprintf('Translation of: %s', $key), $params)
             );
 
         return array_merge(parent::getExtensions(), [new CoreExtension(null, null, $translator)]);

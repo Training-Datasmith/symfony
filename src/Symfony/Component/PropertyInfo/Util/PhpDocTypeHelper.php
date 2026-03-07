@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -153,7 +155,7 @@ final class PhpDocTypeHelper
                 return Type::collection($type, $value, $key);
             }
 
-            $variableTypes = array_map(fn ($t) => $this->getType($t), $genericTypes);
+            $variableTypes = array_map($this->getType(...), $genericTypes);
 
             return Type::generic($type, ...array_filter($variableTypes));
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,9 +27,9 @@ class CacheTokenVerifier implements TokenVerifierInterface
      *                              but you may use a lower value.
      */
     public function __construct(
-        private CacheItemPoolInterface $cache,
-        private int $outdatedTokenTtl = 60,
-        private string $cacheKeyPrefix = 'rememberme-stale-',
+        private readonly CacheItemPoolInterface $cache,
+        private readonly int $outdatedTokenTtl = 60,
+        private readonly string $cacheKeyPrefix = 'rememberme-stale-',
     ) {
     }
 

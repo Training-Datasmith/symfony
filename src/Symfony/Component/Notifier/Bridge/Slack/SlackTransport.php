@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,8 +31,8 @@ final class SlackTransport extends AbstractTransport
     protected const HOST = 'slack.com';
 
     public function __construct(
-        #[\SensitiveParameter] private string $accessToken,
-        private ?string $channel = null,
+        #[\SensitiveParameter] private readonly string $accessToken,
+        private readonly ?string $channel = null,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,
     ) {
@@ -61,7 +63,7 @@ final class SlackTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SlackSentMessage
     {
         if (!$message instanceof ChatMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, ChatMessage::class, $message);
         }
 
         if (!($options = $message->getOptions()) && $notification = $message->getNotification()) {

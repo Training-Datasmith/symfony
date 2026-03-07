@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -95,7 +97,9 @@ class DateCaster
         foreach (clone $p as $i => $d) {
             if (self::PERIOD_LIMIT === $i) {
                 $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
-                $dates[] = \sprintf('%s more', ($end = $p->getEndDate())
+                $dates[] = \sprintf(
+                    '%s more',
+                    ($end = $p->getEndDate())
                     ? ceil(($end->format('U.u') - $d->format('U.u')) / ((int) $now->add($p->getDateInterval())->format('U.u') - (int) $now->format('U.u')))
                     : $p->recurrences - $i
                 );

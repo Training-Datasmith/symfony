@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -45,8 +47,6 @@ class Definition
     private array $bindings = [];
     private array $errors = [];
 
-    protected array $arguments = [];
-
     /**
      * @internal
      *
@@ -68,12 +68,11 @@ class Definition
      */
     public ?int $decorationPriority = null;
 
-    public function __construct(?string $class = null, array $arguments = [])
+    public function __construct(?string $class = null, protected array $arguments = [])
     {
         if (null !== $class) {
             $this->setClass($class);
         }
-        $this->arguments = $arguments;
     }
 
     /**
@@ -776,7 +775,7 @@ class Definition
     public function setBindings(array $bindings): static
     {
         foreach ($bindings as $key => $binding) {
-            if (0 < strpos($key, '$') && $key !== $k = preg_replace('/[ \t]*\$/', ' $', $key)) {
+            if (0 < strpos((string) $key, '$') && $key !== $k = preg_replace('/[ \t]*\$/', ' $', (string) $key)) {
                 unset($bindings[$key]);
                 $bindings[$key = $k] = $binding;
             }
@@ -831,8 +830,8 @@ class Definition
     {
         $data = [];
         foreach ((array) $this as $k => $v) {
-            if (false !== $i = strrpos($k, "\0")) {
-                $k = substr($k, 1 + $i);
+            if (false !== $i = strrpos((string) $k, "\0")) {
+                $k = substr((string) $k, 1 + $i);
             }
             if (!$v xor 'shared' === $k) {
                 continue;

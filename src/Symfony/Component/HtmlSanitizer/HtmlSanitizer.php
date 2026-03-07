@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,18 +24,13 @@ use Symfony\Component\HtmlSanitizer\Visitor\DomVisitor;
  */
 final class HtmlSanitizer implements HtmlSanitizerInterface
 {
-    private ParserInterface $parser;
-
     /**
      * @var array<string, DomVisitor>
      */
     private array $domVisitors = [];
 
-    public function __construct(
-        private HtmlSanitizerConfig $config,
-        ?ParserInterface $parser = null,
-    ) {
-        $this->parser = $parser ?? new NativeParser();
+    public function __construct(private readonly HtmlSanitizerConfig $config, private readonly ?ParserInterface $parser = new NativeParser())
+    {
     }
 
     public function sanitize(string $input): string

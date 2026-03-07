@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -245,7 +247,7 @@ class RegisterServiceSubscribersPassTest extends TestCase
 
     public function testServiceMethodsSubscriberTraitWithSubscribedServiceAttributeOnStaticMethod()
     {
-        $subscriber = new class implements ServiceSubscriberInterface {
+        $subscriber = new class () implements ServiceSubscriberInterface {
             use ServiceMethodsSubscriberTrait;
 
             #[SubscribedService]
@@ -261,7 +263,7 @@ class RegisterServiceSubscribersPassTest extends TestCase
 
     public function testServiceMethodsSubscriberTraitWithSubscribedServiceAttributeOnMethodWithRequiredParameters()
     {
-        $subscriber = new class implements ServiceSubscriberInterface {
+        $subscriber = new class () implements ServiceSubscriberInterface {
             use ServiceMethodsSubscriberTrait;
 
             #[SubscribedService]
@@ -277,7 +279,7 @@ class RegisterServiceSubscribersPassTest extends TestCase
 
     public function testServiceMethodsSubscriberTraitWithSubscribedServiceAttributeOnMethodMissingReturnType()
     {
-        $subscriber = new class implements ServiceSubscriberInterface {
+        $subscriber = new class () implements ServiceSubscriberInterface {
             use ServiceMethodsSubscriberTrait;
 
             #[SubscribedService]
@@ -340,7 +342,7 @@ class RegisterServiceSubscribersPassTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $subscriber = new class implements ServiceSubscriberInterface {
+        $subscriber = new class () implements ServiceSubscriberInterface {
             public static function getSubscribedServices(): array
             {
                 return [
@@ -385,7 +387,7 @@ class RegisterServiceSubscribersPassTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $subscriber = new class implements ServiceSubscriberInterface {
+        $subscriber = new class () implements ServiceSubscriberInterface {
             public static function getSubscribedServices(): array
             {
                 return [

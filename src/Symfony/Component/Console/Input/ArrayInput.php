@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ use Symfony\Component\Console\Exception\InvalidOptionException;
 class ArrayInput extends Input
 {
     public function __construct(
-        private array $parameters,
+        private readonly array $parameters,
         ?InputDefinition $definition = null,
     ) {
         parent::__construct($definition);
@@ -117,10 +119,10 @@ class ArrayInput extends Input
             if ('--' === $key) {
                 return;
             }
-            if (str_starts_with($key, '--')) {
-                $this->addLongOption(substr($key, 2), $value);
-            } elseif (str_starts_with($key, '-')) {
-                $this->addShortOption(substr($key, 1), $value);
+            if (str_starts_with((string) $key, '--')) {
+                $this->addLongOption(substr((string) $key, 2), $value);
+            } elseif (str_starts_with((string) $key, '-')) {
+                $this->addShortOption(substr((string) $key, 1), $value);
             } else {
                 $this->addArgument($key, $value);
             }

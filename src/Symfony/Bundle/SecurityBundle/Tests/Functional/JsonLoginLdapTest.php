@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,7 +38,7 @@ class JsonLoginLdapTest extends AbstractWebTestCase
         $client = $this->createClient(['test_case' => 'JsonLoginLdap', 'root_config' => 'config.yml', 'debug' => true]);
         $container = $client->getContainer();
         $connectionMock = $this->createStub(ConnectionInterface::class);
-        $collection = new class([new Entry('', ['uid' => ['spomky']])]) extends \ArrayObject implements CollectionInterface {
+        $collection = new class ([new Entry('', ['uid' => ['spomky']])]) extends \ArrayObject implements CollectionInterface {
             public function toArray(): array
             {
                 return $this->getArrayCopy();

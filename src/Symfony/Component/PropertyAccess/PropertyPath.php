@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -110,8 +112,8 @@ class PropertyPath implements \IteratorAggregate, PropertyPathInterface
             }
 
             $element = preg_replace('/\\\([.[])/', '$1', $element);
-            if (str_ends_with($element, '\\\\')) {
-                $element = substr($element, 0, -1);
+            if (str_ends_with((string) $element, '\\\\')) {
+                $element = substr((string) $element, 0, -1);
             }
             $this->elements[] = $element;
 

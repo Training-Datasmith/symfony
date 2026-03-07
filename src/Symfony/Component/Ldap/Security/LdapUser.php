@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -24,11 +26,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class LdapUser implements UserInterface, PasswordAuthenticatedUserInterface, EquatableInterface
 {
     public function __construct(
-        private Entry $entry,
-        private string $identifier,
+        private readonly Entry $entry,
+        private readonly string $identifier,
         #[\SensitiveParameter] private ?string $password,
-        private array $roles = [],
-        private array $extraFields = [],
+        private readonly array $roles = [],
+        private readonly array $extraFields = [],
     ) {
         if (!$identifier) {
             throw new \InvalidArgumentException('The username cannot be empty.');

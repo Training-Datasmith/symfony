@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,10 +25,10 @@ use Symfony\Component\Console\Input\InputInterface;
  * @author Tim Goudriaan <tim@codedmonkey.com>
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-final class DateTimeValueResolver implements ValueResolverInterface
+final readonly class DateTimeValueResolver implements ValueResolverInterface
 {
     public function __construct(
-        private readonly ?ClockInterface $clock = null,
+        private ?ClockInterface $clock = null,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,10 +31,6 @@ use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
  */
 abstract class MemberMetadata extends GenericMetadata implements PropertyMetadataInterface
 {
-    private string $class;
-    private string $name;
-    private string $property;
-
     /**
      * @var \ReflectionMethod[]|\ReflectionProperty[]
      */
@@ -43,11 +41,8 @@ abstract class MemberMetadata extends GenericMetadata implements PropertyMetadat
      * @param string $name     The name of the member
      * @param string $property The property the member belongs to
      */
-    public function __construct(string $class, string $name, string $property)
+    public function __construct(private readonly string $class, private readonly string $name, private readonly string $property)
     {
-        $this->class = $class;
-        $this->name = $name;
-        $this->property = $property;
     }
 
     public function addConstraint(Constraint $constraint): static

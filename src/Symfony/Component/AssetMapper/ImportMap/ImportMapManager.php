@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -104,7 +106,10 @@ class ImportMapManager
         if ($update) {
             foreach ($currentEntries as $entry) {
                 $importName = $entry->importName;
-                if (!$entry->isRemotePackage() || ($packagesToUpdate && !\in_array($importName, $packagesToUpdate, true))) {
+                if (!$entry->isRemotePackage()) {
+                    continue;
+                }
+                if ($packagesToUpdate && !\in_array($importName, $packagesToUpdate, true)) {
                     continue;
                 }
 

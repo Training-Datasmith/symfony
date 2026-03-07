@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,15 +25,15 @@ use Symfony\Component\Uid\UuidV6;
 
 class MockUuidFactory extends UuidFactory
 {
-    private \Iterator $sequence;
+    private readonly \Iterator $sequence;
 
     /**
      * @param iterable<string|Uuid> $uuids
      */
     public function __construct(
         iterable $uuids,
-        private Uuid|string|null $timeBasedNode = null,
-        private Uuid|string|null $nameBasedNamespace = null,
+        private readonly Uuid|string|null $timeBasedNode = null,
+        private readonly Uuid|string|null $nameBasedNamespace = null,
     ) {
         $this->sequence = match (true) {
             \is_array($uuids) => new \ArrayIterator($uuids),
@@ -57,9 +59,9 @@ class MockUuidFactory extends UuidFactory
 
     public function randomBased(): RandomBasedUuidFactory
     {
-        return new class($this->create(...)) extends RandomBasedUuidFactory {
+        return new class ($this->create(...)) extends RandomBasedUuidFactory {
             public function __construct(
-                private \Closure $create,
+                private readonly \Closure $create,
             ) {
             }
 
@@ -80,10 +82,10 @@ class MockUuidFactory extends UuidFactory
             $node = Uuid::fromString($node);
         }
 
-        return new class($this->create(...), $node) extends TimeBasedUuidFactory {
+        return new class ($this->create(...), $node) extends TimeBasedUuidFactory {
             public function __construct(
-                private \Closure $create,
-                private ?Uuid $node = null,
+                private readonly \Closure $create,
+                private readonly ?Uuid $node = null,
             ) {
             }
 
@@ -114,10 +116,10 @@ class MockUuidFactory extends UuidFactory
             throw new LogicException(\sprintf('A namespace should be defined when using "%s()".', __METHOD__));
         }
 
-        return new class($this->create(...), $namespace) extends NameBasedUuidFactory {
+        return new class ($this->create(...), $namespace) extends NameBasedUuidFactory {
             public function __construct(
-                private \Closure $create,
-                private Uuid|string $namespace,
+                private readonly \Closure $create,
+                private readonly Uuid|string $namespace,
             ) {
             }
 

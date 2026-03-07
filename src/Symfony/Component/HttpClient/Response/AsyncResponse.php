@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,8 +34,6 @@ class AsyncResponse implements ResponseInterface, StreamableInterface
 
     private const FIRST_CHUNK_YIELDED = 1;
     private const LAST_CHUNK_YIELDED = 2;
-
-    private ?HttpClientInterface $client;
     private ResponseInterface $response;
     private array $info = ['canceled' => false];
     /** @var callable|null */
@@ -45,18 +45,17 @@ class AsyncResponse implements ResponseInterface, StreamableInterface
     /**
      * @param ?callable(ChunkInterface, AsyncContext): ?\Iterator $passthru
      */
-    public function __construct(HttpClientInterface $client, string $method, string $url, array $options, ?callable $passthru = null)
+    public function __construct(private ?HttpClientInterface $client, string $method, string $url, array $options, ?callable $passthru = null)
     {
-        $this->client = $client;
         $this->shouldBuffer = $options['buffer'] ?? true;
 
         if (null !== $onProgress = $options['on_progress'] ?? null) {
             $thisInfo = &$this->info;
-            $options['on_progress'] = static function (int $dlNow, int $dlSize, array $info) use (&$thisInfo, $onProgress) {
+            $options['on_progress'] = static function (int $dlNow, int $dlSize, array $info) use (&$thisInfo, $onProgress): void {
                 $onProgress($dlNow, $dlSize, $thisInfo + $info);
             };
         }
-        $this->response = $client->request($method, $url, ['buffer' => false] + $options);
+        $this->response = $this->client->request($method, $url, ['buffer' => false] + $options);
         $this->passthru = $passthru;
         $this->initializer = static function (self $response, ?float $timeout = null) {
             if (null === $response->shouldBuffer) {
@@ -190,9 +189,9 @@ class AsyncResponse implements ResponseInterface, StreamableInterface
 
         if ($this->initializer && null === $this->getInfo('error') && !$this->hasThrown) {
             try {
-                self::initialize($this, -0.0);
+                self::initialize($this);
                 $this->getHeaders(true);
-            } catch (HttpExceptionInterface $httpException) {
+            } catch (HttpExceptionInterface) {
                 // no-op
             }
         }

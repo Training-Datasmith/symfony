@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -107,7 +109,7 @@ class UndefinedCallableHandler
         }
 
         if ('webpack-encore-bundle' === self::FUNCTION_COMPONENTS[$name]) {
-            return new TwigFunction($name, static fn () => '');
+            return new TwigFunction($name, static fn (): string => '');
         }
 
         throw new SyntaxError(self::onUndefined($name, 'function', self::FUNCTION_COMPONENTS[$name]));

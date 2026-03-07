@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ use Symfony\Component\PropertyAccess\Exception\OutOfBoundsException;
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class PropertyPathBuilder
+class PropertyPathBuilder implements \Stringable
 {
     private array $elements = [];
     private array $isIndex = [];

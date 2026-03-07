@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,13 +25,8 @@ use Symfony\Component\Asset\VersionStrategy\VersionStrategyInterface;
  */
 class Package implements PackageInterface
 {
-    private ContextInterface $context;
-
-    public function __construct(
-        private VersionStrategyInterface $versionStrategy,
-        ?ContextInterface $context = null,
-    ) {
-        $this->context = $context ?? new NullContext();
+    public function __construct(private readonly VersionStrategyInterface $versionStrategy, private readonly ?ContextInterface $context = new NullContext())
+    {
     }
 
     public function getVersion(string $path): string

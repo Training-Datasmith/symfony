@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'Names' => [
         'Africa/Abidjan' => 'கிரீன்விச் சராசரி நேரம் (அபிட்ஜான்)',

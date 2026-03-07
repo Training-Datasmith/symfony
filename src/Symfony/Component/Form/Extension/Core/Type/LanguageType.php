@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ class LanguageType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'choice_loader' => function (Options $options) {
+            'choice_loader' => function (Options $options): \Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader {
                 if (!class_exists(Intl::class)) {
                     throw new LogicException(\sprintf('The "symfony/intl" component is required to use "%s". Try running "composer require symfony/intl".', static::class));
                 }
@@ -34,7 +36,7 @@ class LanguageType extends AbstractType
                 $useAlpha3Codes = $options['alpha3'];
                 $choiceSelfTranslation = $options['choice_self_translation'];
 
-                return ChoiceList::loader($this, new IntlCallbackChoiceLoader(static function () use ($choiceTranslationLocale, $useAlpha3Codes, $choiceSelfTranslation) {
+                return ChoiceList::loader($this, new IntlCallbackChoiceLoader(static function () use ($choiceTranslationLocale, $useAlpha3Codes, $choiceSelfTranslation): array {
                     if (true === $choiceSelfTranslation) {
                         foreach (Languages::getLanguageCodes() as $alpha2Code) {
                             try {

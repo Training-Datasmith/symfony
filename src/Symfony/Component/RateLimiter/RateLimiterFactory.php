@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,8 +32,8 @@ final class RateLimiterFactory implements RateLimiterFactoryInterface
 
     public function __construct(
         array $config,
-        private StorageInterface $storage,
-        private ?LockFactory $lockFactory = null,
+        private readonly StorageInterface $storage,
+        private readonly ?LockFactory $lockFactory = null,
     ) {
         $options = new OptionsResolver();
         self::configureOptions($options);
@@ -82,13 +84,13 @@ final class RateLimiterFactory implements RateLimiterFactoryInterface
             ->define('limit')->allowedTypes('int')
             ->define('interval')->allowedTypes('string')->normalize($intervalNormalizer)
             ->define('rate')
-                ->options(static function (OptionsResolver $rate) use ($intervalNormalizer) {
+                ->options(static function (OptionsResolver $rate) use ($intervalNormalizer): void {
                     $rate
                         ->define('amount')->allowedTypes('int')->default(1)
                         ->define('interval')->allowedTypes('string')->normalize($intervalNormalizer)
                     ;
                 })
-                ->normalize(static function (Options $options, $value) {
+                ->normalize(static function (Options $options, array $value): ?\Symfony\Component\RateLimiter\Policy\Rate {
                     if (!isset($value['interval'])) {
                         return null;
                     }

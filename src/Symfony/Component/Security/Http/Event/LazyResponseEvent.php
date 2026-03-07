@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -25,7 +27,7 @@ use Symfony\Component\Security\Core\Exception\LazyResponseException;
 final class LazyResponseEvent extends RequestEvent
 {
     public function __construct(
-        private parent $event,
+        private readonly parent $event,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,8 +21,8 @@ namespace Symfony\Component\HttpFoundation\Session;
 final class SessionBagProxy implements SessionBagInterface
 {
     private array $data;
-    private ?int $usageIndex;
-    private ?\Closure $usageReporter;
+    private ?int $usageIndex = null;
+    private readonly ?\Closure $usageReporter;
 
     public function __construct(
         private SessionBagInterface $bag,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -100,7 +102,7 @@ final class CurlResponse implements ResponseInterface, StreamableInterface
         }
 
         $execCounter = $multi->execCounter;
-        $this->info['pause_handler'] = static function (float $duration) use ($ch, $multi, $execCounter) {
+        $this->info['pause_handler'] = static function (float $duration) use ($ch, $multi, $execCounter): void {
             if (0 < $duration) {
                 if ($execCounter === $multi->execCounter) {
                     curl_multi_remove_handle($multi->handle, $ch);
@@ -125,7 +127,7 @@ final class CurlResponse implements ResponseInterface, StreamableInterface
         if ($onProgress = $options['on_progress']) {
             $url = isset($info['url']) ? ['url' => $info['url']] : [];
             curl_setopt($ch, \CURLOPT_NOPROGRESS, false);
-            curl_setopt($ch, \CURLOPT_PROGRESSFUNCTION, static function ($ch, $dlSize, $dlNow) use ($onProgress, &$info, $url, $multi, $debugBuffer) {
+            curl_setopt($ch, \CURLOPT_PROGRESSFUNCTION, static function ($ch, $dlSize, $dlNow) use ($onProgress, &$info, $url, $multi, $debugBuffer): ?int {
                 try {
                     $info['debug'] ??= '';
                     rewind($debugBuffer);
@@ -165,7 +167,7 @@ final class CurlResponse implements ResponseInterface, StreamableInterface
             return \strlen($data);
         });
 
-        $this->initializer = static function (self $response) {
+        $this->initializer = static function (self $response): bool {
             $waitFor = curl_getinfo($response->handle, \CURLINFO_PRIVATE);
 
             return 'H' === $waitFor[0];
@@ -176,7 +178,7 @@ final class CurlResponse implements ResponseInterface, StreamableInterface
         $multi->openHandles[$id] = [$ch, $options];
         curl_multi_add_handle($multi->handle, $ch);
 
-        $this->canary = new Canary(static function () use ($ch, $multi, $id) {
+        $this->canary = new Canary(static function () use ($ch, $multi, $id): void {
             unset($multi->pauseExpiries[$id], $multi->openHandles[$id], $multi->handlesActivity[$id]);
             curl_setopt($ch, \CURLOPT_PRIVATE, '_0');
 
@@ -329,13 +331,14 @@ final class CurlResponse implements ResponseInterface, StreamableInterface
                 $multi->handlesActivity[$id][] = \in_array($result, [\CURLE_OK, \CURLE_TOO_MANY_REDIRECTS], true)
                     || '_0' === $waitFor
                     || curl_getinfo($ch, \CURLINFO_SIZE_DOWNLOAD) === curl_getinfo($ch, \CURLINFO_CONTENT_LENGTH_DOWNLOAD)
-                    || ('C' === $waitFor[0]
+                    || (
+                        'C' === $waitFor[0]
                         && 'OpenSSL SSL_read: SSL_ERROR_SYSCALL, errno 0' === curl_error($ch)
                         && -1.0 === curl_getinfo($ch, \CURLINFO_CONTENT_LENGTH_DOWNLOAD)
-                        && \in_array('close', array_map('strtolower', $responses[$id]->headers['connection'] ?? []), true)
+                        && \in_array('close', array_map(strtolower(...), $responses[$id]->headers['connection'] ?? []), true)
                     )
                     ? null
-                    : new TransportException(ucfirst(curl_error($ch) ?: curl_strerror($result)).\sprintf(' for "%s".', curl_getinfo($ch, \CURLINFO_EFFECTIVE_URL)));
+                    : new TransportException(ucfirst(curl_error($ch) ?: (string) curl_strerror($result)).\sprintf(' for "%s".', curl_getinfo($ch, \CURLINFO_EFFECTIVE_URL)));
             }
         } finally {
             $multi->performing = false;
@@ -407,7 +410,7 @@ final class CurlResponse implements ResponseInterface, StreamableInterface
             }
 
             if (\function_exists('openssl_x509_read') && $certinfo = curl_getinfo($ch, \CURLINFO_CERTINFO)) {
-                $info['peer_certificate_chain'] = array_map('openssl_x509_read', array_column($certinfo, 'Cert'));
+                $info['peer_certificate_chain'] = array_map(openssl_x509_read(...), array_column($certinfo, 'Cert'));
             }
 
             if (300 <= $info['http_code'] && $info['http_code'] < 400 && null !== $options) {

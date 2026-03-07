@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -45,7 +47,7 @@ class CidrValidator extends ConstraintValidator
             $value = ($constraint->normalizer)($value);
         }
 
-        $cidrParts = explode('/', $value, 2);
+        $cidrParts = explode('/', (string) $value, 2);
 
         if (!isset($cidrParts[1])
             || !ctype_digit($cidrParts[1])

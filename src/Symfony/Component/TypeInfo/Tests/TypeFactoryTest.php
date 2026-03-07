@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -290,7 +292,7 @@ class TypeFactoryTest extends TestCase
         yield [Type::enum(DummyBackedEnum::class), DummyBackedEnum::ONE];
 
         // collection
-        $arrayAccess = new class implements \ArrayAccess {
+        $arrayAccess = new class () implements \ArrayAccess {
             public function offsetExists(mixed $offset): bool
             {
                 return true;

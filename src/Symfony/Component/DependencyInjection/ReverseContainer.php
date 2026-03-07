@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class ReverseContainer
+final readonly class ReverseContainer
 {
     private \Closure $getServiceId;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,7 @@ trait ContentLoaderTrait
     private function loadContent(RouteCollection $collection, array $config, string $path, string $file): void
     {
         foreach ($config as $name => $config) {
-            if (!str_starts_with($when = $name, 'when@')) {
+            if (!str_starts_with((string) $when = $name, 'when@')) {
                 $config = [$name => $config];
             } elseif (!$this->env || 'when@'.$this->env !== $name) {
                 continue;

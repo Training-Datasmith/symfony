@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     '🧑🏻‍❤‍💋‍🧑🏼' => 'kys: voksen, voksen, lys teint og medium til lys teint',
     '🧑🏻‍❤‍💋‍🧑🏽' => 'kys: voksen, voksen, lys teint og medium teint',

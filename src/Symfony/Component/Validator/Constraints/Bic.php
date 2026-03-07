@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -51,8 +53,6 @@ class Bic extends Constraint
 
     public string $message = 'This is not a valid Business Identifier Code (BIC).';
     public string $ibanMessage = 'This Business Identifier Code (BIC) is not associated with IBAN {{ iban }}.';
-    public ?string $iban = null;
-    public ?string $ibanPropertyPath = null;
     /**
      * @var self::VALIDATION_MODE_*
      */
@@ -67,8 +67,8 @@ class Bic extends Constraint
     public function __construct(
         ?array $options = null,
         ?string $message = null,
-        ?string $iban = null,
-        ?string $ibanPropertyPath = null,
+        public ?string $iban = null,
+        public ?string $ibanPropertyPath = null,
         ?string $ibanMessage = null,
         ?array $groups = null,
         mixed $payload = null,
@@ -90,8 +90,6 @@ class Bic extends Constraint
 
         $this->message = $message ?? $this->message;
         $this->ibanMessage = $ibanMessage ?? $this->ibanMessage;
-        $this->iban = $iban;
-        $this->ibanPropertyPath = $ibanPropertyPath;
         $this->mode = $mode ?? $this->mode;
 
         if (null !== $this->iban && null !== $this->ibanPropertyPath) {

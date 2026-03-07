@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -26,7 +28,7 @@ class JsonBundleWriter implements BundleWriterInterface
             $data = iterator_to_array($data);
         }
 
-        array_walk_recursive($data, static function (&$value) {
+        array_walk_recursive($data, static function (&$value): void {
             if ($value instanceof \Traversable) {
                 $value = iterator_to_array($value);
             }

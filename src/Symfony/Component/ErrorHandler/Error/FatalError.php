@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ class FatalError extends \Error
     public function __construct(
         string $message,
         int $code,
-        private array $error,
+        private readonly array $error,
         ?int $traceOffset = null,
         bool $traceArgs = true,
         ?array $trace = null,

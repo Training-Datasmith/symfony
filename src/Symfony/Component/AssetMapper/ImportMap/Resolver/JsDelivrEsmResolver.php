@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
-final class JsDelivrEsmResolver implements PackageResolverInterface
+final readonly class JsDelivrEsmResolver implements PackageResolverInterface
 {
     public const URL_PATTERN_VERSION = 'https://data.jsdelivr.com/v1/packages/npm/%s/resolved';
     public const URL_PATTERN_DIST_CSS = 'https://cdn.jsdelivr.net/npm/%s@%s%s';
@@ -34,7 +36,7 @@ final class JsDelivrEsmResolver implements PackageResolverInterface
 
     private const ES_MODULE_SHIMS = 'es-module-shims';
 
-    private readonly HttpClientInterface $httpClient;
+    private HttpClientInterface $httpClient;
 
     public function __construct(
         ?HttpClientInterface $httpClient = null,
@@ -136,8 +138,10 @@ final class JsDelivrEsmResolver implements PackageResolverInterface
             $entrypoints = $cssEntrypointResponse->toArray()['entrypoints'] ?? [];
             $cssFile = $entrypoints['css']['file'] ?? null;
             $guessed = $entrypoints['css']['guessed'] ?? true;
-
-            if (!$cssFile || $guessed) {
+            if (!$cssFile) {
+                continue;
+            }
+            if ($guessed) {
                 continue;
             }
 
@@ -240,7 +244,7 @@ final class JsDelivrEsmResolver implements PackageResolverInterface
                 $extraFiles = [];
 
                 $content = $response->getContent();
-                if (str_ends_with($extraFile, '.css')) {
+                if (str_ends_with((string) $extraFile, '.css')) {
                     $content = $this->makeImportsBare($content, $dependencies, $extraFiles, ImportMapType::CSS, $extraFile);
                 }
                 $contents[$package]['extraFiles'][$extraFile] = $content;
@@ -302,7 +306,7 @@ final class JsDelivrEsmResolver implements PackageResolverInterface
     private function makeImportsBare(string $content, array &$dependencies, array &$extraFiles, ImportMapType $type, string $sourceFilePath): string
     {
         if (ImportMapType::JS === $type) {
-            $content = preg_replace_callback(self::IMPORT_REGEX, static function ($matches) use (&$dependencies) {
+            $content = preg_replace_callback(self::IMPORT_REGEX, static function ($matches) use (&$dependencies): string {
                 $packageName = $matches[2].$matches[4]; // add the path if any
                 $dependencies[] = $packageName;
 
@@ -312,8 +316,8 @@ final class JsDelivrEsmResolver implements PackageResolverInterface
 
             // source maps are not also downloaded - so remove the sourceMappingURL
             // remove the final one only (in case sourceMappingURL is used in the code)
-            if (false !== $lastPos = strrpos($content, '//# sourceMappingURL=')) {
-                $content = substr($content, 0, $lastPos).preg_replace('{//# sourceMappingURL=.*$}m', '', substr($content, $lastPos));
+            if (false !== $lastPos = strrpos((string) $content, '//# sourceMappingURL=')) {
+                return substr((string) $content, 0, $lastPos).preg_replace('{//# sourceMappingURL=.*$}m', '', substr((string) $content, $lastPos));
             }
 
             return $content;
@@ -324,8 +328,10 @@ final class JsDelivrEsmResolver implements PackageResolverInterface
             if (str_starts_with($path, 'data:')) {
                 continue;
             }
-
-            if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            if (str_starts_with($path, 'http://')) {
+                continue;
+            }
+            if (str_starts_with($path, 'https://')) {
                 continue;
             }
 

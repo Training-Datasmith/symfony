@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ class MoFileDumper extends FileDumper
         $size = 0;
 
         foreach ($messages->all($domain) as $source => $target) {
-            $offsets[] = array_map('strlen', [$sources, $source, $targets, $target]);
+            $offsets[] = array_map(strlen(...), [$sources, $source, $targets, $target]);
             $sources .= "\0".$source;
             $targets .= "\0".$target;
             ++$size;

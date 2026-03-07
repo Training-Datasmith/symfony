@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ use Symfony\Component\HtmlSanitizer\TextSanitizer\StringSanitizer;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-final class TextNode implements NodeInterface
+final readonly class TextNode implements NodeInterface
 {
     public function __construct(
         private NodeInterface $parentNode,
@@ -29,7 +31,7 @@ final class TextNode implements NodeInterface
         throw new \LogicException('Text nodes cannot have children.');
     }
 
-    public function getParent(): ?NodeInterface
+    public function getParent(): \Symfony\Component\HtmlSanitizer\Visitor\Node\NodeInterface
     {
         return $this->parentNode;
     }

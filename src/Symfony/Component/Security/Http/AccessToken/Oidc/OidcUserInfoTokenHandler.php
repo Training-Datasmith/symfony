@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -76,7 +78,7 @@ final class OidcUserInfoTokenHandler implements AccessTokenHandlerInterface
             }
 
             // UserLoader argument can be overridden by a UserProvider on AccessTokenAuthenticator::authenticate
-            return new UserBadge($claims[$this->claim], new FallbackUserLoader(function () use ($claims) {
+            return new UserBadge($claims[$this->claim], new FallbackUserLoader(function () use ($claims): \Symfony\Component\Security\Core\User\OidcUser {
                 $claims['user_identifier'] = $claims[$this->claim];
 
                 return $this->createUser($claims);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -34,7 +36,7 @@ class DebugAutowiringCommand extends ContainerDebugCommand
 {
     public function __construct(
         ?string $name = null,
-        private ?FileLinkFormatter $fileLinkFormatter = null,
+        private readonly ?FileLinkFormatter $fileLinkFormatter = null,
     ) {
         parent::__construct($name);
     }
@@ -46,7 +48,8 @@ class DebugAutowiringCommand extends ContainerDebugCommand
                 new InputArgument('search', InputArgument::OPTIONAL, 'A search filter'),
                 new InputOption('all', null, InputOption::VALUE_NONE, 'Show also services that are not aliased'),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> command displays the classes and interfaces that
                 you can use as type-hints for autowiring:
 
@@ -71,9 +74,9 @@ class DebugAutowiringCommand extends ContainerDebugCommand
         $serviceIds = array_filter($serviceIds, $this->filterToServiceTypes(...));
 
         if ($search = $input->getArgument('search')) {
-            $searchNormalized = preg_replace('/[^a-zA-Z0-9\x7f-\xff $]++/', '', $search);
+            $searchNormalized = preg_replace('/[^a-zA-Z0-9\x7f-\xff $]++/', '', (string) $search);
 
-            $serviceIds = array_filter($serviceIds, static fn ($serviceId) => false !== stripos(str_replace('\\', '', $serviceId), $searchNormalized) && !str_starts_with($serviceId, '.'));
+            $serviceIds = array_filter($serviceIds, static fn (string $serviceId): bool => false !== stripos(str_replace('\\', '', $serviceId), (string) $searchNormalized) && !str_starts_with($serviceId, '.'));
 
             if (!$serviceIds) {
                 $errorIo->error(\sprintf('No autowirable classes or interfaces found matching "%s"', $search));
@@ -90,7 +93,7 @@ class DebugAutowiringCommand extends ContainerDebugCommand
             }
         }
 
-        uasort($serviceIds, 'strnatcmp');
+        uasort($serviceIds, strnatcmp(...));
 
         $io->title('Autowirable Types');
         $io->text('Use the following classes & interfaces as type-hints in constructor arguments to autowire services.');
@@ -126,10 +129,13 @@ class DebugAutowiringCommand extends ContainerDebugCommand
 
                 $target = null;
                 foreach ($reverseAliases[$alias] ?? [] as $id) {
-                    if (!str_starts_with($id, '.'.$previousId.' $') || !str_contains($serviceId, ' $')) {
+                    if (!str_starts_with($id, '.'.$previousId.' $')) {
                         continue;
                     }
-                    $target = substr($id, \strlen($previousId) + 3);
+                    if (!str_contains($serviceId, ' $')) {
+                        continue;
+                    }
+                    $target = substr($id, \strlen((string) $previousId) + 3);
 
                     if ($container->findDefinition($id) === $container->findDefinition($serviceId)) {
                         break;

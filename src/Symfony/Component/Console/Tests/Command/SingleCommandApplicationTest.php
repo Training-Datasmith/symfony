@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,7 @@ class SingleCommandApplicationTest extends TestCase
 {
     public function testRun()
     {
-        $command = new class extends SingleCommandApplication {
+        $command = new class () extends SingleCommandApplication {
             protected function execute(InputInterface $input, OutputInterface $output): int
             {
                 return 0;

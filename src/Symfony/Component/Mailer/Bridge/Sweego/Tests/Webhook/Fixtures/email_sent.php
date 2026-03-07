@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Symfony\Component\RemoteEvent\Event\Mailer\MailerDeliveryEvent;
 
 $wh = new MailerDeliveryEvent(MailerDeliveryEvent::RECEIVED, '8a3bf3ee-1863-4a02-906d-2e6494914ddb', json_decode(file_get_contents(str_replace('.php', '.json', __FILE__)), true));

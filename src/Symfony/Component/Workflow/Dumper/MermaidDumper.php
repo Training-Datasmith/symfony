@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -47,8 +49,8 @@ class MermaidDumper implements DumperInterface
     private int $linkCount = 0;
 
     public function __construct(
-        private string $transitionType,
-        private string $direction = self::DIRECTION_LEFT_TO_RIGHT,
+        private readonly string $transitionType,
+        private readonly string $direction = self::DIRECTION_LEFT_TO_RIGHT,
     ) {
         $this->validateDirection($direction);
         $this->validateTransitionType($transitionType);
@@ -107,7 +109,7 @@ class MermaidDumper implements DumperInterface
                     foreach ($transitionOutput as $line) {
                         if (\in_array($line, $output)) {
                             // additional links must be decremented again to align the styling
-                            if (0 < strpos($line, '-->')) {
+                            if (0 < strpos((string) $line, '-->')) {
                                 --$this->linkCount;
                             }
 

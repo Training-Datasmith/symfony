@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -147,7 +149,8 @@ class DoctrineTokenProviderTest extends TestCase
             'driver' => 'pdo_sqlite',
             'memory' => true,
         ], $config);
-        $connection->executeStatement(<<< 'SQL'
+        $connection->executeStatement(
+            <<< 'SQL'
             CREATE TABLE rememberme_token (
                 series   char(88)     UNIQUE PRIMARY KEY NOT NULL,
                 value    char(88)     NOT NULL,

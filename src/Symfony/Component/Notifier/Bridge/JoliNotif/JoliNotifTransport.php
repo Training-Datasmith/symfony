@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -47,17 +49,17 @@ final class JoliNotifTransport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof DesktopMessage) {
-            throw new UnsupportedMessageTypeException(__CLASS__, DesktopMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, DesktopMessage::class, $message);
         }
 
         if (($options = $message->getOptions()) && !$options instanceof JoliNotifOptions) {
-            throw new UnsupportedOptionsException(__CLASS__, JoliNotifOptions::class, $options);
+            throw new UnsupportedOptionsException(self::class, JoliNotifOptions::class, $options);
         }
 
         $joliNotification = $this->buildJoliNotificationObject($message, $options);
 
         if (false === $this->joliNotifier->send($joliNotification)) {
-            throw new RuntimeException(\sprintf('An error occurred while sending a notification via the "%s" transport.', __CLASS__));
+            throw new RuntimeException(\sprintf('An error occurred while sending a notification via the "%s" transport.', self::class));
         }
 
         return new SentMessage($message, (string) $this);

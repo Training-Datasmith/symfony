@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -13,7 +15,7 @@ namespace Symfony\Component\Routing\Requirement;
 
 use Symfony\Component\Routing\Exception\InvalidArgumentException;
 
-final class EnumRequirement implements \Stringable
+final readonly class EnumRequirement implements \Stringable
 {
     private string $requirement;
 
@@ -46,7 +48,7 @@ final class EnumRequirement implements \Stringable
             }
         }
 
-        $this->requirement = implode('|', array_map(static fn ($e) => preg_quote($e->value), $cases));
+        $this->requirement = implode('|', array_map(static fn (\BackedEnum $e): string => preg_quote((string) $e->value), $cases));
     }
 
     public function __toString(): string

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -244,7 +246,7 @@ abstract class AbstractString implements \Stringable, \JsonSerializable
     public function collapseWhitespace(): static
     {
         $str = clone $this;
-        $str->string = trim(preg_replace("/(?:[ \n\r\t\x0C]{2,}+|[\n\r\t\x0C])/", ' ', $str->string), " \n\r\t\x0C");
+        $str->string = trim((string) preg_replace("/(?:[ \n\r\t\x0C]{2,}+|[\n\r\t\x0C])/", ' ', $str->string), " \n\r\t\x0C");
 
         return $str;
     }
@@ -461,7 +463,7 @@ abstract class AbstractString implements \Stringable, \JsonSerializable
         set_error_handler(static fn ($t, $m) => throw new InvalidArgumentException($m));
 
         try {
-            if (false === $chunks = preg_split($delimiter, $this->string, $limit, $flags)) {
+            if (false === $chunks = preg_split($delimiter, $this->string, (int) $limit, $flags)) {
                 throw new RuntimeException('Splitting failed with error: '.preg_last_error_msg());
             }
         } finally {
@@ -554,7 +556,7 @@ abstract class AbstractString implements \Stringable, \JsonSerializable
      */
     public function trimPrefix($prefix): static
     {
-        if (\is_array($prefix) || $prefix instanceof \Traversable) { // don't use is_iterable(), it's slow
+        if (is_iterable($prefix)) { // don't use is_iterable(), it's slow
             foreach ($prefix as $s) {
                 $t = $this->trimPrefix($s);
 
@@ -588,7 +590,7 @@ abstract class AbstractString implements \Stringable, \JsonSerializable
      */
     public function trimSuffix($suffix): static
     {
-        if (\is_array($suffix) || $suffix instanceof \Traversable) { // don't use is_iterable(), it's slow
+        if (is_iterable($suffix)) { // don't use is_iterable(), it's slow
             foreach ($suffix as $s) {
                 $t = $this->trimSuffix($s);
 
@@ -608,7 +610,7 @@ abstract class AbstractString implements \Stringable, \JsonSerializable
             $suffix = (string) $suffix;
         }
 
-        if ('' !== $suffix && \strlen($this->string) >= \strlen($suffix) && 0 === substr_compare($this->string, $suffix, -\strlen($suffix), null, $this->ignoreCase)) {
+        if ('' !== $suffix && \strlen($this->string) >= \strlen($suffix) && str_ends_with($this->string, $suffix)) {
             $str->string = substr($this->string, 0, -\strlen($suffix));
         }
 

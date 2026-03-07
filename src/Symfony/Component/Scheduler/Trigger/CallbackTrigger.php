@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -14,7 +16,7 @@ namespace Symfony\Component\Scheduler\Trigger;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class CallbackTrigger implements TriggerInterface
+final readonly class CallbackTrigger implements TriggerInterface
 {
     private \Closure $callback;
     private string $description;

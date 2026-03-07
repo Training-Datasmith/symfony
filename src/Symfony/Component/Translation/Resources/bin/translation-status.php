@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -66,7 +68,7 @@ foreach (array_slice($argv, 1) as $argumentOrOption) {
         continue;
     }
 
-    if (str_starts_with($argumentOrOption, '-')) {
+    if (str_starts_with((string) $argumentOrOption, '-')) {
         $config['verbose_output'] = true;
     } else {
         $config['locale_to_analyze'] = $argumentOrOption;
@@ -87,8 +89,8 @@ foreach ($config['original_files'] as $originalFilePath) {
     $translationFilePaths = findTranslationFiles($originalFilePath, $config['locale_to_analyze']);
     $translationStatus = calculateTranslationStatus($originalFilePath, $translationFilePaths);
 
-    $totalMissingTranslations += array_sum(array_map(static fn ($translation) => count($translation['missingKeys']), array_values($translationStatus)));
-    $totalTranslationMismatches += array_sum(array_map(static fn ($translation) => count($translation['mismatches']), array_values($translationStatus)));
+    $totalMissingTranslations += array_sum(array_map(static fn (array $translation): int => count($translation['missingKeys']), array_values($translationStatus)));
+    $totalTranslationMismatches += array_sum(array_map(static fn (array $translation): int => count($translation['mismatches']), array_values($translationStatus)));
 
     printTranslationStatus($originalFilePath, $translationStatus, $config['verbose_output'], $config['include_completed_languages']);
 }
@@ -99,8 +101,8 @@ function findTranslationFiles($originalFilePath, $localeToAnalyze): array
 {
     $translations = [];
 
-    $translationsDir = dirname($originalFilePath);
-    $originalFileName = basename($originalFilePath);
+    $translationsDir = dirname((string) $originalFilePath);
+    $originalFileName = basename((string) $originalFilePath);
     $translationFileNamePattern = str_replace('.en.', '.*.', $originalFileName);
 
     $translationFiles = glob($translationsDir.'/'.$translationFileNamePattern, \GLOB_NOSORT);
@@ -145,16 +147,16 @@ function isTranslationCompleted(array $translationStatus): bool
     return $translationStatus['total'] === $translationStatus['translated'] && 0 === count($translationStatus['mismatches']);
 }
 
-function printTranslationStatus($originalFilePath, $translationStatus, $verboseOutput, $includeCompletedLanguages): void
+function printTranslationStatus($originalFilePath, $translationStatus, $verboseOutput, bool $includeCompletedLanguages): void
 {
     printTitle($originalFilePath);
     printTable($translationStatus, $verboseOutput, $includeCompletedLanguages);
     echo \PHP_EOL.\PHP_EOL;
 }
 
-function extractLocaleFromFilePath($filePath)
+function extractLocaleFromFilePath($filePath): string
 {
-    $parts = explode('.', $filePath);
+    $parts = explode('.', (string) $filePath);
 
     return $parts[count($parts) - 2];
 }
@@ -196,7 +198,7 @@ function findTransUnitMismatches(array $baseTranslationKeys, array $translatedKe
     return $mismatches;
 }
 
-function printTitle($title): void
+function printTitle(string $title): void
 {
     echo $title.\PHP_EOL;
     echo str_repeat('=', strlen($title)).\PHP_EOL.\PHP_EOL;
@@ -209,7 +211,7 @@ function printTable($translations, $verboseOutput, bool $includeCompletedLanguag
 
         return;
     }
-    $longestLocaleNameLength = max(array_map('strlen', array_keys($translations)));
+    $longestLocaleNameLength = max(array_map(strlen(...), array_keys($translations)));
 
     foreach ($translations as $locale => $translation) {
         if (!$includeCompletedLanguages && $translation['is_completed']) {

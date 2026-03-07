@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -40,7 +42,7 @@ class MailerTest extends AbstractWebTestCase
         $eventDispatcher = self::getContainer()->get(EventDispatcherInterface::class);
         $logger = self::getContainer()->get('logger');
 
-        $testTransport = new class($eventDispatcher, $logger, $onDoSend) extends AbstractTransport {
+        $testTransport = new class ($eventDispatcher, $logger, $onDoSend) extends AbstractTransport {
             private \Closure $onDoSend;
 
             public function __construct(EventDispatcherInterface $eventDispatcher, LoggerInterface $logger, \Closure $onDoSend)

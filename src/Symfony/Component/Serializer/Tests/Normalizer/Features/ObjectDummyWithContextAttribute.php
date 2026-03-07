@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,6 @@ final class ObjectDummyWithContextAttribute
         #[Context([DateTimeNormalizer::FORMAT_KEY => 'm-d-Y'])]
         #[SerializedName('property_with_serialized_name')]
         public \DateTimeImmutable $propertyWithSerializedName,
-
         #[Context([DateTimeNormalizer::FORMAT_KEY => 'm-d-Y'])]
         public \DateTimeImmutable $propertyWithoutSerializedName,
     ) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ class EmailMessage implements MessageInterface, FromNotificationInterface
     private ?Notification $notification = null;
 
     public function __construct(
-        private RawMessage $message,
+        private readonly RawMessage $message,
         private ?Envelope $envelope = null,
     ) {
     }
@@ -36,7 +38,7 @@ class EmailMessage implements MessageInterface, FromNotificationInterface
     public static function fromNotification(Notification $notification, EmailRecipientInterface $recipient): self
     {
         if ('' === $recipient->getEmail()) {
-            throw new InvalidArgumentException(\sprintf('"%s" needs an email, it cannot be empty.', __CLASS__));
+            throw new InvalidArgumentException(\sprintf('"%s" needs an email, it cannot be empty.', self::class));
         }
 
         if (!class_exists(NotificationEmail::class)) {

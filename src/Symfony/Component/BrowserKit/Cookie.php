@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,7 +21,7 @@ use Symfony\Component\BrowserKit\Exception\UnexpectedValueException;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class Cookie
+class Cookie implements \Stringable
 {
     /**
      * Handles dates as defined by RFC 2616 section 3.3.1, and also some other
@@ -54,15 +56,15 @@ class Cookie
      * @param string|null     $samesite     The cookie samesite attribute
      */
     public function __construct(
-        private string $name,
+        private readonly string $name,
         ?string $value,
         string|int|null $expires = null,
         ?string $path = null,
-        private string $domain = '',
-        private bool $secure = false,
-        private bool $httponly = true,
+        private readonly string $domain = '',
+        private readonly bool $secure = false,
+        private readonly bool $httponly = true,
         bool $encodedValue = false,
-        private ?string $samesite = null,
+        private readonly ?string $samesite = null,
     ) {
         if ($encodedValue) {
             $this->rawValue = $value ?? '';
@@ -159,10 +161,15 @@ class Cookie
 
             if ('secure' === strtolower($part)) {
                 // Ignore the secure flag if the original URI is not given or is not HTTPS
-                if (null === $url || !isset($urlParts['scheme']) || 'https' !== $urlParts['scheme']) {
+                if (null === $url) {
                     continue;
                 }
-
+                if (!isset($urlParts['scheme'])) {
+                    continue;
+                }
+                if ('https' !== $urlParts['scheme']) {
+                    continue;
+                }
                 $values['secure'] = true;
 
                 continue;

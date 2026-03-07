@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $loader->load('container1.php');
 
 $container->loadFromExtension('security', [

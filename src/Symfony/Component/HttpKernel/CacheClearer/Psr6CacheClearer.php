@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,14 +20,11 @@ use Psr\Cache\CacheItemPoolInterface;
  */
 class Psr6CacheClearer implements CacheClearerInterface
 {
-    private array $pools = [];
-
     /**
      * @param array<string, CacheItemPoolInterface> $pools
      */
-    public function __construct(array $pools = [])
+    public function __construct(private array $pools = [])
     {
-        $this->pools = $pools;
     }
 
     public function hasPool(string $name): bool

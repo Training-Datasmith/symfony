@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -362,7 +364,8 @@ class FormDataExtractorTest extends TestCase
                 ]
                 EODUMP;
         }
-        $this->assertDumpMatchesFormat($expectedFormat,
+        $this->assertDumpMatchesFormat(
+            $expectedFormat,
             $this->dataExtractor->extractSubmittedData($form)
         );
     }
@@ -371,7 +374,8 @@ class FormDataExtractorTest extends TestCase
     {
         $form = $this->createBuilder('name')
             ->addModelTransformer(new CallbackTransformer(
-                static function () {},
+                static function () {
+                },
                 static function () {
                     throw new TransformationFailedException('Fail!');
                 }

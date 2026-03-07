@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -47,9 +49,7 @@ class PhpFileLoader extends FileLoader
 
         // the closure forbids access to the private scope in the included file
         $loader = $this;
-        $load = \Closure::bind(static function ($file) use ($loader) {
-            return include $file;
-        }, null, null);
+        $load = \Closure::bind(static fn ($file) => include $file, null, null);
 
         if (1 === $result = $load($path)) {
             $result = null;

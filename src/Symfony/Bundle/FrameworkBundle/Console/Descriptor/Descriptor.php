@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -94,8 +96,6 @@ abstract class Descriptor implements DescriptorInterface
      *
      * Common options are:
      * * name: name of described service
-     *
-     * @param Definition|Alias|object $service
      */
     abstract protected function describeContainerService(object $service, array $options = [], ?ContainerBuilder $container = null): void;
 
@@ -153,7 +153,7 @@ abstract class Descriptor implements DescriptorInterface
         // Recursively search for enum values, so we can replace it
         // before json_encode (which will not display anything for \UnitEnum otherwise)
         if (\is_array($value)) {
-            array_walk_recursive($value, static function (&$value) {
+            array_walk_recursive($value, static function (&$value): void {
                 if ($value instanceof \UnitEnum) {
                     $value = ltrim(var_export($value, true), '\\');
                 }
@@ -244,7 +244,7 @@ abstract class Descriptor implements DescriptorInterface
                 }
             }
         }
-        uasort($maxPriority, static fn ($a, $b) => $b <=> $a);
+        uasort($maxPriority, static fn ($a, $b): int => $b <=> $a);
 
         return array_keys($maxPriority);
     }
@@ -285,7 +285,7 @@ abstract class Descriptor implements DescriptorInterface
 
     protected function sortByPriority(array $tag): array
     {
-        usort($tag, static fn ($a, $b) => ($b['priority'] ?? 0) <=> ($a['priority'] ?? 0));
+        usort($tag, static fn (array $a, array $b): int => ($b['priority'] ?? 0) <=> ($a['priority'] ?? 0));
 
         return $tag;
     }
@@ -318,7 +318,7 @@ abstract class Descriptor implements DescriptorInterface
             if ($docComment = $r->getDocComment()) {
                 $docComment = preg_split('#\n\s*\*\s*[\n@]#', substr($docComment, 3, -2), 2)[0];
 
-                return trim(preg_replace('#\s*\n\s*\*\s*#', ' ', $docComment));
+                return trim((string) preg_replace('#\s*\n\s*\*\s*#', ' ', $docComment));
             }
         } catch (\ReflectionException) {
         }
@@ -378,10 +378,10 @@ abstract class Descriptor implements DescriptorInterface
     {
         try {
             return array_values(array_unique(array_map(
-                static fn (ServiceReferenceGraphEdge $edge) => $edge->getSourceNode()->getId(),
+                static fn (ServiceReferenceGraphEdge $edge): string => $edge->getSourceNode()->getId(),
                 $container->getCompiler()->getServiceReferenceGraph()->getNode($serviceId)->getInEdges()
             )));
-        } catch (InvalidArgumentException $exception) {
+        } catch (InvalidArgumentException) {
             return [];
         }
     }

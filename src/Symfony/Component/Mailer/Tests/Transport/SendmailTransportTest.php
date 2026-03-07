@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -128,7 +130,7 @@ class SendmailTransportTest extends TestCase
         $transportProperty = new \ReflectionProperty(SendmailTransport::class, 'transport');
 
         // Replace the transport with an anonymous consumer that trigger the stream methods
-        $transportProperty->setValue($sendmailTransport, new class($transportProperty->getValue($sendmailTransport)->getStream()) extends SmtpTransport {
+        $transportProperty->setValue($sendmailTransport, new class ($transportProperty->getValue($sendmailTransport)->getStream()) extends SmtpTransport {
             private $stream;
 
             public function __construct(ProcessStream $stream)

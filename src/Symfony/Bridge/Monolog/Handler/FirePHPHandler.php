@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,7 +39,7 @@ class FirePHPHandler extends BaseFirePHPHandler
         }
 
         $request = $event->getRequest();
-        if (!preg_match('{\bFirePHP/\d+\.\d+\b}', $request->headers->get('User-Agent', ''))
+        if (!preg_match('{\bFirePHP/\d+\.\d+\b}', (string) $request->headers->get('User-Agent', ''))
             && !$request->headers->has('X-FirePHP-Version')) {
             self::$sendHeaders = false;
             $this->headers = [];

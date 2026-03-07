@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -20,7 +22,7 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 class StringToFloatTransformer implements DataTransformerInterface
 {
     public function __construct(
-        private ?int $scale = null,
+        private readonly ?int $scale = null,
     ) {
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -133,7 +135,8 @@ class ImportMapRendererTest extends TestCase
         $html = $renderer->render([]);
         $this->assertStringContainsString('<script type="importmap" something data-turbo-track="reload">', $html);
         $this->assertStringContainsString('<script something data-turbo-track="reload">', $html);
-        $this->assertStringContainsString(<<<EOTXT
+        $this->assertStringContainsString(
+            <<<EOTXT
                 script.src = 'https://polyfillUrl.example';
                 script.setAttribute('something', 'something');
                 script.setAttribute('data-turbo-track', 'reload');

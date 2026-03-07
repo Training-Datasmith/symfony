@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -18,7 +20,7 @@ use Symfony\Component\AssetMapper\MappedAsset;
  */
 class CircularAssetsException extends RuntimeException
 {
-    public function __construct(private MappedAsset $mappedAsset, string $message = '', int $code = 0, ?\Throwable $previous = null)
+    public function __construct(private readonly MappedAsset $mappedAsset, string $message = '', int $code = 0, ?\Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

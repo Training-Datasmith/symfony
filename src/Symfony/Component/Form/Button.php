@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ class Button implements \IteratorAggregate, FormInterface
      * Creates a new button from a form configuration.
      */
     public function __construct(
-        private FormConfigInterface $config,
+        private readonly FormConfigInterface $config,
     ) {
     }
 

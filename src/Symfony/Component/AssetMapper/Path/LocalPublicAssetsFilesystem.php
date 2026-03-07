@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -16,7 +18,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class LocalPublicAssetsFilesystem implements PublicAssetsFilesystemInterface
 {
-    private Filesystem $filesystem;
+    private readonly Filesystem $filesystem;
 
     /**
      * @param string[] $extensionsToCompress

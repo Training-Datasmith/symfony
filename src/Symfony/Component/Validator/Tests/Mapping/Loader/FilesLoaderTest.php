@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -44,6 +46,6 @@ class FilesLoaderTest extends TestCase
             __DIR__.'/constraint-mapping.txt',
         ];
 
-        return new class($files, $loader) extends FilesLoader {};
+        return new class ($files, $loader) extends FilesLoader {};
     }
 }

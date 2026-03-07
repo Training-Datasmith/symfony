@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,7 @@ final class ServicesResetter implements ServicesResetterInterface
      * @param array<string, string|string[]> $resetMethods
      */
     public function __construct(
-        private \Traversable $resettableServices,
+        private readonly \Traversable $resettableServices,
         private array $resetMethods,
     ) {
     }

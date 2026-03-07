@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -103,10 +105,12 @@ final class AttributeAutoconfigurationPass extends AbstractRecursivePass
 
         if ($this->methodAttributeConfigurators || $this->parameterAttributeConfigurators) {
             foreach ($classReflector->getMethods(\ReflectionMethod::IS_PUBLIC) as $methodReflector) {
-                if ($methodReflector->isConstructor() || $methodReflector->isDestructor()) {
+                if ($methodReflector->isConstructor()) {
                     continue;
                 }
-
+                if ($methodReflector->isDestructor()) {
+                    continue;
+                }
                 $this->callConfigurators($this->methodAttributeConfigurators, $conditionals, $methodReflector);
 
                 foreach ($methodReflector->getParameters() as $parameterReflector) {

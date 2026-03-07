@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $container->loadFromExtension('security', [
     'access_decision_manager' => [
         'service' => 'app.access_decision_manager',

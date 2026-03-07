@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -32,7 +34,7 @@ use Symfony\Contracts\Service\ServiceProviderInterface;
  *
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-final class ArgumentResolver implements ArgumentResolverInterface
+final readonly class ArgumentResolver implements ArgumentResolverInterface
 {
     /**
      * @param iterable<mixed, ValueResolverInterface> $argumentValueResolvers
@@ -125,7 +127,7 @@ final class ArgumentResolver implements ArgumentResolverInterface
                 continue;
             }
 
-            $reasons = array_map(static fn (NearMissValueResolverException $e) => $e->getMessage(), $valueResolverExceptions);
+            $reasons = array_map(static fn (NearMissValueResolverException $e): string => $e->getMessage(), $valueResolverExceptions);
             if (!$reasons) {
                 $reasons[] = \sprintf('The parameter has no #[Argument], #[Option], or #[MapInput] attribute, and its type "%s" cannot be auto-resolved.', $typeName ?? 'unknown');
                 $reasons[] = 'Add an attribute to map this parameter to command input.';

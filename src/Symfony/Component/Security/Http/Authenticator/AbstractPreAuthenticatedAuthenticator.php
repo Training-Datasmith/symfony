@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -37,10 +39,10 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 abstract class AbstractPreAuthenticatedAuthenticator implements InteractiveAuthenticatorInterface
 {
     public function __construct(
-        private UserProviderInterface $userProvider,
-        private TokenStorageInterface $tokenStorage,
-        private string $firewallName,
-        private ?LoggerInterface $logger = null,
+        private readonly UserProviderInterface $userProvider,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly string $firewallName,
+        private readonly ?LoggerInterface $logger = null,
     ) {
     }
 

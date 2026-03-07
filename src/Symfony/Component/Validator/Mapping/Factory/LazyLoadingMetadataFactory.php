@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -118,7 +120,7 @@ class LazyLoadingMetadataFactory implements MetadataFactoryInterface
 
         // Include constraints from all directly implemented interfaces
         foreach ($metadata->getReflectionClass()->getInterfaces() as $interface) {
-            if ('Symfony\Component\Validator\GroupSequenceProviderInterface' === $interface->name) {
+            if (\Symfony\Component\Validator\GroupSequenceProviderInterface::class === $interface->name) {
                 continue;
             }
 

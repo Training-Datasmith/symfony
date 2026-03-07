@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -72,7 +74,7 @@ final class Lox24Transport extends AbstractTransport
     protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$this->supports($message)) {
-            throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
+            throw new UnsupportedMessageTypeException(self::class, SmsMessage::class, $message);
         }
 
         $from = $message->getFrom() ?: $this->from;
@@ -171,11 +173,11 @@ final class Lox24Transport extends AbstractTransport
     {
         $voiceLang = $options['voice_lang'] ?? null;
         if ($voiceLang) {
-            $voiceLang = strtoupper($voiceLang);
+            $voiceLang = strtoupper((string) $voiceLang);
             try {
                 $lang = VoiceLanguage::from($voiceLang);
             } catch (\ValueError) {
-                $allowed = implode(', ', array_map(static fn ($case) => $case->value, VoiceLanguage::cases()));
+                $allowed = implode(', ', array_map(static fn (\Symfony\Component\Notifier\Bridge\Lox24\VoiceLanguage $case) => $case->value, VoiceLanguage::cases()));
                 $str = 'The "voice_lang" option "%s" is not a valid language. Allowed languages are: %s.';
                 throw new InvalidArgumentException(\sprintf($str, $voiceLang, $allowed));
             }

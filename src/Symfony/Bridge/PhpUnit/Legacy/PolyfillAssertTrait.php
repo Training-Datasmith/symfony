@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -22,10 +24,8 @@ trait PolyfillAssertTrait
     /**
      * @param iterable $haystack
      * @param string   $message
-     *
-     * @return void
      */
-    public static function assertContainsEquals($needle, $haystack, $message = '')
+    public static function assertContainsEquals($needle, $haystack, $message = ''): void
     {
         $constraint = new TraversableContains($needle, false, false);
         static::assertThat($haystack, $constraint, $message);
@@ -34,10 +34,8 @@ trait PolyfillAssertTrait
     /**
      * @param iterable $haystack
      * @param string   $message
-     *
-     * @return void
      */
-    public static function assertNotContainsEquals($needle, $haystack, $message = '')
+    public static function assertNotContainsEquals($needle, $haystack, $message = ''): void
     {
         $constraint = new LogicalNot(new TraversableContains($needle, false, false));
         static::assertThat($haystack, $constraint, $message);
@@ -46,10 +44,8 @@ trait PolyfillAssertTrait
     /**
      * @param string $filename
      * @param string $message
-     *
-     * @return void
      */
-    public static function assertIsNotReadable($filename, $message = '')
+    public static function assertIsNotReadable($filename, $message = ''): void
     {
         static::assertNotIsReadable($filename, $message);
     }
@@ -57,10 +53,8 @@ trait PolyfillAssertTrait
     /**
      * @param string $filename
      * @param string $message
-     *
-     * @return void
      */
-    public static function assertIsNotWritable($filename, $message = '')
+    public static function assertIsNotWritable($filename, $message = ''): void
     {
         static::assertNotIsWritable($filename, $message);
     }
@@ -68,10 +62,8 @@ trait PolyfillAssertTrait
     /**
      * @param string $directory
      * @param string $message
-     *
-     * @return void
      */
-    public static function assertDirectoryDoesNotExist($directory, $message = '')
+    public static function assertDirectoryDoesNotExist($directory, $message = ''): void
     {
         static::assertDirectoryNotExists($directory, $message);
     }
@@ -79,10 +71,8 @@ trait PolyfillAssertTrait
     /**
      * @param string $directory
      * @param string $message
-     *
-     * @return void
      */
-    public static function assertDirectoryIsNotReadable($directory, $message = '')
+    public static function assertDirectoryIsNotReadable($directory, $message = ''): void
     {
         static::assertDirectoryNotIsReadable($directory, $message);
     }
@@ -90,10 +80,8 @@ trait PolyfillAssertTrait
     /**
      * @param string $directory
      * @param string $message
-     *
-     * @return void
      */
-    public static function assertDirectoryIsNotWritable($directory, $message = '')
+    public static function assertDirectoryIsNotWritable($directory, $message = ''): void
     {
         static::assertDirectoryNotIsWritable($directory, $message);
     }
@@ -101,10 +89,8 @@ trait PolyfillAssertTrait
     /**
      * @param string $filename
      * @param string $message
-     *
-     * @return void
      */
-    public static function assertFileDoesNotExist($filename, $message = '')
+    public static function assertFileDoesNotExist($filename, $message = ''): void
     {
         static::assertFileNotExists($filename, $message);
     }
@@ -112,10 +98,8 @@ trait PolyfillAssertTrait
     /**
      * @param string $filename
      * @param string $message
-     *
-     * @return void
      */
-    public static function assertFileIsNotReadable($filename, $message = '')
+    public static function assertFileIsNotReadable($filename, $message = ''): void
     {
         static::assertFileNotIsReadable($filename, $message);
     }
@@ -123,10 +107,8 @@ trait PolyfillAssertTrait
     /**
      * @param string $filename
      * @param string $message
-     *
-     * @return void
      */
-    public static function assertFileIsNotWritable($filename, $message = '')
+    public static function assertFileIsNotWritable($filename, $message = ''): void
     {
         static::assertFileNotIsWritable($filename, $message);
     }
@@ -135,10 +117,8 @@ trait PolyfillAssertTrait
      * @param string $pattern
      * @param string $string
      * @param string $message
-     *
-     * @return void
      */
-    public static function assertMatchesRegularExpression($pattern, $string, $message = '')
+    public static function assertMatchesRegularExpression($pattern, $string, $message = ''): void
     {
         static::assertRegExp($pattern, $string, $message);
     }
@@ -147,10 +127,8 @@ trait PolyfillAssertTrait
      * @param string $pattern
      * @param string $string
      * @param string $message
-     *
-     * @return void
      */
-    public static function assertDoesNotMatchRegularExpression($pattern, $string, $message = '')
+    public static function assertDoesNotMatchRegularExpression($pattern, $string, $message = ''): void
     {
         static::assertNotRegExp($pattern, $string, $message);
     }

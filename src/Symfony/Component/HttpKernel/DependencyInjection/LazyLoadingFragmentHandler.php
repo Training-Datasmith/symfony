@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -29,7 +31,7 @@ class LazyLoadingFragmentHandler extends FragmentHandler
     private array $initialized = [];
 
     public function __construct(
-        private ContainerInterface $container,
+        private readonly ContainerInterface $container,
         RequestStack $requestStack,
         bool $debug = false,
     ) {

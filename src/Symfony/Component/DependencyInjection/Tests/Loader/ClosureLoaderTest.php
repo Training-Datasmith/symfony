@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -21,7 +23,8 @@ class ClosureLoaderTest extends TestCase
     {
         $loader = new ClosureLoader(new ContainerBuilder());
 
-        $this->assertTrue($loader->supports(static function ($container) {}), '->supports() returns true if the resource is loadable');
+        $this->assertTrue($loader->supports(static function ($container) {
+        }), '->supports() returns true if the resource is loadable');
         $this->assertFalse($loader->supports('foo.foo'), '->supports() returns true if the resource is loadable');
     }
 

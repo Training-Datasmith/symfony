@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -228,7 +230,8 @@ class SymfonyStyleTest extends TestCase
         $tree = $style->createTree(['A', 'B' => ['B1' => ['B11', 'B12'], 'B2'], 'C'], 'root');
         $tree->render();
 
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             root
             ├── A
             ├── B
@@ -251,7 +254,8 @@ class SymfonyStyleTest extends TestCase
         $tree = $style->createTree(['A', 'B' => ['B1' => ['B11', 'B12'], 'B2'], 'C'], 'root');
         $tree->render();
 
-        $this->assertSame($tree = <<<TREE
+        $this->assertSame(
+            $tree = <<<TREE
             root
             ├── A
             ├── B
@@ -274,7 +278,8 @@ class SymfonyStyleTest extends TestCase
         $tree = $style->createTree(new \ArrayIterator(['A', 'B' => ['B1' => ['B11', 'B12'], 'B2'], 'C']), 'root');
         $tree->render();
 
-        $this->assertSame(<<<TREE
+        $this->assertSame(
+            <<<TREE
             root
             ├── A
             ├── B
@@ -359,14 +364,16 @@ class SymfonyStyleTest extends TestCase
 
         rewind($output->getStream());
         $this->assertEquals($answer, $givenAnswer);
-        $this->assertEquals(escapeshellcmd(
-            'start'.\PHP_EOL. // write start
+        $this->assertEquals(
+            escapeshellcmd(
+                'start'.\PHP_EOL. // write start
             'foo'.\PHP_EOL. // write foo
             "\x1b[1A\x1b[0Jfoo and bar".\PHP_EOL. // complete line
             \PHP_EOL." \033[32mDummy question?\033[39m:".\PHP_EOL.' > '.\PHP_EOL.\PHP_EOL. // question
             'foo2'.\PHP_EOL. // write foo2
             'bar2'.\PHP_EOL. // write bar
-            "\033[9A\033[0J"), // clear 9 lines (8 output lines and one from the answer input return)
+            "\033[9A\033[0J"
+            ), // clear 9 lines (8 output lines and one from the answer input return)
             escapeshellcmd(stream_get_contents($output->getStream()))
         );
     }

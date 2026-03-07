@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @param Symfony\Component\JsonStreamer\Tests\Fixtures\Model\DummyWithUnionProperties $data
  */
 return static function (mixed $data, \Psr\Container\ContainerInterface $valueTransformers, array $options): \Traversable {
     try {
         $prefix1 = '';
-        yield "{";
+        yield '{';
         if (null === $data->value && ($options['include_null_properties'] ?? false)) {
             yield "{$prefix1}\"value\":null";
         }
@@ -20,7 +22,7 @@ return static function (mixed $data, \Psr\Container\ContainerInterface $valueTra
                 throw new \Symfony\Component\JsonStreamer\Exception\UnexpectedValueException(\sprintf('Unexpected "%s" value.', \get_debug_type($data->value)));
             }
         }
-        yield "}";
+        yield '}';
     } catch (\JsonException $e) {
         throw new \Symfony\Component\JsonStreamer\Exception\NotEncodableValueException($e->getMessage(), 0, $e);
     }

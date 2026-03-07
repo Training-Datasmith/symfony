@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -177,7 +179,8 @@ class TranslatorTest extends TestCase
         $translator = new Translator();
         $translator->registerExtension(new HtmlExtension($translator));
         $document = new \DOMDocument();
-        $document->loadHTML(<<<'HTML'
+        $document->loadHTML(
+            <<<'HTML'
             <html>
               <body>
                 <p>

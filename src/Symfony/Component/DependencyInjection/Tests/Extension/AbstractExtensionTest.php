@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -27,7 +29,7 @@ class AbstractExtensionTest extends TestCase
 {
     public function testConfiguration()
     {
-        $extension = new class extends AbstractExtension {
+        $extension = new class () extends AbstractExtension {
             public function configure(DefinitionConfigurator $definition): void
             {
                 // load one
@@ -56,7 +58,7 @@ class AbstractExtensionTest extends TestCase
 
     public function testPrependExtensionConfig()
     {
-        $extension = new class extends AbstractExtension {
+        $extension = new class () extends AbstractExtension {
             public function configure(DefinitionConfigurator $definition): void
             {
                 $definition->rootNode()
@@ -107,7 +109,7 @@ class AbstractExtensionTest extends TestCase
 
     public function testLoadExtension()
     {
-        $extension = new class extends AbstractExtension {
+        $extension = new class () extends AbstractExtension {
             public function configure(DefinitionConfigurator $definition): void
             {
                 $definition->import('../Fixtures/config/definition/foo.php');
@@ -148,7 +150,7 @@ class AbstractExtensionTest extends TestCase
 
     protected function processPrependExtension(PrependExtensionInterface $extension): ContainerBuilder
     {
-        $thirdExtension = new class extends AbstractExtension {
+        $thirdExtension = new class () extends AbstractExtension {
             public function configure(DefinitionConfigurator $definition): void
             {
                 $definition->import('../Fixtures/config/definition/foo.php');

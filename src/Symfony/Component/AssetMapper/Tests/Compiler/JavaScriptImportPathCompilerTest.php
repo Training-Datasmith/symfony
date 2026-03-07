@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -594,12 +596,13 @@ class JavaScriptImportPathCompilerTest extends TestCase
         $assetMapper = $this->createStub(AssetMapperInterface::class);
         $assetMapper
             ->method('getAssetFromSourcePath')
-            ->willReturnCallback(static function ($sourcePath) {
-                return match ($sourcePath) {
-                    '/path/to/other.js' => new MappedAsset('other.js', '/can/be/anything.js', publicPathWithoutDigest: '/assets/other.js'),
-                    default => null,
-                };
-            }
+            ->willReturnCallback(
+                static function ($sourcePath) {
+                    return match ($sourcePath) {
+                        '/path/to/other.js' => new MappedAsset('other.js', '/can/be/anything.js', publicPathWithoutDigest: '/assets/other.js'),
+                        default => null,
+                    };
+                }
             );
 
         $this->assertSame($input, $compiler->compile($input, $asset, $assetMapper));

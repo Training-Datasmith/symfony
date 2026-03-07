@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -30,7 +32,8 @@ class InspectUlidCommand extends Command
             ->setDefinition([
                 new InputArgument('ulid', InputArgument::REQUIRED, 'The ULID to inspect'),
             ])
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
                 The <info>%command.name%</info> displays information about a ULID.
 
                     <info>php %command.full_name% 01EWAKBCMWQ2C94EXNN60ZBS0Q</info>

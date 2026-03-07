@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -47,7 +49,7 @@ class BundleExtension extends Extension implements PrependExtensionInterface
 
     public function prepend(ContainerBuilder $container): void
     {
-        $callback = function (ContainerConfigurator $configurator) use ($container) {
+        $callback = function (ContainerConfigurator $configurator) use ($container): void {
             $this->subject->prependExtension($configurator, $container);
         };
 
@@ -58,7 +60,7 @@ class BundleExtension extends Extension implements PrependExtensionInterface
     {
         $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
 
-        $callback = function (ContainerConfigurator $configurator) use ($config, $container) {
+        $callback = function (ContainerConfigurator $configurator) use ($config, $container): void {
             $this->subject->loadExtension($config, $configurator, $container);
         };
 

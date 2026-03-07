@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -147,7 +149,7 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
         if ($rootNode->hasChildNodes()) {
             $data = $this->parseXml($rootNode, $context);
             if (\is_array($data)) {
-                $data = $this->addXmlNamespaces($data, $rootNode, $dom);
+                return $this->addXmlNamespaces($data, $rootNode, $dom);
             }
 
             return $data;
@@ -355,7 +357,7 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
         if (\is_array($data) || ($data instanceof \Traversable && (null === $this->serializer || !$this->serializer->supportsNormalization($data, $format)))) {
             foreach ($data as $key => $data) {
                 // Ah this is the magic @ attribute types.
-                if (str_starts_with($key, '@') && $this->isElementNameValid($attributeName = substr($key, 1))) {
+                if (str_starts_with((string) $key, '@') && $this->isElementNameValid($attributeName = substr((string) $key, 1))) {
                     if (!\is_scalar($data)) {
                         $data = $this->serializer->normalize($data, $format, $context);
                     }
@@ -364,7 +366,10 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
                     }
 
                     if ($context[self::IGNORE_EMPTY_ATTRIBUTES] ?? $this->defaultContext[self::IGNORE_EMPTY_ATTRIBUTES]) {
-                        if (null === $data || '' === $data) {
+                        if (null === $data) {
+                            continue;
+                        }
+                        if ('' === $data) {
                             continue;
                         }
                     }
@@ -378,7 +383,7 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
                     }
                 } elseif (\is_array($data) && !is_numeric($key)) {
                     // Is this array fully numeric keys?
-                    if (!$preserveNumericKeys && $data && null === array_find_key($data, static fn ($v, $k) => \is_string($k))) {
+                    if (!$preserveNumericKeys && $data && null === array_find_key($data, static fn ($v, $k): bool => \is_string($k))) {
                         /*
                          * Create nodes to append to $parentNode based on the $key of this array
                          * Produces <xml><item>0</item><item>1</item></xml>
@@ -451,7 +456,8 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
     private function needsCdataWrapping(string $name, string $val, array $context): bool
     {
         return ($context[self::CDATA_WRAPPING] ?? $this->defaultContext[self::CDATA_WRAPPING])
-                && (preg_match($context[self::CDATA_WRAPPING_PATTERN] ?? $this->defaultContext[self::CDATA_WRAPPING_PATTERN], $val)
+                && (
+                    preg_match($context[self::CDATA_WRAPPING_PATTERN] ?? $this->defaultContext[self::CDATA_WRAPPING_PATTERN], $val)
                 || (($context[self::CDATA_WRAPPING_NAME_PATTERN] ?? $this->defaultContext[self::CDATA_WRAPPING_NAME_PATTERN]) && preg_match($context[self::CDATA_WRAPPING_NAME_PATTERN] ?? $this->defaultContext[self::CDATA_WRAPPING_NAME_PATTERN], $name))
                 );
     }
@@ -465,7 +471,8 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
     {
         if (\is_array($val)) {
             return $this->buildXml($node, $val, $format, $context);
-        } elseif ($val instanceof \SimpleXMLElement) {
+        }
+        if ($val instanceof \SimpleXMLElement) {
             $child = $node->ownerDocument->importNode(dom_import_simplexml($val), true);
             $node->appendChild($child);
         } elseif ($val instanceof \Traversable) {

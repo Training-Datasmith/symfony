@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -120,7 +122,7 @@ class CheckLdapCredentialsListenerTest extends TestCase
 
     public function testQueryForDn()
     {
-        $collection = new class([new Entry('')]) extends \ArrayObject implements CollectionInterface {
+        $collection = new class ([new Entry('')]) extends \ArrayObject implements CollectionInterface {
             public function toArray(): array
             {
                 return $this->getArrayCopy();
@@ -190,7 +192,7 @@ class CheckLdapCredentialsListenerTest extends TestCase
 
     private function createListener(?LdapInterface $ldap = null)
     {
-        $ldapLocator = new class(['app.ldap' => fn () => $ldap ?? $this->createStub(LdapInterface::class)]) implements ContainerInterface {
+        $ldapLocator = new class (['app.ldap' => fn () => $ldap ?? $this->createStub(LdapInterface::class)]) implements ContainerInterface {
             use ServiceLocatorTrait;
         };
 

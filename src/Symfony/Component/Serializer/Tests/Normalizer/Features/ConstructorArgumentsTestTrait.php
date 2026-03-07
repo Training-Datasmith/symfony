@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -45,7 +47,8 @@ trait ConstructorArgumentsTestTrait
 
         $this->assertEquals(
             $obj,
-            $denormalizer->denormalize(['bar' => 'xyz'],
+            $denormalizer->denormalize(
+                ['bar' => 'xyz'],
                 NotSerializedConstructorArgumentDummy::class,
                 null,
                 ['default_constructor_arguments' => [

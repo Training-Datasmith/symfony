@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -108,7 +110,7 @@ final class TokenBucket implements LimiterStateInterface
         [$this->tokens, $this->timer] = array_values($data);
         [$pack, $rate] = array_keys($data);
         $this->rate = Rate::fromString($rate);
-        $this->burstSize = unpack('Na', $pack)['a'];
-        $this->id = substr($pack, 4);
+        $this->burstSize = unpack('Na', (string) $pack)['a'];
+        $this->id = substr((string) $pack, 4);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -23,7 +25,7 @@ use Symfony\Component\HttpKernel\Exception\NearMissValueResolverException;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class ServiceValueResolver implements ValueResolverInterface
+final readonly class ServiceValueResolver implements ValueResolverInterface
 {
     public function __construct(
         private ContainerInterface $container,

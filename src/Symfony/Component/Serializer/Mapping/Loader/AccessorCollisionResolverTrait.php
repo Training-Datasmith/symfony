@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -45,7 +47,7 @@ trait AccessorCollisionResolverTrait
         $attributeName = substr($methodName, $i);
 
         if (!$class->hasProperty($attributeName)) {
-            $attributeName = lcfirst($attributeName);
+            return lcfirst($attributeName);
         }
 
         return $attributeName;
@@ -78,7 +80,10 @@ trait AccessorCollisionResolverTrait
         $ucAttributeName = ucfirst($attributeName);
         foreach (['get', 'is', 'has', 'can'] as $prefix) {
             $candidateName = $prefix.$ucAttributeName;
-            if ($candidateName === $methodName || !$class->hasMethod($candidateName)) {
+            if ($candidateName === $methodName) {
+                continue;
+            }
+            if (!$class->hasMethod($candidateName)) {
                 continue;
             }
 

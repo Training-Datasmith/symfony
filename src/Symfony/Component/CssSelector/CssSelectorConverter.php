@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -28,7 +30,7 @@ class CssSelectorConverter
 {
     public static int $maxCachedItems = 1024;
 
-    private Translator $translator;
+    private readonly Translator $translator;
     private array $cache;
 
     private static array $xmlCache = [];

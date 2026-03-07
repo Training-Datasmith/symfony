@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -36,7 +38,7 @@ class ClearSiteDataLogoutListener implements EventSubscriberInterface
     public function onLogout(LogoutEvent $event): void
     {
         if (!$event->getResponse()?->headers->has(static::HEADER_NAME)) {
-            $event->getResponse()->headers->set(static::HEADER_NAME, implode(', ', array_map(static fn ($v) => '"'.$v.'"', $this->cookieValue)));
+            $event->getResponse()->headers->set(static::HEADER_NAME, implode(', ', array_map(static fn (string $v): string => '"'.$v.'"', $this->cookieValue)));
         }
     }
 

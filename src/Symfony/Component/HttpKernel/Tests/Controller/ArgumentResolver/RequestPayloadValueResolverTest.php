@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -65,7 +67,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Could not resolve the "$notTyped" controller argument: argument should be typed.');
@@ -251,7 +254,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         try {
             $resolver->onKernelControllerArguments($event);
@@ -279,7 +283,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         try {
             $resolver->onKernelControllerArguments($event);
@@ -310,7 +315,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         try {
             $resolver->onKernelControllerArguments($event);
@@ -344,7 +350,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         try {
             $resolver->onKernelControllerArguments($event);
@@ -369,7 +376,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         try {
             $resolver->onKernelControllerArguments($event);
@@ -399,7 +407,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         $resolver->onKernelControllerArguments($event);
 
@@ -427,7 +436,8 @@ class RequestPayloadValueResolverTest extends TestCase
         $arguments = $resolver->resolve($request, new ArgumentMetadata('valid', RequestPayload::class, false, false, null, false, [
             MapRequestPayload::class => new MapRequestPayload(),
         ]));
-        $event = new ControllerArgumentsEvent($this->createStub(HttpKernelInterface::class), static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($this->createStub(HttpKernelInterface::class), static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         $resolver->onKernelControllerArguments($event);
     }
@@ -453,7 +463,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         $resolver->onKernelControllerArguments($event);
 
@@ -480,7 +491,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         try {
             $resolver->onKernelControllerArguments($event);
@@ -513,7 +525,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         $resolver->onKernelControllerArguments($event);
 
@@ -547,7 +560,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         $resolver->onKernelControllerArguments($event);
 
@@ -574,7 +588,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         try {
             $resolver->onKernelControllerArguments($event);
@@ -652,7 +667,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         $resolver->onKernelControllerArguments($event);
 
@@ -713,7 +729,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         try {
             $resolver->onKernelControllerArguments($event);
@@ -782,7 +799,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         $resolver->onKernelControllerArguments($event);
 
@@ -805,7 +823,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         try {
             $resolver->onKernelControllerArguments($event);
@@ -870,7 +889,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         try {
             $resolver->onKernelControllerArguments($event);
@@ -901,7 +921,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         try {
             $resolver->onKernelControllerArguments($event);
@@ -928,7 +949,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         $resolver->onKernelControllerArguments($event);
 
@@ -949,7 +971,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         $resolver->onKernelControllerArguments($event);
 
@@ -985,7 +1008,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         $resolver->onKernelControllerArguments($event);
 
@@ -1005,7 +1029,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         $resolver->onKernelControllerArguments($event);
 
@@ -1040,7 +1065,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         $resolver->onKernelControllerArguments($event);
 
@@ -1070,7 +1096,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $arguments = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
 
         $resolver->onKernelControllerArguments($event);
 
@@ -1101,7 +1128,8 @@ class RequestPayloadValueResolverTest extends TestCase
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $argument = $resolver->resolve($request, $argument);
-        $event = new ControllerArgumentsEvent($kernel, static function () {}, $argument, $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new ControllerArgumentsEvent($kernel, static function () {
+        }, $argument, $request, HttpKernelInterface::MAIN_REQUEST);
 
         $resolver->onKernelControllerArguments($event);
 

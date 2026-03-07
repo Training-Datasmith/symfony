@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony package.
  *
@@ -50,7 +52,8 @@ class ImportMapAuditCommand extends Command
                 description: \sprintf('The output format ("%s")', implode(', ', $this->getAvailableFormatOptions())),
                 default: 'txt',
             )
-            ->setHelp(<<<'EOT'
+            ->setHelp(
+                <<<'EOT'
                 The <info>--format</info> option specifies the format of the command output:
 
                   <info>php %command.full_name% --format=json</info>
@@ -81,14 +84,14 @@ class ImportMapAuditCommand extends Command
         $rows = [];
 
         $packagesWithoutVersion = [];
-        $vulnerabilitiesCount = array_map(static fn () => 0, self::SEVERITY_COLORS);
+        $vulnerabilitiesCount = array_map(static fn (): int => 0, self::SEVERITY_COLORS);
         foreach ($audit as $packageAudit) {
             if (!$packageAudit->version) {
                 $packagesWithoutVersion[] = $packageAudit->package;
             }
             foreach ($packageAudit->vulnerabilities as $vulnerability) {
                 $rows[] = [
-                    \sprintf('<fg=%s>%s</>', self::SEVERITY_COLORS[$vulnerability->severity] ?? 'default', ucfirst($vulnerability->severity)),
+                    \sprintf('<fg=%s>%s</>', self::SEVERITY_COLORS[$vulnerability->severity] ?? 'default', ucfirst((string) $vulnerability->severity)),
                     $vulnerability->summary,
                     $packageAudit->package,
                     $packageAudit->version ?? 'n/a',
@@ -122,7 +125,8 @@ class ImportMapAuditCommand extends Command
             $this->io->newLine();
         }
 
-        $this->io->text(\sprintf('%d package%s found: %d audited / %d skipped',
+        $this->io->text(\sprintf(
+            '%d package%s found: %d audited / %d skipped',
             $packagesCount,
             1 === $packagesCount ? '' : 's',
             $packagesCount - $packagesWithoutVersionCount,
@@ -130,7 +134,8 @@ class ImportMapAuditCommand extends Command
         ));
 
         if (0 < $packagesWithoutVersionCount) {
-            $this->io->warning(\sprintf('Unable to retrieve versions for package%s: %s',
+            $this->io->warning(\sprintf(
+                'Unable to retrieve versions for package%s: %s',
                 1 === $packagesWithoutVersionCount ? '' : 's',
                 implode(', ', $packagesWithoutVersion)
             ));
@@ -143,10 +148,11 @@ class ImportMapAuditCommand extends Command
                 if (!$count) {
                     continue;
                 }
-                $vulnerabilitySummary[] = \sprintf('%d %s', $count, ucfirst($severity));
+                $vulnerabilitySummary[] = \sprintf('%d %s', $count, ucfirst((string) $severity));
                 $vulnerabilityCount += $count;
             }
-            $this->io->text(\sprintf('%d vulnerabilit%s found: %s',
+            $this->io->text(\sprintf(
+                '%d vulnerabilit%s found: %s',
                 $vulnerabilityCount,
                 1 === $vulnerabilityCount ? 'y' : 'ies',
                 implode(' / ', $vulnerabilitySummary),
@@ -158,7 +164,7 @@ class ImportMapAuditCommand extends Command
 
     private function displayJson(array $audit): int
     {
-        $vulnerabilitiesCount = array_map(static fn () => 0, self::SEVERITY_COLORS);
+        $vulnerabilitiesCount = array_map(static fn (): int => 0, self::SEVERITY_COLORS);
 
         $json = [
             'packages' => [],
@@ -169,7 +175,7 @@ class ImportMapAuditCommand extends Command
             $json['packages'][] = [
                 'package' => $packageAudit->package,
                 'version' => $packageAudit->version,
-                'vulnerabilities' => array_map(static fn (ImportMapPackageAuditVulnerability $v) => [
+                'vulnerabilities' => array_map(static fn (ImportMapPackageAuditVulnerability $v): array => [
                     'ghsa_id' => $v->ghsaId,
                     'cve_id' => $v->cveId,
                     'url' => $v->url,
