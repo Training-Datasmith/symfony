@@ -151,6 +151,6 @@ abstract class AbstractToken implements TokenInterface, \Serializable
      */
     final public function unserialize(string $serialized): void
     {
-        $this->__unserialize(unserialize($serialized));
+        $this->__unserialize(unserialize($serialized, ['allowed_classes' => true]));
     }
 }

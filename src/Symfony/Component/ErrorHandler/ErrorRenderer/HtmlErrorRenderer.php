@@ -175,7 +175,7 @@ class HtmlErrorRenderer implements ErrorRendererInterface
 
     private function escape(string $string): string
     {
-        return htmlspecialchars($string, \ENT_COMPAT | \ENT_SUBSTITUTE, $this->charset);
+        return htmlspecialchars($string, \ENT_QUOTES | \ENT_SUBSTITUTE, $this->charset);
     }
 
     private function abbrClass(string $class): string

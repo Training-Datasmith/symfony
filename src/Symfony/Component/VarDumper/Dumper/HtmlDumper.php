@@ -81,7 +81,7 @@ class HtmlDumper extends CliDumper
     public function __construct($output = null, ?string $charset = null, int $flags = 0)
     {
         AbstractDumper::__construct($output, $charset, $flags);
-        $this->dumpId = 'sf-dump-'.mt_rand();
+        $this->dumpId = 'sf-dump-'.random_int(0, PHP_INT_MAX);
         $this->displayOptions['fileLinkFormat'] = \ini_get('xdebug.file_link_format') ?: get_cfg_var('xdebug.file_link_format');
         $this->styles = static::$themes['dark'] ?? self::$themes['dark'];
     }
@@ -133,7 +133,7 @@ class HtmlDumper extends CliDumper
     {
         $this->extraDisplayOptions = $extraDisplayOptions;
         $result = parent::dump($data, $output);
-        $this->dumpId = 'sf-dump-'.mt_rand();
+        $this->dumpId = 'sf-dump-'.random_int(0, PHP_INT_MAX);
 
         return $result;
     }
