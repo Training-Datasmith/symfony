@@ -17,7 +17,20 @@ use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\Cache\Exception\LogicException;
 use Symfony\Contracts\Cache\Item_Interface;
 /**
+ * PSR-6 / Symfony Cache item implementation.
+ *
+ * Represents a single cached value together with its metadata (TTL, tags, etc.).
+ * Items are created exclusively by cache pool adapters — do not instantiate directly.
+ *
+ * The tagging API (tag()) is only available when the item comes from a
+ * tag-aware pool (e.g. TagAwareAdapter). Calling tag() on a non-taggable item
+ * throws a LogicException.
+ *
  * @author Nicolas Grekas <p@tchwork.com>
+ *
+ * @since 3.1
+ *
+ * @see https://www.php-fig.org/psr/psr-6/ PSR-6 Cache Interface
  */
 final class Cache_Item implements Item_Interface
 {
@@ -32,28 +45,72 @@ final class Cache_Item implements Item_Interface
     protected ?Cache_Item_Interface $inner_item = null;
     protected ?string $pool_hash = null;
     protected bool $is_taggable = false;
+    /**
+     * Returns the key for the current cache item.
+     *
+     * @return string The cache item's unique key within its pool
+     *
+     * @since 3.1
+     */
     public function get_key(): string
     {
         return $this->key;
     }
+
+    /**
+     * Retrieves the value of the item from the cache.
+     *
+     * Returns null both when the item is a miss AND when null is the cached value.
+     * Always check is_hit() to distinguish between a cache miss and a stored null.
+     *
+     * @return mixed The value stored in the cache, or null on a cache miss
+     *
+     * @since 3.1
+     */
     public function get(): mixed
     {
         return $this->value;
     }
+
+    /**
+     * Confirms if the cache item lookup resulted in a cache hit.
+     *
+     * @return bool True if the request resulted in a cache hit; false on miss or expired
+     *
+     * @since 3.1
+     */
     public function is_hit(): bool
     {
         return $this->is_hit;
     }
+
     /**
+     * Sets the value represented by this cache item.
+     *
+     * The value must be serializable. Note that not all serializable values are
+     * supported by all adapters (e.g. resources cannot be serialized).
+     *
+     * @param mixed $value The serializable value to be stored
+     *
      * @return $this
+     *
+     * @since 3.1
      */
     public function set($value): static
     {
         $this->value = $value;
         return $this;
     }
+
     /**
+     * Sets the expiration time for this cache item to an absolute DateTime.
+     *
+     * @param \DateTimeInterface|null $expiration The absolute expiration date; null means the item never expires
+     *                                             (or uses the pool's default TTL)
+     *
      * @return $this
+     *
+     * @since 3.1
      */
     public function expires_at(?\DateTimeInterface $expiration): static
     {
@@ -61,7 +118,16 @@ final class Cache_Item implements Item_Interface
         return $this;
     }
     /**
+     * Sets the expiration time for this cache item as a relative TTL.
+     *
+     * @param int|\DateInterval|null $time The TTL in seconds, a DateInterval, or null to use the pool's default TTL;
+     *                                     passing 0 or a negative integer causes the item to expire immediately
+     *
      * @return $this
+     *
+     * @throws \Symfony\Component\Cache\Exception\InvalidArgumentException When $time is not an int, DateInterval, or null
+     *
+     * @since 3.1
      */
     public function expires_after(mixed $time): static
     {
@@ -110,9 +176,16 @@ final class Cache_Item implements Item_Interface
     /**
      * Validates a cache key according to PSR-6.
      *
-     * @param mixed $key The key to validate
+     * A valid key is a non-empty string not containing any of the reserved characters
+     * defined in self::RESERVED_CHARACTERS ({, }, (, ), /, \, @, :).
      *
-     * @throws InvalidArgumentException When $key is not valid
+     * @param mixed $key The key to validate; must be a non-empty string
+     *
+     * @return string The validated key (unchanged if valid)
+     *
+     * @throws InvalidArgumentException When $key is not a string, is empty, or contains reserved characters
+     *
+     * @since 3.1
      */
     public static function validate_key($key): string
     {

@@ -62,13 +62,22 @@ use Symfony\Contracts\Service\Reset_Interface;
  *
  * This class is optimized for a standard CLI environment.
  *
+ * Commands can be registered:
+ *  - Eagerly via add() / addCommands()
+ *  - Lazily via a CommandLoaderInterface (loaded on first access by name)
+ *
+ * Signal handling (SIGINT, SIGTERM, etc.) is supported when the pcntl extension
+ * is available. Register signals via getSignalRegistry().
+ *
  * Usage:
  *
  *     $app = new Application('myapp', '1.0 (stable)');
- *     $app->addCommand(new SimpleCommand());
+ *     $app->add(new SimpleCommand());
  *     $app->run();
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @since 2.0
  */
 class Application implements Reset_Interface
 {
@@ -90,6 +99,14 @@ class Application implements Reset_Interface
     private ?Signal_Registry $signal_registry = null;
     private array $signals_to_dispatch_event = [];
     private ?int $alarm_interval = null;
+    /**
+     * Creates a new Console Application.
+     *
+     * @param string $name    The application name displayed in help output (default: 'UNKNOWN')
+     * @param string $version The application version displayed in help output (default: 'UNKNOWN')
+     *
+     * @since 2.0
+     */
     public function __construct(private string $name = 'UNKNOWN', private string $version = 'UNKNOWN')
     {
         $this->terminal = new Terminal();

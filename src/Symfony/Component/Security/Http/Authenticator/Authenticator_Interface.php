@@ -22,9 +22,20 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 /**
  * The interface for all authenticators.
  *
+ * Authenticators implement the security authentication flow:
+ *  1. supports(): determines if this authenticator should handle the request
+ *  2. authenticate(): creates a Passport containing the user and credentials
+ *  3. createToken(): wraps the authenticated passport in a security token
+ *  4. onAuthenticationSuccess() / onAuthenticationFailure(): handle the outcome
+ *
+ * Extend AbstractAuthenticator for a base implementation that provides
+ * a default createToken() method using UsernamePasswordToken.
+ *
  * @author Ryan Weaver <ryan@symfonycasts.com>
  * @author Amaury Leroux de Lens <amaury@lerouxdelens.com>
  * @author Wouter de Jong <wouter@wouterj.nl>
+ *
+ * @since 5.1
  */
 interface AuthenticatorInterface
 {
@@ -34,6 +45,14 @@ interface AuthenticatorInterface
      * If this returns true, authenticate() will be called. If false, the authenticator will be skipped.
      *
      * Returning null means authenticate() can be called lazily when accessing the token storage.
+     * This is useful for stateless APIs where authentication is deferred until the token is needed.
+     *
+     * @param Request $request The incoming HTTP request to check
+     *
+     * @return bool|null True to trigger authentication, false to skip this authenticator,
+     *                   null to defer authentication until the token storage is accessed
+     *
+     * @since 5.1
      */
     public function supports(Request $request): ?bool;
 
@@ -48,7 +67,14 @@ interface AuthenticatorInterface
      * You may throw any AuthenticationException in this method in case of error (e.g.
      * a UserNotFoundException when the user cannot be found).
      *
-     * @throws AuthenticationException
+     * @param Request $request The HTTP request containing the authentication credentials
+     *
+     * @return Passport A passport containing the user identity and all credentials to verify
+     *
+     * @throws AuthenticationException When the credentials are invalid, the user is not found,
+     *                                  or any other authentication-related error occurs
+     *
+     * @since 5.1
      */
     public function authenticate(Request $request): Passport;
 

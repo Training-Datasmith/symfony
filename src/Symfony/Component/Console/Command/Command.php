@@ -27,9 +27,26 @@ use Symfony\Component\Console\Input\Input_Interface;
 use Symfony\Component\Console\Input\Input_Option;
 use Symfony\Component\Console\Output\Output_Interface;
 /**
- * Base class for all commands.
+ * Base class for all console commands.
+ *
+ * To create a command, extend this class and implement configure() and execute():
+ *
+ *   protected function configure(): void
+ *   {
+ *       $this->setName('greet')->addArgument('name', InputArgument::REQUIRED);
+ *   }
+ *
+ *   protected function execute(InputInterface $input, OutputInterface $output): int
+ *   {
+ *       $output->writeln('Hello '.$input->getArgument('name'));
+ *       return Command::SUCCESS;
+ *   }
+ *
+ * Alternatively, use the #[AsCommand] attribute on the class to set name and description.
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @since 2.0
  */
 class Command implements Signalable_Command_Interface
 {
@@ -151,11 +168,20 @@ class Command implements Signalable_Command_Interface
      * execute() method, you set the code to execute by passing
      * a Closure to the setCode() method.
      *
-     * @return int 0 if everything went fine, or an exit code
+     * Return Command::SUCCESS (0), Command::FAILURE (1), or Command::INVALID (2).
+     * Using these constants instead of raw integers makes intent explicit and
+     * allows static analysis to verify exit code correctness.
      *
-     * @throws LogicException When this abstract method is not implemented
+     * @param Input_Interface  $input  The input interface bound to this command's definition
+     * @param Output_Interface $output The output interface for writing messages to the console
      *
-     * @see setCode()
+     * @return int Command::SUCCESS (0) if everything went fine, or an exit code
+     *
+     * @throws LogicException When this abstract method is not implemented in a subclass
+     *
+     * @see set_code() For setting executable code without subclassing
+     *
+     * @since 2.0
      */
     protected function execute(Input_Interface $input, Output_Interface $output): int
     {

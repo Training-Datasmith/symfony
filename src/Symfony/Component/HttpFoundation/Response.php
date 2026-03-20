@@ -16,7 +16,15 @@ class_exists(Response_Header_Bag::class);
 /**
  * Response represents an HTTP response.
  *
+ * Handles setting status codes, headers, cookies, and body content.
+ * Use prepare() before send() to ensure RFC 2616 compliance.
+ *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @since 2.0
+ *
+ * @see https://datatracker.ietf.org/doc/html/rfc2616 HTTP/1.1 specification
+ * @see https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml IANA Status Code Registry
  */
 class Response implements \Stringable
 {
@@ -238,9 +246,15 @@ class Response implements \Stringable
      */
     private array $sent_headers;
     /**
-     * @param int $status The HTTP status code (200 "OK" by default)
+     * Creates a new HTTP response.
+     *
+     * @param string|null              $content The response body; pass null or empty string for no body (e.g. 204/304)
+     * @param int                      $status  The HTTP status code (200 "OK" by default); must be between 100 and 599
+     * @param array|Response_Header_Bag $headers Initial response headers; strings are normalised, existing bags used as-is
      *
      * @throws \InvalidArgumentException When the HTTP status code is not valid
+     *
+     * @since 2.0
      */
     public function __construct(?string $content = '', int $status = 200, array|Response_Header_Bag $headers = [])
     {
@@ -276,7 +290,19 @@ class Response implements \Stringable
      * compliant with RFC 2616. Most of the changes are based on
      * the Request that is "associated" with this Response.
      *
+     * Specifically it:
+     *  - Sets Content-Type from the request's accepted format if not already set
+     *  - Appends charset to text/* Content-Type headers
+     *  - Removes Content-Length when Transfer-Encoding is set
+     *  - Strips body for HEAD requests (while preserving Content-Length)
+     *  - Upgrades protocol version to HTTP/1.1 when appropriate
+     *  - Marks cookies as Secure when the request came over HTTPS
+     *
+     * @param Request $request The request object associated with this response
+     *
      * @return $this
+     *
+     * @since 2.0
      */
     public function prepare(Request $request): static
     {

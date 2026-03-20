@@ -37,6 +37,11 @@ class_exists(Server_Bag::class);
  *   * getUriForPath
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @since 2.0
+ *
+ * @see https://datatracker.ietf.org/doc/html/rfc7230 HTTP/1.1 Message Syntax
+ * @see https://datatracker.ietf.org/doc/html/rfc7239 Forwarded HTTP Extension
  */
 class Request implements \Stringable
 {
@@ -261,6 +266,13 @@ class Request implements \Stringable
     }
     /**
      * Creates a new request with values from PHP's super globals.
+     *
+     * Reads from $_GET, $_POST, $_COOKIE, $_FILES, and $_SERVER. For PUT, DELETE,
+     * PATCH, and QUERY methods, the body is parsed via request_parse_body() (PHP 8.4+).
+     *
+     * @return static A new Request instance populated from super globals
+     *
+     * @since 2.0
      */
     public static function create_from_globals(): static
     {
@@ -281,15 +293,21 @@ class Request implements \Stringable
      * The information contained in the URI always take precedence
      * over the other information (server and parameters).
      *
-     * @param string               $uri        The URI
-     * @param string               $method     The HTTP method
-     * @param array                $parameters The query (GET) or request (POST) parameters
+     * Useful for unit testing controllers without a real HTTP environment.
+     *
+     * @param string               $uri        The full URI including scheme, host, path, and query string
+     * @param string               $method     The HTTP method (GET, POST, PUT, PATCH, DELETE, etc.)
+     * @param array                $parameters The query (GET) or request (POST) parameters; for GET they are appended to the URI
      * @param array                $cookies    The request cookies ($_COOKIE)
      * @param array                $files      The request files ($_FILES)
-     * @param array                $server     The server parameters ($_SERVER)
-     * @param string|resource|null $content    The raw body data
+     * @param array                $server     The server parameters ($_SERVER); merged over sensible defaults
+     * @param string|resource|null $content    The raw body data; used as-is for the request body
      *
-     * @throws BadRequestException When the URI is invalid
+     * @return static A fully initialised Request object
+     *
+     * @throws Bad_Request_Exception When the URI is syntactically invalid
+     *
+     * @since 2.0
      */
     public static function create(string $uri, string $method = 'GET', array $parameters = [], array $cookies = [], array $files = [], array $server = [], $content = null): static
     {
@@ -511,8 +529,16 @@ class Request implements \Stringable
      *
      * You should only list the reverse proxies that you manage directly.
      *
-     * @param array                          $proxies          A list of trusted proxies, the string 'REMOTE_ADDR' will be replaced with $_SERVER['REMOTE_ADDR'] and 'PRIVATE_SUBNETS' by IpUtils::PRIVATE_SUBNETS
-     * @param int-mask-of<Request::HEADER_*> $trustedHeaderSet A bit field to set which headers to trust from your proxies
+     * Security note: trusting the wrong proxies allows attackers to spoof client IP
+     * addresses and bypass IP-based access controls. Only list proxies you control.
+     *
+     * @param array                          $proxies          A list of trusted proxy IP addresses or CIDR ranges;
+     *                                                         the string 'REMOTE_ADDR' will be replaced with $_SERVER['REMOTE_ADDR']
+     *                                                         and 'PRIVATE_SUBNETS' with IpUtils::PRIVATE_SUBNETS
+     * @param int-mask-of<Request::HEADER_*> $trustedHeaderSet A bitmask of HEADER_* constants indicating which forwarding
+     *                                                         headers to trust from proxies (e.g. HEADER_X_FORWARDED_FOR)
+     *
+     * @since 2.3
      */
     public static function set_trusted_proxies(array $proxies, int $trusted_header_set): void
     {
@@ -576,6 +602,14 @@ class Request implements \Stringable
      *
      * It builds a normalized query string, where keys/value pairs are alphabetized,
      * have consistent escaping and unneeded delimiters are removed.
+     *
+     * @param string|null $qs The raw query string to normalize; null or empty string returns ''
+     *
+     * @return string The normalized query string, alphabetically sorted and RFC 3986 encoded
+     *
+     * @complexity O(n log n) due to ksort over query parameters
+     *
+     * @since 2.1
      */
     public static function normalize_query_string(?string $qs): string
     {
@@ -693,7 +727,12 @@ class Request implements \Stringable
      *
      * Use this method carefully; you should use getClientIp() instead.
      *
-     * @see getClientIp()
+     * @return string[] Ordered list of client IP addresses, most-trusted first
+     *
+     * @see get_client_ip()
+     * @see set_trusted_proxies()
+     *
+     * @since 2.3
      */
     public function get_client_ips(): array
     {

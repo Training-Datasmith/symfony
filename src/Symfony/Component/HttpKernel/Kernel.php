@@ -45,12 +45,20 @@ class_exists(ConfigCache::class);
 /**
  * The Kernel is the heart of the Symfony system.
  *
- * It manages an environment made of bundles.
+ * It manages an environment made of bundles. Subclasses must implement:
+ *  - registerBundles(): return the list of bundles for this application
+ *  - registerContainerConfiguration(): load container configuration
  *
  * Environment names must always start with a letter and
- * they must only contain letters and numbers.
+ * they must only contain letters and numbers (e.g. "dev", "prod", "test").
+ *
+ * The kernel supports two modes via the $debug flag:
+ *  - Debug mode (true): slower, human-readable cache files, detailed errors
+ *  - Production mode (false): optimised cached container, minimal error detail
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @since 2.0
  */
 abstract class Kernel implements KernelInterface, RebootableInterface, TerminableInterface
 {
@@ -84,6 +92,18 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
     public const END_OF_MAINTENANCE = '01/2027';
     public const END_OF_LIFE = '01/2027';
 
+    /**
+     * Creates a new Kernel instance.
+     *
+     * @param string $environment The application environment (e.g. 'dev', 'prod', 'test');
+     *                            must be non-empty and contain only letters and digits
+     * @param bool   $debug       Whether to enable debug mode; enables verbose error reporting
+     *                            and disables container caching
+     *
+     * @throws \InvalidArgumentException When the environment string is empty
+     *
+     * @since 2.0
+     */
     public function __construct(
         protected string $environment,
         protected bool $debug,
@@ -102,6 +122,16 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
         $this->handlingHttpCache = false;
     }
 
+    /**
+     * Boots the kernel: loads bundles and initialises the dependency injection container.
+     *
+     * On repeated calls when already booted, this method resets stateful services
+     * (via the 'services_resetter' service) if the request stack is empty.
+     *
+     * @throws \LogicException When the container cannot be built
+     *
+     * @since 2.0
+     */
     public function boot(): void
     {
         if ($this->booted) {

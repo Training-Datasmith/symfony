@@ -52,7 +52,21 @@ class_exists(KernelEvents::class);
 /**
  * HttpKernel notifies events to convert a Request object to a Response one.
  *
+ * The request handling pipeline:
+ *  1. Dispatch KernelEvents::REQUEST — listeners may return a Response early
+ *  2. Resolve the controller via ControllerResolverInterface
+ *  3. Dispatch KernelEvents::CONTROLLER — listeners may replace the controller
+ *  4. Resolve controller arguments via ArgumentResolverInterface
+ *  5. Dispatch KernelEvents::CONTROLLER_ARGUMENTS — listeners may alter arguments
+ *  6. Call the controller; if it returns non-Response, dispatch KernelEvents::VIEW
+ *  7. Dispatch KernelEvents::RESPONSE — listeners may modify the Response
+ *  8. Dispatch KernelEvents::FINISH_REQUEST — cleanup listeners
+ *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @since 2.0
+ *
+ * @see KernelEvents For the full list of dispatched events
  */
 class HttpKernel implements HttpKernelInterface, TerminableInterface
 {
@@ -62,6 +76,23 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
     {
     }
 
+    /**
+     * Handles a Request to convert it to a Response.
+     *
+     * When $catch is true (default), any unhandled exception is converted to a
+     * Response via the KernelEvents::EXCEPTION event. Set $catch to false in
+     * tests or when you need raw exception propagation.
+     *
+     * @param Request $request The HTTP request to handle
+     * @param int     $type    The request type: HttpKernelInterface::MAIN_REQUEST or HttpKernelInterface::SUB_REQUEST
+     * @param bool    $catch   Whether to catch exceptions and convert them to responses
+     *
+     * @return Response The HTTP response
+     *
+     * @throws \Throwable When $catch is false and an unhandled exception occurs, or when an \Error is thrown
+     *
+     * @since 2.0
+     */
     public function handle(Request $request, int $type = HttpKernelInterface::MAIN_REQUEST, bool $catch = true): Response
     {
         $request->headers->set('X-Php-Ob-Level', (string) ob_get_level());

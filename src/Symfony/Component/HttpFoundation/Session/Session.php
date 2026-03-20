@@ -23,10 +23,18 @@ class_exists(Attribute_Bag::class);
 class_exists(Flash_Bag::class);
 class_exists(Session_Bag_Proxy::class);
 /**
+ * Default session implementation backed by a SessionStorageInterface.
+ *
+ * The session stores data via bags: AttributeBag for key-value attributes
+ * and FlashBag for one-time flash messages. Additional bags can be registered
+ * via registerBag().
+ *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Drak <drak@zikula.org>
  *
  * @implements \IteratorAggregate<string, mixed>
+ *
+ * @since 2.1
  */
 class Session implements Flash_Bag_Aware_Session_Interface, \IteratorAggregate, \Countable
 {
@@ -45,38 +53,99 @@ class Session implements Flash_Bag_Aware_Session_Interface, \IteratorAggregate, 
         $this->flash_name = $flashes->get_name();
         $this->register_bag($flashes);
     }
+    /**
+     * Starts the session storage.
+     *
+     * @return bool True if the session was successfully started
+     *
+     * @throws \RuntimeException If the session cannot be started
+     */
     public function start(): bool
     {
         return $this->storage->start();
     }
+
+    /**
+     * Checks if an attribute exists in the session.
+     *
+     * @param string $name The attribute name (dot-notation not supported)
+     *
+     * @return bool True if the attribute is set (even if its value is null)
+     */
     public function has(string $name): bool
     {
         return $this->get_attribute_bag()->has($name);
     }
+
+    /**
+     * Returns a session attribute by name.
+     *
+     * @param string $name    The attribute name
+     * @param mixed  $default The value to return when the attribute is not found
+     *
+     * @return mixed The attribute value, or $default if not found
+     */
     public function get(string $name, mixed $default = null): mixed
     {
         return $this->get_attribute_bag()->get($name, $default);
     }
+
+    /**
+     * Sets a session attribute.
+     *
+     * @param string $name  The attribute name
+     * @param mixed  $value The attribute value; must be serializable if using file/db storage
+     */
     public function set(string $name, mixed $value): void
     {
         $this->get_attribute_bag()->set($name, $value);
     }
+
+    /**
+     * Returns all session attributes.
+     *
+     * @return array<string, mixed> All attributes stored in the session
+     */
     public function all(): array
     {
         return $this->get_attribute_bag()->all();
     }
+
+    /**
+     * Replaces all session attributes with the given array.
+     *
+     * @param array<string, mixed> $attributes The new set of attributes; previous values are discarded
+     */
     public function replace(array $attributes): void
     {
         $this->get_attribute_bag()->replace($attributes);
     }
+
+    /**
+     * Removes a session attribute and returns its value.
+     *
+     * @param string $name The attribute name to remove
+     *
+     * @return mixed The removed attribute's value, or null if it did not exist
+     */
     public function remove(string $name): mixed
     {
         return $this->get_attribute_bag()->remove($name);
     }
+
+    /**
+     * Clears all attributes from the session.
+     */
     public function clear(): void
     {
         $this->get_attribute_bag()->clear();
     }
+
+    /**
+     * Returns whether the session has been started.
+     *
+     * @return bool True if the underlying session storage has an active session
+     */
     public function is_started(): bool
     {
         return $this->storage->is_started();

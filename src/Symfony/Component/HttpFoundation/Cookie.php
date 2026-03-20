@@ -12,9 +12,17 @@ declare (strict_types=1);
 namespace Symfony\Component\Http_Foundation;
 
 /**
- * Represents a cookie.
+ * Represents an HTTP Set-Cookie header value.
+ *
+ * Instances are immutable after construction; use the with*() methods to
+ * create modified copies (fluent builder pattern).
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
+ *
+ * @since 2.0
+ *
+ * @see https://datatracker.ietf.org/doc/html/rfc6265 HTTP State Management Mechanism
+ * @see https://datatracker.ietf.org/doc/html/draft-west-cookie-incrementalism SameSite cookies
  */
 class Cookie implements \Stringable
 {
@@ -29,7 +37,14 @@ class Cookie implements \Stringable
     private const RESERVED_CHARS_FROM = ['=', ',', ';', ' ', "\t", "\r", "\n", "\v", "\f"];
     private const RESERVED_CHARS_TO = ['%3D', '%2C', '%3B', '%20', '%09', '%0D', '%0A', '%0B', '%0C'];
     /**
-     * Creates cookie from raw header string.
+     * Creates a Cookie instance from a raw Set-Cookie header string.
+     *
+     * @param string $cookie The raw Set-Cookie header value (e.g. "name=value; Path=/; HttpOnly")
+     * @param bool   $decode Whether to URL-decode the cookie name and value (default: false)
+     *
+     * @return static A new Cookie instance parsed from the header string
+     *
+     * @since 2.2
      */
     public static function from_string(string $cookie, bool $decode = false): static
     {
@@ -315,7 +330,14 @@ class Cookie implements \Stringable
         return $this->same_site;
     }
     /**
-     * @param bool $default The default value of the "secure" flag when it is set to null
+     * Sets the default value of the "secure" flag used when the secure property is null.
+     *
+     * This is called automatically by Response::prepare() when the request is over HTTPS,
+     * ensuring all cookies are automatically secured without requiring explicit configuration.
+     *
+     * @param bool $default The default secure value; true means cookies are sent over HTTPS only
+     *
+     * @since 3.1
      */
     public function set_secure_default(bool $default): void
     {
