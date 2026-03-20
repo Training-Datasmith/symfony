@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,60 +9,50 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Doctrine\Form\Type;
 
 use Doctrine\ORM\Query\Parameter;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\ObjectManager;
-use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
-use Symfony\Component\Form\Exception\UnexpectedTypeException;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-class EntityType extends DoctrineType
+use Doctrine\ORM\Query_Builder;
+use Doctrine\Persistence\Object_Manager;
+use Symfony\Bridge\Doctrine\Form\Choice_List\Orm_Query_Builder_Loader;
+use Symfony\Component\Form\Exception\Unexpected_Type_Exception;
+use Symfony\Component\Options_Resolver\Options;
+use Symfony\Component\Options_Resolver\Options_Resolver;
+class Entity_Type extends Doctrine_Type
 {
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configure_options(Options_Resolver $resolver): void
     {
-        parent::configureOptions($resolver);
-
+        parent::configure_options($resolver);
         // Invoke the query builder closure so that we can cache choice lists
         // for equal query builders
-        $queryBuilderNormalizer = static function (Options $options, $queryBuilder) {
-            if (\is_callable($queryBuilder)) {
-                $queryBuilder = $queryBuilder($options['em']->getRepository($options['class']));
-
-                if (null !== $queryBuilder && !$queryBuilder instanceof QueryBuilder) {
-                    throw new UnexpectedTypeException($queryBuilder, QueryBuilder::class);
+        $query_builder_normalizer = static function (Options $options, $query_builder) {
+            if (\is_callable($query_builder)) {
+                $query_builder = $query_builder($options['em']->get_repository($options['class']));
+                if (null !== $query_builder && !$query_builder instanceof Query_Builder) {
+                    throw new Unexpected_Type_Exception($query_builder, Query_Builder::class);
                 }
             }
-
-            return $queryBuilder;
+            return $query_builder;
         };
-
-        $resolver->setNormalizer('query_builder', $queryBuilderNormalizer);
-        $resolver->setAllowedTypes('query_builder', ['null', 'callable', QueryBuilder::class]);
+        $resolver->set_normalizer('query_builder', $query_builder_normalizer);
+        $resolver->set_allowed_types('query_builder', ['null', 'callable', Query_Builder::class]);
     }
-
     /**
      * Return the default loader object.
      *
      * @param QueryBuilder $queryBuilder
      */
-    public function getLoader(ObjectManager $manager, object $queryBuilder, string $class): ORMQueryBuilderLoader
+    public function get_loader(Object_Manager $manager, object $query_builder, string $class): Orm_Query_Builder_Loader
     {
-        if (!$queryBuilder instanceof QueryBuilder) {
-            throw new \TypeError(\sprintf('Expected an instance of "%s", but got "%s".', QueryBuilder::class, get_debug_type($queryBuilder)));
+        if (!$query_builder instanceof Query_Builder) {
+            throw new \TypeError(\sprintf('Expected an instance of "%s", but got "%s".', Query_Builder::class, get_debug_type($query_builder)));
         }
-
-        return new ORMQueryBuilderLoader($queryBuilder);
+        return new Orm_Query_Builder_Loader($query_builder);
     }
-
-    public function getBlockPrefix(): string
+    public function get_block_prefix(): string
     {
         return 'entity';
     }
-
     /**
      * We consider two query builders with an equal SQL string and
      * equal parameters to be equal.
@@ -73,23 +62,18 @@ class EntityType extends DoctrineType
      * @internal This method is public to be usable as callback. It should not
      *           be used in user code.
      */
-    public function getQueryBuilderPartsForCachingHash(object $queryBuilder): ?array
+    public function get_query_builder_parts_for_caching_hash(object $query_builder): ?array
     {
-        if (!$queryBuilder instanceof QueryBuilder) {
-            throw new \TypeError(\sprintf('Expected an instance of "%s", but got "%s".', QueryBuilder::class, get_debug_type($queryBuilder)));
+        if (!$query_builder instanceof Query_Builder) {
+            throw new \TypeError(\sprintf('Expected an instance of "%s", but got "%s".', Query_Builder::class, get_debug_type($query_builder)));
         }
-
-        return [
-            $queryBuilder->getQuery()->getSQL(),
-            array_map($this->parameterToArray(...), $queryBuilder->getParameters()->toArray()),
-        ];
+        return [$query_builder->get_query()->get_sql(), array_map($this->parameter_to_array(...), $query_builder->get_parameters()->to_array())];
     }
-
     /**
      * Converts a query parameter to an array.
      */
-    private function parameterToArray(Parameter $parameter): array
+    private function parameter_to_array(Parameter $parameter): array
     {
-        return [$parameter->getName(), $parameter->getType(), $parameter->getValue()];
+        return [$parameter->get_name(), $parameter->get_type(), $parameter->get_value()];
     }
 }

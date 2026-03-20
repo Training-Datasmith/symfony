@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,62 +9,48 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Monolog\Processor;
 
-use Monolog\LogRecord;
-use Monolog\ResettableInterface;
-use Symfony\Component\Console\ConsoleEvents;
-use Symfony\Component\Console\Event\ConsoleEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Contracts\Service\ResetInterface;
-
+use Monolog\Log_Record;
+use Monolog\Resettable_Interface;
+use Symfony\Component\Console\Console_Events;
+use Symfony\Component\Console\Event\Console_Event;
+use Symfony\Component\Event_Dispatcher\Event_Subscriber_Interface;
+use Symfony\Contracts\Service\Reset_Interface;
 /**
  * Adds the current console command information to the log entry.
  *
  * @author Piotr Stankowski <git@trakos.pl>
  */
-final class ConsoleCommandProcessor implements EventSubscriberInterface, ResetInterface, ResettableInterface
+final class Console_Command_Processor implements Event_Subscriber_Interface, Reset_Interface, Resettable_Interface
 {
-    private array $commandData;
-
-    public function __construct(
-        private readonly bool $includeArguments = true,
-        private readonly bool $includeOptions = false,
-    ) {
-    }
-
-    public function __invoke(LogRecord $record): LogRecord
+    private array $command_data;
+    public function __construct(private readonly bool $include_arguments = true, private readonly bool $include_options = false)
     {
-        if (isset($this->commandData) && !isset($record->extra['command'])) {
-            $record->extra['command'] = $this->commandData;
+    }
+    public function __invoke(Log_Record $record): Log_Record
+    {
+        if (isset($this->command_data) && !isset($record->extra['command'])) {
+            $record->extra['command'] = $this->command_data;
         }
-
         return $record;
     }
-
     public function reset(): void
     {
-        unset($this->commandData);
+        unset($this->command_data);
     }
-
-    public function addCommandData(ConsoleEvent $event): void
+    public function add_command_data(Console_Event $event): void
     {
-        $this->commandData = [
-            'name' => $event->getCommand()->getName(),
-        ];
-        if ($this->includeArguments) {
-            $this->commandData['arguments'] = $event->getInput()->getArguments();
+        $this->command_data = ['name' => $event->get_command()->get_name()];
+        if ($this->include_arguments) {
+            $this->command_data['arguments'] = $event->get_input()->get_arguments();
         }
-        if ($this->includeOptions) {
-            $this->commandData['options'] = $event->getInput()->getOptions();
+        if ($this->include_options) {
+            $this->command_data['options'] = $event->get_input()->get_options();
         }
     }
-
-    public static function getSubscribedEvents(): array
+    public static function get_subscribed_events(): array
     {
-        return [
-            ConsoleEvents::COMMAND => ['addCommandData', 1],
-        ];
+        return [Console_Events::COMMAND => ['addCommandData', 1]];
     }
 }

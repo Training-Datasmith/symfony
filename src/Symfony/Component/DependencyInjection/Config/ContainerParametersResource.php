@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Config;
 
-namespace Symfony\Component\DependencyInjection\Config;
-
-use Symfony\Component\Config\Resource\ResourceInterface;
-
+use Symfony\Component\Config\Resource\Resource_Interface;
 /**
  * Tracks container parameters.
  *
@@ -22,22 +19,19 @@ use Symfony\Component\Config\Resource\ResourceInterface;
  *
  * @final
  */
-class ContainerParametersResource implements ResourceInterface
+class Container_Parameters_Resource implements Resource_Interface
 {
     /**
      * @param array $parameters The container parameters to track
      */
-    public function __construct(
-        private readonly array $parameters,
-    ) {
+    public function __construct(private readonly array $parameters)
+    {
     }
-
     public function __toString(): string
     {
-        return 'container_parameters_'.hash('xxh128', serialize($this->parameters));
+        return 'container_parameters_' . hash('xxh128', serialize($this->parameters));
     }
-
-    public function getParameters(): array
+    public function get_parameters(): array
     {
         return $this->parameters;
     }

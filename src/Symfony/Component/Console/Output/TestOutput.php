@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,167 +9,128 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Output;
 
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Exception\RuntimeException;
-use Symfony\Component\Console\Formatter\OutputFormatter;
-use Symfony\Component\Console\Formatter\OutputFormatterInterface;
-
+use Symfony\Component\Console\Formatter\Output_Formatter;
+use Symfony\Component\Console\Formatter\Output_Formatter_Interface;
 /**
  * @internal
  *
  * @author Théo FIDRY <theo.fidry@gmail.com>
  */
-final readonly class TestOutput implements ConsoleOutputInterface
+final readonly class Test_Output implements Console_Output_Interface
 {
-    private OutputInterface $innerOutput;
-    private OutputInterface $innerErrorOutput;
-    private OutputInterface $displayOutput;
-    private CombinedOutput $output;
-    private CombinedOutput $errorOutput;
-    private OutputFormatterInterface $formatter;
-
+    private Output_Interface $inner_output;
+    private Output_Interface $inner_error_output;
+    private Output_Interface $display_output;
+    private Combined_Output $output;
+    private Combined_Output $error_output;
+    private Output_Formatter_Interface $formatter;
     /**
      * @param OutputInterface::VERBOSITY_* $verbosity
      */
-    public function __construct(
-        private bool $decorated,
-        private int $verbosity,
-        ?OutputFormatterInterface $formatter = null,
-    ) {
-        $this->formatter = $formatter ?? new OutputFormatter($decorated);
-        $this->formatter->setDecorated($decorated);
-
-        $this->innerOutput = self::createOutput($this);
-        $this->innerErrorOutput = self::createOutput($this);
-        $this->displayOutput = self::createOutput($this);
-
-        $this->output = new CombinedOutput([
-            $this->innerOutput,
-            $this->displayOutput,
-        ]);
-        $this->errorOutput = new CombinedOutput([
-            $this->innerErrorOutput,
-            $this->displayOutput,
-        ]);
-    }
-
-    public function getOutputContents(): string
+    public function __construct(private bool $decorated, private int $verbosity, ?Output_Formatter_Interface $formatter = null)
     {
-        return $this->getStreamContents($this->innerOutput);
+        $this->formatter = $formatter ?? new Output_Formatter($decorated);
+        $this->formatter->set_decorated($decorated);
+        $this->inner_output = self::create_output($this);
+        $this->inner_error_output = self::create_output($this);
+        $this->display_output = self::create_output($this);
+        $this->output = new Combined_Output([$this->inner_output, $this->display_output]);
+        $this->error_output = new Combined_Output([$this->inner_error_output, $this->display_output]);
     }
-
-    public function getErrorOutputContents(): string
+    public function get_output_contents(): string
     {
-        return $this->getStreamContents($this->innerErrorOutput);
+        return $this->get_stream_contents($this->inner_output);
     }
-
-    public function getDisplayContents(): string
+    public function get_error_output_contents(): string
     {
-        return $this->getStreamContents($this->displayOutput);
+        return $this->get_stream_contents($this->inner_error_output);
     }
-
-    public function getErrorOutput(): OutputInterface
+    public function get_display_contents(): string
     {
-        return $this->errorOutput;
+        return $this->get_stream_contents($this->display_output);
     }
-
-    public function setErrorOutput(OutputInterface $error): void
+    public function get_error_output(): Output_Interface
+    {
+        return $this->error_output;
+    }
+    public function set_error_output(Output_Interface $error): void
     {
         throw new LogicException('TestOutput does not support modifying the error output.');
     }
-
-    public function section(): ConsoleSectionOutput
+    public function section(): Console_Section_Output
     {
         throw new LogicException('ConsoleSectionOutput is not supported by TestOutput.');
     }
-
     public function write(iterable|string $messages, bool $newline = false, int $options = 0): void
     {
         $this->output->write(...\func_get_args());
     }
-
     public function writeln(iterable|string $messages, int $options = 0): void
     {
         $this->output->writeln(...\func_get_args());
     }
-
-    public function setVerbosity(int $level): void
+    public function set_verbosity(int $level): void
     {
         throw new LogicException('TestOutput does not support modifying the verbosity.');
     }
-
-    public function getVerbosity(): int
+    public function get_verbosity(): int
     {
         return $this->verbosity;
     }
-
-    public function isSilent(): bool
+    public function is_silent(): bool
     {
         return self::VERBOSITY_SILENT === $this->verbosity;
     }
-
-    public function isQuiet(): bool
+    public function is_quiet(): bool
     {
         return self::VERBOSITY_QUIET === $this->verbosity;
     }
-
-    public function isVerbose(): bool
+    public function is_verbose(): bool
     {
         return self::VERBOSITY_VERBOSE <= $this->verbosity;
     }
-
-    public function isVeryVerbose(): bool
+    public function is_very_verbose(): bool
     {
         return self::VERBOSITY_VERY_VERBOSE <= $this->verbosity;
     }
-
-    public function isDebug(): bool
+    public function is_debug(): bool
     {
         return self::VERBOSITY_DEBUG <= $this->verbosity;
     }
-
-    public function setDecorated(bool $decorated): void
+    public function set_decorated(bool $decorated): void
     {
         throw new LogicException('TestOutput does not support modifying the decorated flag.');
     }
-
-    public function isDecorated(): bool
+    public function is_decorated(): bool
     {
         return $this->decorated;
     }
-
-    public function setFormatter(OutputFormatterInterface $formatter): void
+    public function set_formatter(Output_Formatter_Interface $formatter): void
     {
         throw new LogicException('TestOutput does not support modifying the formatter.');
     }
-
-    public function getFormatter(): OutputFormatterInterface
+    public function get_formatter(): Output_Formatter_Interface
     {
         return $this->formatter;
     }
-
-    private static function createOutput(OutputInterface $config): StreamOutput
+    private static function create_output(Output_Interface $config): Stream_Output
     {
         if (false === $stream = fopen('php://memory', 'w')) {
             throw new RuntimeException('Failed to open stream.');
         }
-
-        return new StreamOutput($stream, $config->getVerbosity(), $config->isDecorated(), $config->getFormatter());
+        return new Stream_Output($stream, $config->get_verbosity(), $config->is_decorated(), $config->get_formatter());
     }
-
-    private function getStreamContents(StreamOutput $output): string
+    private function get_stream_contents(Stream_Output $output): string
     {
-        $stream = $output->getStream();
-
+        $stream = $output->get_stream();
         rewind($stream);
-
         if (false === $contents = stream_get_contents($stream)) {
             throw new RuntimeException('Failed to read stream contents.');
         }
-
         return $contents;
     }
 }

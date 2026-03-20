@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,175 +9,142 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Client\Response;
 
-namespace Symfony\Component\HttpClient\Response;
-
-use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpClient\Exception\TransportException;
-use Symfony\Component\HttpClient\Internal\Canary;
-use Symfony\Component\HttpClient\Internal\ClientState;
-use Symfony\Component\HttpClient\Internal\NativeClientState;
-use Symfony\Contracts\HttpClient\ResponseInterface;
-
+use Psr\Log\Logger_Interface;
+use Symfony\Component\Http_Client\Exception\Transport_Exception;
+use Symfony\Component\Http_Client\Internal\Canary;
+use Symfony\Component\Http_Client\Internal\Client_State;
+use Symfony\Component\Http_Client\Internal\Native_Client_State;
+use Symfony\Contracts\Http_Client\Response_Interface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
  * @internal
  */
-final class NativeResponse implements ResponseInterface, StreamableInterface
+final class Native_Response implements Response_Interface, Streamable_Interface
 {
-    use CommonResponseTrait;
-    use TransportResponseTrait;
-
+    use Common_Response_Trait;
+    use Transport_Response_Trait;
     private \Closure $resolver;
-    private ?\Closure $onProgress;
+    private ?\Closure $on_progress;
     private ?int $remaining = null;
-
     /**
      * @var resource|null
      */
     private $buffer;
-
-    private float $pauseExpiry = 0.0;
-
+    private float $pause_expiry = 0.0;
     /**
      * @internal
      *
      * @param $context resource
      */
-    public function __construct(
-        private NativeClientState $multi,
-        private $context,
-        private string $url,
-        array $options,
-        array &$info,
-        callable $resolver,
-        ?callable $onProgress,
-        ?LoggerInterface $logger,
-    ) {
+    public function __construct(private Native_Client_State $multi, private $context, private string $url, array $options, array &$info, callable $resolver, ?callable $on_progress, ?Logger_Interface $logger)
+    {
         $this->id = $id = (int) $context;
         $this->logger = $logger;
         $this->timeout = $options['timeout'];
-        $this->info = &$info;
+        $this->info =& $info;
         $this->resolver = $resolver(...);
-        $this->onProgress = $onProgress ? $onProgress(...) : null;
+        $this->on_progress = $on_progress ? $on_progress(...) : null;
         $this->inflate = !isset($options['normalized_headers']['accept-encoding']);
-        $this->shouldBuffer = $options['buffer'] ?? true;
-
+        $this->should_buffer = $options['buffer'] ?? true;
         // Temporary resource to dechunk the response stream
         $this->buffer = fopen('php://temp', 'w+');
-
         $info['original_url'] = implode('', $info['url']);
         $info['user_data'] = $options['user_data'];
         $info['max_duration'] = $options['max_duration'];
         $info['max_connect_duration'] = $options['max_connect_duration'];
-        ++$multi->responseCount;
-
-        $this->initializer = static fn (self $response): bool => null === $response->remaining;
-
-        $pauseExpiry = &$this->pauseExpiry;
-        $info['pause_handler'] = static function (float $duration) use (&$pauseExpiry): void {
-            $pauseExpiry = 0 < $duration ? hrtime(true) / 1E9 + $duration : 0;
+        ++$multi->response_count;
+        $this->initializer = static fn(self $response): bool => null === $response->remaining;
+        $pause_expiry =& $this->pause_expiry;
+        $info['pause_handler'] = static function (float $duration) use (&$pause_expiry): void {
+            $pause_expiry = 0 < $duration ? hrtime(true) / 1000000000.0 + $duration : 0;
         };
-
         $this->canary = new Canary(static function () use ($multi, $id): void {
-            if (null !== ($host = $multi->openHandles[$id][6] ?? null) && isset($multi->hosts[$host]) && 0 >= --$multi->hosts[$host]) {
+            if (null !== ($host = $multi->open_handles[$id][6] ?? null) && isset($multi->hosts[$host]) && 0 >= --$multi->hosts[$host]) {
                 unset($multi->hosts[$host]);
             }
-            unset($multi->openHandles[$id], $multi->handlesActivity[$id]);
+            unset($multi->open_handles[$id], $multi->handles_activity[$id]);
         });
     }
-
-    public function getInfo(?string $type = null): mixed
+    public function get_info(?string $type = null): mixed
     {
-        if (!$info = $this->finalInfo) {
+        if (!$info = $this->final_info) {
             $info = $this->info;
             $info['url'] = implode('', $info['url']);
             unset($info['size_body'], $info['request_header']);
-
             if (null === $this->buffer) {
-                $this->finalInfo = $info;
+                $this->final_info = $info;
             }
         }
-
         return null !== $type ? $info[$type] ?? null : $info;
     }
-
     public function __destruct()
     {
         try {
-            $this->doDestruct();
+            $this->do_destruct();
         } finally {
             // Clear the DNS cache when all requests completed
-            if (0 >= --$this->multi->responseCount) {
-                $this->multi->responseCount = 0;
-                $this->multi->dnsCache = [];
+            if (0 >= --$this->multi->response_count) {
+                $this->multi->response_count = 0;
+                $this->multi->dns_cache = [];
             }
         }
     }
-
     private function close(): void
     {
         $this->canary->cancel();
-        $this->handle = $this->buffer = $this->inflate = $this->onProgress = null;
+        $this->handle = $this->buffer = $this->inflate = $this->on_progress = null;
     }
-
-    private static function schedule(self $response, array &$runningResponses): void
+    private static function schedule(self $response, array &$running_responses): void
     {
-        if (!isset($runningResponses[$i = $response->multi->id])) {
-            $runningResponses[$i] = [$response->multi, []];
+        if (!isset($running_responses[$i = $response->multi->id])) {
+            $running_responses[$i] = [$response->multi, []];
         }
-
-        $runningResponses[$i][1][$response->id] = $response;
-
+        $running_responses[$i][1][$response->id] = $response;
         if (null === $response->buffer) {
             // Response already completed
-            $response->multi->handlesActivity[$response->id][] = null;
-            $response->multi->handlesActivity[$response->id][] = null !== $response->info['error'] ? new TransportException($response->info['error']) : null;
+            $response->multi->handles_activity[$response->id][] = null;
+            $response->multi->handles_activity[$response->id][] = null !== $response->info['error'] ? new Transport_Exception($response->info['error']) : null;
         }
     }
-
     /**
      * @param NativeClientState $multi
      */
-    private static function perform(ClientState $multi, ?array $responses = null): void
+    private static function perform(Client_State $multi, ?array $responses = null): void
     {
-        foreach ($multi->openHandles as $i => [$pauseExpiry, $h, $buffer, $onProgress]) {
-            if ($pauseExpiry) {
-                if (hrtime(true) / 1E9 < $pauseExpiry) {
+        foreach ($multi->open_handles as $i => [$pause_expiry, $h, $buffer, $on_progress]) {
+            if ($pause_expiry) {
+                if (hrtime(true) / 1000000000.0 < $pause_expiry) {
                     continue;
                 }
-
-                $multi->openHandles[$i][0] = 0;
+                $multi->open_handles[$i][0] = 0;
             }
-
-            $hasActivity = false;
-            $remaining = &$multi->openHandles[$i][4];
-            $info = &$multi->openHandles[$i][5];
+            $has_activity = false;
+            $remaining =& $multi->open_handles[$i][4];
+            $info =& $multi->open_handles[$i][5];
             $e = null;
-
             // Read incoming buffer and write it to the dechunk one
             try {
                 if ($remaining && '' !== $data = (string) fread($h, 0 > $remaining ? 16372 : $remaining)) {
                     fwrite($buffer, $data);
-                    $hasActivity = true;
+                    $has_activity = true;
                     $multi->sleep = false;
-
                     if (-1 !== $remaining) {
                         $remaining -= \strlen($data);
                     }
                 }
             } catch (\Throwable $e) {
-                $hasActivity = $onProgress = false;
+                $has_activity = $on_progress = false;
             }
-
-            if (!$hasActivity) {
-                if ($onProgress) {
+            if (!$has_activity) {
+                if ($on_progress) {
                     try {
                         // Notify the progress callback so that it can e.g. cancel
                         // the request if the stream is inactive for too long
                         $info['total_time'] = microtime(true) - $info['start_time'];
-                        $onProgress();
+                        $on_progress();
                     } catch (\Throwable) {
                         // no-op
                     }
@@ -186,49 +152,41 @@ final class NativeResponse implements ResponseInterface, StreamableInterface
             } elseif ('' !== $data = stream_get_contents($buffer, -1, 0)) {
                 rewind($buffer);
                 ftruncate($buffer, 0);
-
                 if (null === $e) {
-                    $multi->handlesActivity[$i][] = $data;
+                    $multi->handles_activity[$i][] = $data;
                 }
             }
-
             if (null !== $e || !$remaining || feof($h)) {
                 // Stream completed
                 $info['total_time'] = microtime(true) - $info['start_time'];
                 $info['starttransfer_time'] = $info['starttransfer_time'] ?: $info['total_time'];
-
-                if ($onProgress) {
+                if ($on_progress) {
                     try {
-                        $onProgress(-1);
+                        $on_progress(-1);
                     } catch (\Throwable) {
                         // no-op
                     }
                 }
-
                 if (null === $e) {
                     if (0 < $remaining) {
-                        $e = new TransportException(\sprintf('Transfer closed with %s bytes remaining to read.', $remaining));
+                        $e = new Transport_Exception(\sprintf('Transfer closed with %s bytes remaining to read.', $remaining));
                     } elseif (-1 === $remaining && fwrite($buffer, '-') && '' !== stream_get_contents($buffer, -1, 0)) {
-                        $e = new TransportException('Transfer closed with outstanding data remaining from chunked response.');
+                        $e = new Transport_Exception('Transfer closed with outstanding data remaining from chunked response.');
                     }
                 }
-
-                $multi->handlesActivity[$i][] = null;
-                $multi->handlesActivity[$i][] = $e;
-                if (null !== ($host = $multi->openHandles[$i][6] ?? null) && isset($multi->hosts[$host]) && 0 >= --$multi->hosts[$host]) {
+                $multi->handles_activity[$i][] = null;
+                $multi->handles_activity[$i][] = $e;
+                if (null !== ($host = $multi->open_handles[$i][6] ?? null) && isset($multi->hosts[$host]) && 0 >= --$multi->hosts[$host]) {
                     unset($multi->hosts[$host]);
                 }
-                unset($multi->openHandles[$i]);
+                unset($multi->open_handles[$i]);
                 $multi->sleep = false;
             }
         }
-
         if (null === $responses) {
             return;
         }
-
-        $maxHosts = $multi->maxHostConnections;
-
+        $max_hosts = $multi->max_host_connections;
         foreach ($responses as $i => $response) {
             if (null !== $response->remaining) {
                 continue;
@@ -236,50 +194,42 @@ final class NativeResponse implements ResponseInterface, StreamableInterface
             if (null === $response->buffer) {
                 continue;
             }
-            if ($response->pauseExpiry && hrtime(true) / 1E9 < $response->pauseExpiry) {
+            if ($response->pause_expiry && hrtime(true) / 1000000000.0 < $response->pause_expiry) {
                 // Create empty open handles to tell we still have pending requests
-                $multi->openHandles[$i] = [\INF, null, null, null];
-            } elseif ($maxHosts && $maxHosts > ($multi->hosts[parse_url((string) $response->url, \PHP_URL_HOST)] ?? 0)) {
+                $multi->open_handles[$i] = [\INF, null, null, null];
+            } elseif ($max_hosts && $max_hosts > ($multi->hosts[parse_url((string) $response->url, \PHP_URL_HOST)] ?? 0)) {
                 // Open the next pending request - this is a blocking operation so we do only one of them
                 $response->open();
                 $multi->sleep = false;
                 self::perform($multi);
-                $maxHosts = 0;
+                $max_hosts = 0;
             }
         }
     }
-
     /**
      * @param NativeClientState $multi
      */
-    private static function select(ClientState $multi, float $timeout): int
+    private static function select(Client_State $multi, float $timeout): int
     {
         if (!$multi->sleep = !$multi->sleep) {
             return -1;
         }
-
         $_ = $handles = [];
         $now = null;
-
-        foreach ($multi->openHandles as [$pauseExpiry, $h]) {
+        foreach ($multi->open_handles as [$pause_expiry, $h]) {
             if (null === $h) {
                 continue;
             }
-
-            if ($pauseExpiry && ($now ??= hrtime(true) / 1E9) < $pauseExpiry) {
-                $timeout = min($timeout, $pauseExpiry - $now);
+            if ($pause_expiry && ($now ??= hrtime(true) / 1000000000.0) < $pause_expiry) {
+                $timeout = min($timeout, $pause_expiry - $now);
                 continue;
             }
-
             $handles[] = $h;
         }
-
         if (!$handles) {
-            usleep((int) (1E6 * $timeout));
-
+            usleep((int) (1000000.0 * $timeout));
             return 0;
         }
-
-        return stream_select($handles, $_, $_, (int) $timeout, (int) (1E6 * ($timeout - (int) $timeout)));
+        return stream_select($handles, $_, $_, (int) $timeout, (int) (1000000.0 * ($timeout - (int) $timeout)));
     }
 }

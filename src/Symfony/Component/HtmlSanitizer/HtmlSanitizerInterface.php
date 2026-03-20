@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HtmlSanitizer;
+namespace Symfony\Component\Html_Sanitizer;
 
 /**
  * Sanitizes an untrusted HTML input for safe insertion into a document's DOM.
@@ -21,7 +19,7 @@ namespace Symfony\Component\HtmlSanitizer;
  *
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-interface HtmlSanitizerInterface
+interface Html_Sanitizer_Interface
 {
     /**
      * Sanitizes an untrusted HTML input for a <body> context.
@@ -32,7 +30,6 @@ interface HtmlSanitizerInterface
      * in the "head" element, use {@see HtmlSanitizerInterface::sanitizeFor()}.
      */
     public function sanitize(string $input): string;
-
     /**
      * Sanitizes an untrusted HTML input for a given context.
      *
@@ -40,5 +37,5 @@ interface HtmlSanitizerInterface
      * (body, head, title, ...), the sanitizer will adapt its rules to only
      * allow elements that are valid inside the given parent element.
      */
-    public function sanitizeFor(string $element, string $input): string;
+    public function sanitize_for(string $element, string $input): string;
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,53 +9,40 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Dependency_Injection;
 
-namespace Symfony\Component\HttpKernel\DependencyInjection;
-
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\KernelEvents;
-
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Http_Kernel\Kernel_Events;
 /**
  * Collects attribute listeners and registers them for ControllerAttributesListener.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ControllerAttributesListenerPass implements CompilerPassInterface
+class Controller_Attributes_Listener_Pass implements Compiler_Pass_Interface
 {
-    private const ATTRIBUTE_EVENTS = [
-        KernelEvents::CONTROLLER,
-        KernelEvents::CONTROLLER_ARGUMENTS,
-        KernelEvents::VIEW,
-        KernelEvents::RESPONSE,
-        KernelEvents::EXCEPTION,
-        KernelEvents::FINISH_REQUEST,
-    ];
-
-    public function process(ContainerBuilder $container): void
+    private const ATTRIBUTE_EVENTS = [Kernel_Events::CONTROLLER, Kernel_Events::CONTROLLER_ARGUMENTS, Kernel_Events::VIEW, Kernel_Events::RESPONSE, Kernel_Events::EXCEPTION, Kernel_Events::FINISH_REQUEST];
+    public function process(Container_Builder $container): void
     {
-        if (!$container->has('event_dispatcher') || !$container->hasDefinition('kernel.controller_attributes_listener')) {
+        if (!$container->has('event_dispatcher') || !$container->has_definition('kernel.controller_attributes_listener')) {
             return;
         }
-
-        $dispatcherDefinition = $container->findDefinition('event_dispatcher');
-        $attributesWithListeners = [];
-
-        foreach ($dispatcherDefinition->getMethodCalls() as [$method, $arguments]) {
+        $dispatcher_definition = $container->find_definition('event_dispatcher');
+        $attributes_with_listeners = [];
+        foreach ($dispatcher_definition->get_method_calls() as [$method, $arguments]) {
             if ('addListener' !== $method) {
                 continue;
             }
-            if (!\is_string($eventName = $arguments[0] ?? null)) {
+            if (!\is_string($event_name = $arguments[0] ?? null)) {
                 continue;
             }
-            foreach (self::ATTRIBUTE_EVENTS as $kernelEvent) {
-                if ('.' === ($eventName[\strlen($kernelEvent)] ?? null) && str_starts_with($eventName, $kernelEvent)) {
-                    $attributesWithListeners[$kernelEvent][substr($eventName, \strlen($kernelEvent) + 1)] = true;
+            foreach (self::ATTRIBUTE_EVENTS as $kernel_event) {
+                if ('.' === ($event_name[\strlen($kernel_event)] ?? null) && str_starts_with($event_name, $kernel_event)) {
+                    $attributes_with_listeners[$kernel_event][substr($event_name, \strlen($kernel_event) + 1)] = true;
                     break;
                 }
             }
         }
-
-        $container->getDefinition('kernel.controller_attributes_listener')->replaceArgument(0, $attributesWithListeners);
+        $container->get_definition('kernel.controller_attributes_listener')->replace_argument(0, $attributes_with_listeners);
     }
 }

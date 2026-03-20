@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,18 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Flow;
 
 use Symfony\Component\Form\Exception\BadMethodCallException;
 use Symfony\Component\Form\Exception\InvalidArgumentException;
 use Symfony\Component\Form\Exception\LogicException;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Flow\DataStorage\DataStorageInterface;
-use Symfony\Component\Form\Flow\StepAccessor\StepAccessorInterface;
-use Symfony\Component\Form\FormBuilder;
-use Symfony\Component\Form\FormBuilderInterface;
-
+use Symfony\Component\Form\Extension\Core\Type\Form_Type;
+use Symfony\Component\Form\Flow\Data_Storage\Data_Storage_Interface;
+use Symfony\Component\Form\Flow\Step_Accessor\Step_Accessor_Interface;
+use Symfony\Component\Form\Form_Builder;
+use Symfony\Component\Form\Form_Builder_Interface;
 /**
  * A builder for creating {@link FormFlow} instances.
  *
@@ -29,228 +26,173 @@ use Symfony\Component\Form\FormBuilderInterface;
  *
  * @implements \IteratorAggregate<string, FormBuilderInterface>
  */
-class FormFlowBuilder extends FormBuilder implements FormFlowBuilderInterface
+class Form_Flow_Builder extends Form_Builder implements Form_Flow_Builder_Interface
 {
     /**
      * @var array<string, StepFlowBuilderConfigInterface>
      */
     private array $steps = [];
-    private array $initialOptions = [];
-    private DataStorageInterface $dataStorage;
-    private StepAccessorInterface $stepAccessor;
-
-    public function createStep(string $name, string $type = FormType::class, array $options = []): StepFlowBuilderConfigInterface
+    private array $initial_options = [];
+    private Data_Storage_Interface $data_storage;
+    private Step_Accessor_Interface $step_accessor;
+    public function create_step(string $name, string $type = Form_Type::class, array $options = []): Step_Flow_Builder_Config_Interface
     {
         if ($this->locked) {
             throw new BadMethodCallException('FormFlowBuilder methods cannot be accessed anymore once the builder is turned into a FormFlowConfigInterface instance.');
         }
-
-        return new StepFlowBuilder($name, $type, $options);
+        return new Step_Flow_Builder($name, $type, $options);
     }
-
-    public function addStep(StepFlowBuilderConfigInterface|string $name, string $type = FormType::class, array $options = [], ?callable $skip = null, int $priority = 0): static
+    public function add_step(Step_Flow_Builder_Config_Interface|string $name, string $type = Form_Type::class, array $options = [], ?callable $skip = null, int $priority = 0): static
     {
         if ($this->locked) {
             throw new BadMethodCallException('FormFlowBuilder methods cannot be accessed anymore once the builder is turned into a FormFlowConfigInterface instance.');
         }
-
-        if ($name instanceof StepFlowBuilderConfigInterface) {
-            $this->steps[$name->getName()] = $name;
-
+        if ($name instanceof Step_Flow_Builder_Config_Interface) {
+            $this->steps[$name->get_name()] = $name;
             return $this;
         }
-
-        $this->steps[$name] = $this->createStep($name, $type, $options)
-            ->setSkip($skip ? $skip(...) : null)
-            ->setPriority($priority)
-        ;
-
+        $this->steps[$name] = $this->create_step($name, $type, $options)->set_skip($skip ? $skip(...) : null)->set_priority($priority);
         return $this;
     }
-
-    public function removeStep(string $name): static
+    public function remove_step(string $name): static
     {
         if ($this->locked) {
             throw new BadMethodCallException('FormFlowBuilder methods cannot be accessed anymore once the builder is turned into a FormFlowConfigInterface instance.');
         }
-
         unset($this->steps[$name]);
-
         return $this;
     }
-
-    public function hasStep(string $name): bool
+    public function has_step(string $name): bool
     {
         return isset($this->steps[$name]);
     }
-
-    public function getStep(string $name): StepFlowBuilderConfigInterface
+    public function get_step(string $name): Step_Flow_Builder_Config_Interface
     {
         return $this->steps[$name] ?? throw new InvalidArgumentException(\sprintf('Step "%s" does not exist.', $name));
     }
-
-    public function getSteps(): array
+    public function get_steps(): array
     {
         return $this->steps;
     }
-
-    public function setInitialOptions(array $options): static
+    public function set_initial_options(array $options): static
     {
         if ($this->locked) {
             throw new BadMethodCallException('FormFlowBuilder methods cannot be accessed anymore once the builder is turned into a FormFlowConfigInterface instance.');
         }
-
-        $this->initialOptions = $options;
-
+        $this->initial_options = $options;
         return $this;
     }
-
-    public function getInitialStep(): string
+    public function get_initial_step(): string
     {
-        $defaultStep = (string) key($this->steps);
-
-        if (!isset($this->initialOptions['data'])) {
-            return $defaultStep;
+        $default_step = (string) key($this->steps);
+        if (!isset($this->initial_options['data'])) {
+            return $default_step;
         }
-
-        return (string) $this->stepAccessor->getStep($this->initialOptions['data'], $defaultStep);
+        return (string) $this->step_accessor->get_step($this->initial_options['data'], $default_step);
     }
-
-    public function getInitialOptions(): array
+    public function get_initial_options(): array
     {
-        return $this->initialOptions;
+        return $this->initial_options;
     }
-
-    public function setDataStorage(DataStorageInterface $dataStorage): static
+    public function set_data_storage(Data_Storage_Interface $data_storage): static
     {
         if ($this->locked) {
             throw new BadMethodCallException('FormFlowBuilder methods cannot be accessed anymore once the builder is turned into a FormFlowConfigInterface instance.');
         }
-
-        $this->dataStorage = $dataStorage;
-
+        $this->data_storage = $data_storage;
         // make sure the current data is available immediately
-        $this->setData($dataStorage->load($this->getData()));
-
+        $this->set_data($data_storage->load($this->get_data()));
         return $this;
     }
-
-    public function getDataStorage(): DataStorageInterface
+    public function get_data_storage(): Data_Storage_Interface
     {
-        return $this->dataStorage;
+        return $this->data_storage;
     }
-
-    public function setStepAccessor(StepAccessorInterface $stepAccessor): static
+    public function set_step_accessor(Step_Accessor_Interface $step_accessor): static
     {
         if ($this->locked) {
             throw new BadMethodCallException('FormFlowBuilder methods cannot be accessed anymore once the builder is turned into a FormFlowConfigInterface instance.');
         }
-
-        $this->stepAccessor = $stepAccessor;
-
+        $this->step_accessor = $step_accessor;
         return $this;
     }
-
-    public function getStepAccessor(): StepAccessorInterface
+    public function get_step_accessor(): Step_Accessor_Interface
     {
-        return $this->stepAccessor;
+        return $this->step_accessor;
     }
-
-    public function isAutoReset(): bool
+    public function is_auto_reset(): bool
     {
-        return $this->getOption('auto_reset');
+        return $this->get_option('auto_reset');
     }
-
-    public function getFormConfig(): FormFlowConfigInterface
+    public function get_form_config(): Form_Flow_Config_Interface
     {
         /** @var self $config */
-        $config = parent::getFormConfig();
-
+        $config = parent::get_form_config();
         foreach ($config->steps as $name => $step) {
-            $config->steps[$name] = $step->getStepConfig();
+            $config->steps[$name] = $step->get_step_config();
         }
-
         return $config;
     }
-
-    public function getForm(): FormFlowInterface
+    public function get_form(): Form_Flow_Interface
     {
         if ($this->locked) {
             throw new BadMethodCallException('FormFlowBuilder methods cannot be accessed anymore once the builder is turned into a FormFlowConfigInterface instance.');
         }
-
-        $flow = $this->createFormFlow();
-
+        $flow = $this->create_form_flow();
         foreach ($this->all() as $child) {
-            if ($child instanceof FormFlowBuilderInterface) {
+            if ($child instanceof Form_Flow_Builder_Interface) {
                 throw new LogicException('Nested form flows is not currently supported.');
             }
-
             // Automatic initialization is only supported on root forms
-            $flow->add($child->setAutoInitialize(false)->getForm());
+            $flow->add($child->set_auto_initialize(false)->get_form());
         }
-
-        if ($this->getAutoInitialize()) {
+        if ($this->get_auto_initialize()) {
             // Automatically initialize the form if it is configured so
             $flow->initialize();
         }
-
         return $flow;
     }
-
-    private function createFormFlow(): FormFlowInterface
+    private function create_form_flow(): Form_Flow_Interface
     {
         if (!$this->steps) {
             throw new InvalidArgumentException('Steps not configured.');
         }
-
-        uasort($this->steps, static fn (StepFlowBuilderConfigInterface $a, StepFlowBuilderConfigInterface $b): int => $b->getPriority() <=> $a->getPriority());
-
-        $currentStep = $this->resolveCurrentStep();
-
-        if (!isset($this->steps[$currentStep])) {
-            throw new InvalidArgumentException(\sprintf('Step form "%s" is not defined.', $currentStep));
+        uasort($this->steps, static fn(Step_Flow_Builder_Config_Interface $a, Step_Flow_Builder_Config_Interface $b): int => $b->get_priority() <=> $a->get_priority());
+        $current_step = $this->resolve_current_step();
+        if (!isset($this->steps[$current_step])) {
+            throw new InvalidArgumentException(\sprintf('Step form "%s" is not defined.', $current_step));
         }
-
-        $step = $this->steps[$currentStep];
-        $this->add($step->getName(), $step->getType(), $step->getOptions());
-
-        $cursor = new FormFlowCursor(array_keys($this->steps), $currentStep);
-        $this->pruneActionButtons($this, $cursor);
-
-        return new FormFlow($this->getFormConfig(), $cursor);
+        $step = $this->steps[$current_step];
+        $this->add($step->get_name(), $step->get_type(), $step->get_options());
+        $cursor = new Form_Flow_Cursor(array_keys($this->steps), $current_step);
+        $this->prune_action_buttons($this, $cursor);
+        return new Form_Flow($this->get_form_config(), $cursor);
     }
-
-    private function resolveCurrentStep(): string
+    private function resolve_current_step(): string
     {
-        $data = $this->getData();
-
-        if (!$currentStep = $this->getStepAccessor()->getStep($data)) {
-            $currentStep = key($this->steps);
-            $this->getStepAccessor()->setStep($data, $currentStep);
-            $this->setData($data);
+        $data = $this->get_data();
+        if (!$current_step = $this->get_step_accessor()->get_step($data)) {
+            $current_step = key($this->steps);
+            $this->get_step_accessor()->set_step($data, $current_step);
+            $this->set_data($data);
         }
-
-        return $currentStep;
+        return $current_step;
     }
-
-    private function pruneActionButtons(FormBuilderInterface $builder, FormFlowCursor $cursor): void
+    private function prune_action_buttons(Form_Builder_Interface $builder, Form_Flow_Cursor $cursor): void
     {
         foreach ($builder->all() as $child) {
             if ($child->count() > 0) {
-                $this->pruneActionButtons($child, $cursor);
-
+                $this->prune_action_buttons($child, $cursor);
                 continue;
             }
-            if (!$child instanceof ButtonFlowBuilder) {
+            if (!$child instanceof Button_Flow_Builder) {
                 continue;
             }
-            if (!\is_callable($include = $child->getOption('include_if'))) {
+            if (!\is_callable($include = $child->get_option('include_if'))) {
                 continue;
             }
-
             if (!$include($cursor)) {
-                $builder->remove($child->getName());
+                $builder->remove($child->get_name());
             }
         }
     }

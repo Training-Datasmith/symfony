@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,21 +9,17 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Doctrine\Types;
 
 use Symfony\Component\Uid\Ulid;
-
-final class UlidType extends AbstractUidType
+final class Ulid_Type extends Abstract_Uid_Type
 {
     public const NAME = 'ulid';
-
-    public function getName(): string
+    public function get_name(): string
     {
         return self::NAME;
     }
-
-    protected function getUidClass(): string
+    protected function get_uid_class(): string
     {
         return Ulid::class;
     }

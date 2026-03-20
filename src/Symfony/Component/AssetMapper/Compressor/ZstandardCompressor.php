@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,41 +9,34 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\AssetMapper\Compressor;
+namespace Symfony\Component\Asset_Mapper\Compressor;
 
 use Symfony\Component\Process\Process;
-
 /**
  * Compresses a file using Zstandard.
  *
  * @author Kévin Dunglas <kevin@dunglas.dev>
  */
-final class ZstandardCompressor implements SupportedCompressorInterface
+final class Zstandard_Compressor implements Supported_Compressor_Interface
 {
-    use CompressorTrait;
-
+    use Compressor_Trait;
     private const WRAPPER = 'compress.zstd';
     private const COMMAND = 'zstd';
     private const PHP_EXTENSION = 'zstd';
     private const FILE_EXTENSION = 'zst';
-
-    public function __construct(
-        ?string $executable = null,
-    ) {
+    public function __construct(?string $executable = null)
+    {
         $this->executable = $executable;
     }
-
     /**
      * @return resource
      */
-    private function createStreamContext()
+    private function create_stream_context()
     {
         return stream_context_create(['zstd' => ['level' => ZSTD_COMPRESS_LEVEL_MAX]]);
     }
-
-    private function compressWithBinary(string $path): void
+    private function compress_with_binary(string $path): void
     {
-        (new Process([$this->executable, '-19', '--force', '-o', "$path.".self::FILE_EXTENSION, '--', $path]))->mustRun();
+        (new Process([$this->executable, '-19', '--force', '-o', "{$path}." . self::FILE_EXTENSION, '--', $path]))->must_run();
     }
 }

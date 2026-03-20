@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,94 +9,78 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Foundation\Session;
 
-namespace Symfony\Component\HttpFoundation\Session;
-
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\HttpFoundation\Session\Storage\MetadataBag;
-use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
-use Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface;
-
+use Symfony\Component\Http_Foundation\Session\Attribute\Attribute_Bag;
+use Symfony\Component\Http_Foundation\Session\Attribute\Attribute_Bag_Interface;
+use Symfony\Component\Http_Foundation\Session\Flash\Flash_Bag;
+use Symfony\Component\Http_Foundation\Session\Flash\Flash_Bag_Interface;
+use Symfony\Component\Http_Foundation\Session\Storage\Metadata_Bag;
+use Symfony\Component\Http_Foundation\Session\Storage\Native_Session_Storage;
+use Symfony\Component\Http_Foundation\Session\Storage\Session_Storage_Interface;
 // Help opcache.preload discover always-needed symbols
-class_exists(AttributeBag::class);
-class_exists(FlashBag::class);
-class_exists(SessionBagProxy::class);
-
+class_exists(Attribute_Bag::class);
+class_exists(Flash_Bag::class);
+class_exists(Session_Bag_Proxy::class);
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Drak <drak@zikula.org>
  *
  * @implements \IteratorAggregate<string, mixed>
  */
-class Session implements FlashBagAwareSessionInterface, \IteratorAggregate, \Countable
+class Session implements Flash_Bag_Aware_Session_Interface, \IteratorAggregate, \Countable
 {
-    private readonly string $flashName;
-    private readonly string $attributeName;
+    private readonly string $flash_name;
+    private readonly string $attribute_name;
     private array $data = [];
-    private int $usageIndex = 0;
-    private readonly ?\Closure $usageReporter;
-
-    public function __construct(protected ?SessionStorageInterface $storage = new NativeSessionStorage(), ?AttributeBagInterface $attributes = null, ?FlashBagInterface $flashes = null, ?callable $usageReporter = null)
+    private int $usage_index = 0;
+    private readonly ?\Closure $usage_reporter;
+    public function __construct(protected ?Session_Storage_Interface $storage = new Native_Session_Storage(), ?Attribute_Bag_Interface $attributes = null, ?Flash_Bag_Interface $flashes = null, ?callable $usage_reporter = null)
     {
-        $this->usageReporter = null === $usageReporter ? null : $usageReporter(...);
-
-        $attributes ??= new AttributeBag();
-        $this->attributeName = $attributes->getName();
-        $this->registerBag($attributes);
-
-        $flashes ??= new FlashBag();
-        $this->flashName = $flashes->getName();
-        $this->registerBag($flashes);
+        $this->usage_reporter = null === $usage_reporter ? null : $usage_reporter(...);
+        $attributes ??= new Attribute_Bag();
+        $this->attribute_name = $attributes->get_name();
+        $this->register_bag($attributes);
+        $flashes ??= new Flash_Bag();
+        $this->flash_name = $flashes->get_name();
+        $this->register_bag($flashes);
     }
-
     public function start(): bool
     {
         return $this->storage->start();
     }
-
     public function has(string $name): bool
     {
-        return $this->getAttributeBag()->has($name);
+        return $this->get_attribute_bag()->has($name);
     }
-
     public function get(string $name, mixed $default = null): mixed
     {
-        return $this->getAttributeBag()->get($name, $default);
+        return $this->get_attribute_bag()->get($name, $default);
     }
-
     public function set(string $name, mixed $value): void
     {
-        $this->getAttributeBag()->set($name, $value);
+        $this->get_attribute_bag()->set($name, $value);
     }
-
     public function all(): array
     {
-        return $this->getAttributeBag()->all();
+        return $this->get_attribute_bag()->all();
     }
-
     public function replace(array $attributes): void
     {
-        $this->getAttributeBag()->replace($attributes);
+        $this->get_attribute_bag()->replace($attributes);
     }
-
     public function remove(string $name): mixed
     {
-        return $this->getAttributeBag()->remove($name);
+        return $this->get_attribute_bag()->remove($name);
     }
-
     public function clear(): void
     {
-        $this->getAttributeBag()->clear();
+        $this->get_attribute_bag()->clear();
     }
-
-    public function isStarted(): bool
+    public function is_started(): bool
     {
-        return $this->storage->isStarted();
+        return $this->storage->is_started();
     }
-
     /**
      * Returns an iterator for attributes.
      *
@@ -105,31 +88,28 @@ class Session implements FlashBagAwareSessionInterface, \IteratorAggregate, \Cou
      */
     public function getIterator(): \ArrayIterator
     {
-        return new \ArrayIterator($this->getAttributeBag()->all());
+        return new \ArrayIterator($this->get_attribute_bag()->all());
     }
-
     /**
      * Returns the number of attributes.
      */
     public function count(): int
     {
-        return \count($this->getAttributeBag()->all());
+        return \count($this->get_attribute_bag()->all());
     }
-
-    public function &getUsageIndex(): int
+    public function &get_usage_index(): int
     {
-        return $this->usageIndex;
+        return $this->usage_index;
     }
-
     /**
      * @internal
      */
-    public function isEmpty(): bool
+    public function is_empty(): bool
     {
-        if ($this->isStarted()) {
-            ++$this->usageIndex;
-            if ($this->usageReporter && 0 <= $this->usageIndex) {
-                ($this->usageReporter)();
+        if ($this->is_started()) {
+            ++$this->usage_index;
+            if ($this->usage_reporter && 0 <= $this->usage_index) {
+                ($this->usage_reporter)();
             }
         }
         foreach ($this->data as &$data) {
@@ -137,86 +117,70 @@ class Session implements FlashBagAwareSessionInterface, \IteratorAggregate, \Cou
                 return false;
             }
         }
-
         return true;
     }
-
     public function invalidate(?int $lifetime = null): bool
     {
         $this->storage->clear();
-
         return $this->migrate(true, $lifetime);
     }
-
     public function migrate(bool $destroy = false, ?int $lifetime = null): bool
     {
         return $this->storage->regenerate($destroy, $lifetime);
     }
-
     public function save(): void
     {
         $this->storage->save();
     }
-
-    public function getId(): string
+    public function get_id(): string
     {
-        return $this->storage->getId();
+        return $this->storage->get_id();
     }
-
-    public function setId(string $id): void
+    public function set_id(string $id): void
     {
-        if ($this->storage->getId() !== $id) {
-            $this->storage->setId($id);
+        if ($this->storage->get_id() !== $id) {
+            $this->storage->set_id($id);
         }
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
-        return $this->storage->getName();
+        return $this->storage->get_name();
     }
-
-    public function setName(string $name): void
+    public function set_name(string $name): void
     {
-        $this->storage->setName($name);
+        $this->storage->set_name($name);
     }
-
-    public function getMetadataBag(): MetadataBag
+    public function get_metadata_bag(): Metadata_Bag
     {
-        ++$this->usageIndex;
-        if ($this->usageReporter && 0 <= $this->usageIndex) {
-            ($this->usageReporter)();
+        ++$this->usage_index;
+        if ($this->usage_reporter && 0 <= $this->usage_index) {
+            ($this->usage_reporter)();
         }
-
-        return $this->storage->getMetadataBag();
+        return $this->storage->get_metadata_bag();
     }
-
-    public function registerBag(SessionBagInterface $bag): void
+    public function register_bag(Session_Bag_Interface $bag): void
     {
-        $this->storage->registerBag(new SessionBagProxy($bag, $this->data, $this->usageIndex, $this->usageReporter));
+        $this->storage->register_bag(new Session_Bag_Proxy($bag, $this->data, $this->usage_index, $this->usage_reporter));
     }
-
-    public function getBag(string $name): SessionBagInterface
+    public function get_bag(string $name): Session_Bag_Interface
     {
-        $bag = $this->storage->getBag($name);
-
-        return method_exists($bag, 'getBag') ? $bag->getBag() : $bag;
+        $bag = $this->storage->get_bag($name);
+        return method_exists($bag, 'getBag') ? $bag->get_bag() : $bag;
     }
-
     /**
      * Gets the flashbag interface.
      */
-    public function getFlashBag(): FlashBagInterface
+    public function get_flash_bag(): Flash_Bag_Interface
     {
-        return $this->getBag($this->flashName);
+        return $this->get_bag($this->flash_name);
     }
-
     /**
      * Gets the attributebag interface.
      *
      * Note that this method was added to help with IDE autocompletion.
      */
-    private function getAttributeBag(): AttributeBagInterface
+    private function get_attribute_bag(): Attribute_Bag_Interface
     {
-        return $this->getBag($this->attributeName);
+        return $this->get_bag($this->attribute_name);
     }
 }

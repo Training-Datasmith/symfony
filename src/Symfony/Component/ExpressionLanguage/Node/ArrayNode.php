@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,65 +9,54 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Expression_Language\Node;
 
-namespace Symfony\Component\ExpressionLanguage\Node;
-
-use Symfony\Component\ExpressionLanguage\Compiler;
-
+use Symfony\Component\Expression_Language\Compiler;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @internal
  */
-class ArrayNode extends Node
+class Array_Node extends Node
 {
     protected int $index;
-
     public function __construct()
     {
         $this->index = -1;
     }
-
-    public function addElement(Node $value, ?Node $key = null): void
+    public function add_element(Node $value, ?Node $key = null): void
     {
-        $key ??= new ConstantNode(++$this->index);
-
+        $key ??= new Constant_Node(++$this->index);
         array_push($this->nodes, $key, $value);
     }
-
     /**
      * Compiles the node to PHP.
      */
     public function compile(Compiler $compiler): void
     {
         $compiler->raw('[');
-        $this->compileArguments($compiler);
+        $this->compile_arguments($compiler);
         $compiler->raw(']');
     }
-
     public function evaluate(array $functions, array $values): array
     {
         $result = [];
-        foreach ($this->getKeyValuePairs() as $pair) {
+        foreach ($this->get_key_value_pairs() as $pair) {
             $result[$pair['key']->evaluate($functions, $values)] = $pair['value']->evaluate($functions, $values);
         }
-
         return $result;
     }
-
-    public function toArray(): array
+    public function to_array(): array
     {
         $value = [];
-        foreach ($this->getKeyValuePairs() as $pair) {
+        foreach ($this->get_key_value_pairs() as $pair) {
             $value[$pair['key']->attributes['value']] = $pair['value'];
         }
-
         $array = [];
-
-        if ($this->isHash($value)) {
+        if ($this->is_hash($value)) {
             foreach ($value as $k => $v) {
                 $array[] = ', ';
-                $array[] = new ConstantNode($k);
+                $array[] = new Constant_Node($k);
                 $array[] = ': ';
                 $array[] = $v;
             }
@@ -82,36 +70,27 @@ class ArrayNode extends Node
             $array[0] = '[';
             $array[] = ']';
         }
-
         return $array;
     }
-
-    protected function getKeyValuePairs(): array
+    protected function get_key_value_pairs(): array
     {
         $pairs = [];
         foreach (array_chunk($this->nodes, 2) as $pair) {
             $pairs[] = ['key' => $pair[0], 'value' => $pair[1]];
         }
-
         return $pairs;
     }
-
-    protected function compileArguments(Compiler $compiler, bool $withKeys = true): void
+    protected function compile_arguments(Compiler $compiler, bool $with_keys = true): void
     {
         $first = true;
-        foreach ($this->getKeyValuePairs() as $pair) {
+        foreach ($this->get_key_value_pairs() as $pair) {
             if (!$first) {
                 $compiler->raw(', ');
             }
             $first = false;
-
-            if ($withKeys) {
-                $compiler
-                    ->compile($pair['key'])
-                    ->raw(' => ')
-                ;
+            if ($with_keys) {
+                $compiler->compile($pair['key'])->raw(' => ');
             }
-
             $compiler->compile($pair['value']);
         }
     }

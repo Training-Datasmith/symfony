@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,18 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Flow;
 
-use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\Form\FormView;
-
+use Symfony\Component\Form\Form_Type_Interface;
+use Symfony\Component\Form\Form_View;
 /**
  * A type that should be converted into a {@link FormFlow} instance.
  *
  * @author Yonel Ceruto <open@yceruto.dev>
  */
-interface FormFlowTypeInterface extends FormTypeInterface
+interface Form_Flow_Type_Interface extends Form_Type_Interface
 {
     /**
      * Builds the multistep form.
@@ -31,8 +28,7 @@ interface FormFlowTypeInterface extends FormTypeInterface
      *
      * @param array<string, mixed> $options
      */
-    public function buildFormFlow(FormFlowBuilderInterface $builder, array $options): void;
-
+    public function build_form_flow(Form_Flow_Builder_Interface $builder, array $options): void;
     /**
      * Builds the multistep form view.
      *
@@ -45,8 +41,7 @@ interface FormFlowTypeInterface extends FormTypeInterface
      *
      * @param array<string, mixed> $options
      */
-    public function buildViewFlow(FormView $view, FormFlowInterface $form, array $options): void;
-
+    public function build_view_flow(Form_View $view, Form_Flow_Interface $form, array $options): void;
     /**
      * Finishes the multistep form view.
      *
@@ -60,5 +55,5 @@ interface FormFlowTypeInterface extends FormTypeInterface
      *
      * @param array<string, mixed> $options
      */
-    public function finishViewFlow(FormView $view, FormFlowInterface $form, array $options): void;
+    public function finish_view_flow(Form_View $view, Form_Flow_Interface $form, array $options): void;
 }

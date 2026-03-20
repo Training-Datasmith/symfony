@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Exception\EnvParameterException;
-
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Exception\Env_Parameter_Exception;
 /**
  * This class is used to remove circular dependencies between individual passes.
  *
@@ -23,77 +20,65 @@ use Symfony\Component\DependencyInjection\Exception\EnvParameterException;
  */
 class Compiler
 {
-    private readonly PassConfig $passConfig;
+    private readonly Pass_Config $pass_config;
     private array $log = [];
-    private readonly ServiceReferenceGraph $serviceReferenceGraph;
-
+    private readonly Service_Reference_Graph $service_reference_graph;
     public function __construct()
     {
-        $this->passConfig = new PassConfig();
-        $this->serviceReferenceGraph = new ServiceReferenceGraph();
+        $this->pass_config = new Pass_Config();
+        $this->service_reference_graph = new Service_Reference_Graph();
     }
-
-    public function getPassConfig(): PassConfig
+    public function get_pass_config(): Pass_Config
     {
-        return $this->passConfig;
+        return $this->pass_config;
     }
-
-    public function getServiceReferenceGraph(): ServiceReferenceGraph
+    public function get_service_reference_graph(): Service_Reference_Graph
     {
-        return $this->serviceReferenceGraph;
+        return $this->service_reference_graph;
     }
-
-    public function addPass(CompilerPassInterface $pass, string $type = PassConfig::TYPE_BEFORE_OPTIMIZATION, int $priority = 0): void
+    public function add_pass(Compiler_Pass_Interface $pass, string $type = Pass_Config::TYPE_BEFORE_OPTIMIZATION, int $priority = 0): void
     {
-        $this->passConfig->addPass($pass, $type, $priority);
+        $this->pass_config->add_pass($pass, $type, $priority);
     }
-
     /**
      * @final
      */
-    public function log(CompilerPassInterface $pass, string $message): void
+    public function log(Compiler_Pass_Interface $pass, string $message): void
     {
         if (str_contains($message, "\n")) {
-            $message = str_replace("\n", "\n".$pass::class.': ', trim($message));
+            $message = str_replace("\n", "\n" . $pass::class . ': ', trim($message));
         }
-
-        $this->log[] = $pass::class.': '.$message;
+        $this->log[] = $pass::class . ': ' . $message;
     }
-
-    public function getLog(): array
+    public function get_log(): array
     {
         return $this->log;
     }
-
     /**
      * Run the Compiler and process all Passes.
      */
-    public function compile(ContainerBuilder $container): void
+    public function compile(Container_Builder $container): void
     {
         try {
-            foreach ($this->passConfig->getPasses() as $pass) {
+            foreach ($this->pass_config->get_passes() as $pass) {
                 $pass->process($container);
             }
         } catch (\Exception $e) {
-            $usedEnvs = [];
+            $used_envs = [];
             $prev = $e;
-
             do {
-                $msg = $prev->getMessage();
-
-                if ($msg !== $resolvedMsg = $container->resolveEnvPlaceholders($msg, null, $usedEnvs)) {
+                $msg = $prev->get_message();
+                if ($msg !== $resolved_msg = $container->resolve_env_placeholders($msg, null, $used_envs)) {
                     $r = new \ReflectionProperty($prev, 'message');
-                    $r->setValue($prev, $resolvedMsg);
+                    $r->set_value($prev, $resolved_msg);
                 }
-            } while ($prev = $prev->getPrevious());
-
-            if ($usedEnvs) {
-                $e = new EnvParameterException($usedEnvs, $e);
+            } while ($prev = $prev->get_previous());
+            if ($used_envs) {
+                $e = new Env_Parameter_Exception($used_envs, $e);
             }
-
             throw $e;
         } finally {
-            $this->getServiceReferenceGraph()->clear();
+            $this->get_service_reference_graph()->clear();
         }
     }
 }

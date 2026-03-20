@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,44 +9,18 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
-
-return static function (RoutingConfigurator $routes): void {
-    $routes->add('_profiler_home', '/')
-        ->controller('web_profiler.controller.profiler::homeAction')
-    ;
-    $routes->add('_profiler_search', '/search')
-        ->controller('web_profiler.controller.profiler::searchAction')
-    ;
-    $routes->add('_profiler_search_bar', '/search_bar')
-        ->controller('web_profiler.controller.profiler::searchBarAction')
-    ;
-    $routes->add('_profiler_phpinfo', '/phpinfo')
-        ->controller('web_profiler.controller.profiler::phpinfoAction')
-    ;
-    $routes->add('_profiler_xdebug', '/xdebug')
-        ->controller('web_profiler.controller.profiler::xdebugAction')
-    ;
-    $routes->add('_profiler_font', '/font/{fontName}.woff2')
-        ->controller('web_profiler.controller.profiler::fontAction')
-    ;
-    $routes->add('_profiler_search_results', '/{token}/search/results')
-        ->controller('web_profiler.controller.profiler::searchResultsAction')
-    ;
-    $routes->add('_profiler_open_file', '/open')
-        ->controller('web_profiler.controller.profiler::openAction')
-    ;
-    $routes->add('_profiler', '/{token}')
-        ->controller('web_profiler.controller.profiler::panelAction')
-    ;
-    $routes->add('_profiler_router', '/{token}/router')
-        ->controller('web_profiler.controller.router::panelAction')
-    ;
-    $routes->add('_profiler_exception', '/{token}/exception')
-        ->controller('web_profiler.controller.exception_panel::body')
-    ;
-    $routes->add('_profiler_exception_css', '/{token}/exception.css')
-        ->controller('web_profiler.controller.exception_panel::stylesheet')
-    ;
+use Symfony\Component\Routing\Loader\Configurator\Routing_Configurator;
+return static function (Routing_Configurator $routes): void {
+    $routes->add('_profiler_home', '/')->controller('web_profiler.controller.profiler::homeAction');
+    $routes->add('_profiler_search', '/search')->controller('web_profiler.controller.profiler::searchAction');
+    $routes->add('_profiler_search_bar', '/search_bar')->controller('web_profiler.controller.profiler::searchBarAction');
+    $routes->add('_profiler_phpinfo', '/phpinfo')->controller('web_profiler.controller.profiler::phpinfoAction');
+    $routes->add('_profiler_xdebug', '/xdebug')->controller('web_profiler.controller.profiler::xdebugAction');
+    $routes->add('_profiler_font', '/font/{fontName}.woff2')->controller('web_profiler.controller.profiler::fontAction');
+    $routes->add('_profiler_search_results', '/{token}/search/results')->controller('web_profiler.controller.profiler::searchResultsAction');
+    $routes->add('_profiler_open_file', '/open')->controller('web_profiler.controller.profiler::openAction');
+    $routes->add('_profiler', '/{token}')->controller('web_profiler.controller.profiler::panelAction');
+    $routes->add('_profiler_router', '/{token}/router')->controller('web_profiler.controller.router::panelAction');
+    $routes->add('_profiler_exception', '/{token}/exception')->controller('web_profiler.controller.exception_panel::body');
+    $routes->add('_profiler_exception_css', '/{token}/exception.css')->controller('web_profiler.controller.exception_panel::stylesheet');
 };

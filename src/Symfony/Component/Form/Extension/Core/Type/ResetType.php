@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,25 +9,22 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Extension\Core\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\ButtonTypeInterface;
-
+use Symfony\Component\Form\Abstract_Type;
+use Symfony\Component\Form\Button_Type_Interface;
 /**
  * A reset button.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ResetType extends AbstractType implements ButtonTypeInterface
+class Reset_Type extends Abstract_Type implements Button_Type_Interface
 {
-    public function getParent(): ?string
+    public function get_parent(): ?string
     {
-        return ButtonType::class;
+        return Button_Type::class;
     }
-
-    public function getBlockPrefix(): string
+    public function get_block_prefix(): string
     {
         return 'reset';
     }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,63 +9,54 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event;
 
-namespace Symfony\Component\HttpKernel\Event;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Contracts\EventDispatcher\Event;
-
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Kernel\Http_Kernel_Interface;
+use Symfony\Contracts\Event_Dispatcher\Event;
 /**
  * Base class for events dispatched in the HttpKernel component.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class KernelEvent extends Event
+class Kernel_Event extends Event
 {
     /**
      * @param int $requestType The request type the kernel is currently processing; one of
      *                         HttpKernelInterface::MAIN_REQUEST or HttpKernelInterface::SUB_REQUEST
      */
-    public function __construct(
-        private readonly HttpKernelInterface $kernel,
-        private readonly Request $request,
-        private readonly ?int $requestType,
-    ) {
+    public function __construct(private readonly Http_Kernel_Interface $kernel, private readonly Request $request, private readonly ?int $request_type)
+    {
     }
-
     /**
      * Returns the kernel in which this event was thrown.
      */
-    public function getKernel(): HttpKernelInterface
+    public function get_kernel(): Http_Kernel_Interface
     {
         return $this->kernel;
     }
-
     /**
      * Returns the request the kernel is currently processing.
      */
-    public function getRequest(): Request
+    public function get_request(): Request
     {
         return $this->request;
     }
-
     /**
      * Returns the request type the kernel is currently processing.
      *
      * @return int One of HttpKernelInterface::MAIN_REQUEST and
      *             HttpKernelInterface::SUB_REQUEST
      */
-    public function getRequestType(): int
+    public function get_request_type(): int
     {
-        return $this->requestType;
+        return $this->request_type;
     }
-
     /**
      * Checks if this is the main request.
      */
-    public function isMainRequest(): bool
+    public function is_main_request(): bool
     {
-        return HttpKernelInterface::MAIN_REQUEST === $this->requestType;
+        return Http_Kernel_Interface::MAIN_REQUEST === $this->request_type;
     }
 }

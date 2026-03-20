@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpFoundation\Exception;
+namespace Symfony\Component\Http_Foundation\Exception;
 
 /**
  * Base LogicException for Http Foundation component.
  */
-class LogicException extends \LogicException implements ExceptionInterface
+class LogicException extends \LogicException implements Exception_Interface
 {
 }

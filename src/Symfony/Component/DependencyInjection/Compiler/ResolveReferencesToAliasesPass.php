@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,77 +9,62 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Exception\Service_Circular_Reference_Exception;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * Replaces all references to aliases with references to the actual service.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ResolveReferencesToAliasesPass extends AbstractRecursivePass
+class Resolve_References_To_Aliases_Pass extends Abstract_Recursive_Pass
 {
-    protected bool $skipScalars = true;
-
-    public function process(ContainerBuilder $container): void
+    protected bool $skip_scalars = true;
+    public function process(Container_Builder $container): void
     {
         parent::process($container);
-
-        foreach ($container->getAliases() as $id => $alias) {
-            $aliasId = (string) $alias;
-            $this->currentId = $id;
-
-            if ($aliasId !== $defId = $this->getDefinitionId($aliasId, $container)) {
-                $newAlias = $container->setAlias($id, $defId)->setPublic($alias->isPublic());
-
-                if ($alias->isDeprecated()) {
-                    $newAlias->setDeprecated(...array_values($alias->getDeprecation('%alias_id%')));
+        foreach ($container->get_aliases() as $id => $alias) {
+            $alias_id = (string) $alias;
+            $this->current_id = $id;
+            if ($alias_id !== $def_id = $this->get_definition_id($alias_id, $container)) {
+                $new_alias = $container->set_alias($id, $def_id)->set_public($alias->is_public());
+                if ($alias->is_deprecated()) {
+                    $new_alias->set_deprecated(...array_values($alias->get_deprecation('%alias_id%')));
                 }
             }
         }
     }
-
-    protected function processValue(mixed $value, bool $isRoot = false): mixed
+    protected function process_value(mixed $value, bool $is_root = false): mixed
     {
         if (!$value instanceof Reference) {
-            return parent::processValue($value, $isRoot);
+            return parent::process_value($value, $is_root);
         }
-
-        $defId = $this->getDefinitionId($id = (string) $value, $this->container);
-
-        return $defId !== $id ? new Reference($defId, $value->getInvalidBehavior()) : $value;
+        $def_id = $this->get_definition_id($id = (string) $value, $this->container);
+        return $def_id !== $id ? new Reference($def_id, $value->get_invalid_behavior()) : $value;
     }
-
-    private function getDefinitionId(string $id, ContainerBuilder $container): string
+    private function get_definition_id(string $id, Container_Builder $container): string
     {
-        if (!$container->hasAlias($id)) {
+        if (!$container->has_alias($id)) {
             return $id;
         }
-
-        $alias = $container->getAlias($id);
-
-        if ($alias->isDeprecated()) {
-            $referencingDefinition = $container->hasDefinition($this->currentId) ? $container->getDefinition($this->currentId) : $container->getAlias($this->currentId);
-            if (!$referencingDefinition->isDeprecated()) {
-                $deprecation = $alias->getDeprecation($id);
-                trigger_deprecation($deprecation['package'], $deprecation['version'], rtrim((string) $deprecation['message'], '. ').'. It is being referenced by the "%s" '.($container->hasDefinition($this->currentId) ? 'service.' : 'alias.'), $this->currentId);
+        $alias = $container->get_alias($id);
+        if ($alias->is_deprecated()) {
+            $referencing_definition = $container->has_definition($this->current_id) ? $container->get_definition($this->current_id) : $container->get_alias($this->current_id);
+            if (!$referencing_definition->is_deprecated()) {
+                $deprecation = $alias->get_deprecation($id);
+                trigger_deprecation($deprecation['package'], $deprecation['version'], rtrim((string) $deprecation['message'], '. ') . '. It is being referenced by the "%s" ' . ($container->has_definition($this->current_id) ? 'service.' : 'alias.'), $this->current_id);
             }
         }
-
         $seen = [];
         do {
             if (isset($seen[$id])) {
-                throw new ServiceCircularReferenceException($id, array_merge(array_keys($seen), [$id]));
+                throw new Service_Circular_Reference_Exception($id, array_merge(array_keys($seen), [$id]));
             }
-
             $seen[$id] = true;
-            $id = (string) $container->getAlias($id);
-        } while ($container->hasAlias($id));
-
+            $id = (string) $container->get_alias($id);
+        } while ($container->has_alias($id));
         return $id;
     }
 }

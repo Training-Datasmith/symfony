@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,23 +9,21 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Doctrine\Argument_Resolver\Console;
 
-namespace Symfony\Bridge\Doctrine\ArgumentResolver\Console;
-
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
-use Symfony\Bridge\Doctrine\ArgumentResolver\EntityValueResolverTrait;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use Symfony\Component\Console\ArgumentResolver\Exception\NearMissValueResolverException;
-use Symfony\Component\Console\ArgumentResolver\ValueResolver\ValueResolverInterface;
+use Doctrine\Persistence\Manager_Registry;
+use Doctrine\Persistence\Object_Manager;
+use Symfony\Bridge\Doctrine\Argument_Resolver\Entity_Value_Resolver_Trait;
+use Symfony\Bridge\Doctrine\Attribute\Map_Entity;
+use Symfony\Component\Console\Argument_Resolver\Exception\Near_Miss_Value_Resolver_Exception;
+use Symfony\Component\Console\Argument_Resolver\Value_Resolver\Value_Resolver_Interface;
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\Option;
-use Symfony\Component\Console\Attribute\Reflection\ReflectionMember;
+use Symfony\Component\Console\Attribute\Reflection\Reflection_Member;
 use Symfony\Component\Console\Exception\RuntimeException;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use Symfony\Component\String\UnicodeString;
-
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Expression_Language\Expression_Language;
+use Symfony\Component\String\Unicode_String;
 /**
  * Resolves a Command parameter holding the #[MapEntity] attribute to an Entity.
  *
@@ -34,150 +31,117 @@ use Symfony\Component\String\UnicodeString;
  * @author Jérémy Derussé <jeremy@derusse.com>
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-final class EntityValueResolver implements ValueResolverInterface
+final class Entity_Value_Resolver implements Value_Resolver_Interface
 {
-    use EntityValueResolverTrait;
-
+    use Entity_Value_Resolver_Trait;
     public function __construct(
-        private ManagerRegistry $registry,
-        private ?ExpressionLanguage $expressionLanguage = null,
-        private MapEntity $defaults = new MapEntity(),
+        private Manager_Registry $registry,
+        private ?Expression_Language $expression_language = null,
+        private Map_Entity $defaults = new Map_Entity(),
         /** @var array<class-string, class-string> */
-        private readonly array $typeAliases = [],
-    ) {
-    }
-
-    public function resolve(string $argumentName, InputInterface $input, ReflectionMember $member): iterable
+        private readonly array $type_aliases = []
+    )
     {
-        if (!Argument::tryFrom($member->getMember()) && !Option::tryFrom($member->getMember())) {
+    }
+    public function resolve(string $argument_name, Input_Interface $input, Reflection_Member $member): iterable
+    {
+        if (!Argument::try_from($member->get_member()) && !Option::try_from($member->get_member())) {
             return [];
         }
-
-        $type = $member->getType();
-        if (!$type instanceof \ReflectionNamedType || $type->isBuiltin()) {
+        $type = $member->get_type();
+        if (!$type instanceof \ReflectionNamedType || $type->is_builtin()) {
             return [];
         }
-
-        $inputName = $member->getInputName();
-
-        if ($input->hasArgument($inputName) && \is_object($input->getArgument($inputName))) {
+        $input_name = $member->get_input_name();
+        if ($input->has_argument($input_name) && \is_object($input->get_argument($input_name))) {
             return [];
         }
-
         // #[MapEntity] is optional
-        $attribute = $member->getAttribute(MapEntity::class) ?? $this->defaults;
-
-        $options = $attribute->withDefaults($this->defaults, $type->getName());
-
+        $attribute = $member->get_attribute(Map_Entity::class) ?? $this->defaults;
+        $options = $attribute->with_defaults($this->defaults, $type->get_name());
         if (!$options->class) {
             return [];
         }
-
-        $options->class = $this->typeAliases[$options->class] ?? $options->class;
-
-        if (!$manager = $this->getManager($this->registry, $options->objectManager, $options->class)) {
+        $options->class = $this->type_aliases[$options->class] ?? $options->class;
+        if (!$manager = $this->get_manager($this->registry, $options->object_manager, $options->class)) {
             return [];
         }
-
         $message = '';
         if (null !== $options->expr) {
-            $variables = array_merge($input->getArguments(), ['input' => $input]);
-            if (null === $object = $this->findViaExpression($this->expressionLanguage, $manager, $options, $variables)) {
+            $variables = array_merge($input->get_arguments(), ['input' => $input]);
+            if (null === $object = $this->find_via_expression($this->expression_language, $manager, $options, $variables)) {
                 $message = \sprintf(' The expression "%s" returned null.', $options->expr);
             }
-        } elseif (false === $object = $this->findById($manager, $options, $this->getIdentifier($inputName, $input, $options))) {
-            if (!$criteria = $this->getCriteria($inputName, $input, $options, $manager)) {
-                throw new NearMissValueResolverException(\sprintf('Cannot find mapping for "%s": use the #[MapEntity] attribute to configure entity resolution.', $options->class));
+        } elseif (false === $object = $this->find_by_id($manager, $options, $this->get_identifier($input_name, $input, $options))) {
+            if (!$criteria = $this->get_criteria($input_name, $input, $options, $manager)) {
+                throw new Near_Miss_Value_Resolver_Exception(\sprintf('Cannot find mapping for "%s": use the #[MapEntity] attribute to configure entity resolution.', $options->class));
             }
-            $object = $this->findOneByCriteria($manager, $options, $criteria);
+            $object = $this->find_one_by_criteria($manager, $options, $criteria);
         }
-
-        if (null === $object && !$member->isNullable()) {
+        if (null === $object && !$member->is_nullable()) {
             throw new RuntimeException($options->message ?? \sprintf('"%s" object not found by "%s".%s', $options->class, self::class, $message));
         }
-
         return [$object];
     }
-
-    private function getIdentifier(string $argumentName, InputInterface $input, MapEntity $options): mixed
+    private function get_identifier(string $argument_name, Input_Interface $input, Map_Entity $options): mixed
     {
         if (\is_array($options->id)) {
             $id = [];
             foreach ($options->id as $field) {
                 if (str_contains($field, '%s')) {
-                    $field = \sprintf($field, $argumentName);
+                    $field = \sprintf($field, $argument_name);
                 }
-
-                $fieldName = (new UnicodeString($field))->kebab()->toString();
-
-                if (!$input->hasArgument($fieldName)) {
-                    return $options->stripNull ? false : null;
+                $field_name = (new Unicode_String($field))->kebab()->to_string();
+                if (!$input->has_argument($field_name)) {
+                    return $options->strip_null ? false : null;
                 }
-
-                $id[$field] = $input->getArgument($fieldName);
+                $id[$field] = $input->get_argument($field_name);
             }
-
             return $id;
         }
-
         if ($options->id) {
-            $idName = (new UnicodeString($options->id))->kebab()->toString();
-
-            return $input->hasArgument($idName)
-                ? $input->getArgument($idName)
-                : ($options->stripNull ? false : null);
+            $id_name = (new Unicode_String($options->id))->kebab()->to_string();
+            return $input->has_argument($id_name) ? $input->get_argument($id_name) : ($options->strip_null ? false : null);
         }
-
-        if ($input->hasArgument($argumentName)) {
-            $value = $input->getArgument($argumentName);
+        if ($input->has_argument($argument_name)) {
+            $value = $input->get_argument($argument_name);
             if (\is_array($value)) {
                 return false;
             }
-
-            return $value ?? ($options->stripNull ? false : null);
+            return $value ?? ($options->strip_null ? false : null);
         }
-
-        if ($input->hasArgument('id')) {
-            return $input->getArgument('id') ?? ($options->stripNull ? false : null);
+        if ($input->has_argument('id')) {
+            return $input->get_argument('id') ?? ($options->strip_null ? false : null);
         }
-
         return false;
     }
-
-    private function getCriteria(string $argumentName, InputInterface $input, MapEntity $options, ObjectManager $manager): array
+    private function get_criteria(string $argument_name, Input_Interface $input, Map_Entity $options, Object_Manager $manager): array
     {
         $mapping = $options->mapping;
-
-        if (!$mapping && $input->hasArgument($argumentName) && \is_array($criteria = $input->getArgument($argumentName))) {
+        if (!$mapping && $input->has_argument($argument_name) && \is_array($criteria = $input->get_argument($argument_name))) {
             foreach ($options->exclude ?? [] as $exclude) {
                 unset($criteria[$exclude]);
             }
-
-            if ($options->stripNull) {
-                return array_filter($criteria, static fn ($value): bool => null !== $value);
+            if ($options->strip_null) {
+                return array_filter($criteria, static fn($value): bool => null !== $value);
             }
-
             return $criteria;
         }
-
         if (!$mapping) {
             return [];
         }
-
         if (array_is_list($mapping)) {
             /** @var list<string> $list */
             $list = $mapping;
             $mapping = array_combine($list, $list);
         }
-
         $values = [];
         foreach (array_keys($mapping) as $attribute) {
-            $attributeName = (new UnicodeString($attribute))->kebab()->toString();
-            if ($input->hasArgument($attributeName)) {
-                $values[$attribute] = $input->getArgument($attributeName);
+            $attribute_name = (new Unicode_String($attribute))->kebab()->to_string();
+            if ($input->has_argument($attribute_name)) {
+                $values[$attribute] = $input->get_argument($attribute_name);
             }
         }
-
-        return $this->buildCriteriaFromMapping($manager, $options, $mapping, $values);
+        return $this->build_criteria_from_mapping($manager, $options, $mapping, $values);
     }
 }

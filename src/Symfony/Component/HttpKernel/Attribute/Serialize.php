@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpKernel\Attribute;
+namespace Symfony\Component\Http_Kernel\Attribute;
 
 /**
  * Controller tag to serialize response.
@@ -26,10 +24,7 @@ final readonly class Serialize
      * @param array<string, mixed> $headers Extra headers to set on the response
      * @param array<string, mixed> $context The serialization context passed to the serializer
      */
-    public function __construct(
-        public int $code = 200,
-        public array $headers = [],
-        public array $context = [],
-    ) {
+    public function __construct(public int $code = 200, public array $headers = [], public array $context = [])
+    {
     }
 }

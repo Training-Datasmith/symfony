@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator\Traits;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
-
-use Symfony\Component\DependencyInjection\Argument\BoundArgument;
-use Symfony\Component\DependencyInjection\Loader\Configurator\DefaultsConfigurator;
-use Symfony\Component\DependencyInjection\Loader\Configurator\InstanceofConfigurator;
-
-trait BindTrait
+use Symfony\Component\Dependency_Injection\Argument\Bound_Argument;
+use Symfony\Component\Dependency_Injection\Loader\Configurator\Defaults_Configurator;
+use Symfony\Component\Dependency_Injection\Loader\Configurator\Instanceof_Configurator;
+trait Bind_Trait
 {
     /**
      * Sets bindings.
@@ -31,14 +28,13 @@ trait BindTrait
      *
      * @return $this
      */
-    final public function bind(string $nameOrFqcn, mixed $valueOrRef): static
+    final public function bind(string $name_or_fqcn, mixed $value_or_ref): static
     {
-        $valueOrRef = static::processValue($valueOrRef, true);
-        $bindings = $this->definition->getBindings();
-        $type = $this instanceof DefaultsConfigurator ? BoundArgument::DEFAULTS_BINDING : ($this instanceof InstanceofConfigurator ? BoundArgument::INSTANCEOF_BINDING : BoundArgument::SERVICE_BINDING);
-        $bindings[$nameOrFqcn] = new BoundArgument($valueOrRef, true, $type, $this->path ?? null);
-        $this->definition->setBindings($bindings);
-
+        $value_or_ref = static::process_value($value_or_ref, true);
+        $bindings = $this->definition->get_bindings();
+        $type = $this instanceof Defaults_Configurator ? Bound_Argument::DEFAULTS_BINDING : ($this instanceof Instanceof_Configurator ? Bound_Argument::INSTANCEOF_BINDING : Bound_Argument::SERVICE_BINDING);
+        $bindings[$name_or_fqcn] = new Bound_Argument($value_or_ref, true, $type, $this->path ?? null);
+        $this->definition->set_bindings($bindings);
         return $this;
     }
 }

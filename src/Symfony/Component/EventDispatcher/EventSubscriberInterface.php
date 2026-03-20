@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\EventDispatcher;
+namespace Symfony\Component\Event_Dispatcher;
 
 /**
  * An EventSubscriber knows itself what events it is interested in.
@@ -24,7 +22,7 @@ namespace Symfony\Component\EventDispatcher;
  * @author Roman Borschel <roman@code-factory.org>
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface EventSubscriberInterface
+interface Event_Subscriber_Interface
 {
     /**
      * Returns an array of event names this subscriber wants to listen to.
@@ -47,5 +45,5 @@ interface EventSubscriberInterface
      *
      * @return array<string, string|array{0: string, 1: int}|list<array{0: string, 1?: int}>>
      */
-    public static function getSubscribedEvents(): array;
+    public static function get_subscribed_events(): array;
 }

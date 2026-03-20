@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,48 +9,43 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Exception\RuntimeException;
-
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Exception\RuntimeException;
 /**
  * This pass validates aliases, it provides the following checks:
  *
  * - An alias which happens to be an interface must resolve to a service implementing this interface. This ensures injecting the aliased interface won't cause a type error at runtime.
  */
-class CheckAliasValidityPass implements CompilerPassInterface
+class Check_Alias_Validity_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        foreach ($container->getAliases() as $id => $alias) {
+        foreach ($container->get_aliases() as $id => $alias) {
             try {
-                if (!$container->hasDefinition((string) $alias)) {
+                if (!$container->has_definition((string) $alias)) {
                     continue;
                 }
-
-                $target = $container->getDefinition((string) $alias);
-                if (null === $target->getClass()) {
+                $target = $container->get_definition((string) $alias);
+                if (null === $target->get_class()) {
                     continue;
                 }
-                if (null !== $target->getFactory()) {
+                if (null !== $target->get_factory()) {
                     continue;
                 }
-
-                $reflection = $container->getReflectionClass($id);
+                $reflection = $container->get_reflection_class($id);
                 if (null === $reflection) {
                     continue;
                 }
-                if (!$reflection->isInterface()) {
+                if (!$reflection->is_interface()) {
                     continue;
                 }
-
-                $targetReflection = $container->getReflectionClass($target->getClass());
-                if (null !== $targetReflection && !$targetReflection->implementsInterface($id)) {
-                    throw new RuntimeException(\sprintf('Invalid alias definition: alias "%s" is referencing class "%s" but this class does not implement "%s". Because this alias is an interface, "%s" must implement "%s".', $id, $target->getClass(), $id, $target->getClass(), $id));
+                $target_reflection = $container->get_reflection_class($target->get_class());
+                if (null !== $target_reflection && !$target_reflection->implements_interface($id)) {
+                    throw new RuntimeException(\sprintf('Invalid alias definition: alias "%s" is referencing class "%s" but this class does not implement "%s". Because this alias is an interface, "%s" must implement "%s".', $id, $target->get_class(), $id, $target->get_class(), $id));
                 }
-            } catch (\ReflectionException) {
+            } catch (\Reflection_Exception) {
                 continue;
             }
         }

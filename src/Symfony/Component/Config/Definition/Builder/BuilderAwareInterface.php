@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition\Builder;
 
 /**
@@ -18,12 +16,12 @@ namespace Symfony\Component\Config\Definition\Builder;
  *
  * @author Roland Franssen <franssen.roland@gmail.com>
  */
-interface BuilderAwareInterface
+interface Builder_Aware_Interface
 {
     /**
      * Sets a custom children builder.
      *
      * @param NodeBuilder<static> $builder
      */
-    public function setBuilder(NodeBuilder $builder): void;
+    public function set_builder(Node_Builder $builder): void;
 }

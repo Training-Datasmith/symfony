@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,46 +9,38 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Psr_Http_Message\Event_Listener;
 
-namespace Symfony\Bridge\PsrHttpMessage\EventListener;
-
-use Psr\Http\Message\ResponseInterface;
-use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
-use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\ViewEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
-
+use Psr\Http\Message\Response_Interface;
+use Symfony\Bridge\Psr_Http_Message\Factory\Http_Foundation_Factory;
+use Symfony\Bridge\Psr_Http_Message\Http_Foundation_Factory_Interface;
+use Symfony\Component\Event_Dispatcher\Event_Subscriber_Interface;
+use Symfony\Component\Http_Kernel\Event\View_Event;
+use Symfony\Component\Http_Kernel\Kernel_Events;
 /**
  * Converts PSR-7 Response to HttpFoundation Response using the bridge.
  *
  * @author Kévin Dunglas <dunglas@gmail.com>
  * @author Alexander M. Turek <me@derrabus.de>
  */
-final readonly class PsrResponseListener implements EventSubscriberInterface
+final readonly class Psr_Response_Listener implements Event_Subscriber_Interface
 {
-    public function __construct(private ?HttpFoundationFactoryInterface $httpFoundationFactory = new HttpFoundationFactory())
+    public function __construct(private ?Http_Foundation_Factory_Interface $http_foundation_factory = new Http_Foundation_Factory())
     {
     }
-
     /**
      * Do the conversion if applicable and update the response of the event.
      */
-    public function onKernelView(ViewEvent $event): void
+    public function on_kernel_view(View_Event $event): void
     {
-        $controllerResult = $event->getControllerResult();
-
-        if (!$controllerResult instanceof ResponseInterface) {
+        $controller_result = $event->get_controller_result();
+        if (!$controller_result instanceof Response_Interface) {
             return;
         }
-
-        $event->setResponse($this->httpFoundationFactory->createResponse($controllerResult));
+        $event->set_response($this->http_foundation_factory->create_response($controller_result));
     }
-
-    public static function getSubscribedEvents(): array
+    public static function get_subscribed_events(): array
     {
-        return [
-            KernelEvents::VIEW => 'onKernelView',
-        ];
+        return [Kernel_Events::VIEW => 'onKernelView'];
     }
 }

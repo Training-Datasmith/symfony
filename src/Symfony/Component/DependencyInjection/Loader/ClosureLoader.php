@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DependencyInjection\Loader;
+namespace Symfony\Component\Dependency_Injection\Loader;
 
 use Symfony\Component\Config\Loader\Loader;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
+use Symfony\Component\Dependency_Injection\Container_Builder;
 /**
  * ClosureLoader loads service definitions from a PHP closure.
  *
@@ -23,20 +20,16 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ClosureLoader extends Loader
+class Closure_Loader extends Loader
 {
-    public function __construct(
-        private readonly ContainerBuilder $container,
-        ?string $env = null,
-    ) {
+    public function __construct(private readonly Container_Builder $container, ?string $env = null)
+    {
         parent::__construct($env);
     }
-
     public function load(mixed $resource, ?string $type = null): mixed
     {
         return $resource($this->container, $this->env);
     }
-
     public function supports(mixed $resource, ?string $type = null): bool
     {
         return $resource instanceof \Closure;

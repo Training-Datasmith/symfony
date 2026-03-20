@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,25 +9,21 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Asset_Mapper\Event;
 
-namespace Symfony\Component\AssetMapper\Event;
-
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Contracts\EventDispatcher\Event;
-
+use Symfony\Component\Console\Output\Output_Interface;
+use Symfony\Contracts\Event_Dispatcher\Event;
 /**
  * Dispatched during the asset-map:compile command, before the assets are compiled.
  *
  * @author Ryan Weaver <ryan@symfonycasts.com>
  */
-class PreAssetsCompileEvent extends Event
+class Pre_Assets_Compile_Event extends Event
 {
-    public function __construct(
-        private readonly OutputInterface $output,
-    ) {
+    public function __construct(private readonly Output_Interface $output)
+    {
     }
-
-    public function getOutput(): OutputInterface
+    public function get_output(): Output_Interface
     {
         return $this->output;
     }

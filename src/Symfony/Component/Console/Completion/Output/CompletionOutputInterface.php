@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,18 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Completion\Output;
 
-use Symfony\Component\Console\Completion\CompletionSuggestions;
-use Symfony\Component\Console\Output\OutputInterface;
-
+use Symfony\Component\Console\Completion\Completion_Suggestions;
+use Symfony\Component\Console\Output\Output_Interface;
 /**
  * Transforms the {@see CompletionSuggestions} object into output readable by the shell completion.
  *
  * @author Wouter de Jong <wouter@wouterj.nl>
  */
-interface CompletionOutputInterface
+interface Completion_Output_Interface
 {
-    public function write(CompletionSuggestions $suggestions, OutputInterface $output): void;
+    public function write(Completion_Suggestions $suggestions, Output_Interface $output): void;
 }

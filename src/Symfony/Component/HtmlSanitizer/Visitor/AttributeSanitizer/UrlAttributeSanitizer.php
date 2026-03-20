@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,46 +9,29 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Html_Sanitizer\Visitor\Attribute_Sanitizer;
 
-namespace Symfony\Component\HtmlSanitizer\Visitor\AttributeSanitizer;
-
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
-use Symfony\Component\HtmlSanitizer\TextSanitizer\UrlSanitizer;
-
+use Symfony\Component\Html_Sanitizer\Html_Sanitizer_Config;
+use Symfony\Component\Html_Sanitizer\Text_Sanitizer\Url_Sanitizer;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-final class UrlAttributeSanitizer implements AttributeSanitizerInterface
+final class Url_Attribute_Sanitizer implements Attribute_Sanitizer_Interface
 {
-    public function getSupportedElements(): ?array
+    public function get_supported_elements(): ?array
     {
         // Check all elements for URL attributes
         return null;
     }
-
-    public function getSupportedAttributes(): array
+    public function get_supported_attributes(): array
     {
         return ['src', 'href', 'lowsrc', 'background', 'ping'];
     }
-
-    public function sanitizeAttribute(string $element, string $attribute, string $value, HtmlSanitizerConfig $config): ?string
+    public function sanitize_attribute(string $element, string $attribute, string $value, Html_Sanitizer_Config $config): ?string
     {
         if ('a' === $element) {
-            return UrlSanitizer::sanitize(
-                $value,
-                $config->getAllowedLinkSchemes(),
-                $config->getForceHttpsUrls(),
-                $config->getAllowedLinkHosts(),
-                $config->getAllowRelativeLinks(),
-            );
+            return Url_Sanitizer::sanitize($value, $config->get_allowed_link_schemes(), $config->get_force_https_urls(), $config->get_allowed_link_hosts(), $config->get_allow_relative_links());
         }
-
-        return UrlSanitizer::sanitize(
-            $value,
-            $config->getAllowedMediaSchemes(),
-            $config->getForceHttpsUrls(),
-            $config->getAllowedMediaHosts(),
-            $config->getAllowRelativeMedias(),
-        );
+        return Url_Sanitizer::sanitize($value, $config->get_allowed_media_schemes(), $config->get_force_https_urls(), $config->get_allowed_media_hosts(), $config->get_allow_relative_medias());
     }
 }

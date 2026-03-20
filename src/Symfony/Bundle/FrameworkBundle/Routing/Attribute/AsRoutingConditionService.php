@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Routing\Attribute;
 
-namespace Symfony\Bundle\FrameworkBundle\Routing\Attribute;
-
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-
+use Symfony\Component\Dependency_Injection\Attribute\Autoconfigure_Tag;
 /**
  * Service tag to autoconfigure routing condition services.
  *
@@ -41,16 +38,14 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
  *     }
  */
 #[\Attribute(\Attribute::TARGET_CLASS)]
-class AsRoutingConditionService extends AutoconfigureTag
+class As_Routing_Condition_Service extends Autoconfigure_Tag
 {
     /**
      * @param string|null $alias    The alias of the service to use it in routing condition expressions
      * @param int         $priority Defines a priority that allows the routing condition service to override a service with the same alias
      */
-    public function __construct(
-        ?string $alias = null,
-        int $priority = 0,
-    ) {
+    public function __construct(?string $alias = null, int $priority = 0)
+    {
         parent::__construct('routing.condition_service', ['alias' => $alias, 'priority' => $priority]);
     }
 }

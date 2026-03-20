@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,30 +9,25 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Error_Handler;
 
-namespace Symfony\Component\ErrorHandler;
-
-use Symfony\Component\ErrorHandler\Exception\SilencedErrorContext;
-
+use Symfony\Component\Error_Handler\Exception\Silenced_Error_Context;
 /**
  * @internal
  */
-class ThrowableUtils
+class Throwable_Utils
 {
-    public static function getSeverity(SilencedErrorContext|\Throwable $throwable): int
+    public static function get_severity(Silenced_Error_Context|\Throwable $throwable): int
     {
-        if ($throwable instanceof \ErrorException || $throwable instanceof SilencedErrorContext) {
-            return $throwable->getSeverity();
+        if ($throwable instanceof \ErrorException || $throwable instanceof Silenced_Error_Context) {
+            return $throwable->get_severity();
         }
-
         if ($throwable instanceof \ParseError) {
             return \E_PARSE;
         }
-
         if ($throwable instanceof \TypeError) {
             return \E_RECOVERABLE_ERROR;
         }
-
         return \E_ERROR;
     }
 }

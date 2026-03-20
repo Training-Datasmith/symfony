@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,27 +9,21 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Extension\Core\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-class RangeType extends AbstractType
+use Symfony\Component\Form\Abstract_Type;
+use Symfony\Component\Options_Resolver\Options_Resolver;
+class Range_Type extends Abstract_Type
 {
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configure_options(Options_Resolver $resolver): void
     {
-        $resolver->setDefaults([
-            'invalid_message' => 'Please choose a valid range.',
-        ]);
+        $resolver->set_defaults(['invalid_message' => 'Please choose a valid range.']);
     }
-
-    public function getParent(): ?string
+    public function get_parent(): ?string
     {
-        return TextType::class;
+        return Text_Type::class;
     }
-
-    public function getBlockPrefix(): string
+    public function get_block_prefix(): string
     {
         return 'range';
     }

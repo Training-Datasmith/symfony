@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator\Traits;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
-
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-
-trait CallTrait
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+trait Call_Trait
 {
     /**
      * Adds a method to call after service initialization.
@@ -28,10 +25,9 @@ trait CallTrait
      *
      * @throws InvalidArgumentException on empty $method param
      */
-    final public function call(string $method, array $arguments = [], bool $returnsClone = false): static
+    final public function call(string $method, array $arguments = [], bool $returns_clone = false): static
     {
-        $this->definition->addMethodCall($method, static::processValue($arguments, true), $returnsClone);
-
+        $this->definition->add_method_call($method, static::process_value($arguments, true), $returns_clone);
         return $this;
     }
 }

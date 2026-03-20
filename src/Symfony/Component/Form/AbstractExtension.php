@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,16 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
 use Symfony\Component\Form\Exception\InvalidArgumentException;
-use Symfony\Component\Form\Exception\UnexpectedTypeException;
-
+use Symfony\Component\Form\Exception\Unexpected_Type_Exception;
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-abstract class AbstractExtension implements FormExtensionInterface
+abstract class Abstract_Extension implements Form_Extension_Interface
 {
     /**
      * The types provided by this extension.
@@ -27,153 +24,127 @@ abstract class AbstractExtension implements FormExtensionInterface
      * @var FormTypeInterface[]
      */
     private array $types;
-
     /**
      * The type extensions provided by this extension.
      *
      * @var FormTypeExtensionInterface[][]
      */
-    private array $typeExtensions;
-
+    private array $type_extensions;
     /**
      * The type guesser provided by this extension.
      */
-    private ?FormTypeGuesserInterface $typeGuesser = null;
-
+    private ?Form_Type_Guesser_Interface $type_guesser = null;
     /**
      * Whether the type guesser has been loaded.
      */
-    private bool $typeGuesserLoaded = false;
-
-    public function getType(string $name): FormTypeInterface
+    private bool $type_guesser_loaded = false;
+    public function get_type(string $name): Form_Type_Interface
     {
         if (!isset($this->types)) {
-            $this->initTypes();
+            $this->init_types();
         }
-
         if (!isset($this->types[$name])) {
             throw new InvalidArgumentException(\sprintf('The type "%s" cannot be loaded by this extension.', $name));
         }
-
         return $this->types[$name];
     }
-
-    public function hasType(string $name): bool
+    public function has_type(string $name): bool
     {
         if (!isset($this->types)) {
-            $this->initTypes();
+            $this->init_types();
         }
-
         return isset($this->types[$name]);
     }
-
-    public function getTypeExtensions(string $name): array
+    public function get_type_extensions(string $name): array
     {
-        if (!isset($this->typeExtensions)) {
-            $this->initTypeExtensions();
+        if (!isset($this->type_extensions)) {
+            $this->init_type_extensions();
         }
-
-        return $this->typeExtensions[$name]
-            ?? [];
+        return $this->type_extensions[$name] ?? [];
     }
-
-    public function hasTypeExtensions(string $name): bool
+    public function has_type_extensions(string $name): bool
     {
-        if (!isset($this->typeExtensions)) {
-            $this->initTypeExtensions();
+        if (!isset($this->type_extensions)) {
+            $this->init_type_extensions();
         }
-
-        return isset($this->typeExtensions[$name]) && \count($this->typeExtensions[$name]) > 0;
+        return isset($this->type_extensions[$name]) && \count($this->type_extensions[$name]) > 0;
     }
-
-    public function getTypeGuesser(): ?FormTypeGuesserInterface
+    public function get_type_guesser(): ?Form_Type_Guesser_Interface
     {
-        if (!$this->typeGuesserLoaded) {
-            $this->initTypeGuesser();
+        if (!$this->type_guesser_loaded) {
+            $this->init_type_guesser();
         }
-
-        return $this->typeGuesser;
+        return $this->type_guesser;
     }
-
     /**
      * Registers the types.
      *
      * @return FormTypeInterface[]
      */
-    protected function loadTypes(): array
+    protected function load_types(): array
     {
         return [];
     }
-
     /**
      * Registers the type extensions.
      *
      * @return FormTypeExtensionInterface[]
      */
-    protected function loadTypeExtensions(): array
+    protected function load_type_extensions(): array
     {
         return [];
     }
-
     /**
      * Registers the type guesser.
      */
-    protected function loadTypeGuesser(): ?FormTypeGuesserInterface
+    protected function load_type_guesser(): ?Form_Type_Guesser_Interface
     {
         return null;
     }
-
     /**
      * Initializes the types.
      *
      * @throws UnexpectedTypeException if any registered type is not an instance of FormTypeInterface
      */
-    private function initTypes(): void
+    private function init_types(): void
     {
         $this->types = [];
-
-        foreach ($this->loadTypes() as $type) {
-            if (!$type instanceof FormTypeInterface) {
-                throw new UnexpectedTypeException($type, FormTypeInterface::class);
+        foreach ($this->load_types() as $type) {
+            if (!$type instanceof Form_Type_Interface) {
+                throw new Unexpected_Type_Exception($type, Form_Type_Interface::class);
             }
-
             $this->types[$type::class] = $type;
         }
     }
-
     /**
      * Initializes the type extensions.
      *
      * @throws UnexpectedTypeException if any registered type extension is not
      *                                 an instance of FormTypeExtensionInterface
      */
-    private function initTypeExtensions(): void
+    private function init_type_extensions(): void
     {
-        $this->typeExtensions = [];
-
-        foreach ($this->loadTypeExtensions() as $extension) {
-            if (!$extension instanceof FormTypeExtensionInterface) {
-                throw new UnexpectedTypeException($extension, FormTypeExtensionInterface::class);
+        $this->type_extensions = [];
+        foreach ($this->load_type_extensions() as $extension) {
+            if (!$extension instanceof Form_Type_Extension_Interface) {
+                throw new Unexpected_Type_Exception($extension, Form_Type_Extension_Interface::class);
             }
-
-            foreach ($extension::getExtendedTypes() as $extendedType) {
-                $this->typeExtensions[$extendedType][] = $extension;
+            foreach ($extension::get_extended_types() as $extended_type) {
+                $this->type_extensions[$extended_type][] = $extension;
             }
         }
     }
-
     /**
      * Initializes the type guesser.
      *
      * @throws UnexpectedTypeException if the type guesser is not an instance of FormTypeGuesserInterface
      */
-    private function initTypeGuesser(): void
+    private function init_type_guesser(): void
     {
-        $this->typeGuesserLoaded = true;
-
-        $this->typeGuesser = $this->loadTypeGuesser();
-        if (null !== $this->typeGuesser && !$this->typeGuesser instanceof FormTypeGuesserInterface) {
-            throw new UnexpectedTypeException($this->typeGuesser, FormTypeGuesserInterface::class);
+        $this->type_guesser_loaded = true;
+        $this->type_guesser = $this->load_type_guesser();
+        if (null !== $this->type_guesser && !$this->type_guesser instanceof Form_Type_Guesser_Interface) {
+            throw new Unexpected_Type_Exception($this->type_guesser, Form_Type_Guesser_Interface::class);
         }
     }
 }

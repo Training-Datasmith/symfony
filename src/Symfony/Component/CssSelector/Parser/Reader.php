@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\CssSelector\Parser;
+namespace Symfony\Component\Css_Selector\Parser;
 
 /**
  * CSS selector reader.
@@ -27,57 +25,44 @@ class Reader
 {
     private readonly int $length;
     private int $position = 0;
-
-    public function __construct(
-        private readonly string $source,
-    ) {
+    public function __construct(private readonly string $source)
+    {
         $this->length = \strlen($source);
     }
-
-    public function isEOF(): bool
+    public function is_eof(): bool
     {
         return $this->position >= $this->length;
     }
-
-    public function getPosition(): int
+    public function get_position(): int
     {
         return $this->position;
     }
-
-    public function getRemainingLength(): int
+    public function get_remaining_length(): int
     {
         return $this->length - $this->position;
     }
-
-    public function getSubstring(int $length, int $offset = 0): string
+    public function get_substring(int $length, int $offset = 0): string
     {
         return substr($this->source, $this->position + $offset, $length);
     }
-
-    public function getOffset(string $string): int|false
+    public function get_offset(string $string): int|false
     {
         $position = strpos($this->source, $string, $this->position);
-
         return false === $position ? false : $position - $this->position;
     }
-
-    public function findPattern(string $pattern): array|false
+    public function find_pattern(string $pattern): array|false
     {
         $source = substr($this->source, $this->position);
-
         if (preg_match($pattern, $source, $matches)) {
             return $matches;
         }
-
         return false;
     }
-
-    public function moveForward(int $length): void
+    public function move_forward(int $length): void
     {
         $this->position += $length;
     }
-
-    public function moveToEnd(): void
+    public function move_to_end(): void
     {
         $this->position = $this->length;
     }

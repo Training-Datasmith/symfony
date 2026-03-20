@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,45 +9,38 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Extension\Core\Data_Accessor;
 
-namespace Symfony\Component\Form\Extension\Core\DataAccessor;
-
-use Symfony\Component\Form\DataAccessorInterface;
-use Symfony\Component\Form\Exception\AccessException;
-use Symfony\Component\Form\FormInterface;
-
+use Symfony\Component\Form\Data_Accessor_Interface;
+use Symfony\Component\Form\Exception\Access_Exception;
+use Symfony\Component\Form\Form_Interface;
 /**
  * Writes and reads values to/from an object or array using callback functions.
  *
  * @author Yonel Ceruto <yonelceruto@gmail.com>
  */
-class CallbackAccessor implements DataAccessorInterface
+class Callback_Accessor implements Data_Accessor_Interface
 {
-    public function getValue(object|array $data, FormInterface $form): mixed
+    public function get_value(object|array $data, Form_Interface $form): mixed
     {
-        if (null === $getter = $form->getConfig()->getOption('getter')) {
-            throw new AccessException('Unable to read from the given form data as no getter is defined.');
+        if (null === $getter = $form->get_config()->get_option('getter')) {
+            throw new Access_Exception('Unable to read from the given form data as no getter is defined.');
         }
-
-        return ($getter)($data, $form);
+        return $getter($data, $form);
     }
-
-    public function setValue(object|array &$data, mixed $value, FormInterface $form): void
+    public function set_value(object|array &$data, mixed $value, Form_Interface $form): void
     {
-        if (null === $setter = $form->getConfig()->getOption('setter')) {
-            throw new AccessException('Unable to write the given value as no setter is defined.');
+        if (null === $setter = $form->get_config()->get_option('setter')) {
+            throw new Access_Exception('Unable to write the given value as no setter is defined.');
         }
-
-        ($setter)($data, $form->getData(), $form);
+        $setter($data, $form->get_data(), $form);
     }
-
-    public function isReadable(object|array $data, FormInterface $form): bool
+    public function is_readable(object|array $data, Form_Interface $form): bool
     {
-        return null !== $form->getConfig()->getOption('getter');
+        return null !== $form->get_config()->get_option('getter');
     }
-
-    public function isWritable(object|array $data, FormInterface $form): bool
+    public function is_writable(object|array $data, Form_Interface $form): bool
     {
-        return null !== $form->getConfig()->getOption('setter');
+        return null !== $form->get_config()->get_option('setter');
     }
 }

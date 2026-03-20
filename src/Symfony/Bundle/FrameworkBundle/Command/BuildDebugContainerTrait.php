@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,64 +9,54 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Command;
 
-namespace Symfony\Bundle\FrameworkBundle\Command;
-
-use Symfony\Component\Config\ConfigCache;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\KernelInterface;
-
+use Symfony\Component\Config\Config_Cache;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Http_Kernel\Kernel_Interface;
 /**
  * @internal
  *
  * @author Robin Chalas <robin.chalas@gmail.com>
  * @author Nicolas Grekas <p@tchwork.com>
  */
-trait BuildDebugContainerTrait
+trait Build_Debug_Container_Trait
 {
-    protected ContainerBuilder $container;
-
+    protected Container_Builder $container;
     /**
      * Loads the ContainerBuilder from the cache.
      *
      * @throws \LogicException
      */
-    protected function getContainerBuilder(KernelInterface $kernel): ContainerBuilder
+    protected function get_container_builder(Kernel_Interface $kernel): Container_Builder
     {
         if (isset($this->container)) {
             return $this->container;
         }
-
-        $file = $kernel->isDebug() ? $kernel->getContainer()->getParameter('debug.container.dump') : false;
-
-        if (!$file || !(new ConfigCache($file, true))->isFresh()) {
-            $buildContainer = \Closure::bind(function () {
-                $this->initializeBundles();
-
-                return $this->buildContainer();
+        $file = $kernel->is_debug() ? $kernel->get_container()->get_parameter('debug.container.dump') : false;
+        if (!$file || !(new Config_Cache($file, true))->is_fresh()) {
+            $build_container = \Closure::bind(function () {
+                $this->initialize_bundles();
+                return $this->build_container();
             }, $kernel, $kernel::class);
-            $container = $buildContainer();
-            $container->getCompilerPassConfig()->setRemovingPasses([]);
-            $container->getCompilerPassConfig()->setAfterRemovingPasses([]);
+            $container = $build_container();
+            $container->get_compiler_pass_config()->set_removing_passes([]);
+            $container->get_compiler_pass_config()->set_after_removing_passes([]);
             $container->compile();
         } else {
-            $buildContainer = \Closure::bind(function () {
-                $containerBuilder = $this->getContainerBuilder();
-                $this->prepareContainer($containerBuilder);
-
-                return $containerBuilder;
+            $build_container = \Closure::bind(function () {
+                $container_builder = $this->get_container_builder();
+                $this->prepare_container($container_builder);
+                return $container_builder;
             }, $kernel, $kernel::class);
-            $container = $buildContainer();
-
-            $dumpedContainer = unserialize(file_get_contents(substr_replace($file, '.ser', -4)));
-            $container->setDefinitions($dumpedContainer->getDefinitions());
-            $container->setAliases($dumpedContainer->getAliases());
-
-            $parameterBag = $container->getParameterBag();
-            $parameterBag->clear();
-            $parameterBag->add($dumpedContainer->getParameterBag()->all());
+            $container = $build_container();
+            $dumped_container = unserialize(file_get_contents(substr_replace($file, '.ser', -4)));
+            $container->set_definitions($dumped_container->get_definitions());
+            $container->set_aliases($dumped_container->get_aliases());
+            $parameter_bag = $container->get_parameter_bag();
+            $parameter_bag->clear();
+            $parameter_bag->add($dumped_container->get_parameter_bag()->all());
         }
-
         return $this->container = $container;
     }
 }

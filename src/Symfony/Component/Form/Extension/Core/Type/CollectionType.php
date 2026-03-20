@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,124 +9,78 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Extension\Core\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\EventListener\ResizeFormListener;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-class CollectionType extends AbstractType
+use Symfony\Component\Form\Abstract_Type;
+use Symfony\Component\Form\Extension\Core\Event_Listener\Resize_Form_Listener;
+use Symfony\Component\Form\Form_Builder_Interface;
+use Symfony\Component\Form\Form_Interface;
+use Symfony\Component\Form\Form_View;
+use Symfony\Component\Options_Resolver\Options;
+use Symfony\Component\Options_Resolver\Options_Resolver;
+class Collection_Type extends Abstract_Type
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function build_form(Form_Builder_Interface $builder, array $options): void
     {
-        $resizePrototypeOptions = null;
+        $resize_prototype_options = null;
         if ($options['allow_add'] && $options['prototype']) {
-            $resizePrototypeOptions = array_replace($options['entry_options'], $options['prototype_options']);
-            $prototypeOptions = array_replace([
-                'required' => $options['required'],
-                'label' => $options['prototype_name'].'label__',
-            ], $resizePrototypeOptions);
-
+            $resize_prototype_options = array_replace($options['entry_options'], $options['prototype_options']);
+            $prototype_options = array_replace(['required' => $options['required'], 'label' => $options['prototype_name'] . 'label__'], $resize_prototype_options);
             if (null !== $options['prototype_data']) {
-                $prototypeOptions['data'] = $options['prototype_data'];
+                $prototype_options['data'] = $options['prototype_data'];
             }
-
-            $prototype = $builder->create($options['prototype_name'], $options['entry_type'], $prototypeOptions);
-            $builder->setAttribute('prototype', $prototype->getForm());
+            $prototype = $builder->create($options['prototype_name'], $options['entry_type'], $prototype_options);
+            $builder->set_attribute('prototype', $prototype->get_form());
         }
-
-        $resizeListener = new ResizeFormListener(
-            $options['entry_type'],
-            $options['entry_options'],
-            $options['allow_add'],
-            $options['allow_delete'],
-            $options['delete_empty'],
-            $resizePrototypeOptions,
-            $options['keep_as_list']
-        );
-
-        $builder->addEventSubscriber($resizeListener);
+        $resize_listener = new Resize_Form_Listener($options['entry_type'], $options['entry_options'], $options['allow_add'], $options['allow_delete'], $options['delete_empty'], $resize_prototype_options, $options['keep_as_list']);
+        $builder->add_event_subscriber($resize_listener);
     }
-
-    public function buildView(FormView $view, FormInterface $form, array $options): void
+    public function build_view(Form_View $view, Form_Interface $form, array $options): void
     {
-        $view->vars = array_replace($view->vars, [
-            'allow_add' => $options['allow_add'],
-            'allow_delete' => $options['allow_delete'],
-        ]);
-
-        if ($form->getConfig()->hasAttribute('prototype')) {
-            $prototype = $form->getConfig()->getAttribute('prototype');
-            $view->vars['prototype'] = $prototype->setParent($form)->createView($view);
+        $view->vars = array_replace($view->vars, ['allow_add' => $options['allow_add'], 'allow_delete' => $options['allow_delete']]);
+        if ($form->get_config()->has_attribute('prototype')) {
+            $prototype = $form->get_config()->get_attribute('prototype');
+            $view->vars['prototype'] = $prototype->set_parent($form)->create_view($view);
         }
     }
-
-    public function finishView(FormView $view, FormInterface $form, array $options): void
+    public function finish_view(Form_View $view, Form_Interface $form, array $options): void
     {
-        $prefixOffset = -2;
+        $prefix_offset = -2;
         // check if the entry type also defines a block prefix
         /** @var FormInterface $entry */
         foreach ($form as $entry) {
-            if ($entry->getConfig()->getOption('block_prefix')) {
-                --$prefixOffset;
+            if ($entry->get_config()->get_option('block_prefix')) {
+                --$prefix_offset;
             }
-
             break;
         }
-
-        foreach ($view as $entryView) {
-            array_splice($entryView->vars['block_prefixes'], $prefixOffset, 0, 'collection_entry');
+        foreach ($view as $entry_view) {
+            array_splice($entry_view->vars['block_prefixes'], $prefix_offset, 0, 'collection_entry');
         }
-
         /** @var FormInterface $prototype */
-        if ($prototype = $form->getConfig()->getAttribute('prototype')) {
+        if ($prototype = $form->get_config()->get_attribute('prototype')) {
             if ($view->vars['prototype']->vars['multipart']) {
                 $view->vars['multipart'] = true;
             }
-
-            if ($prefixOffset > -3 && $prototype->getConfig()->getOption('block_prefix')) {
-                --$prefixOffset;
+            if ($prefix_offset > -3 && $prototype->get_config()->get_option('block_prefix')) {
+                --$prefix_offset;
             }
-
-            array_splice($view->vars['prototype']->vars['block_prefixes'], $prefixOffset, 0, 'collection_entry');
+            array_splice($view->vars['prototype']->vars['block_prefixes'], $prefix_offset, 0, 'collection_entry');
         }
     }
-
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configure_options(Options_Resolver $resolver): void
     {
-        $entryOptionsNormalizer = static function (Options $options, array $value): array {
+        $entry_options_normalizer = static function (Options $options, array $value): array {
             $value['block_name'] = 'entry';
-
             return $value;
         };
-
-        $resolver->setDefaults([
-            'allow_add' => false,
-            'allow_delete' => false,
-            'prototype' => true,
-            'prototype_data' => null,
-            'prototype_name' => '__name__',
-            'entry_type' => TextType::class,
-            'entry_options' => [],
-            'prototype_options' => [],
-            'delete_empty' => false,
-            'invalid_message' => 'The collection is invalid.',
-            'keep_as_list' => false,
-        ]);
-
-        $resolver->setNormalizer('entry_options', $entryOptionsNormalizer);
-
-        $resolver->setAllowedTypes('delete_empty', ['bool', 'callable']);
-        $resolver->setAllowedTypes('prototype_options', 'array');
-        $resolver->setAllowedTypes('keep_as_list', ['bool']);
+        $resolver->set_defaults(['allow_add' => false, 'allow_delete' => false, 'prototype' => true, 'prototype_data' => null, 'prototype_name' => '__name__', 'entry_type' => Text_Type::class, 'entry_options' => [], 'prototype_options' => [], 'delete_empty' => false, 'invalid_message' => 'The collection is invalid.', 'keep_as_list' => false]);
+        $resolver->set_normalizer('entry_options', $entry_options_normalizer);
+        $resolver->set_allowed_types('delete_empty', ['bool', 'callable']);
+        $resolver->set_allowed_types('prototype_options', 'array');
+        $resolver->set_allowed_types('keep_as_list', ['bool']);
     }
-
-    public function getBlockPrefix(): string
+    public function get_block_prefix(): string
     {
         return 'collection';
     }

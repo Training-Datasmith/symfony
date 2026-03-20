@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event;
 
-namespace Symfony\Component\HttpKernel\Event;
-
-use Psr\EventDispatcher\StoppableEventInterface;
-use Symfony\Component\ExpressionLanguage\Expression;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-
+use Psr\Event_Dispatcher\Stoppable_Event_Interface;
+use Symfony\Component\Expression_Language\Expression;
+use Symfony\Component\Expression_Language\Expression_Language;
 /**
  * Event dispatched for each controller attribute.
  *
@@ -24,59 +21,51 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final readonly class ControllerAttributeEvent implements StoppableEventInterface
+final readonly class Controller_Attribute_Event implements Stoppable_Event_Interface
 {
     private string|array|object|null $controller;
-
     /**
      * @param T $attribute
      */
     public function __construct(
         /** @var T */
         public object $attribute,
-        public KernelEvent $kernelEvent,
-        private ?ExpressionLanguage $expressionLanguage = null,
-    ) {
+        public Kernel_Event $kernel_event,
+        private ?Expression_Language $expression_language = null
+    )
+    {
         $this->controller = match (true) {
-            $kernelEvent instanceof ControllerEvent => $kernelEvent->getController(),
-            $kernelEvent instanceof ControllerArgumentsEvent => $kernelEvent->getController(),
+            $kernel_event instanceof Controller_Event => $kernel_event->get_controller(),
+            $kernel_event instanceof Controller_Arguments_Event => $kernel_event->get_controller(),
             default => null,
         };
     }
-
-    public function isPropagationStopped(): bool
+    public function is_propagation_stopped(): bool
     {
-        $event = $this->kernelEvent;
-
-        if ($event->isPropagationStopped()) {
+        $event = $this->kernel_event;
+        if ($event->is_propagation_stopped()) {
             return true;
         }
-
         if (!$this->controller) {
             return false;
         }
-
         $controller = match (true) {
-            $event instanceof ControllerEvent => $event->getController(),
-            $event instanceof ControllerArgumentsEvent => $event->getController(),
+            $event instanceof Controller_Event => $event->get_controller(),
+            $event instanceof Controller_Arguments_Event => $event->get_controller(),
         };
-
         return $controller instanceof \Closure ? $controller != $this->controller : $controller !== $this->controller;
     }
-
-    public function evaluate(mixed $value, ?ExpressionLanguage $expressionLanguage = null): mixed
+    public function evaluate(mixed $value, ?Expression_Language $expression_language = null): mixed
     {
         if (!$value instanceof \Closure && !$value instanceof Expression) {
             return $value;
         }
-
-        $event = $this->kernelEvent;
-        $expressionLanguage ??= $this->expressionLanguage;
-
+        $event = $this->kernel_event;
+        $expression_language ??= $this->expression_language;
         return match (true) {
-            $event instanceof ControllerEvent => $event->evaluate($value, $expressionLanguage),
-            $event instanceof ControllerArgumentsEvent => $event->evaluate($value, $expressionLanguage),
-            ($m = $event->controllerMetadata ?? null) instanceof ControllerMetadata => $m->evaluate($value, $expressionLanguage),
+            $event instanceof Controller_Event => $event->evaluate($value, $expression_language),
+            $event instanceof Controller_Arguments_Event => $event->evaluate($value, $expression_language),
+            ($m = $event->controller_metadata ?? null) instanceof Controller_Metadata => $m->evaluate($value, $expression_language),
         };
     }
 }

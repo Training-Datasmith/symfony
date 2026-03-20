@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Output;
 
-use Symfony\Component\Console\Formatter\OutputFormatterInterface;
-
+use Symfony\Component\Console\Formatter\Output_Formatter_Interface;
 /**
  * OutputInterface is the interface implemented by all Output classes.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-interface OutputInterface
+interface Output_Interface
 {
     public const VERBOSITY_SILENT = 8;
     public const VERBOSITY_QUIET = 16;
@@ -28,11 +25,9 @@ interface OutputInterface
     public const VERBOSITY_VERBOSE = 64;
     public const VERBOSITY_VERY_VERBOSE = 128;
     public const VERBOSITY_DEBUG = 256;
-
     public const OUTPUT_NORMAL = 1;
     public const OUTPUT_RAW = 2;
     public const OUTPUT_PLAIN = 4;
-
     /**
      * Writes a message to the output.
      *
@@ -41,7 +36,6 @@ interface OutputInterface
      *                      0 is considered the same as self::OUTPUT_NORMAL | self::VERBOSITY_NORMAL
      */
     public function write(string|iterable $messages, bool $newline = false, int $options = 0): void;
-
     /**
      * Writes a message to the output and adds a newline at the end.
      *
@@ -49,57 +43,46 @@ interface OutputInterface
      *                     0 is considered the same as self::OUTPUT_NORMAL | self::VERBOSITY_NORMAL
      */
     public function writeln(string|iterable $messages, int $options = 0): void;
-
     /**
      * Sets the verbosity of the output.
      *
      * @param self::VERBOSITY_* $level
      */
-    public function setVerbosity(int $level): void;
-
+    public function set_verbosity(int $level): void;
     /**
      * Gets the current verbosity of the output.
      *
      * @return self::VERBOSITY_*
      */
-    public function getVerbosity(): int;
-
-    public function isSilent(): bool;
-
+    public function get_verbosity(): int;
+    public function is_silent(): bool;
     /**
      * Returns whether verbosity is quiet (-q).
      */
-    public function isQuiet(): bool;
-
+    public function is_quiet(): bool;
     /**
      * Returns whether verbosity is verbose (-v).
      */
-    public function isVerbose(): bool;
-
+    public function is_verbose(): bool;
     /**
      * Returns whether verbosity is very verbose (-vv).
      */
-    public function isVeryVerbose(): bool;
-
+    public function is_very_verbose(): bool;
     /**
      * Returns whether verbosity is debug (-vvv).
      */
-    public function isDebug(): bool;
-
+    public function is_debug(): bool;
     /**
      * Sets the decorated flag.
      */
-    public function setDecorated(bool $decorated): void;
-
+    public function set_decorated(bool $decorated): void;
     /**
      * Gets the decorated flag.
      */
-    public function isDecorated(): bool;
-
-    public function setFormatter(OutputFormatterInterface $formatter): void;
-
+    public function is_decorated(): bool;
+    public function set_formatter(Output_Formatter_Interface $formatter): void;
     /**
      * Returns current output formatter instance.
      */
-    public function getFormatter(): OutputFormatterInterface;
+    public function get_formatter(): Output_Formatter_Interface;
 }

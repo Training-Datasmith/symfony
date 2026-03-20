@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,13 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Attribute;
 
 /**
  * Service tag to autoconfigure commands.
  */
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
-final class AsCommand
+final class As_Command
 {
     /**
      * @param string      $name        The name of the command, used when calling it (i.e. "cache:clear")
@@ -27,25 +25,16 @@ final class AsCommand
      * @param string|null $help        The help content of the command, displayed with the help page
      * @param string[]    $usages      The list of usage examples, displayed with the help page
      */
-    public function __construct(
-        public string $name,
-        public ?string $description = null,
-        array $aliases = [],
-        bool $hidden = false,
-        public ?string $help = null,
-        public array $usages = [],
-    ) {
+    public function __construct(public string $name, public ?string $description = null, array $aliases = [], bool $hidden = false, public ?string $help = null, public array $usages = [])
+    {
         if (!$hidden && !$aliases) {
             return;
         }
-
         $name = explode('|', $name);
         $name = array_merge($name, $aliases);
-
         if ($hidden && '' !== $name[0]) {
             array_unshift($name, '');
         }
-
         $this->name = implode('|', $name);
     }
 }

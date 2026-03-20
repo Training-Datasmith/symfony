@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,277 +9,200 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Bundle\FrameworkBundle\Console\Descriptor;
+namespace Symfony\Bundle\Framework_Bundle\Console\Descriptor;
 
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Exception\RuntimeException;
-use Symfony\Component\DependencyInjection\Alias;
-use Symfony\Component\DependencyInjection\Argument\AbstractArgument;
-use Symfony\Component\DependencyInjection\Argument\ArgumentInterface;
-use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Dependency_Injection\Alias;
+use Symfony\Component\Dependency_Injection\Argument\Abstract_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Argument_Interface;
+use Symfony\Component\Dependency_Injection\Argument\Service_Closure_Argument;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Parameter_Bag\Parameter_Bag;
+use Symfony\Component\Dependency_Injection\Reference;
+use Symfony\Component\Event_Dispatcher\Event_Dispatcher_Interface;
 use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\RouteCollection;
-
+use Symfony\Component\Routing\Route_Collection;
 /**
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
  *
  * @internal
  */
-class JsonDescriptor extends Descriptor
+class Json_Descriptor extends Descriptor
 {
-    protected function describeRouteCollection(RouteCollection $routes, array $options = []): void
+    protected function describe_route_collection(Route_Collection $routes, array $options = []): void
     {
         $data = [];
         foreach ($routes->all() as $name => $route) {
-            $data[$name] = $this->getRouteData($route);
-            if (($showAliases ??= $options['show_aliases'] ?? false) && $aliases = ($reverseAliases ??= $this->getReverseAliases($routes))[$name] ?? []) {
+            $data[$name] = $this->get_route_data($route);
+            if (($show_aliases ??= $options['show_aliases'] ?? false) && $aliases = ($reverse_aliases ??= $this->get_reverse_aliases($routes))[$name] ?? []) {
                 $data[$name]['aliases'] = $aliases;
             }
         }
-
-        $this->writeData($data, $options);
+        $this->write_data($data, $options);
     }
-
-    protected function describeRoute(Route $route, array $options = []): void
+    protected function describe_route(Route $route, array $options = []): void
     {
-        $this->writeData($this->getRouteData($route), $options);
+        $this->write_data($this->get_route_data($route), $options);
     }
-
-    protected function describeContainerParameters(ParameterBag $parameters, array $options = []): void
+    protected function describe_container_parameters(Parameter_Bag $parameters, array $options = []): void
     {
-        $this->writeData($this->sortParameters($parameters), $options);
+        $this->write_data($this->sort_parameters($parameters), $options);
     }
-
-    protected function describeContainerTags(ContainerBuilder $container, array $options = []): void
+    protected function describe_container_tags(Container_Builder $container, array $options = []): void
     {
-        $showHidden = isset($options['show_hidden']) && $options['show_hidden'];
+        $show_hidden = isset($options['show_hidden']) && $options['show_hidden'];
         $data = [];
-
-        foreach ($this->findDefinitionsByTag($container, $showHidden) as $tag => $definitions) {
+        foreach ($this->find_definitions_by_tag($container, $show_hidden) as $tag => $definitions) {
             $data[$tag] = [];
             foreach ($definitions as $definition) {
-                $data[$tag][] = $this->getContainerDefinitionData($definition, true, $container, $options['id'] ?? null);
+                $data[$tag][] = $this->get_container_definition_data($definition, true, $container, $options['id'] ?? null);
             }
         }
-
-        $this->writeData($data, $options);
+        $this->write_data($data, $options);
     }
-
-    protected function describeContainerService(object $service, array $options = [], ?ContainerBuilder $container = null): void
+    protected function describe_container_service(object $service, array $options = [], ?Container_Builder $container = null): void
     {
         if (!isset($options['id'])) {
             throw new \InvalidArgumentException('An "id" option must be provided.');
         }
-
         if ($service instanceof Alias) {
-            $this->describeContainerAlias($service, $options, $container);
+            $this->describe_container_alias($service, $options, $container);
         } elseif ($service instanceof Definition) {
-            $data = $this->getContainerDefinitionData($service, isset($options['omit_tags']) && $options['omit_tags'], $container, $options['id']);
-            $this->writeData($data, $options);
+            $data = $this->get_container_definition_data($service, isset($options['omit_tags']) && $options['omit_tags'], $container, $options['id']);
+            $this->write_data($data, $options);
         } else {
-            $this->writeData($service::class, $options);
+            $this->write_data($service::class, $options);
         }
     }
-
-    protected function describeContainerServices(ContainerBuilder $container, array $options = []): void
+    protected function describe_container_services(Container_Builder $container, array $options = []): void
     {
-        $serviceIds = isset($options['tag']) && $options['tag']
-            ? $this->sortTaggedServicesByPriority($container->findTaggedServiceIds($options['tag']))
-            : $this->sortServiceIds($container->getServiceIds());
-        $showHidden = isset($options['show_hidden']) && $options['show_hidden'];
-        $omitTags = isset($options['omit_tags']) && $options['omit_tags'];
+        $service_ids = isset($options['tag']) && $options['tag'] ? $this->sort_tagged_services_by_priority($container->find_tagged_service_ids($options['tag'])) : $this->sort_service_ids($container->get_service_ids());
+        $show_hidden = isset($options['show_hidden']) && $options['show_hidden'];
+        $omit_tags = isset($options['omit_tags']) && $options['omit_tags'];
         $data = ['definitions' => [], 'aliases' => [], 'services' => []];
-
         if (isset($options['filter'])) {
-            $serviceIds = array_filter($serviceIds, $options['filter']);
+            $service_ids = array_filter($service_ids, $options['filter']);
         }
-
-        foreach ($serviceIds as $serviceId) {
-            $service = $this->resolveServiceDefinition($container, $serviceId);
-
-            if ($showHidden xor '.' === ($serviceId[0] ?? null)) {
+        foreach ($service_ids as $service_id) {
+            $service = $this->resolve_service_definition($container, $service_id);
+            if ($show_hidden xor '.' === ($service_id[0] ?? null)) {
                 continue;
             }
-
             if ($service instanceof Alias) {
-                $data['aliases'][$serviceId] = $this->getContainerAliasData($service);
+                $data['aliases'][$service_id] = $this->get_container_alias_data($service);
             } elseif ($service instanceof Definition) {
-                if ($service->hasTag('container.excluded')) {
+                if ($service->has_tag('container.excluded')) {
                     continue;
                 }
-                $data['definitions'][$serviceId] = $this->getContainerDefinitionData($service, $omitTags, $container, $serviceId);
+                $data['definitions'][$service_id] = $this->get_container_definition_data($service, $omit_tags, $container, $service_id);
             } else {
-                $data['services'][$serviceId] = $service::class;
+                $data['services'][$service_id] = $service::class;
             }
         }
-
-        $this->writeData($data, $options);
+        $this->write_data($data, $options);
     }
-
-    protected function describeContainerDefinition(Definition $definition, array $options = [], ?ContainerBuilder $container = null): void
+    protected function describe_container_definition(Definition $definition, array $options = [], ?Container_Builder $container = null): void
     {
-        $this->writeData($this->getContainerDefinitionData($definition, isset($options['omit_tags']) && $options['omit_tags'], $container, $options['id'] ?? null), $options);
+        $this->write_data($this->get_container_definition_data($definition, isset($options['omit_tags']) && $options['omit_tags'], $container, $options['id'] ?? null), $options);
     }
-
-    protected function describeContainerAlias(Alias $alias, array $options = [], ?ContainerBuilder $container = null): void
+    protected function describe_container_alias(Alias $alias, array $options = [], ?Container_Builder $container = null): void
     {
         if (!$container) {
-            $this->writeData($this->getContainerAliasData($alias), $options);
-
+            $this->write_data($this->get_container_alias_data($alias), $options);
             return;
         }
-
-        $this->writeData(
-            [$this->getContainerAliasData($alias), $this->getContainerDefinitionData($container->getDefinition((string) $alias), isset($options['omit_tags']) && $options['omit_tags'], $container, (string) $alias)],
-            array_merge($options, ['id' => (string) $alias])
-        );
+        $this->write_data([$this->get_container_alias_data($alias), $this->get_container_definition_data($container->get_definition((string) $alias), isset($options['omit_tags']) && $options['omit_tags'], $container, (string) $alias)], array_merge($options, ['id' => (string) $alias]));
     }
-
-    protected function describeEventDispatcherListeners(EventDispatcherInterface $eventDispatcher, array $options = []): void
+    protected function describe_event_dispatcher_listeners(Event_Dispatcher_Interface $event_dispatcher, array $options = []): void
     {
-        $this->writeData($this->getEventDispatcherListenersData($eventDispatcher, $options), $options);
+        $this->write_data($this->get_event_dispatcher_listeners_data($event_dispatcher, $options), $options);
     }
-
-    protected function describeCallable(mixed $callable, array $options = []): void
+    protected function describe_callable(mixed $callable, array $options = []): void
     {
-        $this->writeData($this->getCallableData($callable), $options);
+        $this->write_data($this->get_callable_data($callable), $options);
     }
-
-    protected function describeContainerParameter(mixed $parameter, ?array $deprecation, array $options = []): void
+    protected function describe_container_parameter(mixed $parameter, ?array $deprecation, array $options = []): void
     {
         $key = $options['parameter'] ?? '';
         $data = [$key => $parameter];
-
         if ($deprecation) {
             $data['_deprecation'] = \sprintf('Since %s %s: %s', $deprecation[0], $deprecation[1], \sprintf(...\array_slice($deprecation, 2)));
         }
-
-        $this->writeData($data, $options);
+        $this->write_data($data, $options);
     }
-
-    protected function describeContainerEnvVars(array $envs, array $options = []): void
+    protected function describe_container_env_vars(array $envs, array $options = []): void
     {
         throw new LogicException('Using the JSON format to debug environment variables is not supported.');
     }
-
-    protected function describeContainerDeprecations(ContainerBuilder $container, array $options = []): void
+    protected function describe_container_deprecations(Container_Builder $container, array $options = []): void
     {
-        $containerDeprecationFilePath = \sprintf('%s/%sDeprecations.log', $container->getParameter('kernel.build_dir'), $container->getParameter('kernel.container_class'));
-        if (!file_exists($containerDeprecationFilePath)) {
+        $container_deprecation_file_path = \sprintf('%s/%sDeprecations.log', $container->get_parameter('kernel.build_dir'), $container->get_parameter('kernel.container_class'));
+        if (!file_exists($container_deprecation_file_path)) {
             throw new RuntimeException('The deprecation file does not exist, please try warming the cache first.');
         }
-
-        $logs = unserialize(file_get_contents($containerDeprecationFilePath));
-
-        $formattedLogs = [];
-        $remainingCount = 0;
+        $logs = unserialize(file_get_contents($container_deprecation_file_path));
+        $formatted_logs = [];
+        $remaining_count = 0;
         foreach ($logs as $log) {
-            $formattedLogs[] = [
-                'message' => $log['message'],
-                'file' => $log['file'],
-                'line' => $log['line'],
-                'count' => $log['count'],
-            ];
-            $remainingCount += $log['count'];
+            $formatted_logs[] = ['message' => $log['message'], 'file' => $log['file'], 'line' => $log['line'], 'count' => $log['count']];
+            $remaining_count += $log['count'];
         }
-
-        $this->writeData(['remainingCount' => $remainingCount, 'deprecations' => $formattedLogs], $options);
+        $this->write_data(['remainingCount' => $remaining_count, 'deprecations' => $formatted_logs], $options);
     }
-
-    private function writeData(array $data, array $options): void
+    private function write_data(array $data, array $options): void
     {
         $flags = $options['json_encoding'] ?? 0;
-
         // Recursively search for enum values, so we can replace it
         // before json_encode (which will not display anything for \UnitEnum otherwise)
         array_walk_recursive($data, static function (&$value): void {
-            if ($value instanceof \UnitEnum) {
+            if ($value instanceof \Unit_Enum) {
                 $value = ltrim(var_export($value, true), '\\');
             }
         });
-
-        $this->write(json_encode($data, $flags | \JSON_PRETTY_PRINT)."\n");
+        $this->write(json_encode($data, $flags | \JSON_PRETTY_PRINT) . "\n");
     }
-
-    protected function getRouteData(Route $route): array
+    protected function get_route_data(Route $route): array
     {
-        $data = [
-            'path' => $route->getPath(),
-            'pathRegex' => $route->compile()->getRegex(),
-            'host' => '' !== $route->getHost() ? $route->getHost() : 'ANY',
-            'hostRegex' => '' !== $route->getHost() ? $route->compile()->getHostRegex() : '',
-            'scheme' => $route->getSchemes() ? implode('|', $route->getSchemes()) : 'ANY',
-            'method' => $route->getMethods() ? implode('|', $route->getMethods()) : 'ANY',
-            'class' => $route::class,
-            'defaults' => $route->getDefaults(),
-            'requirements' => $route->getRequirements() ?: 'NO CUSTOM',
-            'options' => $route->getOptions(),
-        ];
-
-        if ('' !== $route->getCondition()) {
-            $data['condition'] = $route->getCondition();
+        $data = ['path' => $route->get_path(), 'pathRegex' => $route->compile()->get_regex(), 'host' => '' !== $route->get_host() ? $route->get_host() : 'ANY', 'hostRegex' => '' !== $route->get_host() ? $route->compile()->get_host_regex() : '', 'scheme' => $route->get_schemes() ? implode('|', $route->get_schemes()) : 'ANY', 'method' => $route->get_methods() ? implode('|', $route->get_methods()) : 'ANY', 'class' => $route::class, 'defaults' => $route->get_defaults(), 'requirements' => $route->get_requirements() ?: 'NO CUSTOM', 'options' => $route->get_options()];
+        if ('' !== $route->get_condition()) {
+            $data['condition'] = $route->get_condition();
         }
-
         return $data;
     }
-
-    protected function sortParameters(ParameterBag $parameters): array
+    protected function sort_parameters(Parameter_Bag $parameters): array
     {
-        $sortedParameters = parent::sortParameters($parameters);
-
-        if ($deprecated = $parameters->allDeprecated()) {
+        $sorted_parameters = parent::sort_parameters($parameters);
+        if ($deprecated = $parameters->all_deprecated()) {
             $deprecations = [];
-
             foreach ($deprecated as $parameter => $deprecation) {
                 $deprecations[$parameter] = \sprintf('Since %s %s: %s', $deprecation[0], $deprecation[1], \sprintf(...\array_slice($deprecation, 2)));
             }
-
-            $sortedParameters['_deprecations'] = $deprecations;
+            $sorted_parameters['_deprecations'] = $deprecations;
         }
-
-        return $sortedParameters;
+        return $sorted_parameters;
     }
-
-    private function getContainerDefinitionData(Definition $definition, bool $omitTags = false, ?ContainerBuilder $container = null, ?string $id = null): array
+    private function get_container_definition_data(Definition $definition, bool $omit_tags = false, ?Container_Builder $container = null, ?string $id = null): array
     {
-        $data = [
-            'class' => (string) $definition->getClass(),
-            'public' => $definition->isPublic(),
-            'synthetic' => $definition->isSynthetic(),
-            'lazy' => $definition->isLazy(),
-            'shared' => $definition->isShared(),
-            'abstract' => $definition->isAbstract(),
-            'autowire' => $definition->isAutowired(),
-            'autoconfigure' => $definition->isAutoconfigured(),
-        ];
-
-        if ($definition->isDeprecated()) {
+        $data = ['class' => (string) $definition->get_class(), 'public' => $definition->is_public(), 'synthetic' => $definition->is_synthetic(), 'lazy' => $definition->is_lazy(), 'shared' => $definition->is_shared(), 'abstract' => $definition->is_abstract(), 'autowire' => $definition->is_autowired(), 'autoconfigure' => $definition->is_autoconfigured()];
+        if ($definition->is_deprecated()) {
             $data['deprecated'] = true;
-            $data['deprecation_message'] = $definition->getDeprecation($id)['message'];
+            $data['deprecation_message'] = $definition->get_deprecation($id)['message'];
         } else {
             $data['deprecated'] = false;
         }
-
-        if ('' !== $classDescription = $this->getClassDescription((string) $definition->getClass())) {
-            $data['description'] = $classDescription;
+        if ('' !== $class_description = $this->get_class_description((string) $definition->get_class())) {
+            $data['description'] = $class_description;
         }
-
-        $data['arguments'] = $this->describeValue($definition->getArguments(), $omitTags, $container, $id);
-
-        $data['file'] = $definition->getFile();
-
-        if ($factory = $definition->getFactory()) {
+        $data['arguments'] = $this->describe_value($definition->get_arguments(), $omit_tags, $container, $id);
+        $data['file'] = $definition->get_file();
+        if ($factory = $definition->get_factory()) {
             if (\is_array($factory)) {
                 if ($factory[0] instanceof Reference) {
                     $data['factory_service'] = (string) $factory[0];
                 } elseif ($factory[0] instanceof Definition) {
-                    $data['factory_service'] = \sprintf('inline factory service (%s)', $factory[0]->getClass() ?? 'class not configured');
+                    $data['factory_service'] = \sprintf('inline factory service (%s)', $factory[0]->get_class() ?? 'class not configured');
                 } else {
                     $data['factory_class'] = $factory[0];
                 }
@@ -289,176 +211,135 @@ class JsonDescriptor extends Descriptor
                 $data['factory_function'] = $factory;
             }
         }
-
-        $calls = $definition->getMethodCalls();
+        $calls = $definition->get_method_calls();
         if (\count($calls) > 0) {
             $data['calls'] = [];
-            foreach ($calls as $callData) {
-                $data['calls'][] = $callData[0];
+            foreach ($calls as $call_data) {
+                $data['calls'][] = $call_data[0];
             }
         }
-
-        if (!$omitTags) {
+        if (!$omit_tags) {
             $data['tags'] = [];
-            foreach ($this->sortTagsByPriority($container ? $this->resolvePriorityServiceTags($container, $definition) : $definition->getTags()) as $tagName => $tagData) {
-                foreach ($tagData as $parameters) {
-                    $data['tags'][] = ['name' => $tagName, 'parameters' => $parameters];
+            foreach ($this->sort_tags_by_priority($container ? $this->resolve_priority_service_tags($container, $definition) : $definition->get_tags()) as $tag_name => $tag_data) {
+                foreach ($tag_data as $parameters) {
+                    $data['tags'][] = ['name' => $tag_name, 'parameters' => $parameters];
                 }
             }
         }
-
-        $data['usages'] = null !== $container && null !== $id ? $this->getServiceEdges($container, $id) : [];
-
+        $data['usages'] = null !== $container && null !== $id ? $this->get_service_edges($container, $id) : [];
         if ($container && $id) {
-            $decorationStack = $this->getDecorationStack($container, $id);
-            if (\count($decorationStack) > 1) {
-                $data['decoration_stack'] = $decorationStack;
+            $decoration_stack = $this->get_decoration_stack($container, $id);
+            if (\count($decoration_stack) > 1) {
+                $data['decoration_stack'] = $decoration_stack;
             }
         }
-
         return $data;
     }
-
-    private function getContainerAliasData(Alias $alias): array
+    private function get_container_alias_data(Alias $alias): array
     {
-        return [
-            'service' => (string) $alias,
-            'public' => $alias->isPublic(),
-        ];
+        return ['service' => (string) $alias, 'public' => $alias->is_public()];
     }
-
-    private function getEventDispatcherListenersData(EventDispatcherInterface $eventDispatcher, array $options): array
+    private function get_event_dispatcher_listeners_data(Event_Dispatcher_Interface $event_dispatcher, array $options): array
     {
         $data = [];
         $event = $options['event'] ?? null;
-
         if (null !== $event) {
-            foreach ($eventDispatcher->getListeners($event) as $listener) {
-                $l = $this->getCallableData($listener);
-                $l['priority'] = $eventDispatcher->getListenerPriority($event, $listener);
+            foreach ($event_dispatcher->get_listeners($event) as $listener) {
+                $l = $this->get_callable_data($listener);
+                $l['priority'] = $event_dispatcher->get_listener_priority($event, $listener);
                 $data[] = $l;
             }
         } else {
-            $registeredListeners = \array_key_exists('events', $options) ? array_combine($options['events'], array_map($eventDispatcher->getListeners(...), $options['events'])) : $eventDispatcher->getListeners();
-            ksort($registeredListeners);
-
-            foreach ($registeredListeners as $eventListened => $eventListeners) {
-                foreach ($eventListeners as $eventListener) {
-                    $l = $this->getCallableData($eventListener);
-                    $l['priority'] = $eventDispatcher->getListenerPriority($eventListened, $eventListener);
-                    $data[$eventListened][] = $l;
+            $registered_listeners = \array_key_exists('events', $options) ? array_combine($options['events'], array_map($event_dispatcher->get_listeners(...), $options['events'])) : $event_dispatcher->get_listeners();
+            ksort($registered_listeners);
+            foreach ($registered_listeners as $event_listened => $event_listeners) {
+                foreach ($event_listeners as $event_listener) {
+                    $l = $this->get_callable_data($event_listener);
+                    $l['priority'] = $event_dispatcher->get_listener_priority($event_listened, $event_listener);
+                    $data[$event_listened][] = $l;
                 }
             }
         }
-
         return $data;
     }
-
-    private function getCallableData(mixed $callable): array
+    private function get_callable_data(mixed $callable): array
     {
         $data = [];
-
         if (\is_array($callable)) {
             $data['type'] = 'function';
-
             if (\is_object($callable[0])) {
                 $data['name'] = $callable[1];
                 $data['class'] = $callable[0]::class;
+            } else if (!str_starts_with((string) $callable[1], 'parent::')) {
+                $data['name'] = $callable[1];
+                $data['class'] = $callable[0];
+                $data['static'] = true;
             } else {
-                if (!str_starts_with((string) $callable[1], 'parent::')) {
-                    $data['name'] = $callable[1];
-                    $data['class'] = $callable[0];
-                    $data['static'] = true;
-                } else {
-                    $data['name'] = substr((string) $callable[1], 8);
-                    $data['class'] = $callable[0];
-                    $data['static'] = true;
-                    $data['parent'] = true;
-                }
+                $data['name'] = substr((string) $callable[1], 8);
+                $data['class'] = $callable[0];
+                $data['static'] = true;
+                $data['parent'] = true;
             }
-
             return $data;
         }
-
         if (\is_string($callable)) {
             $data['type'] = 'function';
-
             if (!str_contains($callable, '::')) {
                 $data['name'] = $callable;
             } else {
-                $callableParts = explode('::', $callable);
-
-                $data['name'] = $callableParts[1];
-                $data['class'] = $callableParts[0];
+                $callable_parts = explode('::', $callable);
+                $data['name'] = $callable_parts[1];
+                $data['class'] = $callable_parts[0];
                 $data['static'] = true;
             }
-
             return $data;
         }
-
         if ($callable instanceof \Closure) {
             $data['type'] = 'closure';
-
             $r = new \ReflectionFunction($callable);
-            if ($r->isAnonymous()) {
+            if ($r->is_anonymous()) {
                 return $data;
             }
             $data['name'] = $r->name;
-
-            if ($class = $r->getClosureCalledClass()) {
+            if ($class = $r->get_closure_called_class()) {
                 $data['class'] = $class->name;
-                if (!$r->getClosureThis()) {
+                if (!$r->get_closure_this()) {
                     $data['static'] = true;
                 }
             }
-
             return $data;
         }
-
         if (method_exists($callable, '__invoke')) {
             $data['type'] = 'object';
             $data['name'] = $callable::class;
-
             return $data;
         }
-
         throw new \InvalidArgumentException('Callable is not describable.');
     }
-
-    private function describeValue($value, bool $omitTags, ?ContainerBuilder $container = null, ?string $id = null): mixed
+    private function describe_value($value, bool $omit_tags, ?Container_Builder $container = null, ?string $id = null): mixed
     {
         if (\is_array($value)) {
             $data = [];
             foreach ($value as $k => $v) {
-                $data[$k] = $this->describeValue($v, $omitTags, $container, $id);
+                $data[$k] = $this->describe_value($v, $omit_tags, $container, $id);
             }
-
             return $data;
         }
-
-        if ($value instanceof ServiceClosureArgument) {
-            $value = $value->getValues()[0];
+        if ($value instanceof Service_Closure_Argument) {
+            $value = $value->get_values()[0];
         }
-
         if ($value instanceof Reference) {
-            return [
-                'type' => 'service',
-                'id' => (string) $value,
-            ];
+            return ['type' => 'service', 'id' => (string) $value];
         }
-
-        if ($value instanceof AbstractArgument) {
-            return ['type' => 'abstract', 'text' => $value->getText()];
+        if ($value instanceof Abstract_Argument) {
+            return ['type' => 'abstract', 'text' => $value->get_text()];
         }
-
-        if ($value instanceof ArgumentInterface) {
-            return $this->describeValue($value->getValues(), $omitTags, $container, $id);
+        if ($value instanceof Argument_Interface) {
+            return $this->describe_value($value->get_values(), $omit_tags, $container, $id);
         }
-
         if ($value instanceof Definition) {
-            return $this->getContainerDefinitionData($value, $omitTags, $container, $id);
+            return $this->get_container_definition_data($value, $omit_tags, $container, $id);
         }
-
         return $value;
     }
 }

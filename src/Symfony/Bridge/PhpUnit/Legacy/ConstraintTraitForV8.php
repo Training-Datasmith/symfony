@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,46 +9,39 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Bridge\PhpUnit\Legacy;
+namespace Symfony\Bridge\Php_Unit\Legacy;
 
 /**
  * @internal
  */
-trait ConstraintTraitForV8
+trait Constraint_Trait_For_V8
 {
-    use ConstraintLogicTrait;
-
+    use Constraint_Logic_Trait;
     /**
      * @return bool|null
      */
-    public function evaluate($other, $description = '', $returnResult = false)
+    public function evaluate($other, $description = '', $return_result = false)
     {
-        return $this->doEvaluate($other, $description, $returnResult);
+        return $this->do_evaluate($other, $description, $return_result);
     }
-
     public function count(): int
     {
-        return $this->doCount();
+        return $this->do_count();
     }
-
-    public function toString(): string
+    public function to_string(): string
     {
-        return $this->doToString();
+        return $this->do_to_string();
     }
-
-    protected function additionalFailureDescription($other): string
+    protected function additional_failure_description($other): string
     {
-        return $this->doAdditionalFailureDescription($other);
+        return $this->do_additional_failure_description($other);
     }
-
-    protected function failureDescription($other): string
+    protected function failure_description($other): string
     {
-        return $this->doFailureDescription($other);
+        return $this->do_failure_description($other);
     }
-
     protected function matches($other): bool
     {
-        return $this->doMatches($other);
+        return $this->do_matches($other);
     }
 }

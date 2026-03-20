@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Asset\Context;
 
 /**
@@ -18,14 +16,13 @@ namespace Symfony\Component\Asset\Context;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class NullContext implements ContextInterface
+class Null_Context implements Context_Interface
 {
-    public function getBasePath(): string
+    public function get_base_path(): string
     {
         return '';
     }
-
-    public function isSecure(): bool
+    public function is_secure(): bool
     {
         return false;
     }

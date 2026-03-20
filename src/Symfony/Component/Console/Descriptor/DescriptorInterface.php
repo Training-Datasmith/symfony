@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Descriptor;
 
-use Symfony\Component\Console\Output\OutputInterface;
-
+use Symfony\Component\Console\Output\Output_Interface;
 /**
  * Descriptor interface.
  *
  * @author Jean-François Simon <contact@jfsimon.fr>
  */
-interface DescriptorInterface
+interface Descriptor_Interface
 {
-    public function describe(OutputInterface $output, object $object, array $options = []): void;
+    public function describe(Output_Interface $output, object $object, array $options = []): void;
 }

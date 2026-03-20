@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Bridge\Twig\NodeVisitor;
+namespace Symfony\Bridge\Twig\Node_Visitor;
 
 /**
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
@@ -20,12 +18,9 @@ class Scope
 {
     private array $data = [];
     private bool $left = false;
-
-    public function __construct(
-        private readonly ?self $parent = null,
-    ) {
+    public function __construct(private readonly ?self $parent = null)
+    {
     }
-
     /**
      * Opens a new child scope.
      */
@@ -33,17 +28,14 @@ class Scope
     {
         return new self($this);
     }
-
     /**
      * Closes current scope and returns parent one.
      */
     public function leave(): ?self
     {
         $this->left = true;
-
         return $this->parent;
     }
-
     /**
      * Stores data into current scope.
      *
@@ -56,12 +48,9 @@ class Scope
         if ($this->left) {
             throw new \LogicException('Left scope is not mutable.');
         }
-
         $this->data[$key] = $value;
-
         return $this;
     }
-
     /**
      * Tests if a data is visible from current scope.
      */
@@ -70,14 +59,11 @@ class Scope
         if (\array_key_exists($key, $this->data)) {
             return true;
         }
-
         if (null === $this->parent) {
             return false;
         }
-
         return $this->parent->has($key);
     }
-
     /**
      * Returns data visible from current scope.
      */
@@ -86,11 +72,9 @@ class Scope
         if (\array_key_exists($key, $this->data)) {
             return $this->data[$key];
         }
-
         if (null === $this->parent) {
             return $default;
         }
-
         return $this->parent->get($key, $default);
     }
 }

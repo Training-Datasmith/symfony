@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
 /**
@@ -18,7 +16,7 @@ namespace Symfony\Component\Form;
  *
  * @extends \Traversable<string, FormBuilderInterface>
  */
-interface FormBuilderInterface extends \Traversable, \Countable, FormConfigBuilderInterface
+interface Form_Builder_Interface extends \Traversable, \Countable, Form_Config_Builder_Interface
 {
     /**
      * Adds a new field to this group. A field must have a unique name within
@@ -31,7 +29,6 @@ interface FormBuilderInterface extends \Traversable, \Countable, FormConfigBuild
      * @param array<string, mixed>                 $options
      */
     public function add(string|self $child, ?string $type = null, array $options = []): static;
-
     /**
      * Creates a form builder.
      *
@@ -40,33 +37,28 @@ interface FormBuilderInterface extends \Traversable, \Countable, FormConfigBuild
      * @param array<string, mixed>                 $options
      */
     public function create(string $name, ?string $type = null, array $options = []): self;
-
     /**
      * Returns a child by name.
      *
      * @throws Exception\InvalidArgumentException if the given child does not exist
      */
     public function get(string $name): self;
-
     /**
      * Removes the field with the given name.
      */
     public function remove(string $name): static;
-
     /**
      * Returns whether a field with the given name exists.
      */
     public function has(string $name): bool;
-
     /**
      * Returns the children.
      *
      * @return array<string, self>
      */
     public function all(): array;
-
     /**
      * Creates the form.
      */
-    public function getForm(): FormInterface;
+    public function get_form(): Form_Interface;
 }

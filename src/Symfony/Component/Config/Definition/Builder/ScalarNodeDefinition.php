@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition\Builder;
 
-use Symfony\Component\Config\Definition\ScalarNode;
-
+use Symfony\Component\Config\Definition\Scalar_Node;
 /**
  * This class provides a fluent interface for defining a node.
  *
@@ -24,10 +21,10 @@ use Symfony\Component\Config\Definition\ScalarNode;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ScalarNodeDefinition extends VariableNodeDefinition
+class Scalar_Node_Definition extends Variable_Node_Definition
 {
-    protected function instantiateNode(): ScalarNode
+    protected function instantiate_node(): Scalar_Node
     {
-        return new ScalarNode($this->name, $this->parent, $this->pathSeparator);
+        return new Scalar_Node($this->name, $this->parent, $this->path_separator);
     }
 }

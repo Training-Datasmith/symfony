@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,50 +9,42 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Asset_Mapper\Import_Map;
 
-namespace Symfony\Component\AssetMapper\ImportMap;
-
-use Symfony\Component\HttpClient\DecoratorTrait;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface;
-
+use Symfony\Component\Http_Client\Decorator_Trait;
+use Symfony\Contracts\Http_Client\Http_Client_Interface;
+use Symfony\Contracts\Http_Client\Response_Interface;
 /**
  * @internal
  */
-class BatchHttpClient implements HttpClientInterface
+class Batch_Http_Client implements Http_Client_Interface
 {
-    use DecoratorTrait;
-
+    use Decorator_Trait;
     private const BATCH_SIZE = 250;
-
-    private \WeakMap $pendingRequests;
-
-    public function request(string $method, string $url, array $options = []): ResponseInterface
+    private \WeakMap $pending_requests;
+    public function request(string $method, string $url, array $options = []): Response_Interface
     {
-        $this->pendingRequests ??= new \WeakMap();
-        $pendingRequests = [];
-
-        foreach ($this->pendingRequests as $response => $_) {
-            if ($response->getInfo('http_code')) {
-                $this->pendingRequests->offsetUnset($response);
+        $this->pending_requests ??= new \WeakMap();
+        $pending_requests = [];
+        foreach ($this->pending_requests as $response => $_) {
+            if ($response->get_info('http_code')) {
+                $this->pending_requests->offsetUnset($response);
             } else {
-                $pendingRequests[] = $response;
+                $pending_requests[] = $response;
             }
         }
-
-        if (\count($pendingRequests) >= self::BATCH_SIZE) {
-            foreach ($this->client->stream($pendingRequests) as $response => $chunk) {
-                if (!$chunk->isTimeout() && $chunk->isFirst()) {
-                    $response->getStatusCode(); // ignore 3/4/5xx
-                    $this->pendingRequests->offsetUnset($response);
+        if (\count($pending_requests) >= self::BATCH_SIZE) {
+            foreach ($this->client->stream($pending_requests) as $response => $chunk) {
+                if (!$chunk->is_timeout() && $chunk->is_first()) {
+                    $response->get_status_code();
+                    // ignore 3/4/5xx
+                    $this->pending_requests->offsetUnset($response);
                     break;
                 }
             }
         }
-
         $response = $this->client->request($method, $url, $options);
-        $this->pendingRequests[$response] = true;
-
+        $this->pending_requests[$response] = true;
         return $response;
     }
 }

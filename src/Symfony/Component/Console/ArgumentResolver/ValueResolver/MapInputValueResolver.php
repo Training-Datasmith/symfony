@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,82 +9,65 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\Console\ArgumentResolver\ValueResolver;
+namespace Symfony\Component\Console\Argument_Resolver\Value_Resolver;
 
 use Symfony\Component\Console\Attribute\Argument;
-use Symfony\Component\Console\Attribute\MapInput;
+use Symfony\Component\Console\Attribute\Map_Input;
 use Symfony\Component\Console\Attribute\Option;
-use Symfony\Component\Console\Attribute\Reflection\ReflectionMember;
-use Symfony\Component\Console\Input\InputInterface;
-
+use Symfony\Component\Console\Attribute\Reflection\Reflection_Member;
+use Symfony\Component\Console\Input\Input_Interface;
 /**
  * Resolves the value of a input argument/option to an object holding the #[MapInput] attribute.
  *
  * @author Yonel Ceruto <open@yceruto.dev>
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-final readonly class MapInputValueResolver implements ValueResolverInterface
+final readonly class Map_Input_Value_Resolver implements Value_Resolver_Interface
 {
-    public function __construct(
-        private ValueResolverInterface $builtinTypeResolver,
-        private ValueResolverInterface $backedEnumResolver,
-        private ValueResolverInterface $dateTimeResolver,
-    ) {
-    }
-
-    public function resolve(string $argumentName, InputInterface $input, ReflectionMember $member): iterable
+    public function __construct(private Value_Resolver_Interface $builtin_type_resolver, private Value_Resolver_Interface $backed_enum_resolver, private Value_Resolver_Interface $date_time_resolver)
     {
-        if (!$attribute = MapInput::tryFrom($member->getMember())) {
+    }
+    public function resolve(string $argument_name, Input_Interface $input, Reflection_Member $member): iterable
+    {
+        if (!$attribute = Map_Input::try_from($member->get_member())) {
             return [];
         }
-
-        return [$this->resolveMapInput($attribute, $input)];
+        return [$this->resolve_map_input($attribute, $input)];
     }
-
-    private function resolveMapInput(MapInput $mapInput, InputInterface $input): object
+    private function resolve_map_input(Map_Input $map_input, Input_Interface $input): object
     {
-        $instance = $mapInput->getClass()->newInstanceWithoutConstructor();
-
-        foreach ($mapInput->getDefinition() as $name => $spec) {
+        $instance = $map_input->get_class()->new_instance_without_constructor();
+        foreach ($map_input->get_definition() as $name => $spec) {
             // ignore required arguments that are not set yet (may happen in interactive mode)
-            if ($spec instanceof Argument && $spec->isRequired() && \in_array($input->getArgument($spec->name), [null, []], true)) {
+            if ($spec instanceof Argument && $spec->is_required() && \in_array($input->get_argument($spec->name), [null, []], true)) {
                 continue;
             }
-
-            $instance->$name = match (true) {
-                $spec instanceof Argument => $this->resolveArgumentSpec($spec, $mapInput->getClass()->getProperty($name), $input),
-                $spec instanceof Option => $this->resolveOptionSpec($spec, $mapInput->getClass()->getProperty($name), $input),
-                $spec instanceof MapInput => $this->resolveMapInput($spec, $input),
+            $instance->{$name} = match (true) {
+                $spec instanceof Argument => $this->resolve_argument_spec($spec, $map_input->get_class()->get_property($name), $input),
+                $spec instanceof Option => $this->resolve_option_spec($spec, $map_input->get_class()->get_property($name), $input),
+                $spec instanceof Map_Input => $this->resolve_map_input($spec, $input),
             };
         }
-
         return $instance;
     }
-
-    private function resolveArgumentSpec(Argument $argument, \ReflectionProperty $property, InputInterface $input): mixed
+    private function resolve_argument_spec(Argument $argument, \ReflectionProperty $property, Input_Interface $input): mixed
     {
-        if (is_subclass_of($argument->typeName, \BackedEnum::class)) {
-            return iterator_to_array($this->backedEnumResolver->resolve($property->name, $input, new ReflectionMember($property)))[0] ?? null;
+        if (is_subclass_of($argument->type_name, \Backed_Enum::class)) {
+            return iterator_to_array($this->backed_enum_resolver->resolve($property->name, $input, new Reflection_Member($property)))[0] ?? null;
         }
-
-        if (is_a($argument->typeName, \DateTimeInterface::class, true)) {
-            return iterator_to_array($this->dateTimeResolver->resolve($property->name, $input, new ReflectionMember($property)))[0] ?? null;
+        if (is_a($argument->type_name, \DateTimeInterface::class, true)) {
+            return iterator_to_array($this->date_time_resolver->resolve($property->name, $input, new Reflection_Member($property)))[0] ?? null;
         }
-
-        return iterator_to_array($this->builtinTypeResolver->resolve($property->name, $input, new ReflectionMember($property)))[0] ?? null;
+        return iterator_to_array($this->builtin_type_resolver->resolve($property->name, $input, new Reflection_Member($property)))[0] ?? null;
     }
-
-    private function resolveOptionSpec(Option $option, \ReflectionProperty $property, InputInterface $input): mixed
+    private function resolve_option_spec(Option $option, \ReflectionProperty $property, Input_Interface $input): mixed
     {
-        if (is_subclass_of($option->typeName, \BackedEnum::class)) {
-            return iterator_to_array($this->backedEnumResolver->resolve($property->name, $input, new ReflectionMember($property)))[0] ?? null;
+        if (is_subclass_of($option->type_name, \Backed_Enum::class)) {
+            return iterator_to_array($this->backed_enum_resolver->resolve($property->name, $input, new Reflection_Member($property)))[0] ?? null;
         }
-
-        if (is_a($option->typeName, \DateTimeInterface::class, true)) {
-            return iterator_to_array($this->dateTimeResolver->resolve($property->name, $input, new ReflectionMember($property)))[0] ?? null;
+        if (is_a($option->type_name, \DateTimeInterface::class, true)) {
+            return iterator_to_array($this->date_time_resolver->resolve($property->name, $input, new Reflection_Member($property)))[0] ?? null;
         }
-
-        return iterator_to_array($this->builtinTypeResolver->resolve($property->name, $input, new ReflectionMember($property)))[0] ?? null;
+        return iterator_to_array($this->builtin_type_resolver->resolve($property->name, $input, new Reflection_Member($property)))[0] ?? null;
     }
 }

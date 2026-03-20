@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,86 +9,71 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Expression_Language;
 
-namespace Symfony\Component\ExpressionLanguage;
-
-use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\Cache\Adapter\ArrayAdapter;
-
+use Psr\Cache\Cache_Item_Pool_Interface;
+use Symfony\Component\Cache\Adapter\Array_Adapter;
 // Help opcache.preload discover always-needed symbols
-class_exists(ParsedExpression::class);
-
+class_exists(Parsed_Expression::class);
 /**
  * Allows to compile and evaluate expressions written in your own DSL.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ExpressionLanguage
+class Expression_Language
 {
     private Lexer $lexer;
     private Parser $parser;
     private Compiler $compiler;
-
     protected array $functions = [];
-
     /**
      * @param iterable<ExpressionFunctionProviderInterface> $providers
      */
-    public function __construct(private readonly ?CacheItemPoolInterface $cache = new ArrayAdapter(), iterable $providers = [])
+    public function __construct(private readonly ?Cache_Item_Pool_Interface $cache = new Array_Adapter(), iterable $providers = [])
     {
-        $this->registerFunctions();
+        $this->register_functions();
         foreach ($providers as $provider) {
-            $this->registerProvider($provider);
+            $this->register_provider($provider);
         }
     }
-
     /**
      * Compiles an expression source code.
      */
     public function compile(Expression|string $expression, array $names = []): string
     {
-        return $this->getCompiler()->compile($this->parse($expression, $names)->getNodes())->getSource();
+        return $this->get_compiler()->compile($this->parse($expression, $names)->get_nodes())->get_source();
     }
-
     /**
      * Evaluate an expression.
      */
     public function evaluate(Expression|string $expression, array $values = []): mixed
     {
-        return $this->parse($expression, array_keys($values))->getNodes()->evaluate($this->functions, $values);
+        return $this->parse($expression, array_keys($values))->get_nodes()->evaluate($this->functions, $values);
     }
-
     /**
      * Parses an expression.
      *
      * @param int-mask-of<Parser::IGNORE_*> $flags
      */
-    public function parse(Expression|string $expression, array $names, int $flags = 0): ParsedExpression
+    public function parse(Expression|string $expression, array $names, int $flags = 0): Parsed_Expression
     {
-        if ($expression instanceof ParsedExpression) {
+        if ($expression instanceof Parsed_Expression) {
             return $expression;
         }
-
         asort($names);
-        $cacheKeyItems = [];
-
-        foreach ($names as $nameKey => $name) {
-            $cacheKeyItems[] = \is_int($nameKey) ? $name : $nameKey.':'.$name;
+        $cache_key_items = [];
+        foreach ($names as $name_key => $name) {
+            $cache_key_items[] = \is_int($name_key) ? $name : $name_key . ':' . $name;
         }
-
-        $cacheItem = $this->cache->getItem(rawurlencode($expression.'//'.implode('|', $cacheKeyItems)));
-
-        if (null === $parsedExpression = $cacheItem->get()) {
-            $nodes = $this->getParser()->parse($this->getLexer()->tokenize((string) $expression), $names, $flags);
-            $parsedExpression = new ParsedExpression((string) $expression, $nodes);
-
-            $cacheItem->set($parsedExpression);
-            $this->cache->save($cacheItem);
+        $cache_item = $this->cache->get_item(rawurlencode($expression . '//' . implode('|', $cache_key_items)));
+        if (null === $parsed_expression = $cache_item->get()) {
+            $nodes = $this->get_parser()->parse($this->get_lexer()->tokenize((string) $expression), $names, $flags);
+            $parsed_expression = new Parsed_Expression((string) $expression, $nodes);
+            $cache_item->set($parsed_expression);
+            $this->cache->save($cache_item);
         }
-
-        return $parsedExpression;
+        return $parsed_expression;
     }
-
     /**
      * Validates the syntax of an expression.
      *
@@ -100,13 +84,11 @@ class ExpressionLanguage
      */
     public function lint(Expression|string $expression, array $names, int $flags = 0): void
     {
-        if ($expression instanceof ParsedExpression) {
+        if ($expression instanceof Parsed_Expression) {
             return;
         }
-
-        $this->getParser()->lint($this->getLexer()->tokenize((string) $expression), $names, $flags);
+        $this->get_parser()->lint($this->get_lexer()->tokenize((string) $expression), $names, $flags);
     }
-
     /**
      * Registers a function.
      *
@@ -122,58 +104,43 @@ class ExpressionLanguage
         if (isset($this->parser)) {
             throw new \LogicException('Registering functions after calling evaluate(), compile() or parse() is not supported.');
         }
-
         $this->functions[$name] = ['compiler' => $compiler, 'evaluator' => $evaluator];
     }
-
-    public function addFunction(ExpressionFunction $function): void
+    public function add_function(Expression_Function $function): void
     {
-        $this->register($function->getName(), $function->getCompiler(), $function->getEvaluator());
+        $this->register($function->get_name(), $function->get_compiler(), $function->get_evaluator());
     }
-
-    public function registerProvider(ExpressionFunctionProviderInterface $provider): void
+    public function register_provider(Expression_Function_Provider_Interface $provider): void
     {
-        foreach ($provider->getFunctions() as $function) {
-            $this->addFunction($function);
+        foreach ($provider->get_functions() as $function) {
+            $this->add_function($function);
         }
     }
-
-    protected function registerFunctions(): void
+    protected function register_functions(): void
     {
-        $basicPhpFunctions = ['constant', 'min', 'max'];
-        foreach ($basicPhpFunctions as $function) {
-            $this->addFunction(ExpressionFunction::fromPhp($function));
+        $basic_php_functions = ['constant', 'min', 'max'];
+        foreach ($basic_php_functions as $function) {
+            $this->add_function(Expression_Function::from_php($function));
         }
-
-        $this->addFunction(new ExpressionFunction(
-            'enum',
-            static fn (string $str): string => \sprintf("(\constant(\$v = (%s))) instanceof \UnitEnum ? \constant(\$v) : throw new \TypeError(\sprintf('The string \"%%s\" is not the name of a valid enum case.', \$v))", $str),
-            static function ($arguments, string $str): \UnitEnum {
-                $value = \constant($str);
-
-                if (!$value instanceof \UnitEnum) {
-                    throw new \TypeError(\sprintf('The string "%s" is not the name of a valid enum case.', $str));
-                }
-
-                return $value;
+        $this->add_function(new Expression_Function('enum', static fn(string $str): string => \sprintf("(\\constant(\$v = (%s))) instanceof \\UnitEnum ? \\constant(\$v) : throw new \\TypeError(\\sprintf('The string \"%%s\" is not the name of a valid enum case.', \$v))", $str), static function ($arguments, string $str): \Unit_Enum {
+            $value = \constant($str);
+            if (!$value instanceof \Unit_Enum) {
+                throw new \TypeError(\sprintf('The string "%s" is not the name of a valid enum case.', $str));
             }
-        ));
+            return $value;
+        }));
     }
-
-    private function getLexer(): Lexer
+    private function get_lexer(): Lexer
     {
         return $this->lexer ??= new Lexer();
     }
-
-    private function getParser(): Parser
+    private function get_parser(): Parser
     {
         return $this->parser ??= new Parser($this->functions);
     }
-
-    private function getCompiler(): Compiler
+    private function get_compiler(): Compiler
     {
         $this->compiler ??= new Compiler($this->functions);
-
         return $this->compiler->reset();
     }
 }

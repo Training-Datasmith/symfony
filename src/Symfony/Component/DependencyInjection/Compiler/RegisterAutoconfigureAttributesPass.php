@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,70 +9,57 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
-use Symfony\Component\DependencyInjection\Attribute\Lazy;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\AutoconfigureFailedException;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-
+use Symfony\Component\Dependency_Injection\Attribute\Autoconfigure;
+use Symfony\Component\Dependency_Injection\Attribute\Lazy;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Exception\Autoconfigure_Failed_Exception;
+use Symfony\Component\Dependency_Injection\Loader\Yaml_File_Loader;
 /**
  * Reads #[Autoconfigure] attributes on definitions that are autoconfigured
  * and don't have the "container.ignore_attributes" tag.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class RegisterAutoconfigureAttributesPass implements CompilerPassInterface
+final class Register_Autoconfigure_Attributes_Pass implements Compiler_Pass_Interface
 {
-    private static \Closure $registerForAutoconfiguration;
-
-    public function process(ContainerBuilder $container): void
+    private static \Closure $register_for_autoconfiguration;
+    public function process(Container_Builder $container): void
     {
-        foreach ($container->getDefinitions() as $definition) {
-            if ($this->accept($definition) && $class = $container->getReflectionClass($definition->getClass(), false)) {
-                $this->processClass($container, $class);
+        foreach ($container->get_definitions() as $definition) {
+            if ($this->accept($definition) && $class = $container->get_reflection_class($definition->get_class(), false)) {
+                $this->process_class($container, $class);
             }
         }
     }
-
     public function accept(Definition $definition): bool
     {
-        return $definition->isAutoconfigured() && !$definition->hasTag('container.ignore_attributes');
+        return $definition->is_autoconfigured() && !$definition->has_tag('container.ignore_attributes');
     }
-
-    public function processClass(ContainerBuilder $container, \ReflectionClass $class): void
+    public function process_class(Container_Builder $container, \ReflectionClass $class): void
     {
-        $autoconfigure = $class->getAttributes(Autoconfigure::class, \ReflectionAttribute::IS_INSTANCEOF);
-        $lazy = $class->getAttributes(Lazy::class, \ReflectionAttribute::IS_INSTANCEOF);
-
+        $autoconfigure = $class->get_attributes(Autoconfigure::class, \Reflection_Attribute::IS_INSTANCEOF);
+        $lazy = $class->get_attributes(Lazy::class, \Reflection_Attribute::IS_INSTANCEOF);
         if ($autoconfigure && $lazy) {
-            throw new AutoconfigureFailedException($class->name, 'Using both attributes #[Lazy] and #[Autoconfigure] on an argument is not allowed; use the "lazy" parameter of #[Autoconfigure] instead.');
+            throw new Autoconfigure_Failed_Exception($class->name, 'Using both attributes #[Lazy] and #[Autoconfigure] on an argument is not allowed; use the "lazy" parameter of #[Autoconfigure] instead.');
         }
-
         $attributes = array_merge($autoconfigure, $lazy);
-
         foreach ($attributes as $attribute) {
-            self::registerForAutoconfiguration($container, $class, $attribute);
+            self::register_for_autoconfiguration($container, $class, $attribute);
         }
     }
-
-    private static function registerForAutoconfiguration(ContainerBuilder $container, \ReflectionClass $class, \ReflectionAttribute $attribute): void
+    private static function register_for_autoconfiguration(Container_Builder $container, \ReflectionClass $class, \Reflection_Attribute $attribute): void
     {
-        if (isset(self::$registerForAutoconfiguration)) {
-            (self::$registerForAutoconfiguration)($container, $class, $attribute);
-
+        if (isset(self::$register_for_autoconfiguration)) {
+            (self::$register_for_autoconfiguration)($container, $class, $attribute);
             return;
         }
-
-        $parseDefinitions = new \ReflectionMethod(YamlFileLoader::class, 'parseDefinitions');
-        $yamlLoader = $parseDefinitions->getDeclaringClass()->newInstanceWithoutConstructor();
-
-        self::$registerForAutoconfiguration = static function (ContainerBuilder $container, \ReflectionClass $class, \ReflectionAttribute $attribute) use ($parseDefinitions, $yamlLoader): void {
-            $attribute = (array) $attribute->newInstance();
-
+        $parse_definitions = new \ReflectionMethod(Yaml_File_Loader::class, 'parseDefinitions');
+        $yaml_loader = $parse_definitions->get_declaring_class()->new_instance_without_constructor();
+        self::$register_for_autoconfiguration = static function (Container_Builder $container, \ReflectionClass $class, \Reflection_Attribute $attribute) use ($parse_definitions, $yaml_loader): void {
+            $attribute = (array) $attribute->new_instance();
             foreach (['tags', 'resourceTags'] as $type) {
                 foreach ($attribute[$type] ?? [] as $i => $tag) {
                     if (\is_array($tag) && [0] === array_keys($tag)) {
@@ -85,21 +71,8 @@ final class RegisterAutoconfigureAttributesPass implements CompilerPassInterface
                 $attribute['resource_tags'] = $attribute['resourceTags'];
             }
             unset($attribute['resourceTags']);
-
-            $parseDefinitions->invoke(
-                $yamlLoader,
-                [
-                    'services' => [
-                        '_instanceof' => [
-                            $class->name => [$container->registerForAutoconfiguration($class->name)] + $attribute,
-                        ],
-                    ],
-                ],
-                $class->getFileName(),
-                false
-            );
+            $parse_definitions->invoke($yaml_loader, ['services' => ['_instanceof' => [$class->name => [$container->register_for_autoconfiguration($class->name)] + $attribute]]], $class->get_file_name(), false);
         };
-
-        (self::$registerForAutoconfiguration)($container, $class, $attribute);
+        (self::$register_for_autoconfiguration)($container, $class, $attribute);
     }
 }

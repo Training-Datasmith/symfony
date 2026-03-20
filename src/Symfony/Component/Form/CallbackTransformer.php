@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,27 +9,23 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
-class CallbackTransformer implements DataTransformerInterface
+class Callback_Transformer implements Data_Transformer_Interface
 {
     private readonly \Closure $transform;
-    private readonly \Closure $reverseTransform;
-
-    public function __construct(callable $transform, callable $reverseTransform)
+    private readonly \Closure $reverse_transform;
+    public function __construct(callable $transform, callable $reverse_transform)
     {
         $this->transform = $transform(...);
-        $this->reverseTransform = $reverseTransform(...);
+        $this->reverse_transform = $reverse_transform(...);
     }
-
     public function transform(mixed $data): mixed
     {
         return ($this->transform)($data);
     }
-
-    public function reverseTransform(mixed $data): mixed
+    public function reverse_transform(mixed $data): mixed
     {
-        return ($this->reverseTransform)($data);
+        return ($this->reverse_transform)($data);
     }
 }

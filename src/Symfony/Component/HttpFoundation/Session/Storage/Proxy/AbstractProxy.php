@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,91 +9,79 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpFoundation\Session\Storage\Proxy;
+namespace Symfony\Component\Http_Foundation\Session\Storage\Proxy;
 
 /**
  * @author Drak <drak@zikula.org>
  */
-abstract class AbstractProxy
+abstract class Abstract_Proxy
 {
     protected bool $wrapper = false;
-
-    protected ?string $saveHandlerName = null;
-
+    protected ?string $save_handler_name = null;
     /**
      * Gets the session.save_handler name.
      */
-    public function getSaveHandlerName(): ?string
+    public function get_save_handler_name(): ?string
     {
-        return $this->saveHandlerName;
+        return $this->save_handler_name;
     }
-
     /**
      * Is this proxy handler and instance of \SessionHandlerInterface.
      */
-    public function isSessionHandlerInterface(): bool
+    public function is_session_handler_interface(): bool
     {
-        return $this instanceof \SessionHandlerInterface;
+        return $this instanceof \Session_Handler_Interface;
     }
-
     /**
      * Returns true if this handler wraps an internal PHP session save handler using \SessionHandler.
      */
-    public function isWrapper(): bool
+    public function is_wrapper(): bool
     {
         return $this->wrapper;
     }
-
     /**
      * Has a session started?
      */
-    public function isActive(): bool
+    public function is_active(): bool
     {
         return \PHP_SESSION_ACTIVE === session_status();
     }
-
     /**
      * Gets the session ID.
      */
-    public function getId(): string
+    public function get_id(): string
     {
         return session_id();
     }
-
     /**
      * Sets the session ID.
      *
      * @throws \LogicException
      */
-    public function setId(string $id): void
+    public function set_id(string $id): void
     {
-        if ($this->isActive()) {
+        if ($this->is_active()) {
             throw new \LogicException('Cannot change the ID of an active session.');
         }
-
         session_id($id);
     }
-
     /**
      * Gets the session name.
      */
-    public function getName(): string
+    public function get_name(): string
     {
         return session_name();
     }
-
     /**
      * Sets the session name.
      *
      * @throws \LogicException
      */
-    public function setName(string $name): void
+    public function set_name(string $name): void
     {
-        if ($this->isActive()) {
+        if ($this->is_active()) {
             throw new \LogicException('Cannot change the name of an active session.');
         }
-
         session_name($name);
     }
 }

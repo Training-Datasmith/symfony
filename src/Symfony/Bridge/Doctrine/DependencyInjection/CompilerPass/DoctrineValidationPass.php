@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,49 +9,41 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Doctrine\Dependency_Injection\Compiler_Pass;
 
-namespace Symfony\Bridge\Doctrine\DependencyInjection\CompilerPass;
-
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
 /**
  * Registers additional validators.
  *
  * @author Benjamin Eberlei <kontakt@beberlei.de>
  */
-class DoctrineValidationPass implements CompilerPassInterface
+class Doctrine_Validation_Pass implements Compiler_Pass_Interface
 {
-    public function __construct(
-        private readonly string $managerType,
-    ) {
-    }
-
-    public function process(ContainerBuilder $container): void
+    public function __construct(private readonly string $manager_type)
     {
-        $this->updateValidatorMappingFiles($container, 'xml', 'xml');
-        $this->updateValidatorMappingFiles($container, 'yaml', 'yml');
     }
-
+    public function process(Container_Builder $container): void
+    {
+        $this->update_validator_mapping_files($container, 'xml', 'xml');
+        $this->update_validator_mapping_files($container, 'yaml', 'yml');
+    }
     /**
      * Gets the validation mapping files for the format and extends them with
      * files matching a doctrine search pattern (Resources/config/validation.orm.xml).
      */
-    private function updateValidatorMappingFiles(ContainerBuilder $container, string $mapping, string $extension): void
+    private function update_validator_mapping_files(Container_Builder $container, string $mapping, string $extension): void
     {
-        if (!$container->hasParameter('validator.mapping.loader.'.$mapping.'_files_loader.mapping_files')) {
+        if (!$container->has_parameter('validator.mapping.loader.' . $mapping . '_files_loader.mapping_files')) {
             return;
         }
-
-        $files = $container->getParameter('validator.mapping.loader.'.$mapping.'_files_loader.mapping_files');
-        $validationPath = '/config/validation.'.$this->managerType.'.'.$extension;
-
-        foreach ($container->getParameter('kernel.bundles_metadata') as $bundle) {
-            if ($container->fileExists($file = $bundle['path'].'/Resources'.$validationPath) || $container->fileExists($file = $bundle['path'].$validationPath)) {
+        $files = $container->get_parameter('validator.mapping.loader.' . $mapping . '_files_loader.mapping_files');
+        $validation_path = '/config/validation.' . $this->manager_type . '.' . $extension;
+        foreach ($container->get_parameter('kernel.bundles_metadata') as $bundle) {
+            if ($container->file_exists($file = $bundle['path'] . '/Resources' . $validation_path) || $container->file_exists($file = $bundle['path'] . $validation_path)) {
                 $files[] = $file;
             }
         }
-
-        $container->setParameter('validator.mapping.loader.'.$mapping.'_files_loader.mapping_files', $files);
+        $container->set_parameter('validator.mapping.loader.' . $mapping . '_files_loader.mapping_files', $files);
     }
 }

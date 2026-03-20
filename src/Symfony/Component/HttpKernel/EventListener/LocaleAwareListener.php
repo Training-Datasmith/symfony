@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,66 +9,56 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event_Listener;
 
-namespace Symfony\Component\HttpKernel\EventListener;
-
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Contracts\Translation\LocaleAwareInterface;
-
+use Symfony\Component\Event_Dispatcher\Event_Subscriber_Interface;
+use Symfony\Component\Http_Foundation\Request_Stack;
+use Symfony\Component\Http_Kernel\Event\Finish_Request_Event;
+use Symfony\Component\Http_Kernel\Event\Request_Event;
+use Symfony\Component\Http_Kernel\Kernel_Events;
+use Symfony\Contracts\Translation\Locale_Aware_Interface;
 /**
  * Pass the current locale to the provided services.
  *
  * @author Pierre Bobiet <pierrebobiet@gmail.com>
  */
-class LocaleAwareListener implements EventSubscriberInterface
+class Locale_Aware_Listener implements Event_Subscriber_Interface
 {
     /**
      * @param iterable<mixed, LocaleAwareInterface> $localeAwareServices
      */
-    public function __construct(
-        private readonly iterable $localeAwareServices,
-        private readonly RequestStack $requestStack,
-    ) {
-    }
-
-    public function onKernelRequest(RequestEvent $event): void
+    public function __construct(private readonly iterable $locale_aware_services, private readonly Request_Stack $request_stack)
     {
-        $this->setLocale($event->getRequest()->getLocale(), $event->getRequest()->getDefaultLocale());
     }
-
-    public function onKernelFinishRequest(FinishRequestEvent $event): void
+    public function on_kernel_request(Request_Event $event): void
     {
-        if (null === $parentRequest = $this->requestStack->getParentRequest()) {
-            foreach ($this->localeAwareServices as $service) {
-                $service->setLocale($event->getRequest()->getDefaultLocale());
+        $this->set_locale($event->get_request()->get_locale(), $event->get_request()->get_default_locale());
+    }
+    public function on_kernel_finish_request(Finish_Request_Event $event): void
+    {
+        if (null === $parent_request = $this->request_stack->get_parent_request()) {
+            foreach ($this->locale_aware_services as $service) {
+                $service->set_locale($event->get_request()->get_default_locale());
             }
-
             return;
         }
-
-        $this->setLocale($parentRequest->getLocale(), $parentRequest->getDefaultLocale());
+        $this->set_locale($parent_request->get_locale(), $parent_request->get_default_locale());
     }
-
-    public static function getSubscribedEvents(): array
+    public static function get_subscribed_events(): array
     {
         return [
             // must be registered after the Locale listener
-            KernelEvents::REQUEST => [['onKernelRequest', 15]],
-            KernelEvents::FINISH_REQUEST => [['onKernelFinishRequest', -15]],
+            Kernel_Events::REQUEST => [['onKernelRequest', 15]],
+            Kernel_Events::FINISH_REQUEST => [['onKernelFinishRequest', -15]],
         ];
     }
-
-    private function setLocale(string $locale, string $defaultLocale): void
+    private function set_locale(string $locale, string $default_locale): void
     {
-        foreach ($this->localeAwareServices as $service) {
+        foreach ($this->locale_aware_services as $service) {
             try {
-                $service->setLocale($locale);
+                $service->set_locale($locale);
             } catch (\InvalidArgumentException) {
-                $service->setLocale($defaultLocale);
+                $service->set_locale($default_locale);
             }
         }
     }

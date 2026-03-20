@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,16 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Data_Collector;
 
-namespace Symfony\Component\HttpKernel\DataCollector;
-
-use Symfony\Component\VarDumper\Caster\CutStub;
-use Symfony\Component\VarDumper\Caster\ReflectionCaster;
-use Symfony\Component\VarDumper\Cloner\ClonerInterface;
-use Symfony\Component\VarDumper\Cloner\Data;
-use Symfony\Component\VarDumper\Cloner\Stub;
-use Symfony\Component\VarDumper\Cloner\VarCloner;
-
+use Symfony\Component\Var_Dumper\Caster\Cut_Stub;
+use Symfony\Component\Var_Dumper\Caster\Reflection_Caster;
+use Symfony\Component\Var_Dumper\Cloner\Cloner_Interface;
+use Symfony\Component\Var_Dumper\Cloner\Data;
+use Symfony\Component\Var_Dumper\Cloner\Stub;
+use Symfony\Component\Var_Dumper\Cloner\Var_Cloner;
 /**
  * DataCollector.
  *
@@ -28,79 +25,68 @@ use Symfony\Component\VarDumper\Cloner\VarCloner;
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Bernhard Schussek <bschussek@symfony.com>
  */
-abstract class DataCollector implements DataCollectorInterface
+abstract class Data_Collector implements Data_Collector_Interface
 {
     protected array|Data $data = [];
-
-    private ClonerInterface $cloner;
-
+    private Cloner_Interface $cloner;
     /**
      * Converts the variable into a serializable Data instance.
      *
      * This array can be displayed in the template using
      * the VarDumper component.
      */
-    protected function cloneVar(mixed $var): Data
+    protected function clone_var(mixed $var): Data
     {
         if ($var instanceof Data) {
             return $var;
         }
         if (!isset($this->cloner)) {
-            $this->cloner = new VarCloner();
-            $this->cloner->setMaxItems(-1);
-            $this->cloner->addCasters($this->getCasters());
+            $this->cloner = new Var_Cloner();
+            $this->cloner->set_max_items(-1);
+            $this->cloner->add_casters($this->get_casters());
         }
-
-        return $this->cloner->cloneVar($var);
+        return $this->cloner->clone_var($var);
     }
-
     /**
      * @return callable[] The casters to add to the cloner
      */
-    protected function getCasters(): array
+    protected function get_casters(): array
     {
-        return [
-            '*' => static function ($v, array $a, Stub $s, $isNested): array {
-                if (!$v instanceof Stub) {
-                    $b = $a;
-                    foreach ($a as $k => $v) {
-                        if (!\is_object($v)) {
-                            continue;
+        return ['*' => static function ($v, array $a, Stub $s, $is_nested): array {
+            if (!$v instanceof Stub) {
+                $b = $a;
+                foreach ($a as $k => $v) {
+                    if (!\is_object($v)) {
+                        continue;
+                    }
+                    if ($v instanceof \DateTimeInterface) {
+                        continue;
+                    }
+                    if ($v instanceof Stub) {
+                        continue;
+                    }
+                    try {
+                        $a[$k] = $s = new Cut_Stub($v);
+                        if ($b[$k] === $s) {
+                            // we've hit a non-typed reference
+                            $a[$k] = $v;
                         }
-                        if ($v instanceof \DateTimeInterface) {
-                            continue;
-                        }
-                        if ($v instanceof Stub) {
-                            continue;
-                        }
-                        try {
-                            $a[$k] = $s = new CutStub($v);
-
-                            if ($b[$k] === $s) {
-                                // we've hit a non-typed reference
-                                $a[$k] = $v;
-                            }
-                        } catch (\TypeError) {
-                            // we've hit a typed reference
-                        }
+                    } catch (\TypeError) {
+                        // we've hit a typed reference
                     }
                 }
-
-                return $a;
-            },
-        ] + ReflectionCaster::UNSET_CLOSURE_FILE_INFO;
+            }
+            return $a;
+        }] + Reflection_Caster::UNSET_CLOSURE_FILE_INFO;
     }
-
     public function __serialize(): array
     {
         return ['data' => $this->data];
     }
-
     public function __unserialize(array $data): void
     {
-        $this->data = $data['data'] ?? $data["\0*\0data"];
+        $this->data = $data['data'] ?? $data["\x00*\x00data"];
     }
-
     public function reset(): void
     {
         $this->data = [];

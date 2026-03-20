@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,90 +9,70 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Command;
 
-namespace Symfony\Bundle\FrameworkBundle\Command;
-
-use Symfony\Bundle\FrameworkBundle\Secrets\AbstractVault;
-use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Bundle\Framework_Bundle\Secrets\Abstract_Vault;
+use Symfony\Component\Console\Attribute\As_Command;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Completion\CompletionInput;
-use Symfony\Component\Console\Completion\CompletionSuggestions;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-
+use Symfony\Component\Console\Completion\Completion_Input;
+use Symfony\Component\Console\Completion\Completion_Suggestions;
+use Symfony\Component\Console\Input\Input_Argument;
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Console\Input\Input_Option;
+use Symfony\Component\Console\Output\Console_Output_Interface;
+use Symfony\Component\Console\Output\Output_Interface;
+use Symfony\Component\Console\Style\Symfony_Style;
 /**
  * @author Jérémy Derussé <jeremy@derusse.com>
  * @author Nicolas Grekas <p@tchwork.com>
  *
  * @internal
  */
-#[AsCommand(name: 'secrets:remove', description: 'Remove a secret from the vault')]
-final class SecretsRemoveCommand extends Command
+#[As_Command(name: 'secrets:remove', description: 'Remove a secret from the vault')]
+final class Secrets_Remove_Command extends Command
 {
-    public function __construct(
-        private readonly AbstractVault $vault,
-        private readonly ?AbstractVault $localVault = null,
-    ) {
+    public function __construct(private readonly Abstract_Vault $vault, private readonly ?Abstract_Vault $local_vault = null)
+    {
         parent::__construct();
     }
-
     protected function configure(): void
     {
-        $this
-            ->addArgument('name', InputArgument::REQUIRED, 'The name of the secret')
-            ->addOption('local', 'l', InputOption::VALUE_NONE, 'Update the local vault.')
-            ->setHelp(
-                <<<'EOF'
-                The <info>%command.name%</info> command removes a secret from the vault.
-
-                    <info>%command.full_name% <name></info>
-                EOF
-            )
-        ;
+        $this->add_argument('name', Input_Argument::REQUIRED, 'The name of the secret')->add_option('local', 'l', Input_Option::VALUE_NONE, 'Update the local vault.')->set_help(<<<'EOF'
+        The <info>%command.name%</info> command removes a secret from the vault.
+        
+            <info>%command.full_name% <name></info>
+        EOF);
     }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(Input_Interface $input, Output_Interface $output): int
     {
-        $io = new SymfonyStyle($input, $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output);
-        $vault = $input->getOption('local') ? $this->localVault : $this->vault;
-
+        $io = new Symfony_Style($input, $output instanceof Console_Output_Interface ? $output->get_error_output() : $output);
+        $vault = $input->get_option('local') ? $this->local_vault : $this->vault;
         if (null === $vault) {
             $io->error('The local vault is disabled.');
-
             return 1;
         }
-
-        if ($vault->remove($name = $input->getArgument('name'))) {
-            $io->success($vault->getLastMessage() ?? 'Secret was removed from the vault.');
+        if ($vault->remove($name = $input->get_argument('name'))) {
+            $io->success($vault->get_last_message() ?? 'Secret was removed from the vault.');
         } else {
-            $io->comment($vault->getLastMessage() ?? 'Secret was not found in the vault.');
+            $io->comment($vault->get_last_message() ?? 'Secret was not found in the vault.');
         }
-
-        if ($this->vault === $vault && null !== $this->localVault->reveal($name)) {
+        if ($this->vault === $vault && null !== $this->local_vault->reveal($name)) {
             $io->comment('Note that this secret is overridden in the local vault.');
         }
-
         return 0;
     }
-
-    public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void
+    public function complete(Completion_Input $input, Completion_Suggestions $suggestions): void
     {
-        if (!$input->mustSuggestArgumentValuesFor('name')) {
+        if (!$input->must_suggest_argument_values_for('name')) {
             return;
         }
-
-        $vaultKeys = array_keys($this->vault->list(false));
-        if ($input->getOption('local')) {
-            if (null === $this->localVault) {
+        $vault_keys = array_keys($this->vault->list(false));
+        if ($input->get_option('local')) {
+            if (null === $this->local_vault) {
                 return;
             }
-            $vaultKeys = array_intersect($vaultKeys, array_keys($this->localVault->list(false)));
+            $vault_keys = array_intersect($vault_keys, array_keys($this->local_vault->list(false)));
         }
-
-        $suggestions->suggestValues($vaultKeys);
+        $suggestions->suggest_values($vault_keys);
     }
 }

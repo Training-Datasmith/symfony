@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,66 +9,50 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator;
-
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Definition;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ServiceConfigurator extends AbstractServiceConfigurator
+class Service_Configurator extends Abstract_Service_Configurator
 {
-    use Traits\AbstractTrait;
-    use Traits\ArgumentTrait;
-    use Traits\AutoconfigureTrait;
-    use Traits\AutowireTrait;
-    use Traits\BindTrait;
-    use Traits\CallTrait;
-    use Traits\ClassTrait;
-    use Traits\ConfiguratorTrait;
-    use Traits\ConstructorTrait;
-    use Traits\DecorateTrait;
-    use Traits\DeprecateTrait;
-    use Traits\FactoryTrait;
-    use Traits\FileTrait;
-    use Traits\FromCallableTrait;
-    use Traits\LazyTrait;
-    use Traits\ParentTrait;
-    use Traits\PropertyTrait;
-    use Traits\PublicTrait;
-    use Traits\ShareTrait;
-    use Traits\SyntheticTrait;
-    use Traits\TagTrait;
-
+    use Traits\Abstract_Trait;
+    use Traits\Argument_Trait;
+    use Traits\Autoconfigure_Trait;
+    use Traits\Autowire_Trait;
+    use Traits\Bind_Trait;
+    use Traits\Call_Trait;
+    use Traits\Class_Trait;
+    use Traits\Configurator_Trait;
+    use Traits\Constructor_Trait;
+    use Traits\Decorate_Trait;
+    use Traits\Deprecate_Trait;
+    use Traits\Factory_Trait;
+    use Traits\File_Trait;
+    use Traits\From_Callable_Trait;
+    use Traits\Lazy_Trait;
+    use Traits\Parent_Trait;
+    use Traits\Property_Trait;
+    use Traits\Public_Trait;
+    use Traits\Share_Trait;
+    use Traits\Synthetic_Trait;
+    use Traits\Tag_Trait;
     public const FACTORY = 'services';
-
     private bool $destructed = false;
-
-    public function __construct(
-        private ContainerBuilder $container,
-        private array $instanceof,
-        private bool $allowParent,
-        ServicesConfigurator $parent,
-        Definition $definition,
-        ?string $id,
-        array $defaultTags,
-        private ?string $path = null,
-    ) {
-        parent::__construct($parent, $definition, $id, $defaultTags);
+    public function __construct(private Container_Builder $container, private array $instanceof, private bool $allow_parent, Services_Configurator $parent, Definition $definition, ?string $id, array $default_tags, private ?string $path = null)
+    {
+        parent::__construct($parent, $definition, $id, $default_tags);
     }
-
     public function __destruct()
     {
         if ($this->destructed) {
             return;
         }
         $this->destructed = true;
-
         parent::__destruct();
-
-        $this->container->removeBindings($this->id);
-        $this->container->setDefinition($this->id, $this->definition->setInstanceofConditionals($this->instanceof));
+        $this->container->remove_bindings($this->id);
+        $this->container->set_definition($this->id, $this->definition->set_instanceof_conditionals($this->instanceof));
     }
 }

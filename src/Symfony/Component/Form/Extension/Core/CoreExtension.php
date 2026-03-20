@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,90 +9,38 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Extension\Core;
 
-use Symfony\Component\Form\AbstractExtension;
-use Symfony\Component\Form\ChoiceList\Factory\CachingFactoryDecorator;
-use Symfony\Component\Form\ChoiceList\Factory\ChoiceListFactoryInterface;
-use Symfony\Component\Form\ChoiceList\Factory\DefaultChoiceListFactory;
-use Symfony\Component\Form\ChoiceList\Factory\PropertyAccessDecorator;
-use Symfony\Component\Form\Extension\Core\Type\TransformationFailureExtension;
+use Symfony\Component\Form\Abstract_Extension;
+use Symfony\Component\Form\Choice_List\Factory\Caching_Factory_Decorator;
+use Symfony\Component\Form\Choice_List\Factory\Choice_List_Factory_Interface;
+use Symfony\Component\Form\Choice_List\Factory\Default_Choice_List_Factory;
+use Symfony\Component\Form\Choice_List\Factory\Property_Access_Decorator;
+use Symfony\Component\Form\Extension\Core\Type\Transformation_Failure_Extension;
 use Symfony\Component\Form\Flow;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
-
+use Symfony\Component\Property_Access\Property_Access;
+use Symfony\Component\Property_Access\Property_Accessor_Interface;
+use Symfony\Contracts\Translation\Translator_Interface;
 /**
  * Represents the main form extension, which loads the core functionality.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class CoreExtension extends AbstractExtension
+class Core_Extension extends Abstract_Extension
 {
-    private readonly PropertyAccessorInterface $propertyAccessor;
-    private readonly ChoiceListFactoryInterface $choiceListFactory;
-
-    public function __construct(
-        ?PropertyAccessorInterface $propertyAccessor = null,
-        ?ChoiceListFactoryInterface $choiceListFactory = null,
-        private readonly ?TranslatorInterface $translator = null,
-    ) {
-        $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();
-        $this->choiceListFactory = $choiceListFactory ?? new CachingFactoryDecorator(new PropertyAccessDecorator(new DefaultChoiceListFactory(), $this->propertyAccessor));
-    }
-
-    protected function loadTypes(): array
+    private readonly Property_Accessor_Interface $property_accessor;
+    private readonly Choice_List_Factory_Interface $choice_list_factory;
+    public function __construct(?Property_Accessor_Interface $property_accessor = null, ?Choice_List_Factory_Interface $choice_list_factory = null, private readonly ?Translator_Interface $translator = null)
     {
-        return [
-            new Type\FormType($this->propertyAccessor),
-            new Type\BirthdayType(),
-            new Type\CheckboxType(),
-            new Type\ChoiceType($this->choiceListFactory, $this->translator),
-            new Type\CollectionType(),
-            new Type\CountryType(),
-            new Type\DateIntervalType(),
-            new Type\DateType(),
-            new Type\DateTimeType(),
-            new Type\EmailType(),
-            new Type\HiddenType(),
-            new Type\IntegerType(),
-            new Type\LanguageType(),
-            new Type\LocaleType(),
-            new Type\MoneyType(),
-            new Type\NumberType(),
-            new Type\PasswordType(),
-            new Type\PercentType(),
-            new Type\RadioType(),
-            new Type\RangeType(),
-            new Type\RepeatedType(),
-            new Type\SearchType(),
-            new Type\TextareaType(),
-            new Type\TextType(),
-            new Type\TimeType(),
-            new Type\TimezoneType(),
-            new Type\UrlType(),
-            new Type\FileType($this->translator),
-            new Type\ButtonType(),
-            new Type\SubmitType(),
-            new Type\ResetType(),
-            new Type\CurrencyType(),
-            new Type\TelType(),
-            new Type\ColorType($this->translator),
-            new Type\WeekType(),
-            new Flow\Type\ButtonFlowType(),
-            new Flow\Type\FinishFlowType(),
-            new Flow\Type\NavigatorFlowType(),
-            new Flow\Type\NextFlowType(),
-            new Flow\Type\PreviousFlowType(),
-            new Flow\Type\FormFlowType($this->propertyAccessor),
-        ];
+        $this->property_accessor = $property_accessor ?: Property_Access::create_property_accessor();
+        $this->choice_list_factory = $choice_list_factory ?? new Caching_Factory_Decorator(new Property_Access_Decorator(new Default_Choice_List_Factory(), $this->property_accessor));
     }
-
-    protected function loadTypeExtensions(): array
+    protected function load_types(): array
     {
-        return [
-            new TransformationFailureExtension($this->translator),
-        ];
+        return [new Type\Form_Type($this->property_accessor), new Type\Birthday_Type(), new Type\Checkbox_Type(), new Type\Choice_Type($this->choice_list_factory, $this->translator), new Type\Collection_Type(), new Type\Country_Type(), new Type\Date_Interval_Type(), new Type\Date_Type(), new Type\Date_Time_Type(), new Type\Email_Type(), new Type\Hidden_Type(), new Type\Integer_Type(), new Type\Language_Type(), new Type\Locale_Type(), new Type\Money_Type(), new Type\Number_Type(), new Type\Password_Type(), new Type\Percent_Type(), new Type\Radio_Type(), new Type\Range_Type(), new Type\Repeated_Type(), new Type\Search_Type(), new Type\Textarea_Type(), new Type\Text_Type(), new Type\Time_Type(), new Type\Timezone_Type(), new Type\Url_Type(), new Type\File_Type($this->translator), new Type\Button_Type(), new Type\Submit_Type(), new Type\Reset_Type(), new Type\Currency_Type(), new Type\Tel_Type(), new Type\Color_Type($this->translator), new Type\Week_Type(), new Flow\Type\Button_Flow_Type(), new Flow\Type\Finish_Flow_Type(), new Flow\Type\Navigator_Flow_Type(), new Flow\Type\Next_Flow_Type(), new Flow\Type\Previous_Flow_Type(), new Flow\Type\Form_Flow_Type($this->property_accessor)];
+    }
+    protected function load_type_extensions(): array
+    {
+        return [new Transformation_Failure_Extension($this->translator)];
     }
 }

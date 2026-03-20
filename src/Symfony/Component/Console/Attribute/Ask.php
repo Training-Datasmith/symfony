@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,27 +9,24 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Attribute;
 
-use Symfony\Component\Console\Attribute\Reflection\ReflectionMember;
+use Symfony\Component\Console\Attribute\Reflection\Reflection_Member;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
-use Symfony\Component\Console\Input\File\InputFile;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\Console\Question\FileQuestion;
+use Symfony\Component\Console\Input\File\Input_File;
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Console\Question\Confirmation_Question;
+use Symfony\Component\Console\Question\File_Question;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Style\Symfony_Style;
 use Symfony\Component\Validator\Constraint;
-
 #[\Attribute(\Attribute::TARGET_PARAMETER | \Attribute::TARGET_PROPERTY)]
-class Ask implements InteractiveAttributeInterface
+class Ask implements Interactive_Attribute_Interface
 {
     public ?\Closure $normalizer;
     public ?\Closure $validator;
     private \Closure $closure;
-
     /**
      * @param string                     $question    The question to ask the user
      * @param string|bool|int|float|null $default     The default answer to return if the user enters nothing
@@ -51,125 +47,104 @@ class Ask implements InteractiveAttributeInterface
         public ?int $timeout = null,
         ?callable $normalizer = null,
         ?callable $validator = null,
-        public ?int $maxAttempts = null,
+        public ?int $max_attempts = null,
         /** @var Constraint[] */
-        public array $constraints = [],
-    ) {
+        public array $constraints = []
+    )
+    {
         $this->normalizer = $normalizer ? $normalizer(...) : null;
         $this->validator = $validator ? $validator(...) : null;
     }
-
     /**
      * @internal
      */
-    public static function tryFrom(\ReflectionParameter|\ReflectionProperty $member, string $name): ?self
+    public static function try_from(\ReflectionParameter|\ReflectionProperty $member, string $name): ?self
     {
-        $reflection = new ReflectionMember($member);
-
-        if (!$self = $reflection->getAttribute(self::class)) {
+        $reflection = new Reflection_Member($member);
+        if (!$self = $reflection->get_attribute(self::class)) {
             return null;
         }
-
-        $type = $reflection->getType();
-
+        $type = $reflection->get_type();
         if (!$type instanceof \ReflectionNamedType) {
-            throw new LogicException(\sprintf('The %s "$%s" of "%s" must have a named type. Untyped, Union or Intersection types are not supported for interactive questions.', $reflection->getMemberName(), $name, $reflection->getSourceName()));
+            throw new LogicException(\sprintf('The %s "$%s" of "%s" must have a named type. Untyped, Union or Intersection types are not supported for interactive questions.', $reflection->get_member_name(), $name, $reflection->get_source_name()));
         }
-
-        $self->closure = function (SymfonyStyle $io, InputInterface $input) use ($self, $reflection, $name, $type): void {
-            if ($reflection->isProperty() && isset($this->{$reflection->getName()})) {
+        $self->closure = function (Symfony_Style $io, Input_Interface $input) use ($self, $reflection, $name, $type): void {
+            if ($reflection->is_property() && isset($this->{$reflection->get_name()})) {
                 return;
             }
-
-            if ($reflection->isParameter() && !\in_array($input->getArgument($name), [null, []], true)) {
+            if ($reflection->is_parameter() && !\in_array($input->get_argument($name), [null, []], true)) {
                 return;
             }
-
-            $typeName = $type->getName();
-
-            if (InputFile::class === $typeName) {
-                $question = new FileQuestion($self->question);
-                $question->setValidator($self->validator);
-                $question->setMaxAttempts($self->maxAttempts);
-                $question->setConstraints($self->constraints);
-                $value = $io->askQuestion($question);
-
-                if (null === $value && !$reflection->isNullable()) {
+            $type_name = $type->get_name();
+            if (Input_File::class === $type_name) {
+                $question = new File_Question($self->question);
+                $question->set_validator($self->validator);
+                $question->set_max_attempts($self->max_attempts);
+                $question->set_constraints($self->constraints);
+                $value = $io->ask_question($question);
+                if (null === $value && !$reflection->is_nullable()) {
                     return;
                 }
-
-                if ($reflection->isProperty()) {
-                    $this->{$reflection->getName()} = $value;
+                if ($reflection->is_property()) {
+                    $this->{$reflection->get_name()} = $value;
                 } else {
-                    $input->setArgument($name, $value);
+                    $input->set_argument($name, $value);
                 }
-
                 return;
             }
-
-            if ('bool' === $typeName) {
+            if ('bool' === $type_name) {
                 $self->default ??= false;
-
                 if (!\is_bool($self->default)) {
-                    throw new LogicException(\sprintf('The "%s::$default" value for the %s "$%s" of "%s" must be a boolean.', self::class, $reflection->getMemberName(), $name, $reflection->getSourceName()));
+                    throw new LogicException(\sprintf('The "%s::$default" value for the %s "$%s" of "%s" must be a boolean.', self::class, $reflection->get_member_name(), $name, $reflection->get_source_name()));
                 }
-
-                $question = new ConfirmationQuestion($self->question, $self->default);
+                $question = new Confirmation_Question($self->question, $self->default);
             } else {
                 $question = new Question($self->question, $self->default);
             }
-            $question->setHidden($self->hidden);
-            $question->setMultiline($self->multiline);
-            $question->setTrimmable($self->trimmable);
-            $question->setTimeout($self->timeout);
-
-            if (!$self->validator && $reflection->isProperty() && 'array' !== $typeName) {
-                $self->validator = fn (mixed $value): mixed => $this->{$reflection->getName()} = $value;
+            $question->set_hidden($self->hidden);
+            $question->set_multiline($self->multiline);
+            $question->set_trimmable($self->trimmable);
+            $question->set_timeout($self->timeout);
+            if (!$self->validator && $reflection->is_property() && 'array' !== $type_name) {
+                $self->validator = fn(mixed $value): mixed => $this->{$reflection->get_name()} = $value;
             }
-
-            $question->setValidator($self->validator);
-            $question->setMaxAttempts($self->maxAttempts);
-            $question->setConstraints($self->constraints);
-
+            $question->set_validator($self->validator);
+            $question->set_max_attempts($self->max_attempts);
+            $question->set_constraints($self->constraints);
             if ($self->normalizer) {
-                $question->setNormalizer($self->normalizer);
-            } elseif (is_subclass_of($typeName, \BackedEnum::class)) {
+                $question->set_normalizer($self->normalizer);
+            } elseif (is_subclass_of($type_name, \Backed_Enum::class)) {
                 /** @var class-string<\BackedEnum> $backedType */
-                $backedType = $reflection->getType()->getName();
-                $question->setNormalizer(static fn (string|int $value) => $backedType::tryFrom($value) ?? throw InvalidArgumentException::fromEnumValue($reflection->getName(), $value, array_column($backedType::cases(), 'value')));
+                $backed_type = $reflection->get_type()->get_name();
+                $question->set_normalizer(static fn(string|int $value) => $backed_type::try_from($value) ?? throw InvalidArgumentException::from_enum_value($reflection->get_name(), $value, array_column($backed_type::cases(), 'value')));
             }
-
-            if ('array' === $typeName) {
+            if ('array' === $type_name) {
                 $value = [];
-                while ($v = $io->askQuestion($question)) {
-                    if ("\x4" === $v || \PHP_EOL === $v || ($question->isTrimmable() && '' === $v = trim($v))) {
+                while ($v = $io->ask_question($question)) {
+                    if ("\x04" === $v || \PHP_EOL === $v || $question->is_trimmable() && '' === $v = trim($v)) {
                         break;
                     }
                     $value[] = $v;
                 }
             } else {
-                $value = $io->askQuestion($question);
+                $value = $io->ask_question($question);
             }
-
-            if (null === $value && !$reflection->isNullable()) {
+            if (null === $value && !$reflection->is_nullable()) {
                 return;
             }
-
-            if ($reflection->isProperty()) {
-                $this->{$reflection->getName()} = $value;
+            if ($reflection->is_property()) {
+                $this->{$reflection->get_name()} = $value;
             } else {
-                $input->setArgument($name, $value);
+                $input->set_argument($name, $value);
             }
         };
-
         return $self;
     }
-
     /**
      * @internal
      */
-    public function getFunction(object $instance): \ReflectionFunction
+    public function get_function(object $instance): \ReflectionFunction
     {
-        return new \ReflectionFunction($this->closure->bindTo($instance, $instance::class));
+        return new \ReflectionFunction($this->closure->bind_to($instance, $instance::class));
     }
 }

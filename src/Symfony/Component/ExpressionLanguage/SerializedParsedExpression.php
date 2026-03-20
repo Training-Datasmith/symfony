@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,30 +9,25 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Expression_Language;
 
-namespace Symfony\Component\ExpressionLanguage;
-
-use Symfony\Component\ExpressionLanguage\Node\Node;
-
+use Symfony\Component\Expression_Language\Node\Node;
 /**
  * Represents an already serialized parsed expression.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class SerializedParsedExpression extends ParsedExpression
+class Serialized_Parsed_Expression extends Parsed_Expression
 {
     /**
      * @param string $expression An expression
      * @param string $nodes      The serialized nodes for the expression
      */
-    public function __construct(
-        string $expression,
-        private readonly string $nodes,
-    ) {
+    public function __construct(string $expression, private readonly string $nodes)
+    {
         $this->expression = $expression;
     }
-
-    public function getNodes(): Node
+    public function get_nodes(): Node
     {
         return unserialize($this->nodes);
     }

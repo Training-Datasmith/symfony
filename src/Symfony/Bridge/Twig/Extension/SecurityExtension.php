@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,154 +9,117 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Twig\Extension;
 
-use Symfony\Component\Security\Acl\Voter\FieldVote;
-use Symfony\Component\Security\Core\Authorization\AccessDecision;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Authorization\UserAuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Http\Impersonate\ImpersonateUrlGenerator;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
-
+use Symfony\Component\Security\Acl\Voter\Field_Vote;
+use Symfony\Component\Security\Core\Authorization\Access_Decision;
+use Symfony\Component\Security\Core\Authorization\Authorization_Checker_Interface;
+use Symfony\Component\Security\Core\Authorization\User_Authorization_Checker_Interface;
+use Symfony\Component\Security\Core\Exception\Authentication_Credentials_Not_Found_Exception;
+use Symfony\Component\Security\Core\User\User_Interface;
+use Symfony\Component\Security\Http\Impersonate\Impersonate_Url_Generator;
+use Twig\Extension\Abstract_Extension;
+use Twig\Twig_Function;
 /**
  * SecurityExtension exposes security context features.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class SecurityExtension extends AbstractExtension
+final class Security_Extension extends Abstract_Extension
 {
-    public function __construct(
-        private readonly ?AuthorizationCheckerInterface $securityChecker = null,
-        private readonly ?ImpersonateUrlGenerator $impersonateUrlGenerator = null,
-    ) {
-    }
-
-    public function isGranted(mixed $role, mixed $object = null, ?string $field = null, ?AccessDecision $accessDecision = null): bool
+    public function __construct(private readonly ?Authorization_Checker_Interface $security_checker = null, private readonly ?Impersonate_Url_Generator $impersonate_url_generator = null)
     {
-        if (null === $this->securityChecker) {
+    }
+    public function is_granted(mixed $role, mixed $object = null, ?string $field = null, ?Access_Decision $access_decision = null): bool
+    {
+        if (null === $this->security_checker) {
             return false;
         }
-
         if (null !== $field) {
-            if (!class_exists(FieldVote::class)) {
+            if (!class_exists(Field_Vote::class)) {
                 throw new \LogicException('Passing a $field to the "is_granted()" function requires symfony/acl. Try running "composer require symfony/acl-bundle" if you need field-level access control.');
             }
-
-            $object = new FieldVote($object, $field);
+            $object = new Field_Vote($object, $field);
         }
-
         try {
-            return $this->securityChecker->isGranted($role, $object, $accessDecision);
-        } catch (AuthenticationCredentialsNotFoundException) {
+            return $this->security_checker->is_granted($role, $object, $access_decision);
+        } catch (Authentication_Credentials_Not_Found_Exception) {
             return false;
         }
     }
-
-    public function getAccessDecision(mixed $role, mixed $object = null, ?string $field = null): AccessDecision
+    public function get_access_decision(mixed $role, mixed $object = null, ?string $field = null): Access_Decision
     {
-        if (!class_exists(AccessDecision::class)) {
-            throw new \LogicException(\sprintf('Using the "access_decision()" function requires symfony/security-core >= 7.3. Try running "composer %s symfony/security-core".', $this->securityChecker ? 'update' : 'require'));
+        if (!class_exists(Access_Decision::class)) {
+            throw new \LogicException(\sprintf('Using the "access_decision()" function requires symfony/security-core >= 7.3. Try running "composer %s symfony/security-core".', $this->security_checker ? 'update' : 'require'));
         }
-
-        $accessDecision = new AccessDecision();
-        $this->isGranted($role, $object, $field, $accessDecision);
-
-        return $accessDecision;
+        $access_decision = new Access_Decision();
+        $this->is_granted($role, $object, $field, $access_decision);
+        return $access_decision;
     }
-
-    public function isGrantedForUser(UserInterface $user, mixed $attribute, mixed $subject = null, ?string $field = null, ?AccessDecision $accessDecision = null): bool
+    public function is_granted_for_user(User_Interface $user, mixed $attribute, mixed $subject = null, ?string $field = null, ?Access_Decision $access_decision = null): bool
     {
-        if (null === $this->securityChecker) {
+        if (null === $this->security_checker) {
             return false;
         }
-
-        if (!$this->securityChecker instanceof UserAuthorizationCheckerInterface) {
-            throw new \LogicException(\sprintf('You cannot use "%s()" if the authorization checker doesn\'t implement "%s".', __METHOD__, UserAuthorizationCheckerInterface::class));
+        if (!$this->security_checker instanceof User_Authorization_Checker_Interface) {
+            throw new \LogicException(\sprintf('You cannot use "%s()" if the authorization checker doesn\'t implement "%s".', __METHOD__, User_Authorization_Checker_Interface::class));
         }
-
         if (null !== $field) {
-            if (!class_exists(FieldVote::class)) {
+            if (!class_exists(Field_Vote::class)) {
                 throw new \LogicException('Passing a $field to the "is_granted_for_user()" function requires symfony/acl. Try running "composer require symfony/acl-bundle" if you need field-level access control.');
             }
-
-            $subject = new FieldVote($subject, $field);
+            $subject = new Field_Vote($subject, $field);
         }
-
         try {
-            return $this->securityChecker->isGrantedForUser($user, $attribute, $subject, $accessDecision);
-        } catch (AuthenticationCredentialsNotFoundException) {
+            return $this->security_checker->is_granted_for_user($user, $attribute, $subject, $access_decision);
+        } catch (Authentication_Credentials_Not_Found_Exception) {
             return false;
         }
     }
-
-    public function getAccessDecisionForUser(UserInterface $user, mixed $attribute, mixed $subject = null, ?string $field = null): AccessDecision
+    public function get_access_decision_for_user(User_Interface $user, mixed $attribute, mixed $subject = null, ?string $field = null): Access_Decision
     {
-        if (!class_exists(AccessDecision::class)) {
-            throw new \LogicException(\sprintf('Using the "access_decision_for_user()" function requires symfony/security-core >= 7.3. Try running "composer %s symfony/security-core".', $this->securityChecker ? 'update' : 'require'));
+        if (!class_exists(Access_Decision::class)) {
+            throw new \LogicException(\sprintf('Using the "access_decision_for_user()" function requires symfony/security-core >= 7.3. Try running "composer %s symfony/security-core".', $this->security_checker ? 'update' : 'require'));
         }
-
-        $accessDecision = new AccessDecision();
-        $this->isGrantedForUser($user, $attribute, $subject, $field, $accessDecision);
-
-        return $accessDecision;
+        $access_decision = new Access_Decision();
+        $this->is_granted_for_user($user, $attribute, $subject, $field, $access_decision);
+        return $access_decision;
     }
-
-    public function getImpersonateExitUrl(?string $exitTo = null): string
+    public function get_impersonate_exit_url(?string $exit_to = null): string
     {
-        if (null === $this->impersonateUrlGenerator) {
+        if (null === $this->impersonate_url_generator) {
             return '';
         }
-
-        return $this->impersonateUrlGenerator->generateExitUrl($exitTo);
+        return $this->impersonate_url_generator->generate_exit_url($exit_to);
     }
-
-    public function getImpersonateExitPath(?string $exitTo = null): string
+    public function get_impersonate_exit_path(?string $exit_to = null): string
     {
-        if (null === $this->impersonateUrlGenerator) {
+        if (null === $this->impersonate_url_generator) {
             return '';
         }
-
-        return $this->impersonateUrlGenerator->generateExitPath($exitTo);
+        return $this->impersonate_url_generator->generate_exit_path($exit_to);
     }
-
-    public function getImpersonateUrl(string $identifier): string
+    public function get_impersonate_url(string $identifier): string
     {
-        if (null === $this->impersonateUrlGenerator) {
+        if (null === $this->impersonate_url_generator) {
             return '';
         }
-
-        return $this->impersonateUrlGenerator->generateImpersonationUrl($identifier);
+        return $this->impersonate_url_generator->generate_impersonation_url($identifier);
     }
-
-    public function getImpersonatePath(string $identifier): string
+    public function get_impersonate_path(string $identifier): string
     {
-        if (null === $this->impersonateUrlGenerator) {
+        if (null === $this->impersonate_url_generator) {
             return '';
         }
-
-        return $this->impersonateUrlGenerator->generateImpersonationPath($identifier);
+        return $this->impersonate_url_generator->generate_impersonation_path($identifier);
     }
-
-    public function getFunctions(): array
+    public function get_functions(): array
     {
-        $functions = [
-            new TwigFunction('is_granted', $this->isGranted(...)),
-            new TwigFunction('access_decision', $this->getAccessDecision(...)),
-            new TwigFunction('impersonation_exit_url', $this->getImpersonateExitUrl(...)),
-            new TwigFunction('impersonation_exit_path', $this->getImpersonateExitPath(...)),
-            new TwigFunction('impersonation_url', $this->getImpersonateUrl(...)),
-            new TwigFunction('impersonation_path', $this->getImpersonatePath(...)),
-        ];
-
-        if ($this->securityChecker instanceof UserAuthorizationCheckerInterface) {
-            $functions[] = new TwigFunction('is_granted_for_user', $this->isGrantedForUser(...));
-            $functions[] = new TwigFunction('access_decision_for_user', $this->getAccessDecisionForUser(...));
+        $functions = [new Twig_Function('is_granted', $this->is_granted(...)), new Twig_Function('access_decision', $this->get_access_decision(...)), new Twig_Function('impersonation_exit_url', $this->get_impersonate_exit_url(...)), new Twig_Function('impersonation_exit_path', $this->get_impersonate_exit_path(...)), new Twig_Function('impersonation_url', $this->get_impersonate_url(...)), new Twig_Function('impersonation_path', $this->get_impersonate_path(...))];
+        if ($this->security_checker instanceof User_Authorization_Checker_Interface) {
+            $functions[] = new Twig_Function('is_granted_for_user', $this->is_granted_for_user(...));
+            $functions[] = new Twig_Function('access_decision_for_user', $this->get_access_decision_for_user(...));
         }
-
         return $functions;
     }
 }

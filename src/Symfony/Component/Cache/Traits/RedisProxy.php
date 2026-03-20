@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,1290 +9,1047 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Traits;
 
-use Symfony\Component\VarExporter\LazyObjectInterface;
-use Symfony\Contracts\Service\ResetInterface;
-
+use Symfony\Component\Var_Exporter\Lazy_Object_Interface;
+use Symfony\Contracts\Service\Reset_Interface;
 // Help opcache.preload discover always-needed symbols
-class_exists(\Symfony\Component\VarExporter\Internal\Hydrator::class);
-class_exists(\Symfony\Component\VarExporter\Internal\LazyObjectRegistry::class);
-class_exists(\Symfony\Component\VarExporter\Internal\LazyObjectState::class);
-
+class_exists(\Symfony\Component\Var_Exporter\Internal\Hydrator::class);
+class_exists(\Symfony\Component\Var_Exporter\Internal\Lazy_Object_Registry::class);
+class_exists(\Symfony\Component\Var_Exporter\Internal\Lazy_Object_State::class);
 /**
  * @internal
  */
-class RedisProxy extends \Redis implements ResetInterface, LazyObjectInterface
+class Redis_Proxy extends \Redis implements Reset_Interface, Lazy_Object_Interface
 {
-    use Redis62ProxyTrait;
-    use Redis63ProxyTrait;
-    use RedisProxyTrait {
+    use Redis62proxy_Trait;
+    use Redis63proxy_Trait;
+    use Redis_Proxy_Trait {
         resetLazyObject as reset;
     }
-
     public function __construct($options = null)
     {
-        $this->initializeLazyObject()->__construct(...\func_get_args());
+        $this->initialize_lazy_object()->__construct(...\func_get_args());
     }
-
     public function _compress($value): string
     {
-        return $this->initializeLazyObject()->_compress(...\func_get_args());
+        return $this->initialize_lazy_object()->_compress(...\func_get_args());
     }
-
     public function _pack($value): string
     {
-        return $this->initializeLazyObject()->_pack(...\func_get_args());
+        return $this->initialize_lazy_object()->_pack(...\func_get_args());
     }
-
     public function _prefix($key): string
     {
-        return $this->initializeLazyObject()->_prefix(...\func_get_args());
+        return $this->initialize_lazy_object()->_prefix(...\func_get_args());
     }
-
     public function _serialize($value): string
     {
-        return $this->initializeLazyObject()->_serialize(...\func_get_args());
+        return $this->initialize_lazy_object()->_serialize(...\func_get_args());
     }
-
     public function _uncompress($value): string
     {
-        return $this->initializeLazyObject()->_uncompress(...\func_get_args());
+        return $this->initialize_lazy_object()->_uncompress(...\func_get_args());
     }
-
     public function _unpack($value): mixed
     {
-        return $this->initializeLazyObject()->_unpack(...\func_get_args());
+        return $this->initialize_lazy_object()->_unpack(...\func_get_args());
     }
-
     public function _unserialize($value): mixed
     {
-        return $this->initializeLazyObject()->_unserialize(...\func_get_args());
+        return $this->initialize_lazy_object()->_unserialize(...\func_get_args());
     }
-
     public function acl($subcmd, ...$args): mixed
     {
-        return $this->initializeLazyObject()->acl(...\func_get_args());
+        return $this->initialize_lazy_object()->acl(...\func_get_args());
     }
-
     public function append($key, $value): \Redis|false|int
     {
-        return $this->initializeLazyObject()->append(...\func_get_args());
+        return $this->initialize_lazy_object()->append(...\func_get_args());
     }
-
-    public function auth(#[\SensitiveParameter] $credentials): \Redis|bool
+    public function auth(
+        #[\Sensitive_Parameter]
+        $credentials
+    ): \Redis|bool
     {
-        return $this->initializeLazyObject()->auth(...\func_get_args());
+        return $this->initialize_lazy_object()->auth(...\func_get_args());
     }
-
-    public function bgSave(): \Redis|bool
+    public function bg_save(): \Redis|bool
     {
-        return $this->initializeLazyObject()->bgSave(...\func_get_args());
+        return $this->initialize_lazy_object()->bg_save(...\func_get_args());
     }
-
     public function bgrewriteaof(): \Redis|bool
     {
-        return $this->initializeLazyObject()->bgrewriteaof(...\func_get_args());
+        return $this->initialize_lazy_object()->bgrewriteaof(...\func_get_args());
     }
-
     public function bitcount($key, $start = 0, $end = -1, $bybit = false): \Redis|false|int
     {
-        return $this->initializeLazyObject()->bitcount(...\func_get_args());
+        return $this->initialize_lazy_object()->bitcount(...\func_get_args());
     }
-
     public function bitop($operation, $deskey, $srckey, ...$other_keys): \Redis|false|int
     {
-        return $this->initializeLazyObject()->bitop(...\func_get_args());
+        return $this->initialize_lazy_object()->bitop(...\func_get_args());
     }
-
     public function bitpos($key, $bit, $start = 0, $end = -1, $bybit = false): \Redis|false|int
     {
-        return $this->initializeLazyObject()->bitpos(...\func_get_args());
+        return $this->initialize_lazy_object()->bitpos(...\func_get_args());
     }
-
-    public function blPop($key_or_keys, $timeout_or_key, ...$extra_args): \Redis|array|false|null
+    public function bl_pop($key_or_keys, $timeout_or_key, ...$extra_args): \Redis|array|false|null
     {
-        return $this->initializeLazyObject()->blPop(...\func_get_args());
+        return $this->initialize_lazy_object()->bl_pop(...\func_get_args());
     }
-
     public function blmove($src, $dst, $wherefrom, $whereto, $timeout): \Redis|false|string
     {
-        return $this->initializeLazyObject()->blmove(...\func_get_args());
+        return $this->initialize_lazy_object()->blmove(...\func_get_args());
     }
-
     public function blmpop($timeout, $keys, $from, $count = 1): \Redis|array|false|null
     {
-        return $this->initializeLazyObject()->blmpop(...\func_get_args());
+        return $this->initialize_lazy_object()->blmpop(...\func_get_args());
     }
-
-    public function brPop($key_or_keys, $timeout_or_key, ...$extra_args): \Redis|array|false|null
+    public function br_pop($key_or_keys, $timeout_or_key, ...$extra_args): \Redis|array|false|null
     {
-        return $this->initializeLazyObject()->brPop(...\func_get_args());
+        return $this->initialize_lazy_object()->br_pop(...\func_get_args());
     }
-
     public function brpoplpush($src, $dst, $timeout): \Redis|false|string
     {
-        return $this->initializeLazyObject()->brpoplpush(...\func_get_args());
+        return $this->initialize_lazy_object()->brpoplpush(...\func_get_args());
     }
-
-    public function bzPopMax($key, $timeout_or_key, ...$extra_args): \Redis|array|false
+    public function bz_pop_max($key, $timeout_or_key, ...$extra_args): \Redis|array|false
     {
-        return $this->initializeLazyObject()->bzPopMax(...\func_get_args());
+        return $this->initialize_lazy_object()->bz_pop_max(...\func_get_args());
     }
-
-    public function bzPopMin($key, $timeout_or_key, ...$extra_args): \Redis|array|false
+    public function bz_pop_min($key, $timeout_or_key, ...$extra_args): \Redis|array|false
     {
-        return $this->initializeLazyObject()->bzPopMin(...\func_get_args());
+        return $this->initialize_lazy_object()->bz_pop_min(...\func_get_args());
     }
-
     public function bzmpop($timeout, $keys, $from, $count = 1): \Redis|array|false|null
     {
-        return $this->initializeLazyObject()->bzmpop(...\func_get_args());
+        return $this->initialize_lazy_object()->bzmpop(...\func_get_args());
     }
-
-    public function clearLastError(): bool
+    public function clear_last_error(): bool
     {
-        return $this->initializeLazyObject()->clearLastError(...\func_get_args());
+        return $this->initialize_lazy_object()->clear_last_error(...\func_get_args());
     }
-
-    public function clearTransferredBytes(): void
+    public function clear_transferred_bytes(): void
     {
-        $this->initializeLazyObject()->clearTransferredBytes(...\func_get_args());
+        $this->initialize_lazy_object()->clear_transferred_bytes(...\func_get_args());
     }
-
     public function client($opt, ...$args): mixed
     {
-        return $this->initializeLazyObject()->client(...\func_get_args());
+        return $this->initialize_lazy_object()->client(...\func_get_args());
     }
-
     public function close(): bool
     {
-        return $this->initializeLazyObject()->close(...\func_get_args());
+        return $this->initialize_lazy_object()->close(...\func_get_args());
     }
-
     public function command($opt = null, ...$args): mixed
     {
-        return $this->initializeLazyObject()->command(...\func_get_args());
+        return $this->initialize_lazy_object()->command(...\func_get_args());
     }
-
     public function config($operation, $key_or_settings = null, $value = null): mixed
     {
-        return $this->initializeLazyObject()->config(...\func_get_args());
+        return $this->initialize_lazy_object()->config(...\func_get_args());
     }
-
     public function connect($host, $port = 6379, $timeout = 0, $persistent_id = null, $retry_interval = 0, $read_timeout = 0, $context = null): bool
     {
-        return $this->initializeLazyObject()->connect(...\func_get_args());
+        return $this->initialize_lazy_object()->connect(...\func_get_args());
     }
-
     public function copy($src, $dst, $options = null): \Redis|bool
     {
-        return $this->initializeLazyObject()->copy(...\func_get_args());
+        return $this->initialize_lazy_object()->copy(...\func_get_args());
     }
-
-    public function dbSize(): \Redis|false|int
+    public function db_size(): \Redis|false|int
     {
-        return $this->initializeLazyObject()->dbSize(...\func_get_args());
+        return $this->initialize_lazy_object()->db_size(...\func_get_args());
     }
-
     public function debug($key): \Redis|string
     {
-        return $this->initializeLazyObject()->debug(...\func_get_args());
+        return $this->initialize_lazy_object()->debug(...\func_get_args());
     }
-
     public function decr($key, $by = 1): \Redis|false|int
     {
-        return $this->initializeLazyObject()->decr(...\func_get_args());
+        return $this->initialize_lazy_object()->decr(...\func_get_args());
     }
-
-    public function decrBy($key, $value): \Redis|false|int
+    public function decr_by($key, $value): \Redis|false|int
     {
-        return $this->initializeLazyObject()->decrBy(...\func_get_args());
+        return $this->initialize_lazy_object()->decr_by(...\func_get_args());
     }
-
     public function del($key, ...$other_keys): \Redis|false|int
     {
-        return $this->initializeLazyObject()->del(...\func_get_args());
+        return $this->initialize_lazy_object()->del(...\func_get_args());
     }
-
     public function delete($key, ...$other_keys): \Redis|false|int
     {
-        return $this->initializeLazyObject()->delete(...\func_get_args());
+        return $this->initialize_lazy_object()->delete(...\func_get_args());
     }
-
     public function discard(): \Redis|bool
     {
-        return $this->initializeLazyObject()->discard(...\func_get_args());
+        return $this->initialize_lazy_object()->discard(...\func_get_args());
     }
-
     public function dump($key): \Redis|false|string
     {
-        return $this->initializeLazyObject()->dump(...\func_get_args());
+        return $this->initialize_lazy_object()->dump(...\func_get_args());
     }
-
     public function echo($str): \Redis|false|string
     {
-        return $this->initializeLazyObject()->echo(...\func_get_args());
+        return $this->initialize_lazy_object()->echo(...\func_get_args());
     }
-
     public function eval($script, $args = [], $num_keys = 0): mixed
     {
-        return $this->initializeLazyObject()->eval(...\func_get_args());
+        return $this->initialize_lazy_object()->eval(...\func_get_args());
     }
-
     public function eval_ro($script_sha, $args = [], $num_keys = 0): mixed
     {
-        return $this->initializeLazyObject()->eval_ro(...\func_get_args());
+        return $this->initialize_lazy_object()->eval_ro(...\func_get_args());
     }
-
     public function evalsha($sha1, $args = [], $num_keys = 0): mixed
     {
-        return $this->initializeLazyObject()->evalsha(...\func_get_args());
+        return $this->initialize_lazy_object()->evalsha(...\func_get_args());
     }
-
     public function evalsha_ro($sha1, $args = [], $num_keys = 0): mixed
     {
-        return $this->initializeLazyObject()->evalsha_ro(...\func_get_args());
+        return $this->initialize_lazy_object()->evalsha_ro(...\func_get_args());
     }
-
     public function exec(): \Redis|array|false
     {
-        return $this->initializeLazyObject()->exec(...\func_get_args());
+        return $this->initialize_lazy_object()->exec(...\func_get_args());
     }
-
     public function exists($key, ...$other_keys): \Redis|bool|int
     {
-        return $this->initializeLazyObject()->exists(...\func_get_args());
+        return $this->initialize_lazy_object()->exists(...\func_get_args());
     }
-
     public function expire($key, $timeout, $mode = null): \Redis|bool
     {
-        return $this->initializeLazyObject()->expire(...\func_get_args());
+        return $this->initialize_lazy_object()->expire(...\func_get_args());
     }
-
-    public function expireAt($key, $timestamp, $mode = null): \Redis|bool
+    public function expire_at($key, $timestamp, $mode = null): \Redis|bool
     {
-        return $this->initializeLazyObject()->expireAt(...\func_get_args());
+        return $this->initialize_lazy_object()->expire_at(...\func_get_args());
     }
-
     public function expiretime($key): \Redis|false|int
     {
-        return $this->initializeLazyObject()->expiretime(...\func_get_args());
+        return $this->initialize_lazy_object()->expiretime(...\func_get_args());
     }
-
     public function failover($to = null, $abort = false, $timeout = 0): \Redis|bool
     {
-        return $this->initializeLazyObject()->failover(...\func_get_args());
+        return $this->initialize_lazy_object()->failover(...\func_get_args());
     }
-
     public function fcall($fn, $keys = [], $args = []): mixed
     {
-        return $this->initializeLazyObject()->fcall(...\func_get_args());
+        return $this->initialize_lazy_object()->fcall(...\func_get_args());
     }
-
     public function fcall_ro($fn, $keys = [], $args = []): mixed
     {
-        return $this->initializeLazyObject()->fcall_ro(...\func_get_args());
+        return $this->initialize_lazy_object()->fcall_ro(...\func_get_args());
     }
-
-    public function flushAll($sync = null): \Redis|bool
+    public function flush_all($sync = null): \Redis|bool
     {
-        return $this->initializeLazyObject()->flushAll(...\func_get_args());
+        return $this->initialize_lazy_object()->flush_all(...\func_get_args());
     }
-
-    public function flushDB($sync = null): \Redis|bool
+    public function flush_db($sync = null): \Redis|bool
     {
-        return $this->initializeLazyObject()->flushDB(...\func_get_args());
+        return $this->initialize_lazy_object()->flush_db(...\func_get_args());
     }
-
     public function function($operation, ...$args): \Redis|array|bool|string
     {
-        return $this->initializeLazyObject()->function(...\func_get_args());
+        return $this->initialize_lazy_object()->function(...\func_get_args());
     }
-
     public function geoadd($key, $lng, $lat, $member, ...$other_triples_and_options): \Redis|false|int
     {
-        return $this->initializeLazyObject()->geoadd(...\func_get_args());
+        return $this->initialize_lazy_object()->geoadd(...\func_get_args());
     }
-
     public function geodist($key, $src, $dst, $unit = null): \Redis|false|float
     {
-        return $this->initializeLazyObject()->geodist(...\func_get_args());
+        return $this->initialize_lazy_object()->geodist(...\func_get_args());
     }
-
     public function geohash($key, $member, ...$other_members): \Redis|array|false
     {
-        return $this->initializeLazyObject()->geohash(...\func_get_args());
+        return $this->initialize_lazy_object()->geohash(...\func_get_args());
     }
-
     public function geopos($key, $member, ...$other_members): \Redis|array|false
     {
-        return $this->initializeLazyObject()->geopos(...\func_get_args());
+        return $this->initialize_lazy_object()->geopos(...\func_get_args());
     }
-
     public function georadius($key, $lng, $lat, $radius, $unit, $options = []): mixed
     {
-        return $this->initializeLazyObject()->georadius(...\func_get_args());
+        return $this->initialize_lazy_object()->georadius(...\func_get_args());
     }
-
     public function georadius_ro($key, $lng, $lat, $radius, $unit, $options = []): mixed
     {
-        return $this->initializeLazyObject()->georadius_ro(...\func_get_args());
+        return $this->initialize_lazy_object()->georadius_ro(...\func_get_args());
     }
-
     public function georadiusbymember($key, $member, $radius, $unit, $options = []): mixed
     {
-        return $this->initializeLazyObject()->georadiusbymember(...\func_get_args());
+        return $this->initialize_lazy_object()->georadiusbymember(...\func_get_args());
     }
-
     public function georadiusbymember_ro($key, $member, $radius, $unit, $options = []): mixed
     {
-        return $this->initializeLazyObject()->georadiusbymember_ro(...\func_get_args());
+        return $this->initialize_lazy_object()->georadiusbymember_ro(...\func_get_args());
     }
-
     public function geosearch($key, $position, $shape, $unit, $options = []): array
     {
-        return $this->initializeLazyObject()->geosearch(...\func_get_args());
+        return $this->initialize_lazy_object()->geosearch(...\func_get_args());
     }
-
     public function geosearchstore($dst, $src, $position, $shape, $unit, $options = []): \Redis|array|false|int
     {
-        return $this->initializeLazyObject()->geosearchstore(...\func_get_args());
+        return $this->initialize_lazy_object()->geosearchstore(...\func_get_args());
     }
-
     public function get($key): mixed
     {
-        return $this->initializeLazyObject()->get(...\func_get_args());
+        return $this->initialize_lazy_object()->get(...\func_get_args());
     }
-
-    public function getAuth(): mixed
+    public function get_auth(): mixed
     {
-        return $this->initializeLazyObject()->getAuth(...\func_get_args());
+        return $this->initialize_lazy_object()->get_auth(...\func_get_args());
     }
-
-    public function getBit($key, $idx): \Redis|false|int
+    public function get_bit($key, $idx): \Redis|false|int
     {
-        return $this->initializeLazyObject()->getBit(...\func_get_args());
+        return $this->initialize_lazy_object()->get_bit(...\func_get_args());
     }
-
-    public function getDBNum(): int
+    public function get_db_num(): int
     {
-        return $this->initializeLazyObject()->getDBNum(...\func_get_args());
+        return $this->initialize_lazy_object()->get_db_num(...\func_get_args());
     }
-
-    public function getDel($key): \Redis|bool|string
+    public function get_del($key): \Redis|bool|string
     {
-        return $this->initializeLazyObject()->getDel(...\func_get_args());
+        return $this->initialize_lazy_object()->get_del(...\func_get_args());
     }
-
-    public function getEx($key, $options = []): \Redis|bool|string
+    public function get_ex($key, $options = []): \Redis|bool|string
     {
-        return $this->initializeLazyObject()->getEx(...\func_get_args());
+        return $this->initialize_lazy_object()->get_ex(...\func_get_args());
     }
-
-    public function getHost(): string
+    public function get_host(): string
     {
-        return $this->initializeLazyObject()->getHost(...\func_get_args());
+        return $this->initialize_lazy_object()->get_host(...\func_get_args());
     }
-
-    public function getLastError(): ?string
+    public function get_last_error(): ?string
     {
-        return $this->initializeLazyObject()->getLastError(...\func_get_args());
+        return $this->initialize_lazy_object()->get_last_error(...\func_get_args());
     }
-
-    public function getMode(): int
+    public function get_mode(): int
     {
-        return $this->initializeLazyObject()->getMode(...\func_get_args());
+        return $this->initialize_lazy_object()->get_mode(...\func_get_args());
     }
-
-    public function getOption($option): mixed
+    public function get_option($option): mixed
     {
-        return $this->initializeLazyObject()->getOption(...\func_get_args());
+        return $this->initialize_lazy_object()->get_option(...\func_get_args());
     }
-
-    public function getPersistentID(): ?string
+    public function get_persistent_id(): ?string
     {
-        return $this->initializeLazyObject()->getPersistentID(...\func_get_args());
+        return $this->initialize_lazy_object()->get_persistent_id(...\func_get_args());
     }
-
-    public function getPort(): int
+    public function get_port(): int
     {
-        return $this->initializeLazyObject()->getPort(...\func_get_args());
+        return $this->initialize_lazy_object()->get_port(...\func_get_args());
     }
-
-    public function getRange($key, $start, $end): \Redis|false|string
+    public function get_range($key, $start, $end): \Redis|false|string
     {
-        return $this->initializeLazyObject()->getRange(...\func_get_args());
+        return $this->initialize_lazy_object()->get_range(...\func_get_args());
     }
-
-    public function getReadTimeout(): float
+    public function get_read_timeout(): float
     {
-        return $this->initializeLazyObject()->getReadTimeout(...\func_get_args());
+        return $this->initialize_lazy_object()->get_read_timeout(...\func_get_args());
     }
-
-    public function getTimeout(): false|float
+    public function get_timeout(): false|float
     {
-        return $this->initializeLazyObject()->getTimeout(...\func_get_args());
+        return $this->initialize_lazy_object()->get_timeout(...\func_get_args());
     }
-
-    public function getTransferredBytes(): array
+    public function get_transferred_bytes(): array
     {
-        return $this->initializeLazyObject()->getTransferredBytes(...\func_get_args());
+        return $this->initialize_lazy_object()->get_transferred_bytes(...\func_get_args());
     }
-
     public function getset($key, $value): \Redis|false|string
     {
-        return $this->initializeLazyObject()->getset(...\func_get_args());
+        return $this->initialize_lazy_object()->getset(...\func_get_args());
     }
-
-    public function hDel($key, $field, ...$other_fields): \Redis|false|int
+    public function h_del($key, $field, ...$other_fields): \Redis|false|int
     {
-        return $this->initializeLazyObject()->hDel(...\func_get_args());
+        return $this->initialize_lazy_object()->h_del(...\func_get_args());
     }
-
-    public function hExists($key, $field): \Redis|bool
+    public function h_exists($key, $field): \Redis|bool
     {
-        return $this->initializeLazyObject()->hExists(...\func_get_args());
+        return $this->initialize_lazy_object()->h_exists(...\func_get_args());
     }
-
-    public function hGet($key, $member): mixed
+    public function h_get($key, $member): mixed
     {
-        return $this->initializeLazyObject()->hGet(...\func_get_args());
+        return $this->initialize_lazy_object()->h_get(...\func_get_args());
     }
-
-    public function hGetAll($key): \Redis|array|false
+    public function h_get_all($key): \Redis|array|false
     {
-        return $this->initializeLazyObject()->hGetAll(...\func_get_args());
+        return $this->initialize_lazy_object()->h_get_all(...\func_get_args());
     }
-
-    public function hIncrBy($key, $field, $value): \Redis|false|int
+    public function h_incr_by($key, $field, $value): \Redis|false|int
     {
-        return $this->initializeLazyObject()->hIncrBy(...\func_get_args());
+        return $this->initialize_lazy_object()->h_incr_by(...\func_get_args());
     }
-
-    public function hIncrByFloat($key, $field, $value): \Redis|false|float
+    public function h_incr_by_float($key, $field, $value): \Redis|false|float
     {
-        return $this->initializeLazyObject()->hIncrByFloat(...\func_get_args());
+        return $this->initialize_lazy_object()->h_incr_by_float(...\func_get_args());
     }
-
-    public function hKeys($key): \Redis|array|false
+    public function h_keys($key): \Redis|array|false
     {
-        return $this->initializeLazyObject()->hKeys(...\func_get_args());
+        return $this->initialize_lazy_object()->h_keys(...\func_get_args());
     }
-
-    public function hLen($key): \Redis|false|int
+    public function h_len($key): \Redis|false|int
     {
-        return $this->initializeLazyObject()->hLen(...\func_get_args());
+        return $this->initialize_lazy_object()->h_len(...\func_get_args());
     }
-
-    public function hMget($key, $fields): \Redis|array|false
+    public function h_mget($key, $fields): \Redis|array|false
     {
-        return $this->initializeLazyObject()->hMget(...\func_get_args());
+        return $this->initialize_lazy_object()->h_mget(...\func_get_args());
     }
-
-    public function hMset($key, $fieldvals): \Redis|bool
+    public function h_mset($key, $fieldvals): \Redis|bool
     {
-        return $this->initializeLazyObject()->hMset(...\func_get_args());
+        return $this->initialize_lazy_object()->h_mset(...\func_get_args());
     }
-
-    public function hRandField($key, $options = null): \Redis|array|false|string
+    public function h_rand_field($key, $options = null): \Redis|array|false|string
     {
-        return $this->initializeLazyObject()->hRandField(...\func_get_args());
+        return $this->initialize_lazy_object()->h_rand_field(...\func_get_args());
     }
-
-    public function hSet($key, ...$fields_and_vals): \Redis|false|int
+    public function h_set($key, ...$fields_and_vals): \Redis|false|int
     {
-        return $this->initializeLazyObject()->hSet(...\func_get_args());
+        return $this->initialize_lazy_object()->h_set(...\func_get_args());
     }
-
-    public function hSetNx($key, $field, $value): \Redis|bool
+    public function h_set_nx($key, $field, $value): \Redis|bool
     {
-        return $this->initializeLazyObject()->hSetNx(...\func_get_args());
+        return $this->initialize_lazy_object()->h_set_nx(...\func_get_args());
     }
-
-    public function hStrLen($key, $field): \Redis|false|int
+    public function h_str_len($key, $field): \Redis|false|int
     {
-        return $this->initializeLazyObject()->hStrLen(...\func_get_args());
+        return $this->initialize_lazy_object()->h_str_len(...\func_get_args());
     }
-
-    public function hVals($key): \Redis|array|false
+    public function h_vals($key): \Redis|array|false
     {
-        return $this->initializeLazyObject()->hVals(...\func_get_args());
+        return $this->initialize_lazy_object()->h_vals(...\func_get_args());
     }
-
     public function hscan($key, &$iterator, $pattern = null, $count = 0): \Redis|array|bool
     {
-        return $this->initializeLazyObject()->hscan($key, $iterator, ...\array_slice(\func_get_args(), 2));
+        return $this->initialize_lazy_object()->hscan($key, $iterator, ...\array_slice(\func_get_args(), 2));
     }
-
     public function incr($key, $by = 1): \Redis|false|int
     {
-        return $this->initializeLazyObject()->incr(...\func_get_args());
+        return $this->initialize_lazy_object()->incr(...\func_get_args());
     }
-
-    public function incrBy($key, $value): \Redis|false|int
+    public function incr_by($key, $value): \Redis|false|int
     {
-        return $this->initializeLazyObject()->incrBy(...\func_get_args());
+        return $this->initialize_lazy_object()->incr_by(...\func_get_args());
     }
-
-    public function incrByFloat($key, $value): \Redis|false|float
+    public function incr_by_float($key, $value): \Redis|false|float
     {
-        return $this->initializeLazyObject()->incrByFloat(...\func_get_args());
+        return $this->initialize_lazy_object()->incr_by_float(...\func_get_args());
     }
-
     public function info(...$sections): \Redis|array|false
     {
-        return $this->initializeLazyObject()->info(...\func_get_args());
+        return $this->initialize_lazy_object()->info(...\func_get_args());
     }
-
-    public function isConnected(): bool
+    public function is_connected(): bool
     {
-        return $this->initializeLazyObject()->isConnected(...\func_get_args());
+        return $this->initialize_lazy_object()->is_connected(...\func_get_args());
     }
-
     public function keys($pattern)
     {
-        return $this->initializeLazyObject()->keys(...\func_get_args());
+        return $this->initialize_lazy_object()->keys(...\func_get_args());
     }
-
-    public function lInsert($key, $pos, $pivot, $value)
+    public function l_insert($key, $pos, $pivot, $value)
     {
-        return $this->initializeLazyObject()->lInsert(...\func_get_args());
+        return $this->initialize_lazy_object()->l_insert(...\func_get_args());
     }
-
-    public function lLen($key): \Redis|false|int
+    public function l_len($key): \Redis|false|int
     {
-        return $this->initializeLazyObject()->lLen(...\func_get_args());
+        return $this->initialize_lazy_object()->l_len(...\func_get_args());
     }
-
-    public function lMove($src, $dst, $wherefrom, $whereto): \Redis|false|string
+    public function l_move($src, $dst, $wherefrom, $whereto): \Redis|false|string
     {
-        return $this->initializeLazyObject()->lMove(...\func_get_args());
+        return $this->initialize_lazy_object()->l_move(...\func_get_args());
     }
-
-    public function lPop($key, $count = 0): \Redis|array|bool|string
+    public function l_pop($key, $count = 0): \Redis|array|bool|string
     {
-        return $this->initializeLazyObject()->lPop(...\func_get_args());
+        return $this->initialize_lazy_object()->l_pop(...\func_get_args());
     }
-
-    public function lPos($key, $value, $options = null): \Redis|array|bool|int|null
+    public function l_pos($key, $value, $options = null): \Redis|array|bool|int|null
     {
-        return $this->initializeLazyObject()->lPos(...\func_get_args());
+        return $this->initialize_lazy_object()->l_pos(...\func_get_args());
     }
-
-    public function lPush($key, ...$elements): \Redis|false|int
+    public function l_push($key, ...$elements): \Redis|false|int
     {
-        return $this->initializeLazyObject()->lPush(...\func_get_args());
+        return $this->initialize_lazy_object()->l_push(...\func_get_args());
     }
-
-    public function lPushx($key, $value): \Redis|false|int
+    public function l_pushx($key, $value): \Redis|false|int
     {
-        return $this->initializeLazyObject()->lPushx(...\func_get_args());
+        return $this->initialize_lazy_object()->l_pushx(...\func_get_args());
     }
-
-    public function lSet($key, $index, $value): \Redis|bool
+    public function l_set($key, $index, $value): \Redis|bool
     {
-        return $this->initializeLazyObject()->lSet(...\func_get_args());
+        return $this->initialize_lazy_object()->l_set(...\func_get_args());
     }
-
-    public function lastSave(): int
+    public function last_save(): int
     {
-        return $this->initializeLazyObject()->lastSave(...\func_get_args());
+        return $this->initialize_lazy_object()->last_save(...\func_get_args());
     }
-
     public function lcs($key1, $key2, $options = null): \Redis|array|false|int|string
     {
-        return $this->initializeLazyObject()->lcs(...\func_get_args());
+        return $this->initialize_lazy_object()->lcs(...\func_get_args());
     }
-
     public function lindex($key, $index): mixed
     {
-        return $this->initializeLazyObject()->lindex(...\func_get_args());
+        return $this->initialize_lazy_object()->lindex(...\func_get_args());
     }
-
     public function lmpop($keys, $from, $count = 1): \Redis|array|false|null
     {
-        return $this->initializeLazyObject()->lmpop(...\func_get_args());
+        return $this->initialize_lazy_object()->lmpop(...\func_get_args());
     }
-
     public function lrange($key, $start, $end): \Redis|array|false
     {
-        return $this->initializeLazyObject()->lrange(...\func_get_args());
+        return $this->initialize_lazy_object()->lrange(...\func_get_args());
     }
-
     public function lrem($key, $value, $count = 0): \Redis|false|int
     {
-        return $this->initializeLazyObject()->lrem(...\func_get_args());
+        return $this->initialize_lazy_object()->lrem(...\func_get_args());
     }
-
     public function ltrim($key, $start, $end): \Redis|bool
     {
-        return $this->initializeLazyObject()->ltrim(...\func_get_args());
+        return $this->initialize_lazy_object()->ltrim(...\func_get_args());
     }
-
     public function mget($keys): \Redis|array|false
     {
-        return $this->initializeLazyObject()->mget(...\func_get_args());
+        return $this->initialize_lazy_object()->mget(...\func_get_args());
     }
-
-    public function migrate($host, $port, $key, $dstdb, $timeout, $copy = false, $replace = false, #[\SensitiveParameter] $credentials = null): \Redis|bool
+    public function migrate(
+        $host,
+        $port,
+        $key,
+        $dstdb,
+        $timeout,
+        $copy = false,
+        $replace = false,
+        #[\Sensitive_Parameter]
+        $credentials = null
+    ): \Redis|bool
     {
-        return $this->initializeLazyObject()->migrate(...\func_get_args());
+        return $this->initialize_lazy_object()->migrate(...\func_get_args());
     }
-
     public function move($key, $index): \Redis|bool
     {
-        return $this->initializeLazyObject()->move(...\func_get_args());
+        return $this->initialize_lazy_object()->move(...\func_get_args());
     }
-
     public function mset($key_values): \Redis|bool
     {
-        return $this->initializeLazyObject()->mset(...\func_get_args());
+        return $this->initialize_lazy_object()->mset(...\func_get_args());
     }
-
     public function msetnx($key_values): \Redis|bool
     {
-        return $this->initializeLazyObject()->msetnx(...\func_get_args());
+        return $this->initialize_lazy_object()->msetnx(...\func_get_args());
     }
-
     public function multi($value = \Redis::MULTI): \Redis|bool
     {
-        return $this->initializeLazyObject()->multi(...\func_get_args());
+        return $this->initialize_lazy_object()->multi(...\func_get_args());
     }
-
     public function object($subcommand, $key): \Redis|false|int|string
     {
-        return $this->initializeLazyObject()->object(...\func_get_args());
+        return $this->initialize_lazy_object()->object(...\func_get_args());
     }
-
     public function open($host, $port = 6379, $timeout = 0, $persistent_id = null, $retry_interval = 0, $read_timeout = 0, $context = null): bool
     {
-        return $this->initializeLazyObject()->open(...\func_get_args());
+        return $this->initialize_lazy_object()->open(...\func_get_args());
     }
-
     public function pconnect($host, $port = 6379, $timeout = 0, $persistent_id = null, $retry_interval = 0, $read_timeout = 0, $context = null): bool
     {
-        return $this->initializeLazyObject()->pconnect(...\func_get_args());
+        return $this->initialize_lazy_object()->pconnect(...\func_get_args());
     }
-
     public function persist($key): \Redis|bool
     {
-        return $this->initializeLazyObject()->persist(...\func_get_args());
+        return $this->initialize_lazy_object()->persist(...\func_get_args());
     }
-
     public function pexpire($key, $timeout, $mode = null): bool
     {
-        return $this->initializeLazyObject()->pexpire(...\func_get_args());
+        return $this->initialize_lazy_object()->pexpire(...\func_get_args());
     }
-
-    public function pexpireAt($key, $timestamp, $mode = null): \Redis|bool
+    public function pexpire_at($key, $timestamp, $mode = null): \Redis|bool
     {
-        return $this->initializeLazyObject()->pexpireAt(...\func_get_args());
+        return $this->initialize_lazy_object()->pexpire_at(...\func_get_args());
     }
-
     public function pexpiretime($key): \Redis|false|int
     {
-        return $this->initializeLazyObject()->pexpiretime(...\func_get_args());
+        return $this->initialize_lazy_object()->pexpiretime(...\func_get_args());
     }
-
     public function pfadd($key, $elements): \Redis|int
     {
-        return $this->initializeLazyObject()->pfadd(...\func_get_args());
+        return $this->initialize_lazy_object()->pfadd(...\func_get_args());
     }
-
     public function pfcount($key_or_keys): \Redis|false|int
     {
-        return $this->initializeLazyObject()->pfcount(...\func_get_args());
+        return $this->initialize_lazy_object()->pfcount(...\func_get_args());
     }
-
     public function pfmerge($dst, $srckeys): \Redis|bool
     {
-        return $this->initializeLazyObject()->pfmerge(...\func_get_args());
+        return $this->initialize_lazy_object()->pfmerge(...\func_get_args());
     }
-
     public function ping($message = null): \Redis|bool|string
     {
-        return $this->initializeLazyObject()->ping(...\func_get_args());
+        return $this->initialize_lazy_object()->ping(...\func_get_args());
     }
-
     public function pipeline(): \Redis|bool
     {
-        return $this->initializeLazyObject()->pipeline(...\func_get_args());
+        return $this->initialize_lazy_object()->pipeline(...\func_get_args());
     }
-
     public function popen($host, $port = 6379, $timeout = 0, $persistent_id = null, $retry_interval = 0, $read_timeout = 0, $context = null): bool
     {
-        return $this->initializeLazyObject()->popen(...\func_get_args());
+        return $this->initialize_lazy_object()->popen(...\func_get_args());
     }
-
     public function psetex($key, $expire, $value): \Redis|bool
     {
-        return $this->initializeLazyObject()->psetex(...\func_get_args());
+        return $this->initialize_lazy_object()->psetex(...\func_get_args());
     }
-
     public function psubscribe($patterns, $cb): bool
     {
-        return $this->initializeLazyObject()->psubscribe(...\func_get_args());
+        return $this->initialize_lazy_object()->psubscribe(...\func_get_args());
     }
-
     public function pttl($key): \Redis|false|int
     {
-        return $this->initializeLazyObject()->pttl(...\func_get_args());
+        return $this->initialize_lazy_object()->pttl(...\func_get_args());
     }
-
     public function publish($channel, $message): \Redis|false|int
     {
-        return $this->initializeLazyObject()->publish(...\func_get_args());
+        return $this->initialize_lazy_object()->publish(...\func_get_args());
     }
-
     public function pubsub($command, $arg = null): mixed
     {
-        return $this->initializeLazyObject()->pubsub(...\func_get_args());
+        return $this->initialize_lazy_object()->pubsub(...\func_get_args());
     }
-
     public function punsubscribe($patterns): \Redis|array|bool
     {
-        return $this->initializeLazyObject()->punsubscribe(...\func_get_args());
+        return $this->initialize_lazy_object()->punsubscribe(...\func_get_args());
     }
-
-    public function rPop($key, $count = 0): \Redis|array|bool|string
+    public function r_pop($key, $count = 0): \Redis|array|bool|string
     {
-        return $this->initializeLazyObject()->rPop(...\func_get_args());
+        return $this->initialize_lazy_object()->r_pop(...\func_get_args());
     }
-
-    public function rPush($key, ...$elements): \Redis|false|int
+    public function r_push($key, ...$elements): \Redis|false|int
     {
-        return $this->initializeLazyObject()->rPush(...\func_get_args());
+        return $this->initialize_lazy_object()->r_push(...\func_get_args());
     }
-
-    public function rPushx($key, $value): \Redis|false|int
+    public function r_pushx($key, $value): \Redis|false|int
     {
-        return $this->initializeLazyObject()->rPushx(...\func_get_args());
+        return $this->initialize_lazy_object()->r_pushx(...\func_get_args());
     }
-
-    public function randomKey(): \Redis|false|string
+    public function random_key(): \Redis|false|string
     {
-        return $this->initializeLazyObject()->randomKey(...\func_get_args());
+        return $this->initialize_lazy_object()->random_key(...\func_get_args());
     }
-
     public function rawcommand($command, ...$args): mixed
     {
-        return $this->initializeLazyObject()->rawcommand(...\func_get_args());
+        return $this->initialize_lazy_object()->rawcommand(...\func_get_args());
     }
-
     public function rename($old_name, $new_name): \Redis|bool
     {
-        return $this->initializeLazyObject()->rename(...\func_get_args());
+        return $this->initialize_lazy_object()->rename(...\func_get_args());
     }
-
-    public function renameNx($key_src, $key_dst): \Redis|bool
+    public function rename_nx($key_src, $key_dst): \Redis|bool
     {
-        return $this->initializeLazyObject()->renameNx(...\func_get_args());
+        return $this->initialize_lazy_object()->rename_nx(...\func_get_args());
     }
-
     public function replicaof($host = null, $port = 6379): \Redis|bool
     {
-        return $this->initializeLazyObject()->replicaof(...\func_get_args());
+        return $this->initialize_lazy_object()->replicaof(...\func_get_args());
     }
-
     public function restore($key, $ttl, $value, $options = null): \Redis|bool
     {
-        return $this->initializeLazyObject()->restore(...\func_get_args());
+        return $this->initialize_lazy_object()->restore(...\func_get_args());
     }
-
     public function role(): mixed
     {
-        return $this->initializeLazyObject()->role(...\func_get_args());
+        return $this->initialize_lazy_object()->role(...\func_get_args());
     }
-
     public function rpoplpush($srckey, $dstkey): \Redis|false|string
     {
-        return $this->initializeLazyObject()->rpoplpush(...\func_get_args());
+        return $this->initialize_lazy_object()->rpoplpush(...\func_get_args());
     }
-
-    public function sAdd($key, $value, ...$other_values): \Redis|false|int
+    public function s_add($key, $value, ...$other_values): \Redis|false|int
     {
-        return $this->initializeLazyObject()->sAdd(...\func_get_args());
+        return $this->initialize_lazy_object()->s_add(...\func_get_args());
     }
-
-    public function sAddArray($key, $values): int
+    public function s_add_array($key, $values): int
     {
-        return $this->initializeLazyObject()->sAddArray(...\func_get_args());
+        return $this->initialize_lazy_object()->s_add_array(...\func_get_args());
     }
-
-    public function sDiff($key, ...$other_keys): \Redis|array|false
+    public function s_diff($key, ...$other_keys): \Redis|array|false
     {
-        return $this->initializeLazyObject()->sDiff(...\func_get_args());
+        return $this->initialize_lazy_object()->s_diff(...\func_get_args());
     }
-
-    public function sDiffStore($dst, $key, ...$other_keys): \Redis|false|int
+    public function s_diff_store($dst, $key, ...$other_keys): \Redis|false|int
     {
-        return $this->initializeLazyObject()->sDiffStore(...\func_get_args());
+        return $this->initialize_lazy_object()->s_diff_store(...\func_get_args());
     }
-
-    public function sInter($key, ...$other_keys): \Redis|array|false
+    public function s_inter($key, ...$other_keys): \Redis|array|false
     {
-        return $this->initializeLazyObject()->sInter(...\func_get_args());
+        return $this->initialize_lazy_object()->s_inter(...\func_get_args());
     }
-
-    public function sInterStore($key, ...$other_keys): \Redis|false|int
+    public function s_inter_store($key, ...$other_keys): \Redis|false|int
     {
-        return $this->initializeLazyObject()->sInterStore(...\func_get_args());
+        return $this->initialize_lazy_object()->s_inter_store(...\func_get_args());
     }
-
-    public function sMembers($key): \Redis|array|false
+    public function s_members($key): \Redis|array|false
     {
-        return $this->initializeLazyObject()->sMembers(...\func_get_args());
+        return $this->initialize_lazy_object()->s_members(...\func_get_args());
     }
-
-    public function sMisMember($key, $member, ...$other_members): \Redis|array|false
+    public function s_mis_member($key, $member, ...$other_members): \Redis|array|false
     {
-        return $this->initializeLazyObject()->sMisMember(...\func_get_args());
+        return $this->initialize_lazy_object()->s_mis_member(...\func_get_args());
     }
-
-    public function sMove($src, $dst, $value): \Redis|bool
+    public function s_move($src, $dst, $value): \Redis|bool
     {
-        return $this->initializeLazyObject()->sMove(...\func_get_args());
+        return $this->initialize_lazy_object()->s_move(...\func_get_args());
     }
-
-    public function sPop($key, $count = 0): \Redis|array|false|string
+    public function s_pop($key, $count = 0): \Redis|array|false|string
     {
-        return $this->initializeLazyObject()->sPop(...\func_get_args());
+        return $this->initialize_lazy_object()->s_pop(...\func_get_args());
     }
-
-    public function sRandMember($key, $count = 0): mixed
+    public function s_rand_member($key, $count = 0): mixed
     {
-        return $this->initializeLazyObject()->sRandMember(...\func_get_args());
+        return $this->initialize_lazy_object()->s_rand_member(...\func_get_args());
     }
-
-    public function sUnion($key, ...$other_keys): \Redis|array|false
+    public function s_union($key, ...$other_keys): \Redis|array|false
     {
-        return $this->initializeLazyObject()->sUnion(...\func_get_args());
+        return $this->initialize_lazy_object()->s_union(...\func_get_args());
     }
-
-    public function sUnionStore($dst, $key, ...$other_keys): \Redis|false|int
+    public function s_union_store($dst, $key, ...$other_keys): \Redis|false|int
     {
-        return $this->initializeLazyObject()->sUnionStore(...\func_get_args());
+        return $this->initialize_lazy_object()->s_union_store(...\func_get_args());
     }
-
     public function save(): \Redis|bool
     {
-        return $this->initializeLazyObject()->save(...\func_get_args());
+        return $this->initialize_lazy_object()->save(...\func_get_args());
     }
-
     public function scan(&$iterator, $pattern = null, $count = 0, $type = null): array|false
     {
-        return $this->initializeLazyObject()->scan($iterator, ...\array_slice(\func_get_args(), 1));
+        return $this->initialize_lazy_object()->scan($iterator, ...\array_slice(\func_get_args(), 1));
     }
-
     public function scard($key): \Redis|false|int
     {
-        return $this->initializeLazyObject()->scard(...\func_get_args());
+        return $this->initialize_lazy_object()->scard(...\func_get_args());
     }
-
     public function script($command, ...$args): mixed
     {
-        return $this->initializeLazyObject()->script(...\func_get_args());
+        return $this->initialize_lazy_object()->script(...\func_get_args());
     }
-
     public function select($db): \Redis|bool
     {
-        return $this->initializeLazyObject()->select(...\func_get_args());
+        return $this->initialize_lazy_object()->select(...\func_get_args());
     }
-
     public function set($key, $value, $options = null): \Redis|bool|string
     {
-        return $this->initializeLazyObject()->set(...\func_get_args());
+        return $this->initialize_lazy_object()->set(...\func_get_args());
     }
-
-    public function setBit($key, $idx, $value): \Redis|false|int
+    public function set_bit($key, $idx, $value): \Redis|false|int
     {
-        return $this->initializeLazyObject()->setBit(...\func_get_args());
+        return $this->initialize_lazy_object()->set_bit(...\func_get_args());
     }
-
-    public function setOption($option, $value): bool
+    public function set_option($option, $value): bool
     {
-        return $this->initializeLazyObject()->setOption(...\func_get_args());
+        return $this->initialize_lazy_object()->set_option(...\func_get_args());
     }
-
-    public function setRange($key, $index, $value): \Redis|false|int
+    public function set_range($key, $index, $value): \Redis|false|int
     {
-        return $this->initializeLazyObject()->setRange(...\func_get_args());
+        return $this->initialize_lazy_object()->set_range(...\func_get_args());
     }
-
     public function setex($key, $expire, $value)
     {
-        return $this->initializeLazyObject()->setex(...\func_get_args());
+        return $this->initialize_lazy_object()->setex(...\func_get_args());
     }
-
     public function setnx($key, $value): \Redis|bool
     {
-        return $this->initializeLazyObject()->setnx(...\func_get_args());
+        return $this->initialize_lazy_object()->setnx(...\func_get_args());
     }
-
     public function sintercard($keys, $limit = -1): \Redis|false|int
     {
-        return $this->initializeLazyObject()->sintercard(...\func_get_args());
+        return $this->initialize_lazy_object()->sintercard(...\func_get_args());
     }
-
     public function sismember($key, $value): \Redis|bool
     {
-        return $this->initializeLazyObject()->sismember(...\func_get_args());
+        return $this->initialize_lazy_object()->sismember(...\func_get_args());
     }
-
     public function slaveof($host = null, $port = 6379): \Redis|bool
     {
-        return $this->initializeLazyObject()->slaveof(...\func_get_args());
+        return $this->initialize_lazy_object()->slaveof(...\func_get_args());
     }
-
     public function slowlog($operation, $length = 0): mixed
     {
-        return $this->initializeLazyObject()->slowlog(...\func_get_args());
+        return $this->initialize_lazy_object()->slowlog(...\func_get_args());
     }
-
     public function sort($key, $options = null): mixed
     {
-        return $this->initializeLazyObject()->sort(...\func_get_args());
+        return $this->initialize_lazy_object()->sort(...\func_get_args());
     }
-
-    public function sortAsc($key, $pattern = null, $get = null, $offset = -1, $count = -1, $store = null): array
+    public function sort_asc($key, $pattern = null, $get = null, $offset = -1, $count = -1, $store = null): array
     {
-        return $this->initializeLazyObject()->sortAsc(...\func_get_args());
+        return $this->initialize_lazy_object()->sort_asc(...\func_get_args());
     }
-
-    public function sortAscAlpha($key, $pattern = null, $get = null, $offset = -1, $count = -1, $store = null): array
+    public function sort_asc_alpha($key, $pattern = null, $get = null, $offset = -1, $count = -1, $store = null): array
     {
-        return $this->initializeLazyObject()->sortAscAlpha(...\func_get_args());
+        return $this->initialize_lazy_object()->sort_asc_alpha(...\func_get_args());
     }
-
-    public function sortDesc($key, $pattern = null, $get = null, $offset = -1, $count = -1, $store = null): array
+    public function sort_desc($key, $pattern = null, $get = null, $offset = -1, $count = -1, $store = null): array
     {
-        return $this->initializeLazyObject()->sortDesc(...\func_get_args());
+        return $this->initialize_lazy_object()->sort_desc(...\func_get_args());
     }
-
-    public function sortDescAlpha($key, $pattern = null, $get = null, $offset = -1, $count = -1, $store = null): array
+    public function sort_desc_alpha($key, $pattern = null, $get = null, $offset = -1, $count = -1, $store = null): array
     {
-        return $this->initializeLazyObject()->sortDescAlpha(...\func_get_args());
+        return $this->initialize_lazy_object()->sort_desc_alpha(...\func_get_args());
     }
-
     public function sort_ro($key, $options = null): mixed
     {
-        return $this->initializeLazyObject()->sort_ro(...\func_get_args());
+        return $this->initialize_lazy_object()->sort_ro(...\func_get_args());
     }
-
     public function srem($key, $value, ...$other_values): \Redis|false|int
     {
-        return $this->initializeLazyObject()->srem(...\func_get_args());
+        return $this->initialize_lazy_object()->srem(...\func_get_args());
     }
-
     public function sscan($key, &$iterator, $pattern = null, $count = 0): array|false
     {
-        return $this->initializeLazyObject()->sscan($key, $iterator, ...\array_slice(\func_get_args(), 2));
+        return $this->initialize_lazy_object()->sscan($key, $iterator, ...\array_slice(\func_get_args(), 2));
     }
-
     public function ssubscribe($channels, $cb): bool
     {
-        return $this->initializeLazyObject()->ssubscribe(...\func_get_args());
+        return $this->initialize_lazy_object()->ssubscribe(...\func_get_args());
     }
-
     public function strlen($key): \Redis|false|int
     {
-        return $this->initializeLazyObject()->strlen(...\func_get_args());
+        return $this->initialize_lazy_object()->strlen(...\func_get_args());
     }
-
     public function subscribe($channels, $cb): bool
     {
-        return $this->initializeLazyObject()->subscribe(...\func_get_args());
+        return $this->initialize_lazy_object()->subscribe(...\func_get_args());
     }
-
     public function sunsubscribe($channels): \Redis|array|bool
     {
-        return $this->initializeLazyObject()->sunsubscribe(...\func_get_args());
+        return $this->initialize_lazy_object()->sunsubscribe(...\func_get_args());
     }
-
     public function swapdb($src, $dst): \Redis|bool
     {
-        return $this->initializeLazyObject()->swapdb(...\func_get_args());
+        return $this->initialize_lazy_object()->swapdb(...\func_get_args());
     }
-
     public function time(): \Redis|array
     {
-        return $this->initializeLazyObject()->time(...\func_get_args());
+        return $this->initialize_lazy_object()->time(...\func_get_args());
     }
-
     public function touch($key_or_array, ...$more_keys): \Redis|false|int
     {
-        return $this->initializeLazyObject()->touch(...\func_get_args());
+        return $this->initialize_lazy_object()->touch(...\func_get_args());
     }
-
     public function ttl($key): \Redis|false|int
     {
-        return $this->initializeLazyObject()->ttl(...\func_get_args());
+        return $this->initialize_lazy_object()->ttl(...\func_get_args());
     }
-
     public function type($key): \Redis|false|int
     {
-        return $this->initializeLazyObject()->type(...\func_get_args());
+        return $this->initialize_lazy_object()->type(...\func_get_args());
     }
-
     public function unlink($key, ...$other_keys): \Redis|false|int
     {
-        return $this->initializeLazyObject()->unlink(...\func_get_args());
+        return $this->initialize_lazy_object()->unlink(...\func_get_args());
     }
-
     public function unsubscribe($channels): \Redis|array|bool
     {
-        return $this->initializeLazyObject()->unsubscribe(...\func_get_args());
+        return $this->initialize_lazy_object()->unsubscribe(...\func_get_args());
     }
-
     public function unwatch(): \Redis|bool
     {
-        return $this->initializeLazyObject()->unwatch(...\func_get_args());
+        return $this->initialize_lazy_object()->unwatch(...\func_get_args());
     }
-
     public function wait($numreplicas, $timeout): false|int
     {
-        return $this->initializeLazyObject()->wait(...\func_get_args());
+        return $this->initialize_lazy_object()->wait(...\func_get_args());
     }
-
     public function waitaof($numlocal, $numreplicas, $timeout): \Redis|array|false
     {
-        return $this->initializeLazyObject()->waitaof(...\func_get_args());
+        return $this->initialize_lazy_object()->waitaof(...\func_get_args());
     }
-
     public function watch($key, ...$other_keys): \Redis|bool
     {
-        return $this->initializeLazyObject()->watch(...\func_get_args());
+        return $this->initialize_lazy_object()->watch(...\func_get_args());
     }
-
     public function xack($key, $group, $ids): false|int
     {
-        return $this->initializeLazyObject()->xack(...\func_get_args());
+        return $this->initialize_lazy_object()->xack(...\func_get_args());
     }
-
     public function xadd($key, $id, $values, $maxlen = 0, $approx = false, $nomkstream = false): \Redis|false|string
     {
-        return $this->initializeLazyObject()->xadd(...\func_get_args());
+        return $this->initialize_lazy_object()->xadd(...\func_get_args());
     }
-
     public function xautoclaim($key, $group, $consumer, $min_idle, $start, $count = -1, $justid = false): \Redis|array|bool
     {
-        return $this->initializeLazyObject()->xautoclaim(...\func_get_args());
+        return $this->initialize_lazy_object()->xautoclaim(...\func_get_args());
     }
-
     public function xclaim($key, $group, $consumer, $min_idle, $ids, $options): \Redis|array|bool
     {
-        return $this->initializeLazyObject()->xclaim(...\func_get_args());
+        return $this->initialize_lazy_object()->xclaim(...\func_get_args());
     }
-
     public function xdel($key, $ids): \Redis|false|int
     {
-        return $this->initializeLazyObject()->xdel(...\func_get_args());
+        return $this->initialize_lazy_object()->xdel(...\func_get_args());
     }
-
     public function xgroup($operation, $key = null, $group = null, $id_or_consumer = null, $mkstream = false, $entries_read = -2): mixed
     {
-        return $this->initializeLazyObject()->xgroup(...\func_get_args());
+        return $this->initialize_lazy_object()->xgroup(...\func_get_args());
     }
-
     public function xinfo($operation, $arg1 = null, $arg2 = null, $count = -1): mixed
     {
-        return $this->initializeLazyObject()->xinfo(...\func_get_args());
+        return $this->initialize_lazy_object()->xinfo(...\func_get_args());
     }
-
     public function xlen($key): \Redis|false|int
     {
-        return $this->initializeLazyObject()->xlen(...\func_get_args());
+        return $this->initialize_lazy_object()->xlen(...\func_get_args());
     }
-
     public function xpending($key, $group, $start = null, $end = null, $count = -1, $consumer = null): \Redis|array|false
     {
-        return $this->initializeLazyObject()->xpending(...\func_get_args());
+        return $this->initialize_lazy_object()->xpending(...\func_get_args());
     }
-
     public function xrange($key, $start, $end, $count = -1): \Redis|array|bool
     {
-        return $this->initializeLazyObject()->xrange(...\func_get_args());
+        return $this->initialize_lazy_object()->xrange(...\func_get_args());
     }
-
     public function xread($streams, $count = -1, $block = -1): \Redis|array|bool
     {
-        return $this->initializeLazyObject()->xread(...\func_get_args());
+        return $this->initialize_lazy_object()->xread(...\func_get_args());
     }
-
     public function xreadgroup($group, $consumer, $streams, $count = 1, $block = 1): \Redis|array|bool
     {
-        return $this->initializeLazyObject()->xreadgroup(...\func_get_args());
+        return $this->initialize_lazy_object()->xreadgroup(...\func_get_args());
     }
-
     public function xrevrange($key, $end, $start, $count = -1): \Redis|array|bool
     {
-        return $this->initializeLazyObject()->xrevrange(...\func_get_args());
+        return $this->initialize_lazy_object()->xrevrange(...\func_get_args());
     }
-
     public function xtrim($key, $threshold, $approx = false, $minid = false, $limit = -1): \Redis|false|int
     {
-        return $this->initializeLazyObject()->xtrim(...\func_get_args());
+        return $this->initialize_lazy_object()->xtrim(...\func_get_args());
     }
-
-    public function zAdd($key, $score_or_options, ...$more_scores_and_mems): \Redis|false|float|int
+    public function z_add($key, $score_or_options, ...$more_scores_and_mems): \Redis|false|float|int
     {
-        return $this->initializeLazyObject()->zAdd(...\func_get_args());
+        return $this->initialize_lazy_object()->z_add(...\func_get_args());
     }
-
-    public function zCard($key): \Redis|false|int
+    public function z_card($key): \Redis|false|int
     {
-        return $this->initializeLazyObject()->zCard(...\func_get_args());
+        return $this->initialize_lazy_object()->z_card(...\func_get_args());
     }
-
-    public function zCount($key, $start, $end): \Redis|false|int
+    public function z_count($key, $start, $end): \Redis|false|int
     {
-        return $this->initializeLazyObject()->zCount(...\func_get_args());
+        return $this->initialize_lazy_object()->z_count(...\func_get_args());
     }
-
-    public function zIncrBy($key, $value, $member): \Redis|false|float
+    public function z_incr_by($key, $value, $member): \Redis|false|float
     {
-        return $this->initializeLazyObject()->zIncrBy(...\func_get_args());
+        return $this->initialize_lazy_object()->z_incr_by(...\func_get_args());
     }
-
-    public function zLexCount($key, $min, $max): \Redis|false|int
+    public function z_lex_count($key, $min, $max): \Redis|false|int
     {
-        return $this->initializeLazyObject()->zLexCount(...\func_get_args());
+        return $this->initialize_lazy_object()->z_lex_count(...\func_get_args());
     }
-
-    public function zMscore($key, $member, ...$other_members): \Redis|array|false
+    public function z_mscore($key, $member, ...$other_members): \Redis|array|false
     {
-        return $this->initializeLazyObject()->zMscore(...\func_get_args());
+        return $this->initialize_lazy_object()->z_mscore(...\func_get_args());
     }
-
-    public function zPopMax($key, $count = null): \Redis|array|false
+    public function z_pop_max($key, $count = null): \Redis|array|false
     {
-        return $this->initializeLazyObject()->zPopMax(...\func_get_args());
+        return $this->initialize_lazy_object()->z_pop_max(...\func_get_args());
     }
-
-    public function zPopMin($key, $count = null): \Redis|array|false
+    public function z_pop_min($key, $count = null): \Redis|array|false
     {
-        return $this->initializeLazyObject()->zPopMin(...\func_get_args());
+        return $this->initialize_lazy_object()->z_pop_min(...\func_get_args());
     }
-
-    public function zRandMember($key, $options = null): \Redis|array|string
+    public function z_rand_member($key, $options = null): \Redis|array|string
     {
-        return $this->initializeLazyObject()->zRandMember(...\func_get_args());
+        return $this->initialize_lazy_object()->z_rand_member(...\func_get_args());
     }
-
-    public function zRange($key, $start, $end, $options = null): \Redis|array|false
+    public function z_range($key, $start, $end, $options = null): \Redis|array|false
     {
-        return $this->initializeLazyObject()->zRange(...\func_get_args());
+        return $this->initialize_lazy_object()->z_range(...\func_get_args());
     }
-
-    public function zRangeByLex($key, $min, $max, $offset = -1, $count = -1): \Redis|array|false
+    public function z_range_by_lex($key, $min, $max, $offset = -1, $count = -1): \Redis|array|false
     {
-        return $this->initializeLazyObject()->zRangeByLex(...\func_get_args());
+        return $this->initialize_lazy_object()->z_range_by_lex(...\func_get_args());
     }
-
-    public function zRangeByScore($key, $start, $end, $options = []): \Redis|array|false
+    public function z_range_by_score($key, $start, $end, $options = []): \Redis|array|false
     {
-        return $this->initializeLazyObject()->zRangeByScore(...\func_get_args());
+        return $this->initialize_lazy_object()->z_range_by_score(...\func_get_args());
     }
-
-    public function zRank($key, $member): \Redis|false|int
+    public function z_rank($key, $member): \Redis|false|int
     {
-        return $this->initializeLazyObject()->zRank(...\func_get_args());
+        return $this->initialize_lazy_object()->z_rank(...\func_get_args());
     }
-
-    public function zRem($key, $member, ...$other_members): \Redis|false|int
+    public function z_rem($key, $member, ...$other_members): \Redis|false|int
     {
-        return $this->initializeLazyObject()->zRem(...\func_get_args());
+        return $this->initialize_lazy_object()->z_rem(...\func_get_args());
     }
-
-    public function zRemRangeByLex($key, $min, $max): \Redis|false|int
+    public function z_rem_range_by_lex($key, $min, $max): \Redis|false|int
     {
-        return $this->initializeLazyObject()->zRemRangeByLex(...\func_get_args());
+        return $this->initialize_lazy_object()->z_rem_range_by_lex(...\func_get_args());
     }
-
-    public function zRemRangeByRank($key, $start, $end): \Redis|false|int
+    public function z_rem_range_by_rank($key, $start, $end): \Redis|false|int
     {
-        return $this->initializeLazyObject()->zRemRangeByRank(...\func_get_args());
+        return $this->initialize_lazy_object()->z_rem_range_by_rank(...\func_get_args());
     }
-
-    public function zRemRangeByScore($key, $start, $end): \Redis|false|int
+    public function z_rem_range_by_score($key, $start, $end): \Redis|false|int
     {
-        return $this->initializeLazyObject()->zRemRangeByScore(...\func_get_args());
+        return $this->initialize_lazy_object()->z_rem_range_by_score(...\func_get_args());
     }
-
-    public function zRevRange($key, $start, $end, $scores = null): \Redis|array|false
+    public function z_rev_range($key, $start, $end, $scores = null): \Redis|array|false
     {
-        return $this->initializeLazyObject()->zRevRange(...\func_get_args());
+        return $this->initialize_lazy_object()->z_rev_range(...\func_get_args());
     }
-
-    public function zRevRangeByLex($key, $max, $min, $offset = -1, $count = -1): \Redis|array|false
+    public function z_rev_range_by_lex($key, $max, $min, $offset = -1, $count = -1): \Redis|array|false
     {
-        return $this->initializeLazyObject()->zRevRangeByLex(...\func_get_args());
+        return $this->initialize_lazy_object()->z_rev_range_by_lex(...\func_get_args());
     }
-
-    public function zRevRangeByScore($key, $max, $min, $options = []): \Redis|array|false
+    public function z_rev_range_by_score($key, $max, $min, $options = []): \Redis|array|false
     {
-        return $this->initializeLazyObject()->zRevRangeByScore(...\func_get_args());
+        return $this->initialize_lazy_object()->z_rev_range_by_score(...\func_get_args());
     }
-
-    public function zRevRank($key, $member): \Redis|false|int
+    public function z_rev_rank($key, $member): \Redis|false|int
     {
-        return $this->initializeLazyObject()->zRevRank(...\func_get_args());
+        return $this->initialize_lazy_object()->z_rev_rank(...\func_get_args());
     }
-
-    public function zScore($key, $member): \Redis|false|float
+    public function z_score($key, $member): \Redis|false|float
     {
-        return $this->initializeLazyObject()->zScore(...\func_get_args());
+        return $this->initialize_lazy_object()->z_score(...\func_get_args());
     }
-
     public function zdiff($keys, $options = null): \Redis|array|false
     {
-        return $this->initializeLazyObject()->zdiff(...\func_get_args());
+        return $this->initialize_lazy_object()->zdiff(...\func_get_args());
     }
-
     public function zdiffstore($dst, $keys): \Redis|false|int
     {
-        return $this->initializeLazyObject()->zdiffstore(...\func_get_args());
+        return $this->initialize_lazy_object()->zdiffstore(...\func_get_args());
     }
-
     public function zinter($keys, $weights = null, $options = null): \Redis|array|false
     {
-        return $this->initializeLazyObject()->zinter(...\func_get_args());
+        return $this->initialize_lazy_object()->zinter(...\func_get_args());
     }
-
     public function zintercard($keys, $limit = -1): \Redis|false|int
     {
-        return $this->initializeLazyObject()->zintercard(...\func_get_args());
+        return $this->initialize_lazy_object()->zintercard(...\func_get_args());
     }
-
     public function zinterstore($dst, $keys, $weights = null, $aggregate = null): \Redis|false|int
     {
-        return $this->initializeLazyObject()->zinterstore(...\func_get_args());
+        return $this->initialize_lazy_object()->zinterstore(...\func_get_args());
     }
-
     public function zmpop($keys, $from, $count = 1): \Redis|array|false|null
     {
-        return $this->initializeLazyObject()->zmpop(...\func_get_args());
+        return $this->initialize_lazy_object()->zmpop(...\func_get_args());
     }
-
     public function zrangestore($dstkey, $srckey, $start, $end, $options = null): \Redis|false|int
     {
-        return $this->initializeLazyObject()->zrangestore(...\func_get_args());
+        return $this->initialize_lazy_object()->zrangestore(...\func_get_args());
     }
-
     public function zscan($key, &$iterator, $pattern = null, $count = 0): \Redis|array|false
     {
-        return $this->initializeLazyObject()->zscan($key, $iterator, ...\array_slice(\func_get_args(), 2));
+        return $this->initialize_lazy_object()->zscan($key, $iterator, ...\array_slice(\func_get_args(), 2));
     }
-
     public function zunion($keys, $weights = null, $options = null): \Redis|array|false
     {
-        return $this->initializeLazyObject()->zunion(...\func_get_args());
+        return $this->initialize_lazy_object()->zunion(...\func_get_args());
     }
-
     public function zunionstore($dst, $keys, $weights = null, $aggregate = null): \Redis|false|int
     {
-        return $this->initializeLazyObject()->zunionstore(...\func_get_args());
+        return $this->initialize_lazy_object()->zunionstore(...\func_get_args());
     }
 }

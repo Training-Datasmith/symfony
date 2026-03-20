@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Choice_List\View;
 
-namespace Symfony\Component\Form\ChoiceList\View;
-
-use Symfony\Contracts\Translation\TranslatableInterface;
-
+use Symfony\Contracts\Translation\Translatable_Interface;
 /**
  * Represents a choice in templates.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ChoiceView
+class Choice_View
 {
     /**
      * Creates a new choice view.
@@ -31,12 +28,7 @@ class ChoiceView
      * @param array                              $attr                       Additional attributes for the HTML tag
      * @param array                              $labelTranslationParameters Additional parameters used to translate the label
      */
-    public function __construct(
-        public mixed $data,
-        public string $value,
-        public string|TranslatableInterface|false $label,
-        public array $attr = [],
-        public array $labelTranslationParameters = [],
-    ) {
+    public function __construct(public mixed $data, public string $value, public string|Translatable_Interface|false $label, public array $attr = [], public array $label_translation_parameters = [])
+    {
     }
 }

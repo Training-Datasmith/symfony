@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DependencyInjection\Attribute;
+namespace Symfony\Component\Dependency_Injection\Attribute;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_PARAMETER)]
 class Lazy
 {
-    public function __construct(
-        public bool|string|null $lazy = true,
-    ) {
+    public function __construct(public bool|string|null $lazy = true)
+    {
     }
 }

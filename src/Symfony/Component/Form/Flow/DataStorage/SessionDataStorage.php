@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,34 +9,27 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Flow\Data_Storage;
 
-namespace Symfony\Component\Form\Flow\DataStorage;
-
-use Symfony\Component\HttpFoundation\RequestStack;
-
+use Symfony\Component\Http_Foundation\Request_Stack;
 /**
  * @author Yonel Ceruto <open@yceruto.dev>
  */
-class SessionDataStorage implements DataStorageInterface
+class Session_Data_Storage implements Data_Storage_Interface
 {
-    public function __construct(
-        private readonly string $key,
-        private readonly RequestStack $requestStack,
-    ) {
+    public function __construct(private readonly string $key, private readonly Request_Stack $request_stack)
+    {
     }
-
     public function save(object|array $data): void
     {
-        $this->requestStack->getSession()->set($this->key, $data);
+        $this->request_stack->get_session()->set($this->key, $data);
     }
-
     public function load(object|array|null $default = null): object|array|null
     {
-        return $this->requestStack->getSession()->get($this->key, $default);
+        return $this->request_stack->get_session()->get($this->key, $default);
     }
-
     public function clear(): void
     {
-        $this->requestStack->getSession()->remove($this->key);
+        $this->request_stack->get_session()->remove($this->key);
     }
 }

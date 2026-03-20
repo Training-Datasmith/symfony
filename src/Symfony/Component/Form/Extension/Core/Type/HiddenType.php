@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Extension\Core\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-class HiddenType extends AbstractType
+use Symfony\Component\Form\Abstract_Type;
+use Symfony\Component\Options_Resolver\Options_Resolver;
+class Hidden_Type extends Abstract_Type
 {
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configure_options(Options_Resolver $resolver): void
     {
-        $resolver->setDefaults([
+        $resolver->set_defaults([
             // hidden fields cannot have a required attribute
             'required' => false,
             // Pass errors to the parent
@@ -29,8 +26,7 @@ class HiddenType extends AbstractType
             'invalid_message' => 'The hidden field is invalid.',
         ]);
     }
-
-    public function getBlockPrefix(): string
+    public function get_block_prefix(): string
     {
         return 'hidden';
     }

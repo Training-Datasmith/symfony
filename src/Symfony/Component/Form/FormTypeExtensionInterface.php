@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,25 +9,21 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Options_Resolver\Options_Resolver;
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface FormTypeExtensionInterface
+interface Form_Type_Extension_Interface
 {
     /**
      * Gets the extended types.
      *
      * @return string[]
      */
-    public static function getExtendedTypes(): iterable;
-
-    public function configureOptions(OptionsResolver $resolver): void;
-
+    public static function get_extended_types(): iterable;
+    public function configure_options(Options_Resolver $resolver): void;
     /**
      * Builds the form.
      *
@@ -39,8 +34,7 @@ interface FormTypeExtensionInterface
      *
      * @see FormTypeInterface::buildForm()
      */
-    public function buildForm(FormBuilderInterface $builder, array $options): void;
-
+    public function build_form(Form_Builder_Interface $builder, array $options): void;
     /**
      * Builds the view.
      *
@@ -51,8 +45,7 @@ interface FormTypeExtensionInterface
      *
      * @see FormTypeInterface::buildView()
      */
-    public function buildView(FormView $view, FormInterface $form, array $options): void;
-
+    public function build_view(Form_View $view, Form_Interface $form, array $options): void;
     /**
      * Finishes the view.
      *
@@ -63,5 +56,5 @@ interface FormTypeExtensionInterface
      *
      * @see FormTypeInterface::finishView()
      */
-    public function finishView(FormView $view, FormInterface $form, array $options): void;
+    public function finish_view(Form_View $view, Form_Interface $form, array $options): void;
 }

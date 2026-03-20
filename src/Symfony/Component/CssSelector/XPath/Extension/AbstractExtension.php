@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\CssSelector\XPath\Extension;
+namespace Symfony\Component\Css_Selector\X_Path\Extension;
 
 /**
  * XPath expression translator abstract extension.
@@ -23,34 +21,29 @@ namespace Symfony\Component\CssSelector\XPath\Extension;
  *
  * @internal
  */
-abstract class AbstractExtension implements ExtensionInterface
+abstract class Abstract_Extension implements Extension_Interface
 {
-    public function getNodeTranslators(): array
+    public function get_node_translators(): array
     {
         return [];
     }
-
-    public function getCombinationTranslators(): array
+    public function get_combination_translators(): array
     {
         return [];
     }
-
-    public function getFunctionTranslators(): array
+    public function get_function_translators(): array
     {
         return [];
     }
-
-    public function getPseudoClassTranslators(): array
+    public function get_pseudo_class_translators(): array
     {
         return [];
     }
-
-    public function getAttributeMatchingTranslators(): array
+    public function get_attribute_matching_translators(): array
     {
         return [];
     }
-
-    public function getRelativeCombinationTranslators(): array
+    public function get_relative_combination_translators(): array
     {
         return [];
     }

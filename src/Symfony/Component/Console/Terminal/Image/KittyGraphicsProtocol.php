@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Terminal\Image;
 
 /**
@@ -28,89 +26,69 @@ namespace Symfony\Component\Console\Terminal\Image;
  *
  * @internal
  */
-final class KittyGraphicsProtocol implements ImageProtocolInterface
+final class Kitty_Graphics_Protocol implements Image_Protocol_Interface
 {
     public const APC_START = "\x1b_G";
     public const ST = "\x1b\\";
-
-    public function detectPastedImage(string $data): bool
+    public function detect_pasted_image(string $data): bool
     {
         return str_contains($data, self::APC_START);
     }
-
     public function decode(string $data): array
     {
         if (false === $start = strpos($data, self::APC_START)) {
             return ['data' => '', 'format' => null];
         }
-
         if (false === $end = strpos($data, self::ST, $start)) {
             $end = strpos($data, "\x07", $start);
         }
-
         if (false === $end) {
             return ['data' => '', 'format' => null];
         }
-
         $content = substr($data, $start + \strlen(self::APC_START), $end - $start - \strlen(self::APC_START));
-
-        if (false === $semicolonPos = strpos($content, ';')) {
+        if (false === $semicolon_pos = strpos($content, ';')) {
             return ['data' => '', 'format' => null];
         }
-
-        $controlData = substr($content, 0, $semicolonPos);
-        $payload = substr($content, $semicolonPos + 1);
-
-        $decodedData = base64_decode($payload, true);
-        if (false === $decodedData) {
+        $control_data = substr($content, 0, $semicolon_pos);
+        $payload = substr($content, $semicolon_pos + 1);
+        $decoded_data = base64_decode($payload, true);
+        if (false === $decoded_data) {
             return ['data' => '', 'format' => null];
         }
-
-        return ['data' => $decodedData, 'format' => $this->parseFormat($controlData)];
+        return ['data' => $decoded_data, 'format' => $this->parse_format($control_data)];
     }
-
-    public function encode(string $imageData, ?int $maxWidth = null): string
+    public function encode(string $image_data, ?int $max_width = null): string
     {
-        $format = $this->detectImageFormat($imageData);
-
-        $controlParts = ['a=T', 'f=100'];
-
-        if (null !== $maxWidth) {
-            $controlParts[] = \sprintf('c=%d', $maxWidth);
+        $format = $this->detect_image_format($image_data);
+        $control_parts = ['a=T', 'f=100'];
+        if (null !== $max_width) {
+            $control_parts[] = \sprintf('c=%d', $max_width);
         }
-
         if ('png' === $format) {
-            $controlParts[1] = 'f=100';
+            $control_parts[1] = 'f=100';
         }
-
-        $controlData = implode(',', $controlParts);
-        $payload = base64_encode($imageData);
-        $maxChunkSize = 4096;
-
-        if (\strlen($payload) <= $maxChunkSize) {
-            return self::APC_START.$controlData.';'.$payload.self::ST;
+        $control_data = implode(',', $control_parts);
+        $payload = base64_encode($image_data);
+        $max_chunk_size = 4096;
+        if (\strlen($payload) <= $max_chunk_size) {
+            return self::APC_START . $control_data . ';' . $payload . self::ST;
         }
-
-        $chunks = str_split($payload, $maxChunkSize);
+        $chunks = str_split($payload, $max_chunk_size);
         $result = '';
-
         foreach ($chunks as $i => $chunk) {
-            $isLast = ($i === \count($chunks) - 1);
-            $chunkControl = $i > 0 ? 'm='.($isLast ? '0' : '1') : $controlData.',m='.($isLast ? '0' : '1');
-            $result .= self::APC_START.$chunkControl.';'.$chunk.self::ST;
+            $is_last = $i === \count($chunks) - 1;
+            $chunk_control = $i > 0 ? 'm=' . ($is_last ? '0' : '1') : $control_data . ',m=' . ($is_last ? '0' : '1');
+            $result .= self::APC_START . $chunk_control . ';' . $chunk . self::ST;
         }
-
         return $result;
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return 'kitty';
     }
-
-    private function parseFormat(string $controlData): ?string
+    private function parse_format(string $control_data): ?string
     {
-        foreach (explode(',', $controlData) as $pair) {
+        foreach (explode(',', $control_data) as $pair) {
             $parts = explode('=', $pair, 2);
             if (2 === \count($parts) && 'f' === $parts[0]) {
                 return match ($parts[1]) {
@@ -121,15 +99,13 @@ final class KittyGraphicsProtocol implements ImageProtocolInterface
                 };
             }
         }
-
         return null;
     }
-
-    private function detectImageFormat(string $data): ?string
+    private function detect_image_format(string $data): ?string
     {
         return match (true) {
             str_starts_with($data, "\x89PNG\r\n\x1a\n") => 'png',
-            str_starts_with($data, "\xFF\xD8\xFF") => 'jpg',
+            str_starts_with($data, "\xff\xd8\xff") => 'jpg',
             str_starts_with($data, 'GIF87a'), str_starts_with($data, 'GIF89a') => 'gif',
             str_starts_with($data, 'RIFF') && 'WEBP' === substr($data, 8, 4) => 'webp',
             default => null,

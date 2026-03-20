@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,89 +9,75 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\Dependency_Injection\Definition;
 use Symfony\Contracts\Service\Attribute\Required;
-
 /**
  * Looks for definitions with autowiring enabled and registers their corresponding "#[Required]" methods as setters.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class AutowireRequiredMethodsPass extends AbstractRecursivePass
+class Autowire_Required_Methods_Pass extends Abstract_Recursive_Pass
 {
-    protected bool $skipScalars = true;
-
-    protected function processValue(mixed $value, bool $isRoot = false): mixed
+    protected bool $skip_scalars = true;
+    protected function process_value(mixed $value, bool $is_root = false): mixed
     {
-        $value = parent::processValue($value, $isRoot);
-
-        if (!$value instanceof Definition || !$value->isAutowired() || $value->isAbstract() || !$value->getClass()) {
+        $value = parent::process_value($value, $is_root);
+        if (!$value instanceof Definition || !$value->is_autowired() || $value->is_abstract() || !$value->get_class()) {
             return $value;
         }
-        if (!$reflectionClass = $this->container->getReflectionClass($value->getClass(), false)) {
+        if (!$reflection_class = $this->container->get_reflection_class($value->get_class(), false)) {
             return $value;
         }
-
-        $alreadyCalledMethods = [];
+        $already_called_methods = [];
         $withers = [];
-
-        foreach ($value->getMethodCalls() as [$method]) {
-            $alreadyCalledMethods[strtolower((string) $method)] = true;
+        foreach ($value->get_method_calls() as [$method]) {
+            $already_called_methods[strtolower((string) $method)] = true;
         }
-
-        foreach ($reflectionClass->getMethods() as $reflectionMethod) {
-            $r = $reflectionMethod;
-            if ($r->isConstructor()) {
+        foreach ($reflection_class->get_methods() as $reflection_method) {
+            $r = $reflection_method;
+            if ($r->is_constructor()) {
                 continue;
             }
-            if (isset($alreadyCalledMethods[strtolower($r->name)])) {
+            if (isset($already_called_methods[strtolower($r->name)])) {
                 continue;
             }
-
             while (true) {
-                if ($r->getAttributes(Required::class)) {
-                    if ($this->isWither($r, $r->getDocComment() ?: '')) {
+                if ($r->get_attributes(Required::class)) {
+                    if ($this->is_wither($r, $r->get_doc_comment() ?: '')) {
                         $withers[] = [$r->name, [], true];
                     } else {
-                        $value->addMethodCall($r->name, []);
+                        $value->add_method_call($r->name, []);
                     }
                     break;
                 }
-                if (!$r->hasPrototype()) {
+                if (!$r->has_prototype()) {
                     break;
                 }
-                $r = $r->getPrototype();
+                $r = $r->get_prototype();
             }
         }
-
         if ($withers) {
             // Prepend withers to prevent creating circular loops
-            $setters = $value->getMethodCalls();
-            $value->setMethodCalls($withers);
+            $setters = $value->get_method_calls();
+            $value->set_method_calls($withers);
             foreach ($setters as $call) {
-                $value->addMethodCall($call[0], $call[1], $call[2] ?? false);
+                $value->add_method_call($call[0], $call[1], $call[2] ?? false);
             }
         }
-
         return $value;
     }
-
-    private function isWither(\ReflectionMethod $reflectionMethod, string $doc): bool
+    private function is_wither(\ReflectionMethod $reflection_method, string $doc): bool
     {
         $match = preg_match('#(?:^/\*\*|\n\s*+\*)\s*+@return\s++(static|\$this)[\s\*]#i', $doc, $matches);
         if ($match && 'static' === $matches[1]) {
             return true;
         }
-
         if ($match && '$this' === $matches[1]) {
             return false;
         }
-
-        $reflectionType = $reflectionMethod->hasReturnType() ? $reflectionMethod->getReturnType() : null;
-
-        return $reflectionType instanceof \ReflectionNamedType && 'static' === $reflectionType->getName();
+        $reflection_type = $reflection_method->has_return_type() ? $reflection_method->get_return_type() : null;
+        return $reflection_type instanceof \ReflectionNamedType && 'static' === $reflection_type->get_name();
     }
 }

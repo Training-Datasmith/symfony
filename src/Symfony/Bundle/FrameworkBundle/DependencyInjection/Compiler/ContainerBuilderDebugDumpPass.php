@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Dependency_Injection\Compiler;
 
-namespace Symfony\Bundle\FrameworkBundle\DependencyInjection\Compiler;
-
-use Symfony\Component\Config\ConfigCache;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\Compiler\ResolveEnvPlaceholdersPass;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Dumper\XmlDumper;
-use Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
+use Symfony\Component\Config\Config_Cache;
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Compiler\Resolve_Env_Placeholders_Pass;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Dumper\Xml_Dumper;
+use Symfony\Component\Dependency_Injection\Parameter_Bag\Env_Placeholder_Parameter_Bag;
 use Symfony\Component\Filesystem\Filesystem;
-
 /**
  * Dumps the ContainerBuilder to a cache file so that it can be used by
  * debugging tools such as the debug:container console command.
@@ -28,60 +25,52 @@ use Symfony\Component\Filesystem\Filesystem;
  * @author Ryan Weaver <ryan@thatsquality.com>
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ContainerBuilderDebugDumpPass implements CompilerPassInterface
+class Container_Builder_Debug_Dump_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (!$container->getParameter('debug.container.dump')) {
+        if (!$container->get_parameter('debug.container.dump')) {
             return;
         }
-
-        $file = $container->getParameter('debug.container.dump');
-        $cache = new ConfigCache($file, true);
-        if ($cache->isFresh()) {
+        $file = $container->get_parameter('debug.container.dump');
+        $cache = new Config_Cache($file, true);
+        if ($cache->is_fresh()) {
             return;
         }
-        $cache->write((new XmlDumper($container))->dump(), $container->getResources());
-
+        $cache->write((new Xml_Dumper($container))->dump(), $container->get_resources());
         if (!str_ends_with($file, '.xml')) {
             return;
         }
-
         $file = substr_replace($file, '.ser', -4);
-
         try {
-            $dump = new ContainerBuilder(clone $container->getParameterBag());
-            $dump->setDefinitions(unserialize(serialize($container->getDefinitions())));
-            $dump->setAliases($container->getAliases());
-
-            if (($bag = $container->getParameterBag()) instanceof EnvPlaceholderParameterBag) {
-                (new ResolveEnvPlaceholdersPass(null))->process($dump);
-                $dump->__construct(new EnvPlaceholderParameterBag($container->resolveEnvPlaceholders($this->escapeParameters($bag->all()))));
+            $dump = new Container_Builder(clone $container->get_parameter_bag());
+            $dump->set_definitions(unserialize(serialize($container->get_definitions())));
+            $dump->set_aliases($container->get_aliases());
+            if (($bag = $container->get_parameter_bag()) instanceof Env_Placeholder_Parameter_Bag) {
+                (new Resolve_Env_Placeholders_Pass(null))->process($dump);
+                $dump->__construct(new Env_Placeholder_Parameter_Bag($container->resolve_env_placeholders($this->escape_parameters($bag->all()))));
             }
-
             $fs = new Filesystem();
-            $fs->dumpFile($file, serialize($dump));
-            $fs->chmod($file, 0o666, umask());
+            $fs->dump_file($file, serialize($dump));
+            $fs->chmod($file, 0666, umask());
         } catch (\Throwable $e) {
-            $container->getCompiler()->log($this, $e->getMessage());
+            $container->get_compiler()->log($this, $e->get_message());
             // ignore serialization and file-system errors
             if (file_exists($file)) {
                 @unlink($file);
             }
         }
     }
-
-    private function escapeParameters(array $parameters): array
+    private function escape_parameters(array $parameters): array
     {
         $params = [];
         foreach ($parameters as $k => $v) {
             $params[$k] = match (true) {
-                \is_array($v) => $this->escapeParameters($v),
+                \is_array($v) => $this->escape_parameters($v),
                 \is_string($v) => str_replace('%', '%%', $v),
                 default => $v,
             };
         }
-
         return $params;
     }
 }

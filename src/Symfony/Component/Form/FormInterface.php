@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
-use Symfony\Component\PropertyAccess\PropertyPathInterface;
-
+use Symfony\Component\Property_Access\Property_Path_Interface;
 /**
  * A form group bundling multiple forms in a hierarchical structure.
  *
@@ -23,7 +20,7 @@ use Symfony\Component\PropertyAccess\PropertyPathInterface;
  * @extends \ArrayAccess<string, FormInterface>
  * @extends \Traversable<string, FormInterface>
  */
-interface FormInterface extends \ArrayAccess, \Traversable, \Countable
+interface Form_Interface extends \ArrayAccess, \Traversable, \Countable
 {
     /**
      * Sets the parent form.
@@ -36,13 +33,11 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      * @throws Exception\LogicException            when trying to set a parent for a form with
      *                                             an empty name
      */
-    public function setParent(?self $parent): static;
-
+    public function set_parent(?self $parent): static;
     /**
      * Returns the parent form.
      */
-    public function getParent(): ?self;
-
+    public function get_parent(): ?self;
     /**
      * Adds or replaces a child to the form.
      *
@@ -57,19 +52,16 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      * @throws Exception\UnexpectedTypeException   if $child or $type has an unexpected type
      */
     public function add(self|string $child, ?string $type = null, array $options = []): static;
-
     /**
      * Returns the child with the given name.
      *
      * @throws Exception\OutOfBoundsException if the named child does not exist
      */
     public function get(string $name): self;
-
     /**
      * Returns whether a child with the given name exists.
      */
     public function has(string $name): bool;
-
     /**
      * Removes a child from the form.
      *
@@ -78,14 +70,12 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      * @throws Exception\AlreadySubmittedException if the form has already been submitted
      */
     public function remove(string $name): static;
-
     /**
      * Returns all children in this group.
      *
      * @return self[]
      */
     public function all(): array;
-
     /**
      * Returns the errors of this form.
      *
@@ -93,8 +83,7 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      * @param bool $flatten Whether to flatten the list of errors in case
      *                      $deep is set to true
      */
-    public function getErrors(bool $deep = false, bool $flatten = true): FormErrorIterator;
-
+    public function get_errors(bool $deep = false, bool $flatten = true): Form_Error_Iterator;
     /**
      * Updates the form with default model data.
      *
@@ -109,8 +98,7 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      *                                                 the form inherits data from its parent
      * @throws Exception\TransformationFailedException if the synchronization failed
      */
-    public function setData(mixed $modelData): static;
-
+    public function set_data(mixed $model_data): static;
     /**
      * Returns the model data in the format needed for the underlying object.
      *
@@ -120,8 +108,7 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      *
      * @throws Exception\RuntimeException If the form inherits data but has no parent
      */
-    public function getData(): mixed;
-
+    public function get_data(): mixed;
     /**
      * Returns the normalized data of the field, used as internal bridge
      * between model data and view data.
@@ -133,8 +120,7 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      *
      * @throws Exception\RuntimeException If the form inherits data but has no parent
      */
-    public function getNormData(): mixed;
-
+    public function get_norm_data(): mixed;
     /**
      * Returns the view data of the field.
      *
@@ -154,51 +140,43 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      *
      * @throws Exception\RuntimeException If the form inherits data but has no parent
      */
-    public function getViewData(): mixed;
-
+    public function get_view_data(): mixed;
     /**
      * Returns the extra submitted data.
      *
      * @return array The submitted data which do not belong to a child
      */
-    public function getExtraData(): array;
-
+    public function get_extra_data(): array;
     /**
      * Returns the form's configuration.
      */
-    public function getConfig(): FormConfigInterface;
-
+    public function get_config(): Form_Config_Interface;
     /**
      * Returns whether the form is submitted.
      */
-    public function isSubmitted(): bool;
-
+    public function is_submitted(): bool;
     /**
      * Returns the name by which the form is identified in forms.
      *
      * Only root forms are allowed to have an empty name.
      */
-    public function getName(): string;
-
+    public function get_name(): string;
     /**
      * Returns the property path that the form is mapped to.
      */
-    public function getPropertyPath(): ?PropertyPathInterface;
-
+    public function get_property_path(): ?Property_Path_Interface;
     /**
      * Adds an error to this form.
      *
      * @return $this
      */
-    public function addError(FormError $error): static;
-
+    public function add_error(Form_Error $error): static;
     /**
      * Returns whether the form and all children are valid.
      *
      * @throws Exception\LogicException if the form is not submitted
      */
-    public function isValid(): bool;
-
+    public function is_valid(): bool;
     /**
      * Returns whether the form is required to be filled out.
      *
@@ -206,8 +184,7 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      * will always return false. Otherwise the value set with setRequired()
      * is returned.
      */
-    public function isRequired(): bool;
-
+    public function is_required(): bool;
     /**
      * Returns whether this form is disabled.
      *
@@ -217,13 +194,11 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      * Forms whose parents are disabled are considered disabled regardless of
      * their own state.
      */
-    public function isDisabled(): bool;
-
+    public function is_disabled(): bool;
     /**
      * Returns whether the form is empty.
      */
-    public function isEmpty(): bool;
-
+    public function is_empty(): bool;
     /**
      * Returns whether the data in the different formats is synchronized.
      *
@@ -232,13 +207,11 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      *
      * If the form is not submitted, this method always returns true.
      */
-    public function isSynchronized(): bool;
-
+    public function is_synchronized(): bool;
     /**
      * Returns the data transformation failure, if any, during submission.
      */
-    public function getTransformationFailure(): ?Exception\TransformationFailedException;
-
+    public function get_transformation_failure(): ?Exception\Transformation_Failed_Exception;
     /**
      * Initializes the form tree.
      *
@@ -249,7 +222,6 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      * @throws Exception\RuntimeException If the form is not the root
      */
     public function initialize(): static;
-
     /**
      * Inspects the given request and calls {@link submit()} if the form was
      * submitted.
@@ -260,8 +232,7 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      *
      * @return $this
      */
-    public function handleRequest(mixed $request = null): static;
-
+    public function handle_request(mixed $request = null): static;
     /**
      * Submits data to the form.
      *
@@ -275,17 +246,14 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      *
      * @throws Exception\AlreadySubmittedException if the form has already been submitted
      */
-    public function submit(string|array|null $submittedData, bool $clearMissing = true): static;
-
+    public function submit(string|array|null $submitted_data, bool $clear_missing = true): static;
     /**
      * Returns the root of the form tree.
      */
-    public function getRoot(): self;
-
+    public function get_root(): self;
     /**
      * Returns whether the field is the root of the form tree.
      */
-    public function isRoot(): bool;
-
-    public function createView(?FormView $parent = null): FormView;
+    public function is_root(): bool;
+    public function create_view(?Form_View $parent = null): Form_View;
 }

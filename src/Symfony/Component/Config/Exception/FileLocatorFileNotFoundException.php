@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Exception;
 
 /**
@@ -18,18 +16,13 @@ namespace Symfony\Component\Config\Exception;
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  */
-class FileLocatorFileNotFoundException extends \InvalidArgumentException
+class File_Locator_File_Not_Found_Exception extends \InvalidArgumentException
 {
-    public function __construct(
-        string $message = '',
-        int $code = 0,
-        ?\Throwable $previous = null,
-        private readonly array $paths = [],
-    ) {
+    public function __construct(string $message = '', int $code = 0, ?\Throwable $previous = null, private readonly array $paths = [])
+    {
         parent::__construct($message, $code, $previous);
     }
-
-    public function getPaths(): array
+    public function get_paths(): array
     {
         return $this->paths;
     }

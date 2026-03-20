@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,21 +9,19 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Flow\FormFlowBuilderInterface;
-use Symfony\Component\Form\Flow\FormFlowInterface;
-use Symfony\Component\Form\Flow\FormFlowTypeInterface;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-
+use Symfony\Component\Form\Extension\Core\Type\Form_Type;
+use Symfony\Component\Form\Flow\Form_Flow_Builder_Interface;
+use Symfony\Component\Form\Flow\Form_Flow_Interface;
+use Symfony\Component\Form\Flow\Form_Flow_Type_Interface;
+use Symfony\Component\Options_Resolver\Exception\Invalid_Options_Exception;
 /**
  * Allows creating a form based on a name, a class or a property.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface FormFactoryInterface
+interface Form_Factory_Interface
 {
     /**
      * Returns a form.
@@ -37,8 +34,7 @@ interface FormFactoryInterface
      *
      * @throws InvalidOptionsException if any given option is not applicable to the given type
      */
-    public function create(string $type = FormType::class, mixed $data = null, array $options = []): FormInterface;
-
+    public function create(string $type = Form_Type::class, mixed $data = null, array $options = []): Form_Interface;
     /**
      * Returns a form.
      *
@@ -50,8 +46,7 @@ interface FormFactoryInterface
      *
      * @throws InvalidOptionsException if any given option is not applicable to the given type
      */
-    public function createNamed(string $name, string $type = FormType::class, mixed $data = null, array $options = []): FormInterface;
-
+    public function create_named(string $name, string $type = Form_Type::class, mixed $data = null, array $options = []): Form_Interface;
     /**
      * Returns a form for a property of a class.
      *
@@ -63,8 +58,7 @@ interface FormFactoryInterface
      *
      * @throws InvalidOptionsException if any given option is not applicable to the form type
      */
-    public function createForProperty(string $class, string $property, mixed $data = null, array $options = []): FormInterface;
-
+    public function create_for_property(string $class, string $property, mixed $data = null, array $options = []): Form_Interface;
     /**
      * Returns a form builder.
      *
@@ -74,8 +68,7 @@ interface FormFactoryInterface
      *
      * @throws InvalidOptionsException if any given option is not applicable to the given type
      */
-    public function createBuilder(string $type = FormType::class, mixed $data = null, array $options = []): FormBuilderInterface;
-
+    public function create_builder(string $type = Form_Type::class, mixed $data = null, array $options = []): Form_Builder_Interface;
     /**
      * Returns a form builder.
      *
@@ -85,8 +78,7 @@ interface FormFactoryInterface
      *
      * @throws InvalidOptionsException if any given option is not applicable to the given type
      */
-    public function createNamedBuilder(string $name, string $type = FormType::class, mixed $data = null, array $options = []): FormBuilderInterface;
-
+    public function create_named_builder(string $name, string $type = Form_Type::class, mixed $data = null, array $options = []): Form_Builder_Interface;
     /**
      * Returns a form builder for a property of a class.
      *
@@ -99,5 +91,5 @@ interface FormFactoryInterface
      *
      * @throws InvalidOptionsException if any given option is not applicable to the form type
      */
-    public function createBuilderForProperty(string $class, string $property, mixed $data = null, array $options = []): FormBuilderInterface;
+    public function create_builder_for_property(string $class, string $property, mixed $data = null, array $options = []): Form_Builder_Interface;
 }

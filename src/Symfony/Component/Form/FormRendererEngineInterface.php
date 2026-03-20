@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
 /**
@@ -18,7 +16,7 @@ namespace Symfony\Component\Form;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface FormRendererEngineInterface
+interface Form_Renderer_Engine_Interface
 {
     /**
      * Sets the theme(s) to be used for rendering a view and its children.
@@ -27,8 +25,7 @@ interface FormRendererEngineInterface
      * @param mixed    $themes The theme(s). The type of these themes
      *                         is open to the implementation.
      */
-    public function setTheme(FormView $view, mixed $themes, bool $useDefaultThemes = true): void;
-
+    public function set_theme(Form_View $view, mixed $themes, bool $use_default_themes = true): void;
     /**
      * Returns the resource for a block name.
      *
@@ -45,8 +42,7 @@ interface FormRendererEngineInterface
      *
      * @return mixed the renderer resource or false, if none was found
      */
-    public function getResourceForBlockName(FormView $view, string $blockName): mixed;
-
+    public function get_resource_for_block_name(Form_View $view, string $block_name): mixed;
     /**
      * Returns the resource for a block hierarchy.
      *
@@ -81,8 +77,7 @@ interface FormRendererEngineInterface
      *
      * @return mixed The renderer resource or false, if none was found
      */
-    public function getResourceForBlockNameHierarchy(FormView $view, array $blockNameHierarchy, int $hierarchyLevel): mixed;
-
+    public function get_resource_for_block_name_hierarchy(Form_View $view, array $block_name_hierarchy, int $hierarchy_level): mixed;
     /**
      * Returns the hierarchy level at which a resource can be found.
      *
@@ -117,8 +112,7 @@ interface FormRendererEngineInterface
      *                                     looking. Level 0 indicates the root block, i.e.
      *                                     the first element of $blockNameHierarchy.
      */
-    public function getResourceHierarchyLevel(FormView $view, array $blockNameHierarchy, int $hierarchyLevel): int|false;
-
+    public function get_resource_hierarchy_level(Form_View $view, array $block_name_hierarchy, int $hierarchy_level): int|false;
     /**
      * Renders a block in the given renderer resource.
      *
@@ -130,5 +124,5 @@ interface FormRendererEngineInterface
      * @param mixed    $resource  The renderer resource
      * @param array    $variables The variables to pass to the template
      */
-    public function renderBlock(FormView $view, mixed $resource, string $blockName, array $variables = []): string;
+    public function render_block(Form_View $view, mixed $resource, string $block_name, array $variables = []): string;
 }

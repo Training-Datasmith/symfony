@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Command;
 
-namespace Symfony\Bundle\FrameworkBundle\Command;
-
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Yaml\Command\LintCommand as BaseLintCommand;
-
+use Symfony\Component\Console\Attribute\As_Command;
+use Symfony\Component\Yaml\Command\Lint_Command as BaseLintCommand;
 /**
  * Validates YAML files syntax and outputs encountered errors.
  *
@@ -24,36 +21,29 @@ use Symfony\Component\Yaml\Command\LintCommand as BaseLintCommand;
  *
  * @final
  */
-#[AsCommand(name: 'lint:yaml', description: 'Lint a YAML file and outputs encountered errors')]
-class YamlLintCommand extends BaseLintCommand
+#[As_Command(name: 'lint:yaml', description: 'Lint a YAML file and outputs encountered errors')]
+class Yaml_Lint_Command extends Base_Lint_Command
 {
     public function __construct()
     {
-        $directoryIteratorProvider = function ($directory, $default) {
+        $directory_iterator_provider = function ($directory, $default) {
             if (!is_dir($directory)) {
-                $directory = $this->getApplication()->getKernel()->locateResource($directory);
+                $directory = $this->get_application()->get_kernel()->locate_resource($directory);
             }
-
             return $default($directory);
         };
-
-        $isReadableProvider = static fn ($fileOrDirectory, $default): bool => str_starts_with((string) $fileOrDirectory, '@') || $default($fileOrDirectory);
-
-        parent::__construct(null, $directoryIteratorProvider, $isReadableProvider);
+        $is_readable_provider = static fn($file_or_directory, $default): bool => str_starts_with((string) $file_or_directory, '@') || $default($file_or_directory);
+        parent::__construct(null, $directory_iterator_provider, $is_readable_provider);
     }
-
     protected function configure(): void
     {
         parent::configure();
-
-        $this->setHelp(
-            $this->getHelp().<<<'EOF'
-
-            Or find all files in a bundle:
-
-              <info>php %command.full_name% @AcmeDemoBundle</info>
-
-            EOF
-        );
+        $this->set_help($this->get_help() . <<<'EOF'
+        
+        Or find all files in a bundle:
+        
+          <info>php %command.full_name% @AcmeDemoBundle</info>
+        
+        EOF);
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpKernel\Attribute;
+namespace Symfony\Component\Http_Kernel\Attribute;
 
 /**
  * Autoconfigures controllers as services by applying
@@ -21,6 +19,6 @@ namespace Symfony\Component\HttpKernel\Attribute;
  * to other conventional dependency injection strategies.
  */
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_FUNCTION)]
-class AsController
+class As_Controller
 {
 }

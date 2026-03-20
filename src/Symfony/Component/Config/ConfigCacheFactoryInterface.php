@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config;
 
 /**
@@ -20,7 +18,7 @@ namespace Symfony\Component\Config;
  *
  * @author Matthias Pigulla <mp@webfactory.de>
  */
-interface ConfigCacheFactoryInterface
+interface Config_Cache_Factory_Interface
 {
     /**
      * Creates a cache instance and (re-)initializes it if necessary.
@@ -28,5 +26,5 @@ interface ConfigCacheFactoryInterface
      * @param string   $file     The absolute cache file path
      * @param callable $callable The callable to be executed when the cache needs to be filled (i. e. is not fresh). The cache will be passed as the only parameter to this callback
      */
-    public function cache(string $file, callable $callable): ConfigCacheInterface;
+    public function cache(string $file, callable $callable): Config_Cache_Interface;
 }

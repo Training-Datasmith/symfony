@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,98 +9,79 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Doctrine\Types;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types\ConversionException;
-use Doctrine\DBAL\Types\Exception\InvalidType;
-use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
+use Doctrine\DBAL\Platforms\Abstract_Platform;
+use Doctrine\DBAL\Types\Conversion_Exception;
+use Doctrine\DBAL\Types\Exception\Invalid_Type;
+use Doctrine\DBAL\Types\Exception\Value_Not_Convertible;
 use Doctrine\DBAL\Types\Type;
-use Symfony\Component\Uid\AbstractUid;
-
-abstract class AbstractUidType extends Type
+use Symfony\Component\Uid\Abstract_Uid;
+abstract class Abstract_Uid_Type extends Type
 {
     /**
      * @return class-string<AbstractUid>
      */
-    abstract protected function getUidClass(): string;
-
-    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
+    abstract protected function get_uid_class(): string;
+    public function get_sql_declaration(array $column, Abstract_Platform $platform): string
     {
-        if ($this->hasNativeGuidType($platform)) {
-            return $platform->getGuidTypeDeclarationSQL($column);
+        if ($this->has_native_guid_type($platform)) {
+            return $platform->get_guid_type_declaration_sql($column);
         }
-
-        return $platform->getBinaryTypeDeclarationSQL([
-            'length' => 16,
-            'fixed' => true,
-        ]);
+        return $platform->get_binary_type_declaration_sql(['length' => 16, 'fixed' => true]);
     }
-
     /**
      * @throws ConversionException
      */
-    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?AbstractUid
+    public function convert_to_php_value(mixed $value, Abstract_Platform $platform): ?Abstract_Uid
     {
-        if ($value instanceof AbstractUid || null === $value) {
+        if ($value instanceof Abstract_Uid || null === $value) {
             return $value;
         }
-
         if (!\is_string($value)) {
-            $this->throwInvalidType($value);
+            $this->throw_invalid_type($value);
         }
-
         try {
-            return $this->getUidClass()::fromString($value);
+            return $this->get_uid_class()::from_string($value);
         } catch (\InvalidArgumentException $e) {
-            $this->throwValueNotConvertible($value, $e);
+            $this->throw_value_not_convertible($value, $e);
         }
     }
-
     /**
      * @throws ConversionException
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
+    public function convert_to_database_value($value, Abstract_Platform $platform): ?string
     {
-        $toString = $this->hasNativeGuidType($platform) ? 'toRfc4122' : 'toBinary';
-
-        if ($value instanceof AbstractUid) {
-            return $value->$toString();
+        $to_string = $this->has_native_guid_type($platform) ? 'toRfc4122' : 'toBinary';
+        if ($value instanceof Abstract_Uid) {
+            return $value->{$to_string}();
         }
-
         if (null === $value || '' === $value) {
             return null;
         }
-
         if (!\is_string($value)) {
-            $this->throwInvalidType($value);
+            $this->throw_invalid_type($value);
         }
-
         try {
-            return $this->getUidClass()::fromString($value)->$toString();
+            return $this->get_uid_class()::from_string($value)->{$to_string}();
         } catch (\InvalidArgumentException $e) {
-            $this->throwValueNotConvertible($value, $e);
+            $this->throw_value_not_convertible($value, $e);
         }
     }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
+    public function requires_sql_comment_hint(Abstract_Platform $platform): bool
     {
         return true;
     }
-
-    private function hasNativeGuidType(AbstractPlatform $platform): bool
+    private function has_native_guid_type(Abstract_Platform $platform): bool
     {
-        return $platform->getGuidTypeDeclarationSQL([]) !== $platform->getStringTypeDeclarationSQL(['fixed' => true, 'length' => 36]);
+        return $platform->get_guid_type_declaration_sql([]) !== $platform->get_string_type_declaration_sql(['fixed' => true, 'length' => 36]);
     }
-
-    private function throwInvalidType(mixed $value): never
+    private function throw_invalid_type(mixed $value): never
     {
-        throw InvalidType::new($value, $this->getName(), ['null', 'string', AbstractUid::class]);
+        throw Invalid_Type::new($value, $this->get_name(), ['null', 'string', Abstract_Uid::class]);
     }
-
-    private function throwValueNotConvertible(mixed $value, \Throwable $previous): never
+    private function throw_value_not_convertible(mixed $value, \Throwable $previous): never
     {
-        throw ValueNotConvertible::new($value, $this->getName(), null, $previous);
+        throw Value_Not_Convertible::new($value, $this->get_name(), null, $previous);
     }
 }

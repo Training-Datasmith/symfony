@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,15 +9,13 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Options_Resolver\Options_Resolver;
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface FormTypeInterface
+interface Form_Type_Interface
 {
     /**
      * Returns the name of the parent type.
@@ -26,13 +23,11 @@ interface FormTypeInterface
      * The parent type and its extensions will configure the form with the
      * following methods before the current implementation.
      */
-    public function getParent(): ?string;
-
+    public function get_parent(): ?string;
     /**
      * Configures the options for this type.
      */
-    public function configureOptions(OptionsResolver $resolver): void;
-
+    public function configure_options(Options_Resolver $resolver): void;
     /**
      * Builds the form.
      *
@@ -43,8 +38,7 @@ interface FormTypeInterface
      *
      * @see FormTypeExtensionInterface::buildForm()
      */
-    public function buildForm(FormBuilderInterface $builder, array $options): void;
-
+    public function build_form(Form_Builder_Interface $builder, array $options): void;
     /**
      * Builds the form view.
      *
@@ -59,8 +53,7 @@ interface FormTypeInterface
      *
      * @see FormTypeExtensionInterface::buildView()
      */
-    public function buildView(FormView $view, FormInterface $form, array $options): void;
-
+    public function build_view(Form_View $view, Form_Interface $form, array $options): void;
     /**
      * Finishes the form view.
      *
@@ -76,13 +69,12 @@ interface FormTypeInterface
      *
      * @see FormTypeExtensionInterface::finishView()
      */
-    public function finishView(FormView $view, FormInterface $form, array $options): void;
-
+    public function finish_view(Form_View $view, Form_Interface $form, array $options): void;
     /**
      * Returns the prefix of the template block name for this type.
      *
      * The block prefix defaults to the underscored short class name with
      * the "Type" suffix removed (e.g. "UserProfileType" => "user_profile").
      */
-    public function getBlockPrefix(): string;
+    public function get_block_prefix(): string;
 }

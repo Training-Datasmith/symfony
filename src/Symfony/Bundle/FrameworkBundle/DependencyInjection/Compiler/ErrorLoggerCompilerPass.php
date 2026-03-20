@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,30 +9,27 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Dependency_Injection\Compiler;
 
-namespace Symfony\Bundle\FrameworkBundle\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * @internal
  */
-class ErrorLoggerCompilerPass implements CompilerPassInterface
+class Error_Logger_Compiler_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (!$container->hasDefinition('debug.error_handler_configurator')) {
+        if (!$container->has_definition('debug.error_handler_configurator')) {
             return;
         }
-
-        $definition = $container->getDefinition('debug.error_handler_configurator');
-        if ($container->hasDefinition('monolog.logger.php')) {
-            $definition->replaceArgument(0, new Reference('monolog.logger.php'));
+        $definition = $container->get_definition('debug.error_handler_configurator');
+        if ($container->has_definition('monolog.logger.php')) {
+            $definition->replace_argument(0, new Reference('monolog.logger.php'));
         }
-        if ($container->hasDefinition('monolog.logger.deprecation')) {
-            $definition->replaceArgument(5, new Reference('monolog.logger.deprecation'));
+        if ($container->has_definition('monolog.logger.deprecation')) {
+            $definition->replace_argument(5, new Reference('monolog.logger.deprecation'));
         }
     }
 }

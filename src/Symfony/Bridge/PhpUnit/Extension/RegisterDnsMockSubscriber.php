@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,42 +9,36 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Php_Unit\Extension;
 
-namespace Symfony\Bridge\PhpUnit\Extension;
-
-use PHPUnit\Event\Code\TestMethod;
-use PHPUnit\Event\TestSuite\Loaded;
-use PHPUnit\Event\TestSuite\LoadedSubscriber;
-use PHPUnit\Metadata\Group;
-use Symfony\Bridge\PhpUnit\Attribute\DnsSensitive;
-use Symfony\Bridge\PhpUnit\DnsMock;
-use Symfony\Bridge\PhpUnit\Metadata\AttributeReader;
-
+use Php_Unit\Event\Code\Test_Method;
+use Php_Unit\Event\Test_Suite\Loaded;
+use Php_Unit\Event\Test_Suite\Loaded_Subscriber;
+use Php_Unit\Metadata\Group;
+use Symfony\Bridge\Php_Unit\Attribute\Dns_Sensitive;
+use Symfony\Bridge\Php_Unit\Dns_Mock;
+use Symfony\Bridge\Php_Unit\Metadata\Attribute_Reader;
 /**
  * @internal
  */
-class RegisterDnsMockSubscriber implements LoadedSubscriber
+class Register_Dns_Mock_Subscriber implements Loaded_Subscriber
 {
-    public function __construct(
-        private readonly AttributeReader $reader,
-    ) {
+    public function __construct(private readonly Attribute_Reader $reader)
+    {
     }
-
     public function notify(Loaded $event): void
     {
-        foreach ($event->testSuite()->tests() as $test) {
-            if (!$test instanceof TestMethod) {
+        foreach ($event->test_suite()->tests() as $test) {
+            if (!$test instanceof Test_Method) {
                 continue;
             }
-
             foreach ($test->metadata() as $metadata) {
-                if ($metadata instanceof Group && 'dns-sensitive' === $metadata->groupName()) {
-                    DnsMock::register($test->className());
+                if ($metadata instanceof Group && 'dns-sensitive' === $metadata->group_name()) {
+                    Dns_Mock::register($test->class_name());
                 }
             }
-
-            foreach ($this->reader->forClassAndMethod($test->className(), $test->methodName(), DnsSensitive::class) as $attribute) {
-                DnsMock::register($attribute->class ?? $test->className());
+            foreach ($this->reader->for_class_and_method($test->class_name(), $test->method_name(), Dns_Sensitive::class) as $attribute) {
+                Dns_Mock::register($attribute->class ?? $test->class_name());
             }
         }
     }

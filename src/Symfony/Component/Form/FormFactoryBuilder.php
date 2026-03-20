@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,145 +9,111 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
-use Symfony\Component\Form\Extension\Core\CoreExtension;
-
+use Symfony\Component\Form\Extension\Core\Core_Extension;
 /**
  * The default implementation of FormFactoryBuilderInterface.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class FormFactoryBuilder implements FormFactoryBuilderInterface
+class Form_Factory_Builder implements Form_Factory_Builder_Interface
 {
-    private ResolvedFormTypeFactoryInterface $resolvedTypeFactory;
-
+    private Resolved_Form_Type_Factory_Interface $resolved_type_factory;
     /**
      * @var FormExtensionInterface[]
      */
     private array $extensions = [];
-
     /**
      * @var FormTypeInterface[]
      */
     private array $types = [];
-
     /**
      * @var FormTypeExtensionInterface[][]
      */
-    private array $typeExtensions = [];
-
+    private array $type_extensions = [];
     /**
      * @var FormTypeGuesserInterface[]
      */
-    private array $typeGuessers = [];
-
-    public function __construct(
-        private readonly bool $forceCoreExtension = false,
-    ) {
-    }
-
-    public function setResolvedTypeFactory(ResolvedFormTypeFactoryInterface $resolvedTypeFactory): static
+    private array $type_guessers = [];
+    public function __construct(private readonly bool $force_core_extension = false)
     {
-        $this->resolvedTypeFactory = $resolvedTypeFactory;
-
+    }
+    public function set_resolved_type_factory(Resolved_Form_Type_Factory_Interface $resolved_type_factory): static
+    {
+        $this->resolved_type_factory = $resolved_type_factory;
         return $this;
     }
-
-    public function addExtension(FormExtensionInterface $extension): static
+    public function add_extension(Form_Extension_Interface $extension): static
     {
         $this->extensions[] = $extension;
-
         return $this;
     }
-
-    public function addExtensions(array $extensions): static
+    public function add_extensions(array $extensions): static
     {
         $this->extensions = array_merge($this->extensions, $extensions);
-
         return $this;
     }
-
-    public function addType(FormTypeInterface $type): static
+    public function add_type(Form_Type_Interface $type): static
     {
         $this->types[] = $type;
-
         return $this;
     }
-
-    public function addTypes(array $types): static
+    public function add_types(array $types): static
     {
         foreach ($types as $type) {
             $this->types[] = $type;
         }
-
         return $this;
     }
-
-    public function addTypeExtension(FormTypeExtensionInterface $typeExtension): static
+    public function add_type_extension(Form_Type_Extension_Interface $type_extension): static
     {
-        foreach ($typeExtension::getExtendedTypes() as $extendedType) {
-            $this->typeExtensions[$extendedType][] = $typeExtension;
+        foreach ($type_extension::get_extended_types() as $extended_type) {
+            $this->type_extensions[$extended_type][] = $type_extension;
         }
-
         return $this;
     }
-
-    public function addTypeExtensions(array $typeExtensions): static
+    public function add_type_extensions(array $type_extensions): static
     {
-        foreach ($typeExtensions as $typeExtension) {
-            $this->addTypeExtension($typeExtension);
+        foreach ($type_extensions as $type_extension) {
+            $this->add_type_extension($type_extension);
         }
-
         return $this;
     }
-
-    public function addTypeGuesser(FormTypeGuesserInterface $typeGuesser): static
+    public function add_type_guesser(Form_Type_Guesser_Interface $type_guesser): static
     {
-        $this->typeGuessers[] = $typeGuesser;
-
+        $this->type_guessers[] = $type_guesser;
         return $this;
     }
-
-    public function addTypeGuessers(array $typeGuessers): static
+    public function add_type_guessers(array $type_guessers): static
     {
-        $this->typeGuessers = array_merge($this->typeGuessers, $typeGuessers);
-
+        $this->type_guessers = array_merge($this->type_guessers, $type_guessers);
         return $this;
     }
-
-    public function getFormFactory(): FormFactoryInterface
+    public function get_form_factory(): Form_Factory_Interface
     {
         $extensions = $this->extensions;
-
-        if ($this->forceCoreExtension) {
-            $hasCoreExtension = false;
-
+        if ($this->force_core_extension) {
+            $has_core_extension = false;
             foreach ($extensions as $extension) {
-                if ($extension instanceof CoreExtension) {
-                    $hasCoreExtension = true;
+                if ($extension instanceof Core_Extension) {
+                    $has_core_extension = true;
                     break;
                 }
             }
-
-            if (!$hasCoreExtension) {
-                array_unshift($extensions, new CoreExtension());
+            if (!$has_core_extension) {
+                array_unshift($extensions, new Core_Extension());
             }
         }
-
-        if (\count($this->types) > 0 || \count($this->typeExtensions) > 0 || \count($this->typeGuessers) > 0) {
-            if (\count($this->typeGuessers) > 1) {
-                $typeGuesser = new FormTypeGuesserChain($this->typeGuessers);
+        if (\count($this->types) > 0 || \count($this->type_extensions) > 0 || \count($this->type_guessers) > 0) {
+            if (\count($this->type_guessers) > 1) {
+                $type_guesser = new Form_Type_Guesser_Chain($this->type_guessers);
             } else {
-                $typeGuesser = $this->typeGuessers[0] ?? null;
+                $type_guesser = $this->type_guessers[0] ?? null;
             }
-
-            $extensions[] = new PreloadedExtension($this->types, $this->typeExtensions, $typeGuesser);
+            $extensions[] = new Preloaded_Extension($this->types, $this->type_extensions, $type_guesser);
         }
-
-        $registry = new FormRegistry($extensions, $this->resolvedTypeFactory ?? new ResolvedFormTypeFactory());
-
-        return new FormFactory($registry);
+        $registry = new Form_Registry($extensions, $this->resolved_type_factory ?? new Resolved_Form_Type_Factory());
+        return new Form_Factory($registry);
     }
 }

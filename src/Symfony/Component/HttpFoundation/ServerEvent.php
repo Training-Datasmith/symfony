@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpFoundation;
+namespace Symfony\Component\Http_Foundation;
 
 /**
  * An event generated on the server intended for streaming to the client
@@ -21,7 +19,7 @@ namespace Symfony\Component\HttpFoundation;
  *
  * @author Yonel Ceruto <open@yceruto.dev>
  */
-class ServerEvent implements \IteratorAggregate
+class Server_Event implements \IteratorAggregate
 {
     /**
      * @param string|iterable<string> $data    The event data field for the message
@@ -31,117 +29,93 @@ class ServerEvent implements \IteratorAggregate
      * @param string|null             $id      The event ID to set the EventSource object's last event ID value
      * @param string|null             $comment The event comment
      */
-    public function __construct(
-        private string|iterable $data,
-        private ?string $type = null,
-        private ?int $retry = null,
-        private ?string $id = null,
-        private ?string $comment = null,
-    ) {
+    public function __construct(private string|iterable $data, private ?string $type = null, private ?int $retry = null, private ?string $id = null, private ?string $comment = null)
+    {
     }
-
-    public function getData(): iterable|string
+    public function get_data(): iterable|string
     {
         return $this->data;
     }
-
     /**
      * @return $this
      */
-    public function setData(iterable|string $data): static
+    public function set_data(iterable|string $data): static
     {
         $this->data = $data;
-
         return $this;
     }
-
-    public function getType(): ?string
+    public function get_type(): ?string
     {
         return $this->type;
     }
-
     /**
      * @return $this
      */
-    public function setType(string $type): static
+    public function set_type(string $type): static
     {
         $this->type = $type;
-
         return $this;
     }
-
-    public function getRetry(): ?int
+    public function get_retry(): ?int
     {
         return $this->retry;
     }
-
     /**
      * @return $this
      */
-    public function setRetry(?int $retry): static
+    public function set_retry(?int $retry): static
     {
         $this->retry = $retry;
-
         return $this;
     }
-
-    public function getId(): ?string
+    public function get_id(): ?string
     {
         return $this->id;
     }
-
     /**
      * @return $this
      */
-    public function setId(string $id): static
+    public function set_id(string $id): static
     {
         $this->id = $id;
-
         return $this;
     }
-
-    public function getComment(): ?string
+    public function get_comment(): ?string
     {
         return $this->comment;
     }
-
-    public function setComment(string $comment): static
+    public function set_comment(string $comment): static
     {
         $this->comment = $comment;
-
         return $this;
     }
-
     /**
      * @return \Traversable<string>
      */
     public function getIterator(): \Traversable
     {
-        static $lastRetry = null;
-
+        static $last_retry = null;
         $head = '';
         if ($this->comment) {
-            $head .= \sprintf(': %s', $this->comment)."\n";
+            $head .= \sprintf(': %s', $this->comment) . "\n";
         }
         if ($this->id) {
-            $head .= \sprintf('id: %s', $this->id)."\n";
+            $head .= \sprintf('id: %s', $this->id) . "\n";
         }
-        if ($this->retry > 0 && $this->retry !== $lastRetry) {
-            $head .= \sprintf('retry: %s', $lastRetry = $this->retry)."\n";
+        if ($this->retry > 0 && $this->retry !== $last_retry) {
+            $head .= \sprintf('retry: %s', $last_retry = $this->retry) . "\n";
         }
         if ($this->type) {
-            $head .= \sprintf('event: %s', $this->type)."\n";
+            $head .= \sprintf('event: %s', $this->type) . "\n";
         }
         yield $head;
-
         if (is_iterable($this->data)) {
             foreach ($this->data as $data) {
-                yield \sprintf('data: %s', $data)."\n";
+                yield \sprintf('data: %s', $data) . "\n";
             }
         } elseif ('' !== $this->data) {
-            yield \sprintf('data: %s', $this->data)."\n";
+            yield \sprintf('data: %s', $this->data) . "\n";
         }
-
         yield "\n";
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,18 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Foundation\Request_Matcher;
 
-namespace Symfony\Component\HttpFoundation\RequestMatcher;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcherInterface;
-
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Request_Matcher_Interface;
 /**
  * Checks the Request attributes matches all regular expressions.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class AttributesRequestMatcher implements RequestMatcherInterface
+class Attributes_Request_Matcher implements Request_Matcher_Interface
 {
     /**
      * @param array<string, string> $regexps
@@ -29,7 +26,6 @@ class AttributesRequestMatcher implements RequestMatcherInterface
     public function __construct(private readonly array $regexps)
     {
     }
-
     public function matches(Request $request): bool
     {
         foreach ($this->regexps as $key => $regexp) {
@@ -37,11 +33,10 @@ class AttributesRequestMatcher implements RequestMatcherInterface
             if (!\is_string($attribute)) {
                 return false;
             }
-            if (!preg_match('{'.$regexp.'}', $attribute)) {
+            if (!preg_match('{' . $regexp . '}', $attribute)) {
                 return false;
             }
         }
-
         return true;
     }
 }

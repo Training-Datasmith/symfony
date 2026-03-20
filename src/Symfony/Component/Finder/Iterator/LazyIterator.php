@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Finder\Iterator;
 
 /**
@@ -18,17 +16,15 @@ namespace Symfony\Component\Finder\Iterator;
  *
  * @internal
  */
-class LazyIterator implements \IteratorAggregate
+class Lazy_Iterator implements \IteratorAggregate
 {
-    private readonly \Closure $iteratorFactory;
-
-    public function __construct(callable $iteratorFactory)
+    private readonly \Closure $iterator_factory;
+    public function __construct(callable $iterator_factory)
     {
-        $this->iteratorFactory = $iteratorFactory(...);
+        $this->iterator_factory = $iterator_factory(...);
     }
-
     public function getIterator(): \Traversable
     {
-        yield from ($this->iteratorFactory)();
+        yield from ($this->iterator_factory)();
     }
 }

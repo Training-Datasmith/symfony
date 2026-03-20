@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,134 +9,111 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Dependency_Injection;
 
-namespace Symfony\Component\Form\DependencyInjection;
-
-use Symfony\Component\DependencyInjection\Argument\ArgumentInterface;
-use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
-use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Dependency_Injection\Argument\Argument_Interface;
+use Symfony\Component\Dependency_Injection\Argument\Iterator_Argument;
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Compiler\Priority_Tagged_Service_Trait;
+use Symfony\Component\Dependency_Injection\Compiler\Service_Locator_Tag_Pass;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * Adds all services with the tags "form.type", "form.type_extension" and
  * "form.type_guesser" as arguments of the "form.extension" service.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class FormPass implements CompilerPassInterface
+class Form_Pass implements Compiler_Pass_Interface
 {
-    use PriorityTaggedServiceTrait;
-
-    public function process(ContainerBuilder $container): void
+    use Priority_Tagged_Service_Trait;
+    public function process(Container_Builder $container): void
     {
-        if (!$container->hasDefinition('form.extension')) {
+        if (!$container->has_definition('form.extension')) {
             return;
         }
-
-        $definition = $container->getDefinition('form.extension');
-        $definition->replaceArgument(0, $this->processFormTypes($container));
-        $definition->replaceArgument(1, $this->processFormTypeExtensions($container));
-        $definition->replaceArgument(2, $this->processFormTypeGuessers($container));
+        $definition = $container->get_definition('form.extension');
+        $definition->replace_argument(0, $this->process_form_types($container));
+        $definition->replace_argument(1, $this->process_form_type_extensions($container));
+        $definition->replace_argument(2, $this->process_form_type_guessers($container));
     }
-
-    private function processFormTypes(ContainerBuilder $container): Reference
+    private function process_form_types(Container_Builder $container): Reference
     {
         // Get service locator argument
-        $servicesMap = [];
+        $services_map = [];
         $namespaces = ['Symfony\Component\Form\Extension\Core\Type' => true];
-        $csrfTokenIds = [];
-
+        $csrf_token_ids = [];
         // Builds an array with fully-qualified type class names as keys and service IDs as values
-        foreach ($container->findTaggedServiceIds('form.type', true) as $serviceId => $tag) {
+        foreach ($container->find_tagged_service_ids('form.type', true) as $service_id => $tag) {
             // Add form type service to the service locator
-            $serviceDefinition = $container->getDefinition($serviceId);
-            $servicesMap[$formType = $serviceDefinition->getClass()] = new Reference($serviceId);
-            $namespaces[substr((string) $formType, 0, strrpos((string) $formType, '\\') ?: \strlen((string) $formType))] = true;
-
+            $service_definition = $container->get_definition($service_id);
+            $services_map[$form_type = $service_definition->get_class()] = new Reference($service_id);
+            $namespaces[substr((string) $form_type, 0, strrpos((string) $form_type, '\\') ?: \strlen((string) $form_type))] = true;
             if (isset($tag[0]['csrf_token_id'])) {
-                $csrfTokenIds[$formType] = $tag[0]['csrf_token_id'];
+                $csrf_token_ids[$form_type] = $tag[0]['csrf_token_id'];
             }
         }
-
-        if ($container->hasDefinition('console.command.form_debug')) {
-            $commandDefinition = $container->getDefinition('console.command.form_debug');
-            $commandDefinition->setArgument(1, array_keys($namespaces));
-            $commandDefinition->setArgument(2, array_keys($servicesMap));
+        if ($container->has_definition('console.command.form_debug')) {
+            $command_definition = $container->get_definition('console.command.form_debug');
+            $command_definition->set_argument(1, array_keys($namespaces));
+            $command_definition->set_argument(2, array_keys($services_map));
         }
-
-        if ($csrfTokenIds && $container->hasDefinition('form.type_extension.csrf')) {
-            $csrfExtension = $container->getDefinition('form.type_extension.csrf');
-
-            if (8 <= \count($csrfExtension->getArguments())) {
-                $csrfExtension->replaceArgument(7, $csrfTokenIds);
+        if ($csrf_token_ids && $container->has_definition('form.type_extension.csrf')) {
+            $csrf_extension = $container->get_definition('form.type_extension.csrf');
+            if (8 <= \count($csrf_extension->get_arguments())) {
+                $csrf_extension->replace_argument(7, $csrf_token_ids);
             }
         }
-
-        return ServiceLocatorTagPass::register($container, $servicesMap);
+        return Service_Locator_Tag_Pass::register($container, $services_map);
     }
-
-    private function processFormTypeExtensions(ContainerBuilder $container): array
+    private function process_form_type_extensions(Container_Builder $container): array
     {
-        $typeExtensions = [];
-        $typeExtensionsClasses = [];
-        foreach ($this->findAndSortTaggedServices('form.type_extension', $container) as $reference) {
-            $serviceId = (string) $reference;
-            $serviceDefinition = $container->getDefinition($serviceId);
-
-            $tag = $serviceDefinition->getTag('form.type_extension');
-            $typeExtensionClass = $container->getParameterBag()->resolveValue($serviceDefinition->getClass());
-
+        $type_extensions = [];
+        $type_extensions_classes = [];
+        foreach ($this->find_and_sort_tagged_services('form.type_extension', $container) as $reference) {
+            $service_id = (string) $reference;
+            $service_definition = $container->get_definition($service_id);
+            $tag = $service_definition->get_tag('form.type_extension');
+            $type_extension_class = $container->get_parameter_bag()->resolve_value($service_definition->get_class());
             if (isset($tag[0]['extended_type'])) {
-                $typeExtensions[$tag[0]['extended_type']][] = new Reference($serviceId);
-                $typeExtensionsClasses[] = $typeExtensionClass;
+                $type_extensions[$tag[0]['extended_type']][] = new Reference($service_id);
+                $type_extensions_classes[] = $type_extension_class;
             } else {
-                $extendsTypes = false;
-
-                $typeExtensionsClasses[] = $typeExtensionClass;
-                $container->getReflectionClass($typeExtensionClass);
-                foreach ($typeExtensionClass::getExtendedTypes() as $extendedType) {
-                    $typeExtensions[$extendedType][] = new Reference($serviceId);
-                    $extendsTypes = true;
+                $extends_types = false;
+                $type_extensions_classes[] = $type_extension_class;
+                $container->get_reflection_class($type_extension_class);
+                foreach ($type_extension_class::get_extended_types() as $extended_type) {
+                    $type_extensions[$extended_type][] = new Reference($service_id);
+                    $extends_types = true;
                 }
-
-                if (!$extendsTypes) {
-                    throw new InvalidArgumentException(\sprintf('The getExtendedTypes() method for service "%s" does not return any extended types.', $serviceId));
+                if (!$extends_types) {
+                    throw new InvalidArgumentException(\sprintf('The getExtendedTypes() method for service "%s" does not return any extended types.', $service_id));
                 }
             }
         }
-
-        foreach ($typeExtensions as $extendedType => $extensions) {
-            $typeExtensions[$extendedType] = new IteratorArgument($extensions);
+        foreach ($type_extensions as $extended_type => $extensions) {
+            $type_extensions[$extended_type] = new Iterator_Argument($extensions);
         }
-
-        if ($container->hasDefinition('console.command.form_debug')) {
-            $commandDefinition = $container->getDefinition('console.command.form_debug');
-            $commandDefinition->setArgument(3, $typeExtensionsClasses);
+        if ($container->has_definition('console.command.form_debug')) {
+            $command_definition = $container->get_definition('console.command.form_debug');
+            $command_definition->set_argument(3, $type_extensions_classes);
         }
-
-        return $typeExtensions;
+        return $type_extensions;
     }
-
-    private function processFormTypeGuessers(ContainerBuilder $container): ArgumentInterface
+    private function process_form_type_guessers(Container_Builder $container): Argument_Interface
     {
         $guessers = [];
-        $guessersClasses = [];
-        foreach ($container->findTaggedServiceIds('form.type_guesser', true) as $serviceId => $tags) {
-            $guessers[] = new Reference($serviceId);
-
-            $serviceDefinition = $container->getDefinition($serviceId);
-            $guessersClasses[] = $serviceDefinition->getClass();
+        $guessers_classes = [];
+        foreach ($container->find_tagged_service_ids('form.type_guesser', true) as $service_id => $tags) {
+            $guessers[] = new Reference($service_id);
+            $service_definition = $container->get_definition($service_id);
+            $guessers_classes[] = $service_definition->get_class();
         }
-
-        if ($container->hasDefinition('console.command.form_debug')) {
-            $commandDefinition = $container->getDefinition('console.command.form_debug');
-            $commandDefinition->setArgument(4, $guessersClasses);
+        if ($container->has_definition('console.command.form_debug')) {
+            $command_definition = $container->get_definition('console.command.form_debug');
+            $command_definition->set_argument(4, $guessers_classes);
         }
-
-        return new IteratorArgument($guessers);
+        return new Iterator_Argument($guessers);
     }
 }

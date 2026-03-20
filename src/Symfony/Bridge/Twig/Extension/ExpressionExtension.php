@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,28 +9,23 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Twig\Extension;
 
-use Symfony\Component\ExpressionLanguage\Expression;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
-
+use Symfony\Component\Expression_Language\Expression;
+use Twig\Extension\Abstract_Extension;
+use Twig\Twig_Function;
 /**
  * ExpressionExtension gives a way to create Expressions from a template.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class ExpressionExtension extends AbstractExtension
+final class Expression_Extension extends Abstract_Extension
 {
-    public function getFunctions(): array
+    public function get_functions(): array
     {
-        return [
-            new TwigFunction('expression', $this->createExpression(...)),
-        ];
+        return [new Twig_Function('expression', $this->create_expression(...))];
     }
-
-    public function createExpression(string $expression): Expression
+    public function create_expression(string $expression): Expression
     {
         return new Expression($expression);
     }

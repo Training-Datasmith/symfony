@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Foundation\Session;
 
-namespace Symfony\Component\HttpFoundation\Session;
-
-use Symfony\Component\HttpFoundation\Session\Storage\MetadataBag;
-
+use Symfony\Component\Http_Foundation\Session\Storage\Metadata_Bag;
 /**
  * Interface for the session.
  *
  * @author Drak <drak@zikula.org>
  */
-interface SessionInterface
+interface Session_Interface
 {
     /**
      * Starts the session storage.
@@ -28,27 +25,22 @@ interface SessionInterface
      * @throws \RuntimeException if session fails to start
      */
     public function start(): bool;
-
     /**
      * Returns the session ID.
      */
-    public function getId(): string;
-
+    public function get_id(): string;
     /**
      * Sets the session ID.
      */
-    public function setId(string $id): void;
-
+    public function set_id(string $id): void;
     /**
      * Returns the session name.
      */
-    public function getName(): string;
-
+    public function get_name(): string;
     /**
      * Sets the session name.
      */
-    public function setName(string $name): void;
-
+    public function set_name(string $name): void;
     /**
      * Invalidates the current session.
      *
@@ -61,7 +53,6 @@ interface SessionInterface
      *                           not a Unix timestamp.
      */
     public function invalidate(?int $lifetime = null): bool;
-
     /**
      * Migrates the current session to a new session id while maintaining all
      * session attributes.
@@ -73,7 +64,6 @@ interface SessionInterface
      *                           not a Unix timestamp.
      */
     public function migrate(bool $destroy = false, ?int $lifetime = null): bool;
-
     /**
      * Force the session to be saved and closed.
      *
@@ -82,61 +72,50 @@ interface SessionInterface
      * code execution.
      */
     public function save(): void;
-
     /**
      * Checks if an attribute is defined.
      */
     public function has(string $name): bool;
-
     /**
      * Returns an attribute.
      */
     public function get(string $name, mixed $default = null): mixed;
-
     /**
      * Sets an attribute.
      */
     public function set(string $name, mixed $value): void;
-
     /**
      * Returns attributes.
      */
     public function all(): array;
-
     /**
      * Sets attributes.
      */
     public function replace(array $attributes): void;
-
     /**
      * Removes an attribute.
      *
      * @return mixed The removed value or null when it does not exist
      */
     public function remove(string $name): mixed;
-
     /**
      * Clears all attributes.
      */
     public function clear(): void;
-
     /**
      * Checks if the session was started.
      */
-    public function isStarted(): bool;
-
+    public function is_started(): bool;
     /**
      * Registers a SessionBagInterface with the session.
      */
-    public function registerBag(SessionBagInterface $bag): void;
-
+    public function register_bag(Session_Bag_Interface $bag): void;
     /**
      * Gets a bag instance by name.
      */
-    public function getBag(string $name): SessionBagInterface;
-
+    public function get_bag(string $name): Session_Bag_Interface;
     /**
      * Gets session meta.
      */
-    public function getMetadataBag(): MetadataBag;
+    public function get_metadata_bag(): Metadata_Bag;
 }

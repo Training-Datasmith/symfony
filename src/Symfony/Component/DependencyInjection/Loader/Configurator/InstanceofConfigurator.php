@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,38 +9,29 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator;
-
-use Symfony\Component\DependencyInjection\Definition;
-
+use Symfony\Component\Dependency_Injection\Definition;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class InstanceofConfigurator extends AbstractServiceConfigurator
+class Instanceof_Configurator extends Abstract_Service_Configurator
 {
-    use Traits\AutowireTrait;
-    use Traits\BindTrait;
-    use Traits\CallTrait;
-    use Traits\ConfiguratorTrait;
-    use Traits\ConstructorTrait;
-    use Traits\LazyTrait;
-    use Traits\PropertyTrait;
-    use Traits\PublicTrait;
-    use Traits\ShareTrait;
-    use Traits\TagTrait;
-
+    use Traits\Autowire_Trait;
+    use Traits\Bind_Trait;
+    use Traits\Call_Trait;
+    use Traits\Configurator_Trait;
+    use Traits\Constructor_Trait;
+    use Traits\Lazy_Trait;
+    use Traits\Property_Trait;
+    use Traits\Public_Trait;
+    use Traits\Share_Trait;
+    use Traits\Tag_Trait;
     public const FACTORY = 'instanceof';
-
-    public function __construct(
-        ServicesConfigurator $parent,
-        Definition $definition,
-        string $id,
-        private ?string $path = null,
-    ) {
+    public function __construct(Services_Configurator $parent, Definition $definition, string $id, private ?string $path = null)
+    {
         parent::__construct($parent, $definition, $id);
     }
-
     /**
      * Defines an instanceof-conditional to be applied to following service definitions.
      */

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,24 +9,20 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Dependency_Injection\Compiler;
 
-namespace Symfony\Bundle\FrameworkBundle\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
-class TranslationUpdateCommandPass implements CompilerPassInterface
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+class Translation_Update_Command_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (!$container->hasDefinition('console.command.translation_extract')) {
+        if (!$container->has_definition('console.command.translation_extract')) {
             return;
         }
-
-        $translationWriterClass = $container->getParameterBag()->resolveValue($container->findDefinition('translation.writer')->getClass());
-
-        if (!method_exists($translationWriterClass, 'getFormats')) {
-            $container->removeDefinition('console.command.translation_extract');
+        $translation_writer_class = $container->get_parameter_bag()->resolve_value($container->find_definition('translation.writer')->get_class());
+        if (!method_exists($translation_writer_class, 'getFormats')) {
+            $container->remove_definition('console.command.translation_extract');
         }
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,42 +9,30 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Flow\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Form\Abstract_Type;
+use Symfony\Component\Form\Form_Builder_Interface;
+use Symfony\Component\Options_Resolver\Options_Resolver;
 /**
  * A navigator type that defines default buttons to interact with a form flow.
  *
  * @author Yonel Ceruto <open@yceruto.dev>
  */
-class NavigatorFlowType extends AbstractType
+class Navigator_Flow_Type extends Abstract_Type
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function build_form(Form_Builder_Interface $builder, array $options): void
     {
-        $builder->add('previous', PreviousFlowType::class);
-        $builder->add('next', NextFlowType::class);
-        $builder->add('finish', FinishFlowType::class);
-
+        $builder->add('previous', Previous_Flow_Type::class);
+        $builder->add('next', Next_Flow_Type::class);
+        $builder->add('finish', Finish_Flow_Type::class);
         if ($options['with_reset']) {
-            $builder->add('reset', ResetFlowType::class);
+            $builder->add('reset', Reset_Flow_Type::class);
         }
     }
-
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configure_options(Options_Resolver $resolver): void
     {
-        $resolver->setDefaults([
-            'label' => false,
-            'mapped' => false,
-            'priority' => -100,
-        ]);
-
-        $resolver->define('with_reset')
-            ->allowedTypes('bool')
-            ->default(false)
-            ->info('Whether to add a reset button to restart the flow from the first step');
+        $resolver->set_defaults(['label' => false, 'mapped' => false, 'priority' => -100]);
+        $resolver->define('with_reset')->allowed_types('bool')->default(false)->info('Whether to add a reset button to restart the flow from the first step');
     }
 }

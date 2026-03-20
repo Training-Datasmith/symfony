@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,24 +9,23 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\AssetMapper\ImportMap;
+namespace Symfony\Component\Asset_Mapper\Import_Map;
 
 /**
  * Represents an item that should be in the importmap.
  *
  * @author Ryan Weaver <ryan@symfonycasts.com>
  */
-final readonly class ImportMapEntry
+final readonly class Import_Map_Entry
 {
     private function __construct(
-        public string $importName,
-        public ImportMapType $type,
+        public string $import_name,
+        public Import_Map_Type $type,
         /**
          * A logical path, relative path or absolute path to the file.
          */
         public string $path,
-        public bool $isEntrypoint,
+        public bool $is_entrypoint,
         /**
          * The version of the package (remote only).
          */
@@ -35,50 +33,43 @@ final readonly class ImportMapEntry
         /**
          * The full "package-name/path" (remote only).
          */
-        public ?string $packageModuleSpecifier,
-    ) {
-    }
-
-    public static function createLocal(string $importName, ImportMapType $importMapType, string $path, bool $isEntrypoint): self
+        public ?string $package_module_specifier
+    )
     {
-        return new self($importName, $importMapType, $path, $isEntrypoint, null, null);
     }
-
-    public static function createRemote(string $importName, ImportMapType $importMapType, string $path, string $version, string $packageModuleSpecifier, bool $isEntrypoint): self
+    public static function create_local(string $import_name, Import_Map_Type $import_map_type, string $path, bool $is_entrypoint): self
     {
-        return new self($importName, $importMapType, $path, $isEntrypoint, $version, $packageModuleSpecifier);
+        return new self($import_name, $import_map_type, $path, $is_entrypoint, null, null);
     }
-
-    public function getPackageName(): string
+    public static function create_remote(string $import_name, Import_Map_Type $import_map_type, string $path, string $version, string $package_module_specifier, bool $is_entrypoint): self
     {
-        return self::splitPackageNameAndFilePath($this->packageModuleSpecifier)[0];
+        return new self($import_name, $import_map_type, $path, $is_entrypoint, $version, $package_module_specifier);
     }
-
-    public function getPackagePathString(): string
+    public function get_package_name(): string
     {
-        return self::splitPackageNameAndFilePath($this->packageModuleSpecifier)[1];
+        return self::split_package_name_and_file_path($this->package_module_specifier)[0];
     }
-
+    public function get_package_path_string(): string
+    {
+        return self::split_package_name_and_file_path($this->package_module_specifier)[1];
+    }
     /**
      * @psalm-assert-if-true !null $this->version
      * @psalm-assert-if-true !null $this->packageModuleSpecifier
      */
-    public function isRemotePackage(): bool
+    public function is_remote_package(): bool
     {
         return null !== $this->version;
     }
-
-    public static function splitPackageNameAndFilePath(string $packageModuleSpecifier): array
+    public static function split_package_name_and_file_path(string $package_module_specifier): array
     {
-        $filePath = '';
-        $i = strpos($packageModuleSpecifier, '/');
-
-        if ($i && (!str_starts_with($packageModuleSpecifier, '@') || $i = strpos($packageModuleSpecifier, '/', $i + 1))) {
+        $file_path = '';
+        $i = strpos($package_module_specifier, '/');
+        if ($i && (!str_starts_with($package_module_specifier, '@') || $i = strpos($package_module_specifier, '/', $i + 1))) {
             // @vendor/package/filepath or package/filepath
-            $filePath = substr($packageModuleSpecifier, $i);
-            $packageModuleSpecifier = substr($packageModuleSpecifier, 0, $i);
+            $file_path = substr($package_module_specifier, $i);
+            $package_module_specifier = substr($package_module_specifier, 0, $i);
         }
-
-        return [$packageModuleSpecifier, $filePath];
+        return [$package_module_specifier, $file_path];
     }
 }

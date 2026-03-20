@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,37 +9,28 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Extension\Core\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-class BirthdayType extends AbstractType
+use Symfony\Component\Form\Abstract_Type;
+use Symfony\Component\Form\Form_Interface;
+use Symfony\Component\Form\Form_View;
+use Symfony\Component\Options_Resolver\Options_Resolver;
+class Birthday_Type extends Abstract_Type
 {
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configure_options(Options_Resolver $resolver): void
     {
-        $resolver->setDefaults([
-            'years' => range(date('Y') - 120, date('Y')),
-            'invalid_message' => 'Please enter a valid birthdate.',
-        ]);
-
-        $resolver->setAllowedTypes('years', 'array');
+        $resolver->set_defaults(['years' => range(date('Y') - 120, date('Y')), 'invalid_message' => 'Please enter a valid birthdate.']);
+        $resolver->set_allowed_types('years', 'array');
     }
-
-    public function getParent(): ?string
+    public function get_parent(): ?string
     {
-        return DateType::class;
+        return Date_Type::class;
     }
-
-    public function getBlockPrefix(): string
+    public function get_block_prefix(): string
     {
         return 'birthday';
     }
-
-    public function buildView(FormView $view, FormInterface $form, array $options): void
+    public function build_view(Form_View $view, Form_Interface $form, array $options): void
     {
         if ('single_text' === $options['widget']) {
             $view->vars['attr']['min'] ??= \sprintf('%d-01-01', min($options['years']));

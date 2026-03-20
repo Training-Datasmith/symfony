@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Css_Selector\X_Path\Extension;
 
-namespace Symfony\Component\CssSelector\XPath\Extension;
-
-use Symfony\Component\CssSelector\XPath\XPathExpr;
-
+use Symfony\Component\Css_Selector\X_Path\X_Path_Expr;
 /**
  * XPath expression translator combination extension.
  *
@@ -25,42 +22,29 @@ use Symfony\Component\CssSelector\XPath\XPathExpr;
  *
  * @internal
  */
-class CombinationExtension extends AbstractExtension
+class Combination_Extension extends Abstract_Extension
 {
-    public function getCombinationTranslators(): array
+    public function get_combination_translators(): array
     {
-        return [
-            ' ' => $this->translateDescendant(...),
-            '>' => $this->translateChild(...),
-            '+' => $this->translateDirectAdjacent(...),
-            '~' => $this->translateIndirectAdjacent(...),
-        ];
+        return [' ' => $this->translate_descendant(...), '>' => $this->translate_child(...), '+' => $this->translate_direct_adjacent(...), '~' => $this->translate_indirect_adjacent(...)];
     }
-
-    public function translateDescendant(XPathExpr $xpath, XPathExpr $combinedXpath): XPathExpr
+    public function translate_descendant(X_Path_Expr $xpath, X_Path_Expr $combined_xpath): X_Path_Expr
     {
-        return $xpath->join('/descendant-or-self::*/', $combinedXpath);
+        return $xpath->join('/descendant-or-self::*/', $combined_xpath);
     }
-
-    public function translateChild(XPathExpr $xpath, XPathExpr $combinedXpath): XPathExpr
+    public function translate_child(X_Path_Expr $xpath, X_Path_Expr $combined_xpath): X_Path_Expr
     {
-        return $xpath->join('/', $combinedXpath);
+        return $xpath->join('/', $combined_xpath);
     }
-
-    public function translateDirectAdjacent(XPathExpr $xpath, XPathExpr $combinedXpath): XPathExpr
+    public function translate_direct_adjacent(X_Path_Expr $xpath, X_Path_Expr $combined_xpath): X_Path_Expr
     {
-        return $xpath
-            ->join('/following-sibling::', $combinedXpath)
-            ->addNameTest()
-            ->addCondition('position() = 1');
+        return $xpath->join('/following-sibling::', $combined_xpath)->add_name_test()->add_condition('position() = 1');
     }
-
-    public function translateIndirectAdjacent(XPathExpr $xpath, XPathExpr $combinedXpath): XPathExpr
+    public function translate_indirect_adjacent(X_Path_Expr $xpath, X_Path_Expr $combined_xpath): X_Path_Expr
     {
-        return $xpath->join('/following-sibling::', $combinedXpath);
+        return $xpath->join('/following-sibling::', $combined_xpath);
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return 'combination';
     }

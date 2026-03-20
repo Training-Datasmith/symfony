@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Cache_Warmer;
 
-namespace Symfony\Bundle\FrameworkBundle\CacheWarmer;
-
-use Symfony\Component\HttpKernel\CacheClearer\Psr6CacheClearer;
-use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
-
+use Symfony\Component\Http_Kernel\Cache_Clearer\Psr6cache_Clearer;
+use Symfony\Component\Http_Kernel\Cache_Warmer\Cache_Warmer_Interface;
 /**
  * Clears the cache pools when warming up the cache.
  *
@@ -25,29 +22,24 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
  *
  * @internal
  */
-final readonly class CachePoolClearerCacheWarmer implements CacheWarmerInterface
+final readonly class Cache_Pool_Clearer_Cache_Warmer implements Cache_Warmer_Interface
 {
     /**
      * @param string[] $pools
      */
-    public function __construct(
-        private Psr6CacheClearer $poolClearer,
-        private array $pools = [],
-    ) {
+    public function __construct(private Psr6cache_Clearer $pool_clearer, private array $pools = [])
+    {
     }
-
-    public function warmUp(string $cacheDir, ?string $buildDir = null): array
+    public function warm_up(string $cache_dir, ?string $build_dir = null): array
     {
         foreach ($this->pools as $pool) {
-            if ($this->poolClearer->hasPool($pool)) {
-                $this->poolClearer->clearPool($pool);
+            if ($this->pool_clearer->has_pool($pool)) {
+                $this->pool_clearer->clear_pool($pool);
             }
         }
-
         return [];
     }
-
-    public function isOptional(): bool
+    public function is_optional(): bool
     {
         // optional cache warmers are not run when handling the request
         return false;

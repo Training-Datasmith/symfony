@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event_Listener;
 
-namespace Symfony\Component\HttpKernel\EventListener;
-
-use Symfony\Component\Console\ConsoleEvents;
-use Symfony\Component\Console\Event\ConsoleEvent;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
-use Symfony\Component\ErrorHandler\ErrorHandler;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\KernelEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
-
+use Symfony\Component\Console\Console_Events;
+use Symfony\Component\Console\Event\Console_Event;
+use Symfony\Component\Console\Output\Console_Output_Interface;
+use Symfony\Component\Error_Handler\Error_Handler;
+use Symfony\Component\Event_Dispatcher\Event_Subscriber_Interface;
+use Symfony\Component\Http_Kernel\Event\Kernel_Event;
+use Symfony\Component\Http_Kernel\Kernel_Events;
 /**
  * Sets an exception handler.
  *
@@ -30,102 +27,90 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * @internal
  */
-class DebugHandlersListener implements EventSubscriberInterface
+class Debug_Handlers_Listener implements Event_Subscriber_Interface
 {
-    private readonly string|object|null $earlyHandler;
-    private ?\Closure $exceptionHandler;
-    private readonly bool $webMode;
-    private bool $firstCall = true;
-    private bool $hasTerminatedWithException = false;
-
+    private readonly string|object|null $early_handler;
+    private ?\Closure $exception_handler;
+    private readonly bool $web_mode;
+    private bool $first_call = true;
+    private bool $has_terminated_with_exception = false;
     /**
      * @param callable|null $exceptionHandler A handler that must support \Throwable instances that will be called on Exception
      */
-    public function __construct(?callable $exceptionHandler = null, ?bool $webMode = null)
+    public function __construct(?callable $exception_handler = null, ?bool $web_mode = null)
     {
         $handler = set_exception_handler(var_dump(...));
-        $this->earlyHandler = \is_array($handler) ? $handler[0] : null;
+        $this->early_handler = \is_array($handler) ? $handler[0] : null;
         restore_exception_handler();
-
-        $this->exceptionHandler = null === $exceptionHandler ? null : $exceptionHandler(...);
-        $this->webMode = $webMode ?? !\in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true);
+        $this->exception_handler = null === $exception_handler ? null : $exception_handler(...);
+        $this->web_mode = $web_mode ?? !\in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true);
     }
-
     /**
      * Configures the error handler.
      */
     public function configure(?object $event = null): void
     {
-        if ($event instanceof ConsoleEvent && $this->webMode) {
+        if ($event instanceof Console_Event && $this->web_mode) {
             return;
         }
-        if (!$event instanceof KernelEvent ? !$this->firstCall : !$event->isMainRequest()) {
+        if (!$event instanceof Kernel_Event ? !$this->first_call : !$event->is_main_request()) {
             return;
         }
-        $this->firstCall = $this->hasTerminatedWithException = false;
-        $hasRun = null;
-
-        if (!$this->exceptionHandler) {
-            if ($event instanceof KernelEvent) {
-                if (method_exists($kernel = $event->getKernel(), 'terminateWithException')) {
-                    $request = $event->getRequest();
-                    $hasRun = &$this->hasTerminatedWithException;
-                    $this->exceptionHandler = static function (\Throwable $e) use ($kernel, $request, &$hasRun): void {
-                        if ($hasRun) {
+        $this->first_call = $this->has_terminated_with_exception = false;
+        $has_run = null;
+        if (!$this->exception_handler) {
+            if ($event instanceof Kernel_Event) {
+                if (method_exists($kernel = $event->get_kernel(), 'terminateWithException')) {
+                    $request = $event->get_request();
+                    $has_run =& $this->has_terminated_with_exception;
+                    $this->exception_handler = static function (\Throwable $e) use ($kernel, $request, &$has_run): void {
+                        if ($has_run) {
                             throw $e;
                         }
-
-                        $hasRun = true;
-                        $kernel->terminateWithException($e, $request);
+                        $has_run = true;
+                        $kernel->terminate_with_exception($e, $request);
                     };
                 }
-            } elseif ($event instanceof ConsoleEvent && $app = $event->getCommand()->getApplication()) {
-                $output = $event->getOutput();
-                if ($output instanceof ConsoleOutputInterface) {
-                    $output = $output->getErrorOutput();
+            } elseif ($event instanceof Console_Event && $app = $event->get_command()->get_application()) {
+                $output = $event->get_output();
+                if ($output instanceof Console_Output_Interface) {
+                    $output = $output->get_error_output();
                 }
-                $this->exceptionHandler = static function (\Throwable $e) use ($app, $output): void {
-                    $app->renderThrowable($e, $output);
+                $this->exception_handler = static function (\Throwable $e) use ($app, $output): void {
+                    $app->render_throwable($e, $output);
                 };
             }
         }
-        if ($this->exceptionHandler) {
+        if ($this->exception_handler) {
             $handler = set_exception_handler(var_dump(...));
             $handler = \is_array($handler) ? $handler[0] : null;
             restore_exception_handler();
-
-            if (!$handler instanceof ErrorHandler) {
-                $handler = $this->earlyHandler;
+            if (!$handler instanceof Error_Handler) {
+                $handler = $this->early_handler;
             }
-
-            if ($handler instanceof ErrorHandler) {
-                $handler->setExceptionHandler($this->exceptionHandler);
-                if (null !== $hasRun) {
-                    $throwAt = $handler->throwAt(0) | \E_ERROR | \E_CORE_ERROR | \E_COMPILE_ERROR | \E_USER_ERROR | \E_RECOVERABLE_ERROR | \E_PARSE;
+            if ($handler instanceof Error_Handler) {
+                $handler->set_exception_handler($this->exception_handler);
+                if (null !== $has_run) {
+                    $throw_at = $handler->throw_at(0) | \E_ERROR | \E_CORE_ERROR | \E_COMPILE_ERROR | \E_USER_ERROR | \E_RECOVERABLE_ERROR | \E_PARSE;
                     $loggers = [];
-
-                    foreach ($handler->setLoggers([]) as $type => $log) {
-                        if ($type & $throwAt) {
+                    foreach ($handler->set_loggers([]) as $type => $log) {
+                        if ($type & $throw_at) {
                             $loggers[$type] = [null, $log[1]];
                         }
                     }
-
                     // Assume $kernel->terminateWithException() will log uncaught exceptions appropriately
-                    $handler->setLoggers($loggers);
+                    $handler->set_loggers($loggers);
                 }
             }
-            $this->exceptionHandler = null;
+            $this->exception_handler = null;
         }
     }
-
-    public static function getSubscribedEvents(): array
+    public static function get_subscribed_events(): array
     {
-        $events = [KernelEvents::REQUEST => ['configure', 2048]];
-
+        $events = [Kernel_Events::REQUEST => ['configure', 2048]];
         if (\defined('Symfony\Component\Console\ConsoleEvents::COMMAND')) {
-            $events[ConsoleEvents::COMMAND] = ['configure', 2048];
+            $events[Console_Events::COMMAND] = ['configure', 2048];
         }
-
         return $events;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Guess;
 
 /**
@@ -18,22 +16,19 @@ namespace Symfony\Component\Form\Guess;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ValueGuess extends Guess
+class Value_Guess extends Guess
 {
     /**
      * @param int $confidence The confidence that the guessed class name is correct
      */
-    public function __construct(
-        private readonly string|int|bool|null $value,
-        int $confidence,
-    ) {
+    public function __construct(private readonly string|int|bool|null $value, int $confidence)
+    {
         parent::__construct($confidence);
     }
-
     /**
      * Returns the guessed value.
      */
-    public function getValue(): string|int|bool|null
+    public function get_value(): string|int|bool|null
     {
         return $this->value;
     }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,39 +9,34 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Foundation\Request_Matcher;
 
-namespace Symfony\Component\HttpFoundation\RequestMatcher;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcherInterface;
-
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Request_Matcher_Interface;
 /**
  * Checks the presence of HTTP query parameters of a Request.
  *
  * @author Alexandre Daubois <alex.daubois@gmail.com>
  */
-class QueryParameterRequestMatcher implements RequestMatcherInterface
+class Query_Parameter_Request_Matcher implements Request_Matcher_Interface
 {
     /**
      * @var string[]
      */
     private readonly array $parameters;
-
     /**
      * @param string[]|string $parameters A parameter or a list of parameters
      *                                    Strings can contain a comma-delimited list of query parameters
      */
     public function __construct(array|string $parameters)
     {
-        $this->parameters = array_reduce(array_map(strtolower(...), (array) $parameters), static fn (array $parameters, string $parameter): array => array_merge($parameters, preg_split('/\s*,\s*/', $parameter)), []);
+        $this->parameters = array_reduce(array_map(strtolower(...), (array) $parameters), static fn(array $parameters, string $parameter): array => array_merge($parameters, preg_split('/\s*,\s*/', $parameter)), []);
     }
-
     public function matches(Request $request): bool
     {
         if (!$this->parameters) {
             return true;
         }
-
         return 0 === \count(array_diff_assoc($this->parameters, $request->query->keys()));
     }
 }

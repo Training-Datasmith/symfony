@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,37 +9,31 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Marshaller;
 
-use Symfony\Component\Cache\Exception\CacheException;
-
+use Symfony\Component\Cache\Exception\Cache_Exception;
 /**
  * Compresses values using gzdeflate().
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class DeflateMarshaller implements MarshallerInterface
+class Deflate_Marshaller implements Marshaller_Interface
 {
-    public function __construct(
-        private readonly MarshallerInterface $marshaller,
-    ) {
+    public function __construct(private readonly Marshaller_Interface $marshaller)
+    {
         if (!\function_exists('gzdeflate')) {
-            throw new CacheException('The "zlib" PHP extension is not loaded.');
+            throw new Cache_Exception('The "zlib" PHP extension is not loaded.');
         }
     }
-
     public function marshall(array $values, ?array &$failed): array
     {
         return array_map(gzdeflate(...), $this->marshaller->marshall($values, $failed));
     }
-
     public function unmarshall(string $value): mixed
     {
-        if (false !== $inflatedValue = @gzinflate($value)) {
-            $value = $inflatedValue;
+        if (false !== $inflated_value = @gzinflate($value)) {
+            $value = $inflated_value;
         }
-
         return $this->marshaller->unmarshall($value);
     }
 }

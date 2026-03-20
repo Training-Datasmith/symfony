@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,30 +9,23 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Console\Helper;
 
-namespace Symfony\Bundle\FrameworkBundle\Console\Helper;
-
-use Symfony\Bundle\FrameworkBundle\Console\Descriptor\JsonDescriptor;
-use Symfony\Bundle\FrameworkBundle\Console\Descriptor\MarkdownDescriptor;
-use Symfony\Bundle\FrameworkBundle\Console\Descriptor\TextDescriptor;
-use Symfony\Bundle\FrameworkBundle\Console\Descriptor\XmlDescriptor;
-use Symfony\Component\Console\Helper\DescriptorHelper as BaseDescriptorHelper;
-use Symfony\Component\ErrorHandler\ErrorRenderer\FileLinkFormatter;
-
+use Symfony\Bundle\Framework_Bundle\Console\Descriptor\Json_Descriptor;
+use Symfony\Bundle\Framework_Bundle\Console\Descriptor\Markdown_Descriptor;
+use Symfony\Bundle\Framework_Bundle\Console\Descriptor\Text_Descriptor;
+use Symfony\Bundle\Framework_Bundle\Console\Descriptor\Xml_Descriptor;
+use Symfony\Component\Console\Helper\Descriptor_Helper as BaseDescriptorHelper;
+use Symfony\Component\Error_Handler\Error_Renderer\File_Link_Formatter;
 /**
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
  *
  * @internal
  */
-class DescriptorHelper extends BaseDescriptorHelper
+class Descriptor_Helper extends Base_Descriptor_Helper
 {
-    public function __construct(?FileLinkFormatter $fileLinkFormatter = null)
+    public function __construct(?File_Link_Formatter $file_link_formatter = null)
     {
-        $this
-            ->register('txt', new TextDescriptor($fileLinkFormatter))
-            ->register('xml', new XmlDescriptor())
-            ->register('json', new JsonDescriptor())
-            ->register('md', new MarkdownDescriptor())
-        ;
+        $this->register('txt', new Text_Descriptor($file_link_formatter))->register('xml', new Xml_Descriptor())->register('json', new Json_Descriptor())->register('md', new Markdown_Descriptor());
     }
 }

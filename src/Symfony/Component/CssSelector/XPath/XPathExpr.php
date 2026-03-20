@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\CssSelector\XPath;
+namespace Symfony\Component\Css_Selector\X_Path;
 
 /**
  * XPath expression translator interface.
@@ -23,98 +21,79 @@ namespace Symfony\Component\CssSelector\XPath;
  *
  * @internal
  */
-class XPathExpr implements \Stringable
+class X_Path_Expr implements \Stringable
 {
-    public function __construct(
-        private string $path = '',
-        private string $element = '*',
-        private string $condition = '',
-        bool $starPrefix = false,
-    ) {
-        if ($starPrefix) {
-            $this->addStarPrefix();
+    public function __construct(private string $path = '', private string $element = '*', private string $condition = '', bool $star_prefix = false)
+    {
+        if ($star_prefix) {
+            $this->add_star_prefix();
         }
     }
-
-    public function getElement(): string
+    public function get_element(): string
     {
         return $this->element;
     }
-
     /**
      * @return $this
      */
-    public function addCondition(string $condition, string $operator = 'and'): static
+    public function add_condition(string $condition, string $operator = 'and'): static
     {
         $this->condition = $this->condition ? \sprintf('(%s) %s (%s)', $this->condition, $operator, $condition) : $condition;
-
         return $this;
     }
-
-    public function getCondition(): string
+    public function get_condition(): string
     {
         return $this->condition;
     }
-
     /**
      * @return $this
      */
-    public function addNameTest(): static
+    public function add_name_test(): static
     {
         if ('*' !== $this->element) {
-            $this->addCondition('name() = '.Translator::getXpathLiteral($this->element));
+            $this->add_condition('name() = ' . Translator::get_xpath_literal($this->element));
             $this->element = '*';
         }
-
         return $this;
     }
-
     /**
      * @return $this
      */
-    public function addStarPrefix(): static
+    public function add_star_prefix(): static
     {
         $this->path .= '*/';
-
         return $this;
     }
-
     /**
      * Joins another XPathExpr with a combiner.
      *
      * @return $this
      */
-    public function join(string $combiner, self $expr, ?string $closingCombiner = null, bool $hasInnerConditions = false): static
+    public function join(string $combiner, self $expr, ?string $closing_combiner = null, bool $has_inner_conditions = false): static
     {
-        $path = $this->__toString().$combiner;
-
+        $path = $this->__toString() . $combiner;
         if ('*/' !== $expr->path) {
             $path .= $expr->path;
         }
-
         $this->path = $path;
-
-        if (!$hasInnerConditions) {
-            $this->element = $expr->element.($closingCombiner ?? '');
+        if (!$has_inner_conditions) {
+            $this->element = $expr->element . ($closing_combiner ?? '');
             $this->condition = $expr->condition;
         } else {
             $this->element = $expr->element;
             if ($expr->condition) {
-                $this->element .= '['.$expr->condition.']';
+                $this->element .= '[' . $expr->condition . ']';
             }
-            if ($closingCombiner) {
-                $this->element .= $closingCombiner;
+            if ($closing_combiner) {
+                $this->element .= $closing_combiner;
             }
         }
-
         return $this;
     }
-
     public function __toString(): string
     {
-        $path = $this->path.$this->element;
-        $condition = '' === $this->condition ? '' : '['.$this->condition.']';
-
-        return $path.$condition;
+        $path = $this->path . $this->element;
+        $condition = '' === $this->condition ? '' : '[' . $this->condition . ']';
+        return $path . $condition;
     }
 }

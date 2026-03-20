@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Finder\Iterator;
 
 /**
@@ -20,35 +18,30 @@ namespace Symfony\Component\Finder\Iterator;
  *
  * @extends \FilterIterator<string, \SplFileInfo>
  */
-class FileTypeFilterIterator extends \FilterIterator
+class File_Type_Filter_Iterator extends \Filter_Iterator
 {
     public const ONLY_FILES = 1;
     public const ONLY_DIRECTORIES = 2;
-
     /**
      * @param \Iterator<string, \SplFileInfo> $iterator The Iterator to filter
      * @param int                             $mode     The mode (self::ONLY_FILES or self::ONLY_DIRECTORIES)
      */
-    public function __construct(
-        \Iterator $iterator,
-        private readonly int $mode,
-    ) {
+    public function __construct(\Iterator $iterator, private readonly int $mode)
+    {
         parent::__construct($iterator);
     }
-
     /**
      * Filters the iterator values.
      */
     public function accept(): bool
     {
         $fileinfo = $this->current();
-        if (self::ONLY_DIRECTORIES === (self::ONLY_DIRECTORIES & $this->mode) && $fileinfo->isFile()) {
+        if (self::ONLY_DIRECTORIES === (self::ONLY_DIRECTORIES & $this->mode) && $fileinfo->is_file()) {
             return false;
         }
-        if (self::ONLY_FILES === (self::ONLY_FILES & $this->mode) && $fileinfo->isDir()) {
+        if (self::ONLY_FILES === (self::ONLY_FILES & $this->mode) && $fileinfo->is_dir()) {
             return false;
         }
-
         return true;
     }
 }

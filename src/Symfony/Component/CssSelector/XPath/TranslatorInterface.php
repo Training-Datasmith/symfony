@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Css_Selector\X_Path;
 
-namespace Symfony\Component\CssSelector\XPath;
-
-use Symfony\Component\CssSelector\Node\SelectorNode;
-
+use Symfony\Component\Css_Selector\Node\Selector_Node;
 /**
  * XPath expression translator interface.
  *
@@ -25,15 +22,14 @@ use Symfony\Component\CssSelector\Node\SelectorNode;
  *
  * @internal
  */
-interface TranslatorInterface
+interface Translator_Interface
 {
     /**
      * Translates a CSS selector to an XPath expression.
      */
-    public function cssToXPath(string $cssExpr, string $prefix = 'descendant-or-self::'): string;
-
+    public function css_to_x_path(string $css_expr, string $prefix = 'descendant-or-self::'): string;
     /**
      * Translates a parsed selector node to an XPath expression.
      */
-    public function selectorToXPath(SelectorNode $selector, string $prefix = 'descendant-or-self::'): string;
+    public function selector_to_x_path(Selector_Node $selector, string $prefix = 'descendant-or-self::'): string;
 }

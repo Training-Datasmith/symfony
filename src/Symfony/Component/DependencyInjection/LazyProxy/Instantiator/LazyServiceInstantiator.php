@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,42 +9,35 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Lazy_Proxy\Instantiator;
 
-namespace Symfony\Component\DependencyInjection\LazyProxy\Instantiator;
-
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\LazyProxy\PhpDumper\LazyServiceDumper;
-
+use Symfony\Component\Dependency_Injection\Container_Interface;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+use Symfony\Component\Dependency_Injection\Lazy_Proxy\Php_Dumper\Lazy_Service_Dumper;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class LazyServiceInstantiator implements InstantiatorInterface
+final class Lazy_Service_Instantiator implements Instantiator_Interface
 {
-    public function instantiateProxy(ContainerInterface $container, Definition $definition, string $id, callable $realInstantiator): object
+    public function instantiate_proxy(Container_Interface $container, Definition $definition, string $id, callable $real_instantiator): object
     {
-        $dumper = new LazyServiceDumper();
-
-        if (!$dumper->isProxyCandidate($definition, $asGhostObject, $id)) {
+        $dumper = new Lazy_Service_Dumper();
+        if (!$dumper->is_proxy_candidate($definition, $as_ghost_object, $id)) {
             throw new InvalidArgumentException(\sprintf('Cannot instantiate lazy proxy for service "%s".', $id));
         }
-
-        if ($asGhostObject) {
-            return new \ReflectionClass($definition->getClass())->newLazyGhost(static function ($ghost) use ($realInstantiator): void {
-                $realInstantiator($ghost);
+        if ($as_ghost_object) {
+            return (new \ReflectionClass($definition->get_class()))->new_lazy_ghost(static function ($ghost) use ($real_instantiator): void {
+                $real_instantiator($ghost);
             });
         }
-
         $class = null;
-        if (!class_exists($proxyClass = $dumper->getProxyClass($definition, false, $class), false)) {
-            eval($dumper->getProxyCode($definition, $id));
+        if (!class_exists($proxy_class = $dumper->get_proxy_class($definition, false, $class), false)) {
+            eval($dumper->get_proxy_code($definition, $id));
         }
-
-        if ($definition->getClass() === $proxyClass) {
-            return $class->newLazyProxy($realInstantiator);
+        if ($definition->get_class() === $proxy_class) {
+            return $class->new_lazy_proxy($real_instantiator);
         }
-
-        return $proxyClass::createLazyProxy($realInstantiator);
+        return $proxy_class::create_lazy_proxy($real_instantiator);
     }
 }

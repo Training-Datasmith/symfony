@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,55 +9,44 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Client\Chunk;
 
-namespace Symfony\Component\HttpClient\Chunk;
-
-use Symfony\Contracts\HttpClient\ChunkInterface;
-
+use Symfony\Contracts\Http_Client\Chunk_Interface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
  * @internal
  */
-class DataChunk implements ChunkInterface
+class Data_Chunk implements Chunk_Interface
 {
-    public function __construct(
-        private readonly int $offset = 0,
-        private readonly string $content = '',
-    ) {
+    public function __construct(private readonly int $offset = 0, private readonly string $content = '')
+    {
     }
-
-    public function isTimeout(): bool
+    public function is_timeout(): bool
     {
         return false;
     }
-
-    public function isFirst(): bool
+    public function is_first(): bool
     {
         return false;
     }
-
-    public function isLast(): bool
+    public function is_last(): bool
     {
         return false;
     }
-
-    public function getInformationalStatus(): ?array
+    public function get_informational_status(): ?array
     {
         return null;
     }
-
-    public function getContent(): string
+    public function get_content(): string
     {
         return $this->content;
     }
-
-    public function getOffset(): int
+    public function get_offset(): int
     {
         return $this->offset;
     }
-
-    public function getError(): ?string
+    public function get_error(): ?string
     {
         return null;
     }

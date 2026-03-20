@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition;
 
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-
+use Symfony\Component\Config\Definition\Exception\Invalid_Configuration_Exception;
 /**
  * This node represents a value of variable type in the config tree.
  *
@@ -23,86 +20,71 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
  *
  * @author Jeremy Mikola <jmikola@gmail.com>
  */
-class VariableNode extends BaseNode implements PrototypeNodeInterface
+class Variable_Node extends Base_Node implements Prototype_Node_Interface
 {
-    protected bool $defaultValueSet = false;
-    protected mixed $defaultValue = null;
-    protected bool $allowEmptyValue = true;
-
-    public function setDefaultValue(mixed $value): void
+    protected bool $default_value_set = false;
+    protected mixed $default_value = null;
+    protected bool $allow_empty_value = true;
+    public function set_default_value(mixed $value): void
     {
-        $this->defaultValueSet = true;
-        $this->defaultValue = $value;
+        $this->default_value_set = true;
+        $this->default_value = $value;
     }
-
-    public function hasDefaultValue(): bool
+    public function has_default_value(): bool
     {
-        return $this->defaultValueSet;
+        return $this->default_value_set;
     }
-
-    public function getDefaultValue(): mixed
+    public function get_default_value(): mixed
     {
-        $v = $this->defaultValue;
-
+        $v = $this->default_value;
         return $v instanceof \Closure ? $v() : $v;
     }
-
     /**
      * Sets if this node is allowed to have an empty value.
      *
      * @param bool $boolean True if this entity will accept empty values
      */
-    public function setAllowEmptyValue(bool $boolean): void
+    public function set_allow_empty_value(bool $boolean): void
     {
-        $this->allowEmptyValue = $boolean;
+        $this->allow_empty_value = $boolean;
     }
-
-    public function setName(string $name): void
+    public function set_name(string $name): void
     {
         $this->name = $name;
     }
-
-    protected function validateType(mixed $value): void
+    protected function validate_type(mixed $value): void
     {
     }
-
-    protected function finalizeValue(mixed $value): mixed
+    protected function finalize_value(mixed $value): mixed
     {
         // deny environment variables only when using custom validators
         // this avoids ever passing an empty value to final validation closures
-        if (!$this->allowEmptyValue && $this->isHandlingPlaceholder() && $this->finalValidationClosures) {
-            $e = new InvalidConfigurationException(\sprintf('The path "%s" cannot contain an environment variable when empty values are not allowed by definition and are validated.', $this->getPath()));
-            if ($hint = $this->getInfo()) {
-                $e->addHint($hint);
+        if (!$this->allow_empty_value && $this->is_handling_placeholder() && $this->final_validation_closures) {
+            $e = new Invalid_Configuration_Exception(\sprintf('The path "%s" cannot contain an environment variable when empty values are not allowed by definition and are validated.', $this->get_path()));
+            if ($hint = $this->get_info()) {
+                $e->add_hint($hint);
             }
-            $e->setPath($this->getPath());
-
+            $e->set_path($this->get_path());
             throw $e;
         }
-
-        if (!$this->allowEmptyValue && $this->isValueEmpty($value)) {
-            $ex = new InvalidConfigurationException(\sprintf('The path "%s" cannot contain an empty value, but got %s.', $this->getPath(), json_encode($value)));
-            if ($hint = $this->getInfo()) {
-                $ex->addHint($hint);
+        if (!$this->allow_empty_value && $this->is_value_empty($value)) {
+            $ex = new Invalid_Configuration_Exception(\sprintf('The path "%s" cannot contain an empty value, but got %s.', $this->get_path(), json_encode($value)));
+            if ($hint = $this->get_info()) {
+                $ex->add_hint($hint);
             }
-            $ex->setPath($this->getPath());
-
+            $ex->set_path($this->get_path());
             throw $ex;
         }
-
         return $value;
     }
-
-    protected function normalizeValue(mixed $value): mixed
+    protected function normalize_value(mixed $value): mixed
     {
         return $value;
     }
-
-    protected function mergeValues(mixed $leftSide, mixed $rightSide): mixed
+    protected function merge_values(mixed $left_side, mixed $right_side): mixed
     {
-        return $rightSide;
+        return $right_side;
     }
-
     /**
      * Evaluates if the given value is to be treated as empty.
      *
@@ -112,7 +94,7 @@ class VariableNode extends BaseNode implements PrototypeNodeInterface
      *
      * @see finalizeValue()
      */
-    protected function isValueEmpty(mixed $value): bool
+    protected function is_value_empty(mixed $value): bool
     {
         return !$value;
     }

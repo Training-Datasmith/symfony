@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition;
 
-use Symfony\Component\Config\Definition\Exception\ForbiddenOverwriteException;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\Config\Definition\Exception\InvalidTypeException;
-
+use Symfony\Component\Config\Definition\Exception\Forbidden_Overwrite_Exception;
+use Symfony\Component\Config\Definition\Exception\Invalid_Configuration_Exception;
+use Symfony\Component\Config\Definition\Exception\Invalid_Type_Exception;
 /**
  * Common Interface among all nodes.
  *
@@ -25,50 +22,43 @@ use Symfony\Component\Config\Definition\Exception\InvalidTypeException;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-interface NodeInterface
+interface Node_Interface
 {
     /**
      * Returns the name of the node.
      */
-    public function getName(): string;
-
+    public function get_name(): string;
     /**
      * Returns the path of the node.
      */
-    public function getPath(): string;
-
+    public function get_path(): string;
     /**
      * Returns true when the node is required.
      */
-    public function isRequired(): bool;
-
+    public function is_required(): bool;
     /**
      * Returns true when the node has a default value.
      */
-    public function hasDefaultValue(): bool;
-
+    public function has_default_value(): bool;
     /**
      * Returns the default value of the node.
      *
      * @throws \RuntimeException if the node has no default value
      */
-    public function getDefaultValue(): mixed;
-
+    public function get_default_value(): mixed;
     /**
      * Normalizes a value.
      *
      * @throws InvalidTypeException if the value type is invalid
      */
     public function normalize(mixed $value): mixed;
-
     /**
      * Merges two values together.
      *
      * @throws ForbiddenOverwriteException if the configuration path cannot be overwritten
      * @throws InvalidTypeException        if the value type is invalid
      */
-    public function merge(mixed $leftSide, mixed $rightSide): mixed;
-
+    public function merge(mixed $left_side, mixed $right_side): mixed;
     /**
      * Finalizes a value.
      *

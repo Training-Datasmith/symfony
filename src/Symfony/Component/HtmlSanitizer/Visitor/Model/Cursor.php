@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Html_Sanitizer\Visitor\Model;
 
-namespace Symfony\Component\HtmlSanitizer\Visitor\Model;
-
-use Symfony\Component\HtmlSanitizer\Visitor\Node\NodeInterface;
-
+use Symfony\Component\Html_Sanitizer\Visitor\Node\Node_Interface;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -22,7 +19,7 @@ use Symfony\Component\HtmlSanitizer\Visitor\Node\NodeInterface;
  */
 final class Cursor
 {
-    public function __construct(public ?NodeInterface $node)
+    public function __construct(public ?Node_Interface $node)
     {
     }
 }

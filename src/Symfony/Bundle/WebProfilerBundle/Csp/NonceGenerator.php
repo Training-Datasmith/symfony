@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Bundle\WebProfilerBundle\Csp;
+namespace Symfony\Bundle\Web_Profiler_Bundle\Csp;
 
 /**
  * Generates Content-Security-Policy nonce.
@@ -20,7 +18,7 @@ namespace Symfony\Bundle\WebProfilerBundle\Csp;
  *
  * @internal
  */
-class NonceGenerator
+class Nonce_Generator
 {
     public function generate(): string
     {

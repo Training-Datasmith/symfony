@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Client\Exception;
 
-namespace Symfony\Component\HttpClient\Exception;
-
-use Symfony\Contracts\HttpClient\Exception\TimeoutExceptionInterface;
-
+use Symfony\Contracts\Http_Client\Exception\Timeout_Exception_Interface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class TimeoutException extends TransportException implements TimeoutExceptionInterface
+final class Timeout_Exception extends Transport_Exception implements Timeout_Exception_Interface
 {
 }

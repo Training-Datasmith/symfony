@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,52 +9,41 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Cache_Warmer;
 
-namespace Symfony\Bundle\FrameworkBundle\CacheWarmer;
-
-use Psr\Container\ContainerInterface;
-use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
-use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
-use Symfony\Contracts\Service\ServiceSubscriberInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
-
+use Psr\Container\Container_Interface;
+use Symfony\Component\Http_Kernel\Cache_Warmer\Cache_Warmer_Interface;
+use Symfony\Component\Http_Kernel\Cache_Warmer\Warmable_Interface;
+use Symfony\Contracts\Service\Service_Subscriber_Interface;
+use Symfony\Contracts\Translation\Translator_Interface;
 /**
  * Generates the catalogues for translations.
  *
  * @author Xavier Leune <xavier.leune@gmail.com>
  */
-final class TranslationsCacheWarmer implements CacheWarmerInterface, ServiceSubscriberInterface
+final class Translations_Cache_Warmer implements Cache_Warmer_Interface, Service_Subscriber_Interface
 {
-    private TranslatorInterface $translator;
-
+    private Translator_Interface $translator;
     /**
      * As this cache warmer is optional, dependencies should be lazy-loaded, that's why a container should be injected.
      */
-    public function __construct(
-        private readonly ContainerInterface $container,
-    ) {
+    public function __construct(private readonly Container_Interface $container)
+    {
     }
-
-    public function warmUp(string $cacheDir, ?string $buildDir = null): array
+    public function warm_up(string $cache_dir, ?string $build_dir = null): array
     {
         $this->translator ??= $this->container->get('translator');
-
-        if ($this->translator instanceof WarmableInterface) {
-            return $this->translator->warmUp($cacheDir, $buildDir);
+        if ($this->translator instanceof Warmable_Interface) {
+            return $this->translator->warm_up($cache_dir, $build_dir);
         }
-
         return [];
     }
-
-    public function isOptional(): bool
+    public function is_optional(): bool
     {
         return true;
     }
-
-    public static function getSubscribedServices(): array
+    public static function get_subscribed_services(): array
     {
-        return [
-            'translator' => TranslatorInterface::class,
-        ];
+        return ['translator' => Translator_Interface::class];
     }
 }

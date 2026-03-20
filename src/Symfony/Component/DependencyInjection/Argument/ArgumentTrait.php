@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,15 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DependencyInjection\Argument;
+namespace Symfony\Component\Dependency_Injection\Argument;
 
 /**
  * Helps reduce the size of the dumped container when using php-serialize.
  *
  * @internal
  */
-trait ArgumentTrait
+trait Argument_Trait
 {
     public function __serialize(): array
     {
@@ -27,12 +25,11 @@ trait ArgumentTrait
             if (null === $v) {
                 continue;
             }
-            if (false !== $i = strrpos((string) $k, "\0")) {
+            if (false !== $i = strrpos((string) $k, "\x00")) {
                 $k = substr((string) $k, 1 + $i);
             }
             $data[$k] = $v;
         }
-
         return $data;
     }
 }

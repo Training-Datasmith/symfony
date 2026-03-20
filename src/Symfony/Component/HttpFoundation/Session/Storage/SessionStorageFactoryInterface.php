@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,18 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Foundation\Session\Storage;
 
-namespace Symfony\Component\HttpFoundation\Session\Storage;
-
-use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\Http_Foundation\Request;
 /**
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
-interface SessionStorageFactoryInterface
+interface Session_Storage_Factory_Interface
 {
     /**
      * Creates a new instance of SessionStorageInterface.
      */
-    public function createStorage(?Request $request): SessionStorageInterface;
+    public function create_storage(?Request $request): Session_Storage_Interface;
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Tester;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Formatter\OutputFormatter;
-use Symfony\Component\Console\Formatter\OutputFormatterInterface;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\TestOutput;
-
+use Symfony\Component\Console\Formatter\Output_Formatter;
+use Symfony\Component\Console\Formatter\Output_Formatter_Interface;
+use Symfony\Component\Console\Input\Array_Input;
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Console\Output\Output_Interface;
+use Symfony\Component\Console\Output\Test_Output;
 /**
  * Eases the testing of console commands.
  *
@@ -28,48 +25,36 @@ use Symfony\Component\Console\Output\TestOutput;
  * @author Robin Chalas <robin.chalas@gmail.com>
  * @author Théo FIDRY <theo.fidry@gmail.com>
  */
-class CommandTester
+class Command_Tester
 {
-    use TesterTrait;
-
+    use Tester_Trait;
     private Command $command;
-
     /**
      * @param OutputInterface::VERBOSITY_* $verbosity
      */
-    public function __construct(
-        callable|Command $command,
-        private ?bool $interactive = null,
-        private bool $decorated = false,
-        private int $verbosity = OutputInterface::VERBOSITY_NORMAL,
-        private ?OutputFormatterInterface $outputFormatter = new OutputFormatter(),
-    ) {
+    public function __construct(callable|Command $command, private ?bool $interactive = null, private bool $decorated = false, private int $verbosity = Output_Interface::VERBOSITY_NORMAL, private ?Output_Formatter_Interface $output_formatter = new Output_Formatter())
+    {
         $this->command = $command instanceof Command ? $command : new Command(null, $command);
     }
-
-    public function setInteractive(bool $interactive): void
+    public function set_interactive(bool $interactive): void
     {
         $this->interactive = $interactive;
     }
-
-    public function setDecorated(bool $decorated): void
+    public function set_decorated(bool $decorated): void
     {
         $this->decorated = $decorated;
     }
-
     /**
      * @param OutputInterface::VERBOSITY_* $level
      */
-    public function setVerbosity(int $level): void
+    public function set_verbosity(int $level): void
     {
         $this->verbosity = $level;
     }
-
-    public function setOutputFormatter(OutputFormatterInterface $outputFormatter): void
+    public function set_output_formatter(Output_Formatter_Interface $output_formatter): void
     {
-        $this->outputFormatter = $outputFormatter;
+        $this->output_formatter = $output_formatter;
     }
-
     /**
      * Runs the command with the result-based testing API.
      *
@@ -83,15 +68,13 @@ class CommandTester
      * @param OutputInterface::VERBOSITY_*    $verbosity
      * @param array<\Closure(string): string> $normalizers
      */
-    public function run(array $input = [], array $interactiveInputs = [], ?bool $interactive = null, ?bool $decorated = null, ?int $verbosity = null, array $normalizers = []): ExecutionResult
+    public function run(array $input = [], array $interactive_inputs = [], ?bool $interactive = null, ?bool $decorated = null, ?int $verbosity = null, array $normalizers = []): Execution_Result
     {
-        $input = $this->createInput($input, $interactiveInputs, $interactive);
-        $testOutput = new TestOutput($decorated ?? $this->decorated, $verbosity ?? $this->verbosity, $this->outputFormatter);
-        $statusCode = $this->command->run($input, $testOutput);
-
-        return ExecutionResult::fromExecution($input, $statusCode, $testOutput, $normalizers);
+        $input = $this->create_input($input, $interactive_inputs, $interactive);
+        $test_output = new Test_Output($decorated ?? $this->decorated, $verbosity ?? $this->verbosity, $this->output_formatter);
+        $status_code = $this->command->run($input, $test_output);
+        return Execution_Result::from_execution($input, $status_code, $test_output, $normalizers);
     }
-
     /**
      * Executes the command with the legacy stateful testing API.
      *
@@ -115,31 +98,24 @@ class CommandTester
      */
     public function execute(array $input, array $options = []): int
     {
-        $this->input = $this->createInput($input, $this->inputs, $options['interactive'] ?? $this->interactive);
-
+        $this->input = $this->create_input($input, $this->inputs, $options['interactive'] ?? $this->interactive);
         if (!isset($options['decorated'])) {
             $options['decorated'] = $this->decorated;
         }
-
-        $this->initOutput($options);
-
-        return $this->statusCode = $this->command->run($this->input, $this->output);
+        $this->init_output($options);
+        return $this->status_code = $this->command->run($this->input, $this->output);
     }
-
-    private function createInput(array $input, array $interactiveInputs = [], ?bool $interactive = null): InputInterface
+    private function create_input(array $input, array $interactive_inputs = [], ?bool $interactive = null): Input_Interface
     {
-        if (!isset($input['command']) && $this->command->getApplication()?->getDefinition()->hasArgument('command')) {
-            $input = array_merge(['command' => $this->command->getName()], $input);
+        if (!isset($input['command']) && $this->command->get_application()?->get_definition()->has_argument('command')) {
+            $input = array_merge(['command' => $this->command->get_name()], $input);
         }
-
-        $input = new ArrayInput($input);
+        $input = new Array_Input($input);
         // Use an in-memory input stream even if no inputs are set so that QuestionHelper::ask() does not rely on the blocking STDIN.
-        $input->setStream(self::createStream($interactiveInputs));
-
+        $input->set_stream(self::create_stream($interactive_inputs));
         if (null !== $interactive ??= $this->interactive) {
-            $input->setInteractive($interactive);
+            $input->set_interactive($interactive);
         }
-
         return $input;
     }
 }

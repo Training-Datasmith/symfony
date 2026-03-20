@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,217 +9,171 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Adapter;
 
-use Psr\Cache\CacheItemInterface;
-use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\Cache\CacheItem;
-use Symfony\Component\Cache\PruneableInterface;
-use Symfony\Component\Cache\ResettableInterface;
-use Symfony\Component\Cache\Traits\ContractsTrait;
-use Symfony\Component\Cache\Traits\ProxyTrait;
-use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\NamespacedPoolInterface;
-
+use Psr\Cache\Cache_Item_Interface;
+use Psr\Cache\Cache_Item_Pool_Interface;
+use Symfony\Component\Cache\Cache_Item;
+use Symfony\Component\Cache\Pruneable_Interface;
+use Symfony\Component\Cache\Resettable_Interface;
+use Symfony\Component\Cache\Traits\Contracts_Trait;
+use Symfony\Component\Cache\Traits\Proxy_Trait;
+use Symfony\Contracts\Cache\Cache_Interface;
+use Symfony\Contracts\Cache\Namespaced_Pool_Interface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ProxyAdapter implements AdapterInterface, NamespacedPoolInterface, CacheInterface, PruneableInterface, ResettableInterface
+class Proxy_Adapter implements Adapter_Interface, Namespaced_Pool_Interface, Cache_Interface, Pruneable_Interface, Resettable_Interface
 {
-    use ContractsTrait;
-    use ProxyTrait;
-
+    use Contracts_Trait;
+    use Proxy_Trait;
     private string $namespace = '';
-    private int $namespaceLen;
-    private string $poolHash;
-
-    private static \Closure $createCacheItem;
-    private static \Closure $setInnerItem;
-
-    public function __construct(CacheItemPoolInterface $pool, string $namespace = '', private int $defaultLifetime = 0)
+    private int $namespace_len;
+    private string $pool_hash;
+    private static \Closure $create_cache_item;
+    private static \Closure $set_inner_item;
+    public function __construct(Cache_Item_Pool_Interface $pool, string $namespace = '', private int $default_lifetime = 0)
     {
         if ('' !== $namespace) {
-            if ($pool instanceof NamespacedPoolInterface) {
-                $pool = $pool->withSubNamespace($namespace);
+            if ($pool instanceof Namespaced_Pool_Interface) {
+                $pool = $pool->with_sub_namespace($namespace);
                 $this->namespace = $namespace = '';
             } else {
-                \assert('' !== CacheItem::validateKey($namespace));
+                \assert('' !== Cache_Item::validate_key($namespace));
                 $this->namespace = $namespace;
             }
         }
         $this->pool = $pool;
-        $this->poolHash = spl_object_hash($pool);
-        $this->namespaceLen = \strlen($namespace);
-        self::$createCacheItem ??= \Closure::bind(
-            static function ($key, $innerItem, $poolHash): \Symfony\Component\Cache\CacheItem {
-                $item = new CacheItem();
-                $item->key = $key;
-
-                if (null === $innerItem) {
-                    return $item;
-                }
-
-                $item->value = $innerItem->get();
-                $item->isHit = $innerItem->isHit();
-                $item->innerItem = $innerItem;
-                $item->poolHash = $poolHash;
-
-                if (!$item->unpack() && $innerItem instanceof CacheItem) {
-                    $item->metadata = $innerItem->metadata;
-                }
-                $innerItem->set(null);
-
+        $this->pool_hash = spl_object_hash($pool);
+        $this->namespace_len = \strlen($namespace);
+        self::$create_cache_item ??= \Closure::bind(static function ($key, $inner_item, $pool_hash): \Symfony\Component\Cache\Cache_Item {
+            $item = new Cache_Item();
+            $item->key = $key;
+            if (null === $inner_item) {
                 return $item;
-            },
-            null,
-            CacheItem::class
-        );
-        self::$setInnerItem ??= \Closure::bind(
-            static function (CacheItemInterface $innerItem, CacheItem $item, $expiry = null): void {
-                $innerItem->set($item->pack());
-                $innerItem->expiresAt(($expiry ?? $item->expiry) ? \DateTimeImmutable::createFromFormat('U.u', \sprintf('%.6F', $expiry ?? $item->expiry)) : null);
-            },
-            null,
-            CacheItem::class
-        );
+            }
+            $item->value = $inner_item->get();
+            $item->is_hit = $inner_item->is_hit();
+            $item->inner_item = $inner_item;
+            $item->pool_hash = $pool_hash;
+            if (!$item->unpack() && $inner_item instanceof Cache_Item) {
+                $item->metadata = $inner_item->metadata;
+            }
+            $inner_item->set(null);
+            return $item;
+        }, null, Cache_Item::class);
+        self::$set_inner_item ??= \Closure::bind(static function (Cache_Item_Interface $inner_item, Cache_Item $item, $expiry = null): void {
+            $inner_item->set($item->pack());
+            $inner_item->expires_at($expiry ?? $item->expiry ? \DateTimeImmutable::create_from_format('U.u', \sprintf('%.6F', $expiry ?? $item->expiry)) : null);
+        }, null, Cache_Item::class);
     }
-
     public function get(string $key, callable $callback, ?float $beta = null, ?array &$metadata = null): mixed
     {
-        if (!$this->pool instanceof CacheInterface) {
-            return $this->doGet($this, $key, $callback, $beta, $metadata);
+        if (!$this->pool instanceof Cache_Interface) {
+            return $this->do_get($this, $key, $callback, $beta, $metadata);
         }
-
-        return $this->pool->get($this->getId($key), function ($innerItem, bool &$save) use ($key, $callback) {
-            $item = (self::$createCacheItem)($key, $innerItem, $this->poolHash);
+        return $this->pool->get($this->get_id($key), function ($inner_item, bool &$save) use ($key, $callback) {
+            $item = (self::$create_cache_item)($key, $inner_item, $this->pool_hash);
             $item->set($value = $callback($item, $save));
-            (self::$setInnerItem)($innerItem, $item);
-
+            (self::$set_inner_item)($inner_item, $item);
             return $value;
         }, $beta, $metadata);
     }
-
-    public function getItem(mixed $key): CacheItem
+    public function get_item(mixed $key): Cache_Item
     {
-        $item = $this->pool->getItem($this->getId($key));
-
-        return (self::$createCacheItem)($key, $item, $this->poolHash);
+        $item = $this->pool->get_item($this->get_id($key));
+        return (self::$create_cache_item)($key, $item, $this->pool_hash);
     }
-
-    public function getItems(array $keys = []): iterable
+    public function get_items(array $keys = []): iterable
     {
-        if ($this->namespaceLen) {
+        if ($this->namespace_len) {
             foreach ($keys as $i => $key) {
-                $keys[$i] = $this->getId($key);
+                $keys[$i] = $this->get_id($key);
             }
         }
-
-        return $this->generateItems($this->pool->getItems($keys));
+        return $this->generate_items($this->pool->get_items($keys));
     }
-
-    public function hasItem(mixed $key): bool
+    public function has_item(mixed $key): bool
     {
-        return $this->pool->hasItem($this->getId($key));
+        return $this->pool->has_item($this->get_id($key));
     }
-
     public function clear(string $prefix = ''): bool
     {
-        if ($this->pool instanceof AdapterInterface) {
-            return $this->pool->clear($this->namespace.$prefix);
+        if ($this->pool instanceof Adapter_Interface) {
+            return $this->pool->clear($this->namespace . $prefix);
         }
-
         return $this->pool->clear();
     }
-
-    public function deleteItem(mixed $key): bool
+    public function delete_item(mixed $key): bool
     {
-        return $this->pool->deleteItem($this->getId($key));
+        return $this->pool->delete_item($this->get_id($key));
     }
-
-    public function deleteItems(array $keys): bool
+    public function delete_items(array $keys): bool
     {
-        if ($this->namespaceLen) {
+        if ($this->namespace_len) {
             foreach ($keys as $i => $key) {
-                $keys[$i] = $this->getId($key);
+                $keys[$i] = $this->get_id($key);
             }
         }
-
-        return $this->pool->deleteItems($keys);
+        return $this->pool->delete_items($keys);
     }
-
-    public function save(CacheItemInterface $item): bool
+    public function save(Cache_Item_Interface $item): bool
     {
-        return $this->doSave($item, __FUNCTION__);
+        return $this->do_save($item, __FUNCTION__);
     }
-
-    public function saveDeferred(CacheItemInterface $item): bool
+    public function save_deferred(Cache_Item_Interface $item): bool
     {
-        return $this->doSave($item, __FUNCTION__);
+        return $this->do_save($item, __FUNCTION__);
     }
-
     public function commit(): bool
     {
         return $this->pool->commit();
     }
-
-    public function withSubNamespace(string $namespace): static
+    public function with_sub_namespace(string $namespace): static
     {
         $clone = clone $this;
-
-        if ($clone->pool instanceof NamespacedPoolInterface) {
-            $clone->pool = $clone->pool->withSubNamespace($namespace);
+        if ($clone->pool instanceof Namespaced_Pool_Interface) {
+            $clone->pool = $clone->pool->with_sub_namespace($namespace);
         } else {
-            $clone->namespace .= CacheItem::validateKey($namespace);
-            $clone->namespaceLen = \strlen($clone->namespace);
+            $clone->namespace .= Cache_Item::validate_key($namespace);
+            $clone->namespace_len = \strlen($clone->namespace);
         }
-
         return $clone;
     }
-
-    private function doSave(CacheItemInterface $item, string $method): bool
+    private function do_save(Cache_Item_Interface $item, string $method): bool
     {
-        if (!$item instanceof CacheItem) {
+        if (!$item instanceof Cache_Item) {
             return false;
         }
-        $castItem = (array) $item;
-
-        if (null === $castItem["\0*\0expiry"] && 0 < $this->defaultLifetime) {
-            $castItem["\0*\0expiry"] = microtime(true) + $this->defaultLifetime;
+        $cast_item = (array) $item;
+        if (null === $cast_item["\x00*\x00expiry"] && 0 < $this->default_lifetime) {
+            $cast_item["\x00*\x00expiry"] = microtime(true) + $this->default_lifetime;
         }
-
-        if ($castItem["\0*\0poolHash"] === $this->poolHash && $castItem["\0*\0innerItem"]) {
-            $innerItem = $castItem["\0*\0innerItem"];
-        } elseif ($this->pool instanceof AdapterInterface) {
+        if ($cast_item["\x00*\x00poolHash"] === $this->pool_hash && $cast_item["\x00*\x00innerItem"]) {
+            $inner_item = $cast_item["\x00*\x00innerItem"];
+        } elseif ($this->pool instanceof Adapter_Interface) {
             // this is an optimization specific for AdapterInterface implementations
             // so we can save a round-trip to the backend by just creating a new item
-            $innerItem = (self::$createCacheItem)($this->namespace.$castItem["\0*\0key"], null, $this->poolHash);
+            $inner_item = (self::$create_cache_item)($this->namespace . $cast_item["\x00*\x00key"], null, $this->pool_hash);
         } else {
-            $innerItem = $this->pool->getItem($this->namespace.$castItem["\0*\0key"]);
+            $inner_item = $this->pool->get_item($this->namespace . $cast_item["\x00*\x00key"]);
         }
-
-        (self::$setInnerItem)($innerItem, $item, $castItem["\0*\0expiry"]);
-
-        return $this->pool->$method($innerItem);
+        (self::$set_inner_item)($inner_item, $item, $cast_item["\x00*\x00expiry"]);
+        return $this->pool->{$method}($inner_item);
     }
-
-    private function generateItems(iterable $items): \Generator
+    private function generate_items(iterable $items): \Generator
     {
-        $f = self::$createCacheItem;
-
+        $f = self::$create_cache_item;
         foreach ($items as $key => $item) {
-            if ($this->namespaceLen) {
-                $key = substr((string) $key, $this->namespaceLen);
+            if ($this->namespace_len) {
+                $key = substr((string) $key, $this->namespace_len);
             }
-
-            yield $key => $f($key, $item, $this->poolHash);
+            yield $key => $f($key, $item, $this->pool_hash);
         }
     }
-
-    private function getId(mixed $key): string
+    private function get_id(mixed $key): string
     {
-        \assert('' !== CacheItem::validateKey($key));
-
-        return $this->namespace.$key;
+        \assert('' !== Cache_Item::validate_key($key));
+        return $this->namespace . $key;
     }
 }

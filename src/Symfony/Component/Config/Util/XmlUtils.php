@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Util;
 
-use Symfony\Component\Config\Util\Exception\InvalidXmlException;
-use Symfony\Component\Config\Util\Exception\XmlParsingException;
+use Symfony\Component\Config\Util\Exception\Invalid_Xml_Exception;
+use Symfony\Component\Config\Util\Exception\Xml_Parsing_Exception;
 use Symfony\Component\Filesystem\Filesystem;
-
 /**
  * XMLUtils is a bunch of utility methods to XML operations.
  *
@@ -26,7 +23,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * @author Martin Hasoň <martin.hason@gmail.com>
  * @author Ole Rößner <ole@roessner.it>
  */
-class XmlUtils
+class Xml_Utils
 {
     /**
      * This class should not be instantiated.
@@ -34,7 +31,6 @@ class XmlUtils
     private function __construct()
     {
     }
-
     /**
      * Parses an XML string.
      *
@@ -45,66 +41,54 @@ class XmlUtils
      * @throws InvalidXmlException When parsing of XML with schema or callable produces any errors unrelated to the XML parsing itself
      * @throws \RuntimeException   When DOM extension is missing
      */
-    public static function parse(string $content, string|callable|null $schemaOrCallable = null): \DOMDocument
+    public static function parse(string $content, string|callable|null $schema_or_callable = null): \Dom_Document
     {
         if (!\extension_loaded('dom')) {
             throw new \LogicException('Extension DOM is required.');
         }
-
-        $internalErrors = libxml_use_internal_errors(true);
+        $internal_errors = libxml_use_internal_errors(true);
         libxml_clear_errors();
-
-        $dom = new \DOMDocument();
-        $dom->validateOnParse = true;
-        if (!$dom->loadXML($content, \LIBXML_NONET | \LIBXML_COMPACT)) {
-            throw new XmlParsingException(implode("\n", static::getXmlErrors($internalErrors)));
+        $dom = new \Dom_Document();
+        $dom->validate_on_parse = true;
+        if (!$dom->load_xml($content, \LIBXML_NONET | \LIBXML_COMPACT)) {
+            throw new Xml_Parsing_Exception(implode("\n", static::get_xml_errors($internal_errors)));
         }
-
-        $dom->normalizeDocument();
-
-        libxml_use_internal_errors($internalErrors);
-
-        foreach ($dom->childNodes as $child) {
-            if (\XML_DOCUMENT_TYPE_NODE === $child->nodeType) {
-                throw new XmlParsingException('Document types are not allowed.');
+        $dom->normalize_document();
+        libxml_use_internal_errors($internal_errors);
+        foreach ($dom->child_nodes as $child) {
+            if (\XML_DOCUMENT_TYPE_NODE === $child->node_type) {
+                throw new Xml_Parsing_Exception('Document types are not allowed.');
             }
         }
-
-        if (null !== $schemaOrCallable) {
-            $internalErrors = libxml_use_internal_errors(true);
+        if (null !== $schema_or_callable) {
+            $internal_errors = libxml_use_internal_errors(true);
             libxml_clear_errors();
-
             $e = null;
-            if (\is_callable($schemaOrCallable)) {
+            if (\is_callable($schema_or_callable)) {
                 try {
-                    $valid = $schemaOrCallable($dom, $internalErrors);
+                    $valid = $schema_or_callable($dom, $internal_errors);
                 } catch (\Exception) {
                     $valid = false;
                 }
-            } elseif (is_file($schemaOrCallable)) {
-                $schemaSource = (new Filesystem())->readFile($schemaOrCallable);
-                $valid = @$dom->schemaValidateSource($schemaSource);
+            } elseif (is_file($schema_or_callable)) {
+                $schema_source = (new Filesystem())->read_file($schema_or_callable);
+                $valid = @$dom->schema_validate_source($schema_source);
             } else {
-                libxml_use_internal_errors($internalErrors);
-
-                throw new XmlParsingException(\sprintf('Invalid XSD file: "%s".', $schemaOrCallable));
+                libxml_use_internal_errors($internal_errors);
+                throw new Xml_Parsing_Exception(\sprintf('Invalid XSD file: "%s".', $schema_or_callable));
             }
-
             if (!$valid) {
-                $messages = static::getXmlErrors($internalErrors);
+                $messages = static::get_xml_errors($internal_errors);
                 if (!$messages) {
-                    throw new InvalidXmlException('The XML is not valid.', 0, $e);
+                    throw new Invalid_Xml_Exception('The XML is not valid.', 0, $e);
                 }
-                throw new XmlParsingException(implode("\n", $messages), 0, $e);
+                throw new Xml_Parsing_Exception(implode("\n", $messages), 0, $e);
             }
         }
-
         libxml_clear_errors();
-        libxml_use_internal_errors($internalErrors);
-
+        libxml_use_internal_errors($internal_errors);
         return $dom;
     }
-
     /**
      * Loads an XML file.
      *
@@ -115,29 +99,24 @@ class XmlUtils
      * @throws XmlParsingException       When XML parsing returns any errors
      * @throws \RuntimeException         When DOM extension is missing
      */
-    public static function loadFile(string $file, string|callable|null $schemaOrCallable = null): \DOMDocument
+    public static function load_file(string $file, string|callable|null $schema_or_callable = null): \Dom_Document
     {
         if (!is_file($file)) {
             throw new \InvalidArgumentException(\sprintf('Resource "%s" is not a file.', $file));
         }
-
         if (!is_readable($file)) {
             throw new \InvalidArgumentException(\sprintf('File "%s" is not readable.', $file));
         }
-
-        $content = (new Filesystem())->readFile($file);
-
+        $content = (new Filesystem())->read_file($file);
         if ('' === trim($content)) {
             throw new \InvalidArgumentException(\sprintf('File "%s" does not contain valid XML, it is empty.', $file));
         }
-
         try {
-            return static::parse($content, $schemaOrCallable);
-        } catch (InvalidXmlException $e) {
-            throw new XmlParsingException(\sprintf('The XML file "%s" is not valid.', $file), 0, $e->getPrevious());
+            return static::parse($content, $schema_or_callable);
+        } catch (Invalid_Xml_Exception $e) {
+            throw new Xml_Parsing_Exception(\sprintf('The XML file "%s" is not valid.', $file), 0, $e->get_previous());
         }
     }
-
     /**
      * Converts a \DOMElement object to a PHP array.
      *
@@ -156,32 +135,30 @@ class XmlUtils
      * @param \DOMElement $element     A \DOMElement instance
      * @param bool        $checkPrefix Check prefix in an element or an attribute name
      */
-    public static function convertDomElementToArray(\DOMElement $element, bool $checkPrefix = true): mixed
+    public static function convert_dom_element_to_array(\Dom_Element $element, bool $check_prefix = true): mixed
     {
         $prefix = $element->prefix;
         $empty = true;
         $config = [];
         foreach ($element->attributes as $name => $node) {
-            if ($checkPrefix && !\in_array($node->prefix, ['', $prefix], true)) {
+            if ($check_prefix && !\in_array($node->prefix, ['', $prefix], true)) {
                 continue;
             }
             $config[$name] = static::phpize($node->value);
             $empty = false;
         }
-
-        $nodeValue = false;
-        foreach ($element->childNodes as $node) {
-            if ($node instanceof \DOMText) {
-                if ('' !== trim((string) $node->nodeValue)) {
-                    $nodeValue = trim((string) $node->nodeValue);
+        $node_value = false;
+        foreach ($element->child_nodes as $node) {
+            if ($node instanceof \Dom_Text) {
+                if ('' !== trim((string) $node->node_value)) {
+                    $node_value = trim((string) $node->node_value);
                     $empty = false;
                 }
-            } elseif ($checkPrefix && $prefix != $node->prefix) {
+            } elseif ($check_prefix && $prefix != $node->prefix) {
                 continue;
-            } elseif (!$node instanceof \DOMComment) {
-                $value = static::convertDomElementToArray($node, $checkPrefix);
-
-                $key = $node->localName;
+            } elseif (!$node instanceof \Dom_Comment) {
+                $value = static::convert_dom_element_to_array($node, $check_prefix);
+                $key = $node->local_name;
                 if (isset($config[$key])) {
                     if (!\is_array($config[$key]) || !\is_int(key($config[$key]))) {
                         $config[$key] = [$config[$key]];
@@ -190,48 +167,42 @@ class XmlUtils
                 } else {
                     $config[$key] = $value;
                 }
-
                 $empty = false;
             }
         }
-
-        if (false !== $nodeValue) {
-            $value = static::phpize($nodeValue);
+        if (false !== $node_value) {
+            $value = static::phpize($node_value);
             if (\count($config)) {
                 $config['value'] = $value;
             } else {
                 $config = $value;
             }
         }
-
         return !$empty ? $config : null;
     }
-
     /**
      * Converts an xml value to a PHP type.
      */
     public static function phpize(string|\Stringable $value): mixed
     {
         $value = (string) $value;
-        $lowercaseValue = strtolower($value);
-
+        $lowercase_value = strtolower($value);
         switch (true) {
-            case 'null' === $lowercaseValue:
+            case 'null' === $lowercase_value:
                 return null;
             case ctype_digit($value):
             case isset($value[1]) && '-' === $value[0] && ctype_digit(substr($value, 1)):
                 $raw = $value;
                 $cast = (int) $value;
-
-                return self::isOctal($value) ? \intval($value, 8) : (($raw === (string) $cast) ? $cast : $raw);
-            case 'true' === $lowercaseValue:
+                return self::is_octal($value) ? \intval($value, 8) : ($raw === (string) $cast ? $cast : $raw);
+            case 'true' === $lowercase_value:
                 return true;
-            case 'false' === $lowercaseValue:
+            case 'false' === $lowercase_value:
                 return false;
-            case isset($value[1]) && '0b' == $value[0].$value[1] && preg_match('/^0b[01]*$/', $value):
+            case isset($value[1]) && '0b' == $value[0] . $value[1] && preg_match('/^0b[01]*$/', $value):
                 return bindec($value);
             case is_numeric($value):
-                return '0x' === $value[0].$value[1] ? hexdec($value) : (float) $value;
+                return '0x' === $value[0] . $value[1] ? hexdec($value) : (float) $value;
             case preg_match('/^0x[0-9a-f]++$/i', $value):
                 return hexdec($value);
             case preg_match('/^[+-]?[0-9]+(\.[0-9]+)?$/', $value):
@@ -240,34 +211,21 @@ class XmlUtils
                 return $value;
         }
     }
-
-    protected static function getXmlErrors(bool $internalErrors): array
+    protected static function get_xml_errors(bool $internal_errors): array
     {
         $errors = [];
         foreach (libxml_get_errors() as $error) {
-            $errors[] = \sprintf(
-                '[%s %s] %s (in %s - line %d, column %d)',
-                \LIBXML_ERR_WARNING == $error->level ? 'WARNING' : 'ERROR',
-                $error->code,
-                trim($error->message),
-                $error->file ?: 'n/a',
-                $error->line,
-                $error->column
-            );
+            $errors[] = \sprintf('[%s %s] %s (in %s - line %d, column %d)', \LIBXML_ERR_WARNING == $error->level ? 'WARNING' : 'ERROR', $error->code, trim($error->message), $error->file ?: 'n/a', $error->line, $error->column);
         }
-
         libxml_clear_errors();
-        libxml_use_internal_errors($internalErrors);
-
+        libxml_use_internal_errors($internal_errors);
         return $errors;
     }
-
-    private static function isOctal(string $str): bool
+    private static function is_octal(string $str): bool
     {
         if ('-' === $str[0]) {
             $str = substr($str, 1);
         }
-
-        return $str === '0'.decoct(\intval($str, 8));
+        return $str === '0' . decoct(\intval($str, 8));
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Alias;
-use Symfony\Component\DependencyInjection\Definition;
-
+use Symfony\Component\Dependency_Injection\Alias;
+use Symfony\Component\Dependency_Injection\Definition;
 /**
  * Represents a node in your service graph.
  *
@@ -23,84 +20,72 @@ use Symfony\Component\DependencyInjection\Definition;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ServiceReferenceGraphNode
+class Service_Reference_Graph_Node
 {
-    private array $inEdges = [];
-    private array $outEdges = [];
-
-    public function __construct(
-        private readonly string $id,
-        private readonly mixed $value,
-    ) {
-    }
-
-    public function addInEdge(ServiceReferenceGraphEdge $edge): void
+    private array $in_edges = [];
+    private array $out_edges = [];
+    public function __construct(private readonly string $id, private readonly mixed $value)
     {
-        $this->inEdges[] = $edge;
     }
-
-    public function addOutEdge(ServiceReferenceGraphEdge $edge): void
+    public function add_in_edge(Service_Reference_Graph_Edge $edge): void
     {
-        $this->outEdges[] = $edge;
+        $this->in_edges[] = $edge;
     }
-
+    public function add_out_edge(Service_Reference_Graph_Edge $edge): void
+    {
+        $this->out_edges[] = $edge;
+    }
     /**
      * Checks if the value of this node is an Alias.
      */
-    public function isAlias(): bool
+    public function is_alias(): bool
     {
         return $this->value instanceof Alias;
     }
-
     /**
      * Checks if the value of this node is a Definition.
      */
-    public function isDefinition(): bool
+    public function is_definition(): bool
     {
         return $this->value instanceof Definition;
     }
-
     /**
      * Returns the identifier.
      */
-    public function getId(): string
+    public function get_id(): string
     {
         return $this->id;
     }
-
     /**
      * Returns the in edges.
      *
      * @return ServiceReferenceGraphEdge[]
      */
-    public function getInEdges(): array
+    public function get_in_edges(): array
     {
-        return $this->inEdges;
+        return $this->in_edges;
     }
-
     /**
      * Returns the out edges.
      *
      * @return ServiceReferenceGraphEdge[]
      */
-    public function getOutEdges(): array
+    public function get_out_edges(): array
     {
-        return $this->outEdges;
+        return $this->out_edges;
     }
-
     /**
      * Returns the value of this Node.
      */
-    public function getValue(): mixed
+    public function get_value(): mixed
     {
         return $this->value;
     }
-
     /**
      * Clears all edges.
      */
     public function clear(): void
     {
-        $this->inEdges = $this->outEdges = [];
+        $this->in_edges = $this->out_edges = [];
     }
 }

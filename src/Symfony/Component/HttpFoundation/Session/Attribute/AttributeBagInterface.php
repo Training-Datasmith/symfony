@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,42 +9,35 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Foundation\Session\Attribute;
 
-namespace Symfony\Component\HttpFoundation\Session\Attribute;
-
-use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
-
+use Symfony\Component\Http_Foundation\Session\Session_Bag_Interface;
 /**
  * Attributes store.
  *
  * @author Drak <drak@zikula.org>
  */
-interface AttributeBagInterface extends SessionBagInterface
+interface Attribute_Bag_Interface extends Session_Bag_Interface
 {
     /**
      * Checks if an attribute is defined.
      */
     public function has(string $name): bool;
-
     /**
      * Returns an attribute.
      */
     public function get(string $name, mixed $default = null): mixed;
-
     /**
      * Sets an attribute.
      */
     public function set(string $name, mixed $value): void;
-
     /**
      * Returns attributes.
      *
      * @return array<string, mixed>
      */
     public function all(): array;
-
     public function replace(array $attributes): void;
-
     /**
      * Removes an attribute.
      *

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,161 +9,146 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Bridge\PhpUnit;
+namespace Symfony\Bridge\Php_Unit;
 
 use Doctrine\Deprecations\Deprecation;
-use PHPUnit\Event\Code\Test;
-use PHPUnit\Event\Code\TestMethod;
-use PHPUnit\Event\Test\BeforeTestMethodErrored;
-use PHPUnit\Event\Test\BeforeTestMethodErroredSubscriber;
-use PHPUnit\Event\Test\Errored;
-use PHPUnit\Event\Test\ErroredSubscriber;
-use PHPUnit\Event\Test\Finished;
-use PHPUnit\Event\Test\FinishedSubscriber;
-use PHPUnit\Event\Test\Skipped;
-use PHPUnit\Event\Test\SkippedSubscriber;
-use PHPUnit\Metadata\Group;
-use PHPUnit\Runner\Extension\Extension;
-use PHPUnit\Runner\Extension\Facade;
-use PHPUnit\Runner\Extension\ParameterCollection;
-use PHPUnit\TextUI\Configuration\Configuration;
-use Symfony\Bridge\PhpUnit\Attribute\DnsSensitive;
-use Symfony\Bridge\PhpUnit\Attribute\TimeSensitive;
-use Symfony\Bridge\PhpUnit\Extension\EnableClockMockSubscriber;
-use Symfony\Bridge\PhpUnit\Extension\RegisterClockMockSubscriber;
-use Symfony\Bridge\PhpUnit\Extension\RegisterDnsMockSubscriber;
-use Symfony\Bridge\PhpUnit\Metadata\AttributeReader;
-use Symfony\Component\ErrorHandler\DebugClassLoader;
-
-class SymfonyExtension implements Extension
+use Php_Unit\Event\Code\Test;
+use Php_Unit\Event\Code\Test_Method;
+use Php_Unit\Event\Test\Before_Test_Method_Errored;
+use Php_Unit\Event\Test\Before_Test_Method_Errored_Subscriber;
+use Php_Unit\Event\Test\Errored;
+use Php_Unit\Event\Test\Errored_Subscriber;
+use Php_Unit\Event\Test\Finished;
+use Php_Unit\Event\Test\Finished_Subscriber;
+use Php_Unit\Event\Test\Skipped;
+use Php_Unit\Event\Test\Skipped_Subscriber;
+use Php_Unit\Metadata\Group;
+use Php_Unit\Runner\Extension\Extension;
+use Php_Unit\Runner\Extension\Facade;
+use Php_Unit\Runner\Extension\Parameter_Collection;
+use Php_Unit\Text_Ui\Configuration\Configuration;
+use Symfony\Bridge\Php_Unit\Attribute\Dns_Sensitive;
+use Symfony\Bridge\Php_Unit\Attribute\Time_Sensitive;
+use Symfony\Bridge\Php_Unit\Extension\Enable_Clock_Mock_Subscriber;
+use Symfony\Bridge\Php_Unit\Extension\Register_Clock_Mock_Subscriber;
+use Symfony\Bridge\Php_Unit\Extension\Register_Dns_Mock_Subscriber;
+use Symfony\Bridge\Php_Unit\Metadata\Attribute_Reader;
+use Symfony\Component\Error_Handler\Debug_Class_Loader;
+class Symfony_Extension implements Extension
 {
-    public function bootstrap(Configuration $configuration, Facade $facade, ParameterCollection $parameters): void
+    public function bootstrap(Configuration $configuration, Facade $facade, Parameter_Collection $parameters): void
     {
-        $deprecationsNamespacesMapping = null;
+        $deprecations_namespaces_mapping = null;
         if ($parameters->has('deprecations-namespaces-mapping')) {
-            $deprecationsNamespacesMapping = [];
+            $deprecations_namespaces_mapping = [];
             foreach (explode(',', $parameters->get('deprecations-namespaces-mapping')) as $pair) {
                 [$key, $value] = explode('=>', $pair, 2);
-                $deprecationsNamespacesMapping[trim($key)] = trim($value);
+                $deprecations_namespaces_mapping[trim($key)] = trim($value);
             }
         }
-
-        if (class_exists(DebugClassLoader::class)) {
-            DebugClassLoader::enable($deprecationsNamespacesMapping);
+        if (class_exists(Debug_Class_Loader::class)) {
+            Debug_Class_Loader::enable($deprecations_namespaces_mapping);
         }
-
         if (class_exists(Deprecation::class)) {
-            Deprecation::withoutDeduplication();
+            Deprecation::without_deduplication();
         }
-
-        $reader = new AttributeReader();
-
+        $reader = new Attribute_Reader();
         if ($parameters->has('clock-mock-namespaces')) {
             foreach (explode(',', $parameters->get('clock-mock-namespaces')) as $namespace) {
-                ClockMock::register($namespace.'\DummyClass');
+                Clock_Mock::register($namespace . '\DummyClass');
             }
         }
-
-        $facade->registerSubscriber(new RegisterClockMockSubscriber($reader));
-        $facade->registerSubscriber(new EnableClockMockSubscriber($reader));
-        $facade->registerSubscriber(new class ($reader) implements ErroredSubscriber {
-            public function __construct(private readonly AttributeReader $reader)
+        $facade->register_subscriber(new Register_Clock_Mock_Subscriber($reader));
+        $facade->register_subscriber(new Enable_Clock_Mock_Subscriber($reader));
+        $facade->register_subscriber(new class($reader) implements Errored_Subscriber
+        {
+            public function __construct(private readonly Attribute_Reader $reader)
             {
             }
-
             public function notify(Errored $event): void
             {
-                SymfonyExtension::disableClockMock($event->test(), $this->reader);
-                SymfonyExtension::disableDnsMock($event->test(), $this->reader);
+                Symfony_Extension::disable_clock_mock($event->test(), $this->reader);
+                Symfony_Extension::disable_dns_mock($event->test(), $this->reader);
             }
         });
-        $facade->registerSubscriber(new class ($reader) implements FinishedSubscriber {
-            public function __construct(private readonly AttributeReader $reader)
+        $facade->register_subscriber(new class($reader) implements Finished_Subscriber
+        {
+            public function __construct(private readonly Attribute_Reader $reader)
             {
             }
-
             public function notify(Finished $event): void
             {
-                SymfonyExtension::disableClockMock($event->test(), $this->reader);
-                SymfonyExtension::disableDnsMock($event->test(), $this->reader);
+                Symfony_Extension::disable_clock_mock($event->test(), $this->reader);
+                Symfony_Extension::disable_dns_mock($event->test(), $this->reader);
             }
         });
-        $facade->registerSubscriber(new class ($reader) implements SkippedSubscriber {
-            public function __construct(private readonly AttributeReader $reader)
+        $facade->register_subscriber(new class($reader) implements Skipped_Subscriber
+        {
+            public function __construct(private readonly Attribute_Reader $reader)
             {
             }
-
             public function notify(Skipped $event): void
             {
-                SymfonyExtension::disableClockMock($event->test(), $this->reader);
-                SymfonyExtension::disableDnsMock($event->test(), $this->reader);
+                Symfony_Extension::disable_clock_mock($event->test(), $this->reader);
+                Symfony_Extension::disable_dns_mock($event->test(), $this->reader);
             }
         });
-
-        if (interface_exists(BeforeTestMethodErroredSubscriber::class)) {
-            $facade->registerSubscriber(new class ($reader) implements BeforeTestMethodErroredSubscriber {
-                public function __construct(private readonly AttributeReader $reader)
+        if (interface_exists(Before_Test_Method_Errored_Subscriber::class)) {
+            $facade->register_subscriber(new class($reader) implements Before_Test_Method_Errored_Subscriber
+            {
+                public function __construct(private readonly Attribute_Reader $reader)
                 {
                 }
-
-                public function notify(BeforeTestMethodErrored $event): void
+                public function notify(Before_Test_Method_Errored $event): void
                 {
                     if (method_exists($event, 'test')) {
-                        SymfonyExtension::disableClockMock($event->test(), $this->reader);
-                        SymfonyExtension::disableDnsMock($event->test(), $this->reader);
+                        Symfony_Extension::disable_clock_mock($event->test(), $this->reader);
+                        Symfony_Extension::disable_dns_mock($event->test(), $this->reader);
                     } else {
-                        ClockMock::withClockMock(false);
-                        DnsMock::withMockedHosts([]);
+                        Clock_Mock::with_clock_mock(false);
+                        Dns_Mock::with_mocked_hosts([]);
                     }
                 }
             });
         }
-
         if ($parameters->has('dns-mock-namespaces')) {
             foreach (explode(',', $parameters->get('dns-mock-namespaces')) as $namespace) {
-                DnsMock::register($namespace.'\DummyClass');
+                Dns_Mock::register($namespace . '\DummyClass');
             }
         }
-
-        $facade->registerSubscriber(new RegisterDnsMockSubscriber($reader));
+        $facade->register_subscriber(new Register_Dns_Mock_Subscriber($reader));
     }
-
     /**
      * @internal
      */
-    public static function disableClockMock(Test $test, AttributeReader $reader): void
+    public static function disable_clock_mock(Test $test, Attribute_Reader $reader): void
     {
-        if (self::hasGroup($test, 'time-sensitive', $reader, TimeSensitive::class)) {
-            ClockMock::withClockMock(false);
+        if (self::has_group($test, 'time-sensitive', $reader, Time_Sensitive::class)) {
+            Clock_Mock::with_clock_mock(false);
         }
     }
-
     /**
      * @internal
      */
-    public static function disableDnsMock(Test $test, AttributeReader $reader): void
+    public static function disable_dns_mock(Test $test, Attribute_Reader $reader): void
     {
-        if (self::hasGroup($test, 'dns-sensitive', $reader, DnsSensitive::class)) {
-            DnsMock::withMockedHosts([]);
+        if (self::has_group($test, 'dns-sensitive', $reader, Dns_Sensitive::class)) {
+            Dns_Mock::with_mocked_hosts([]);
         }
     }
-
     /**
      * @internal
      */
-    public static function hasGroup(Test $test, string $groupName, AttributeReader $reader, string $attribute): bool
+    public static function has_group(Test $test, string $group_name, Attribute_Reader $reader, string $attribute): bool
     {
-        if (!$test instanceof TestMethod) {
+        if (!$test instanceof Test_Method) {
             return false;
         }
-
         foreach ($test->metadata() as $metadata) {
-            if ($metadata instanceof Group && $groupName === $metadata->groupName()) {
+            if ($metadata instanceof Group && $group_name === $metadata->group_name()) {
                 return true;
             }
         }
-
-        return [] !== $reader->forClassAndMethod($test->className(), $test->methodName(), $attribute);
+        return [] !== $reader->for_class_and_method($test->class_name(), $test->method_name(), $attribute);
     }
 }

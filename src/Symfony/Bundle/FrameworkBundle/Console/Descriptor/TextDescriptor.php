@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,657 +9,501 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Console\Descriptor;
 
-namespace Symfony\Bundle\FrameworkBundle\Console\Descriptor;
-
-use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\Console\Formatter\Output_Formatter;
 use Symfony\Component\Console\Helper\Dumper;
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Helper\TableCell;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Alias;
-use Symfony\Component\DependencyInjection\Argument\AbstractArgument;
-use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
-use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
-use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
-use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\ErrorHandler\ErrorRenderer\FileLinkFormatter;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Console\Helper\Table_Cell;
+use Symfony\Component\Console\Style\Symfony_Style;
+use Symfony\Component\Dependency_Injection\Alias;
+use Symfony\Component\Dependency_Injection\Argument\Abstract_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Iterator_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Service_Closure_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Service_Locator_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Tagged_Iterator_Argument;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Parameter_Bag\Parameter_Bag;
+use Symfony\Component\Dependency_Injection\Reference;
+use Symfony\Component\Error_Handler\Error_Renderer\File_Link_Formatter;
+use Symfony\Component\Event_Dispatcher\Event_Dispatcher_Interface;
 use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\RouteCollection;
-
+use Symfony\Component\Routing\Route_Collection;
 /**
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
  *
  * @internal
  */
-class TextDescriptor extends Descriptor
+class Text_Descriptor extends Descriptor
 {
-    private const VERB_COLORS = [
-        'ANY' => 'default',
-        'GET' => 'blue',
-        'QUERY' => 'blue',
-        'HEAD' => 'magenta',
-        'OPTIONS' => 'blue',
-        'POST' => 'green',
-        'PUT' => 'yellow',
-        'PATCH' => 'yellow',
-        'DELETE' => 'red',
-    ];
-
-    public function __construct(
-        private readonly ?FileLinkFormatter $fileLinkFormatter = null,
-    ) {
-    }
-
-    protected function describeRouteCollection(RouteCollection $routes, array $options = []): void
+    private const VERB_COLORS = ['ANY' => 'default', 'GET' => 'blue', 'QUERY' => 'blue', 'HEAD' => 'magenta', 'OPTIONS' => 'blue', 'POST' => 'green', 'PUT' => 'yellow', 'PATCH' => 'yellow', 'DELETE' => 'red'];
+    public function __construct(private readonly ?File_Link_Formatter $file_link_formatter = null)
     {
-        $showAliases = $options['show_aliases'] ?? false;
-        $showControllers = $options['show_controllers'] ?? false;
-
-        $tableRows = [];
-        $shouldShowScheme = false;
-        $shouldShowHost = false;
+    }
+    protected function describe_route_collection(Route_Collection $routes, array $options = []): void
+    {
+        $show_aliases = $options['show_aliases'] ?? false;
+        $show_controllers = $options['show_controllers'] ?? false;
+        $table_rows = [];
+        $should_show_scheme = false;
+        $should_show_host = false;
         foreach ($routes->all() as $name => $route) {
-            $controller = $route->getDefault('_controller');
-
-            $scheme = $route->getSchemes() ? implode('|', $route->getSchemes()) : 'ANY';
-            $shouldShowScheme = $shouldShowScheme || 'ANY' !== $scheme;
-
-            $host = '' !== $route->getHost() ? $route->getHost() : 'ANY';
-            $shouldShowHost = $shouldShowHost || 'ANY' !== $host;
-
-            $row = [
-                'Name' => $name,
-                'Methods' => $this->formatMethods($route->getMethods()),
-                'Scheme' => $scheme,
-                'Host' => $host,
-                'Path' => $route->getPath(),
-            ];
-
-            if ($showControllers) {
-                $row['Controller'] = $controller ? $this->formatControllerLink($controller, $this->formatCallable($controller), $options['container'] ?? null) : '';
+            $controller = $route->get_default('_controller');
+            $scheme = $route->get_schemes() ? implode('|', $route->get_schemes()) : 'ANY';
+            $should_show_scheme = $should_show_scheme || 'ANY' !== $scheme;
+            $host = '' !== $route->get_host() ? $route->get_host() : 'ANY';
+            $should_show_host = $should_show_host || 'ANY' !== $host;
+            $row = ['Name' => $name, 'Methods' => $this->format_methods($route->get_methods()), 'Scheme' => $scheme, 'Host' => $host, 'Path' => $route->get_path()];
+            if ($show_controllers) {
+                $row['Controller'] = $controller ? $this->format_controller_link($controller, $this->format_callable($controller), $options['container'] ?? null) : '';
             }
-
-            if ($showAliases) {
-                $row['Aliases'] = implode('|', $this->getReverseAliases($routes)[$name] ?? []);
+            if ($show_aliases) {
+                $row['Aliases'] = implode('|', $this->get_reverse_aliases($routes)[$name] ?? []);
             }
-
-            $tableRows[] = $row;
+            $table_rows[] = $row;
         }
-
-        $tableHeaders = ['Name', 'Method'];
-
-        if ($shouldShowScheme) {
-            $tableHeaders[] = 'Scheme';
+        $table_headers = ['Name', 'Method'];
+        if ($should_show_scheme) {
+            $table_headers[] = 'Scheme';
         } else {
-            array_walk($tableRows, static function (array &$row): void {
+            array_walk($table_rows, static function (array &$row): void {
                 unset($row['Scheme']);
             });
         }
-
-        if ($shouldShowHost) {
-            $tableHeaders[] = 'Host';
+        if ($should_show_host) {
+            $table_headers[] = 'Host';
         } else {
-            array_walk($tableRows, static function (array &$row): void {
+            array_walk($table_rows, static function (array &$row): void {
                 unset($row['Host']);
             });
         }
-
-        $tableHeaders[] = 'Path';
-
-        if ($showControllers) {
-            $tableHeaders[] = 'Controller';
+        $table_headers[] = 'Path';
+        if ($show_controllers) {
+            $table_headers[] = 'Controller';
         }
-
-        if ($showAliases) {
-            $tableHeaders[] = 'Aliases';
+        if ($show_aliases) {
+            $table_headers[] = 'Aliases';
         }
-
         if (isset($options['output'])) {
-            $options['output']->table($tableHeaders, $tableRows);
+            $options['output']->table($table_headers, $table_rows);
         } else {
-            $table = new Table($this->getOutput());
-            $table->setHeaders($tableHeaders)->setRows($tableRows);
+            $table = new Table($this->get_output());
+            $table->set_headers($table_headers)->set_rows($table_rows);
             $table->render();
         }
     }
-
-    protected function describeRoute(Route $route, array $options = []): void
+    protected function describe_route(Route $route, array $options = []): void
     {
-        $defaults = $route->getDefaults();
+        $defaults = $route->get_defaults();
         if (isset($defaults['_controller'])) {
-            $defaults['_controller'] = $this->formatControllerLink($defaults['_controller'], $this->formatCallable($defaults['_controller']), $options['container'] ?? null);
+            $defaults['_controller'] = $this->format_controller_link($defaults['_controller'], $this->format_callable($defaults['_controller']), $options['container'] ?? null);
         }
-
-        $tableHeaders = ['Property', 'Value'];
-        $tableRows = [
-            ['Route Name', $options['name'] ?? ''],
-            ['Path', $route->getPath()],
-            ['Path Regex', $route->compile()->getRegex()],
-            ['Host', '' !== $route->getHost() ? $route->getHost() : 'ANY'],
-            ['Host Regex', '' !== $route->getHost() ? $route->compile()->getHostRegex() : ''],
-            ['Scheme', $route->getSchemes() ? implode('|', $route->getSchemes()) : 'ANY'],
-            ['Method', $this->formatMethods($route->getMethods())],
-            ['Requirements', $route->getRequirements() ? $this->formatRouterConfig($route->getRequirements()) : 'NO CUSTOM'],
-            ['Class', $route::class],
-            ['Defaults', $this->formatRouterConfig($defaults)],
-            ['Options', $this->formatRouterConfig($route->getOptions())],
-        ];
-
-        if ('' !== $route->getCondition()) {
-            $tableRows[] = ['Condition', $route->getCondition()];
+        $table_headers = ['Property', 'Value'];
+        $table_rows = [['Route Name', $options['name'] ?? ''], ['Path', $route->get_path()], ['Path Regex', $route->compile()->get_regex()], ['Host', '' !== $route->get_host() ? $route->get_host() : 'ANY'], ['Host Regex', '' !== $route->get_host() ? $route->compile()->get_host_regex() : ''], ['Scheme', $route->get_schemes() ? implode('|', $route->get_schemes()) : 'ANY'], ['Method', $this->format_methods($route->get_methods())], ['Requirements', $route->get_requirements() ? $this->format_router_config($route->get_requirements()) : 'NO CUSTOM'], ['Class', $route::class], ['Defaults', $this->format_router_config($defaults)], ['Options', $this->format_router_config($route->get_options())]];
+        if ('' !== $route->get_condition()) {
+            $table_rows[] = ['Condition', $route->get_condition()];
         }
-
-        $table = new Table($this->getOutput());
-        $table->setHeaders($tableHeaders)->setRows($tableRows);
+        $table = new Table($this->get_output());
+        $table->set_headers($table_headers)->set_rows($table_rows);
         $table->render();
     }
-
-    protected function describeContainerParameters(ParameterBag $parameters, array $options = []): void
+    protected function describe_container_parameters(Parameter_Bag $parameters, array $options = []): void
     {
-        $tableHeaders = ['Parameter', 'Value'];
-
-        $deprecatedParameters = $parameters->allDeprecated();
-
-        $tableRows = [];
-        foreach ($this->sortParameters($parameters) as $parameter => $value) {
-            $tableRows[] = [$parameter, $this->formatParameter($value)];
-
-            if (isset($deprecatedParameters[$parameter])) {
-                $tableRows[] = [new TableCell(
-                    \sprintf('<comment>(Since %s %s: %s)</comment>', $deprecatedParameters[$parameter][0], $deprecatedParameters[$parameter][1], \sprintf(...\array_slice($deprecatedParameters[$parameter], 2))),
-                    ['colspan' => 2]
-                )];
+        $table_headers = ['Parameter', 'Value'];
+        $deprecated_parameters = $parameters->all_deprecated();
+        $table_rows = [];
+        foreach ($this->sort_parameters($parameters) as $parameter => $value) {
+            $table_rows[] = [$parameter, $this->format_parameter($value)];
+            if (isset($deprecated_parameters[$parameter])) {
+                $table_rows[] = [new Table_Cell(\sprintf('<comment>(Since %s %s: %s)</comment>', $deprecated_parameters[$parameter][0], $deprecated_parameters[$parameter][1], \sprintf(...\array_slice($deprecated_parameters[$parameter], 2))), ['colspan' => 2])];
             }
         }
-
         $options['output']->title('Symfony Container Parameters');
-        $options['output']->table($tableHeaders, $tableRows);
+        $options['output']->table($table_headers, $table_rows);
     }
-
-    protected function describeContainerTags(ContainerBuilder $container, array $options = []): void
+    protected function describe_container_tags(Container_Builder $container, array $options = []): void
     {
-        $showHidden = isset($options['show_hidden']) && $options['show_hidden'];
-
-        if ($showHidden) {
+        $show_hidden = isset($options['show_hidden']) && $options['show_hidden'];
+        if ($show_hidden) {
             $options['output']->title('Symfony Container Hidden Tags');
         } else {
             $options['output']->title('Symfony Container Tags');
         }
-
-        foreach ($this->findDefinitionsByTag($container, $showHidden) as $tag => $definitions) {
+        foreach ($this->find_definitions_by_tag($container, $show_hidden) as $tag => $definitions) {
             $options['output']->section(\sprintf('"%s" tag', $tag));
             $options['output']->listing(array_keys($definitions));
         }
     }
-
-    protected function describeContainerService(object $service, array $options = [], ?ContainerBuilder $container = null): void
+    protected function describe_container_service(object $service, array $options = [], ?Container_Builder $container = null): void
     {
         if (!isset($options['id'])) {
             throw new \InvalidArgumentException('An "id" option must be provided.');
         }
-
         if ($service instanceof Alias) {
-            $this->describeContainerAlias($service, $options, $container);
+            $this->describe_container_alias($service, $options, $container);
         } elseif ($service instanceof Definition) {
-            $this->describeContainerDefinition($service, $options, $container);
+            $this->describe_container_definition($service, $options, $container);
         } else {
             $options['output']->title(\sprintf('Information for Service "<info>%s</info>"', $options['id']));
-            $options['output']->table(
-                ['Service ID', 'Class'],
-                [
-                    [$options['id'], $service::class],
-                ]
-            );
+            $options['output']->table(['Service ID', 'Class'], [[$options['id'], $service::class]]);
         }
     }
-
-    protected function describeContainerServices(ContainerBuilder $container, array $options = []): void
+    protected function describe_container_services(Container_Builder $container, array $options = []): void
     {
-        $showHidden = isset($options['show_hidden']) && $options['show_hidden'];
-        $showTag = $options['tag'] ?? null;
-
-        if ($showHidden) {
+        $show_hidden = isset($options['show_hidden']) && $options['show_hidden'];
+        $show_tag = $options['tag'] ?? null;
+        if ($show_hidden) {
             $title = 'Symfony Container Hidden Services';
         } else {
             $title = 'Symfony Container Services';
         }
-
-        if ($showTag) {
+        if ($show_tag) {
             $title .= \sprintf(' Tagged with "%s" Tag', $options['tag']);
         }
-
         $options['output']->title($title);
-
         if (isset($options['tag']) && $options['tag']) {
             $services = [];
-            foreach ($container->findTaggedServiceIds($options['tag']) as $serviceId => $tags) {
-                $definition = $container->getDefinition($serviceId);
-                $services[$serviceId] = $this->resolvePriorityServiceTags($container, $definition, $options['tag']);
+            foreach ($container->find_tagged_service_ids($options['tag']) as $service_id => $tags) {
+                $definition = $container->get_definition($service_id);
+                $services[$service_id] = $this->resolve_priority_service_tags($container, $definition, $options['tag']);
             }
-            $serviceIds = $this->sortTaggedServicesByPriority($services);
+            $service_ids = $this->sort_tagged_services_by_priority($services);
         } else {
-            $serviceIds = $this->sortServiceIds($container->getServiceIds());
+            $service_ids = $this->sort_service_ids($container->get_service_ids());
         }
-        $maxTags = [];
-
+        $max_tags = [];
         if (isset($options['filter'])) {
-            $serviceIds = array_filter($serviceIds, $options['filter']);
+            $service_ids = array_filter($service_ids, $options['filter']);
         }
-
-        foreach ($serviceIds as $key => $serviceId) {
-            $definition = $this->resolveServiceDefinition($container, $serviceId);
-
+        foreach ($service_ids as $key => $service_id) {
+            $definition = $this->resolve_service_definition($container, $service_id);
             // filter out hidden services unless shown explicitly
-            if ($showHidden xor '.' === ($serviceId[0] ?? null)) {
-                unset($serviceIds[$key]);
+            if ($show_hidden xor '.' === ($service_id[0] ?? null)) {
+                unset($service_ids[$key]);
                 continue;
             }
-
             if ($definition instanceof Definition) {
-                if ($definition->hasTag('container.excluded')) {
-                    unset($serviceIds[$key]);
+                if ($definition->has_tag('container.excluded')) {
+                    unset($service_ids[$key]);
                     continue;
                 }
-                if ($showTag) {
-                    $tags = $services[$serviceId];
+                if ($show_tag) {
+                    $tags = $services[$service_id];
                     foreach ($tags as $tag) {
                         foreach ($tag as $key => $value) {
-                            if (!isset($maxTags[$key])) {
-                                $maxTags[$key] = \strlen((string) $key);
+                            if (!isset($max_tags[$key])) {
+                                $max_tags[$key] = \strlen((string) $key);
                             }
                             if (\is_array($value)) {
-                                $value = $this->formatParameter($value);
+                                $value = $this->format_parameter($value);
                             }
-
-                            if (\strlen((string) $value) > $maxTags[$key]) {
-                                $maxTags[$key] = \strlen((string) $value);
+                            if (\strlen((string) $value) > $max_tags[$key]) {
+                                $max_tags[$key] = \strlen((string) $value);
                             }
                         }
                     }
                 }
             }
         }
-
-        $tagsCount = \count($maxTags);
-        $tagsNames = array_keys($maxTags);
-
-        $tableHeaders = array_merge(['Service ID'], $tagsNames, ['Class name']);
-        $tableRows = [];
-        $rawOutput = isset($options['raw_text']) && $options['raw_text'];
-        foreach ($serviceIds as $serviceId) {
-            $definition = $this->resolveServiceDefinition($container, $serviceId);
-
-            $styledServiceId = $rawOutput ? $serviceId : \sprintf('<fg=cyan>%s</fg=cyan>', OutputFormatter::escape($serviceId));
+        $tags_count = \count($max_tags);
+        $tags_names = array_keys($max_tags);
+        $table_headers = array_merge(['Service ID'], $tags_names, ['Class name']);
+        $table_rows = [];
+        $raw_output = isset($options['raw_text']) && $options['raw_text'];
+        foreach ($service_ids as $service_id) {
+            $definition = $this->resolve_service_definition($container, $service_id);
+            $styled_service_id = $raw_output ? $service_id : \sprintf('<fg=cyan>%s</fg=cyan>', Output_Formatter::escape($service_id));
             if ($definition instanceof Definition) {
-                if ($showTag) {
-                    foreach ($this->sortByPriority($services[$serviceId]) as $key => $tag) {
-                        $tagValues = [];
-                        foreach ($tagsNames as $tagName) {
-                            if (\is_array($tagValue = $tag[$tagName] ?? '')) {
-                                $tagValue = $this->formatParameter($tagValue);
+                if ($show_tag) {
+                    foreach ($this->sort_by_priority($services[$service_id]) as $key => $tag) {
+                        $tag_values = [];
+                        foreach ($tags_names as $tag_name) {
+                            if (\is_array($tag_value = $tag[$tag_name] ?? '')) {
+                                $tag_value = $this->format_parameter($tag_value);
                             }
-
-                            $tagValues[] = $tagValue;
+                            $tag_values[] = $tag_value;
                         }
                         if (0 === $key) {
-                            $tableRows[] = array_merge([$serviceId], $tagValues, [$definition->getClass()]);
+                            $table_rows[] = array_merge([$service_id], $tag_values, [$definition->get_class()]);
                         } else {
-                            $tableRows[] = array_merge([' (same service as previous, another tag)'], $tagValues, ['']);
+                            $table_rows[] = array_merge([' (same service as previous, another tag)'], $tag_values, ['']);
                         }
                     }
                 } else {
-                    $tableRows[] = [$styledServiceId, $definition->getClass()];
+                    $table_rows[] = [$styled_service_id, $definition->get_class()];
                 }
             } elseif ($definition instanceof Alias) {
                 $alias = $definition;
-                $tableRows[] = array_merge([$styledServiceId, \sprintf('alias for "%s"', $alias)], $tagsCount ? array_fill(0, $tagsCount, '') : []);
+                $table_rows[] = array_merge([$styled_service_id, \sprintf('alias for "%s"', $alias)], $tags_count ? array_fill(0, $tags_count, '') : []);
             } else {
-                $tableRows[] = array_merge([$styledServiceId, $definition::class], $tagsCount ? array_fill(0, $tagsCount, '') : []);
+                $table_rows[] = array_merge([$styled_service_id, $definition::class], $tags_count ? array_fill(0, $tags_count, '') : []);
             }
         }
-
-        $options['output']->table($tableHeaders, $tableRows);
+        $options['output']->table($table_headers, $table_rows);
     }
-
-    protected function describeContainerDefinition(Definition $definition, array $options = [], ?ContainerBuilder $container = null): void
+    protected function describe_container_definition(Definition $definition, array $options = [], ?Container_Builder $container = null): void
     {
         if (isset($options['id'])) {
             $options['output']->title(\sprintf('Information for Service "<info>%s</info>"', $options['id']));
         }
-
-        if ('' !== $classDescription = $this->getClassDescription((string) $definition->getClass())) {
-            $options['output']->text($classDescription."\n");
+        if ('' !== $class_description = $this->get_class_description((string) $definition->get_class())) {
+            $options['output']->text($class_description . "\n");
         }
-
-        $tableHeaders = ['Option', 'Value'];
-
-        $tableRows[] = ['Service ID', $options['id'] ?? '-'];
-        $tableRows[] = ['Class', $definition->getClass() ?: '-'];
-
-        $omitTags = isset($options['omit_tags']) && $options['omit_tags'];
-        if (!$omitTags && ($tags = $container ? $this->resolvePriorityServiceTags($container, $definition) : $definition->getTags())) {
-            $tagInformation = [];
-            foreach ($tags as $tagName => $tagData) {
-                foreach ($tagData as $tagParameters) {
-                    $parameters = array_map(fn (string $key, $value): string => \sprintf('<info>%s</info>: %s', $key, \is_array($value) ? $this->formatParameter($value) : $value), array_keys($tagParameters), array_values($tagParameters));
+        $table_headers = ['Option', 'Value'];
+        $table_rows[] = ['Service ID', $options['id'] ?? '-'];
+        $table_rows[] = ['Class', $definition->get_class() ?: '-'];
+        $omit_tags = isset($options['omit_tags']) && $options['omit_tags'];
+        if (!$omit_tags && $tags = $container ? $this->resolve_priority_service_tags($container, $definition) : $definition->get_tags()) {
+            $tag_information = [];
+            foreach ($tags as $tag_name => $tag_data) {
+                foreach ($tag_data as $tag_parameters) {
+                    $parameters = array_map(fn(string $key, $value): string => \sprintf('<info>%s</info>: %s', $key, \is_array($value) ? $this->format_parameter($value) : $value), array_keys($tag_parameters), array_values($tag_parameters));
                     $parameters = implode(', ', $parameters);
-
                     if ('' === $parameters) {
-                        $tagInformation[] = \sprintf('%s', $tagName);
+                        $tag_information[] = \sprintf('%s', $tag_name);
                     } else {
-                        $tagInformation[] = \sprintf('%s (%s)', $tagName, $parameters);
+                        $tag_information[] = \sprintf('%s (%s)', $tag_name, $parameters);
                     }
                 }
             }
-            $tagInformation = implode("\n", $tagInformation);
+            $tag_information = implode("\n", $tag_information);
         } else {
-            $tagInformation = '-';
+            $tag_information = '-';
         }
-        $tableRows[] = ['Tags', $tagInformation];
-
-        $calls = $definition->getMethodCalls();
+        $table_rows[] = ['Tags', $tag_information];
+        $calls = $definition->get_method_calls();
         if (\count($calls) > 0) {
-            $callInformation = [];
+            $call_information = [];
             foreach ($calls as $call) {
-                $callInformation[] = $call[0];
+                $call_information[] = $call[0];
             }
-            $tableRows[] = ['Calls', implode(', ', $callInformation)];
+            $table_rows[] = ['Calls', implode(', ', $call_information)];
         }
-
-        $tableRows[] = ['Public', $definition->isPublic() ? 'yes' : 'no'];
-        $tableRows[] = ['Synthetic', $definition->isSynthetic() ? 'yes' : 'no'];
-        $tableRows[] = ['Lazy', $definition->isLazy() ? 'yes' : 'no'];
-        $tableRows[] = ['Shared', $definition->isShared() ? 'yes' : 'no'];
-        $tableRows[] = ['Abstract', $definition->isAbstract() ? 'yes' : 'no'];
-        $tableRows[] = ['Autowired', $definition->isAutowired() ? 'yes' : 'no'];
-        $tableRows[] = ['Autoconfigured', $definition->isAutoconfigured() ? 'yes' : 'no'];
-
-        if ($definition->getFile()) {
-            $tableRows[] = ['Required File', $definition->getFile()];
+        $table_rows[] = ['Public', $definition->is_public() ? 'yes' : 'no'];
+        $table_rows[] = ['Synthetic', $definition->is_synthetic() ? 'yes' : 'no'];
+        $table_rows[] = ['Lazy', $definition->is_lazy() ? 'yes' : 'no'];
+        $table_rows[] = ['Shared', $definition->is_shared() ? 'yes' : 'no'];
+        $table_rows[] = ['Abstract', $definition->is_abstract() ? 'yes' : 'no'];
+        $table_rows[] = ['Autowired', $definition->is_autowired() ? 'yes' : 'no'];
+        $table_rows[] = ['Autoconfigured', $definition->is_autoconfigured() ? 'yes' : 'no'];
+        if ($definition->get_file()) {
+            $table_rows[] = ['Required File', $definition->get_file()];
         }
-
-        if ($factory = $definition->getFactory()) {
+        if ($factory = $definition->get_factory()) {
             if (\is_array($factory)) {
                 if ($factory[0] instanceof Reference) {
-                    $tableRows[] = ['Factory Service', $factory[0]];
+                    $table_rows[] = ['Factory Service', $factory[0]];
                 } elseif ($factory[0] instanceof Definition) {
-                    $tableRows[] = ['Factory Service', \sprintf('inline factory service (%s)', $factory[0]->getClass() ?? 'class not configured')];
+                    $table_rows[] = ['Factory Service', \sprintf('inline factory service (%s)', $factory[0]->get_class() ?? 'class not configured')];
                 } else {
-                    $tableRows[] = ['Factory Class', $factory[0]];
+                    $table_rows[] = ['Factory Class', $factory[0]];
                 }
-                $tableRows[] = ['Factory Method', $factory[1]];
+                $table_rows[] = ['Factory Method', $factory[1]];
             } else {
-                $tableRows[] = ['Factory Function', $factory];
+                $table_rows[] = ['Factory Function', $factory];
             }
         }
-
-        $argumentsInformation = [];
-        if ($arguments = $definition->getArguments()) {
+        $arguments_information = [];
+        if ($arguments = $definition->get_arguments()) {
             foreach ($arguments as $argument) {
-                if ($argument instanceof ServiceClosureArgument) {
-                    $argument = $argument->getValues()[0];
+                if ($argument instanceof Service_Closure_Argument) {
+                    $argument = $argument->get_values()[0];
                 }
                 if ($argument instanceof Reference) {
-                    $argumentsInformation[] = \sprintf('Service(%s)', (string) $argument);
-                } elseif ($argument instanceof IteratorArgument) {
-                    if ($argument instanceof TaggedIteratorArgument) {
-                        $argumentsInformation[] = \sprintf('Tagged Iterator for "%s"%s', $argument->getTag(), $options['is_debug'] ? '' : \sprintf(' (%d element(s))', \count($argument->getValues())));
+                    $arguments_information[] = \sprintf('Service(%s)', (string) $argument);
+                } elseif ($argument instanceof Iterator_Argument) {
+                    if ($argument instanceof Tagged_Iterator_Argument) {
+                        $arguments_information[] = \sprintf('Tagged Iterator for "%s"%s', $argument->get_tag(), $options['is_debug'] ? '' : \sprintf(' (%d element(s))', \count($argument->get_values())));
                     } else {
-                        $argumentsInformation[] = \sprintf('Iterator (%d element(s))', \count($argument->getValues()));
+                        $arguments_information[] = \sprintf('Iterator (%d element(s))', \count($argument->get_values()));
                     }
-
-                    foreach ($argument->getValues() as $ref) {
-                        $argumentsInformation[] = \sprintf('- Service(%s)', $ref);
+                    foreach ($argument->get_values() as $ref) {
+                        $arguments_information[] = \sprintf('- Service(%s)', $ref);
                     }
-                } elseif ($argument instanceof ServiceLocatorArgument) {
-                    $argumentsInformation[] = \sprintf('Service locator (%d element(s))', \count($argument->getValues()));
+                } elseif ($argument instanceof Service_Locator_Argument) {
+                    $arguments_information[] = \sprintf('Service locator (%d element(s))', \count($argument->get_values()));
                 } elseif ($argument instanceof Definition) {
-                    $argumentsInformation[] = 'Inlined Service';
-                } elseif ($argument instanceof \UnitEnum) {
-                    $argumentsInformation[] = ltrim(var_export($argument, true), '\\');
-                } elseif ($argument instanceof AbstractArgument) {
-                    $argumentsInformation[] = \sprintf('Abstract argument (%s)', $argument->getText());
+                    $arguments_information[] = 'Inlined Service';
+                } elseif ($argument instanceof \Unit_Enum) {
+                    $arguments_information[] = ltrim(var_export($argument, true), '\\');
+                } elseif ($argument instanceof Abstract_Argument) {
+                    $arguments_information[] = \sprintf('Abstract argument (%s)', $argument->get_text());
                 } else {
-                    $argumentsInformation[] = \is_array($argument) ? \sprintf('Array (%d element(s))', \count($argument)) : $argument;
+                    $arguments_information[] = \is_array($argument) ? \sprintf('Array (%d element(s))', \count($argument)) : $argument;
                 }
             }
-
-            $tableRows[] = ['Arguments', implode("\n", $argumentsInformation)];
+            $table_rows[] = ['Arguments', implode("\n", $arguments_information)];
         }
-
-        $inEdges = null !== $container && isset($options['id']) ? $this->getServiceEdges($container, $options['id']) : [];
-        $tableRows[] = ['Usages', $inEdges ? implode(\PHP_EOL, $inEdges) : 'none'];
-
-        $options['output']->table($tableHeaders, $tableRows);
-
+        $in_edges = null !== $container && isset($options['id']) ? $this->get_service_edges($container, $options['id']) : [];
+        $table_rows[] = ['Usages', $in_edges ? implode(\PHP_EOL, $in_edges) : 'none'];
+        $options['output']->table($table_headers, $table_rows);
         if (isset($options['id']) && $container) {
-            $stack = $this->getDecorationStack($container, $options['id']);
-
+            $stack = $this->get_decoration_stack($container, $options['id']);
             if (\count($stack) > 1) {
                 $options['output']->section('Decoration Stack');
                 $options['output']->table(['ID', 'Class', 'Priority'], array_map(array_values(...), $stack));
             }
         }
     }
-
-    protected function describeContainerDeprecations(ContainerBuilder $container, array $options = []): void
+    protected function describe_container_deprecations(Container_Builder $container, array $options = []): void
     {
-        $containerDeprecationFilePath = \sprintf('%s/%sDeprecations.log', $container->getParameter('kernel.build_dir'), $container->getParameter('kernel.container_class'));
-        if (!file_exists($containerDeprecationFilePath)) {
+        $container_deprecation_file_path = \sprintf('%s/%sDeprecations.log', $container->get_parameter('kernel.build_dir'), $container->get_parameter('kernel.container_class'));
+        if (!file_exists($container_deprecation_file_path)) {
             $options['output']->warning('The deprecation file does not exist, please try warming the cache first.');
-
             return;
         }
-
-        $logs = unserialize(file_get_contents($containerDeprecationFilePath));
+        $logs = unserialize(file_get_contents($container_deprecation_file_path));
         if (0 === \count($logs)) {
             $options['output']->success('There are no deprecations in the logs!');
-
             return;
         }
-
-        $formattedLogs = [];
-        $remainingCount = 0;
+        $formatted_logs = [];
+        $remaining_count = 0;
         foreach ($logs as $log) {
-            $formattedLogs[] = \sprintf("%sx: %s\n      in %s:%s", $log['count'], $log['message'], $log['file'], $log['line']);
-            $remainingCount += $log['count'];
+            $formatted_logs[] = \sprintf("%sx: %s\n      in %s:%s", $log['count'], $log['message'], $log['file'], $log['line']);
+            $remaining_count += $log['count'];
         }
-        $options['output']->title(\sprintf('Remaining deprecations (%s)', $remainingCount));
-        $options['output']->listing($formattedLogs);
+        $options['output']->title(\sprintf('Remaining deprecations (%s)', $remaining_count));
+        $options['output']->listing($formatted_logs);
     }
-
-    protected function describeContainerAlias(Alias $alias, array $options = [], ?ContainerBuilder $container = null): void
+    protected function describe_container_alias(Alias $alias, array $options = [], ?Container_Builder $container = null): void
     {
-        if ($alias->isPublic()) {
+        if ($alias->is_public()) {
             $options['output']->comment(\sprintf('This service is a <info>public</info> alias for the service <info>%s</info>', (string) $alias));
         } else {
             $options['output']->comment(\sprintf('This service is a <comment>private</comment> alias for the service <info>%s</info>', (string) $alias));
         }
-
         if (!$container) {
             return;
         }
-
-        $this->describeContainerDefinition($container->getDefinition((string) $alias), array_merge($options, ['id' => (string) $alias]), $container);
+        $this->describe_container_definition($container->get_definition((string) $alias), array_merge($options, ['id' => (string) $alias]), $container);
     }
-
-    protected function describeContainerParameter(mixed $parameter, ?array $deprecation, array $options = []): void
+    protected function describe_container_parameter(mixed $parameter, ?array $deprecation, array $options = []): void
     {
-        $parameterName = $options['parameter'];
-        $rows = [
-            [$parameterName, $this->formatParameter($parameter)],
-        ];
-
+        $parameter_name = $options['parameter'];
+        $rows = [[$parameter_name, $this->format_parameter($parameter)]];
         if ($deprecation) {
-            $rows[] = [new TableCell(
-                \sprintf('<comment>(Since %s %s: %s)</comment>', $deprecation[0], $deprecation[1], \sprintf(...\array_slice($deprecation, 2))),
-                ['colspan' => 2]
-            )];
+            $rows[] = [new Table_Cell(\sprintf('<comment>(Since %s %s: %s)</comment>', $deprecation[0], $deprecation[1], \sprintf(...\array_slice($deprecation, 2))), ['colspan' => 2])];
         }
-
         $options['output']->table(['Parameter', 'Value'], $rows);
     }
-
-    protected function describeContainerEnvVars(array $envs, array $options = []): void
+    protected function describe_container_env_vars(array $envs, array $options = []): void
     {
         $dump = new Dumper($this->output);
         $options['output']->title('Symfony Container Environment Variables');
-
         if (null !== $name = $options['name'] ?? null) {
-            $options['output']->comment('Displaying detailed environment variable usage matching '.$name);
-
+            $options['output']->comment('Displaying detailed environment variable usage matching ' . $name);
             $matches = false;
             foreach ($envs as $env) {
                 if ($name === $env['name'] || false !== stripos((string) $env['name'], (string) $name)) {
                     $matches = true;
-                    $options['output']->section('%env('.$env['processor'].':'.$env['name'].')%');
-                    $options['output']->table([], [
-                        ['<info>Default value</>', $env['default_available'] ? $dump($env['default_value']) : 'n/a'],
-                        ['<info>Real value</>', $env['runtime_available'] ? $dump($env['runtime_value']) : 'n/a'],
-                        ['<info>Processed value</>', $env['default_available'] || $env['runtime_available'] ? $dump($env['processed_value']) : 'n/a'],
-                    ]);
+                    $options['output']->section('%env(' . $env['processor'] . ':' . $env['name'] . ')%');
+                    $options['output']->table([], [['<info>Default value</>', $env['default_available'] ? $dump($env['default_value']) : 'n/a'], ['<info>Real value</>', $env['runtime_available'] ? $dump($env['runtime_value']) : 'n/a'], ['<info>Processed value</>', $env['default_available'] || $env['runtime_available'] ? $dump($env['processed_value']) : 'n/a']]);
                 }
             }
-
             if (!$matches) {
                 $options['output']->block('None of the environment variables match this name.');
             } else {
                 $options['output']->comment('Note real values might be different between web and CLI.');
             }
-
             return;
         }
-
         if (!$envs) {
             $options['output']->block('No environment variables are being used.');
-
             return;
         }
-
         $rows = [];
         $missing = [];
         foreach ($envs as $env) {
             if (isset($rows[$env['name']])) {
                 continue;
             }
-
-            $rows[$env['name']] = [
-                $env['name'],
-                $env['default_available'] ? $dump($env['default_value']) : 'n/a',
-                $env['runtime_available'] ? $dump($env['runtime_value']) : 'n/a',
-            ];
+            $rows[$env['name']] = [$env['name'], $env['default_available'] ? $dump($env['default_value']) : 'n/a', $env['runtime_available'] ? $dump($env['runtime_value']) : 'n/a'];
             if (!$env['default_available'] && !$env['runtime_available']) {
                 $missing[$env['name']] = true;
             }
         }
-
         $options['output']->table(['Name', 'Default value', 'Real value'], $rows);
         $options['output']->comment('Note real values might be different between web and CLI.');
-
         if ($missing) {
             $options['output']->warning('The following variables are missing:');
             $options['output']->listing(array_keys($missing));
         }
     }
-
-    protected function describeEventDispatcherListeners(EventDispatcherInterface $eventDispatcher, array $options = []): void
+    protected function describe_event_dispatcher_listeners(Event_Dispatcher_Interface $event_dispatcher, array $options = []): void
     {
         $event = $options['event'] ?? null;
-        $dispatcherServiceName = $options['dispatcher_service_name'] ?? null;
-
+        $dispatcher_service_name = $options['dispatcher_service_name'] ?? null;
         $title = 'Registered Listeners';
-
-        if (null !== $dispatcherServiceName) {
-            $title .= \sprintf(' of Event Dispatcher "%s"', $dispatcherServiceName);
+        if (null !== $dispatcher_service_name) {
+            $title .= \sprintf(' of Event Dispatcher "%s"', $dispatcher_service_name);
         }
-
         if (null !== $event) {
             $title .= \sprintf(' for "%s" Event', $event);
-            $registeredListeners = $eventDispatcher->getListeners($event);
+            $registered_listeners = $event_dispatcher->get_listeners($event);
         } else {
             $title .= ' Grouped by Event';
             // Try to see if "events" exists
-            $registeredListeners = \array_key_exists('events', $options) ? array_combine($options['events'], array_map($eventDispatcher->getListeners(...), $options['events'])) : $eventDispatcher->getListeners();
+            $registered_listeners = \array_key_exists('events', $options) ? array_combine($options['events'], array_map($event_dispatcher->get_listeners(...), $options['events'])) : $event_dispatcher->get_listeners();
         }
-
         $options['output']->title($title);
         if (null !== $event) {
-            $this->renderEventListenerTable($eventDispatcher, $event, $registeredListeners, $options['output']);
+            $this->render_event_listener_table($event_dispatcher, $event, $registered_listeners, $options['output']);
         } else {
-            ksort($registeredListeners);
-            foreach ($registeredListeners as $eventListened => $eventListeners) {
-                $options['output']->section(\sprintf('"%s" event', $eventListened));
-                $this->renderEventListenerTable($eventDispatcher, $eventListened, $eventListeners, $options['output']);
+            ksort($registered_listeners);
+            foreach ($registered_listeners as $event_listened => $event_listeners) {
+                $options['output']->section(\sprintf('"%s" event', $event_listened));
+                $this->render_event_listener_table($event_dispatcher, $event_listened, $event_listeners, $options['output']);
             }
         }
     }
-
-    protected function describeCallable(mixed $callable, array $options = []): void
+    protected function describe_callable(mixed $callable, array $options = []): void
     {
-        $this->writeText($this->formatCallable($callable), $options);
+        $this->write_text($this->format_callable($callable), $options);
     }
-
-    private function renderEventListenerTable(EventDispatcherInterface $eventDispatcher, string $event, array $eventListeners, SymfonyStyle $io): void
+    private function render_event_listener_table(Event_Dispatcher_Interface $event_dispatcher, string $event, array $event_listeners, Symfony_Style $io): void
     {
-        $tableHeaders = ['Order', 'Callable', 'Priority'];
-        $tableRows = [];
-
-        foreach ($eventListeners as $order => $listener) {
-            $tableRows[] = [\sprintf('#%d', $order + 1), $this->formatCallable($listener), $eventDispatcher->getListenerPriority($event, $listener)];
+        $table_headers = ['Order', 'Callable', 'Priority'];
+        $table_rows = [];
+        foreach ($event_listeners as $order => $listener) {
+            $table_rows[] = [\sprintf('#%d', $order + 1), $this->format_callable($listener), $event_dispatcher->get_listener_priority($event, $listener)];
         }
-
-        $io->table($tableHeaders, $tableRows);
+        $io->table($table_headers, $table_rows);
     }
-
-    private function formatRouterConfig(array $config): string
+    private function format_router_config(array $config): string
     {
         if (!$config) {
             return 'NONE';
         }
-
         ksort($config);
-
-        $configAsString = '';
+        $config_as_string = '';
         foreach ($config as $key => $value) {
-            $configAsString .= \sprintf("\n%s: %s", $key, $this->formatValue($value));
+            $config_as_string .= \sprintf("\n%s: %s", $key, $this->format_value($value));
         }
-
-        return trim($configAsString);
+        return trim($config_as_string);
     }
-
     /**
      * @param array<string> $methods
      */
-    private function formatMethods(array $methods): string
+    private function format_methods(array $methods): string
     {
         if ([] === $methods) {
             $methods = ['ANY'];
         }
-
-        return implode('|', array_map(
-            static fn (string $method): string => \sprintf('<fg=%s>%s</>', self::VERB_COLORS[$method] ?? 'default', $method),
-            $methods
-        ));
+        return implode('|', array_map(static fn(string $method): string => \sprintf('<fg=%s>%s</>', self::VERB_COLORS[$method] ?? 'default', $method), $methods));
     }
-
     /**
      * @param (callable():ContainerBuilder)|null $getContainer
      */
-    private function formatControllerLink(mixed $controller, string $anchorText, ?callable $getContainer = null): string
+    private function format_controller_link(mixed $controller, string $anchor_text, ?callable $get_container = null): string
     {
-        if (null === $this->fileLinkFormatter) {
-            return $anchorText;
+        if (null === $this->file_link_formatter) {
+            return $anchor_text;
         }
-
         try {
             if (null === $controller) {
-                return $anchorText;
+                return $anchor_text;
             }
             if (\is_array($controller)) {
                 $r = new \ReflectionMethod($controller[0], $controller[1]);
@@ -671,80 +514,63 @@ class TextDescriptor extends Descriptor
             } elseif (str_contains((string) $controller, '::')) {
                 $r = new \ReflectionMethod(...explode('::', (string) $controller, 2));
             } elseif (!\is_string($controller)) {
-                return $anchorText;
+                return $anchor_text;
             } else {
                 $r = new \ReflectionFunction($controller);
             }
-        } catch (\ReflectionException) {
+        } catch (\Reflection_Exception) {
             if (\is_array($controller)) {
                 $controller = implode('::', $controller);
             }
-
             $id = $controller;
             $method = '__invoke';
-
             if ($pos = strpos($controller, '::')) {
                 $id = substr($controller, 0, $pos);
                 $method = substr($controller, $pos + 2);
             }
-
-            if (!$getContainer || !($container = $getContainer()) || !$container->has($id)) {
-                return $anchorText;
+            if (!$get_container || !($container = $get_container()) || !$container->has($id)) {
+                return $anchor_text;
             }
-
             try {
-                $r = new \ReflectionMethod($container->findDefinition($id)->getClass(), $method);
-            } catch (\ReflectionException) {
-                return $anchorText;
+                $r = new \ReflectionMethod($container->find_definition($id)->get_class(), $method);
+            } catch (\Reflection_Exception) {
+                return $anchor_text;
             }
         }
-
-        $fileLink = $this->fileLinkFormatter->format($r->getFileName(), $r->getStartLine());
-        if ($fileLink) {
-            return \sprintf('<href=%s>%s</>', $fileLink, $anchorText);
+        $file_link = $this->file_link_formatter->format($r->get_file_name(), $r->get_start_line());
+        if ($file_link) {
+            return \sprintf('<href=%s>%s</>', $file_link, $anchor_text);
         }
-
-        return $anchorText;
+        return $anchor_text;
     }
-
-    private function formatCallable(mixed $callable): string
+    private function format_callable(mixed $callable): string
     {
         if (\is_array($callable)) {
             if (\is_object($callable[0])) {
                 return \sprintf('%s::%s()', $callable[0]::class, $callable[1]);
             }
-
             return \sprintf('%s::%s()', $callable[0], $callable[1]);
         }
-
         if (\is_string($callable)) {
             return \sprintf('%s()', $callable);
         }
-
         if ($callable instanceof \Closure) {
             $r = new \ReflectionFunction($callable);
-            if ($r->isAnonymous()) {
+            if ($r->is_anonymous()) {
                 return 'Closure()';
             }
-            if ($class = $r->getClosureCalledClass()) {
+            if ($class = $r->get_closure_called_class()) {
                 return \sprintf('%s::%s()', $class->name, $r->name);
             }
-
-            return $r->name.'()';
+            return $r->name . '()';
         }
-
         if (method_exists($callable, '__invoke')) {
             return \sprintf('%s::__invoke()', $callable::class);
         }
-
         throw new \InvalidArgumentException('Callable is not describable.');
     }
-
-    private function writeText(string $content, array $options = []): void
+    private function write_text(string $content, array $options = []): void
     {
-        $this->write(
-            isset($options['raw_text']) && $options['raw_text'] ? strip_tags($content) : $content,
-            isset($options['raw_output']) ? !$options['raw_output'] : true
-        );
+        $this->write(isset($options['raw_text']) && $options['raw_text'] ? strip_tags($content) : $content, isset($options['raw_output']) ? !$options['raw_output'] : true);
     }
 }

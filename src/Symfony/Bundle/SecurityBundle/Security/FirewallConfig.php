@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,99 +9,72 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Bundle\SecurityBundle\Security;
+namespace Symfony\Bundle\Security_Bundle\Security;
 
 /**
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-final readonly class FirewallConfig
+final readonly class Firewall_Config
 {
-    public function __construct(
-        private string $name,
-        private string $userChecker,
-        private ?string $requestMatcher = null,
-        private bool $securityEnabled = true,
-        private bool $stateless = false,
-        private ?string $provider = null,
-        private ?string $context = null,
-        private ?string $entryPoint = null,
-        private ?string $accessDeniedHandler = null,
-        private ?string $accessDeniedUrl = null,
-        private array $authenticators = [],
-        private ?array $switchUser = null,
-        private ?array $logout = null,
-    ) {
+    public function __construct(private string $name, private string $user_checker, private ?string $request_matcher = null, private bool $security_enabled = true, private bool $stateless = false, private ?string $provider = null, private ?string $context = null, private ?string $entry_point = null, private ?string $access_denied_handler = null, private ?string $access_denied_url = null, private array $authenticators = [], private ?array $switch_user = null, private ?array $logout = null)
+    {
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return $this->name;
     }
-
     /**
      * @return string|null The request matcher service id or null if neither the request matcher, pattern or host
      *                     options were provided
      */
-    public function getRequestMatcher(): ?string
+    public function get_request_matcher(): ?string
     {
-        return $this->requestMatcher;
+        return $this->request_matcher;
     }
-
-    public function isSecurityEnabled(): bool
+    public function is_security_enabled(): bool
     {
-        return $this->securityEnabled;
+        return $this->security_enabled;
     }
-
-    public function isStateless(): bool
+    public function is_stateless(): bool
     {
         return $this->stateless;
     }
-
-    public function getProvider(): ?string
+    public function get_provider(): ?string
     {
         return $this->provider;
     }
-
     /**
      * @return string|null The context key (will be null if the firewall is stateless)
      */
-    public function getContext(): ?string
+    public function get_context(): ?string
     {
         return $this->context;
     }
-
-    public function getEntryPoint(): ?string
+    public function get_entry_point(): ?string
     {
-        return $this->entryPoint;
+        return $this->entry_point;
     }
-
-    public function getUserChecker(): string
+    public function get_user_checker(): string
     {
-        return $this->userChecker;
+        return $this->user_checker;
     }
-
-    public function getAccessDeniedHandler(): ?string
+    public function get_access_denied_handler(): ?string
     {
-        return $this->accessDeniedHandler;
+        return $this->access_denied_handler;
     }
-
-    public function getAccessDeniedUrl(): ?string
+    public function get_access_denied_url(): ?string
     {
-        return $this->accessDeniedUrl;
+        return $this->access_denied_url;
     }
-
-    public function getAuthenticators(): array
+    public function get_authenticators(): array
     {
         return $this->authenticators;
     }
-
-    public function getSwitchUser(): ?array
+    public function get_switch_user(): ?array
     {
-        return $this->switchUser;
+        return $this->switch_user;
     }
-
-    public function getLogout(): ?array
+    public function get_logout(): ?array
     {
         return $this->logout;
     }

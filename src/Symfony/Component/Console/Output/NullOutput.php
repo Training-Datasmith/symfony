@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Output;
 
-use Symfony\Component\Console\Formatter\NullOutputFormatter;
-use Symfony\Component\Console\Formatter\OutputFormatterInterface;
-
+use Symfony\Component\Console\Formatter\Null_Output_Formatter;
+use Symfony\Component\Console\Formatter\Output_Formatter_Interface;
 /**
  * NullOutput suppresses all output.
  *
@@ -24,71 +21,58 @@ use Symfony\Component\Console\Formatter\OutputFormatterInterface;
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Tobias Schultze <http://tobion.de>
  */
-class NullOutput implements OutputInterface
+class Null_Output implements Output_Interface
 {
-    private NullOutputFormatter $formatter;
-
-    public function setFormatter(OutputFormatterInterface $formatter): void
+    private Null_Output_Formatter $formatter;
+    public function set_formatter(Output_Formatter_Interface $formatter): void
     {
         // do nothing
     }
-
-    public function getFormatter(): OutputFormatterInterface
+    public function get_formatter(): Output_Formatter_Interface
     {
         // to comply with the interface we must return a OutputFormatterInterface
-        return $this->formatter ??= new NullOutputFormatter();
+        return $this->formatter ??= new Null_Output_Formatter();
     }
-
-    public function setDecorated(bool $decorated): void
+    public function set_decorated(bool $decorated): void
     {
         // do nothing
     }
-
-    public function isDecorated(): bool
+    public function is_decorated(): bool
     {
         return false;
     }
-
-    public function setVerbosity(int $level): void
+    public function set_verbosity(int $level): void
     {
         // do nothing
     }
-
-    public function getVerbosity(): int
+    public function get_verbosity(): int
     {
         return self::VERBOSITY_SILENT;
     }
-
-    public function isSilent(): bool
+    public function is_silent(): bool
     {
         return true;
     }
-
-    public function isQuiet(): bool
+    public function is_quiet(): bool
     {
         return false;
     }
-
-    public function isVerbose(): bool
+    public function is_verbose(): bool
     {
         return false;
     }
-
-    public function isVeryVerbose(): bool
+    public function is_very_verbose(): bool
     {
         return false;
     }
-
-    public function isDebug(): bool
+    public function is_debug(): bool
     {
         return false;
     }
-
     public function writeln(string|iterable $messages, int $options = self::OUTPUT_NORMAL): void
     {
         // do nothing
     }
-
     public function write(string|iterable $messages, bool $newline = false, int $options = self::OUTPUT_NORMAL): void
     {
         // do nothing

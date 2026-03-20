@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
 /**
@@ -18,13 +16,12 @@ namespace Symfony\Component\Form;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface FormRendererInterface
+interface Form_Renderer_Interface
 {
     /**
      * Returns the engine used by this renderer.
      */
-    public function getEngine(): FormRendererEngineInterface;
-
+    public function get_engine(): Form_Renderer_Engine_Interface;
     /**
      * Sets the theme(s) to be used for rendering a view and its children.
      *
@@ -34,16 +31,14 @@ interface FormRendererInterface
      * @param bool     $useDefaultThemes If true, will use default themes specified
      *                                   in the renderer
      */
-    public function setTheme(FormView $view, mixed $themes, bool $useDefaultThemes = true): void;
-
+    public function set_theme(Form_View $view, mixed $themes, bool $use_default_themes = true): void;
     /**
      * Renders a named block of the form theme.
      *
      * @param FormView $view      The view for which to render the block
      * @param array    $variables The variables to pass to the template
      */
-    public function renderBlock(FormView $view, string $blockName, array $variables = []): string;
-
+    public function render_block(Form_View $view, string $block_name, array $variables = []): string;
     /**
      * Searches and renders a block for a given name suffix.
      *
@@ -57,8 +52,7 @@ interface FormRendererInterface
      * @param FormView $view      The view for which to render the block
      * @param array    $variables The variables to pass to the template
      */
-    public function searchAndRenderBlock(FormView $view, string $blockNameSuffix, array $variables = []): string;
-
+    public function search_and_render_block(Form_View $view, string $block_name_suffix, array $variables = []): string;
     /**
      * Renders a CSRF token.
      *
@@ -74,8 +68,7 @@ interface FormRendererInterface
      *         throw new \RuntimeException('CSRF attack detected.');
      *     }
      */
-    public function renderCsrfToken(string $tokenId): string;
-
+    public function render_csrf_token(string $token_id): string;
     /**
      * Makes a technical name human readable.
      *

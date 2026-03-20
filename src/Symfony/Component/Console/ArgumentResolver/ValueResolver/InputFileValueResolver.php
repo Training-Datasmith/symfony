@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,53 +9,43 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\Console\ArgumentResolver\ValueResolver;
+namespace Symfony\Component\Console\Argument_Resolver\Value_Resolver;
 
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\Option;
-use Symfony\Component\Console\Attribute\Reflection\ReflectionMember;
-use Symfony\Component\Console\Input\File\InputFile;
-use Symfony\Component\Console\Input\InputInterface;
-
+use Symfony\Component\Console\Attribute\Reflection\Reflection_Member;
+use Symfony\Component\Console\Input\File\Input_File;
+use Symfony\Component\Console\Input\Input_Interface;
 /**
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-final class InputFileValueResolver implements ValueResolverInterface
+final class Input_File_Value_Resolver implements Value_Resolver_Interface
 {
-    public function resolve(string $argumentName, InputInterface $input, ReflectionMember $member): iterable
+    public function resolve(string $argument_name, Input_Interface $input, Reflection_Member $member): iterable
     {
-        $type = $member->getType();
-
-        if (!$type instanceof \ReflectionNamedType || InputFile::class !== $type->getName()) {
+        $type = $member->get_type();
+        if (!$type instanceof \ReflectionNamedType || Input_File::class !== $type->get_name()) {
             return [];
         }
-
-        if ($argument = Argument::tryFrom($member->getMember())) {
-            return $this->resolveValue($input->getArgument($argument->name), $member);
+        if ($argument = Argument::try_from($member->get_member())) {
+            return $this->resolve_value($input->get_argument($argument->name), $member);
         }
-
-        if ($option = Option::tryFrom($member->getMember())) {
-            return $this->resolveValue($input->getOption($option->name), $member);
+        if ($option = Option::try_from($member->get_member())) {
+            return $this->resolve_value($input->get_option($option->name), $member);
         }
-
         return [];
     }
-
-    private function resolveValue(mixed $value, ReflectionMember $member): iterable
+    private function resolve_value(mixed $value, Reflection_Member $member): iterable
     {
         if (!$value) {
-            if ($member->isNullable()) {
+            if ($member->is_nullable()) {
                 return [null];
             }
-
             return [];
         }
-
-        if ($value instanceof InputFile) {
+        if ($value instanceof Input_File) {
             return [$value];
         }
-
-        return [InputFile::fromPath($value)];
+        return [Input_File::from_path($value)];
     }
 }

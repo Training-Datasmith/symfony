@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,57 +9,44 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Monolog\Handler;
 
-use Monolog\Formatter\FormatterInterface;
-use Monolog\Formatter\HtmlFormatter;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\AbstractProcessingHandler;
+use Monolog\Formatter\Formatter_Interface;
+use Monolog\Formatter\Html_Formatter;
+use Monolog\Formatter\Line_Formatter;
+use Monolog\Handler\Abstract_Processing_Handler;
 use Monolog\Level;
-use Monolog\LogRecord;
-use Symfony\Component\Mailer\MailerInterface;
+use Monolog\Log_Record;
+use Symfony\Component\Mailer\Mailer_Interface;
 use Symfony\Component\Mime\Email;
-
 /**
  * @author Alexander Borisov <boshurik@gmail.com>
  */
-final class MailerHandler extends AbstractProcessingHandler
+final class Mailer_Handler extends Abstract_Processing_Handler
 {
-    private readonly \Closure|Email $messageTemplate;
-
-    public function __construct(
-        private readonly MailerInterface $mailer,
-        callable|Email $messageTemplate,
-        string|int|Level $level = Level::Debug,
-        bool $bubble = true,
-    ) {
+    private readonly \Closure|Email $message_template;
+    public function __construct(private readonly Mailer_Interface $mailer, callable|Email $message_template, string|int|Level $level = Level::Debug, bool $bubble = true)
+    {
         parent::__construct($level, $bubble);
-
-        $this->messageTemplate = $messageTemplate instanceof Email ? $messageTemplate : $messageTemplate(...);
+        $this->message_template = $message_template instanceof Email ? $message_template : $message_template(...);
     }
-
-    public function handleBatch(array $records): void
+    public function handle_batch(array $records): void
     {
         $messages = [];
-
         foreach ($records as $record) {
-            if ($record->level->isLowerThan($this->level)) {
+            if ($record->level->is_lower_than($this->level)) {
                 continue;
             }
-            $messages[] = $this->processRecord($record);
+            $messages[] = $this->process_record($record);
         }
-
         if ($messages) {
-            $this->send((string) $this->getFormatter()->formatBatch($messages), $messages);
+            $this->send((string) $this->get_formatter()->format_batch($messages), $messages);
         }
     }
-
-    protected function write(LogRecord $record): void
+    protected function write(Log_Record $record): void
     {
         $this->send((string) $record->formatted, [$record]);
     }
-
     /**
      * Send a mail with the given content.
      *
@@ -69,69 +55,60 @@ final class MailerHandler extends AbstractProcessingHandler
      */
     protected function send(string $content, array $records): void
     {
-        $this->mailer->send($this->buildMessage($content, $records));
+        $this->mailer->send($this->build_message($content, $records));
     }
-
     /**
      * Gets the formatter for the Message subject.
      *
      * @param string $format The format of the subject
      */
-    protected function getSubjectFormatter(string $format): FormatterInterface
+    protected function get_subject_formatter(string $format): Formatter_Interface
     {
-        return new LineFormatter($format);
+        return new Line_Formatter($format);
     }
-
     /**
      * Creates instance of Message to be sent.
      *
      * @param string $content formatted email body to be sent
      * @param array  $records Log records that formed the content
      */
-    protected function buildMessage(string $content, array $records): Email
+    protected function build_message(string $content, array $records): Email
     {
-        if ($this->messageTemplate instanceof Email) {
-            $message = clone $this->messageTemplate;
-        } elseif (\is_callable($this->messageTemplate)) {
-            $message = ($this->messageTemplate)($content, $records);
+        if ($this->message_template instanceof Email) {
+            $message = clone $this->message_template;
+        } elseif (\is_callable($this->message_template)) {
+            $message = ($this->message_template)($content, $records);
             if (!$message instanceof Email) {
                 throw new \InvalidArgumentException(\sprintf('Could not resolve message from a callable. Instance of "%s" is expected.', Email::class));
             }
         } else {
             throw new \InvalidArgumentException('Could not resolve message as instance of Email or a callable returning it.');
         }
-
         if ($records) {
-            $subjectFormatter = $this->getSubjectFormatter($message->getSubject());
-            $message->subject($subjectFormatter->format($this->getHighestRecord($records)));
+            $subject_formatter = $this->get_subject_formatter($message->get_subject());
+            $message->subject($subject_formatter->format($this->get_highest_record($records)));
         }
-
-        if ($this->getFormatter() instanceof HtmlFormatter) {
-            if ($message->getHtmlCharset()) {
-                $message->html($content, $message->getHtmlCharset());
+        if ($this->get_formatter() instanceof Html_Formatter) {
+            if ($message->get_html_charset()) {
+                $message->html($content, $message->get_html_charset());
             } else {
                 $message->html($content);
             }
+        } else if ($message->get_text_charset()) {
+            $message->text($content, $message->get_text_charset());
         } else {
-            if ($message->getTextCharset()) {
-                $message->text($content, $message->getTextCharset());
-            } else {
-                $message->text($content);
-            }
+            $message->text($content);
         }
-
         return $message;
     }
-
-    protected function getHighestRecord(array $records): LogRecord
+    protected function get_highest_record(array $records): Log_Record
     {
-        $highestRecord = null;
+        $highest_record = null;
         foreach ($records as $record) {
-            if (null === $highestRecord || $highestRecord->level->isLowerThan($record->level)) {
-                $highestRecord = $record;
+            if (null === $highest_record || $highest_record->level->is_lower_than($record->level)) {
+                $highest_record = $record;
             }
         }
-
-        return $highestRecord;
+        return $highest_record;
     }
 }

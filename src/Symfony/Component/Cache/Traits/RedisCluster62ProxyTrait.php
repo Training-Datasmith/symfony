@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,40 +9,36 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Traits;
 
 if (version_compare(phpversion('redis'), '6.2.0', '>=')) {
     /**
      * @internal
      */
-    trait RedisCluster62ProxyTrait
+    trait Redis_Cluster62proxy_Trait
     {
         public function expiremember($key, $field, $ttl, $unit = null): \Redis|false|int
         {
-            return $this->initializeLazyObject()->expiremember(...\func_get_args());
+            return $this->initialize_lazy_object()->expiremember(...\func_get_args());
         }
-
         public function expirememberat($key, $field, $timestamp): \Redis|false|int
         {
-            return $this->initializeLazyObject()->expirememberat(...\func_get_args());
+            return $this->initialize_lazy_object()->expirememberat(...\func_get_args());
         }
-
         public function getdel($key): mixed
         {
-            return $this->initializeLazyObject()->getdel(...\func_get_args());
+            return $this->initialize_lazy_object()->getdel(...\func_get_args());
         }
-
-        public function getWithMeta($key): \RedisCluster|array|false
+        public function get_with_meta($key): \Redis_Cluster|array|false
         {
-            return $this->initializeLazyObject()->getWithMeta(...\func_get_args());
+            return $this->initialize_lazy_object()->get_with_meta(...\func_get_args());
         }
     }
 } else {
     /**
      * @internal
      */
-    trait RedisCluster62ProxyTrait
+    trait Redis_Cluster62proxy_Trait
     {
     }
 }

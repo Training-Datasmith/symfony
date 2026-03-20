@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,36 +9,30 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Dependency_Injection\Compiler;
 
-namespace Symfony\Bundle\FrameworkBundle\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
 /**
  * @author Ahmed TAILOULOUTE <ahmed.tailouloute@gmail.com>
  */
-class RemoveUnusedSessionMarshallingHandlerPass implements CompilerPassInterface
+class Remove_Unused_Session_Marshalling_Handler_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (!$container->hasDefinition('session.marshalling_handler')) {
+        if (!$container->has_definition('session.marshalling_handler')) {
             return;
         }
-
-        $isMarshallerDecorated = false;
-
-        foreach ($container->getDefinitions() as $definition) {
-            $decorated = $definition->getDecoratedService();
+        $is_marshaller_decorated = false;
+        foreach ($container->get_definitions() as $definition) {
+            $decorated = $definition->get_decorated_service();
             if (null !== $decorated && 'session.marshaller' === $decorated[0]) {
-                $isMarshallerDecorated = true;
-
+                $is_marshaller_decorated = true;
                 break;
             }
         }
-
-        if (!$isMarshallerDecorated) {
-            $container->removeDefinition('session.marshalling_handler');
+        if (!$is_marshaller_decorated) {
+            $container->remove_definition('session.marshalling_handler');
         }
     }
 }

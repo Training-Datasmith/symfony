@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Finder\Iterator;
 
 use Symfony\Component\Finder\Glob;
-
 /**
  * FilenameFilterIterator filters files by patterns (a regexp, a glob, or a string).
  *
@@ -22,16 +19,15 @@ use Symfony\Component\Finder\Glob;
  *
  * @extends MultiplePcreFilterIterator<string, \SplFileInfo>
  */
-class FilenameFilterIterator extends MultiplePcreFilterIterator
+class Filename_Filter_Iterator extends Multiple_Pcre_Filter_Iterator
 {
     /**
      * Filters the iterator values.
      */
     public function accept(): bool
     {
-        return $this->isAccepted($this->current()->getFilename());
+        return $this->is_accepted($this->current()->get_filename());
     }
-
     /**
      * Converts glob to regexp.
      *
@@ -40,8 +36,8 @@ class FilenameFilterIterator extends MultiplePcreFilterIterator
      *
      * @param string $str Pattern: glob or regexp
      */
-    protected function toRegex(string $str): string
+    protected function to_regex(string $str): string
     {
-        return $this->isRegex($str) ? $str : Glob::toRegex($str);
+        return $this->is_regex($str) ? $str : Glob::to_regex($str);
     }
 }

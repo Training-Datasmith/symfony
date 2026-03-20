@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,30 +9,26 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config;
 
-use Symfony\Component\Config\Resource\ResourceInterface;
-
+use Symfony\Component\Config\Resource\Resource_Interface;
 /**
  * Interface for ConfigCache.
  *
  * @author Matthias Pigulla <mp@webfactory.de>
  */
-interface ConfigCacheInterface
+interface Config_Cache_Interface
 {
     /**
      * Gets the cache file path.
      */
-    public function getPath(): string;
-
+    public function get_path(): string;
     /**
      * Checks if the cache is still fresh.
      *
      * This check should take the metadata passed to the write() method into consideration.
      */
-    public function isFresh(): bool;
-
+    public function is_fresh(): bool;
     /**
      * Writes the given content into the cache file. Metadata will be stored
      * independently and can be used to check cache freshness at a later time.

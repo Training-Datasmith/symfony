@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,52 +9,40 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Extension\Core\Data_Transformer;
 
-namespace Symfony\Component\Form\Extension\Core\DataTransformer;
-
-use Symfony\Component\Form\DataTransformerInterface;
+use Symfony\Component\Form\Data_Transformer_Interface;
 use Symfony\Component\Form\Exception\InvalidArgumentException;
-
 /**
  * @template TTransformedValue
  *
  * @implements DataTransformerInterface<\DateTimeInterface, TTransformedValue>
  */
-abstract class BaseDateTimeTransformer implements DataTransformerInterface
+abstract class Base_Date_Time_Transformer implements Data_Transformer_Interface
 {
-    protected static array $formats = [
-        \IntlDateFormatter::NONE,
-        \IntlDateFormatter::FULL,
-        \IntlDateFormatter::LONG,
-        \IntlDateFormatter::MEDIUM,
-        \IntlDateFormatter::SHORT,
-    ];
-
-    protected string $inputTimezone;
-    protected string $outputTimezone;
-
+    protected static array $formats = [\Intl_Date_Formatter::NONE, \Intl_Date_Formatter::FULL, \Intl_Date_Formatter::LONG, \Intl_Date_Formatter::MEDIUM, \Intl_Date_Formatter::SHORT];
+    protected string $input_timezone;
+    protected string $output_timezone;
     /**
      * @param string|null $inputTimezone  The name of the input timezone
      * @param string|null $outputTimezone The name of the output timezone
      *
      * @throws InvalidArgumentException if a timezone is not valid
      */
-    public function __construct(?string $inputTimezone = null, ?string $outputTimezone = null)
+    public function __construct(?string $input_timezone = null, ?string $output_timezone = null)
     {
-        $this->inputTimezone = $inputTimezone ?: date_default_timezone_get();
-        $this->outputTimezone = $outputTimezone ?: date_default_timezone_get();
-
+        $this->input_timezone = $input_timezone ?: date_default_timezone_get();
+        $this->output_timezone = $output_timezone ?: date_default_timezone_get();
         // Check if input and output timezones are valid
         try {
-            new \DateTimeZone($this->inputTimezone);
+            new \DateTimeZone($this->input_timezone);
         } catch (\Exception $e) {
-            throw new InvalidArgumentException(\sprintf('Input timezone is invalid: "%s".', $this->inputTimezone), $e->getCode(), $e);
+            throw new InvalidArgumentException(\sprintf('Input timezone is invalid: "%s".', $this->input_timezone), $e->get_code(), $e);
         }
-
         try {
-            new \DateTimeZone($this->outputTimezone);
+            new \DateTimeZone($this->output_timezone);
         } catch (\Exception $e) {
-            throw new InvalidArgumentException(\sprintf('Output timezone is invalid: "%s".', $this->outputTimezone), $e->getCode(), $e);
+            throw new InvalidArgumentException(\sprintf('Output timezone is invalid: "%s".', $this->output_timezone), $e->get_code(), $e);
         }
     }
 }

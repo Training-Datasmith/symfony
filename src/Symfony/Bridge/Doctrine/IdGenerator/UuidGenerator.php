@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,65 +9,53 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Doctrine\Id_Generator;
 
-namespace Symfony\Bridge\Doctrine\IdGenerator;
-
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Id\AbstractIdGenerator;
-use Symfony\Component\Uid\Factory\NameBasedUuidFactory;
-use Symfony\Component\Uid\Factory\RandomBasedUuidFactory;
-use Symfony\Component\Uid\Factory\TimeBasedUuidFactory;
-use Symfony\Component\Uid\Factory\UuidFactory;
+use Doctrine\ORM\Entity_Manager_Interface;
+use Doctrine\ORM\Id\Abstract_Id_Generator;
+use Symfony\Component\Uid\Factory\Name_Based_Uuid_Factory;
+use Symfony\Component\Uid\Factory\Random_Based_Uuid_Factory;
+use Symfony\Component\Uid\Factory\Time_Based_Uuid_Factory;
+use Symfony\Component\Uid\Factory\Uuid_Factory;
 use Symfony\Component\Uid\Uuid;
-
-final class UuidGenerator extends AbstractIdGenerator
+final class Uuid_Generator extends Abstract_Id_Generator
 {
-    private readonly UuidFactory $protoFactory;
-    private UuidFactory|NameBasedUuidFactory|RandomBasedUuidFactory|TimeBasedUuidFactory $factory;
-    private ?string $entityGetter = null;
-
-    public function __construct(?UuidFactory $factory = null)
+    private readonly Uuid_Factory $proto_factory;
+    private Uuid_Factory|Name_Based_Uuid_Factory|Random_Based_Uuid_Factory|Time_Based_Uuid_Factory $factory;
+    private ?string $entity_getter = null;
+    public function __construct(?Uuid_Factory $factory = null)
     {
-        $this->protoFactory = $this->factory = $factory ?? new UuidFactory();
+        $this->proto_factory = $this->factory = $factory ?? new Uuid_Factory();
     }
-
-    public function generateId(EntityManagerInterface $em, $entity): Uuid
+    public function generate_id(Entity_Manager_Interface $em, $entity): Uuid
     {
-        if (null !== $this->entityGetter) {
-            if (\is_callable([$entity, $this->entityGetter])) {
-                return $this->factory->create($entity->{$this->entityGetter}());
+        if (null !== $this->entity_getter) {
+            if (\is_callable([$entity, $this->entity_getter])) {
+                return $this->factory->create($entity->{$this->entity_getter}());
             }
-
-            return $this->factory->create($entity->{$this->entityGetter});
+            return $this->factory->create($entity->{$this->entity_getter});
         }
-
         return $this->factory->create();
     }
-
-    public function nameBased(string $entityGetter, Uuid|string|null $namespace = null): static
+    public function name_based(string $entity_getter, Uuid|string|null $namespace = null): static
     {
         $clone = clone $this;
-        $clone->factory = $clone->protoFactory->nameBased($namespace);
-        $clone->entityGetter = $entityGetter;
-
+        $clone->factory = $clone->proto_factory->name_based($namespace);
+        $clone->entity_getter = $entity_getter;
         return $clone;
     }
-
-    public function randomBased(): static
+    public function random_based(): static
     {
         $clone = clone $this;
-        $clone->factory = $clone->protoFactory->randomBased();
-        $clone->entityGetter = null;
-
+        $clone->factory = $clone->proto_factory->random_based();
+        $clone->entity_getter = null;
         return $clone;
     }
-
-    public function timeBased(Uuid|string|null $node = null): static
+    public function time_based(Uuid|string|null $node = null): static
     {
         $clone = clone $this;
-        $clone->factory = $clone->protoFactory->timeBased($node);
-        $clone->entityGetter = null;
-
+        $clone->factory = $clone->proto_factory->time_based($node);
+        $clone->entity_getter = null;
         return $clone;
     }
 }

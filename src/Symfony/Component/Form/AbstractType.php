@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,41 +9,34 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Util\StringUtil;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Form\Extension\Core\Type\Form_Type;
+use Symfony\Component\Form\Util\String_Util;
+use Symfony\Component\Options_Resolver\Options_Resolver;
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-abstract class AbstractType implements FormTypeInterface
+abstract class Abstract_Type implements Form_Type_Interface
 {
-    public function getParent(): ?string
+    public function get_parent(): ?string
     {
-        return FormType::class;
+        return Form_Type::class;
     }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-    }
-
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function configure_options(Options_Resolver $resolver): void
     {
     }
-
-    public function buildView(FormView $view, FormInterface $form, array $options): void
+    public function build_form(Form_Builder_Interface $builder, array $options): void
     {
     }
-
-    public function finishView(FormView $view, FormInterface $form, array $options): void
+    public function build_view(Form_View $view, Form_Interface $form, array $options): void
     {
     }
-
-    public function getBlockPrefix(): string
+    public function finish_view(Form_View $view, Form_Interface $form, array $options): void
     {
-        return StringUtil::fqcnToBlockPrefix(static::class) ?: '';
+    }
+    public function get_block_prefix(): string
+    {
+        return String_Util::fqcn_to_block_prefix(static::class) ?: '';
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,22 +9,19 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Data_Collector;
 
-namespace Symfony\Bundle\FrameworkBundle\DataCollector;
-
-use Symfony\Component\HttpKernel\DataCollector\DataCollector;
-
+use Symfony\Component\Http_Kernel\Data_Collector\Data_Collector;
 /**
  * @author Laurent VOULLEMIER <laurent.voullemier@gmail.com>
  */
-abstract class AbstractDataCollector extends DataCollector implements TemplateAwareDataCollectorInterface
+abstract class Abstract_Data_Collector extends Data_Collector implements Template_Aware_Data_Collector_Interface
 {
-    public function getName(): string
+    public function get_name(): string
     {
         return static::class;
     }
-
-    public static function getTemplate(): ?string
+    public static function get_template(): ?string
     {
         return null;
     }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,15 +9,13 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Data_Collector;
 
-namespace Symfony\Bundle\FrameworkBundle\DataCollector;
-
-use Symfony\Component\HttpKernel\DataCollector\DataCollectorInterface;
-
+use Symfony\Component\Http_Kernel\Data_Collector\Data_Collector_Interface;
 /**
  * @author Laurent VOULLEMIER <laurent.voullemier@gmail.com>
  */
-interface TemplateAwareDataCollectorInterface extends DataCollectorInterface
+interface Template_Aware_Data_Collector_Interface extends Data_Collector_Interface
 {
-    public static function getTemplate(): ?string;
+    public static function get_template(): ?string;
 }

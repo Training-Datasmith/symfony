@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,109 +9,73 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Dependency_Injection\Security\Factory;
 
-namespace Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory;
-
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
-use Symfony\Component\DependencyInjection\ChildDefinition;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
+use Symfony\Component\Config\Definition\Builder\Node_Definition;
+use Symfony\Component\Dependency_Injection\Child_Definition;
+use Symfony\Component\Dependency_Injection\Container_Builder;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Lukas Kahwe Smith <smith@pooteeweet.org>
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-abstract class AbstractFactory implements AuthenticatorFactoryInterface
+abstract class Abstract_Factory implements Authenticator_Factory_Interface
 {
-    protected array $options = [
-        'check_path' => '/login_check',
-        'use_forward' => false,
-        'login_path' => '/login',
-    ];
-
-    protected array $defaultSuccessHandlerOptions = [
-        'always_use_default_target_path' => false,
-        'default_target_path' => '/',
-        'login_path' => '/login',
-        'target_path_parameter' => '_target_path',
-        'use_referer' => false,
-    ];
-
-    protected array $defaultFailureHandlerOptions = [
-        'failure_path' => null,
-        'failure_forward' => false,
-        'login_path' => '/login',
-        'failure_path_parameter' => '_failure_path',
-    ];
-
-    final public function addOption(string $name, mixed $default = null): void
+    protected array $options = ['check_path' => '/login_check', 'use_forward' => false, 'login_path' => '/login'];
+    protected array $default_success_handler_options = ['always_use_default_target_path' => false, 'default_target_path' => '/', 'login_path' => '/login', 'target_path_parameter' => '_target_path', 'use_referer' => false];
+    protected array $default_failure_handler_options = ['failure_path' => null, 'failure_forward' => false, 'login_path' => '/login', 'failure_path_parameter' => '_failure_path'];
+    final public function add_option(string $name, mixed $default = null): void
     {
         $this->options[$name] = $default;
     }
-
-    public function addConfiguration(NodeDefinition $node): void
+    public function add_configuration(Node_Definition $node): void
     {
         $builder = $node->children();
-
-        $builder
-            ->scalarNode('provider')->end()
-            ->booleanNode('remember_me')->defaultTrue()->end()
-            ->scalarNode('success_handler')->end()
-            ->scalarNode('failure_handler')->end()
-        ;
-
-        foreach (array_merge($this->options, $this->defaultSuccessHandlerOptions, $this->defaultFailureHandlerOptions) as $name => $default) {
+        $builder->scalar_node('provider')->end()->boolean_node('remember_me')->default_true()->end()->scalar_node('success_handler')->end()->scalar_node('failure_handler')->end();
+        foreach (array_merge($this->options, $this->default_success_handler_options, $this->default_failure_handler_options) as $name => $default) {
             if (\is_bool($default)) {
-                $builder->booleanNode($name)->defaultValue($default);
+                $builder->boolean_node($name)->default_value($default);
             } else {
-                $builder->scalarNode($name)->defaultValue($default);
+                $builder->scalar_node($name)->default_value($default);
             }
         }
     }
-
-    protected function createAuthenticationSuccessHandler(ContainerBuilder $container, string $id, array $config): string
+    protected function create_authentication_success_handler(Container_Builder $container, string $id, array $config): string
     {
-        $successHandlerId = $this->getSuccessHandlerId($id);
-        $options = array_intersect_key($config, $this->defaultSuccessHandlerOptions);
-
+        $success_handler_id = $this->get_success_handler_id($id);
+        $options = array_intersect_key($config, $this->default_success_handler_options);
         if (isset($config['success_handler'])) {
-            $successHandler = $container->setDefinition($successHandlerId, new ChildDefinition('security.authentication.custom_success_handler'));
-            $successHandler->replaceArgument(0, new ChildDefinition($config['success_handler']));
-            $successHandler->replaceArgument(1, $options);
-            $successHandler->replaceArgument(2, $id);
+            $success_handler = $container->set_definition($success_handler_id, new Child_Definition('security.authentication.custom_success_handler'));
+            $success_handler->replace_argument(0, new Child_Definition($config['success_handler']));
+            $success_handler->replace_argument(1, $options);
+            $success_handler->replace_argument(2, $id);
         } else {
-            $successHandler = $container->setDefinition($successHandlerId, new ChildDefinition('security.authentication.success_handler'));
-            $successHandler->addMethodCall('setOptions', [$options]);
-            $successHandler->addMethodCall('setFirewallName', [$id]);
+            $success_handler = $container->set_definition($success_handler_id, new Child_Definition('security.authentication.success_handler'));
+            $success_handler->add_method_call('setOptions', [$options]);
+            $success_handler->add_method_call('setFirewallName', [$id]);
         }
-
-        return $successHandlerId;
+        return $success_handler_id;
     }
-
-    protected function createAuthenticationFailureHandler(ContainerBuilder $container, string $id, array $config): string
+    protected function create_authentication_failure_handler(Container_Builder $container, string $id, array $config): string
     {
-        $id = $this->getFailureHandlerId($id);
-        $options = array_intersect_key($config, $this->defaultFailureHandlerOptions);
-
+        $id = $this->get_failure_handler_id($id);
+        $options = array_intersect_key($config, $this->default_failure_handler_options);
         if (isset($config['failure_handler'])) {
-            $failureHandler = $container->setDefinition($id, new ChildDefinition('security.authentication.custom_failure_handler'));
-            $failureHandler->replaceArgument(0, new ChildDefinition($config['failure_handler']));
-            $failureHandler->replaceArgument(1, $options);
+            $failure_handler = $container->set_definition($id, new Child_Definition('security.authentication.custom_failure_handler'));
+            $failure_handler->replace_argument(0, new Child_Definition($config['failure_handler']));
+            $failure_handler->replace_argument(1, $options);
         } else {
-            $failureHandler = $container->setDefinition($id, new ChildDefinition('security.authentication.failure_handler'));
-            $failureHandler->addMethodCall('setOptions', [$options]);
+            $failure_handler = $container->set_definition($id, new Child_Definition('security.authentication.failure_handler'));
+            $failure_handler->add_method_call('setOptions', [$options]);
         }
-
         return $id;
     }
-
-    protected function getSuccessHandlerId(string $id): string
+    protected function get_success_handler_id(string $id): string
     {
-        return 'security.authentication.success_handler.'.$id.'.'.str_replace('-', '_', $this->getKey());
+        return 'security.authentication.success_handler.' . $id . '.' . str_replace('-', '_', $this->get_key());
     }
-
-    protected function getFailureHandlerId(string $id): string
+    protected function get_failure_handler_id(string $id): string
     {
-        return 'security.authentication.failure_handler.'.$id.'.'.str_replace('-', '_', $this->getKey());
+        return 'security.authentication.failure_handler.' . $id . '.' . str_replace('-', '_', $this->get_key());
     }
 }

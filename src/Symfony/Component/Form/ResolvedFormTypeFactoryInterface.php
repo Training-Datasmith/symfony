@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
 /**
@@ -22,7 +20,7 @@ namespace Symfony\Component\Form;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface ResolvedFormTypeFactoryInterface
+interface Resolved_Form_Type_Factory_Interface
 {
     /**
      * Resolves a form type.
@@ -32,5 +30,5 @@ interface ResolvedFormTypeFactoryInterface
      * @throws Exception\UnexpectedTypeException  if the types parent {@link FormTypeInterface::getParent()} is not a string
      * @throws Exception\InvalidArgumentException if the types parent cannot be retrieved from any extension
      */
-    public function createResolvedType(FormTypeInterface $type, array $typeExtensions, ?ResolvedFormTypeInterface $parent = null): ResolvedFormTypeInterface;
+    public function create_resolved_type(Form_Type_Interface $type, array $type_extensions, ?Resolved_Form_Type_Interface $parent = null): Resolved_Form_Type_Interface;
 }

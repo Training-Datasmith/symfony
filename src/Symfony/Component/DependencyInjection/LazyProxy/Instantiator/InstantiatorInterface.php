@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,19 +9,17 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Lazy_Proxy\Instantiator;
 
-namespace Symfony\Component\DependencyInjection\LazyProxy\Instantiator;
-
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Definition;
-
+use Symfony\Component\Dependency_Injection\Container_Interface;
+use Symfony\Component\Dependency_Injection\Definition;
 /**
  * Lazy proxy instantiator, capable of instantiating a proxy given a container, the
  * service definitions and a callback that produces the real service instance.
  *
  * @author Marco Pivetta <ocramius@gmail.com>
  */
-interface InstantiatorInterface
+interface Instantiator_Interface
 {
     /**
      * Instantiates a proxy object.
@@ -32,5 +29,5 @@ interface InstantiatorInterface
      *                                                                        - For direct instantiation or value-holder proxies: Called without arguments and returns the service object.
      *                                                                        - For ghost object proxies (using PHP's lazy objects): Called with the proxy as argument, initializes it in place and returns void.
      */
-    public function instantiateProxy(ContainerInterface $container, Definition $definition, string $id, callable $realInstantiator): object;
+    public function instantiate_proxy(Container_Interface $container, Definition $definition, string $id, callable $real_instantiator): object;
 }

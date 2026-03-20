@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,26 +9,21 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Attribute;
 
-namespace Symfony\Component\DependencyInjection\Attribute;
-
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
+use Symfony\Component\Dependency_Injection\Container_Interface;
 /**
  * Declares a decorating service.
  */
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::IS_REPEATABLE)]
-class AsDecorator
+class As_Decorator
 {
     /**
      * @param string $decorates The service id to decorate
      * @param int    $priority  The priority of this decoration when multiple decorators are declared for the same service
      * @param int    $onInvalid The behavior to adopt when the decoration is invalid; must be one of the {@see ContainerInterface} constants
      */
-    public function __construct(
-        public string $decorates,
-        public int $priority = 0,
-        public int $onInvalid = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
-    ) {
+    public function __construct(public string $decorates, public int $priority = 0, public int $on_invalid = Container_Interface::EXCEPTION_ON_INVALID_REFERENCE)
+    {
     }
 }

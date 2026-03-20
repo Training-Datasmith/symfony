@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Monolog\Processor;
 
-use Monolog\LogRecord;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
+use Monolog\Log_Record;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\Token_Storage_Interface;
+use Symfony\Component\Security\Core\Authentication\Token\Token_Interface;
 /**
  * The base class for security token processors.
  *
@@ -25,30 +22,20 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  *
  * @internal
  */
-abstract class AbstractTokenProcessor
+abstract class Abstract_Token_Processor
 {
-    public function __construct(
-        protected TokenStorageInterface $tokenStorage,
-    ) {
-    }
-
-    abstract protected function getKey(): string;
-
-    abstract protected function getToken(): ?TokenInterface;
-
-    public function __invoke(LogRecord $record): LogRecord
+    public function __construct(protected Token_Storage_Interface $token_storage)
     {
-        $record->extra[$this->getKey()] = null;
-
-        if (null !== $token = $this->getToken()) {
-            $record->extra[$this->getKey()] = [
-                'authenticated' => (bool) $token->getUser(),
-                'roles' => $token->getRoleNames(),
-            ];
-
-            $record->extra[$this->getKey()]['user_identifier'] = $token->getUserIdentifier();
+    }
+    abstract protected function get_key(): string;
+    abstract protected function get_token(): ?Token_Interface;
+    public function __invoke(Log_Record $record): Log_Record
+    {
+        $record->extra[$this->get_key()] = null;
+        if (null !== $token = $this->get_token()) {
+            $record->extra[$this->get_key()] = ['authenticated' => (bool) $token->get_user(), 'roles' => $token->get_role_names()];
+            $record->extra[$this->get_key()]['user_identifier'] = $token->get_user_identifier();
         }
-
         return $record;
     }
 }

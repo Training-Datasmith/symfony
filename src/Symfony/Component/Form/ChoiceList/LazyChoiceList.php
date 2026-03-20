@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Choice_List;
 
-namespace Symfony\Component\Form\ChoiceList;
-
-use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
-
+use Symfony\Component\Form\Choice_List\Loader\Choice_Loader_Interface;
 /**
  * A choice list that loads its choices lazily.
  *
@@ -27,7 +24,7 @@ use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class LazyChoiceList implements ChoiceListInterface
+class Lazy_Choice_List implements Choice_List_Interface
 {
     /**
      * The callable creating string values for each choice.
@@ -35,7 +32,6 @@ class LazyChoiceList implements ChoiceListInterface
      * If null, choices are cast to strings.
      */
     private readonly ?\Closure $value;
-
     /**
      * Creates a lazily-loaded list using the given loader.
      *
@@ -46,40 +42,32 @@ class LazyChoiceList implements ChoiceListInterface
      * @param callable|null $value The callable creating string values for each choice.
      *                             If null, choices are cast to strings.
      */
-    public function __construct(
-        private readonly ChoiceLoaderInterface $loader,
-        ?callable $value = null,
-    ) {
+    public function __construct(private readonly Choice_Loader_Interface $loader, ?callable $value = null)
+    {
         $this->value = null === $value ? null : $value(...);
     }
-
-    public function getChoices(): array
+    public function get_choices(): array
     {
-        return $this->loader->loadChoiceList($this->value)->getChoices();
+        return $this->loader->load_choice_list($this->value)->get_choices();
     }
-
-    public function getValues(): array
+    public function get_values(): array
     {
-        return $this->loader->loadChoiceList($this->value)->getValues();
+        return $this->loader->load_choice_list($this->value)->get_values();
     }
-
-    public function getStructuredValues(): array
+    public function get_structured_values(): array
     {
-        return $this->loader->loadChoiceList($this->value)->getStructuredValues();
+        return $this->loader->load_choice_list($this->value)->get_structured_values();
     }
-
-    public function getOriginalKeys(): array
+    public function get_original_keys(): array
     {
-        return $this->loader->loadChoiceList($this->value)->getOriginalKeys();
+        return $this->loader->load_choice_list($this->value)->get_original_keys();
     }
-
-    public function getChoicesForValues(array $values): array
+    public function get_choices_for_values(array $values): array
     {
-        return $this->loader->loadChoicesForValues($values, $this->value);
+        return $this->loader->load_choices_for_values($values, $this->value);
     }
-
-    public function getValuesForChoices(array $choices): array
+    public function get_values_for_choices(array $choices): array
     {
-        return $this->loader->loadValuesForChoices($choices, $this->value);
+        return $this->loader->load_values_for_choices($choices, $this->value);
     }
 }

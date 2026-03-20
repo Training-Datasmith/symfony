@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event_Listener;
 
-namespace Symfony\Component\HttpKernel\EventListener;
-
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
-
+use Symfony\Component\Event_Dispatcher\Event_Subscriber_Interface;
+use Symfony\Component\Http_Kernel\Event\Request_Event;
+use Symfony\Component\Http_Kernel\Kernel_Events;
 /**
  * Adds configured formats to each request.
  *
@@ -24,26 +21,23 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * @final
  */
-class AddRequestFormatsListener implements EventSubscriberInterface
+class Add_Request_Formats_Listener implements Event_Subscriber_Interface
 {
-    public function __construct(
-        private readonly array $formats,
-    ) {
+    public function __construct(private readonly array $formats)
+    {
     }
-
     /**
      * Adds request formats.
      */
-    public function onKernelRequest(RequestEvent $event): void
+    public function on_kernel_request(Request_Event $event): void
     {
-        $request = $event->getRequest();
-        foreach ($this->formats as $format => $mimeTypes) {
-            $request->setFormat($format, $mimeTypes);
+        $request = $event->get_request();
+        foreach ($this->formats as $format => $mime_types) {
+            $request->set_format($format, $mime_types);
         }
     }
-
-    public static function getSubscribedEvents(): array
+    public static function get_subscribed_events(): array
     {
-        return [KernelEvents::REQUEST => ['onKernelRequest', 100]];
+        return [Kernel_Events::REQUEST => ['onKernelRequest', 100]];
     }
 }

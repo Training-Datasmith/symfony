@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Formatter;
 
 /**
@@ -18,33 +16,28 @@ namespace Symfony\Component\Console\Formatter;
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
  */
-interface OutputFormatterStyleInterface
+interface Output_Formatter_Style_Interface
 {
     /**
      * Sets style foreground color.
      */
-    public function setForeground(?string $color): void;
-
+    public function set_foreground(?string $color): void;
     /**
      * Sets style background color.
      */
-    public function setBackground(?string $color): void;
-
+    public function set_background(?string $color): void;
     /**
      * Sets some specific style option.
      */
-    public function setOption(string $option): void;
-
+    public function set_option(string $option): void;
     /**
      * Unsets some specific style option.
      */
-    public function unsetOption(string $option): void;
-
+    public function unset_option(string $option): void;
     /**
      * Sets multiple style options at once.
      */
-    public function setOptions(array $options): void;
-
+    public function set_options(array $options): void;
     /**
      * Applies the style to a given text.
      */

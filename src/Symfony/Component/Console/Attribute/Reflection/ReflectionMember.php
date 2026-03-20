@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,21 +9,17 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Attribute\Reflection;
 
-use Symfony\Component\String\UnicodeString;
-
+use Symfony\Component\String\Unicode_String;
 /**
  * @internal
  */
-class ReflectionMember
+class Reflection_Member
 {
-    public function __construct(
-        private readonly \ReflectionParameter|\ReflectionProperty $member,
-    ) {
+    public function __construct(private readonly \ReflectionParameter|\ReflectionProperty $member)
+    {
     }
-
     /**
      * @template T of object
      *
@@ -32,11 +27,10 @@ class ReflectionMember
      *
      * @return T|null
      */
-    public function getAttribute(string $class): ?object
+    public function get_attribute(string $class): ?object
     {
-        return ($this->member->getAttributes($class, \ReflectionAttribute::IS_INSTANCEOF)[0] ?? null)?->newInstance();
+        return ($this->member->get_attributes($class, \Reflection_Attribute::IS_INSTANCEOF)[0] ?? null)?->new_instance();
     }
-
     /**
      * @template T of object
      *
@@ -44,100 +38,77 @@ class ReflectionMember
      *
      * @return list<T>
      */
-    public function getAttributes(string $class): array
+    public function get_attributes(string $class): array
     {
-        return array_map(
-            static fn (\ReflectionAttribute $attribute): object => $attribute->newInstance(),
-            $this->member->getAttributes($class, \ReflectionAttribute::IS_INSTANCEOF)
-        );
+        return array_map(static fn(\Reflection_Attribute $attribute): object => $attribute->new_instance(), $this->member->get_attributes($class, \Reflection_Attribute::IS_INSTANCEOF));
     }
-
-    public function getSourceName(): string
+    public function get_source_name(): string
     {
         if ($this->member instanceof \ReflectionProperty) {
             return $this->member->class;
         }
-
-        $function = $this->member->getDeclaringFunction();
-
+        $function = $this->member->get_declaring_function();
         if ($function instanceof \ReflectionMethod) {
-            return $function->class.'::'.$function->name.'()';
+            return $function->class . '::' . $function->name . '()';
         }
-
-        return $function->name.'()';
+        return $function->name . '()';
     }
-
-    public function getSourceThis(): ?object
+    public function get_source_this(): ?object
     {
         if ($this->member instanceof \ReflectionParameter) {
-            return $this->member->getDeclaringFunction()->getClosureThis();
+            return $this->member->get_declaring_function()->get_closure_this();
         }
-
         return null;
     }
-
-    public function getType(): ?\ReflectionType
+    public function get_type(): ?\Reflection_Type
     {
-        return $this->member->getType();
+        return $this->member->get_type();
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
-        return $this->member->getName();
+        return $this->member->get_name();
     }
-
-    public function hasDefaultValue(): bool
+    public function has_default_value(): bool
     {
         if ($this->member instanceof \ReflectionParameter) {
-            return $this->member->isDefaultValueAvailable();
+            return $this->member->is_default_value_available();
         }
-
-        return $this->member->hasDefaultValue();
+        return $this->member->has_default_value();
     }
-
-    public function getDefaultValue(): mixed
+    public function get_default_value(): mixed
     {
-        $defaultValue = $this->member->getDefaultValue();
-
-        if ($defaultValue instanceof \BackedEnum) {
-            return $defaultValue->value;
+        $default_value = $this->member->get_default_value();
+        if ($default_value instanceof \Backed_Enum) {
+            return $default_value->value;
         }
-
-        return $defaultValue;
+        return $default_value;
     }
-
-    public function isNullable(): bool
+    public function is_nullable(): bool
     {
-        return (bool) $this->member->getType()?->allowsNull();
+        return (bool) $this->member->get_type()?->allows_null();
     }
-
-    public function getMemberName(): string
+    public function get_member_name(): string
     {
         return $this->member instanceof \ReflectionParameter ? 'parameter' : 'property';
     }
-
-    public function isParameter(): bool
+    public function is_parameter(): bool
     {
         return $this->member instanceof \ReflectionParameter;
     }
-
-    public function isVariadic(): bool
+    public function is_variadic(): bool
     {
-        return $this->member instanceof \ReflectionParameter && $this->member->isVariadic();
+        return $this->member instanceof \ReflectionParameter && $this->member->is_variadic();
     }
-
-    public function isProperty(): bool
+    public function is_property(): bool
     {
         return $this->member instanceof \ReflectionProperty;
     }
-
-    public function getMember(): \ReflectionParameter|\ReflectionProperty
+    public function get_member(): \ReflectionParameter|\ReflectionProperty
     {
         return $this->member;
     }
-
-    public function getInputName(): string
+    public function get_input_name(): string
     {
-        return (new UnicodeString($this->member->getName()))->kebab()->toString();
+        return (new Unicode_String($this->member->get_name()))->kebab()->to_string();
     }
 }

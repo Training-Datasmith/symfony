@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Lazy_Proxy\Php_Dumper;
 
-namespace Symfony\Component\DependencyInjection\LazyProxy\PhpDumper;
-
-use Symfony\Component\DependencyInjection\Definition;
-
+use Symfony\Component\Dependency_Injection\Definition;
 /**
  * Null dumper, negates any proxy code generation for any given service definition.
  *
@@ -22,19 +19,17 @@ use Symfony\Component\DependencyInjection\Definition;
  *
  * @final
  */
-class NullDumper implements DumperInterface
+class Null_Dumper implements Dumper_Interface
 {
-    public function isProxyCandidate(Definition $definition, ?bool &$asGhostObject = null, ?string $id = null): bool
+    public function is_proxy_candidate(Definition $definition, ?bool &$as_ghost_object = null, ?string $id = null): bool
     {
-        return $asGhostObject = false;
+        return $as_ghost_object = false;
     }
-
-    public function getProxyFactoryCode(Definition $definition, string $id, string $factoryCode): string
+    public function get_proxy_factory_code(Definition $definition, string $id, string $factory_code): string
     {
         return '';
     }
-
-    public function getProxyCode(Definition $definition, ?string $id = null): string
+    public function get_proxy_code(Definition $definition, ?string $id = null): string
     {
         return '';
     }

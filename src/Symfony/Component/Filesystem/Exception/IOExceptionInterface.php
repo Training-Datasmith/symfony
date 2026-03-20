@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Filesystem\Exception;
 
 /**
@@ -18,10 +16,10 @@ namespace Symfony\Component\Filesystem\Exception;
  *
  * @author Christian Gärtner <christiangaertner.film@googlemail.com>
  */
-interface IOExceptionInterface extends ExceptionInterface
+interface Io_Exception_Interface extends Exception_Interface
 {
     /**
      * Returns the associated path for the exception.
      */
-    public function getPath(): ?string;
+    public function get_path(): ?string;
 }

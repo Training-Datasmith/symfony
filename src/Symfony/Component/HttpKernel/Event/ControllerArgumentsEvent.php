@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event;
 
-namespace Symfony\Component\HttpKernel\Event;
-
-use Symfony\Component\ExpressionLanguage\Expression;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-
+use Symfony\Component\Expression_Language\Expression;
+use Symfony\Component\Expression_Language\Expression_Language;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Kernel\Http_Kernel_Interface;
 /**
  * Allows filtering of controller arguments.
  *
@@ -30,85 +27,68 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  *
  * @author Christophe Coevoet <stof@notk.org>
  */
-final class ControllerArgumentsEvent extends KernelEvent
+final class Controller_Arguments_Event extends Kernel_Event
 {
-    private readonly ControllerEvent $controllerEvent;
-    private array $namedArguments;
-
-    public function __construct(
-        HttpKernelInterface $kernel,
-        callable|ControllerEvent $controller,
-        private array $arguments,
-        Request $request,
-        ?int $requestType,
-    ) {
-        parent::__construct($kernel, $request, $requestType);
-
-        if (!$controller instanceof ControllerEvent) {
-            $controller = new ControllerEvent($kernel, $controller, $request, $requestType);
-        }
-
-        $this->controllerEvent = $controller;
-    }
-
-    public function getController(): callable
+    private readonly Controller_Event $controller_event;
+    private array $named_arguments;
+    public function __construct(Http_Kernel_Interface $kernel, callable|Controller_Event $controller, private array $arguments, Request $request, ?int $request_type)
     {
-        return $this->controllerEvent->getController();
+        parent::__construct($kernel, $request, $request_type);
+        if (!$controller instanceof Controller_Event) {
+            $controller = new Controller_Event($kernel, $controller, $request, $request_type);
+        }
+        $this->controller_event = $controller;
     }
-
+    public function get_controller(): callable
+    {
+        return $this->controller_event->get_controller();
+    }
     /**
      * @param list<object>|null $attributes
      */
-    public function setController(callable $controller, ?array $attributes = null): void
+    public function set_controller(callable $controller, ?array $attributes = null): void
     {
-        $this->controllerEvent->setController($controller, $attributes);
-        unset($this->namedArguments);
+        $this->controller_event->set_controller($controller, $attributes);
+        unset($this->named_arguments);
     }
-
     /**
      * @return list<mixed>
      */
-    public function getArguments(): array
+    public function get_arguments(): array
     {
         return $this->arguments;
     }
-
     /**
      * @param list<mixed> $arguments
      */
-    public function setArguments(array $arguments): void
+    public function set_arguments(array $arguments): void
     {
         $this->arguments = $arguments;
-        unset($this->namedArguments);
+        unset($this->named_arguments);
     }
-
     /**
      * @return array<string, mixed>
      */
-    public function getNamedArguments(): array
+    public function get_named_arguments(): array
     {
-        if (isset($this->namedArguments)) {
-            return $this->namedArguments;
+        if (isset($this->named_arguments)) {
+            return $this->named_arguments;
         }
-
-        $namedArguments = [];
+        $named_arguments = [];
         $arguments = $this->arguments;
-
-        foreach ($this->controllerEvent->getControllerReflector()->getParameters() as $i => $param) {
-            if ($param->isVariadic()) {
-                $namedArguments[$param->name] = \array_slice($arguments, $i);
+        foreach ($this->controller_event->get_controller_reflector()->get_parameters() as $i => $param) {
+            if ($param->is_variadic()) {
+                $named_arguments[$param->name] = \array_slice($arguments, $i);
                 break;
             }
             if (\array_key_exists($i, $arguments)) {
-                $namedArguments[$param->name] = $arguments[$i];
-            } elseif ($param->isDefaultvalueAvailable()) {
-                $namedArguments[$param->name] = $param->getDefaultValue();
+                $named_arguments[$param->name] = $arguments[$i];
+            } elseif ($param->is_defaultvalue_available()) {
+                $named_arguments[$param->name] = $param->get_default_value();
             }
         }
-
-        return $this->namedArguments = $namedArguments;
+        return $this->named_arguments = $named_arguments;
     }
-
     /**
      * @template T of object
      *
@@ -116,17 +96,15 @@ final class ControllerArgumentsEvent extends KernelEvent
      *
      * @return ($className is null ? array<class-string, list<object>> : ($className is '*' ? list<object> : list<T>))
      */
-    public function getAttributes(?string $className = null): array
+    public function get_attributes(?string $class_name = null): array
     {
-        return $this->controllerEvent->getAttributes($className);
+        return $this->controller_event->get_attributes($class_name);
     }
-
-    public function evaluate(mixed $value, ?ExpressionLanguage $expressionLanguage): mixed
+    public function evaluate(mixed $value, ?Expression_Language $expression_language): mixed
     {
         if (!$value instanceof \Closure && !$value instanceof Expression) {
             return $value;
         }
-
-        return $this->controllerEvent->evaluate($value, $expressionLanguage, $this->getNamedArguments());
+        return $this->controller_event->evaluate($value, $expression_language, $this->get_named_arguments());
     }
 }

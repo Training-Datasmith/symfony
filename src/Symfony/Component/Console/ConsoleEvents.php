@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,21 +9,19 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console;
 
-use Symfony\Component\Console\Event\ConsoleCommandEvent;
-use Symfony\Component\Console\Event\ConsoleErrorEvent;
-use Symfony\Component\Console\Event\ConsoleSignalEvent;
-use Symfony\Component\Console\Event\ConsoleTerminateEvent;
-use Symfony\Component\Console\Event\QuestionAnsweredEvent;
-
+use Symfony\Component\Console\Event\Console_Command_Event;
+use Symfony\Component\Console\Event\Console_Error_Event;
+use Symfony\Component\Console\Event\Console_Signal_Event;
+use Symfony\Component\Console\Event\Console_Terminate_Event;
+use Symfony\Component\Console\Event\Question_Answered_Event;
 /**
  * Contains all events dispatched by an Application.
  *
  * @author Francesco Levorato <git@flevour.net>
  */
-final class ConsoleEvents
+final class Console_Events
 {
     /**
      * The COMMAND event allows you to attach listeners before any command is
@@ -34,7 +31,6 @@ final class ConsoleEvents
      * @Event("Symfony\Component\Console\Event\ConsoleCommandEvent")
      */
     public const COMMAND = 'console.command';
-
     /**
      * The SIGNAL event allows you to perform some actions
      * after the command execution was interrupted.
@@ -42,7 +38,6 @@ final class ConsoleEvents
      * @Event("Symfony\Component\Console\Event\ConsoleSignalEvent")
      */
     public const SIGNAL = 'console.signal';
-
     /**
      * The TERMINATE event allows you to attach listeners after a command is
      * executed by the console.
@@ -50,7 +45,6 @@ final class ConsoleEvents
      * @Event("Symfony\Component\Console\Event\ConsoleTerminateEvent")
      */
     public const TERMINATE = 'console.terminate';
-
     /**
      * The ERROR event occurs when an uncaught exception or error appears.
      *
@@ -60,7 +54,6 @@ final class ConsoleEvents
      * @Event("Symfony\Component\Console\Event\ConsoleErrorEvent")
      */
     public const ERROR = 'console.error';
-
     /**
      * The QUESTION_ANSWERED event allows you to validate user input
      * using Symfony Validator constraints.
@@ -68,17 +61,10 @@ final class ConsoleEvents
      * @Event("Symfony\Component\Console\Event\QuestionAnsweredEvent")
      */
     public const QUESTION_ANSWERED = 'console.question_answered';
-
     /**
      * Event aliases.
      *
      * These aliases can be consumed by RegisterListenersPass.
      */
-    public const ALIASES = [
-        ConsoleCommandEvent::class => self::COMMAND,
-        ConsoleErrorEvent::class => self::ERROR,
-        ConsoleSignalEvent::class => self::SIGNAL,
-        ConsoleTerminateEvent::class => self::TERMINATE,
-        QuestionAnsweredEvent::class => self::QUESTION_ANSWERED,
-    ];
+    public const ALIASES = [Console_Command_Event::class => self::COMMAND, Console_Error_Event::class => self::ERROR, Console_Signal_Event::class => self::SIGNAL, Console_Terminate_Event::class => self::TERMINATE, Question_Answered_Event::class => self::QUESTION_ANSWERED];
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,46 +9,36 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Twig\Extension;
 
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Twig\Extension\AbstractExtension;
-use Twig\Node\Expression\ArrayExpression;
-use Twig\Node\Expression\ConstantExpression;
+use Symfony\Component\Routing\Generator\Url_Generator_Interface;
+use Twig\Extension\Abstract_Extension;
+use Twig\Node\Expression\Array_Expression;
+use Twig\Node\Expression\Constant_Expression;
 use Twig\Node\Node;
-use Twig\TwigFunction;
-
+use Twig\Twig_Function;
 /**
  * Provides integration of the Routing component with Twig.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class RoutingExtension extends AbstractExtension
+final class Routing_Extension extends Abstract_Extension
 {
-    public function __construct(
-        private readonly UrlGeneratorInterface $generator,
-    ) {
-    }
-
-    public function getFunctions(): array
+    public function __construct(private readonly Url_Generator_Interface $generator)
     {
-        return [
-            new TwigFunction('url', $this->getUrl(...), ['is_safe_callback' => $this->isUrlGenerationSafe(...)]),
-            new TwigFunction('path', $this->getPath(...), ['is_safe_callback' => $this->isUrlGenerationSafe(...)]),
-        ];
     }
-
-    public function getPath(string $name, array $parameters = [], bool $relative = false): string
+    public function get_functions(): array
     {
-        return $this->generator->generate($name, $parameters, $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH);
+        return [new Twig_Function('url', $this->get_url(...), ['is_safe_callback' => $this->is_url_generation_safe(...)]), new Twig_Function('path', $this->get_path(...), ['is_safe_callback' => $this->is_url_generation_safe(...)])];
     }
-
-    public function getUrl(string $name, array $parameters = [], bool $schemeRelative = false): string
+    public function get_path(string $name, array $parameters = [], bool $relative = false): string
     {
-        return $this->generator->generate($name, $parameters, $schemeRelative ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL);
+        return $this->generator->generate($name, $parameters, $relative ? Url_Generator_Interface::RELATIVE_PATH : Url_Generator_Interface::ABSOLUTE_PATH);
     }
-
+    public function get_url(string $name, array $parameters = [], bool $scheme_relative = false): string
+    {
+        return $this->generator->generate($name, $parameters, $scheme_relative ? Url_Generator_Interface::NETWORK_PATH : Url_Generator_Interface::ABSOLUTE_URL);
+    }
     /**
      * Determines at compile time whether the generated URL will be safe and thus
      * saving the unneeded automatic escaping for performance reasons.
@@ -72,19 +61,13 @@ final class RoutingExtension extends AbstractExtension
      *
      * @return array An array with the contexts the URL is safe
      */
-    public function isUrlGenerationSafe(Node $argsNode): array
+    public function is_url_generation_safe(Node $args_node): array
     {
         // support named arguments
-        $paramsNode = $argsNode->hasNode('parameters') ? $argsNode->getNode('parameters') : (
-            $argsNode->hasNode(1) ? $argsNode->getNode(1) : null
-        );
-
-        if (null === $paramsNode || $paramsNode instanceof ArrayExpression && \count($paramsNode) <= 2
-            && (!$paramsNode->hasNode(1) || $paramsNode->getNode(1) instanceof ConstantExpression)
-        ) {
+        $params_node = $args_node->has_node('parameters') ? $args_node->get_node('parameters') : ($args_node->has_node(1) ? $args_node->get_node(1) : null);
+        if (null === $params_node || $params_node instanceof Array_Expression && \count($params_node) <= 2 && (!$params_node->has_node(1) || $params_node->get_node(1) instanceof Constant_Expression)) {
             return ['html'];
         }
-
         return [];
     }
 }

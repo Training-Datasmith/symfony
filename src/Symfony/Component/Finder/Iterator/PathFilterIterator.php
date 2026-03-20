@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Finder\Iterator;
 
-use Symfony\Component\Finder\SplFileInfo;
-
+use Symfony\Component\Finder\Spl_File_Info;
 /**
  * PathFilterIterator filters files by path patterns (e.g. some/special/dir).
  *
@@ -23,22 +20,19 @@ use Symfony\Component\Finder\SplFileInfo;
  *
  * @extends MultiplePcreFilterIterator<string, SplFileInfo>
  */
-class PathFilterIterator extends MultiplePcreFilterIterator
+class Path_Filter_Iterator extends Multiple_Pcre_Filter_Iterator
 {
     /**
      * Filters the iterator values.
      */
     public function accept(): bool
     {
-        $filename = $this->current()->getRelativePathname();
-
+        $filename = $this->current()->get_relative_pathname();
         if ('\\' === \DIRECTORY_SEPARATOR) {
             $filename = str_replace('\\', '/', $filename);
         }
-
-        return $this->isAccepted($filename);
+        return $this->is_accepted($filename);
     }
-
     /**
      * Converts strings to regexp.
      *
@@ -51,8 +45,8 @@ class PathFilterIterator extends MultiplePcreFilterIterator
      *
      * @param string $str Pattern: regexp or dirname
      */
-    protected function toRegex(string $str): string
+    protected function to_regex(string $str): string
     {
-        return $this->isRegex($str) ? $str : '/'.preg_quote($str, '/').'/';
+        return $this->is_regex($str) ? $str : '/' . preg_quote($str, '/') . '/';
     }
 }

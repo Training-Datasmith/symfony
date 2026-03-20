@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,15 +9,13 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Dependency_Injection\Security\Factory;
 
-namespace Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory;
-
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
-use Symfony\Component\DependencyInjection\ChildDefinition;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\Config\Definition\Builder\Node_Definition;
+use Symfony\Component\Dependency_Injection\Child_Definition;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Reference;
 use Symfony\Component\Security\Core\Exception\LogicException;
-
 /**
  * HttpBasicFactory creates services for HTTP basic authentication.
  *
@@ -28,62 +25,35 @@ use Symfony\Component\Security\Core\Exception\LogicException;
  *
  * @internal
  */
-class HttpBasicLdapFactory extends HttpBasicFactory
+class Http_Basic_Ldap_Factory extends Http_Basic_Factory
 {
-    use LdapFactoryTrait;
-
-    public function create(ContainerBuilder $container, string $id, array $config, string $userProvider, ?string $defaultEntryPoint): array
+    use Ldap_Factory_Trait;
+    public function create(Container_Builder $container, string $id, array $config, string $user_provider, ?string $default_entry_point): array
     {
-        $provider = 'security.authentication.provider.ldap_bind.'.$id;
-        $definition = $container
-            ->setDefinition($provider, new ChildDefinition('security.authentication.provider.ldap_bind'))
-            ->replaceArgument(0, new Reference($userProvider))
-            ->replaceArgument(1, new Reference('security.user_checker.'.$id))
-            ->replaceArgument(2, $id)
-            ->replaceArgument(3, new Reference($config['service']))
-            ->replaceArgument(4, $config['dn_string'])
-            ->replaceArgument(6, $config['search_dn'])
-            ->replaceArgument(7, $config['search_password'])
-        ;
-
+        $provider = 'security.authentication.provider.ldap_bind.' . $id;
+        $definition = $container->set_definition($provider, new Child_Definition('security.authentication.provider.ldap_bind'))->replace_argument(0, new Reference($user_provider))->replace_argument(1, new Reference('security.user_checker.' . $id))->replace_argument(2, $id)->replace_argument(3, new Reference($config['service']))->replace_argument(4, $config['dn_string'])->replace_argument(6, $config['search_dn'])->replace_argument(7, $config['search_password']);
         // entry point
-        $entryPointId = $defaultEntryPoint;
-
-        if (null === $entryPointId) {
-            $entryPointId = 'security.authentication.basic_entry_point.'.$id;
-            $container
-                ->setDefinition($entryPointId, new ChildDefinition('security.authentication.basic_entry_point'))
-                ->addArgument($config['realm']);
+        $entry_point_id = $default_entry_point;
+        if (null === $entry_point_id) {
+            $entry_point_id = 'security.authentication.basic_entry_point.' . $id;
+            $container->set_definition($entry_point_id, new Child_Definition('security.authentication.basic_entry_point'))->add_argument($config['realm']);
         }
-
         if (!empty($config['query_string'])) {
             if ('' === $config['search_dn'] || '' === $config['search_password']) {
                 throw new LogicException('Using the "query_string" config without using a "search_dn" and a "search_password" is not supported.');
             }
-            $definition->addMethodCall('setQueryString', [$config['query_string']]);
+            $definition->add_method_call('setQueryString', [$config['query_string']]);
         }
-
         // listener
-        $listenerId = 'security.authentication.listener.basic.'.$id;
-        $listener = $container->setDefinition($listenerId, new ChildDefinition('security.authentication.listener.basic'));
-        $listener->replaceArgument(2, $id);
-        $listener->replaceArgument(3, new Reference($entryPointId));
-
-        return [$provider, $listenerId, $entryPointId];
+        $listener_id = 'security.authentication.listener.basic.' . $id;
+        $listener = $container->set_definition($listener_id, new Child_Definition('security.authentication.listener.basic'));
+        $listener->replace_argument(2, $id);
+        $listener->replace_argument(3, new Reference($entry_point_id));
+        return [$provider, $listener_id, $entry_point_id];
     }
-
-    public function addConfiguration(NodeDefinition $node): void
+    public function add_configuration(Node_Definition $node): void
     {
-        parent::addConfiguration($node);
-
-        $node
-            ->children()
-                ->scalarNode('service')->defaultValue('ldap')->end()
-                ->scalarNode('dn_string')->defaultValue('{user_identifier}')->end()
-                ->scalarNode('query_string')->end()
-                ->scalarNode('search_dn')->defaultValue('')->end()
-                ->scalarNode('search_password')->defaultValue('')->end()
-            ->end()
-        ;
+        parent::add_configuration($node);
+        $node->children()->scalar_node('service')->default_value('ldap')->end()->scalar_node('dn_string')->default_value('{user_identifier}')->end()->scalar_node('query_string')->end()->scalar_node('search_dn')->default_value('')->end()->scalar_node('search_password')->default_value('')->end()->end();
     }
 }

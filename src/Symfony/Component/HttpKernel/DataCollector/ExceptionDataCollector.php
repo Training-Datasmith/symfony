@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,60 +9,49 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Data_Collector;
 
-namespace Symfony\Component\HttpKernel\DataCollector;
-
-use Symfony\Component\ErrorHandler\Exception\FlattenException;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
+use Symfony\Component\Error_Handler\Exception\Flatten_Exception;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Response;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @final
  */
-class ExceptionDataCollector extends DataCollector
+class Exception_Data_Collector extends Data_Collector
 {
     public function collect(Request $request, Response $response, ?\Throwable $exception = null): void
     {
         if (null !== $exception) {
-            $this->data = [
-                'exception' => FlattenException::createWithDataRepresentation($exception),
-            ];
+            $this->data = ['exception' => Flatten_Exception::create_with_data_representation($exception)];
         }
     }
-
-    public function hasException(): bool
+    public function has_exception(): bool
     {
         return isset($this->data['exception']);
     }
-
-    public function getException(): \Exception|FlattenException
+    public function get_exception(): \Exception|Flatten_Exception
     {
         return $this->data['exception'];
     }
-
-    public function getMessage(): string
+    public function get_message(): string
     {
-        return $this->data['exception']->getMessage();
+        return $this->data['exception']->get_message();
     }
-
-    public function getCode(): int|string
+    public function get_code(): int|string
     {
-        return $this->data['exception']->getCode();
+        return $this->data['exception']->get_code();
     }
-
-    public function getStatusCode(): int
+    public function get_status_code(): int
     {
-        return $this->data['exception']->getStatusCode();
+        return $this->data['exception']->get_status_code();
     }
-
-    public function getTrace(): array
+    public function get_trace(): array
     {
-        return $this->data['exception']->getTrace();
+        return $this->data['exception']->get_trace();
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return 'exception';
     }

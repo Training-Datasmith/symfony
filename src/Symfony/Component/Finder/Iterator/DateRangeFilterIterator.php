@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Finder\Iterator;
 
-use Symfony\Component\Finder\Comparator\DateComparator;
-
+use Symfony\Component\Finder\Comparator\Date_Comparator;
 /**
  * DateRangeFilterIterator filters out files that are not in the given date range (last modified dates).
  *
@@ -22,7 +19,7 @@ use Symfony\Component\Finder\Comparator\DateComparator;
  *
  * @extends \FilterIterator<string, \SplFileInfo>
  */
-class DateRangeFilterIterator extends \FilterIterator
+class Date_Range_Filter_Iterator extends \Filter_Iterator
 {
     /**
      * @param \Iterator<string, \SplFileInfo> $iterator
@@ -32,25 +29,21 @@ class DateRangeFilterIterator extends \FilterIterator
     {
         parent::__construct($iterator);
     }
-
     /**
      * Filters the iterator values.
      */
     public function accept(): bool
     {
         $fileinfo = $this->current();
-
-        if (!file_exists($fileinfo->getPathname())) {
+        if (!file_exists($fileinfo->get_pathname())) {
             return false;
         }
-
-        $filedate = $fileinfo->getMTime();
+        $filedate = $fileinfo->get_m_time();
         foreach ($this->comparators as $compare) {
             if (!$compare->test($filedate)) {
                 return false;
             }
         }
-
         return true;
     }
 }

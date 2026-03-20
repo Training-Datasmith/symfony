@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,27 +9,22 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Doctrine\Id_Generator;
 
-namespace Symfony\Bridge\Doctrine\IdGenerator;
-
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Id\AbstractIdGenerator;
-use Symfony\Component\Uid\Factory\UlidFactory;
+use Doctrine\ORM\Entity_Manager_Interface;
+use Doctrine\ORM\Id\Abstract_Id_Generator;
+use Symfony\Component\Uid\Factory\Ulid_Factory;
 use Symfony\Component\Uid\Ulid;
-
-final class UlidGenerator extends AbstractIdGenerator
+final class Ulid_Generator extends Abstract_Id_Generator
 {
-    public function __construct(
-        private readonly ?UlidFactory $factory = null,
-    ) {
+    public function __construct(private readonly ?Ulid_Factory $factory = null)
+    {
     }
-
-    public function generateId(EntityManagerInterface $em, $entity): Ulid
+    public function generate_id(Entity_Manager_Interface $em, $entity): Ulid
     {
         if ($this->factory) {
             return $this->factory->create();
         }
-
         return new Ulid();
     }
 }

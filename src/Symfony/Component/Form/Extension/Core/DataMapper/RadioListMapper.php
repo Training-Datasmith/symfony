@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Extension\Core\Data_Mapper;
 
-namespace Symfony\Component\Form\Extension\Core\DataMapper;
-
-use Symfony\Component\Form\DataMapperInterface;
-use Symfony\Component\Form\Exception\UnexpectedTypeException;
-
+use Symfony\Component\Form\Data_Mapper_Interface;
+use Symfony\Component\Form\Exception\Unexpected_Type_Exception;
 /**
  * Maps choices to/from radio forms.
  *
@@ -25,36 +22,30 @@ use Symfony\Component\Form\Exception\UnexpectedTypeException;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class RadioListMapper implements DataMapperInterface
+class Radio_List_Mapper implements Data_Mapper_Interface
 {
-    public function mapDataToForms(mixed $choice, \Traversable $radios): void
+    public function map_data_to_forms(mixed $choice, \Traversable $radios): void
     {
         if (!\is_string($choice)) {
-            throw new UnexpectedTypeException($choice, 'string');
+            throw new Unexpected_Type_Exception($choice, 'string');
         }
-
         foreach ($radios as $radio) {
-            $value = $radio->getConfig()->getOption('value');
-            $radio->setData($choice === $value);
+            $value = $radio->get_config()->get_option('value');
+            $radio->set_data($choice === $value);
         }
     }
-
-    public function mapFormsToData(\Traversable $radios, mixed &$choice): void
+    public function map_forms_to_data(\Traversable $radios, mixed &$choice): void
     {
         if (null !== $choice && !\is_string($choice)) {
-            throw new UnexpectedTypeException($choice, 'null or string');
+            throw new Unexpected_Type_Exception($choice, 'null or string');
         }
-
         $choice = null;
-
         foreach ($radios as $radio) {
-            if ($radio->getData()) {
-                if ('placeholder' === $radio->getName()) {
+            if ($radio->get_data()) {
+                if ('placeholder' === $radio->get_name()) {
                     return;
                 }
-
-                $choice = $radio->getConfig()->getOption('value');
-
+                $choice = $radio->get_config()->get_option('value');
                 return;
             }
         }

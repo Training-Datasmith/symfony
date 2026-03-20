@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,23 +9,20 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Extension\Validator\Violation_Mapper;
 
-namespace Symfony\Component\Form\Extension\Validator\ViolationMapper;
-
-use Symfony\Component\PropertyAccess\PropertyPathIterator;
-
+use Symfony\Component\Property_Access\Property_Path_Iterator;
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ViolationPathIterator extends PropertyPathIterator
+class Violation_Path_Iterator extends Property_Path_Iterator
 {
-    public function __construct(ViolationPath $violationPath)
+    public function __construct(Violation_Path $violation_path)
     {
-        parent::__construct($violationPath);
+        parent::__construct($violation_path);
     }
-
-    public function mapsForm(): bool
+    public function maps_form(): bool
     {
-        return $this->path->mapsForm($this->key());
+        return $this->path->maps_form($this->key());
     }
 }

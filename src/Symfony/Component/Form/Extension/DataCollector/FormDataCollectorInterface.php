@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,54 +9,46 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Extension\Data_Collector;
 
-namespace Symfony\Component\Form\Extension\DataCollector;
-
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpKernel\DataCollector\DataCollectorInterface;
-use Symfony\Component\VarDumper\Cloner\Data;
-
+use Symfony\Component\Form\Form_Interface;
+use Symfony\Component\Form\Form_View;
+use Symfony\Component\Http_Kernel\Data_Collector\Data_Collector_Interface;
+use Symfony\Component\Var_Dumper\Cloner\Data;
 /**
  * Collects and structures information about forms.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface FormDataCollectorInterface extends DataCollectorInterface
+interface Form_Data_Collector_Interface extends Data_Collector_Interface
 {
     /**
      * Stores configuration data of the given form and its children.
      */
-    public function collectConfiguration(FormInterface $form): void;
-
+    public function collect_configuration(Form_Interface $form): void;
     /**
      * Stores the default data of the given form and its children.
      */
-    public function collectDefaultData(FormInterface $form): void;
-
+    public function collect_default_data(Form_Interface $form): void;
     /**
      * Stores the submitted data of the given form and its children.
      */
-    public function collectSubmittedData(FormInterface $form): void;
-
+    public function collect_submitted_data(Form_Interface $form): void;
     /**
      * Stores the view variables of the given form view and its children.
      */
-    public function collectViewVariables(FormView $view): void;
-
+    public function collect_view_variables(Form_View $view): void;
     /**
      * Specifies that the given objects represent the same conceptual form.
      */
-    public function associateFormWithView(FormInterface $form, FormView $view): void;
-
+    public function associate_form_with_view(Form_Interface $form, Form_View $view): void;
     /**
      * Assembles the data collected about the given form and its children as
      * a tree-like data structure.
      *
      * The result can be queried using {@link getData()}.
      */
-    public function buildPreliminaryFormTree(FormInterface $form): void;
-
+    public function build_preliminary_form_tree(Form_Interface $form): void;
     /**
      * Assembles the data collected about the given form and its children as
      * a tree-like data structure.
@@ -76,10 +67,9 @@ interface FormDataCollectorInterface extends DataCollectorInterface
      * corresponding {@link FormInterface} exists otherwise, call
      * {@link associateFormWithView()} before calling this method.
      */
-    public function buildFinalFormTree(FormInterface $form, FormView $view): void;
-
+    public function build_final_form_tree(Form_Interface $form, Form_View $view): void;
     /**
      * Returns all collected data.
      */
-    public function getData(): array|Data;
+    public function get_data(): array|Data;
 }

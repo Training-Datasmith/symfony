@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,19 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection;
 
-namespace Symfony\Component\DependencyInjection;
-
-class StaticEnvVarLoader implements EnvVarLoaderInterface
+class Static_Env_Var_Loader implements Env_Var_Loader_Interface
 {
-    private array $envVars;
-
-    public function __construct(private readonly EnvVarLoaderInterface $envVarLoader)
+    private array $env_vars;
+    public function __construct(private readonly Env_Var_Loader_Interface $env_var_loader)
     {
     }
-
-    public function loadEnvVars(): array
+    public function load_env_vars(): array
     {
-        return $this->envVars ??= $this->envVarLoader->loadEnvVars();
+        return $this->env_vars ??= $this->env_var_loader->load_env_vars();
     }
 }

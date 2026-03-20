@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,51 +9,36 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Extension\Core\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Exception\InvalidConfigurationException;
-use Symfony\Component\Form\Extension\Core\DataTransformer\DateIntervalToArrayTransformer;
-use Symfony\Component\Form\Extension\Core\DataTransformer\DateIntervalToStringTransformer;
-use Symfony\Component\Form\Extension\Core\DataTransformer\IntegerToLocalizedStringTransformer;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\ReversedTransformer;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Form\Abstract_Type;
+use Symfony\Component\Form\Exception\Invalid_Configuration_Exception;
+use Symfony\Component\Form\Extension\Core\Data_Transformer\Date_Interval_To_Array_Transformer;
+use Symfony\Component\Form\Extension\Core\Data_Transformer\Date_Interval_To_String_Transformer;
+use Symfony\Component\Form\Extension\Core\Data_Transformer\Integer_To_Localized_String_Transformer;
+use Symfony\Component\Form\Form_Builder_Interface;
+use Symfony\Component\Form\Form_Interface;
+use Symfony\Component\Form\Form_View;
+use Symfony\Component\Form\Reversed_Transformer;
+use Symfony\Component\Options_Resolver\Options;
+use Symfony\Component\Options_Resolver\Options_Resolver;
 /**
  * @author Steffen Roßkamp <steffen.rosskamp@gimmickmedia.de>
  */
-class DateIntervalType extends AbstractType
+class Date_Interval_Type extends Abstract_Type
 {
-    private const TIME_PARTS = [
-        'years',
-        'months',
-        'weeks',
-        'days',
-        'hours',
-        'minutes',
-        'seconds',
-    ];
-    private const WIDGETS = [
-        'text' => TextType::class,
-        'integer' => IntegerType::class,
-        'choice' => ChoiceType::class,
-    ];
-
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    private const TIME_PARTS = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds'];
+    private const WIDGETS = ['text' => Text_Type::class, 'integer' => Integer_Type::class, 'choice' => Choice_Type::class];
+    public function build_form(Form_Builder_Interface $builder, array $options): void
     {
         if (!$options['with_years'] && !$options['with_months'] && !$options['with_weeks'] && !$options['with_days'] && !$options['with_hours'] && !$options['with_minutes'] && !$options['with_seconds']) {
-            throw new InvalidConfigurationException('You must enable at least one interval field.');
+            throw new Invalid_Configuration_Exception('You must enable at least one interval field.');
         }
         if ($options['with_invert'] && 'single_text' === $options['widget']) {
-            throw new InvalidConfigurationException('The single_text widget does not support invertible intervals.');
+            throw new Invalid_Configuration_Exception('The single_text widget does not support invertible intervals.');
         }
         if ($options['with_weeks'] && $options['with_days']) {
-            throw new InvalidConfigurationException('You cannot enable weeks and days fields together.');
+            throw new Invalid_Configuration_Exception('You cannot enable weeks and days fields together.');
         }
         $format = 'P';
         $parts = [];
@@ -93,11 +77,11 @@ class DateIntervalType extends AbstractType
             $parts[] = 'invert';
         }
         if ('single_text' === $options['widget']) {
-            $builder->addViewTransformer(new DateIntervalToStringTransformer($format));
+            $builder->add_view_transformer(new Date_Interval_To_String_Transformer($format));
         } else {
             foreach (self::TIME_PARTS as $part) {
-                if ($options['with_'.$part]) {
-                    $childOptions = [
+                if ($options['with_' . $part]) {
+                    $child_options = [
                         'error_bubbling' => true,
                         'label' => $options['labels'][$part],
                         // Append generic carry-along options
@@ -107,87 +91,50 @@ class DateIntervalType extends AbstractType
                         'empty_data' => $options['empty_data'][$part] ?? null,
                     ];
                     if ('choice' === $options['widget']) {
-                        $childOptions['choice_translation_domain'] = false;
-                        $childOptions['choices'] = $options[$part];
-                        $childOptions['placeholder'] = $options['placeholder'][$part];
+                        $child_options['choice_translation_domain'] = false;
+                        $child_options['choices'] = $options[$part];
+                        $child_options['placeholder'] = $options['placeholder'][$part];
                     }
-                    $childForm = $builder->create($part, self::WIDGETS[$options['widget']], $childOptions);
+                    $child_form = $builder->create($part, self::WIDGETS[$options['widget']], $child_options);
                     if ('integer' === $options['widget']) {
-                        $childForm->addModelTransformer(
-                            new ReversedTransformer(
-                                new IntegerToLocalizedStringTransformer()
-                            )
-                        );
+                        $child_form->add_model_transformer(new Reversed_Transformer(new Integer_To_Localized_String_Transformer()));
                     }
-                    $builder->add($childForm);
+                    $builder->add($child_form);
                 }
             }
             if ($options['with_invert']) {
-                $builder->add('invert', CheckboxType::class, [
-                    'label' => $options['labels']['invert'],
-                    'error_bubbling' => true,
-                    'required' => false,
-                    'translation_domain' => $options['translation_domain'],
-                ]);
+                $builder->add('invert', Checkbox_Type::class, ['label' => $options['labels']['invert'], 'error_bubbling' => true, 'required' => false, 'translation_domain' => $options['translation_domain']]);
             }
-            $builder->addViewTransformer(new DateIntervalToArrayTransformer($parts, 'text' === $options['widget']));
+            $builder->add_view_transformer(new Date_Interval_To_Array_Transformer($parts, 'text' === $options['widget']));
         }
         if ('string' === $options['input']) {
-            $builder->addModelTransformer(
-                new ReversedTransformer(
-                    new DateIntervalToStringTransformer($format)
-                )
-            );
+            $builder->add_model_transformer(new Reversed_Transformer(new Date_Interval_To_String_Transformer($format)));
         } elseif ('array' === $options['input']) {
-            $builder->addModelTransformer(
-                new ReversedTransformer(
-                    new DateIntervalToArrayTransformer($parts)
-                )
-            );
+            $builder->add_model_transformer(new Reversed_Transformer(new Date_Interval_To_Array_Transformer($parts)));
         }
     }
-
-    public function buildView(FormView $view, FormInterface $form, array $options): void
+    public function build_view(Form_View $view, Form_Interface $form, array $options): void
     {
-        $vars = [
-            'widget' => $options['widget'],
-            'with_invert' => $options['with_invert'],
-        ];
+        $vars = ['widget' => $options['widget'], 'with_invert' => $options['with_invert']];
         foreach (self::TIME_PARTS as $part) {
-            $vars['with_'.$part] = $options['with_'.$part];
+            $vars['with_' . $part] = $options['with_' . $part];
         }
         $view->vars = array_replace($view->vars, $vars);
     }
-
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configure_options(Options_Resolver $resolver): void
     {
-        $compound = static fn (Options $options): bool => 'single_text' !== $options['widget'];
-        $emptyData = static fn (Options $options): array|string => 'single_text' === $options['widget'] ? '' : [];
-
-        $placeholderDefault = static fn (Options $options): ?string => $options['required'] ? null : '';
-
-        $placeholderNormalizer = static function (Options $options, $placeholder) use ($placeholderDefault): array {
+        $compound = static fn(Options $options): bool => 'single_text' !== $options['widget'];
+        $empty_data = static fn(Options $options): array|string => 'single_text' === $options['widget'] ? '' : [];
+        $placeholder_default = static fn(Options $options): ?string => $options['required'] ? null : '';
+        $placeholder_normalizer = static function (Options $options, $placeholder) use ($placeholder_default): array {
             if (\is_array($placeholder)) {
-                $default = $placeholderDefault($options);
-
+                $default = $placeholder_default($options);
                 return array_merge(array_fill_keys(self::TIME_PARTS, $default), $placeholder);
             }
-
             return array_fill_keys(self::TIME_PARTS, $placeholder);
         };
-
-        $labelsNormalizer = static fn (Options $options, array $labels): array => array_replace([
-            'years' => null,
-            'months' => null,
-            'days' => null,
-            'weeks' => null,
-            'hours' => null,
-            'minutes' => null,
-            'seconds' => null,
-            'invert' => 'Negative interval',
-        ], array_filter($labels, static fn ($label): bool => null !== $label));
-
-        $resolver->setDefaults([
+        $labels_normalizer = static fn(Options $options, array $labels): array => array_replace(['years' => null, 'months' => null, 'days' => null, 'weeks' => null, 'hours' => null, 'minutes' => null, 'seconds' => null, 'invert' => 'Negative interval'], array_filter($labels, static fn($label): bool => null !== $label));
+        $resolver->set_defaults([
             'with_years' => true,
             'with_months' => true,
             'with_days' => true,
@@ -205,7 +152,7 @@ class DateIntervalType extends AbstractType
             'seconds' => range(0, 60),
             'widget' => 'choice',
             'input' => 'dateinterval',
-            'placeholder' => $placeholderDefault,
+            'placeholder' => $placeholder_default,
             'by_reference' => true,
             'error_bubbling' => false,
             // If initialized with a \DateInterval object, FormType initializes
@@ -214,53 +161,35 @@ class DateIntervalType extends AbstractType
             // this option.
             'data_class' => null,
             'compound' => $compound,
-            'empty_data' => $emptyData,
+            'empty_data' => $empty_data,
             'labels' => [],
             'invalid_message' => 'Please choose a valid date interval.',
         ]);
-        $resolver->setNormalizer('placeholder', $placeholderNormalizer);
-        $resolver->setNormalizer('labels', $labelsNormalizer);
-
-        $resolver->setAllowedValues(
-            'input',
-            [
-                'dateinterval',
-                'string',
-                'array',
-            ]
-        );
-        $resolver->setAllowedValues(
-            'widget',
-            [
-                'single_text',
-                'text',
-                'integer',
-                'choice',
-            ]
-        );
+        $resolver->set_normalizer('placeholder', $placeholder_normalizer);
+        $resolver->set_normalizer('labels', $labels_normalizer);
+        $resolver->set_allowed_values('input', ['dateinterval', 'string', 'array']);
+        $resolver->set_allowed_values('widget', ['single_text', 'text', 'integer', 'choice']);
         // Don't clone \DateInterval classes, as i.e. format()
         // does not work after that
-        $resolver->setAllowedValues('by_reference', true);
-
-        $resolver->setAllowedTypes('years', 'array');
-        $resolver->setAllowedTypes('months', 'array');
-        $resolver->setAllowedTypes('weeks', 'array');
-        $resolver->setAllowedTypes('days', 'array');
-        $resolver->setAllowedTypes('hours', 'array');
-        $resolver->setAllowedTypes('minutes', 'array');
-        $resolver->setAllowedTypes('seconds', 'array');
-        $resolver->setAllowedTypes('with_years', 'bool');
-        $resolver->setAllowedTypes('with_months', 'bool');
-        $resolver->setAllowedTypes('with_weeks', 'bool');
-        $resolver->setAllowedTypes('with_days', 'bool');
-        $resolver->setAllowedTypes('with_hours', 'bool');
-        $resolver->setAllowedTypes('with_minutes', 'bool');
-        $resolver->setAllowedTypes('with_seconds', 'bool');
-        $resolver->setAllowedTypes('with_invert', 'bool');
-        $resolver->setAllowedTypes('labels', 'array');
+        $resolver->set_allowed_values('by_reference', true);
+        $resolver->set_allowed_types('years', 'array');
+        $resolver->set_allowed_types('months', 'array');
+        $resolver->set_allowed_types('weeks', 'array');
+        $resolver->set_allowed_types('days', 'array');
+        $resolver->set_allowed_types('hours', 'array');
+        $resolver->set_allowed_types('minutes', 'array');
+        $resolver->set_allowed_types('seconds', 'array');
+        $resolver->set_allowed_types('with_years', 'bool');
+        $resolver->set_allowed_types('with_months', 'bool');
+        $resolver->set_allowed_types('with_weeks', 'bool');
+        $resolver->set_allowed_types('with_days', 'bool');
+        $resolver->set_allowed_types('with_hours', 'bool');
+        $resolver->set_allowed_types('with_minutes', 'bool');
+        $resolver->set_allowed_types('with_seconds', 'bool');
+        $resolver->set_allowed_types('with_invert', 'bool');
+        $resolver->set_allowed_types('labels', 'array');
     }
-
-    public function getBlockPrefix(): string
+    public function get_block_prefix(): string
     {
         return 'dateinterval';
     }

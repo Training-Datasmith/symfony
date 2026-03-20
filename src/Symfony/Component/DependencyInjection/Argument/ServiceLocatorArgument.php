@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,42 +9,35 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DependencyInjection\Argument;
+namespace Symfony\Component\Dependency_Injection\Argument;
 
 /**
  * Represents a closure acting as a service locator.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ServiceLocatorArgument implements ArgumentInterface
+class Service_Locator_Argument implements Argument_Interface
 {
-    use ArgumentTrait;
-
+    use Argument_Trait;
     private array $values;
-    private ?TaggedIteratorArgument $taggedIteratorArgument = null;
-
-    public function __construct(array|TaggedIteratorArgument $values = [])
+    private ?Tagged_Iterator_Argument $tagged_iterator_argument = null;
+    public function __construct(array|Tagged_Iterator_Argument $values = [])
     {
-        if ($values instanceof TaggedIteratorArgument) {
-            $this->taggedIteratorArgument = $values;
+        if ($values instanceof Tagged_Iterator_Argument) {
+            $this->tagged_iterator_argument = $values;
             $values = [];
         }
-
-        $this->setValues($values);
+        $this->set_values($values);
     }
-
-    public function getTaggedIteratorArgument(): ?TaggedIteratorArgument
+    public function get_tagged_iterator_argument(): ?Tagged_Iterator_Argument
     {
-        return $this->taggedIteratorArgument;
+        return $this->tagged_iterator_argument;
     }
-
-    public function getValues(): array
+    public function get_values(): array
     {
         return $this->values;
     }
-
-    public function setValues(array $values): void
+    public function set_values(array $values): void
     {
         $this->values = $values;
     }

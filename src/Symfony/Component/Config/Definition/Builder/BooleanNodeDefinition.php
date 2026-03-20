@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition\Builder;
 
-use Symfony\Component\Config\Definition\BooleanNode;
-use Symfony\Component\Config\Definition\Exception\InvalidDefinitionException;
-
+use Symfony\Component\Config\Definition\Boolean_Node;
+use Symfony\Component\Config\Definition\Exception\Invalid_Definition_Exception;
 /**
  * This class provides a fluent interface for defining a node.
  *
@@ -25,38 +22,33 @@ use Symfony\Component\Config\Definition\Exception\InvalidDefinitionException;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class BooleanNodeDefinition extends ScalarNodeDefinition
+class Boolean_Node_Definition extends Scalar_Node_Definition
 {
     /**
      * @param TParent $parent
      */
-    public function __construct(?string $name, ?NodeParentInterface $parent = null)
+    public function __construct(?string $name, ?Node_Parent_Interface $parent = null)
     {
         parent::__construct($name, $parent);
-
-        $this->nullEquivalent = true;
+        $this->null_equivalent = true;
     }
-
-    protected function instantiateNode(): BooleanNode
+    protected function instantiate_node(): Boolean_Node
     {
-        return new BooleanNode($this->name, $this->parent, $this->pathSeparator, null === $this->nullEquivalent);
+        return new Boolean_Node($this->name, $this->parent, $this->path_separator, null === $this->null_equivalent);
     }
-
     /**
      * @throws InvalidDefinitionException
      */
-    public function cannotBeEmpty(): static
+    public function cannot_be_empty(): static
     {
-        throw new InvalidDefinitionException('->cannotBeEmpty() is not applicable to BooleanNodeDefinition.');
+        throw new Invalid_Definition_Exception('->cannotBeEmpty() is not applicable to BooleanNodeDefinition.');
     }
-
     /**
      * @return $this
      */
-    public function defaultValue(mixed $value): static
+    public function default_value(mixed $value): static
     {
-        $this->nullEquivalent = null === $value ? null : true;
-
-        return parent::defaultValue($value);
+        $this->null_equivalent = null === $value ? null : true;
+        return parent::default_value($value);
     }
 }

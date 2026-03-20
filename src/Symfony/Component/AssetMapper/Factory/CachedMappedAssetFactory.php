@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,71 +9,55 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Asset_Mapper\Factory;
 
-namespace Symfony\Component\AssetMapper\Factory;
-
-use Symfony\Component\AssetMapper\MappedAsset;
-use Symfony\Component\Config\ConfigCache;
-use Symfony\Component\Config\Resource\DirectoryResource;
-use Symfony\Component\Config\Resource\FileExistenceResource;
-use Symfony\Component\Config\Resource\FileResource;
-use Symfony\Component\Config\Resource\ResourceInterface;
+use Symfony\Component\Asset_Mapper\Mapped_Asset;
+use Symfony\Component\Config\Config_Cache;
+use Symfony\Component\Config\Resource\Directory_Resource;
+use Symfony\Component\Config\Resource\File_Existence_Resource;
+use Symfony\Component\Config\Resource\File_Resource;
+use Symfony\Component\Config\Resource\Resource_Interface;
 use Symfony\Component\Filesystem\Filesystem;
-
 /**
  * Decorates the asset factory to load MappedAssets from cache when possible.
  */
-class CachedMappedAssetFactory implements MappedAssetFactoryInterface
+class Cached_Mapped_Asset_Factory implements Mapped_Asset_Factory_Interface
 {
-    public function __construct(
-        private readonly MappedAssetFactoryInterface $innerFactory,
-        private readonly string $cacheDir,
-        private readonly bool $debug,
-    ) {
-    }
-
-    public function createMappedAsset(string $logicalPath, string $sourcePath): ?MappedAsset
+    public function __construct(private readonly Mapped_Asset_Factory_Interface $inner_factory, private readonly string $cache_dir, private readonly bool $debug)
     {
-        $cachePath = $this->getCacheFilePath($logicalPath, $sourcePath);
-        $configCache = new ConfigCache($cachePath, $this->debug);
-
-        if ($configCache->isFresh()) {
-            return unserialize((new Filesystem())->readFile($cachePath), ['allowed_classes' => true]);
+    }
+    public function create_mapped_asset(string $logical_path, string $source_path): ?Mapped_Asset
+    {
+        $cache_path = $this->get_cache_file_path($logical_path, $source_path);
+        $config_cache = new Config_Cache($cache_path, $this->debug);
+        if ($config_cache->is_fresh()) {
+            return unserialize((new Filesystem())->read_file($cache_path), ['allowed_classes' => true]);
         }
-
-        $mappedAsset = $this->innerFactory->createMappedAsset($logicalPath, $sourcePath);
-
-        if (!$mappedAsset) {
+        $mapped_asset = $this->inner_factory->create_mapped_asset($logical_path, $source_path);
+        if (!$mapped_asset) {
             return null;
         }
-
-        $resources = $this->collectResourcesFromAsset($mappedAsset);
-        $configCache->write(serialize($mappedAsset), $resources);
-
-        return $mappedAsset;
+        $resources = $this->collect_resources_from_asset($mapped_asset);
+        $config_cache->write(serialize($mapped_asset), $resources);
+        return $mapped_asset;
     }
-
-    private function getCacheFilePath(string $logicalPath, string $sourcePath): string
+    private function get_cache_file_path(string $logical_path, string $source_path): string
     {
-        return $this->cacheDir.'/'.hash('xxh128', $logicalPath.':'.$sourcePath).'.php';
+        return $this->cache_dir . '/' . hash('xxh128', $logical_path . ':' . $source_path) . '.php';
     }
-
     /**
      * @return ResourceInterface[]
      */
-    private function collectResourcesFromAsset(MappedAsset $mappedAsset): array
+    private function collect_resources_from_asset(Mapped_Asset $mapped_asset): array
     {
-        $resources = array_map(static fn (string $path): \Symfony\Component\Config\Resource\DirectoryResource|\Symfony\Component\Config\Resource\FileResource => is_dir($path) ? new DirectoryResource($path) : new FileResource($path), $mappedAsset->getFileDependencies());
-        $resources[] = new FileResource($mappedAsset->sourcePath);
-
-        foreach ($mappedAsset->getDependencies() as $assetDependency) {
-            $resources = array_merge($resources, $this->collectResourcesFromAsset($assetDependency));
+        $resources = array_map(static fn(string $path): \Symfony\Component\Config\Resource\Directory_Resource|\Symfony\Component\Config\Resource\File_Resource => is_dir($path) ? new Directory_Resource($path) : new File_Resource($path), $mapped_asset->get_file_dependencies());
+        $resources[] = new File_Resource($mapped_asset->source_path);
+        foreach ($mapped_asset->get_dependencies() as $asset_dependency) {
+            $resources = array_merge($resources, $this->collect_resources_from_asset($asset_dependency));
         }
-
-        foreach ($mappedAsset->getJavaScriptImports() as $import) {
-            $resources[] = new FileExistenceResource($import->assetSourcePath);
+        foreach ($mapped_asset->get_java_script_imports() as $import) {
+            $resources[] = new File_Existence_Resource($import->asset_source_path);
         }
-
         return $resources;
     }
 }

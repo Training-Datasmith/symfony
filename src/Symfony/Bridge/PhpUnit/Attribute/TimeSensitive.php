@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Bridge\PhpUnit\Attribute;
+namespace Symfony\Bridge\Php_Unit\Attribute;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
-final readonly class TimeSensitive
+final readonly class Time_Sensitive
 {
-    public function __construct(
-        public ?string $class = null,
-    ) {
+    public function __construct(public ?string $class = null)
+    {
     }
 }

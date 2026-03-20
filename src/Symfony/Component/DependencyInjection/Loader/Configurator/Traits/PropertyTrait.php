@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,10 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator\Traits;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
-
-trait PropertyTrait
+trait Property_Trait
 {
     /**
      * Sets a specific property.
@@ -22,8 +20,7 @@ trait PropertyTrait
      */
     final public function property(string $name, mixed $value): static
     {
-        $this->definition->setProperty($name, static::processValue($value, true));
-
+        $this->definition->set_property($name, static::process_value($value, true));
         return $this;
     }
 }

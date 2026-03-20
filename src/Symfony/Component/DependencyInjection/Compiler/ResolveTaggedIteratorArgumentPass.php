@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,35 +9,28 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
-
+use Symfony\Component\Dependency_Injection\Argument\Tagged_Iterator_Argument;
 /**
  * Resolves all TaggedIteratorArgument arguments.
  *
  * @author Roland Franssen <franssen.roland@gmail.com>
  */
-class ResolveTaggedIteratorArgumentPass extends AbstractRecursivePass
+class Resolve_Tagged_Iterator_Argument_Pass extends Abstract_Recursive_Pass
 {
-    use PriorityTaggedServiceTrait;
-
-    protected bool $skipScalars = true;
-
-    protected function processValue(mixed $value, bool $isRoot = false): mixed
+    use Priority_Tagged_Service_Trait;
+    protected bool $skip_scalars = true;
+    protected function process_value(mixed $value, bool $is_root = false): mixed
     {
-        if (!$value instanceof TaggedIteratorArgument) {
-            return parent::processValue($value, $isRoot);
+        if (!$value instanceof Tagged_Iterator_Argument) {
+            return parent::process_value($value, $is_root);
         }
-
-        $exclude = $value->getExclude();
-        if ($value->excludeSelf()) {
-            $exclude[] = $this->currentId;
+        $exclude = $value->get_exclude();
+        if ($value->exclude_self()) {
+            $exclude[] = $this->current_id;
         }
-
-        $value->setValues($this->findAndSortTaggedServices($value, $this->container, $exclude));
-
+        $value->set_values($this->find_and_sort_tagged_services($value, $this->container, $exclude));
         return $value;
     }
 }

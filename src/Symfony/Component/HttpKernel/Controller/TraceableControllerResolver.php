@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,29 +9,23 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Controller;
 
-namespace Symfony\Component\HttpKernel\Controller;
-
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Http_Foundation\Request;
 use Symfony\Component\Stopwatch\Stopwatch;
-
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class TraceableControllerResolver implements ControllerResolverInterface
+class Traceable_Controller_Resolver implements Controller_Resolver_Interface
 {
-    public function __construct(
-        private readonly ControllerResolverInterface $resolver,
-        private readonly Stopwatch $stopwatch,
-    ) {
+    public function __construct(private readonly Controller_Resolver_Interface $resolver, private readonly Stopwatch $stopwatch)
+    {
     }
-
-    public function getController(Request $request): callable|false
+    public function get_controller(Request $request): callable|false
     {
         $e = $this->stopwatch->start('controller.get_callable');
-
         try {
-            return $this->resolver->getController($request);
+            return $this->resolver->get_controller($request);
         } finally {
             $e->stop();
         }

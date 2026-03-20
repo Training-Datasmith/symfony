@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\ExpressionLanguage;
+namespace Symfony\Component\Expression_Language;
 
 /**
  * Lexes an expression.
@@ -25,51 +23,38 @@ class Lexer
      *
      * @throws SyntaxError
      */
-    public function tokenize(string $expression): TokenStream
+    public function tokenize(string $expression): Token_Stream
     {
         $expression = str_replace(["\r", "\n", "\t", "\v", "\f"], ' ', $expression);
         $cursor = 0;
         $tokens = [];
         $brackets = [];
         $end = \strlen($expression);
-
         while ($cursor < $end) {
             if (' ' == $expression[$cursor]) {
                 ++$cursor;
-
                 continue;
             }
-
-            if (preg_match(
-                '/
+            if (preg_match('/
                 (?(DEFINE)(?P<LNUM>[0-9]+(_[0-9]+)*))
-                (?:\.(?&LNUM)|(?&LNUM)(?:\.(?!\.)(?&LNUM)?)?)(?:[eE][+-]?(?&LNUM))?/Ax',
-                $expression,
-                $match,
-                0,
-                $cursor
-            )
-            ) {
+                (?:\.(?&LNUM)|(?&LNUM)(?:\.(?!\.)(?&LNUM)?)?)(?:[eE][+-]?(?&LNUM))?/Ax', $expression, $match, 0, $cursor)) {
                 // numbers
                 $tokens[] = new Token(Token::NUMBER_TYPE, 0 + str_replace('_', '', $match[0]), $cursor + 1);
                 $cursor += \strlen($match[0]);
             } elseif (str_contains('([{', $expression[$cursor])) {
                 // opening bracket
                 $brackets[] = [$expression[$cursor], $cursor];
-
                 $tokens[] = new Token(Token::PUNCTUATION_TYPE, $expression[$cursor], $cursor + 1);
                 ++$cursor;
             } elseif (str_contains(')]}', $expression[$cursor])) {
                 // closing bracket
                 if (!$brackets) {
-                    throw new SyntaxError(\sprintf('Unexpected "%s".', $expression[$cursor]), $cursor, $expression);
+                    throw new Syntax_Error(\sprintf('Unexpected "%s".', $expression[$cursor]), $cursor, $expression);
                 }
-
                 [$expect, $cur] = array_pop($brackets);
                 if ($expression[$cursor] != strtr($expect, '([{', ')]}')) {
-                    throw new SyntaxError(\sprintf('Unclosed "%s".', $expect), $cur, $expression);
+                    throw new Syntax_Error(\sprintf('Unclosed "%s".', $expect), $cur, $expression);
                 }
-
                 $tokens[] = new Token(Token::PUNCTUATION_TYPE, $expression[$cursor], $cursor + 1);
                 ++$cursor;
             } elseif (preg_match('/"([^"\\\\]*(?>(?:\\\\.[^"\\\\]*))*)"|\'([^\'\\\\]*(?>(?:\\\\.[^\'\\\\]*))*)\'/As', $expression, $match, 0, $cursor)) {
@@ -101,17 +86,14 @@ class Lexer
                 $cursor += \strlen($match[0]);
             } else {
                 // unlexable
-                throw new SyntaxError(\sprintf('Unexpected character "%s".', $expression[$cursor]), $cursor, $expression);
+                throw new Syntax_Error(\sprintf('Unexpected character "%s".', $expression[$cursor]), $cursor, $expression);
             }
         }
-
         $tokens[] = new Token(Token::EOF_TYPE, null, $cursor + 1);
-
         if ($brackets) {
             [$expect, $cur] = array_pop($brackets);
-            throw new SyntaxError(\sprintf('Unclosed "%s".', $expect), $cur, $expression);
+            throw new Syntax_Error(\sprintf('Unclosed "%s".', $expect), $cur, $expression);
         }
-
-        return new TokenStream($tokens, $expression);
+        return new Token_Stream($tokens, $expression);
     }
 }

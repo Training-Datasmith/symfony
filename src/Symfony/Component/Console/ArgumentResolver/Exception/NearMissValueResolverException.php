@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,13 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\Console\ArgumentResolver\Exception;
+namespace Symfony\Component\Console\Argument_Resolver\Exception;
 
 /**
  * Lets value resolvers tell when an argument could be under their watch but failed to be resolved.
  *
  * Throwing this exception inside `ValueResolverInterface::resolve` does not interrupt the value resolvers chain.
  */
-final class NearMissValueResolverException extends \RuntimeException
+final class Near_Miss_Value_Resolver_Exception extends \RuntimeException
 {
 }

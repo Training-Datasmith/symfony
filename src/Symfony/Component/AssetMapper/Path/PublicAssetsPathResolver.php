@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,22 +9,18 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Asset_Mapper\Path;
 
-namespace Symfony\Component\AssetMapper\Path;
-
-class PublicAssetsPathResolver implements PublicAssetsPathResolverInterface
+class Public_Assets_Path_Resolver implements Public_Assets_Path_Resolver_Interface
 {
-    private readonly string $publicPrefix;
-
-    public function __construct(
-        string $publicPrefix = '/assets/',
-    ) {
-        // ensure that the public prefix always starts and ends with a single slash
-        $this->publicPrefix = '/'.trim($publicPrefix, '/').'/';
-    }
-
-    public function resolvePublicPath(string $logicalPath): string
+    private readonly string $public_prefix;
+    public function __construct(string $public_prefix = '/assets/')
     {
-        return $this->publicPrefix.ltrim($logicalPath, '/');
+        // ensure that the public prefix always starts and ends with a single slash
+        $this->public_prefix = '/' . trim($public_prefix, '/') . '/';
+    }
+    public function resolve_public_path(string $logical_path): string
+    {
+        return $this->public_prefix . ltrim($logical_path, '/');
     }
 }

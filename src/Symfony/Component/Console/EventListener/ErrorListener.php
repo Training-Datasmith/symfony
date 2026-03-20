@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,82 +9,61 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Console\Event_Listener;
 
-namespace Symfony\Component\Console\EventListener;
-
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Console\ConsoleEvents;
-use Symfony\Component\Console\Event\ConsoleErrorEvent;
-use Symfony\Component\Console\Event\ConsoleEvent;
-use Symfony\Component\Console\Event\ConsoleTerminateEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-
+use Psr\Log\Logger_Interface;
+use Symfony\Component\Console\Console_Events;
+use Symfony\Component\Console\Event\Console_Error_Event;
+use Symfony\Component\Console\Event\Console_Event;
+use Symfony\Component\Console\Event\Console_Terminate_Event;
+use Symfony\Component\Event_Dispatcher\Event_Subscriber_Interface;
 /**
  * @author James Halsall <james.t.halsall@googlemail.com>
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-class ErrorListener implements EventSubscriberInterface
+class Error_Listener implements Event_Subscriber_Interface
 {
-    public function __construct(
-        private readonly ?LoggerInterface $logger = null,
-    ) {
+    public function __construct(private readonly ?Logger_Interface $logger = null)
+    {
     }
-
-    public function onConsoleError(ConsoleErrorEvent $event): void
+    public function on_console_error(Console_Error_Event $event): void
     {
         if (null === $this->logger) {
             return;
         }
-
-        $error = $event->getError();
-
-        if (!$inputString = self::getInputString($event)) {
-            $this->logger->critical('An error occurred while using the console. Message: "{message}"', ['exception' => $error, 'message' => $error->getMessage()]);
-
+        $error = $event->get_error();
+        if (!$input_string = self::get_input_string($event)) {
+            $this->logger->critical('An error occurred while using the console. Message: "{message}"', ['exception' => $error, 'message' => $error->get_message()]);
             return;
         }
-
-        $this->logger->critical('Error thrown while running command "{command}". Message: "{message}"', ['exception' => $error, 'command' => $inputString, 'message' => $error->getMessage()]);
+        $this->logger->critical('Error thrown while running command "{command}". Message: "{message}"', ['exception' => $error, 'command' => $input_string, 'message' => $error->get_message()]);
     }
-
-    public function onConsoleTerminate(ConsoleTerminateEvent $event): void
+    public function on_console_terminate(Console_Terminate_Event $event): void
     {
         if (null === $this->logger) {
             return;
         }
-
-        $exitCode = $event->getExitCode();
-
-        if (0 === $exitCode) {
+        $exit_code = $event->get_exit_code();
+        if (0 === $exit_code) {
             return;
         }
-
-        if (!$inputString = self::getInputString($event)) {
-            $this->logger->debug('The console exited with code "{code}"', ['code' => $exitCode]);
-
+        if (!$input_string = self::get_input_string($event)) {
+            $this->logger->debug('The console exited with code "{code}"', ['code' => $exit_code]);
             return;
         }
-
-        $this->logger->debug('Command "{command}" exited with code "{code}"', ['command' => $inputString, 'code' => $exitCode]);
+        $this->logger->debug('Command "{command}" exited with code "{code}"', ['command' => $input_string, 'code' => $exit_code]);
     }
-
-    public static function getSubscribedEvents(): array
+    public static function get_subscribed_events(): array
     {
-        return [
-            ConsoleEvents::ERROR => ['onConsoleError', -128],
-            ConsoleEvents::TERMINATE => ['onConsoleTerminate', -128],
-        ];
+        return [Console_Events::ERROR => ['onConsoleError', -128], Console_Events::TERMINATE => ['onConsoleTerminate', -128]];
     }
-
-    private static function getInputString(ConsoleEvent $event): string
+    private static function get_input_string(Console_Event $event): string
     {
-        $commandName = $event->getCommand()?->getName();
-        $inputString = (string) $event->getInput();
-
-        if ($commandName) {
-            return str_replace(["'$commandName'", "\"$commandName\""], $commandName, $inputString);
+        $command_name = $event->get_command()?->get_name();
+        $input_string = (string) $event->get_input();
+        if ($command_name) {
+            return str_replace(["'{$command_name}'", "\"{$command_name}\""], $command_name, $input_string);
         }
-
-        return $inputString;
+        return $input_string;
     }
 }

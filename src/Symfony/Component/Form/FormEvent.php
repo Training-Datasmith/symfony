@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,42 +9,35 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
-use Symfony\Contracts\EventDispatcher\Event;
-
+use Symfony\Contracts\Event_Dispatcher\Event;
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class FormEvent extends Event
+class Form_Event extends Event
 {
-    public function __construct(
-        private readonly FormInterface $form,
-        protected mixed $data,
-    ) {
+    public function __construct(private readonly Form_Interface $form, protected mixed $data)
+    {
     }
-
     /**
      * Returns the form at the source of the event.
      */
-    public function getForm(): FormInterface
+    public function get_form(): Form_Interface
     {
         return $this->form;
     }
-
     /**
      * Returns the data associated with this event.
      */
-    public function getData(): mixed
+    public function get_data(): mixed
     {
         return $this->data;
     }
-
     /**
      * Allows updating with some filtered data.
      */
-    public function setData(mixed $data): void
+    public function set_data(mixed $data): void
     {
         $this->data = $data;
     }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Console\Argument_Resolver;
 
-namespace Symfony\Component\Console\ArgumentResolver;
-
-use Symfony\Component\Console\ArgumentResolver\Exception\ResolverNotFoundException;
-use Symfony\Component\Console\Input\InputInterface;
-
+use Symfony\Component\Console\Argument_Resolver\Exception\Resolver_Not_Found_Exception;
+use Symfony\Component\Console\Input\Input_Interface;
 /**
  * Determines the arguments for a specific Console Command.
  *
@@ -23,7 +20,7 @@ use Symfony\Component\Console\Input\InputInterface;
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Nicolas Grekas <p@tchwork.com>
  */
-interface ArgumentResolverInterface
+interface Argument_Resolver_Interface
 {
     /**
      * Returns the arguments to pass to the Console Command after resolution.
@@ -31,5 +28,5 @@ interface ArgumentResolverInterface
      * @throws \RuntimeException         When no value could be provided for a required argument
      * @throws ResolverNotFoundException
      */
-    public function getArguments(InputInterface $input, callable $command, ?\ReflectionFunctionAbstract $reflector = null): array;
+    public function get_arguments(Input_Interface $input, callable $command, ?\Reflection_Function_Abstract $reflector = null): array;
 }

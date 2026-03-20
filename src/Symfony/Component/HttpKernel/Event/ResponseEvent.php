@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event;
 
-namespace Symfony\Component\HttpKernel\Event;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Response;
+use Symfony\Component\Http_Kernel\Http_Kernel_Interface;
 /**
  * Allows to filter a Response object.
  *
@@ -26,24 +23,17 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-final class ResponseEvent extends KernelEvent
+final class Response_Event extends Kernel_Event
 {
-    public function __construct(
-        HttpKernelInterface $kernel,
-        Request $request,
-        int $requestType,
-        private Response $response,
-        public readonly ?ControllerArgumentsMetadata $controllerMetadata = null,
-    ) {
-        parent::__construct($kernel, $request, $requestType);
+    public function __construct(Http_Kernel_Interface $kernel, Request $request, int $request_type, private Response $response, public readonly ?Controller_Arguments_Metadata $controller_metadata = null)
+    {
+        parent::__construct($kernel, $request, $request_type);
     }
-
-    public function getResponse(): Response
+    public function get_response(): Response
     {
         return $this->response;
     }
-
-    public function setResponse(Response $response): void
+    public function set_response(Response $response): void
     {
         $this->response = $response;
     }

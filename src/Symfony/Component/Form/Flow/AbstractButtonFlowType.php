@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,19 +9,17 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Flow;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Flow\Type\ButtonFlowType;
-
+use Symfony\Component\Form\Abstract_Type;
+use Symfony\Component\Form\Flow\Type\Button_Flow_Type;
 /**
  * @author Yonel Ceruto <open@yceruto.dev>
  */
-abstract class AbstractButtonFlowType extends AbstractType implements ButtonFlowTypeInterface
+abstract class Abstract_Button_Flow_Type extends Abstract_Type implements Button_Flow_Type_Interface
 {
-    public function getParent(): string
+    public function get_parent(): string
     {
-        return ButtonFlowType::class;
+        return Button_Flow_Type::class;
     }
 }

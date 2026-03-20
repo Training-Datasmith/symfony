@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,285 +9,229 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition\Dumper;
 
-use Symfony\Component\Config\Definition\ArrayNode;
-use Symfony\Component\Config\Definition\BaseNode;
-use Symfony\Component\Config\Definition\BooleanNode;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\Config\Definition\EnumNode;
-use Symfony\Component\Config\Definition\FloatNode;
-use Symfony\Component\Config\Definition\IntegerNode;
-use Symfony\Component\Config\Definition\NodeInterface;
-use Symfony\Component\Config\Definition\PrototypedArrayNode;
-use Symfony\Component\Config\Definition\ScalarNode;
-
+use Symfony\Component\Config\Definition\Array_Node;
+use Symfony\Component\Config\Definition\Base_Node;
+use Symfony\Component\Config\Definition\Boolean_Node;
+use Symfony\Component\Config\Definition\Configuration_Interface;
+use Symfony\Component\Config\Definition\Enum_Node;
+use Symfony\Component\Config\Definition\Float_Node;
+use Symfony\Component\Config\Definition\Integer_Node;
+use Symfony\Component\Config\Definition\Node_Interface;
+use Symfony\Component\Config\Definition\Prototyped_Array_Node;
+use Symfony\Component\Config\Definition\Scalar_Node;
 /**
  * Dumps an XML reference configuration for the given configuration/node instance.
  *
  * @author Wouter J <waldio.webdesign@gmail.com>
  */
-class XmlReferenceDumper
+class Xml_Reference_Dumper
 {
     private ?string $reference = null;
-
-    public function dump(ConfigurationInterface $configuration, ?string $namespace = null): string
+    public function dump(Configuration_Interface $configuration, ?string $namespace = null): string
     {
-        return $this->dumpNode($configuration->getConfigTreeBuilder()->buildTree(), $namespace);
+        return $this->dump_node($configuration->get_config_tree_builder()->build_tree(), $namespace);
     }
-
-    public function dumpNode(NodeInterface $node, ?string $namespace = null): string
+    public function dump_node(Node_Interface $node, ?string $namespace = null): string
     {
         $this->reference = '';
-        $this->writeNode($node, 0, true, $namespace);
+        $this->write_node($node, 0, true, $namespace);
         $ref = $this->reference;
         $this->reference = null;
-
         return $ref;
     }
-
-    private function writeNode(NodeInterface $node, int $depth = 0, bool $root = false, ?string $namespace = null): void
+    private function write_node(Node_Interface $node, int $depth = 0, bool $root = false, ?string $namespace = null): void
     {
-        $rootName = ($root ? 'config' : $node->getName());
-        $rootNamespace = ($namespace ?: ($root ? 'http://example.org/schema/dic/'.$node->getName() : null));
-
+        $root_name = $root ? 'config' : $node->get_name();
+        $root_namespace = $namespace ?: ($root ? 'http://example.org/schema/dic/' . $node->get_name() : null);
         // xml remapping
-        if ($node->getParent()) {
-            $remapping = array_filter($node->getParent()->getXmlRemappings(), static fn (array $mapping): bool => $rootName === $mapping[1]);
-
+        if ($node->get_parent()) {
+            $remapping = array_filter($node->get_parent()->get_xml_remappings(), static fn(array $mapping): bool => $root_name === $mapping[1]);
             if (\count($remapping)) {
                 [$singular] = current($remapping);
-                $rootName = $singular;
+                $root_name = $singular;
             }
         }
-        $rootName = str_replace('_', '-', $rootName);
-
-        $rootAttributes = [];
-        $rootAttributeComments = [];
-        $rootChildren = [];
-        $rootComments = [];
-
-        if ($node instanceof ArrayNode) {
-            $children = $node->getChildren();
-
+        $root_name = str_replace('_', '-', $root_name);
+        $root_attributes = [];
+        $root_attribute_comments = [];
+        $root_children = [];
+        $root_comments = [];
+        if ($node instanceof Array_Node) {
+            $children = $node->get_children();
             // comments about the root node
-            if ($rootInfo = $node->getInfo()) {
-                $rootComments[] = $rootInfo;
+            if ($root_info = $node->get_info()) {
+                $root_comments[] = $root_info;
             }
-
-            if ($rootNamespace) {
-                $rootComments[] = 'Namespace: '.$rootNamespace;
+            if ($root_namespace) {
+                $root_comments[] = 'Namespace: ' . $root_namespace;
             }
-
             // render prototyped nodes
-            if ($node instanceof PrototypedArrayNode) {
-                $prototype = $node->getPrototype();
-
+            if ($node instanceof Prototyped_Array_Node) {
+                $prototype = $node->get_prototype();
                 $info = 'prototype';
-                if (null !== $prototype->getInfo()) {
-                    $info .= ': '.$prototype->getInfo();
+                if (null !== $prototype->get_info()) {
+                    $info .= ': ' . $prototype->get_info();
                 }
-                array_unshift($rootComments, $info);
-
-                if ($key = $node->getKeyAttribute()) {
-                    $rootAttributes[$key] = str_replace('-', ' ', $rootName).' '.$key;
+                array_unshift($root_comments, $info);
+                if ($key = $node->get_key_attribute()) {
+                    $root_attributes[$key] = str_replace('-', ' ', $root_name) . ' ' . $key;
                 }
-
-                if ($prototype instanceof PrototypedArrayNode) {
-                    $prototype->setName($key ?? '');
+                if ($prototype instanceof Prototyped_Array_Node) {
+                    $prototype->set_name($key ?? '');
                     $children = [$key => $prototype];
-                } elseif ($prototype instanceof ArrayNode) {
-                    $children = $prototype->getChildren();
+                } elseif ($prototype instanceof Array_Node) {
+                    $children = $prototype->get_children();
+                } else if ($prototype->has_default_value()) {
+                    $prototype_value = $prototype->get_default_value();
                 } else {
-                    if ($prototype->hasDefaultValue()) {
-                        $prototypeValue = $prototype->getDefaultValue();
-                    } else {
-                        $prototypeValue = match ($prototype::class) {
-                            ScalarNode::class => 'scalar value',
-                            FloatNode::class,
-                            IntegerNode::class => 'numeric value',
-                            BooleanNode::class => 'true|false',
-                            EnumNode::class => $prototype->getPermissibleValues('|'),
-                            default => 'value',
-                        };
-                    }
+                    $prototype_value = match ($prototype::class) {
+                        Scalar_Node::class => 'scalar value',
+                        Float_Node::class, Integer_Node::class => 'numeric value',
+                        Boolean_Node::class => 'true|false',
+                        Enum_Node::class => $prototype->get_permissible_values('|'),
+                        default => 'value',
+                    };
                 }
             }
-
             // get attributes and elements
             foreach ($children as $child) {
-                if ($child instanceof ArrayNode) {
+                if ($child instanceof Array_Node) {
                     // get elements
-                    $rootChildren[] = $child;
-
+                    $root_children[] = $child;
                     continue;
                 }
-
                 // get attributes
-
                 // metadata
-                $name = str_replace('_', '-', $child->getName());
-                $value = '%%%%not_defined%%%%'; // use a string which isn't used in the normal world
-
+                $name = str_replace('_', '-', $child->get_name());
+                $value = '%%%%not_defined%%%%';
+                // use a string which isn't used in the normal world
                 // comments
                 $comments = [];
-                if ($child instanceof BaseNode && $info = $child->getInfo()) {
+                if ($child instanceof Base_Node && $info = $child->get_info()) {
                     $comments[] = $info;
                 }
-
-                if ($child instanceof BaseNode && $example = $child->getExample()) {
-                    $comments[] = 'Example: '.(\is_array($example) ? implode(', ', $example) : $example);
+                if ($child instanceof Base_Node && $example = $child->get_example()) {
+                    $comments[] = 'Example: ' . (\is_array($example) ? implode(', ', $example) : $example);
                 }
-
-                if ($child->isRequired()) {
+                if ($child->is_required()) {
                     $comments[] = 'Required';
                 }
-
-                if ($child instanceof BaseNode && $child->isDeprecated()) {
-                    $comments[] = \sprintf('Deprecated (%s)', $child->getDeprecationMessage($node));
+                if ($child instanceof Base_Node && $child->is_deprecated()) {
+                    $comments[] = \sprintf('Deprecated (%s)', $child->get_deprecation_message($node));
                 }
-
-                if ($child instanceof EnumNode) {
-                    $comments[] = 'One of '.$child->getPermissibleValues('; ');
+                if ($child instanceof Enum_Node) {
+                    $comments[] = 'One of ' . $child->get_permissible_values('; ');
                 }
-
                 if (\count($comments)) {
-                    $rootAttributeComments[$name] = implode(";\n", $comments);
+                    $root_attribute_comments[$name] = implode(";\n", $comments);
                 }
-
                 // default values
-                if ($child->hasDefaultValue()) {
-                    $value = $child->getDefaultValue();
+                if ($child->has_default_value()) {
+                    $value = $child->get_default_value();
                 }
-
                 // append attribute
-                $rootAttributes[$name] = $value;
+                $root_attributes[$name] = $value;
             }
         }
-
         // render comments
-
         // root node comment
-        if (\count($rootComments)) {
-            foreach ($rootComments as $comment) {
-                $this->writeLine('<!-- '.$comment.' -->', $depth);
+        if (\count($root_comments)) {
+            foreach ($root_comments as $comment) {
+                $this->write_line('<!-- ' . $comment . ' -->', $depth);
             }
         }
-
         // attribute comments
-        if (\count($rootAttributeComments)) {
-            foreach ($rootAttributeComments as $attrName => $comment) {
-                $commentDepth = $depth + 4 + \strlen($attrName) + 2;
-                $commentLines = explode("\n", $comment);
-                $multiline = (\count($commentLines) > 1);
-                $comment = implode(\PHP_EOL.str_repeat(' ', $commentDepth), $commentLines);
-
+        if (\count($root_attribute_comments)) {
+            foreach ($root_attribute_comments as $attr_name => $comment) {
+                $comment_depth = $depth + 4 + \strlen($attr_name) + 2;
+                $comment_lines = explode("\n", $comment);
+                $multiline = \count($comment_lines) > 1;
+                $comment = implode(\PHP_EOL . str_repeat(' ', $comment_depth), $comment_lines);
                 if ($multiline) {
-                    $this->writeLine('<!--', $depth);
-                    $this->writeLine($attrName.': '.$comment, $depth + 4);
-                    $this->writeLine('-->', $depth);
+                    $this->write_line('<!--', $depth);
+                    $this->write_line($attr_name . ': ' . $comment, $depth + 4);
+                    $this->write_line('-->', $depth);
                 } else {
-                    $this->writeLine('<!-- '.$attrName.': '.$comment.' -->', $depth);
+                    $this->write_line('<!-- ' . $attr_name . ': ' . $comment . ' -->', $depth);
                 }
             }
         }
-
         // render start tag + attributes
-        $rootIsVariablePrototype = isset($prototypeValue);
-        $rootIsEmptyTag = (0 === \count($rootChildren) && !$rootIsVariablePrototype);
-        $rootOpenTag = '<'.$rootName;
-        if (1 >= ($attributesCount = \count($rootAttributes))) {
-            if (1 === $attributesCount) {
-                $rootOpenTag .= \sprintf(' %s="%s"', current(array_keys($rootAttributes)), $this->writeValue(current($rootAttributes)));
+        $root_is_variable_prototype = isset($prototype_value);
+        $root_is_empty_tag = 0 === \count($root_children) && !$root_is_variable_prototype;
+        $root_open_tag = '<' . $root_name;
+        if (1 >= $attributes_count = \count($root_attributes)) {
+            if (1 === $attributes_count) {
+                $root_open_tag .= \sprintf(' %s="%s"', current(array_keys($root_attributes)), $this->write_value(current($root_attributes)));
             }
-
-            $rootOpenTag .= $rootIsEmptyTag ? ' />' : '>';
-
-            if ($rootIsVariablePrototype) {
-                $rootOpenTag .= $prototypeValue.'</'.$rootName.'>';
+            $root_open_tag .= $root_is_empty_tag ? ' />' : '>';
+            if ($root_is_variable_prototype) {
+                $root_open_tag .= $prototype_value . '</' . $root_name . '>';
             }
-
-            $this->writeLine($rootOpenTag, $depth);
+            $this->write_line($root_open_tag, $depth);
         } else {
-            $this->writeLine($rootOpenTag, $depth);
-
+            $this->write_line($root_open_tag, $depth);
             $i = 1;
-
-            foreach ($rootAttributes as $attrName => $attrValue) {
-                $attr = \sprintf('%s="%s"', $attrName, $this->writeValue($attrValue));
-
-                $this->writeLine($attr, $depth + 4);
-
-                if ($attributesCount === $i++) {
-                    $this->writeLine($rootIsEmptyTag ? '/>' : '>', $depth);
-
-                    if ($rootIsVariablePrototype) {
-                        $rootOpenTag .= $prototypeValue.'</'.$rootName.'>';
+            foreach ($root_attributes as $attr_name => $attr_value) {
+                $attr = \sprintf('%s="%s"', $attr_name, $this->write_value($attr_value));
+                $this->write_line($attr, $depth + 4);
+                if ($attributes_count === $i++) {
+                    $this->write_line($root_is_empty_tag ? '/>' : '>', $depth);
+                    if ($root_is_variable_prototype) {
+                        $root_open_tag .= $prototype_value . '</' . $root_name . '>';
                     }
                 }
             }
         }
-
         // render children tags
-        foreach ($rootChildren as $child) {
-            $this->writeLine('');
-            $this->writeNode($child, $depth + 4);
+        foreach ($root_children as $child) {
+            $this->write_line('');
+            $this->write_node($child, $depth + 4);
         }
-
         // render end tag
-        if (!$rootIsEmptyTag && !$rootIsVariablePrototype) {
-            $this->writeLine('');
-
-            $rootEndTag = '</'.$rootName.'>';
-            $this->writeLine($rootEndTag, $depth);
+        if (!$root_is_empty_tag && !$root_is_variable_prototype) {
+            $this->write_line('');
+            $root_end_tag = '</' . $root_name . '>';
+            $this->write_line($root_end_tag, $depth);
         }
     }
-
     /**
      * Outputs a single config reference line.
      */
-    private function writeLine(string $text, int $indent = 0): void
+    private function write_line(string $text, int $indent = 0): void
     {
         $indent = \strlen($text) + $indent;
-        $format = '%'.$indent.'s';
-
-        $this->reference .= \sprintf($format, $text).\PHP_EOL;
+        $format = '%' . $indent . 's';
+        $this->reference .= \sprintf($format, $text) . \PHP_EOL;
     }
-
     /**
      * Renders the string conversion of the value.
      */
-    private function writeValue(mixed $value): string
+    private function write_value(mixed $value): string
     {
         if ('%%%%not_defined%%%%' === $value) {
             return '';
         }
-
         if (\is_string($value) || is_numeric($value)) {
             return $value;
         }
-
         if (false === $value) {
             return 'false';
         }
-
         if (true === $value) {
             return 'true';
         }
-
         if (null === $value) {
             return 'null';
         }
-
         if (!$value) {
             return '';
         }
-
         if (\is_array($value)) {
             return implode(',', $value);
         }
-
         return '';
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Exception;
 
 /**
@@ -18,37 +16,32 @@ namespace Symfony\Component\Form\Exception;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class TransformationFailedException extends RuntimeException
+class Transformation_Failed_Exception extends RuntimeException
 {
-    private ?string $invalidMessage;
-    private array $invalidMessageParameters;
-
-    public function __construct(string $message = '', int $code = 0, ?\Throwable $previous = null, ?string $invalidMessage = null, array $invalidMessageParameters = [])
+    private ?string $invalid_message;
+    private array $invalid_message_parameters;
+    public function __construct(string $message = '', int $code = 0, ?\Throwable $previous = null, ?string $invalid_message = null, array $invalid_message_parameters = [])
     {
         parent::__construct($message, $code, $previous);
-
-        $this->setInvalidMessage($invalidMessage, $invalidMessageParameters);
+        $this->set_invalid_message($invalid_message, $invalid_message_parameters);
     }
-
     /**
      * Sets the message that will be shown to the user.
      *
      * @param string|null $invalidMessage           The message or message key
      * @param array       $invalidMessageParameters Data to be passed into the translator
      */
-    public function setInvalidMessage(?string $invalidMessage, array $invalidMessageParameters = []): void
+    public function set_invalid_message(?string $invalid_message, array $invalid_message_parameters = []): void
     {
-        $this->invalidMessage = $invalidMessage;
-        $this->invalidMessageParameters = $invalidMessageParameters;
+        $this->invalid_message = $invalid_message;
+        $this->invalid_message_parameters = $invalid_message_parameters;
     }
-
-    public function getInvalidMessage(): ?string
+    public function get_invalid_message(): ?string
     {
-        return $this->invalidMessage;
+        return $this->invalid_message;
     }
-
-    public function getInvalidMessageParameters(): array
+    public function get_invalid_message_parameters(): array
     {
-        return $this->invalidMessageParameters;
+        return $this->invalid_message_parameters;
     }
 }

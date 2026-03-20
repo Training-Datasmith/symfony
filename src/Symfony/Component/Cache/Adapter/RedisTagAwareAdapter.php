@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,24 +9,22 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Adapter;
 
-use Predis\Connection\Aggregate\ClusterInterface;
-use Predis\Connection\Aggregate\PredisCluster;
-use Predis\Connection\Aggregate\ReplicationInterface;
-use Predis\Connection\Replication\ReplicationInterface as Predis2ReplicationInterface;
-use Predis\Response\ErrorInterface;
+use Predis\Connection\Aggregate\Cluster_Interface;
+use Predis\Connection\Aggregate\Predis_Cluster;
+use Predis\Connection\Aggregate\Replication_Interface;
+use Predis\Connection\Replication\Replication_Interface as Predis2ReplicationInterface;
+use Predis\Response\Error_Interface;
 use Predis\Response\Status;
 use Relay\Relay;
-use Symfony\Component\Cache\CacheItem;
+use Symfony\Component\Cache\Cache_Item;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\Cache\Exception\LogicException;
-use Symfony\Component\Cache\Marshaller\DeflateMarshaller;
-use Symfony\Component\Cache\Marshaller\MarshallerInterface;
-use Symfony\Component\Cache\Marshaller\TagAwareMarshaller;
-use Symfony\Component\Cache\Traits\RedisTrait;
-
+use Symfony\Component\Cache\Marshaller\Deflate_Marshaller;
+use Symfony\Component\Cache\Marshaller\Marshaller_Interface;
+use Symfony\Component\Cache\Marshaller\Tag_Aware_Marshaller;
+use Symfony\Component\Cache\Traits\Redis_Trait;
 /**
  * Stores tag id <> cache id relationship as a Redis Set.
  *
@@ -47,82 +44,62 @@ use Symfony\Component\Cache\Traits\RedisTrait;
  * @author Nicolas Grekas <p@tchwork.com>
  * @author André Rømcke <andre.romcke+symfony@gmail.com>
  */
-class RedisTagAwareAdapter extends AbstractTagAwareAdapter
+class Redis_Tag_Aware_Adapter extends Abstract_Tag_Aware_Adapter
 {
-    use RedisTrait;
-
+    use Redis_Trait;
     /**
      * On cache items without a lifetime set, we set it to 100 days. This is to make sure cache items are
      * preferred to be evicted over tag Sets, if eviction policy is configured according to requirements.
      */
     private const DEFAULT_CACHE_TTL = 8640000;
-
     /**
      * detected eviction policy used on Redis server.
      */
-    private string $redisEvictionPolicy;
-
-    public function __construct(
-        \Redis|Relay|\Relay\Cluster|\RedisArray|\RedisCluster|\Predis\ClientInterface $redis,
-        private string $namespace = '',
-        int $defaultLifetime = 0,
-        ?MarshallerInterface $marshaller = null,
-    ) {
-        if ($redis instanceof \Predis\ClientInterface && $redis->getConnection() instanceof ClusterInterface && !$redis->getConnection() instanceof PredisCluster) {
-            throw new InvalidArgumentException(\sprintf('Unsupported Predis cluster connection: only "%s" is, "%s" given.', PredisCluster::class, get_debug_type($redis->getConnection())));
+    private string $redis_eviction_policy;
+    public function __construct(\Redis|Relay|\Relay\Cluster|\Redis_Array|\Redis_Cluster|\Predis\Client_Interface $redis, private string $namespace = '', int $default_lifetime = 0, ?Marshaller_Interface $marshaller = null)
+    {
+        if ($redis instanceof \Predis\Client_Interface && $redis->get_connection() instanceof Cluster_Interface && !$redis->get_connection() instanceof Predis_Cluster) {
+            throw new InvalidArgumentException(\sprintf('Unsupported Predis cluster connection: only "%s" is, "%s" given.', Predis_Cluster::class, get_debug_type($redis->get_connection())));
         }
-
-        $isRelay = $redis instanceof Relay || $redis instanceof \Relay\Cluster;
-        if ($isRelay || \defined('Redis::OPT_COMPRESSION') && \in_array($redis::class, [\Redis::class, \RedisArray::class, \RedisCluster::class], true)) {
-            $compression = $redis->getOption($isRelay ? Relay::OPT_COMPRESSION : \Redis::OPT_COMPRESSION);
-
+        $is_relay = $redis instanceof Relay || $redis instanceof \Relay\Cluster;
+        if ($is_relay || \defined('Redis::OPT_COMPRESSION') && \in_array($redis::class, [\Redis::class, \Redis_Array::class, \Redis_Cluster::class], true)) {
+            $compression = $redis->get_option($is_relay ? Relay::OPT_COMPRESSION : \Redis::OPT_COMPRESSION);
             foreach (\is_array($compression) ? $compression : [$compression] as $c) {
-                if ($isRelay ? Relay::COMPRESSION_NONE : \Redis::COMPRESSION_NONE !== $c) {
-                    throw new InvalidArgumentException(\sprintf('redis compression must be disabled when using "%s", use "%s" instead.', static::class, DeflateMarshaller::class));
+                if ($is_relay ? Relay::COMPRESSION_NONE : \Redis::COMPRESSION_NONE !== $c) {
+                    throw new InvalidArgumentException(\sprintf('redis compression must be disabled when using "%s", use "%s" instead.', static::class, Deflate_Marshaller::class));
                 }
             }
         }
-
-        $this->init($redis, $namespace, $defaultLifetime, new TagAwareMarshaller($marshaller));
+        $this->init($redis, $namespace, $default_lifetime, new Tag_Aware_Marshaller($marshaller));
     }
-
-    protected function doSave(array $values, int $lifetime, array $addTagData = [], array $delTagData = []): array
+    protected function do_save(array $values, int $lifetime, array $add_tag_data = [], array $del_tag_data = []): array
     {
-        $eviction = $this->getRedisEvictionPolicy();
+        $eviction = $this->get_redis_eviction_policy();
         if ('noeviction' !== $eviction && !str_starts_with($eviction, 'volatile-')) {
             throw new LogicException(\sprintf('Redis maxmemory-policy setting "%s" is *not* supported by RedisTagAwareAdapter, use "noeviction" or "volatile-*" eviction policies.', $eviction));
         }
-
         // serialize values
         if (!$serialized = $this->marshaller->marshall($values, $failed)) {
             return $failed;
         }
-
         // While pipeline isn't supported on RedisCluster, other setups will at least benefit from doing this in one op
-        $results = $this->pipeline(static function () use ($serialized, $lifetime, $addTagData, $delTagData, $failed) {
+        $results = $this->pipeline(static function () use ($serialized, $lifetime, $add_tag_data, $del_tag_data, $failed) {
             // Store cache items, force a ttl if none is set, as there is no MSETEX we need to set each one
             foreach ($serialized as $id => $value) {
-                yield 'setEx' => [
-                    $id,
-                    0 >= $lifetime ? self::DEFAULT_CACHE_TTL : $lifetime,
-                    $value,
-                ];
+                yield 'setEx' => [$id, 0 >= $lifetime ? self::DEFAULT_CACHE_TTL : $lifetime, $value];
             }
-
             // Add and Remove Tags
-            foreach ($addTagData as $tagId => $ids) {
+            foreach ($add_tag_data as $tag_id => $ids) {
                 if (!$failed || $ids = array_diff($ids, $failed)) {
-                    yield 'sAdd' => array_merge([$tagId], $ids);
+                    yield 'sAdd' => array_merge([$tag_id], $ids);
                 }
             }
-
-            foreach ($delTagData as $tagId => $ids) {
+            foreach ($del_tag_data as $tag_id => $ids) {
                 if (!$failed || $ids = array_diff($ids, $failed)) {
-                    yield 'sRem' => array_merge([$tagId], $ids);
+                    yield 'sRem' => array_merge([$tag_id], $ids);
                 }
             }
         });
-
         foreach ($results as $id => $result) {
             // Skip results of SADD/SREM operations, they'll be 1 or 0 depending on if set value already existed or not
             if (is_numeric($result)) {
@@ -133,40 +110,34 @@ class RedisTagAwareAdapter extends AbstractTagAwareAdapter
                 $failed[] = $id;
             }
         }
-
         return $failed;
     }
-
-    protected function doDeleteYieldTags(array $ids): iterable
+    protected function do_delete_yield_tags(array $ids): iterable
     {
         $lua = <<<'EOLUA'
-                        local v = redis.call('GET', KEYS[1])
-                        local e = redis.pcall('UNLINK', KEYS[1])
-
-                        if type(e) ~= 'number' then
-                            redis.call('DEL', KEYS[1])
-                        end
-
-                        if not v or v:len() <= 13 or v:byte(1) ~= 0x9D or v:byte(6) ~= 0 or v:byte(10) ~= 0x5F then
-                            return ''
-                        end
-
-                        return v:sub(14, 13 + v:byte(13) + v:byte(12) * 256 + v:byte(11) * 65536)
-            EOLUA;
-
+                    local v = redis.call('GET', KEYS[1])
+                    local e = redis.pcall('UNLINK', KEYS[1])
+        
+                    if type(e) ~= 'number' then
+                        redis.call('DEL', KEYS[1])
+                    end
+        
+                    if not v or v:len() <= 13 or v:byte(1) ~= 0x9D or v:byte(6) ~= 0 or v:byte(10) ~= 0x5F then
+                        return ''
+                    end
+        
+                    return v:sub(14, 13 + v:byte(13) + v:byte(12) * 256 + v:byte(11) * 65536)
+        EOLUA;
         $results = $this->pipeline(function () use ($ids, $lua) {
             foreach ($ids as $id) {
-                yield 'eval' => $this->redis instanceof \Predis\ClientInterface ? [$lua, 1, $id] : [$lua, [$id], 1];
+                yield 'eval' => $this->redis instanceof \Predis\Client_Interface ? [$lua, 1, $id] : [$lua, [$id], 1];
             }
         });
-
         foreach ($results as $id => $result) {
-            if ($result instanceof \RedisException || $result instanceof \Relay\Exception || $result instanceof ErrorInterface) {
-                CacheItem::log($this->logger, 'Failed to delete key "{key}": '.$result->getMessage(), ['key' => substr((string) $id, \strlen($this->rootNamespace)), 'exception' => $result]);
-
+            if ($result instanceof \Redis_Exception || $result instanceof \Relay\Exception || $result instanceof Error_Interface) {
+                Cache_Item::log($this->logger, 'Failed to delete key "{key}": ' . $result->get_message(), ['key' => substr((string) $id, \strlen($this->root_namespace)), 'exception' => $result]);
                 continue;
             }
-
             try {
                 yield $id => !\is_string($result) || '' === $result ? [] : $this->marshaller->unmarshall($result);
             } catch (\Exception) {
@@ -174,135 +145,115 @@ class RedisTagAwareAdapter extends AbstractTagAwareAdapter
             }
         }
     }
-
-    protected function doDeleteTagRelations(array $tagData): bool
+    protected function do_delete_tag_relations(array $tag_data): bool
     {
-        $results = $this->pipeline(static function () use ($tagData) {
-            foreach ($tagData as $tagId => $idList) {
-                array_unshift($idList, $tagId);
-                yield 'sRem' => $idList;
+        $results = $this->pipeline(static function () use ($tag_data) {
+            foreach ($tag_data as $tag_id => $id_list) {
+                array_unshift($id_list, $tag_id);
+                yield 'sRem' => $id_list;
             }
         });
         foreach ($results as $result) {
             // no-op
         }
-
         return true;
     }
-
-    protected function doInvalidate(array $tagIds): bool
+    protected function do_invalidate(array $tag_ids): bool
     {
         // This script scans the set of items linked to tag: it empties the set
         // and removes the linked items. When the set is still not empty after
         // the scan, it means we're in cluster mode and that the linked items
         // are on other nodes: we move the links to a temporary set and we
         // garbage collect that set from the client side.
-
         $lua = <<<'EOLUA'
-                        redis.replicate_commands()
-
-                        local cursor = '0'
-                        local id = KEYS[1]
-                        repeat
-                            local result = redis.call('SSCAN', id, cursor, 'COUNT', 5000);
-                            cursor = result[1];
-                            local rems = {}
-
-                            for _, v in ipairs(result[2]) do
-                                local ok, _ = pcall(redis.call, 'DEL', ARGV[1]..v)
-                                if ok then
-                                    table.insert(rems, v)
-                                end
+                    redis.replicate_commands()
+        
+                    local cursor = '0'
+                    local id = KEYS[1]
+                    repeat
+                        local result = redis.call('SSCAN', id, cursor, 'COUNT', 5000);
+                        cursor = result[1];
+                        local rems = {}
+        
+                        for _, v in ipairs(result[2]) do
+                            local ok, _ = pcall(redis.call, 'DEL', ARGV[1]..v)
+                            if ok then
+                                table.insert(rems, v)
                             end
-                            if 0 < #rems then
-                                redis.call('SREM', id, unpack(rems))
-                            end
-                        until '0' == cursor;
-
-                        redis.call('SUNIONSTORE', '{'..id..'}'..id, id)
-                        redis.call('DEL', id)
-
-                        return redis.call('SSCAN', '{'..id..'}'..id, '0', 'COUNT', 5000)
-            EOLUA;
-
-        $results = $this->pipeline(function () use ($tagIds, $lua) {
-            if ($this->redis instanceof \Predis\ClientInterface) {
-                $prefix = $this->redis->getOptions()->prefix ? $this->redis->getOptions()->prefix->getPrefix() : '';
-            } elseif (\is_array($prefix = $this->redis->getOption(($this->redis instanceof Relay || $this->redis instanceof \Relay\Cluster) ? Relay::OPT_PREFIX : \Redis::OPT_PREFIX) ?? '')) {
+                        end
+                        if 0 < #rems then
+                            redis.call('SREM', id, unpack(rems))
+                        end
+                    until '0' == cursor;
+        
+                    redis.call('SUNIONSTORE', '{'..id..'}'..id, id)
+                    redis.call('DEL', id)
+        
+                    return redis.call('SSCAN', '{'..id..'}'..id, '0', 'COUNT', 5000)
+        EOLUA;
+        $results = $this->pipeline(function () use ($tag_ids, $lua) {
+            if ($this->redis instanceof \Predis\Client_Interface) {
+                $prefix = $this->redis->get_options()->prefix ? $this->redis->get_options()->prefix->get_prefix() : '';
+            } elseif (\is_array($prefix = $this->redis->get_option($this->redis instanceof Relay || $this->redis instanceof \Relay\Cluster ? Relay::OPT_PREFIX : \Redis::OPT_PREFIX) ?? '')) {
                 $prefix = current($prefix);
             }
-
-            foreach ($tagIds as $id) {
-                yield 'eval' => $this->redis instanceof \Predis\ClientInterface ? [$lua, 1, $id, $prefix] : [$lua, [$id, $prefix], 1];
+            foreach ($tag_ids as $id) {
+                yield 'eval' => $this->redis instanceof \Predis\Client_Interface ? [$lua, 1, $id, $prefix] : [$lua, [$id, $prefix], 1];
             }
         });
-
         $lua = <<<'EOLUA'
-                        redis.replicate_commands()
-
-                        local id = KEYS[1]
-                        local cursor = table.remove(ARGV)
-                        redis.call('SREM', '{'..id..'}'..id, unpack(ARGV))
-
-                        return redis.call('SSCAN', '{'..id..'}'..id, cursor, 'COUNT', 5000)
-            EOLUA;
-
+                    redis.replicate_commands()
+        
+                    local id = KEYS[1]
+                    local cursor = table.remove(ARGV)
+                    redis.call('SREM', '{'..id..'}'..id, unpack(ARGV))
+        
+                    return redis.call('SSCAN', '{'..id..'}'..id, cursor, 'COUNT', 5000)
+        EOLUA;
         $success = true;
         foreach ($results as $id => $values) {
-            if ($values instanceof \RedisException || $values instanceof \Relay\Exception || $values instanceof ErrorInterface) {
-                CacheItem::log($this->logger, 'Failed to invalidate key "{key}": '.$values->getMessage(), ['key' => substr((string) $id, \strlen($this->namespace)), 'exception' => $values]);
+            if ($values instanceof \Redis_Exception || $values instanceof \Relay\Exception || $values instanceof Error_Interface) {
+                Cache_Item::log($this->logger, 'Failed to invalidate key "{key}": ' . $values->get_message(), ['key' => substr((string) $id, \strlen($this->namespace)), 'exception' => $values]);
                 $success = false;
-
                 continue;
             }
-
             [$cursor, $ids] = $values;
-
             while ($ids || '0' !== $cursor) {
-                $this->doDelete($ids);
-
-                $evalArgs = [$id, $cursor];
-                array_splice($evalArgs, 1, 0, $ids);
-
-                if ($this->redis instanceof \Predis\ClientInterface) {
-                    array_unshift($evalArgs, $lua, 1);
+                $this->do_delete($ids);
+                $eval_args = [$id, $cursor];
+                array_splice($eval_args, 1, 0, $ids);
+                if ($this->redis instanceof \Predis\Client_Interface) {
+                    array_unshift($eval_args, $lua, 1);
                 } else {
-                    $evalArgs = [$lua, $evalArgs, 1];
+                    $eval_args = [$lua, $eval_args, 1];
                 }
-
-                $results = $this->pipeline(static function () use ($evalArgs) {
-                    yield 'eval' => $evalArgs;
+                $results = $this->pipeline(static function () use ($eval_args) {
+                    yield 'eval' => $eval_args;
                 });
-
                 foreach ($results as [$cursor, $ids]) {
                     // no-op
                 }
             }
         }
-
         return $success;
     }
-
-    private function getRedisEvictionPolicy(): string
+    private function get_redis_eviction_policy(): string
     {
-        if (isset($this->redisEvictionPolicy)) {
-            return $this->redisEvictionPolicy;
+        if (isset($this->redis_eviction_policy)) {
+            return $this->redis_eviction_policy;
         }
-
-        $hosts = $this->getHosts();
+        $hosts = $this->get_hosts();
         $host = reset($hosts);
         if ($host instanceof \Predis\Client) {
-            $connection = $host->getConnection();
-
+            $connection = $host->get_connection();
             // Predis supports info command only on the master in replication environments
-            if ($connection instanceof ReplicationInterface) {
-                $hosts = [$host->getClientFor('master')];
-            } elseif ($connection instanceof Predis2ReplicationInterface) {
-                $connection->switchToMaster();
+            if ($connection instanceof Replication_Interface) {
+                $hosts = [$host->get_client_for('master')];
+            } elseif ($connection instanceof Predis2replication_Interface) {
+                $connection->switch_to_master();
                 $hosts = [$host];
             }
         }
-
         foreach ($hosts as $host) {
             $info = $host->info('Memory');
             if (false === $info) {
@@ -311,15 +262,12 @@ class RedisTagAwareAdapter extends AbstractTagAwareAdapter
             if (null === $info) {
                 continue;
             }
-            if ($info instanceof ErrorInterface) {
+            if ($info instanceof Error_Interface) {
                 continue;
             }
-
             $info = $info['Memory'] ?? $info;
-
-            return $this->redisEvictionPolicy = $info['maxmemory_policy'] ?? '';
+            return $this->redis_eviction_policy = $info['maxmemory_policy'] ?? '';
         }
-
-        return $this->redisEvictionPolicy = '';
+        return $this->redis_eviction_policy = '';
     }
 }

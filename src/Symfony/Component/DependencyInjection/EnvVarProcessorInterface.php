@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection;
 
-namespace Symfony\Component\DependencyInjection;
-
-use Symfony\Component\DependencyInjection\Exception\RuntimeException;
-
+use Symfony\Component\Dependency_Injection\Exception\RuntimeException;
 /**
  * The EnvVarProcessorInterface is implemented by objects that manage environment-like variables.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-interface EnvVarProcessorInterface
+interface Env_Var_Processor_Interface
 {
     /**
      * Returns the value of the given variable as managed by the current instance.
@@ -31,10 +28,9 @@ interface EnvVarProcessorInterface
      *
      * @throws RuntimeException on error
      */
-    public function getEnv(string $prefix, string $name, \Closure $getEnv): mixed;
-
+    public function get_env(string $prefix, string $name, \Closure $get_env): mixed;
     /**
      * @return array<string, string> The PHP-types managed by getEnv(), keyed by prefixes
      */
-    public static function getProvidedTypes(): array;
+    public static function get_provided_types(): array;
 }

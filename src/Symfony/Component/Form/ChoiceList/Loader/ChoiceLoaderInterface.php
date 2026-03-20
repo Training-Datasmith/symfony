@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Choice_List\Loader;
 
-namespace Symfony\Component\Form\ChoiceList\Loader;
-
-use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
-
+use Symfony\Component\Form\Choice_List\Choice_List_Interface;
 /**
  * Loads a choice list.
  *
@@ -24,7 +21,7 @@ use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface ChoiceLoaderInterface
+interface Choice_Loader_Interface
 {
     /**
      * Loads a list of choices.
@@ -36,8 +33,7 @@ interface ChoiceLoaderInterface
      * @param callable|null $value The callable which generates the values
      *                             from choices
      */
-    public function loadChoiceList(?callable $value = null): ChoiceListInterface;
-
+    public function load_choice_list(?callable $value = null): Choice_List_Interface;
     /**
      * Loads the choices corresponding to the given values.
      *
@@ -52,8 +48,7 @@ interface ChoiceLoaderInterface
      *                              values in this array are ignored
      * @param callable|null $value  The callable generating the choice values
      */
-    public function loadChoicesForValues(array $values, ?callable $value = null): array;
-
+    public function load_choices_for_values(array $values, ?callable $value = null): array;
     /**
      * Loads the values corresponding to the given choices.
      *
@@ -70,5 +65,5 @@ interface ChoiceLoaderInterface
      *
      * @return string[]
      */
-    public function loadValuesForChoices(array $choices, ?callable $value = null): array;
+    public function load_values_for_choices(array $choices, ?callable $value = null): array;
 }

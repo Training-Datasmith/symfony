@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,15 +9,13 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config;
 
-use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
-
+use Symfony\Component\Config\Exception\File_Locator_File_Not_Found_Exception;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  */
-interface FileLocatorInterface
+interface File_Locator_Interface
 {
     /**
      * Returns a full path for a given file name.
@@ -34,5 +31,5 @@ interface FileLocatorInterface
      * @throws \InvalidArgumentException        If $name is empty
      * @throws FileLocatorFileNotFoundException If a file is not found
      */
-    public function locate(string $name, ?string $currentPath = null, bool $first = true): string|array;
+    public function locate(string $name, ?string $current_path = null, bool $first = true): string|array;
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,16 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Foundation\Exception;
 
-namespace Symfony\Component\HttpFoundation\Exception;
-
-use Symfony\Component\HttpKernel\Attribute\WithHttpStatus;
-
+use Symfony\Component\Http_Kernel\Attribute\With_Http_Status;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-#[WithHttpStatus(403)]
-final class ExpiredSignedUriException extends SignedUriException
+#[With_Http_Status(403)]
+final class Expired_Signed_Uri_Exception extends Signed_Uri_Exception
 {
     /**
      * @internal

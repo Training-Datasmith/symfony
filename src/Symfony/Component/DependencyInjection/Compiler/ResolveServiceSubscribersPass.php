@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,47 +9,39 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Psr\Container\ContainerInterface;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Contracts\Service\ServiceProviderInterface;
-
+use Psr\Container\Container_Interface;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Reference;
+use Symfony\Contracts\Service\Service_Provider_Interface;
 /**
  * Compiler pass to inject their service locator to service subscribers.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ResolveServiceSubscribersPass extends AbstractRecursivePass
+class Resolve_Service_Subscribers_Pass extends Abstract_Recursive_Pass
 {
-    protected bool $skipScalars = true;
-
-    private ?string $serviceLocator = null;
-
-    protected function processValue(mixed $value, bool $isRoot = false): mixed
+    protected bool $skip_scalars = true;
+    private ?string $service_locator = null;
+    protected function process_value(mixed $value, bool $is_root = false): mixed
     {
-        if ($value instanceof Reference && $this->serviceLocator && \in_array((string) $value, [ContainerInterface::class, ServiceProviderInterface::class], true)) {
-            return new Reference($this->serviceLocator);
+        if ($value instanceof Reference && $this->service_locator && \in_array((string) $value, [Container_Interface::class, Service_Provider_Interface::class], true)) {
+            return new Reference($this->service_locator);
         }
-
         if (!$value instanceof Definition) {
-            return parent::processValue($value, $isRoot);
+            return parent::process_value($value, $is_root);
         }
-
-        $serviceLocator = $this->serviceLocator;
-        $this->serviceLocator = null;
-
-        if ($value->hasTag('container.service_subscriber.locator')) {
-            $this->serviceLocator = $value->getTag('container.service_subscriber.locator')[0]['id'];
-            $value->clearTag('container.service_subscriber.locator');
+        $service_locator = $this->service_locator;
+        $this->service_locator = null;
+        if ($value->has_tag('container.service_subscriber.locator')) {
+            $this->service_locator = $value->get_tag('container.service_subscriber.locator')[0]['id'];
+            $value->clear_tag('container.service_subscriber.locator');
         }
-
         try {
-            return parent::processValue($value);
+            return parent::process_value($value);
         } finally {
-            $this->serviceLocator = $serviceLocator;
+            $this->service_locator = $service_locator;
         }
     }
 }

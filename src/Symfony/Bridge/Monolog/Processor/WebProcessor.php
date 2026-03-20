@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Monolog\Processor;
 
-use Monolog\Processor\WebProcessor as BaseWebProcessor;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
-
+use Monolog\Processor\Web_Processor as BaseWebProcessor;
+use Symfony\Component\Event_Dispatcher\Event_Subscriber_Interface;
+use Symfony\Component\Http_Kernel\Event\Request_Event;
+use Symfony\Component\Http_Kernel\Kernel_Events;
 /**
  * WebProcessor override to read from the HttpFoundation's Request.
  *
@@ -25,26 +22,22 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * @final
  */
-class WebProcessor extends BaseWebProcessor implements EventSubscriberInterface
+class Web_Processor extends Base_Web_Processor implements Event_Subscriber_Interface
 {
-    public function __construct(?array $extraFields = null)
+    public function __construct(?array $extra_fields = null)
     {
         // Pass an empty array as the default null value would access $_SERVER
-        parent::__construct([], $extraFields);
+        parent::__construct([], $extra_fields);
     }
-
-    public function onKernelRequest(RequestEvent $event): void
+    public function on_kernel_request(Request_Event $event): void
     {
-        if ($event->isMainRequest()) {
-            $this->serverData = $event->getRequest()->server->all();
-            $this->serverData['REMOTE_ADDR'] = $event->getRequest()->getClientIp();
+        if ($event->is_main_request()) {
+            $this->server_data = $event->get_request()->server->all();
+            $this->server_data['REMOTE_ADDR'] = $event->get_request()->get_client_ip();
         }
     }
-
-    public static function getSubscribedEvents(): array
+    public static function get_subscribed_events(): array
     {
-        return [
-            KernelEvents::REQUEST => ['onKernelRequest', 4096],
-        ];
+        return [Kernel_Events::REQUEST => ['onKernelRequest', 4096]];
     }
 }

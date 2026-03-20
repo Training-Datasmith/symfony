@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition\Builder;
 
-use Symfony\Component\Config\Definition\NodeInterface;
-
+use Symfony\Component\Config\Definition\Node_Interface;
 /**
  * This is the entry class for building a config tree.
  *
@@ -22,23 +19,21 @@ use Symfony\Component\Config\Definition\NodeInterface;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class TreeBuilder implements NodeParentInterface
+class Tree_Builder implements Node_Parent_Interface
 {
-    protected ?NodeInterface $tree = null;
+    protected ?Node_Interface $tree = null;
     /**
      * @var NodeDefinition<$this>|null
      */
-    protected ?NodeDefinition $root = null;
-
+    protected ?Node_Definition $root = null;
     /**
      * @param T $type
      */
-    public function __construct(string $name, string $type = 'array', ?NodeBuilder $builder = null)
+    public function __construct(string $name, string $type = 'array', ?Node_Builder $builder = null)
     {
-        $builder ??= new NodeBuilder();
-        $this->root = $builder->node($name, $type)->setParent($this);
+        $builder ??= new Node_Builder();
+        $this->root = $builder->node($name, $type)->set_parent($this);
     }
-
     /**
      * @return (
      *    T is 'array' ? ArrayNodeDefinition<$this>
@@ -52,21 +47,18 @@ class TreeBuilder implements NodeParentInterface
      *    : NodeDefinition<$this>)))))))
      * )
      */
-    public function getRootNode(): NodeDefinition
+    public function get_root_node(): Node_Definition
     {
         return $this->root;
     }
-
-    public function buildTree(): NodeInterface
+    public function build_tree(): Node_Interface
     {
-        return $this->tree ??= $this->root->getNode(true);
+        return $this->tree ??= $this->root->get_node(true);
     }
-
-    public function setPathSeparator(string $separator): void
+    public function set_path_separator(string $separator): void
     {
         // unset last built as changing path separator changes all nodes
         $this->tree = null;
-
-        $this->root->setPathSeparator($separator);
+        $this->root->set_path_separator($separator);
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Attribute;
 
-namespace Symfony\Component\HttpKernel\Attribute;
-
-use Symfony\Component\ExpressionLanguage\Expression;
-use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\Expression_Language\Expression;
+use Symfony\Component\Http_Foundation\Request;
 /**
  * Describes the default HTTP cache headers on controllers.
  * Headers defined in the Cache attribute are ignored if they are already set
@@ -32,37 +29,31 @@ final class Cache
      * @internal
      */
     public public(set) readonly array $variables;
-
     public function __construct(
         /**
          * The expiration date as a valid date for the strtotime() function.
          */
         public ?string $expires = null,
-
         /**
          * The number of seconds that the response is considered fresh by a private
          * cache like a web browser.
          */
         public int|string|null $maxage = null,
-
         /**
          * The number of seconds that the response is considered fresh by a public
          * cache like a reverse proxy cache.
          */
         public int|string|null $smaxage = null,
-
         /**
          * If true, the contents will be stored in a public cache and served to all
          * the next requests.
          */
         public ?bool $public = null,
-
         /**
          * If true, the response is not served stale by a cache in any circumstance
          * without first revalidating with the origin.
          */
-        public bool $mustRevalidate = false,
-
+        public bool $must_revalidate = false,
         /**
          * Set "Vary" header.
          *
@@ -74,7 +65,6 @@ final class Cache
          * @var string[]
          */
         public array $vary = [],
-
         /**
          * A value evaluated to compute the Last-Modified HTTP header.
          *
@@ -85,8 +75,7 @@ final class Cache
          *
          * @var \DateTimeInterface|string|Expression|\Closure(array<string, mixed>, Request, ?object):\DateTimeInterface|null
          */
-        public \DateTimeInterface|string|Expression|\Closure|null $lastModified = null,
-
+        public \DateTimeInterface|string|Expression|\Closure|null $last_modified = null,
         /**
          * A value evaluated to compute the ETag HTTP header.
          *
@@ -98,25 +87,21 @@ final class Cache
          * @var string|Expression|\Closure(array<string, mixed>, Request, ?object):string|null
          */
         public string|Expression|\Closure|null $etag = null,
-
         /**
          * max-stale Cache-Control header
          * It can be expressed in seconds or with a relative time format (1 day, 2 weeks, ...).
          */
-        public int|string|null $maxStale = null,
-
+        public int|string|null $max_stale = null,
         /**
          * stale-while-revalidate Cache-Control header
          * It can be expressed in seconds or with a relative time format (1 day, 2 weeks, ...).
          */
-        public int|string|null $staleWhileRevalidate = null,
-
+        public int|string|null $stale_while_revalidate = null,
         /**
          * stale-if-error Cache-Control header
          * It can be expressed in seconds or with a relative time format (1 day, 2 weeks, ...).
          */
-        public int|string|null $staleIfError = null,
-
+        public int|string|null $stale_if_error = null,
         /**
          * Add the "no-store" Cache-Control directive when set to true.
          *
@@ -127,8 +112,7 @@ final class Cache
          *
          * @see https://datatracker.ietf.org/doc/html/rfc7234#section-5.2.2.3
          */
-        public ?bool $noStore = null,
-
+        public ?bool $no_store = null,
         /**
          * A value evaluated to determine whether the cache attribute should be applied.
          *
@@ -139,7 +123,8 @@ final class Cache
          *
          * @var bool|string|Expression|\Closure(array<string, mixed>, Request, ?object):bool
          */
-        public bool|string|Expression|\Closure $if = true,
-    ) {
+        public bool|string|Expression|\Closure $if = true
+    )
+    {
     }
 }

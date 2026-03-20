@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,21 +9,19 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Command;
 
-namespace Symfony\Bundle\FrameworkBundle\Command;
-
-use Symfony\Bundle\FrameworkBundle\Secrets\AbstractVault;
-use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Bundle\Framework_Bundle\Secrets\Abstract_Vault;
+use Symfony\Component\Console\Attribute\As_Command;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Completion\CompletionInput;
-use Symfony\Component\Console\Completion\CompletionSuggestions;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-
+use Symfony\Component\Console\Completion\Completion_Input;
+use Symfony\Component\Console\Completion\Completion_Suggestions;
+use Symfony\Component\Console\Input\Input_Argument;
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Console\Input\Input_Option;
+use Symfony\Component\Console\Output\Console_Output_Interface;
+use Symfony\Component\Console\Output\Output_Interface;
+use Symfony\Component\Console\Style\Symfony_Style;
 /**
  * @author Tobias Schultze <http://tobion.de>
  * @author Jérémy Derussé <jeremy@derusse.com>
@@ -32,71 +29,53 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  *
  * @internal
  */
-#[AsCommand(name: 'secrets:set', description: 'Set a secret in the vault')]
-final class SecretsSetCommand extends Command
+#[As_Command(name: 'secrets:set', description: 'Set a secret in the vault')]
+final class Secrets_Set_Command extends Command
 {
-    public function __construct(
-        private readonly AbstractVault $vault,
-        private readonly ?AbstractVault $localVault = null,
-    ) {
+    public function __construct(private readonly Abstract_Vault $vault, private readonly ?Abstract_Vault $local_vault = null)
+    {
         parent::__construct();
     }
-
     protected function configure(): void
     {
-        $this
-            ->addArgument('name', InputArgument::REQUIRED, 'The name of the secret')
-            ->addArgument('file', InputArgument::OPTIONAL, 'A file where to read the secret from or "-" for reading from STDIN')
-            ->addOption('local', 'l', InputOption::VALUE_NONE, 'Update the local vault.')
-            ->addOption('random', 'r', InputOption::VALUE_OPTIONAL, 'Generate a random value.', false)
-            ->setHelp(
-                <<<'EOF'
-                The <info>%command.name%</info> command stores a secret in the vault.
-
-                    <info>%command.full_name% <name></info>
-
-                To reference secrets in services.yaml or any other config
-                files, use <info>"%env(<name>)%"</info>.
-
-                By default, the secret value should be entered interactively.
-                Alternatively, provide a file where to read the secret from:
-
-                    <info>php %command.full_name% <name> filename</info>
-
-                Use "-" as a file name to read from STDIN:
-
-                    <info>cat filename | php %command.full_name% <name> -</info>
-
-                Use <info>--local</info> to override secrets for local needs.
-                EOF
-            )
-        ;
+        $this->add_argument('name', Input_Argument::REQUIRED, 'The name of the secret')->add_argument('file', Input_Argument::OPTIONAL, 'A file where to read the secret from or "-" for reading from STDIN')->add_option('local', 'l', Input_Option::VALUE_NONE, 'Update the local vault.')->add_option('random', 'r', Input_Option::VALUE_OPTIONAL, 'Generate a random value.', false)->set_help(<<<'EOF'
+        The <info>%command.name%</info> command stores a secret in the vault.
+        
+            <info>%command.full_name% <name></info>
+        
+        To reference secrets in services.yaml or any other config
+        files, use <info>"%env(<name>)%"</info>.
+        
+        By default, the secret value should be entered interactively.
+        Alternatively, provide a file where to read the secret from:
+        
+            <info>php %command.full_name% <name> filename</info>
+        
+        Use "-" as a file name to read from STDIN:
+        
+            <info>cat filename | php %command.full_name% <name> -</info>
+        
+        Use <info>--local</info> to override secrets for local needs.
+        EOF);
     }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(Input_Interface $input, Output_Interface $output): int
     {
-        $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
-        $io = new SymfonyStyle($input, $errOutput);
-        $name = $input->getArgument('name');
-        $vault = $input->getOption('local') ? $this->localVault : $this->vault;
-
+        $err_output = $output instanceof Console_Output_Interface ? $output->get_error_output() : $output;
+        $io = new Symfony_Style($input, $err_output);
+        $name = $input->get_argument('name');
+        $vault = $input->get_option('local') ? $this->local_vault : $this->vault;
         if (null === $vault) {
             $io->error('The local vault is disabled.');
-
             return 1;
         }
-
-        if ($this->localVault === $vault && !\array_key_exists($name, $this->vault->list())) {
+        if ($this->local_vault === $vault && !\array_key_exists($name, $this->vault->list())) {
             $io->error(\sprintf('Secret "%s" does not exist in the vault, you cannot override it locally.', $name));
-
             return 1;
         }
-
-        if (0 < $random = $input->getOption('random') ?? 16) {
+        if (0 < $random = $input->get_option('random') ?? 16) {
             $value = strtr(substr(base64_encode(random_bytes($random)), 0, $random), '+/', '-_');
-        } elseif (!$file = $input->getArgument('file')) {
-            $value = $io->askHidden('Please type the secret value');
-
+        } elseif (!$file = $input->get_argument('file')) {
+            $value = $io->ask_hidden('Please type the secret value');
             if (null === $value) {
                 $io->warning('No value provided: using empty string');
                 $value = '';
@@ -110,37 +89,29 @@ final class SecretsSetCommand extends Command
         } elseif (!is_readable($file)) {
             throw new \InvalidArgumentException(\sprintf('File is not readable: "%s".', $file));
         }
-
-        if ($vault->generateKeys()) {
-            $io->success($vault->getLastMessage());
-
+        if ($vault->generate_keys()) {
+            $io->success($vault->get_last_message());
             if ($this->vault === $vault) {
                 $io->caution('DO NOT COMMIT THE DECRYPTION KEY FOR THE PROD ENVIRONMENT⚠️');
             }
         }
-
         $vault->seal($name, $value);
-
-        $io->success($vault->getLastMessage() ?? 'Secret was successfully stored in the vault.');
-
+        $io->success($vault->get_last_message() ?? 'Secret was successfully stored in the vault.');
         if (0 < $random) {
-            $errOutput->write(' // The generated random value is: <comment>');
+            $err_output->write(' // The generated random value is: <comment>');
             $output->write($value);
-            $errOutput->writeln('</comment>');
-            $io->newLine();
+            $err_output->writeln('</comment>');
+            $io->new_line();
         }
-
-        if ($this->vault === $vault && null !== $this->localVault->reveal($name)) {
+        if ($this->vault === $vault && null !== $this->local_vault->reveal($name)) {
             $io->comment('Note that this secret is overridden in the local vault.');
         }
-
         return 0;
     }
-
-    public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void
+    public function complete(Completion_Input $input, Completion_Suggestions $suggestions): void
     {
-        if ($input->mustSuggestArgumentValuesFor('name')) {
-            $suggestions->suggestValues(array_keys($this->vault->list(false)));
+        if ($input->must_suggest_argument_values_for('name')) {
+            $suggestions->suggest_values(array_keys($this->vault->list(false)));
         }
     }
 }

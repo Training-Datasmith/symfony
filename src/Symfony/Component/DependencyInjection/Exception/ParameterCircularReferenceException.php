@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,24 +9,20 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DependencyInjection\Exception;
+namespace Symfony\Component\Dependency_Injection\Exception;
 
 /**
  * This exception is thrown when a circular reference in a parameter is detected.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ParameterCircularReferenceException extends RuntimeException
+class Parameter_Circular_Reference_Exception extends RuntimeException
 {
-    public function __construct(
-        private readonly array $parameters,
-        ?\Throwable $previous = null,
-    ) {
+    public function __construct(private readonly array $parameters, ?\Throwable $previous = null)
+    {
         parent::__construct(\sprintf('Circular reference detected for parameter "%s" ("%s" > "%s").', $parameters[0], implode('" > "', $parameters), $parameters[0]), 0, $previous);
     }
-
-    public function getParameters(): array
+    public function get_parameters(): array
     {
         return $this->parameters;
     }

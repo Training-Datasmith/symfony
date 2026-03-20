@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config;
 
-use Symfony\Component\Config\Resource\ResourceInterface;
-
+use Symfony\Component\Config\Resource\Resource_Interface;
 /**
  * Interface for ResourceCheckers.
  *
@@ -26,18 +23,17 @@ use Symfony\Component\Config\Resource\ResourceInterface;
  * @author Matthias Pigulla <mp@webfactory.de>
  * @author Benjamin Klotz <bk@webfactory.de>
  */
-interface ResourceCheckerInterface
+interface Resource_Checker_Interface
 {
     /**
      * Queries the ResourceChecker whether it can validate a given
      * resource or not.
      */
-    public function supports(ResourceInterface $metadata): bool;
-
+    public function supports(Resource_Interface $metadata): bool;
     /**
      * Validates the resource.
      *
      * @param int $timestamp The timestamp at which the cache associated with this resource was created
      */
-    public function isFresh(ResourceInterface $resource, int $timestamp): bool;
+    public function is_fresh(Resource_Interface $resource, int $timestamp): bool;
 }

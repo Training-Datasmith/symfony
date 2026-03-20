@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\CssSelector\Parser;
+namespace Symfony\Component\Css_Selector\Parser;
 
 /**
  * CSS selector token.
@@ -32,84 +30,66 @@ class Token implements \Stringable
     public const TYPE_HASH = 'hash';
     public const TYPE_NUMBER = 'number';
     public const TYPE_STRING = 'string';
-
     /**
      * @param self::TYPE_*|null $type
      */
-    public function __construct(
-        private readonly ?string $type,
-        private readonly ?string $value,
-        private readonly ?int $position,
-    ) {
+    public function __construct(private readonly ?string $type, private readonly ?string $value, private readonly ?int $position)
+    {
     }
-
     /**
      * @return self::TYPE_*|null
      */
-    public function getType(): ?string
+    public function get_type(): ?string
     {
         return $this->type;
     }
-
-    public function getValue(): ?string
+    public function get_value(): ?string
     {
         return $this->value;
     }
-
-    public function getPosition(): ?int
+    public function get_position(): ?int
     {
         return $this->position;
     }
-
-    public function isFileEnd(): bool
+    public function is_file_end(): bool
     {
         return self::TYPE_FILE_END === $this->type;
     }
-
-    public function isDelimiter(array $values = []): bool
+    public function is_delimiter(array $values = []): bool
     {
         if (self::TYPE_DELIMITER !== $this->type) {
             return false;
         }
-
         if (!$values) {
             return true;
         }
-
         return \in_array($this->value, $values, true);
     }
-
-    public function isWhitespace(): bool
+    public function is_whitespace(): bool
     {
         return self::TYPE_WHITESPACE === $this->type;
     }
-
-    public function isIdentifier(): bool
+    public function is_identifier(): bool
     {
         return self::TYPE_IDENTIFIER === $this->type;
     }
-
-    public function isHash(): bool
+    public function is_hash(): bool
     {
         return self::TYPE_HASH === $this->type;
     }
-
-    public function isNumber(): bool
+    public function is_number(): bool
     {
         return self::TYPE_NUMBER === $this->type;
     }
-
-    public function isString(): bool
+    public function is_string(): bool
     {
         return self::TYPE_STRING === $this->type;
     }
-
     public function __toString(): string
     {
         if ($this->value) {
             return \sprintf('<%s "%s" at %s>', $this->type, $this->value, $this->position);
         }
-
         return \sprintf('<%s at %s>', $this->type, $this->position);
     }
 }

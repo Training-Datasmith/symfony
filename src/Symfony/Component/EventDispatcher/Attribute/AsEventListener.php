@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\EventDispatcher\Attribute;
+namespace Symfony\Component\Event_Dispatcher\Attribute;
 
 /**
  * Service tag to autoconfigure event listeners.
@@ -19,7 +17,7 @@ namespace Symfony\Component\EventDispatcher\Attribute;
  * @author Alexander M. Turek <me@derrabus.de>
  */
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
-class AsEventListener
+class As_Event_Listener
 {
     /**
      * @param string|null $event      The event name to listen to
@@ -27,11 +25,7 @@ class AsEventListener
      * @param int         $priority   The priority of this listener if several are declared for the same event
      * @param string|null $dispatcher The service id of the event dispatcher to listen to
      */
-    public function __construct(
-        public ?string $event = null,
-        public ?string $method = null,
-        public int $priority = 0,
-        public ?string $dispatcher = null,
-    ) {
+    public function __construct(public ?string $event = null, public ?string $method = null, public int $priority = 0, public ?string $dispatcher = null)
+    {
     }
 }

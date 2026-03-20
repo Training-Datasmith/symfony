@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition\Builder;
 
-use Symfony\Component\Config\Definition\Exception\InvalidDefinitionException;
-
+use Symfony\Component\Config\Definition\Exception\Invalid_Definition_Exception;
 /**
  * Abstract class that contains common code of integer and float node definitions.
  *
@@ -24,11 +21,10 @@ use Symfony\Component\Config\Definition\Exception\InvalidDefinitionException;
  *
  * @author David Jeanmonod <david.jeanmonod@gmail.com>
  */
-abstract class NumericNodeDefinition extends ScalarNodeDefinition
+abstract class Numeric_Node_Definition extends Scalar_Node_Definition
 {
     protected int|float|null $min = null;
     protected int|float|null $max = null;
-
     /**
      * Ensures that the value is smaller than the given reference.
      *
@@ -42,10 +38,8 @@ abstract class NumericNodeDefinition extends ScalarNodeDefinition
             throw new \InvalidArgumentException(\sprintf('You cannot define a max(%s) as you already have a min(%s).', $max, $this->min));
         }
         $this->max = $max;
-
         return $this;
     }
-
     /**
      * Ensures that the value is bigger than the given reference.
      *
@@ -59,15 +53,13 @@ abstract class NumericNodeDefinition extends ScalarNodeDefinition
             throw new \InvalidArgumentException(\sprintf('You cannot define a min(%s) as you already have a max(%s).', $min, $this->max));
         }
         $this->min = $min;
-
         return $this;
     }
-
     /**
      * @throws InvalidDefinitionException
      */
-    public function cannotBeEmpty(): static
+    public function cannot_be_empty(): static
     {
-        throw new InvalidDefinitionException('->cannotBeEmpty() is not applicable to NumericNodeDefinition.');
+        throw new Invalid_Definition_Exception('->cannotBeEmpty() is not applicable to NumericNodeDefinition.');
     }
 }

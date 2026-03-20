@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Controller;
 
-namespace Symfony\Component\HttpKernel\Controller;
-
-use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
-
+use Symfony\Component\Http_Kernel\Fragment\Fragment_Renderer_Interface;
 /**
  * Acts as a marker and a data holder for a Controller.
  *
@@ -26,7 +23,7 @@ use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
  *
  * @see FragmentRendererInterface
  */
-class ControllerReference
+class Controller_Reference
 {
     /**
      * @param string $controller The controller name

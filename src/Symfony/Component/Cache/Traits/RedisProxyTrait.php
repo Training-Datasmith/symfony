@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,43 +9,35 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Traits;
 
 /**
  * @internal
  */
-trait RedisProxyTrait
+trait Redis_Proxy_Trait
 {
     private \Closure $initializer;
-    private ?parent $realInstance = null;
-
-    public static function createLazyProxy(\Closure $initializer, ?self $instance = null): static
+    private ?parent $real_instance = null;
+    public static function create_lazy_proxy(\Closure $initializer, ?self $instance = null): static
     {
-        $instance ??= (new \ReflectionClass(static::class))->newInstanceWithoutConstructor();
-        $instance->realInstance = null;
+        $instance ??= (new \ReflectionClass(static::class))->new_instance_without_constructor();
+        $instance->real_instance = null;
         $instance->initializer = $initializer;
-
         return $instance;
     }
-
-    public function isLazyObjectInitialized(bool $partial = false): bool
+    public function is_lazy_object_initialized(bool $partial = false): bool
     {
-        return isset($this->realInstance);
+        return isset($this->real_instance);
     }
-
-    public function initializeLazyObject(): object
+    public function initialize_lazy_object(): object
     {
-        return $this->realInstance ??= ($this->initializer)();
+        return $this->real_instance ??= ($this->initializer)();
     }
-
-    public function resetLazyObject(): bool
+    public function reset_lazy_object(): bool
     {
-        $this->realInstance = null;
-
+        $this->real_instance = null;
         return true;
     }
-
     public function __destruct()
     {
     }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,31 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator;
-
-use Symfony\Bundle\FrameworkBundle\Secrets\DotenvVault;
-use Symfony\Bundle\FrameworkBundle\Secrets\SodiumVault;
-use Symfony\Component\DependencyInjection\StaticEnvVarLoader;
-
-return static function (ContainerConfigurator $container): void {
-    $container->services()
-        ->set('secrets.vault', SodiumVault::class)
-            ->args([
-                abstract_arg('Secret dir, set in FrameworkExtension'),
-                service('secrets.decryption_key')->ignoreOnInvalid(),
-                abstract_arg('Secret env var, set in FrameworkExtension'),
-            ])
-
-        ->set('secrets.env_var_loader', StaticEnvVarLoader::class)
-            ->args([service('secrets.vault')])
-            ->tag('container.env_var_loader')
-
-        ->set('secrets.decryption_key')
-            ->parent('container.env')
-            ->args([abstract_arg('Decryption env var, set in FrameworkExtension')])
-
-        ->set('secrets.local_vault', DotenvVault::class)
-            ->args([abstract_arg('.env file path, set in FrameworkExtension')])
-    ;
+use Symfony\Bundle\Framework_Bundle\Secrets\Dotenv_Vault;
+use Symfony\Bundle\Framework_Bundle\Secrets\Sodium_Vault;
+use Symfony\Component\Dependency_Injection\Static_Env_Var_Loader;
+return static function (Container_Configurator $container): void {
+    $container->services()->set('secrets.vault', Sodium_Vault::class)->args([abstract_arg('Secret dir, set in FrameworkExtension'), service('secrets.decryption_key')->ignore_on_invalid(), abstract_arg('Secret env var, set in FrameworkExtension')])->set('secrets.env_var_loader', Static_Env_Var_Loader::class)->args([service('secrets.vault')])->tag('container.env_var_loader')->set('secrets.decryption_key')->parent('container.env')->args([abstract_arg('Decryption env var, set in FrameworkExtension')])->set('secrets.local_vault', Dotenv_Vault::class)->args([abstract_arg('.env file path, set in FrameworkExtension')]);
 };

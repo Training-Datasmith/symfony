@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,10 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Console\Argument_Resolver\Exception;
 
-namespace Symfony\Component\Console\ArgumentResolver\Exception;
-
-final class ResolverNotFoundException extends \RuntimeException
+final class Resolver_Not_Found_Exception extends \RuntimeException
 {
     /**
      * @param string[] $alternatives
@@ -27,9 +25,8 @@ final class ResolverNotFoundException extends \RuntimeException
             } else {
                 $msg .= ' Did you mean one of these: "';
             }
-            $msg .= implode('", "', $alternatives).'"?';
+            $msg .= implode('", "', $alternatives) . '"?';
         }
-
         parent::__construct($msg);
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,191 +9,141 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Command;
 
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Completion\CompletionInput;
-use Symfony\Component\Console\Completion\CompletionSuggestions;
+use Symfony\Component\Console\Completion\Completion_Input;
+use Symfony\Component\Console\Completion\Completion_Suggestions;
 use Symfony\Component\Console\Completion\Suggestion;
-use Symfony\Component\Console\Helper\HelperInterface;
-use Symfony\Component\Console\Helper\HelperSet;
-use Symfony\Component\Console\Input\InputDefinition;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-
+use Symfony\Component\Console\Helper\Helper_Interface;
+use Symfony\Component\Console\Helper\Helper_Set;
+use Symfony\Component\Console\Input\Input_Definition;
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Console\Output\Output_Interface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class LazyCommand extends Command
+final class Lazy_Command extends Command
 {
-    public function __construct(
-        string $name,
-        array $aliases,
-        string $description,
-        bool $isHidden,
-        private \Closure|Command $command,
-        private readonly ?bool $isEnabled = true,
-    ) {
-        $this->setName($name)
-            ->setAliases($aliases)
-            ->setHidden($isHidden)
-            ->setDescription($description);
-    }
-
-    public function ignoreValidationErrors(): void
+    public function __construct(string $name, array $aliases, string $description, bool $is_hidden, private \Closure|Command $command, private readonly ?bool $is_enabled = true)
     {
-        $this->getCommand()->ignoreValidationErrors();
+        $this->set_name($name)->set_aliases($aliases)->set_hidden($is_hidden)->set_description($description);
     }
-
-    public function setApplication(?Application $application): void
+    public function ignore_validation_errors(): void
     {
-        $this->command->setApplication($application);
-
-        parent::setApplication($application);
+        $this->get_command()->ignore_validation_errors();
     }
-
-    public function setHelperSet(HelperSet $helperSet): void
+    public function set_application(?Application $application): void
     {
-        $this->command->setHelperSet($helperSet);
-
-        parent::setHelperSet($helperSet);
+        $this->command->set_application($application);
+        parent::set_application($application);
     }
-
-    public function isEnabled(): bool
+    public function set_helper_set(Helper_Set $helper_set): void
     {
-        return $this->isEnabled ?? $this->getCommand()->isEnabled();
+        $this->command->set_helper_set($helper_set);
+        parent::set_helper_set($helper_set);
     }
-
-    public function run(InputInterface $input, OutputInterface $output): int
+    public function is_enabled(): bool
     {
-        return $this->getCommand()->run($input, $output);
+        return $this->is_enabled ?? $this->get_command()->is_enabled();
     }
-
-    public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void
+    public function run(Input_Interface $input, Output_Interface $output): int
     {
-        $this->getCommand()->complete($input, $suggestions);
+        return $this->get_command()->run($input, $output);
     }
-
-    public function setCode(callable $code): static
+    public function complete(Completion_Input $input, Completion_Suggestions $suggestions): void
     {
-        $this->getCommand()->setCode($code);
-
+        $this->get_command()->complete($input, $suggestions);
+    }
+    public function set_code(callable $code): static
+    {
+        $this->get_command()->set_code($code);
         return $this;
     }
-
     /**
      * @internal
      */
-    public function mergeApplicationDefinition(bool $mergeArgs = true): void
+    public function merge_application_definition(bool $merge_args = true): void
     {
-        $this->getCommand()->mergeApplicationDefinition($mergeArgs);
+        $this->get_command()->merge_application_definition($merge_args);
     }
-
-    public function setDefinition(array|InputDefinition $definition): static
+    public function set_definition(array|Input_Definition $definition): static
     {
-        $this->getCommand()->setDefinition($definition);
-
+        $this->get_command()->set_definition($definition);
         return $this;
     }
-
-    public function getDefinition(): InputDefinition
+    public function get_definition(): Input_Definition
     {
-        return $this->getCommand()->getDefinition();
+        return $this->get_command()->get_definition();
     }
-
-    public function getNativeDefinition(): InputDefinition
+    public function get_native_definition(): Input_Definition
     {
-        return $this->getCommand()->getNativeDefinition();
+        return $this->get_command()->get_native_definition();
     }
-
     /**
      * @param array|\Closure(CompletionInput,CompletionSuggestions):list<string|Suggestion> $suggestedValues The values used for input completion
      */
-    public function addArgument(string $name, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = []): static
+    public function add_argument(string $name, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggested_values = []): static
     {
-        $this->getCommand()->addArgument($name, $mode, $description, $default, $suggestedValues);
-
+        $this->get_command()->add_argument($name, $mode, $description, $default, $suggested_values);
         return $this;
     }
-
     /**
      * @param array|\Closure(CompletionInput,CompletionSuggestions):list<string|Suggestion> $suggestedValues The values used for input completion
      */
-    public function addOption(string $name, string|array|null $shortcut = null, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = []): static
+    public function add_option(string $name, string|array|null $shortcut = null, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggested_values = []): static
     {
-        $this->getCommand()->addOption($name, $shortcut, $mode, $description, $default, $suggestedValues);
-
+        $this->get_command()->add_option($name, $shortcut, $mode, $description, $default, $suggested_values);
         return $this;
     }
-
-    public function setProcessTitle(string $title): static
+    public function set_process_title(string $title): static
     {
-        $this->getCommand()->setProcessTitle($title);
-
+        $this->get_command()->set_process_title($title);
         return $this;
     }
-
-    public function setHelp(string $help): static
+    public function set_help(string $help): static
     {
-        $this->getCommand()->setHelp($help);
-
+        $this->get_command()->set_help($help);
         return $this;
     }
-
-    public function getHelp(): string
+    public function get_help(): string
     {
-        return $this->getCommand()->getHelp();
+        return $this->get_command()->get_help();
     }
-
-    public function getProcessedHelp(): string
+    public function get_processed_help(): string
     {
-        return $this->getCommand()->getProcessedHelp();
+        return $this->get_command()->get_processed_help();
     }
-
-    public function getSynopsis(bool $short = false): string
+    public function get_synopsis(bool $short = false): string
     {
-        return $this->getCommand()->getSynopsis($short);
+        return $this->get_command()->get_synopsis($short);
     }
-
-    public function addUsage(string $usage): static
+    public function add_usage(string $usage): static
     {
-        $this->getCommand()->addUsage($usage);
-
+        $this->get_command()->add_usage($usage);
         return $this;
     }
-
-    public function getUsages(): array
+    public function get_usages(): array
     {
-        return $this->getCommand()->getUsages();
+        return $this->get_command()->get_usages();
     }
-
-    public function getHelper(string $name): HelperInterface
+    public function get_helper(string $name): Helper_Interface
     {
-        return $this->getCommand()->getHelper($name);
+        return $this->get_command()->get_helper($name);
     }
-
-    public function getCommand(): parent
+    public function get_command(): parent
     {
         if (!$this->command instanceof \Closure) {
             return $this->command;
         }
-
         $command = $this->command = ($this->command)();
-        $command->setApplication($this->getApplication());
-
-        if (null !== $this->getHelperSet()) {
-            $command->setHelperSet($this->getHelperSet());
+        $command->set_application($this->get_application());
+        if (null !== $this->get_helper_set()) {
+            $command->set_helper_set($this->get_helper_set());
         }
-
-        $command->setName($this->getName())
-            ->setAliases($this->getAliases())
-            ->setHidden($this->isHidden())
-            ->setDescription($this->getDescription());
-
+        $command->set_name($this->get_name())->set_aliases($this->get_aliases())->set_hidden($this->is_hidden())->set_description($this->get_description());
         // Will throw if the command is not correctly initialized.
-        $command->getDefinition();
-
+        $command->get_definition();
         return $command;
     }
 }

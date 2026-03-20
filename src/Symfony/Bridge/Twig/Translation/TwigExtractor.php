@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,80 +9,66 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Twig\Translation;
 
-use Symfony\Bridge\Twig\Extension\TranslationExtension;
+use Symfony\Bridge\Twig\Extension\Translation_Extension;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Translation\Extractor\AbstractFileExtractor;
-use Symfony\Component\Translation\Extractor\ExtractorInterface;
-use Symfony\Component\Translation\MessageCatalogue;
+use Symfony\Component\Translation\Extractor\Abstract_File_Extractor;
+use Symfony\Component\Translation\Extractor\Extractor_Interface;
+use Symfony\Component\Translation\Message_Catalogue;
 use Twig\Environment;
 use Twig\Error\Error;
 use Twig\Source;
-
 /**
  * TwigExtractor extracts translation messages from a twig template.
  *
  * @author Michel Salib <michelsalib@hotmail.com>
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class TwigExtractor extends AbstractFileExtractor implements ExtractorInterface
+class Twig_Extractor extends Abstract_File_Extractor implements Extractor_Interface
 {
     /**
      * Default domain for found messages.
      */
-    private string $defaultDomain = 'messages';
-
+    private string $default_domain = 'messages';
     /**
      * Prefix for found message.
      */
     private string $prefix = '';
-
-    public function __construct(
-        private readonly Environment $twig,
-    ) {
-    }
-
-    public function extract($resource, MessageCatalogue $catalogue): void
+    public function __construct(private readonly Environment $twig)
     {
-        foreach ($this->extractFiles($resource) as $file) {
+    }
+    public function extract($resource, Message_Catalogue $catalogue): void
+    {
+        foreach ($this->extract_files($resource) as $file) {
             try {
-                $this->extractTemplate(file_get_contents($file->getPathname()), $catalogue);
+                $this->extract_template(file_get_contents($file->get_pathname()), $catalogue);
             } catch (Error) {
                 // ignore errors, these should be fixed by using the linter
             }
         }
     }
-
-    public function setPrefix(string $prefix): void
+    public function set_prefix(string $prefix): void
     {
         $this->prefix = $prefix;
     }
-
-    protected function extractTemplate(string $template, MessageCatalogue $catalogue): void
+    protected function extract_template(string $template, Message_Catalogue $catalogue): void
     {
-        $visitor = $this->twig->getExtension(TranslationExtension::class)->getTranslationNodeVisitor();
+        $visitor = $this->twig->get_extension(Translation_Extension::class)->get_translation_node_visitor();
         $visitor->enable();
-
         $this->twig->parse($this->twig->tokenize(new Source($template, '')));
-
-        foreach ($visitor->getMessages() as $message) {
-            $catalogue->set(trim((string) $message[0]), $this->prefix.trim((string) $message[0]), $message[1] ?: $this->defaultDomain);
+        foreach ($visitor->get_messages() as $message) {
+            $catalogue->set(trim((string) $message[0]), $this->prefix . trim((string) $message[0]), $message[1] ?: $this->default_domain);
         }
-
         $visitor->disable();
     }
-
-    protected function canBeExtracted(string $file): bool
+    protected function can_be_extracted(string $file): bool
     {
-        return $this->isFile($file) && 'twig' === pathinfo($file, \PATHINFO_EXTENSION);
+        return $this->is_file($file) && 'twig' === pathinfo($file, \PATHINFO_EXTENSION);
     }
-
-    protected function extractFromDirectory($directory): iterable
+    protected function extract_from_directory($directory): iterable
     {
         $finder = new Finder();
-
         return $finder->files()->name('*.twig')->in($directory);
     }
 }

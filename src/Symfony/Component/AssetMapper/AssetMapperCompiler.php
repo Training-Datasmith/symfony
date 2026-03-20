@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,49 +9,41 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Asset_Mapper;
 
-namespace Symfony\Component\AssetMapper;
-
-use Symfony\Component\AssetMapper\Compiler\AssetCompilerInterface;
-
+use Symfony\Component\Asset_Mapper\Compiler\Asset_Compiler_Interface;
 /**
  * Runs a chain of compiles intended to adjust the source of assets.
  *
  * @final
  */
-class AssetMapperCompiler
+class Asset_Mapper_Compiler
 {
-    private AssetMapperInterface $assetMapper;
-
+    private Asset_Mapper_Interface $asset_mapper;
     /**
      * @param iterable<AssetCompilerInterface> $assetCompilers
      * @param \Closure(): AssetMapperInterface $assetMapperFactory
      */
-    public function __construct(private readonly iterable $assetCompilers, private readonly \Closure $assetMapperFactory)
+    public function __construct(private readonly iterable $asset_compilers, private readonly \Closure $asset_mapper_factory)
     {
     }
-
-    public function compile(string $content, MappedAsset $asset): string
+    public function compile(string $content, Mapped_Asset $asset): string
     {
-        foreach ($this->assetCompilers as $compiler) {
+        foreach ($this->asset_compilers as $compiler) {
             if (!$compiler->supports($asset)) {
                 continue;
             }
-
-            $content = $compiler->compile($content, $asset, $this->assetMapper ??= ($this->assetMapperFactory)());
+            $content = $compiler->compile($content, $asset, $this->asset_mapper ??= ($this->asset_mapper_factory)());
         }
-
         return $content;
     }
-
-    public function supports(MappedAsset $asset): bool
+    public function supports(Mapped_Asset $asset): bool
     {
-        foreach ($this->assetCompilers as $compiler) {
+        foreach ($this->asset_compilers as $compiler) {
             if ($compiler->supports($asset)) {
                 return true;
             }
         }
-
         return false;
     }
 }

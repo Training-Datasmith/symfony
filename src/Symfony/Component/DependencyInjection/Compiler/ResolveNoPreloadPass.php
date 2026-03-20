@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,83 +9,68 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * Propagate the "container.no_preload" tag.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ResolveNoPreloadPass extends AbstractRecursivePass
+class Resolve_No_Preload_Pass extends Abstract_Recursive_Pass
 {
     private const DO_PRELOAD_TAG = '.container.do_preload';
-
-    protected bool $skipScalars = true;
-
-    private array $resolvedIds = [];
-
-    public function process(ContainerBuilder $container): void
+    protected bool $skip_scalars = true;
+    private array $resolved_ids = [];
+    public function process(Container_Builder $container): void
     {
         $this->container = $container;
-
         try {
-            foreach ($container->getDefinitions() as $id => $definition) {
-                if ($definition->isPublic() && !isset($this->resolvedIds[$id])) {
-                    $this->resolvedIds[$id] = true;
-                    $this->processValue($definition, true);
+            foreach ($container->get_definitions() as $id => $definition) {
+                if ($definition->is_public() && !isset($this->resolved_ids[$id])) {
+                    $this->resolved_ids[$id] = true;
+                    $this->process_value($definition, true);
                 }
             }
-
-            foreach ($container->getAliases() as $alias) {
-                if ($alias->isPublic() && !isset($this->resolvedIds[$id = (string) $alias]) && $container->hasDefinition($id)) {
-                    $this->resolvedIds[$id] = true;
-                    $this->processValue($container->getDefinition($id), true);
+            foreach ($container->get_aliases() as $alias) {
+                if ($alias->is_public() && !isset($this->resolved_ids[$id = (string) $alias]) && $container->has_definition($id)) {
+                    $this->resolved_ids[$id] = true;
+                    $this->process_value($container->get_definition($id), true);
                 }
             }
         } finally {
-            $this->resolvedIds = [];
+            $this->resolved_ids = [];
             $this->container = null;
         }
-
-        foreach ($container->getDefinitions() as $definition) {
-            if ($definition->hasTag(self::DO_PRELOAD_TAG)) {
-                $definition->clearTag(self::DO_PRELOAD_TAG);
-            } elseif (!$definition->isDeprecated() && !$definition->hasErrors()) {
-                $definition->addTag('container.no_preload');
+        foreach ($container->get_definitions() as $definition) {
+            if ($definition->has_tag(self::DO_PRELOAD_TAG)) {
+                $definition->clear_tag(self::DO_PRELOAD_TAG);
+            } elseif (!$definition->is_deprecated() && !$definition->has_errors()) {
+                $definition->add_tag('container.no_preload');
             }
         }
     }
-
-    protected function processValue(mixed $value, bool $isRoot = false): mixed
+    protected function process_value(mixed $value, bool $is_root = false): mixed
     {
-        if ($value instanceof Reference && ContainerBuilder::IGNORE_ON_UNINITIALIZED_REFERENCE !== $value->getInvalidBehavior() && $this->container->hasDefinition($id = (string) $value)) {
-            $definition = $this->container->getDefinition($id);
-
-            if (!isset($this->resolvedIds[$id]) && $definition->isPrivate()) {
-                $this->resolvedIds[$id] = true;
-                $this->processValue($definition, true);
+        if ($value instanceof Reference && Container_Builder::IGNORE_ON_UNINITIALIZED_REFERENCE !== $value->get_invalid_behavior() && $this->container->has_definition($id = (string) $value)) {
+            $definition = $this->container->get_definition($id);
+            if (!isset($this->resolved_ids[$id]) && $definition->is_private()) {
+                $this->resolved_ids[$id] = true;
+                $this->process_value($definition, true);
             }
-
             return $value;
         }
-
         if (!$value instanceof Definition) {
-            return parent::processValue($value, $isRoot);
+            return parent::process_value($value, $is_root);
         }
-
-        if ($value->hasTag('container.no_preload') || $value->isDeprecated() || $value->hasErrors()) {
+        if ($value->has_tag('container.no_preload') || $value->is_deprecated() || $value->has_errors()) {
             return $value;
         }
-
-        if ($isRoot) {
-            $value->addTag(self::DO_PRELOAD_TAG);
+        if ($is_root) {
+            $value->add_tag(self::DO_PRELOAD_TAG);
         }
-
-        return parent::processValue($value, $isRoot);
+        return parent::process_value($value, $is_root);
     }
 }

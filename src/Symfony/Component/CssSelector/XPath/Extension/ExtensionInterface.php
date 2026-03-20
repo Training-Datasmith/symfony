@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Css_Selector\X_Path\Extension;
 
-namespace Symfony\Component\CssSelector\XPath\Extension;
-
-use Symfony\Component\CssSelector\XPath\XPathExpr;
-
+use Symfony\Component\Css_Selector\X_Path\X_Path_Expr;
 /**
  * XPath expression translator extension interface.
  *
@@ -25,7 +22,7 @@ use Symfony\Component\CssSelector\XPath\XPathExpr;
  *
  * @internal
  */
-interface ExtensionInterface
+interface Extension_Interface
 {
     /**
      * Returns node translators.
@@ -34,45 +31,39 @@ interface ExtensionInterface
      *
      * @return callable[]
      */
-    public function getNodeTranslators(): array;
-
+    public function get_node_translators(): array;
     /**
      * Returns combination translators.
      *
      * @return callable[]
      */
-    public function getCombinationTranslators(): array;
-
+    public function get_combination_translators(): array;
     /**
      * Returns function translators.
      *
      * @return callable[]
      */
-    public function getFunctionTranslators(): array;
-
+    public function get_function_translators(): array;
     /**
      * Returns pseudo-class translators.
      *
      * @return callable[]
      */
-    public function getPseudoClassTranslators(): array;
-
+    public function get_pseudo_class_translators(): array;
     /**
      * Returns attribute operation translators.
      *
      * @return callable[]
      */
-    public function getAttributeMatchingTranslators(): array;
-
+    public function get_attribute_matching_translators(): array;
     /**
      * Returns combination translators found inside ":has()" relation.
      *
      * @return array<string, callable(XPathExpr, XPathExpr): XPathExpr>
      */
-    public function getRelativeCombinationTranslators(): array;
-
+    public function get_relative_combination_translators(): array;
     /**
      * Returns extension name.
      */
-    public function getName(): string;
+    public function get_name(): string;
 }

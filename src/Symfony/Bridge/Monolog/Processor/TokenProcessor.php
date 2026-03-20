@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,26 +9,23 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Monolog\Processor;
 
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
+use Symfony\Component\Security\Core\Authentication\Token\Token_Interface;
 /**
  * Adds the current security token to the log entry.
  *
  * @author Dany Maillard <danymaillard93b@gmail.com>
  * @author Igor Timoshenko <igor.timoshenko@i.ua>
  */
-final class TokenProcessor extends AbstractTokenProcessor
+final class Token_Processor extends Abstract_Token_Processor
 {
-    protected function getKey(): string
+    protected function get_key(): string
     {
         return 'token';
     }
-
-    protected function getToken(): ?TokenInterface
+    protected function get_token(): ?Token_Interface
     {
-        return $this->tokenStorage->getToken();
+        return $this->token_storage->get_token();
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
-
-return static function (RoutingConfigurator $routes): void {
-    $routes->add('_preview_error', '/{code}.{_format}')
-        ->controller('error_controller::preview')
-        ->defaults(['_format' => 'html'])
-        ->requirements(['code' => '\d+'])
-    ;
+use Symfony\Component\Routing\Loader\Configurator\Routing_Configurator;
+return static function (Routing_Configurator $routes): void {
+    $routes->add('_preview_error', '/{code}.{_format}')->controller('error_controller::preview')->defaults(['_format' => 'html'])->requirements(['code' => '\d+']);
 };

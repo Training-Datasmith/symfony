@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\CssSelector\Node;
+namespace Symfony\Component\Css_Selector\Node;
 
 /**
  * Abstract base node class.
@@ -23,12 +21,11 @@ namespace Symfony\Component\CssSelector\Node;
  *
  * @internal
  */
-abstract class AbstractNode implements NodeInterface
+abstract class Abstract_Node implements Node_Interface
 {
-    private string $nodeName;
-
-    public function getNodeName(): string
+    private string $node_name;
+    public function get_node_name(): string
     {
-        return $this->nodeName ??= preg_replace('~.*\\\\([^\\\\]+)Node$~', '$1', static::class);
+        return $this->node_name ??= preg_replace('~.*\\\\([^\\\\]+)Node$~', '$1', static::class);
     }
 }

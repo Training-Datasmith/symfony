@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Dependency_Injection\Security\Factory;
 
-namespace Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory;
-
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
+use Symfony\Component\Dependency_Injection\Container_Builder;
 /**
  * Stateless authenticators are authenticators that can work without a user provider.
  *
@@ -24,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  *
  * @author Wouter de Jong <wouter@wouterj.nl>
  */
-interface StatelessAuthenticatorFactoryInterface extends AuthenticatorFactoryInterface
+interface Stateless_Authenticator_Factory_Interface extends Authenticator_Factory_Interface
 {
-    public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, ?string $userProviderId): string|array;
+    public function create_authenticator(Container_Builder $container, string $firewall_name, array $config, ?string $user_provider_id): string|array;
 }

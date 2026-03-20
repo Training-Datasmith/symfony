@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Css_Selector\Parser\Shortcut;
 
-namespace Symfony\Component\CssSelector\Parser\Shortcut;
-
-use Symfony\Component\CssSelector\Node\ElementNode;
-use Symfony\Component\CssSelector\Node\HashNode;
-use Symfony\Component\CssSelector\Node\SelectorNode;
-use Symfony\Component\CssSelector\Parser\ParserInterface;
-
+use Symfony\Component\Css_Selector\Node\Element_Node;
+use Symfony\Component\Css_Selector\Node\Hash_Node;
+use Symfony\Component\Css_Selector\Node\Selector_Node;
+use Symfony\Component\Css_Selector\Parser\Parser_Interface;
 /**
  * CSS selector hash parser shortcut.
  *
@@ -28,7 +25,7 @@ use Symfony\Component\CssSelector\Parser\ParserInterface;
  *
  * @internal
  */
-class HashParser implements ParserInterface
+class Hash_Parser implements Parser_Interface
 {
     public function parse(string $source): array
     {
@@ -40,11 +37,8 @@ class HashParser implements ParserInterface
         //     2 => string 'input' (length=5)
         //     3 => string 'ab6bd_field' (length=11)
         if (preg_match('/^(?:([a-z]++)\|)?+([\w-]++|\*)?+#([\w-]++)$/i', trim($source), $matches)) {
-            return [
-                new SelectorNode(new HashNode(new ElementNode($matches[1] ?: null, $matches[2] ?: null), $matches[3])),
-            ];
+            return [new Selector_Node(new Hash_Node(new Element_Node($matches[1] ?: null, $matches[2] ?: null), $matches[3]))];
         }
-
         return [];
     }
 }

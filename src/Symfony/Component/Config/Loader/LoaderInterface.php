@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Loader;
 
 /**
@@ -18,7 +16,7 @@ namespace Symfony\Component\Config\Loader;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-interface LoaderInterface
+interface Loader_Interface
 {
     /**
      * Loads a resource.
@@ -26,21 +24,18 @@ interface LoaderInterface
      * @throws \Exception If something went wrong
      */
     public function load(mixed $resource, ?string $type = null): mixed;
-
     /**
      * Returns whether this class supports the given resource.
      *
      * @param mixed $resource A resource
      */
     public function supports(mixed $resource, ?string $type = null): bool;
-
     /**
      * Gets the loader resolver.
      */
-    public function getResolver(): LoaderResolverInterface;
-
+    public function get_resolver(): Loader_Resolver_Interface;
     /**
      * Sets the loader resolver.
      */
-    public function setResolver(LoaderResolverInterface $resolver): void;
+    public function set_resolver(Loader_Resolver_Interface $resolver): void;
 }

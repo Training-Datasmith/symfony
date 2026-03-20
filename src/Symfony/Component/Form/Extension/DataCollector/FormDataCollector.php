@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,21 +9,19 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Extension\Data_Collector;
 
-namespace Symfony\Component\Form\Extension\DataCollector;
-
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\DataCollector\DataCollector;
-use Symfony\Component\Validator\ConstraintViolationInterface;
-use Symfony\Component\VarDumper\Caster\Caster;
-use Symfony\Component\VarDumper\Caster\ClassStub;
-use Symfony\Component\VarDumper\Caster\StubCaster;
-use Symfony\Component\VarDumper\Cloner\Data;
-use Symfony\Component\VarDumper\Cloner\Stub;
-
+use Symfony\Component\Form\Form_Interface;
+use Symfony\Component\Form\Form_View;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Response;
+use Symfony\Component\Http_Kernel\Data_Collector\Data_Collector;
+use Symfony\Component\Validator\Constraint_Violation_Interface;
+use Symfony\Component\Var_Dumper\Caster\Caster;
+use Symfony\Component\Var_Dumper\Caster\Class_Stub;
+use Symfony\Component\Var_Dumper\Caster\Stub_Caster;
+use Symfony\Component\Var_Dumper\Cloner\Data;
+use Symfony\Component\Var_Dumper\Cloner\Stub;
 /**
  * Data collector for {@link FormInterface} instances.
  *
@@ -33,7 +30,7 @@ use Symfony\Component\VarDumper\Cloner\Stub;
  *
  * @final
  */
-class FormDataCollector extends DataCollector implements FormDataCollectorInterface
+class Form_Data_Collector extends Data_Collector implements Form_Data_Collector_Interface
 {
     /**
      * Stores the collected data per {@link FormInterface} instance.
@@ -42,8 +39,7 @@ class FormDataCollector extends DataCollector implements FormDataCollectorInterf
      * {@link \SplObjectStorage}, because in this way no references are kept
      * to the {@link FormInterface} instances.
      */
-    private array $dataByForm;
-
+    private array $data_by_form;
     /**
      * Stores the collected data per {@link FormView} instance.
      *
@@ -51,8 +47,7 @@ class FormDataCollector extends DataCollector implements FormDataCollectorInterf
      * {@link \SplObjectStorage}, because in this way no references are kept
      * to the {@link FormView} instances.
      */
-    private array $dataByView;
-
+    private array $data_by_view;
     /**
      * Connects {@link FormView} with {@link FormInterface} instances.
      *
@@ -60,237 +55,158 @@ class FormDataCollector extends DataCollector implements FormDataCollectorInterf
      * values. This is preferable over storing the objects directly, because
      * this way they can safely be discarded by the GC.
      */
-    private array $formsByView;
-
-    public function __construct(
-        private readonly FormDataExtractorInterface $dataExtractor,
-    ) {
-        if (!class_exists(ClassStub::class)) {
+    private array $forms_by_view;
+    public function __construct(private readonly Form_Data_Extractor_Interface $data_extractor)
+    {
+        if (!class_exists(Class_Stub::class)) {
             throw new \LogicException(\sprintf('The VarDumper component is needed for using the "%s" class. Install symfony/var-dumper version 3.4 or above.', self::class));
         }
-
         $this->reset();
     }
-
     /**
      * Does nothing. The data is collected during the form event listeners.
      */
     public function collect(Request $request, Response $response, ?\Throwable $exception = null): void
     {
     }
-
     public function reset(): void
     {
-        $this->data = [
-            'forms' => [],
-            'forms_by_hash' => [],
-            'nb_errors' => 0,
-        ];
+        $this->data = ['forms' => [], 'forms_by_hash' => [], 'nb_errors' => 0];
     }
-
-    public function associateFormWithView(FormInterface $form, FormView $view): void
+    public function associate_form_with_view(Form_Interface $form, Form_View $view): void
     {
-        $this->formsByView[spl_object_hash($view)] = spl_object_hash($form);
+        $this->forms_by_view[spl_object_hash($view)] = spl_object_hash($form);
     }
-
-    public function collectConfiguration(FormInterface $form): void
+    public function collect_configuration(Form_Interface $form): void
     {
         $hash = spl_object_hash($form);
-
-        if (!isset($this->dataByForm[$hash])) {
-            $this->dataByForm[$hash] = [];
+        if (!isset($this->data_by_form[$hash])) {
+            $this->data_by_form[$hash] = [];
         }
-
-        $this->dataByForm[$hash] = array_replace(
-            $this->dataByForm[$hash],
-            $this->dataExtractor->extractConfiguration($form)
-        );
-
+        $this->data_by_form[$hash] = array_replace($this->data_by_form[$hash], $this->data_extractor->extract_configuration($form));
         foreach ($form as $child) {
-            $this->collectConfiguration($child);
+            $this->collect_configuration($child);
         }
     }
-
-    public function collectDefaultData(FormInterface $form): void
+    public function collect_default_data(Form_Interface $form): void
     {
         $hash = spl_object_hash($form);
-
-        if (!isset($this->dataByForm[$hash])) {
+        if (!isset($this->data_by_form[$hash])) {
             // field was created by form event
-            $this->collectConfiguration($form);
+            $this->collect_configuration($form);
         }
-
-        $this->dataByForm[$hash] = array_replace(
-            $this->dataByForm[$hash],
-            $this->dataExtractor->extractDefaultData($form)
-        );
-
+        $this->data_by_form[$hash] = array_replace($this->data_by_form[$hash], $this->data_extractor->extract_default_data($form));
         foreach ($form as $child) {
-            $this->collectDefaultData($child);
+            $this->collect_default_data($child);
         }
     }
-
-    public function collectSubmittedData(FormInterface $form): void
+    public function collect_submitted_data(Form_Interface $form): void
     {
         $hash = spl_object_hash($form);
-
-        if (!isset($this->dataByForm[$hash])) {
+        if (!isset($this->data_by_form[$hash])) {
             // field was created by form event
-            $this->collectConfiguration($form);
-            $this->collectDefaultData($form);
+            $this->collect_configuration($form);
+            $this->collect_default_data($form);
         }
-
-        $this->dataByForm[$hash] = array_replace(
-            $this->dataByForm[$hash],
-            $this->dataExtractor->extractSubmittedData($form)
-        );
-
+        $this->data_by_form[$hash] = array_replace($this->data_by_form[$hash], $this->data_extractor->extract_submitted_data($form));
         // Count errors
-        if (isset($this->dataByForm[$hash]['errors'])) {
-            $this->data['nb_errors'] += \count($this->dataByForm[$hash]['errors']);
+        if (isset($this->data_by_form[$hash]['errors'])) {
+            $this->data['nb_errors'] += \count($this->data_by_form[$hash]['errors']);
         }
-
         foreach ($form as $child) {
-            $this->collectSubmittedData($child);
-
+            $this->collect_submitted_data($child);
             // Expand current form if there are children with errors
-            if (empty($this->dataByForm[$hash]['has_children_error'])) {
-                $childData = $this->dataByForm[spl_object_hash($child)];
-                $this->dataByForm[$hash]['has_children_error'] = !empty($childData['has_children_error']) || !empty($childData['errors']);
+            if (empty($this->data_by_form[$hash]['has_children_error'])) {
+                $child_data = $this->data_by_form[spl_object_hash($child)];
+                $this->data_by_form[$hash]['has_children_error'] = !empty($child_data['has_children_error']) || !empty($child_data['errors']);
             }
         }
     }
-
-    public function collectViewVariables(FormView $view): void
+    public function collect_view_variables(Form_View $view): void
     {
         $hash = spl_object_hash($view);
-
-        if (!isset($this->dataByView[$hash])) {
-            $this->dataByView[$hash] = [];
+        if (!isset($this->data_by_view[$hash])) {
+            $this->data_by_view[$hash] = [];
         }
-
-        $this->dataByView[$hash] = array_replace(
-            $this->dataByView[$hash],
-            $this->dataExtractor->extractViewVariables($view)
-        );
-
+        $this->data_by_view[$hash] = array_replace($this->data_by_view[$hash], $this->data_extractor->extract_view_variables($view));
         foreach ($view->children as $child) {
-            $this->collectViewVariables($child);
+            $this->collect_view_variables($child);
         }
     }
-
-    public function buildPreliminaryFormTree(FormInterface $form): void
+    public function build_preliminary_form_tree(Form_Interface $form): void
     {
-        $this->data['forms'][$form->getName()] = &$this->recursiveBuildPreliminaryFormTree($form, $this->data['forms_by_hash']);
+        $this->data['forms'][$form->get_name()] =& $this->recursive_build_preliminary_form_tree($form, $this->data['forms_by_hash']);
     }
-
-    public function buildFinalFormTree(FormInterface $form, FormView $view): void
+    public function build_final_form_tree(Form_Interface $form, Form_View $view): void
     {
-        $this->data['forms'][$form->getName()] = &$this->recursiveBuildFinalFormTree($form, $view, $this->data['forms_by_hash']);
+        $this->data['forms'][$form->get_name()] =& $this->recursive_build_final_form_tree($form, $view, $this->data['forms_by_hash']);
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return 'form';
     }
-
-    public function getData(): array|Data
+    public function get_data(): array|Data
     {
         return $this->data;
     }
-
     public function __serialize(): array
     {
         foreach ($this->data['forms_by_hash'] as &$form) {
-            if (isset($form['type_class']) && !$form['type_class'] instanceof ClassStub) {
-                $form['type_class'] = new ClassStub($form['type_class']);
+            if (isset($form['type_class']) && !$form['type_class'] instanceof Class_Stub) {
+                $form['type_class'] = new Class_Stub($form['type_class']);
             }
         }
-
-        return ['data' => $this->data = $this->cloneVar($this->data)];
+        return ['data' => $this->data = $this->clone_var($this->data)];
     }
-
-    protected function getCasters(): array
+    protected function get_casters(): array
     {
-        return parent::getCasters() + [
-            \Exception::class => static function (\Exception $e, array $a, Stub $s): array {
-                foreach (["\0Exception\0previous", "\0Exception\0trace"] as $k) {
-                    if (isset($a[$k])) {
-                        unset($a[$k]);
-                        ++$s->cut;
-                    }
+        return parent::get_casters() + [\Exception::class => static function (\Exception $e, array $a, Stub $s): array {
+            foreach (["\x00Exception\x00previous", "\x00Exception\x00trace"] as $k) {
+                if (isset($a[$k])) {
+                    unset($a[$k]);
+                    ++$s->cut;
                 }
-
-                return $a;
-            },
-            FormInterface::class => static fn (FormInterface $f, array $a): array => [
-                Caster::PREFIX_VIRTUAL.'name' => $f->getName(),
-                Caster::PREFIX_VIRTUAL.'type_class' => new ClassStub($f->getConfig()->getType()->getInnerType()::class),
-            ],
-            FormView::class => StubCaster::cutInternals(...),
-            ConstraintViolationInterface::class => static fn (ConstraintViolationInterface $v, array $a): array => [
-                Caster::PREFIX_VIRTUAL.'root' => $v->getRoot(),
-                Caster::PREFIX_VIRTUAL.'path' => $v->getPropertyPath(),
-                Caster::PREFIX_VIRTUAL.'value' => $v->getInvalidValue(),
-            ],
-        ];
+            }
+            return $a;
+        }, Form_Interface::class => static fn(Form_Interface $f, array $a): array => [Caster::PREFIX_VIRTUAL . 'name' => $f->get_name(), Caster::PREFIX_VIRTUAL . 'type_class' => new Class_Stub($f->get_config()->get_type()->get_inner_type()::class)], Form_View::class => Stub_Caster::cut_internals(...), Constraint_Violation_Interface::class => static fn(Constraint_Violation_Interface $v, array $a): array => [Caster::PREFIX_VIRTUAL . 'root' => $v->get_root(), Caster::PREFIX_VIRTUAL . 'path' => $v->get_property_path(), Caster::PREFIX_VIRTUAL . 'value' => $v->get_invalid_value()]];
     }
-
-    private function &recursiveBuildPreliminaryFormTree(FormInterface $form, array &$outputByHash): array
+    private function &recursive_build_preliminary_form_tree(Form_Interface $form, array &$output_by_hash): array
     {
         $hash = spl_object_hash($form);
-
-        $output = &$outputByHash[$hash];
-        $output = $this->dataByForm[$hash]
-            ?? [];
-
+        $output =& $output_by_hash[$hash];
+        $output = $this->data_by_form[$hash] ?? [];
         $output['children'] = [];
-
         foreach ($form as $name => $child) {
-            $output['children'][$name] = &$this->recursiveBuildPreliminaryFormTree($child, $outputByHash);
+            $output['children'][$name] =& $this->recursive_build_preliminary_form_tree($child, $output_by_hash);
         }
-
         return $output;
     }
-
-    private function &recursiveBuildFinalFormTree(?FormInterface $form, FormView $view, array &$outputByHash): array
+    private function &recursive_build_final_form_tree(?Form_Interface $form, Form_View $view, array &$output_by_hash): array
     {
-        $viewHash = spl_object_hash($view);
-        $formHash = null;
-
+        $view_hash = spl_object_hash($view);
+        $form_hash = null;
         if (null !== $form) {
-            $formHash = spl_object_hash($form);
-        } elseif (isset($this->formsByView[$viewHash])) {
+            $form_hash = spl_object_hash($form);
+        } elseif (isset($this->forms_by_view[$view_hash])) {
             // The FormInterface instance of the CSRF token is never contained in
             // the FormInterface tree of the form, so we need to get the
             // corresponding FormInterface instance for its view in a different way
-            $formHash = $this->formsByView[$viewHash];
+            $form_hash = $this->forms_by_view[$view_hash];
         }
-        if (null !== $formHash) {
-            $output = &$outputByHash[$formHash];
+        if (null !== $form_hash) {
+            $output =& $output_by_hash[$form_hash];
         }
-
-        $output = $this->dataByView[$viewHash]
-            ?? [];
-
-        if (null !== $formHash) {
-            $output = array_replace(
-                $output,
-                $this->dataByForm[$formHash]
-                    ?? []
-            );
+        $output = $this->data_by_view[$view_hash] ?? [];
+        if (null !== $form_hash) {
+            $output = array_replace($output, $this->data_by_form[$form_hash] ?? []);
         }
-
         $output['children'] = [];
-
-        foreach ($view->children as $name => $childView) {
+        foreach ($view->children as $name => $child_view) {
             // The CSRF token, for example, is never added to the form tree.
             // It is only present in the view.
-            $childForm = $form?->has($name) ? $form->get($name) : null;
-
-            $output['children'][$name] = &$this->recursiveBuildFinalFormTree($childForm, $childView, $outputByHash);
+            $child_form = $form?->has($name) ? $form->get($name) : null;
+            $output['children'][$name] =& $this->recursive_build_final_form_tree($child_form, $child_view, $output_by_hash);
         }
-
         return $output;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,97 +9,68 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Extension\Core\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\ChoiceList\ChoiceList;
-use Symfony\Component\Form\ChoiceList\Loader\IntlCallbackChoiceLoader;
+use Symfony\Component\Form\Abstract_Type;
+use Symfony\Component\Form\Choice_List\Choice_List;
+use Symfony\Component\Form\Choice_List\Loader\Intl_Callback_Choice_Loader;
 use Symfony\Component\Form\Exception\LogicException;
 use Symfony\Component\Intl\Currencies;
 use Symfony\Component\Intl\Intl;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-class CurrencyType extends AbstractType
+use Symfony\Component\Options_Resolver\Exception\Invalid_Options_Exception;
+use Symfony\Component\Options_Resolver\Options;
+use Symfony\Component\Options_Resolver\Options_Resolver;
+class Currency_Type extends Abstract_Type
 {
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configure_options(Options_Resolver $resolver): void
     {
-        $resolver->setDefaults([
-            'choice_loader' => function (Options $options): \Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader {
-                if (!class_exists(Intl::class)) {
-                    throw new LogicException(\sprintf('The "symfony/intl" component is required to use "%s". Try running "composer require symfony/intl".', static::class));
+        $resolver->set_defaults(['choice_loader' => function (Options $options): \Symfony\Component\Form\Choice_List\Factory\Cache\Choice_Loader {
+            if (!class_exists(Intl::class)) {
+                throw new LogicException(\sprintf('The "symfony/intl" component is required to use "%s". Try running "composer require symfony/intl".', static::class));
+            }
+            $choice_translation_locale = $options['choice_translation_locale'];
+            $active_at = $options['active_at'];
+            $not_active_at = $options['not_active_at'];
+            $legal_tender = $options['legal_tender'];
+            $include_undated = $options['include_undated'];
+            if (null !== $active_at && null !== $not_active_at) {
+                throw new Invalid_Options_Exception('The "active_at" and "not_active_at" options cannot be used together.');
+            }
+            $legal_tender_cache_key = match ($legal_tender) {
+                null => 'X',
+                true => '1',
+                false => '0',
+            };
+            return Choice_List::loader($this, new Intl_Callback_Choice_Loader(static function () use ($choice_translation_locale, $active_at, $not_active_at, $legal_tender, $include_undated): array {
+                if (null === $active_at && null === $not_active_at && null === $legal_tender) {
+                    return array_flip(Currencies::get_names($choice_translation_locale));
                 }
-
-                $choiceTranslationLocale = $options['choice_translation_locale'];
-                $activeAt = $options['active_at'];
-                $notActiveAt = $options['not_active_at'];
-                $legalTender = $options['legal_tender'];
-                $includeUndated = $options['include_undated'];
-
-                if (null !== $activeAt && null !== $notActiveAt) {
-                    throw new InvalidOptionsException('The "active_at" and "not_active_at" options cannot be used together.');
-                }
-
-                $legalTenderCacheKey = match ($legalTender) {
-                    null => 'X',
-                    true => '1',
-                    false => '0',
+                $filtered_currency_names = [];
+                $active = match (true) {
+                    null !== $active_at => true,
+                    null !== $not_active_at => false,
+                    default => null,
                 };
-
-                return ChoiceList::loader(
-                    $this,
-                    new IntlCallbackChoiceLoader(
-                        static function () use ($choiceTranslationLocale, $activeAt, $notActiveAt, $legalTender, $includeUndated): array {
-                            if (null === $activeAt && null === $notActiveAt && null === $legalTender) {
-                                return array_flip(Currencies::getNames($choiceTranslationLocale));
-                            }
-
-                            $filteredCurrencyNames = [];
-
-                            $active = match (true) {
-                                null !== $activeAt => true,
-                                null !== $notActiveAt => false,
-                                default => null,
-                            };
-
-                            foreach (Currencies::getCurrencyCodes() as $code) {
-                                if (!Currencies::isValidInAnyCountry($code, $legalTender, $active, $activeAt ?? $notActiveAt, $includeUndated)) {
-                                    continue;
-                                }
-
-                                $filteredCurrencyNames[$code] = Currencies::getName($code, $choiceTranslationLocale);
-                            }
-
-                            return array_flip($filteredCurrencyNames);
-                        },
-                    ),
-                    $choiceTranslationLocale.($activeAt ?? $notActiveAt)?->format('Y-m-d\TH:i:s').$legalTenderCacheKey.(int) $includeUndated,
-                );
-            },
-            'choice_translation_domain' => false,
-            'choice_translation_locale' => null,
-            'active_at' => new \DateTimeImmutable('today', new \DateTimeZone('Etc/UTC')),
-            'not_active_at' => null,
-            'include_undated' => true,
-            'legal_tender' => true,
-            'invalid_message' => 'Please select a valid currency.',
-        ]);
-
-        $resolver->setAllowedTypes('choice_translation_locale', ['null', 'string']);
-        $resolver->setAllowedTypes('active_at', [\DateTimeInterface::class, 'null']);
-        $resolver->setAllowedTypes('not_active_at', [\DateTimeInterface::class, 'null']);
-        $resolver->setAllowedTypes('legal_tender', ['bool', 'null']);
-        $resolver->setAllowedTypes('include_undated', 'bool');
+                foreach (Currencies::get_currency_codes() as $code) {
+                    if (!Currencies::is_valid_in_any_country($code, $legal_tender, $active, $active_at ?? $not_active_at, $include_undated)) {
+                        continue;
+                    }
+                    $filtered_currency_names[$code] = Currencies::get_name($code, $choice_translation_locale);
+                }
+                return array_flip($filtered_currency_names);
+            }), $choice_translation_locale . ($active_at ?? $not_active_at)?->format('Y-m-d\TH:i:s') . $legal_tender_cache_key . (int) $include_undated);
+        }, 'choice_translation_domain' => false, 'choice_translation_locale' => null, 'active_at' => new \DateTimeImmutable('today', new \DateTimeZone('Etc/UTC')), 'not_active_at' => null, 'include_undated' => true, 'legal_tender' => true, 'invalid_message' => 'Please select a valid currency.']);
+        $resolver->set_allowed_types('choice_translation_locale', ['null', 'string']);
+        $resolver->set_allowed_types('active_at', [\DateTimeInterface::class, 'null']);
+        $resolver->set_allowed_types('not_active_at', [\DateTimeInterface::class, 'null']);
+        $resolver->set_allowed_types('legal_tender', ['bool', 'null']);
+        $resolver->set_allowed_types('include_undated', 'bool');
     }
-
-    public function getParent(): ?string
+    public function get_parent(): ?string
     {
-        return ChoiceType::class;
+        return Choice_Type::class;
     }
-
-    public function getBlockPrefix(): string
+    public function get_block_prefix(): string
     {
         return 'currency';
     }

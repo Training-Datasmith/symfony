@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,43 +9,37 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Extension\Core\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\SubmitButtonTypeInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Form\Abstract_Type;
+use Symfony\Component\Form\Form_Interface;
+use Symfony\Component\Form\Form_View;
+use Symfony\Component\Form\Submit_Button_Type_Interface;
+use Symfony\Component\Options_Resolver\Options_Resolver;
 /**
  * A submit button.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class SubmitType extends AbstractType implements SubmitButtonTypeInterface
+class Submit_Type extends Abstract_Type implements Submit_Button_Type_Interface
 {
-    public function buildView(FormView $view, FormInterface $form, array $options): void
+    public function build_view(Form_View $view, Form_Interface $form, array $options): void
     {
-        $view->vars['clicked'] = $form->isClicked();
-
+        $view->vars['clicked'] = $form->is_clicked();
         if (!$options['validate']) {
             $view->vars['attr']['formnovalidate'] = true;
         }
     }
-
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configure_options(Options_Resolver $resolver): void
     {
-        $resolver->setDefault('validate', true);
-        $resolver->setAllowedTypes('validate', 'bool');
+        $resolver->set_default('validate', true);
+        $resolver->set_allowed_types('validate', 'bool');
     }
-
-    public function getParent(): ?string
+    public function get_parent(): ?string
     {
-        return ButtonType::class;
+        return Button_Type::class;
     }
-
-    public function getBlockPrefix(): string
+    public function get_block_prefix(): string
     {
         return 'submit';
     }

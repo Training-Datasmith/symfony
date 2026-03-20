@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\CssSelector\Parser\Tokenizer;
+namespace Symfony\Component\Css_Selector\Parser\Tokenizer;
 
 /**
  * CSS selector tokenizer patterns builder.
@@ -23,69 +21,61 @@ namespace Symfony\Component\CssSelector\Parser\Tokenizer;
  *
  * @internal
  */
-class TokenizerPatterns
+class Tokenizer_Patterns
 {
-    private readonly string $unicodeEscapePattern;
-    private readonly string $simpleEscapePattern;
-    private readonly string $newLineEscapePattern;
-    private readonly string $escapePattern;
-    private readonly string $stringEscapePattern;
-    private readonly string $nonAsciiPattern;
-    private readonly string $nmCharPattern;
-    private readonly string $nmStartPattern;
-    private readonly string $identifierPattern;
-    private readonly string $hashPattern;
-    private readonly string $numberPattern;
-    private readonly string $quotedStringPattern;
-
+    private readonly string $unicode_escape_pattern;
+    private readonly string $simple_escape_pattern;
+    private readonly string $new_line_escape_pattern;
+    private readonly string $escape_pattern;
+    private readonly string $string_escape_pattern;
+    private readonly string $non_ascii_pattern;
+    private readonly string $nm_char_pattern;
+    private readonly string $nm_start_pattern;
+    private readonly string $identifier_pattern;
+    private readonly string $hash_pattern;
+    private readonly string $number_pattern;
+    private readonly string $quoted_string_pattern;
     public function __construct()
     {
-        $this->unicodeEscapePattern = '\\\\([0-9a-f]{1,6})(?:\r\n|[ \n\r\t\f])?';
-        $this->simpleEscapePattern = '\\\\(.)';
-        $this->newLineEscapePattern = '\\\\(?:\n|\r\n|\r|\f)';
-        $this->escapePattern = $this->unicodeEscapePattern.'|\\\\[^\n\r\f0-9a-f]';
-        $this->stringEscapePattern = $this->newLineEscapePattern.'|'.$this->escapePattern;
-        $this->nonAsciiPattern = '[^\x00-\x7F]';
-        $this->nmCharPattern = '[_a-z0-9-]|'.$this->escapePattern.'|'.$this->nonAsciiPattern;
-        $this->nmStartPattern = '[_a-z]|'.$this->escapePattern.'|'.$this->nonAsciiPattern;
-        $this->identifierPattern = '-?(?:'.$this->nmStartPattern.')(?:'.$this->nmCharPattern.')*';
-        $this->hashPattern = '#((?:'.$this->nmCharPattern.')+)';
-        $this->numberPattern = '[+-]?(?:[0-9]*\.[0-9]+|[0-9]+)';
-        $this->quotedStringPattern = '([^\n\r\f\\\\%s]|'.$this->stringEscapePattern.')*';
+        $this->unicode_escape_pattern = '\\\\([0-9a-f]{1,6})(?:\r\n|[ \n\r\t\f])?';
+        $this->simple_escape_pattern = '\\\\(.)';
+        $this->new_line_escape_pattern = '\\\\(?:\n|\r\n|\r|\f)';
+        $this->escape_pattern = $this->unicode_escape_pattern . '|\\\\[^\n\r\f0-9a-f]';
+        $this->string_escape_pattern = $this->new_line_escape_pattern . '|' . $this->escape_pattern;
+        $this->non_ascii_pattern = '[^\x00-\x7F]';
+        $this->nm_char_pattern = '[_a-z0-9-]|' . $this->escape_pattern . '|' . $this->non_ascii_pattern;
+        $this->nm_start_pattern = '[_a-z]|' . $this->escape_pattern . '|' . $this->non_ascii_pattern;
+        $this->identifier_pattern = '-?(?:' . $this->nm_start_pattern . ')(?:' . $this->nm_char_pattern . ')*';
+        $this->hash_pattern = '#((?:' . $this->nm_char_pattern . ')+)';
+        $this->number_pattern = '[+-]?(?:[0-9]*\.[0-9]+|[0-9]+)';
+        $this->quoted_string_pattern = '([^\n\r\f\\\\%s]|' . $this->string_escape_pattern . ')*';
     }
-
-    public function getNewLineEscapePattern(): string
+    public function get_new_line_escape_pattern(): string
     {
-        return '~'.$this->newLineEscapePattern.'~';
+        return '~' . $this->new_line_escape_pattern . '~';
     }
-
-    public function getSimpleEscapePattern(): string
+    public function get_simple_escape_pattern(): string
     {
-        return '~'.$this->simpleEscapePattern.'~';
+        return '~' . $this->simple_escape_pattern . '~';
     }
-
-    public function getUnicodeEscapePattern(): string
+    public function get_unicode_escape_pattern(): string
     {
-        return '~'.$this->unicodeEscapePattern.'~i';
+        return '~' . $this->unicode_escape_pattern . '~i';
     }
-
-    public function getIdentifierPattern(): string
+    public function get_identifier_pattern(): string
     {
-        return '~^'.$this->identifierPattern.'~i';
+        return '~^' . $this->identifier_pattern . '~i';
     }
-
-    public function getHashPattern(): string
+    public function get_hash_pattern(): string
     {
-        return '~^'.$this->hashPattern.'~i';
+        return '~^' . $this->hash_pattern . '~i';
     }
-
-    public function getNumberPattern(): string
+    public function get_number_pattern(): string
     {
-        return '~^'.$this->numberPattern.'~';
+        return '~^' . $this->number_pattern . '~';
     }
-
-    public function getQuotedStringPattern(string $quote): string
+    public function get_quoted_string_pattern(string $quote): string
     {
-        return '~^'.\sprintf($this->quotedStringPattern, $quote).'~i';
+        return '~^' . \sprintf($this->quoted_string_pattern, $quote) . '~i';
     }
 }

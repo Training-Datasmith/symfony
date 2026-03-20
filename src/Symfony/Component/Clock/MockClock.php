@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Clock;
 
 /**
@@ -20,10 +18,9 @@ namespace Symfony\Component\Clock;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class MockClock implements ClockInterface
+final class Mock_Clock implements Clock_Interface
 {
-    private DatePoint $now;
-
+    private Date_Point $now;
     /**
      * @throws \DateMalformedStringException When $now is invalid
      * @throws \DateInvalidTimeZoneException When $timezone is invalid
@@ -33,34 +30,27 @@ final class MockClock implements ClockInterface
         if (\is_string($timezone)) {
             $timezone = new \DateTimeZone($timezone);
         }
-
         if (\is_string($now)) {
-            $now = new DatePoint($now, $timezone ?? new \DateTimeZone('UTC'));
-        } elseif (!$now instanceof DatePoint) {
-            $now = DatePoint::createFromInterface($now);
+            $now = new Date_Point($now, $timezone ?? new \DateTimeZone('UTC'));
+        } elseif (!$now instanceof Date_Point) {
+            $now = Date_Point::create_from_interface($now);
         }
-
-        $this->now = null !== $timezone ? $now->setTimezone($timezone) : $now;
+        $this->now = null !== $timezone ? $now->set_timezone($timezone) : $now;
     }
-
-    public function now(): DatePoint
+    public function now(): Date_Point
     {
         return clone $this->now;
     }
-
     public function sleep(float|int $seconds): void
     {
         if (0 >= $seconds) {
             return;
         }
-
-        $now = (float) $this->now->format('Uu') + $seconds * 1e6;
+        $now = (float) $this->now->format('Uu') + $seconds * 1000000.0;
         $now = substr_replace(\sprintf('@%07.0F', $now), '.', -6, 0);
-        $timezone = $this->now->getTimezone();
-
-        $this->now = DatePoint::createFromInterface(new \DateTimeImmutable($now, $timezone))->setTimezone($timezone);
+        $timezone = $this->now->get_timezone();
+        $this->now = Date_Point::create_from_interface(new \DateTimeImmutable($now, $timezone))->set_timezone($timezone);
     }
-
     /**
      * @throws \DateMalformedStringException When $modifier is invalid
      */
@@ -68,19 +58,16 @@ final class MockClock implements ClockInterface
     {
         $this->now = $this->now->modify($modifier);
     }
-
     /**
      * @throws \DateInvalidTimeZoneException When the timezone name is invalid
      */
-    public function withTimeZone(\DateTimeZone|string $timezone): static
+    public function with_time_zone(\DateTimeZone|string $timezone): static
     {
         if (\is_string($timezone)) {
             $timezone = new \DateTimeZone($timezone);
         }
-
         $clone = clone $this;
-        $clone->now = $clone->now->setTimezone($timezone);
-
+        $clone->now = $clone->now->set_timezone($timezone);
         return $clone;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,19 +9,17 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Foundation\File;
 
-namespace Symfony\Component\HttpFoundation\File;
-
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
-use Symfony\Component\Mime\MimeTypes;
-
+use Symfony\Component\Http_Foundation\File\Exception\File_Exception;
+use Symfony\Component\Http_Foundation\File\Exception\File_Not_Found_Exception;
+use Symfony\Component\Mime\Mime_Types;
 /**
  * A file in the file system.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class File extends \SplFileInfo
+class File extends \Spl_File_Info
 {
     /**
      * Constructs a new file from the given path.
@@ -32,15 +29,13 @@ class File extends \SplFileInfo
      *
      * @throws FileNotFoundException If the given path is not a file
      */
-    public function __construct(string $path, bool $checkPath = true)
+    public function __construct(string $path, bool $check_path = true)
     {
-        if ($checkPath && !is_file($path)) {
-            throw new FileNotFoundException($path);
+        if ($check_path && !is_file($path)) {
+            throw new File_Not_Found_Exception($path);
         }
-
         parent::__construct($path);
     }
-
     /**
      * Returns the extension based on the mime type.
      *
@@ -52,15 +47,13 @@ class File extends \SplFileInfo
      * @see MimeTypes
      * @see getMimeType()
      */
-    public function guessExtension(): ?string
+    public function guess_extension(): ?string
     {
-        if (!class_exists(MimeTypes::class)) {
+        if (!class_exists(Mime_Types::class)) {
             throw new \LogicException('You cannot guess the extension as the Mime component is not installed. Try running "composer require symfony/mime".');
         }
-
-        return MimeTypes::getDefault()->getExtensions($this->getMimeType())[0] ?? null;
+        return Mime_Types::get_default()->get_extensions($this->get_mime_type())[0] ?? null;
     }
-
     /**
      * Returns the mime type of the file.
      *
@@ -70,15 +63,13 @@ class File extends \SplFileInfo
      *
      * @see MimeTypes
      */
-    public function getMimeType(): ?string
+    public function get_mime_type(): ?string
     {
-        if (!class_exists(MimeTypes::class)) {
+        if (!class_exists(Mime_Types::class)) {
             throw new \LogicException('You cannot guess the mime type as the Mime component is not installed. Try running "composer require symfony/mime".');
         }
-
-        return MimeTypes::getDefault()->guessMimeType($this->getPathname());
+        return Mime_Types::get_default()->guess_mime_type($this->get_pathname());
     }
-
     /**
      * Moves the file to a new location.
      *
@@ -86,61 +77,50 @@ class File extends \SplFileInfo
      */
     public function move(string $directory, ?string $name = null): self
     {
-        $target = $this->getTargetFile($directory, $name);
-
+        $target = $this->get_target_file($directory, $name);
         set_error_handler(static function ($type, $msg) use (&$error): void {
             $error = $msg;
         });
         try {
-            $renamed = rename($this->getPathname(), $target);
+            $renamed = rename($this->get_pathname(), $target);
         } finally {
             restore_error_handler();
         }
         if (!$renamed) {
-            throw new FileException(\sprintf('Could not move the file "%s" to "%s" (%s).', $this->getPathname(), $target, strip_tags((string) $error)));
+            throw new File_Exception(\sprintf('Could not move the file "%s" to "%s" (%s).', $this->get_pathname(), $target, strip_tags((string) $error)));
         }
-
-        @chmod($target, 0o666 & ~umask());
-
+        @chmod($target, 0666 & ~umask());
         return $target;
     }
-
-    public function getContent(): string
+    public function get_content(): string
     {
-        $content = file_get_contents($this->getPathname());
-
+        $content = file_get_contents($this->get_pathname());
         if (false === $content) {
-            throw new FileException(\sprintf('Could not get the content of the file "%s".', $this->getPathname()));
+            throw new File_Exception(\sprintf('Could not get the content of the file "%s".', $this->get_pathname()));
         }
-
         return $content;
     }
-
-    protected function getTargetFile(string $directory, ?string $name = null): self
+    protected function get_target_file(string $directory, ?string $name = null): self
     {
-        if (!is_dir($directory) && !@mkdir($directory, 0o777, true) && !is_dir($directory)) {
+        if (!is_dir($directory) && !@mkdir($directory, 0777, true) && !is_dir($directory)) {
             if (is_file($directory)) {
-                throw new FileException(\sprintf('Unable to create the "%s" directory: a similarly-named file exists.', $directory));
+                throw new File_Exception(\sprintf('Unable to create the "%s" directory: a similarly-named file exists.', $directory));
             }
-            throw new FileException(\sprintf('Unable to create the "%s" directory.', $directory));
+            throw new File_Exception(\sprintf('Unable to create the "%s" directory.', $directory));
         }
         if (!is_writable($directory)) {
-            throw new FileException(\sprintf('Unable to write in the "%s" directory.', $directory));
+            throw new File_Exception(\sprintf('Unable to write in the "%s" directory.', $directory));
         }
-
-        $target = rtrim($directory, '/\\').\DIRECTORY_SEPARATOR.(null === $name ? $this->getBasename() : $this->getName($name));
-
+        $target = rtrim($directory, '/\\') . \DIRECTORY_SEPARATOR . (null === $name ? $this->get_basename() : $this->get_name($name));
         return new self($target, false);
     }
-
     /**
      * Returns locale independent base name of the given path.
      */
-    protected function getName(string $name): string
+    protected function get_name(string $name): string
     {
-        $originalName = str_replace('\\', '/', $name);
-        $pos = strrpos($originalName, '/');
-
-        return false === $pos ? $originalName : substr($originalName, $pos + 1);
+        $original_name = str_replace('\\', '/', $name);
+        $pos = strrpos($original_name, '/');
+        return false === $pos ? $original_name : substr($original_name, $pos + 1);
     }
 }

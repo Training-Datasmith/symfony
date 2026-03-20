@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,37 +9,29 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Resource;
 
-use Symfony\Component\Config\ResourceCheckerInterface;
-
-class SkippingResourceChecker implements ResourceCheckerInterface
+use Symfony\Component\Config\Resource_Checker_Interface;
+class Skipping_Resource_Checker implements Resource_Checker_Interface
 {
-    private array $skippedResourceTypes;
-
+    private array $skipped_resource_types;
     /**
      * @param class-string<ResourceInterface>[] $skippedResourceTypes
      */
-    public function __construct(array $skippedResourceTypes = [])
+    public function __construct(array $skipped_resource_types = [])
     {
-        $this->skippedResourceTypes = array_flip($skippedResourceTypes);
+        $this->skipped_resource_types = array_flip($skipped_resource_types);
     }
-
-    public function supports(ResourceInterface $metadata): bool
+    public function supports(Resource_Interface $metadata): bool
     {
-        return !$this->skippedResourceTypes || isset($this->skippedResourceTypes[$metadata::class]);
+        return !$this->skipped_resource_types || isset($this->skipped_resource_types[$metadata::class]);
     }
-
-    public function isFresh(ResourceInterface $resource, int $timestamp): bool
+    public function is_fresh(Resource_Interface $resource, int $timestamp): bool
     {
         return true;
     }
-
     public function __serialize(): array
     {
-        return [
-            'skippedResourceTypes' => $this->skippedResourceTypes,
-        ];
+        return ['skippedResourceTypes' => $this->skipped_resource_types];
     }
 }

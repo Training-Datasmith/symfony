@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,40 +9,32 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Dependency_Injection;
 
-namespace Symfony\Component\HttpKernel\DependencyInjection;
-
-use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Log\Logger;
-
+use Psr\Log\Logger_Interface;
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Reference;
+use Symfony\Component\Http_Foundation\Request_Stack;
+use Symfony\Component\Http_Kernel\Log\Logger;
 /**
  * Registers the default logger if necessary.
  *
  * @author Kévin Dunglas <dunglas@gmail.com>
  */
-class LoggerPass implements CompilerPassInterface
+class Logger_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (!$container->has(LoggerInterface::class)) {
-            $container->setAlias(LoggerInterface::class, 'logger');
+        if (!$container->has(Logger_Interface::class)) {
+            $container->set_alias(Logger_Interface::class, 'logger');
         }
-
         if ($container->has('logger')) {
             return;
         }
-
-        if ($debug = $container->getParameter('kernel.debug')) {
-            $debug = $container->hasParameter('kernel.runtime_mode.web')
-                ? $container->getParameter('kernel.runtime_mode.web')
-                : !\in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true);
+        if ($debug = $container->get_parameter('kernel.debug')) {
+            $debug = $container->has_parameter('kernel.runtime_mode.web') ? $container->get_parameter('kernel.runtime_mode.web') : !\in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true);
         }
-
-        $container->register('logger', Logger::class)
-            ->setArguments([null, null, null, new Reference(RequestStack::class), $debug]);
+        $container->register('logger', Logger::class)->set_arguments([null, null, null, new Reference(Request_Stack::class), $debug]);
     }
 }

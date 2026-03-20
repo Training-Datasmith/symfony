@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition\Builder;
 
 /**
@@ -20,23 +18,20 @@ namespace Symfony\Component\Config\Definition\Builder;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class NormalizationBuilder
+class Normalization_Builder
 {
     /**
      * @var (ExprBuilder<T>|\Closure)[]
      */
     public array $before = [];
-    public array $declaredTypes = [];
+    public array $declared_types = [];
     public array $remappings = [];
-
     /**
      * @param T $node
      */
-    public function __construct(
-        protected NodeDefinition $node,
-    ) {
+    public function __construct(protected Node_Definition $node)
+    {
     }
-
     /**
      * Registers a key to remap to its plural form.
      *
@@ -48,23 +43,19 @@ class NormalizationBuilder
     public function remap(string $key, ?string $plural = null): static
     {
         $this->remappings[] = [$key, $plural ?? $key . 's'];
-
         return $this;
     }
-
     /**
      * Registers a closure to run before the normalization or an expression builder to build it if null is provided.
      *
      * @return ($closure is \Closure ? $this : ExprBuilder<T>)
      */
-    public function before(?\Closure $closure = null): ExprBuilder|static
+    public function before(?\Closure $closure = null): Expr_Builder|static
     {
         if ($closure) {
             $this->before[] = $closure;
-
             return $this;
         }
-
-        return $this->before[] = new ExprBuilder($this->node);
+        return $this->before[] = new Expr_Builder($this->node);
     }
 }

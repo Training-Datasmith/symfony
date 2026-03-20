@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator;
 
 // For the phpdoc to remain compatible with the generation of per-app App class,
 // this file should have no "use" statements: all symbols referenced by
 // the phpdoc need to be in the current namespace or be root-scoped.
-
 /**
  * This class provides array-shapes for configuring the services and bundles of an application.
  *
@@ -149,7 +146,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     }>
  * }
  */
-class AppReference
+class App_Reference
 {
     /**
      * @param ConfigType $config
@@ -158,22 +155,15 @@ class AppReference
      */
     public static function config(array $config): array
     {
-        $defaults = [
-            '_defaults' => [
-                'autowire' => true,
-                'autoconfigure' => true,
-            ],
-        ];
+        $defaults = ['_defaults' => ['autowire' => true, 'autoconfigure' => true]];
         if (\is_array($config['services'] ?? null)) {
             $config['services'] = array_replace_recursive($defaults, $config['services']);
         }
-
         foreach ($config as $key => $value) {
             if (str_starts_with($key, 'when@') && \is_array($value['services'] ?? null)) {
                 $config[$key]['services'] = array_replace_recursive($defaults, $value['services']);
             }
         }
-
         return $config;
     }
 }

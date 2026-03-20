@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,24 +9,21 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Foundation;
 
-namespace Symfony\Component\HttpFoundation;
-
-use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-
+use Symfony\Component\Http_Foundation\Exception\Session_Not_Found_Exception;
+use Symfony\Component\Http_Foundation\Session\Session_Interface;
 /**
  * Request stack that controls the lifecycle of requests.
  *
  * @author Benjamin Eberlei <kontakt@beberlei.de>
  */
-class RequestStack
+class Request_Stack
 {
     /**
      * @var Request[]
      */
     private array $requests = [];
-
     /**
      * @param Request[] $requests
      */
@@ -37,7 +33,6 @@ class RequestStack
             $this->push($request);
         }
     }
-
     /**
      * Pushes a Request on the stack.
      *
@@ -48,7 +43,6 @@ class RequestStack
     {
         $this->requests[] = $request;
     }
-
     /**
      * Pops the current request from the stack.
      *
@@ -62,15 +56,12 @@ class RequestStack
         if (!$this->requests) {
             return null;
         }
-
         return array_pop($this->requests);
     }
-
-    public function getCurrentRequest(): ?Request
+    public function get_current_request(): ?Request
     {
         return end($this->requests) ?: null;
     }
-
     /**
      * Gets the main request.
      *
@@ -78,15 +69,13 @@ class RequestStack
      * might make it un-compatible with other features of your framework
      * like ESI support.
      */
-    public function getMainRequest(): ?Request
+    public function get_main_request(): ?Request
     {
         if (!$this->requests) {
             return null;
         }
-
         return $this->requests[0];
     }
-
     /**
      * Returns the parent request of the current.
      *
@@ -96,31 +85,27 @@ class RequestStack
      *
      * If current Request is the main request, it returns null.
      */
-    public function getParentRequest(): ?Request
+    public function get_parent_request(): ?Request
     {
         $pos = \count($this->requests) - 2;
-
         return $this->requests[$pos] ?? null;
     }
-
     /**
      * Gets the current session.
      *
      * @throws SessionNotFoundException
      */
-    public function getSession(): SessionInterface
+    public function get_session(): Session_Interface
     {
-        if ((null !== $request = end($this->requests) ?: null) && $request->hasSession()) {
-            return $request->getSession();
+        if (null !== ($request = end($this->requests) ?: null) && $request->has_session()) {
+            return $request->get_session();
         }
-
-        throw new SessionNotFoundException();
+        throw new Session_Not_Found_Exception();
     }
-
-    public function resetRequestFormats(): void
+    public function reset_request_formats(): void
     {
-        static $resetRequestFormats;
-        $resetRequestFormats ??= \Closure::bind(static fn (): null => self::$formats = null, null, Request::class);
-        $resetRequestFormats();
+        static $reset_request_formats;
+        $reset_request_formats ??= \Closure::bind(static fn(): null => self::$formats = null, null, Request::class);
+        $reset_request_formats();
     }
 }

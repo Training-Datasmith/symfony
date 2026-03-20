@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Dotenv\Exception;
 
 /**
@@ -18,7 +16,7 @@ namespace Symfony\Component\Dotenv\Exception;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class PathException extends \RuntimeException implements ExceptionInterface
+final class Path_Exception extends \RuntimeException implements Exception_Interface
 {
     public function __construct(string $path, int $code = 0, ?\Throwable $previous = null)
     {

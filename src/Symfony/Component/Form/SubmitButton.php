@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
 /**
@@ -18,15 +16,13 @@ namespace Symfony\Component\Form;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class SubmitButton extends Button implements ClickableInterface
+class Submit_Button extends Button implements Clickable_Interface
 {
     private bool $clicked = false;
-
-    public function isClicked(): bool
+    public function is_clicked(): bool
     {
         return $this->clicked;
     }
-
     /**
      * Submits data to the button.
      *
@@ -34,18 +30,14 @@ class SubmitButton extends Button implements ClickableInterface
      *
      * @throws Exception\AlreadySubmittedException if the form has already been submitted
      */
-    public function submit(array|string|null $submittedData, bool $clearMissing = true): static
+    public function submit(array|string|null $submitted_data, bool $clear_missing = true): static
     {
-        if ($this->getConfig()->getDisabled()) {
+        if ($this->get_config()->get_disabled()) {
             $this->clicked = false;
-
             return $this;
         }
-
-        parent::submit($submittedData, $clearMissing);
-
-        $this->clicked = null !== $submittedData;
-
+        parent::submit($submitted_data, $clear_missing);
+        $this->clicked = null !== $submitted_data;
         return $this;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,31 +9,28 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Cache\Dependency_Injection;
 
-namespace Symfony\Component\Cache\DependencyInjection;
-
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class CachePoolClearerPass implements CompilerPassInterface
+class Cache_Pool_Clearer_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        $container->getParameterBag()->remove('cache.prefix.seed');
-
-        foreach ($container->findTaggedServiceIds('cache.pool.clearer') as $id => $attr) {
-            $clearer = $container->getDefinition($id);
+        $container->get_parameter_bag()->remove('cache.prefix.seed');
+        foreach ($container->find_tagged_service_ids('cache.pool.clearer') as $id => $attr) {
+            $clearer = $container->get_definition($id);
             $pools = [];
-            foreach ($clearer->getArgument(0) as $name => $ref) {
-                if ($container->hasDefinition($ref)) {
+            foreach ($clearer->get_argument(0) as $name => $ref) {
+                if ($container->has_definition($ref)) {
                     $pools[$name] = new Reference($ref);
                 }
             }
-            $clearer->replaceArgument(0, $pools);
+            $clearer->replace_argument(0, $pools);
         }
     }
 }

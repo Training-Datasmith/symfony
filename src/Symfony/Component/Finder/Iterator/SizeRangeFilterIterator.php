@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Finder\Iterator;
 
-use Symfony\Component\Finder\Comparator\NumberComparator;
-
+use Symfony\Component\Finder\Comparator\Number_Comparator;
 /**
  * SizeRangeFilterIterator filters out files that are not in the given size range.
  *
@@ -22,7 +19,7 @@ use Symfony\Component\Finder\Comparator\NumberComparator;
  *
  * @extends \FilterIterator<string, \SplFileInfo>
  */
-class SizeRangeFilterIterator extends \FilterIterator
+class Size_Range_Filter_Iterator extends \Filter_Iterator
 {
     /**
      * @param \Iterator<string, \SplFileInfo> $iterator
@@ -32,24 +29,21 @@ class SizeRangeFilterIterator extends \FilterIterator
     {
         parent::__construct($iterator);
     }
-
     /**
      * Filters the iterator values.
      */
     public function accept(): bool
     {
         $fileinfo = $this->current();
-        if (!$fileinfo->isFile()) {
+        if (!$fileinfo->is_file()) {
             return true;
         }
-
-        $filesize = $fileinfo->getSize();
+        $filesize = $fileinfo->get_size();
         foreach ($this->comparators as $compare) {
             if (!$compare->test($filesize)) {
                 return false;
             }
         }
-
         return true;
     }
 }

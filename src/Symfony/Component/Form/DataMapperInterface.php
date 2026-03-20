@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface DataMapperInterface
+interface Data_Mapper_Interface
 {
     /**
      * Maps the view data of a compound form to its children.
@@ -29,8 +27,7 @@ interface DataMapperInterface
      *
      * @throws Exception\UnexpectedTypeException if the type of the data parameter is not supported
      */
-    public function mapDataToForms(mixed $viewData, \Traversable $forms): void;
-
+    public function map_data_to_forms(mixed $view_data, \Traversable $forms): void;
     /**
      * Maps the model data of a list of children forms into the view data of their parent.
      *
@@ -60,5 +57,5 @@ interface DataMapperInterface
      *
      * @throws Exception\UnexpectedTypeException if the type of the data parameter is not supported
      */
-    public function mapFormsToData(\Traversable $forms, mixed &$viewData): void;
+    public function map_forms_to_data(\Traversable $forms, mixed &$view_data): void;
 }

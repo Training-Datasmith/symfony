@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,16 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Event;
 
-use Symfony\Component\Form\FormEvent;
-
+use Symfony\Component\Form\Form_Event;
 /**
  * This event is dispatched at the beginning of the Form::setData() method.
  *
  * It can be used to modify the data given during pre-population.
  */
-final class PreSetDataEvent extends FormEvent
+final class Pre_Set_Data_Event extends Form_Event
 {
 }

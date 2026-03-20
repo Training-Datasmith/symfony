@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Finder;
 
 /**
@@ -40,59 +38,53 @@ class Glob
     /**
      * Returns a regexp which is the equivalent of the glob pattern.
      */
-    public static function toRegex(string $glob, bool $strictLeadingDot = true, bool $strictWildcardSlash = true, string $delimiter = '#'): string
+    public static function to_regex(string $glob, bool $strict_leading_dot = true, bool $strict_wildcard_slash = true, string $delimiter = '#'): string
     {
-        $firstByte = true;
+        $first_byte = true;
         $escaping = false;
-        $inCurlies = 0;
+        $in_curlies = 0;
         $regex = '';
         if ($unanchored = str_starts_with($glob, '**/')) {
-            $glob = '/'.$glob;
+            $glob = '/' . $glob;
         }
-        $sizeGlob = \strlen($glob);
-        for ($i = 0; $i < $sizeGlob; ++$i) {
+        $size_glob = \strlen($glob);
+        for ($i = 0; $i < $size_glob; ++$i) {
             $car = $glob[$i];
-            if ($firstByte && $strictLeadingDot && '.' !== $car) {
+            if ($first_byte && $strict_leading_dot && '.' !== $car) {
                 $regex .= '(?=[^\.])';
             }
-
-            $firstByte = '/' === $car;
-
-            if ($firstByte && $strictWildcardSlash && isset($glob[$i + 2]) && '**' === $glob[$i + 1].$glob[$i + 2] && (!isset($glob[$i + 3]) || '/' === $glob[$i + 3])) {
+            $first_byte = '/' === $car;
+            if ($first_byte && $strict_wildcard_slash && isset($glob[$i + 2]) && '**' === $glob[$i + 1] . $glob[$i + 2] && (!isset($glob[$i + 3]) || '/' === $glob[$i + 3])) {
                 $car = '[^/]++/';
                 if (!isset($glob[$i + 3])) {
                     $car .= '?';
                 }
-
-                if ($strictLeadingDot) {
-                    $car = '(?=[^\.])'.$car;
+                if ($strict_leading_dot) {
+                    $car = '(?=[^\.])' . $car;
                 }
-
-                $car = '/(?:'.$car.')*';
+                $car = '/(?:' . $car . ')*';
                 $i += 2 + isset($glob[$i + 3]);
-
                 if ('/' === $delimiter) {
-                    $car = str_replace('/', '\\/', $car);
+                    $car = str_replace('/', '\/', $car);
                 }
             }
-
             if ($delimiter === $car || '.' === $car || '(' === $car || ')' === $car || '|' === $car || '+' === $car || '^' === $car || '$' === $car) {
-                $regex .= "\\$car";
+                $regex .= "\\{$car}";
             } elseif ('*' === $car) {
-                $regex .= $escaping ? '\\*' : ($strictWildcardSlash ? '[^/]*' : '.*');
+                $regex .= $escaping ? '\*' : ($strict_wildcard_slash ? '[^/]*' : '.*');
             } elseif ('?' === $car) {
-                $regex .= $escaping ? '\\?' : ($strictWildcardSlash ? '[^/]' : '.');
+                $regex .= $escaping ? '\?' : ($strict_wildcard_slash ? '[^/]' : '.');
             } elseif ('{' === $car) {
-                $regex .= $escaping ? '\\{' : '(';
+                $regex .= $escaping ? '\{' : '(';
                 if (!$escaping) {
-                    ++$inCurlies;
+                    ++$in_curlies;
                 }
-            } elseif ('}' === $car && $inCurlies) {
+            } elseif ('}' === $car && $in_curlies) {
                 $regex .= $escaping ? '}' : ')';
                 if (!$escaping) {
-                    --$inCurlies;
+                    --$in_curlies;
                 }
-            } elseif (',' === $car && $inCurlies) {
+            } elseif (',' === $car && $in_curlies) {
                 $regex .= $escaping ? ',' : '|';
             } elseif ('\\' === $car) {
                 if ($escaping) {
@@ -101,18 +93,15 @@ class Glob
                 } else {
                     $escaping = true;
                 }
-
                 continue;
             } else {
                 $regex .= $car;
             }
             $escaping = false;
         }
-
         if ($unanchored) {
-            $regex = substr_replace($regex, '?', 1 + ('/' === $delimiter) + ($strictLeadingDot ? \strlen('(?=[^\.])') : 0), 0);
+            $regex = substr_replace($regex, '?', 1 + ('/' === $delimiter) + ($strict_leading_dot ? \strlen('(?=[^\.])') : 0), 0);
         }
-
-        return $delimiter.'^'.$regex.'$'.$delimiter;
+        return $delimiter . '^' . $regex . '$' . $delimiter;
     }
 }

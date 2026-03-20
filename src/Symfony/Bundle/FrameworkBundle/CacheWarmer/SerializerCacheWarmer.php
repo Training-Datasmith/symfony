@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,77 +9,66 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Cache_Warmer;
 
-namespace Symfony\Bundle\FrameworkBundle\CacheWarmer;
-
-use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Component\Serializer\Mapping\Factory\CacheClassMetadataFactory;
-use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
-use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
-use Symfony\Component\Serializer\Mapping\Loader\LoaderChain;
-use Symfony\Component\Serializer\Mapping\Loader\LoaderInterface;
-use Symfony\Component\Serializer\Mapping\Loader\XmlFileLoader;
-use Symfony\Component\Serializer\Mapping\Loader\YamlFileLoader;
-
+use Symfony\Component\Cache\Adapter\Array_Adapter;
+use Symfony\Component\Serializer\Mapping\Factory\Cache_Class_Metadata_Factory;
+use Symfony\Component\Serializer\Mapping\Factory\Class_Metadata_Factory;
+use Symfony\Component\Serializer\Mapping\Loader\Attribute_Loader;
+use Symfony\Component\Serializer\Mapping\Loader\Loader_Chain;
+use Symfony\Component\Serializer\Mapping\Loader\Loader_Interface;
+use Symfony\Component\Serializer\Mapping\Loader\Xml_File_Loader;
+use Symfony\Component\Serializer\Mapping\Loader\Yaml_File_Loader;
 /**
  * Warms up serializer metadata.
  *
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-final class SerializerCacheWarmer extends AbstractPhpFileCacheWarmer
+final class Serializer_Cache_Warmer extends Abstract_Php_File_Cache_Warmer
 {
     /**
      * @param LoaderInterface[] $loaders      The serializer metadata loaders
      * @param string            $phpArrayFile The PHP file where metadata are cached
      */
-    public function __construct(
-        private readonly array $loaders,
-        string $phpArrayFile,
-    ) {
-        parent::__construct($phpArrayFile);
-    }
-
-    protected function doWarmUp(string $cacheDir, ArrayAdapter $arrayAdapter, ?string $buildDir = null): bool
+    public function __construct(private readonly array $loaders, string $php_array_file)
     {
-        if (!$buildDir) {
+        parent::__construct($php_array_file);
+    }
+    protected function do_warm_up(string $cache_dir, Array_Adapter $array_adapter, ?string $build_dir = null): bool
+    {
+        if (!$build_dir) {
             return false;
         }
         if (!$this->loaders) {
             return true;
         }
-
-        $metadataFactory = new CacheClassMetadataFactory(new ClassMetadataFactory(new LoaderChain($this->loaders)), $arrayAdapter);
-
-        foreach ($this->extractSupportedLoaders($this->loaders) as $loader) {
-            foreach ($loader->getMappedClasses() as $mappedClass) {
+        $metadata_factory = new Cache_Class_Metadata_Factory(new Class_Metadata_Factory(new Loader_Chain($this->loaders)), $array_adapter);
+        foreach ($this->extract_supported_loaders($this->loaders) as $loader) {
+            foreach ($loader->get_mapped_classes() as $mapped_class) {
                 try {
-                    $metadataFactory->getMetadataFor($mappedClass);
+                    $metadata_factory->get_metadata_for($mapped_class);
                 } catch (\Exception $e) {
-                    $this->ignoreAutoloadException($mappedClass, $e);
+                    $this->ignore_autoload_exception($mapped_class, $e);
                 }
             }
         }
-
         return true;
     }
-
     /**
      * @param LoaderInterface[] $loaders
      *
      * @return list<XmlFileLoader|YamlFileLoader|AttributeLoader>
      */
-    private function extractSupportedLoaders(array $loaders): array
+    private function extract_supported_loaders(array $loaders): array
     {
-        $supportedLoaders = [];
-
+        $supported_loaders = [];
         foreach ($loaders as $loader) {
             if (method_exists($loader, 'getMappedClasses')) {
-                $supportedLoaders[] = $loader;
-            } elseif ($loader instanceof LoaderChain) {
-                $supportedLoaders = array_merge($supportedLoaders, $this->extractSupportedLoaders($loader->getLoaders()));
+                $supported_loaders[] = $loader;
+            } elseif ($loader instanceof Loader_Chain) {
+                $supported_loaders = array_merge($supported_loaders, $this->extract_supported_loaders($loader->get_loaders()));
             }
         }
-
-        return $supportedLoaders;
+        return $supported_loaders;
     }
 }

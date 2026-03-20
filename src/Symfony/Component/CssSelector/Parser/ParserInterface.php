@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Css_Selector\Parser;
 
-namespace Symfony\Component\CssSelector\Parser;
-
-use Symfony\Component\CssSelector\Node\SelectorNode;
-
+use Symfony\Component\Css_Selector\Node\Selector_Node;
 /**
  * CSS selector parser interface.
  *
@@ -25,7 +22,7 @@ use Symfony\Component\CssSelector\Node\SelectorNode;
  *
  * @internal
  */
-interface ParserInterface
+interface Parser_Interface
 {
     /**
      * Parses given selector source into an array of tokens.

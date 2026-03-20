@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpKernel\Exception;
+namespace Symfony\Component\Http_Kernel\Exception;
 
 /**
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
  */
-class UnexpectedSessionUsageException extends \LogicException
+class Unexpected_Session_Usage_Exception extends \LogicException
 {
 }

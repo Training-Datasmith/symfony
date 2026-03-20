@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\CssSelector\Node;
+namespace Symfony\Component\Css_Selector\Node;
 
 /**
  * Represents a node specificity.
@@ -30,42 +28,32 @@ class Specificity
     public const A_FACTOR = 100;
     public const B_FACTOR = 10;
     public const C_FACTOR = 1;
-
-    public function __construct(
-        private readonly int $a,
-        private readonly int $b,
-        private readonly int $c,
-    ) {
+    public function __construct(private readonly int $a, private readonly int $b, private readonly int $c)
+    {
     }
-
     public function plus(self $specificity): self
     {
         return new self($this->a + $specificity->a, $this->b + $specificity->b, $this->c + $specificity->c);
     }
-
-    public function getValue(): int
+    public function get_value(): int
     {
         return $this->a * self::A_FACTOR + $this->b * self::B_FACTOR + $this->c * self::C_FACTOR;
     }
-
     /**
      * Returns -1 if the object specificity is lower than the argument,
      * 0 if they are equal, and 1 if the argument is lower.
      */
-    public function compareTo(self $specificity): int
+    public function compare_to(self $specificity): int
     {
         if ($this->a !== $specificity->a) {
             return $this->a > $specificity->a ? 1 : -1;
         }
-
         if ($this->b !== $specificity->b) {
             return $this->b > $specificity->b ? 1 : -1;
         }
-
         if ($this->c !== $specificity->c) {
             return $this->c > $specificity->c ? 1 : -1;
         }
-
         return 0;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,18 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Client\Response;
 
-namespace Symfony\Component\HttpClient\Response;
-
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-
+use Symfony\Contracts\Http_Client\Exception\Client_Exception_Interface;
+use Symfony\Contracts\Http_Client\Exception\Redirection_Exception_Interface;
+use Symfony\Contracts\Http_Client\Exception\Server_Exception_Interface;
+use Symfony\Contracts\Http_Client\Exception\Transport_Exception_Interface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-interface StreamableInterface
+interface Streamable_Interface
 {
     /**
      * Casts the response to a PHP stream resource.
@@ -33,5 +30,5 @@ interface StreamableInterface
      * @throws ClientExceptionInterface      On a 4xx when $throw is true
      * @throws ServerExceptionInterface      On a 5xx when $throw is true
      */
-    public function toStream(bool $throw = true);
+    public function to_stream(bool $throw = true);
 }

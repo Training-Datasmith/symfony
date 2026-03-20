@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Php_Unit;
 
-namespace Symfony\Bridge\PhpUnit;
-
-class_alias(\Symfony\Bridge\PhpUnit\Legacy\SymfonyTestsListenerForV7::class, \Symfony\Bridge\PhpUnit\SymfonyTestsListener::class);
-
+class_alias(\Symfony\Bridge\Php_Unit\Legacy\Symfony_Tests_Listener_For_V7::class, \Symfony\Bridge\Php_Unit\Symfony_Tests_Listener::class);
 if (false) {
-    class SymfonyTestsListener
+    class Symfony_Tests_Listener
     {
     }
 }

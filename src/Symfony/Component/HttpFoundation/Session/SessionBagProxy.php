@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,77 +9,61 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpFoundation\Session;
+namespace Symfony\Component\Http_Foundation\Session;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
  * @internal
  */
-final class SessionBagProxy implements SessionBagInterface
+final class Session_Bag_Proxy implements Session_Bag_Interface
 {
     private array $data;
-    private ?int $usageIndex = null;
-    private readonly ?\Closure $usageReporter;
-
-    public function __construct(
-        private SessionBagInterface $bag,
-        array &$data,
-        ?int &$usageIndex,
-        ?callable $usageReporter,
-    ) {
-        $this->bag = $bag;
-        $this->data = &$data;
-        $this->usageIndex = &$usageIndex;
-        $this->usageReporter = null === $usageReporter ? null : $usageReporter(...);
-    }
-
-    public function getBag(): SessionBagInterface
+    private ?int $usage_index = null;
+    private readonly ?\Closure $usage_reporter;
+    public function __construct(private Session_Bag_Interface $bag, array &$data, ?int &$usage_index, ?callable $usage_reporter)
     {
-        ++$this->usageIndex;
-        if ($this->usageReporter && 0 <= $this->usageIndex) {
-            ($this->usageReporter)();
+        $this->bag = $bag;
+        $this->data =& $data;
+        $this->usage_index =& $usage_index;
+        $this->usage_reporter = null === $usage_reporter ? null : $usage_reporter(...);
+    }
+    public function get_bag(): Session_Bag_Interface
+    {
+        ++$this->usage_index;
+        if ($this->usage_reporter && 0 <= $this->usage_index) {
+            ($this->usage_reporter)();
         }
-
         return $this->bag;
     }
-
-    public function isEmpty(): bool
+    public function is_empty(): bool
     {
-        if (!isset($this->data[$this->bag->getStorageKey()])) {
+        if (!isset($this->data[$this->bag->get_storage_key()])) {
             return true;
         }
-        ++$this->usageIndex;
-        if ($this->usageReporter && 0 <= $this->usageIndex) {
-            ($this->usageReporter)();
+        ++$this->usage_index;
+        if ($this->usage_reporter && 0 <= $this->usage_index) {
+            ($this->usage_reporter)();
         }
-
-        return empty($this->data[$this->bag->getStorageKey()]);
+        return empty($this->data[$this->bag->get_storage_key()]);
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
-        return $this->bag->getName();
+        return $this->bag->get_name();
     }
-
     public function initialize(array &$array): void
     {
-        ++$this->usageIndex;
-        if ($this->usageReporter && 0 <= $this->usageIndex) {
-            ($this->usageReporter)();
+        ++$this->usage_index;
+        if ($this->usage_reporter && 0 <= $this->usage_index) {
+            ($this->usage_reporter)();
         }
-
-        $this->data[$this->bag->getStorageKey()] = &$array;
-
+        $this->data[$this->bag->get_storage_key()] =& $array;
         $this->bag->initialize($array);
     }
-
-    public function getStorageKey(): string
+    public function get_storage_key(): string
     {
-        return $this->bag->getStorageKey();
+        return $this->bag->get_storage_key();
     }
-
     public function clear(): mixed
     {
         return $this->bag->clear();

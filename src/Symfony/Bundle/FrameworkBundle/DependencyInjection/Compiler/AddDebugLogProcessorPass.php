@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,28 +9,24 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Dependency_Injection\Compiler;
 
-namespace Symfony\Bundle\FrameworkBundle\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-
-class AddDebugLogProcessorPass implements CompilerPassInterface
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Reference;
+class Add_Debug_Log_Processor_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (!$container->hasDefinition('profiler')) {
+        if (!$container->has_definition('profiler')) {
             return;
         }
-        if (!$container->hasDefinition('monolog.logger_prototype')) {
+        if (!$container->has_definition('monolog.logger_prototype')) {
             return;
         }
-        if (!$container->hasDefinition('debug.log_processor')) {
+        if (!$container->has_definition('debug.log_processor')) {
             return;
         }
-
-        $container->getDefinition('monolog.logger_prototype')
-            ->setConfigurator([new Reference('debug.debug_logger_configurator'), 'pushDebugLogger']);
+        $container->get_definition('monolog.logger_prototype')->set_configurator([new Reference('debug.debug_logger_configurator'), 'pushDebugLogger']);
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Css_Selector\X_Path\Extension;
 
-namespace Symfony\Component\CssSelector\XPath\Extension;
-
-use Symfony\Component\CssSelector\XPath\Translator;
-use Symfony\Component\CssSelector\XPath\XPathExpr;
-
+use Symfony\Component\Css_Selector\X_Path\Translator;
+use Symfony\Component\Css_Selector\X_Path\X_Path_Expr;
 /**
  * XPath expression translator attribute extension.
  *
@@ -26,89 +23,45 @@ use Symfony\Component\CssSelector\XPath\XPathExpr;
  *
  * @internal
  */
-class AttributeMatchingExtension extends AbstractExtension
+class Attribute_Matching_Extension extends Abstract_Extension
 {
-    public function getAttributeMatchingTranslators(): array
+    public function get_attribute_matching_translators(): array
     {
-        return [
-            'exists' => $this->translateExists(...),
-            '=' => $this->translateEquals(...),
-            '~=' => $this->translateIncludes(...),
-            '|=' => $this->translateDashMatch(...),
-            '^=' => $this->translatePrefixMatch(...),
-            '$=' => $this->translateSuffixMatch(...),
-            '*=' => $this->translateSubstringMatch(...),
-            '!=' => $this->translateDifferent(...),
-        ];
+        return ['exists' => $this->translate_exists(...), '=' => $this->translate_equals(...), '~=' => $this->translate_includes(...), '|=' => $this->translate_dash_match(...), '^=' => $this->translate_prefix_match(...), '$=' => $this->translate_suffix_match(...), '*=' => $this->translate_substring_match(...), '!=' => $this->translate_different(...)];
     }
-
-    public function translateExists(XPathExpr $xpath, string $attribute, ?string $value): XPathExpr
+    public function translate_exists(X_Path_Expr $xpath, string $attribute, ?string $value): X_Path_Expr
     {
-        return $xpath->addCondition($attribute);
+        return $xpath->add_condition($attribute);
     }
-
-    public function translateEquals(XPathExpr $xpath, string $attribute, ?string $value): XPathExpr
+    public function translate_equals(X_Path_Expr $xpath, string $attribute, ?string $value): X_Path_Expr
     {
-        return $xpath->addCondition(\sprintf('%s = %s', $attribute, Translator::getXpathLiteral($value)));
+        return $xpath->add_condition(\sprintf('%s = %s', $attribute, Translator::get_xpath_literal($value)));
     }
-
-    public function translateIncludes(XPathExpr $xpath, string $attribute, ?string $value): XPathExpr
+    public function translate_includes(X_Path_Expr $xpath, string $attribute, ?string $value): X_Path_Expr
     {
-        return $xpath->addCondition($value ? \sprintf(
-            '%1$s and contains(concat(\' \', normalize-space(%1$s), \' \'), %2$s)',
-            $attribute,
-            Translator::getXpathLiteral(' '.$value.' ')
-        ) : '0');
+        return $xpath->add_condition($value ? \sprintf('%1$s and contains(concat(\' \', normalize-space(%1$s), \' \'), %2$s)', $attribute, Translator::get_xpath_literal(' ' . $value . ' ')) : '0');
     }
-
-    public function translateDashMatch(XPathExpr $xpath, string $attribute, ?string $value): XPathExpr
+    public function translate_dash_match(X_Path_Expr $xpath, string $attribute, ?string $value): X_Path_Expr
     {
-        return $xpath->addCondition(\sprintf(
-            '%1$s and (%1$s = %2$s or starts-with(%1$s, %3$s))',
-            $attribute,
-            Translator::getXpathLiteral($value),
-            Translator::getXpathLiteral($value.'-')
-        ));
+        return $xpath->add_condition(\sprintf('%1$s and (%1$s = %2$s or starts-with(%1$s, %3$s))', $attribute, Translator::get_xpath_literal($value), Translator::get_xpath_literal($value . '-')));
     }
-
-    public function translatePrefixMatch(XPathExpr $xpath, string $attribute, ?string $value): XPathExpr
+    public function translate_prefix_match(X_Path_Expr $xpath, string $attribute, ?string $value): X_Path_Expr
     {
-        return $xpath->addCondition($value ? \sprintf(
-            '%1$s and starts-with(%1$s, %2$s)',
-            $attribute,
-            Translator::getXpathLiteral($value)
-        ) : '0');
+        return $xpath->add_condition($value ? \sprintf('%1$s and starts-with(%1$s, %2$s)', $attribute, Translator::get_xpath_literal($value)) : '0');
     }
-
-    public function translateSuffixMatch(XPathExpr $xpath, string $attribute, ?string $value): XPathExpr
+    public function translate_suffix_match(X_Path_Expr $xpath, string $attribute, ?string $value): X_Path_Expr
     {
-        return $xpath->addCondition($value ? \sprintf(
-            '%1$s and substring(%1$s, string-length(%1$s)-%2$s) = %3$s',
-            $attribute,
-            \strlen($value) - 1,
-            Translator::getXpathLiteral($value)
-        ) : '0');
+        return $xpath->add_condition($value ? \sprintf('%1$s and substring(%1$s, string-length(%1$s)-%2$s) = %3$s', $attribute, \strlen($value) - 1, Translator::get_xpath_literal($value)) : '0');
     }
-
-    public function translateSubstringMatch(XPathExpr $xpath, string $attribute, ?string $value): XPathExpr
+    public function translate_substring_match(X_Path_Expr $xpath, string $attribute, ?string $value): X_Path_Expr
     {
-        return $xpath->addCondition($value ? \sprintf(
-            '%1$s and contains(%1$s, %2$s)',
-            $attribute,
-            Translator::getXpathLiteral($value)
-        ) : '0');
+        return $xpath->add_condition($value ? \sprintf('%1$s and contains(%1$s, %2$s)', $attribute, Translator::get_xpath_literal($value)) : '0');
     }
-
-    public function translateDifferent(XPathExpr $xpath, string $attribute, ?string $value): XPathExpr
+    public function translate_different(X_Path_Expr $xpath, string $attribute, ?string $value): X_Path_Expr
     {
-        return $xpath->addCondition(\sprintf(
-            $value ? 'not(%1$s) or %1$s != %2$s' : '%s != %s',
-            $attribute,
-            Translator::getXpathLiteral($value)
-        ));
+        return $xpath->add_condition(\sprintf($value ? 'not(%1$s) or %1$s != %2$s' : '%s != %s', $attribute, Translator::get_xpath_literal($value)));
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return 'attribute-matching';
     }

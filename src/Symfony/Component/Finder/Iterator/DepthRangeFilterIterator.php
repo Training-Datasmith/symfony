@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Finder\Iterator;
 
 /**
@@ -23,25 +21,23 @@ namespace Symfony\Component\Finder\Iterator;
  *
  * @extends \FilterIterator<TKey, TValue>
  */
-class DepthRangeFilterIterator extends \FilterIterator
+class Depth_Range_Filter_Iterator extends \Filter_Iterator
 {
     /**
      * @param \RecursiveIteratorIterator<\RecursiveIterator<TKey, TValue>> $iterator The Iterator to filter
      * @param int                                                          $minDepth The min depth
      * @param int                                                          $maxDepth The max depth
      */
-    public function __construct(\RecursiveIteratorIterator $iterator, private readonly int $minDepth = 0, int $maxDepth = \PHP_INT_MAX)
+    public function __construct(\Recursive_Iterator_Iterator $iterator, private readonly int $min_depth = 0, int $max_depth = \PHP_INT_MAX)
     {
-        $iterator->setMaxDepth(\PHP_INT_MAX === $maxDepth ? -1 : $maxDepth);
-
+        $iterator->set_max_depth(\PHP_INT_MAX === $max_depth ? -1 : $max_depth);
         parent::__construct($iterator);
     }
-
     /**
      * Filters the iterator values.
      */
     public function accept(): bool
     {
-        return $this->getInnerIterator()->getDepth() >= $this->minDepth;
+        return $this->get_inner_iterator()->get_depth() >= $this->min_depth;
     }
 }

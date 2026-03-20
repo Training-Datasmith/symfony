@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,18 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
-use Symfony\Component\Form\Exception\UnexpectedTypeException;
+use Symfony\Component\Form\Exception\Unexpected_Type_Exception;
 use Symfony\Component\Form\Guess\Guess;
-use Symfony\Component\Form\Guess\TypeGuess;
-use Symfony\Component\Form\Guess\ValueGuess;
-
-class FormTypeGuesserChain implements FormTypeGuesserInterface
+use Symfony\Component\Form\Guess\Type_Guess;
+use Symfony\Component\Form\Guess\Value_Guess;
+class Form_Type_Guesser_Chain implements Form_Type_Guesser_Interface
 {
     private array $guessers = [];
-
     /**
      * @param FormTypeGuesserInterface[] $guessers
      *
@@ -29,42 +25,35 @@ class FormTypeGuesserChain implements FormTypeGuesserInterface
      */
     public function __construct(iterable $guessers)
     {
-        $tmpGuessers = [];
+        $tmp_guessers = [];
         foreach ($guessers as $guesser) {
-            if (!$guesser instanceof FormTypeGuesserInterface) {
-                throw new UnexpectedTypeException($guesser, FormTypeGuesserInterface::class);
+            if (!$guesser instanceof Form_Type_Guesser_Interface) {
+                throw new Unexpected_Type_Exception($guesser, Form_Type_Guesser_Interface::class);
             }
-
             if ($guesser instanceof self) {
-                $tmpGuessers[] = $guesser->guessers;
+                $tmp_guessers[] = $guesser->guessers;
             } else {
-                $tmpGuessers[] = [$guesser];
+                $tmp_guessers[] = [$guesser];
             }
         }
-
-        $this->guessers = array_merge([], ...$tmpGuessers);
+        $this->guessers = array_merge([], ...$tmp_guessers);
     }
-
-    public function guessType(string $class, string $property): ?TypeGuess
+    public function guess_type(string $class, string $property): ?Type_Guess
     {
-        return $this->guess(static fn ($guesser) => $guesser->guessType($class, $property));
+        return $this->guess(static fn($guesser) => $guesser->guess_type($class, $property));
     }
-
-    public function guessRequired(string $class, string $property): ?ValueGuess
+    public function guess_required(string $class, string $property): ?Value_Guess
     {
-        return $this->guess(static fn ($guesser) => $guesser->guessRequired($class, $property));
+        return $this->guess(static fn($guesser) => $guesser->guess_required($class, $property));
     }
-
-    public function guessMaxLength(string $class, string $property): ?ValueGuess
+    public function guess_max_length(string $class, string $property): ?Value_Guess
     {
-        return $this->guess(static fn ($guesser) => $guesser->guessMaxLength($class, $property));
+        return $this->guess(static fn($guesser) => $guesser->guess_max_length($class, $property));
     }
-
-    public function guessPattern(string $class, string $property): ?ValueGuess
+    public function guess_pattern(string $class, string $property): ?Value_Guess
     {
-        return $this->guess(static fn ($guesser) => $guesser->guessPattern($class, $property));
+        return $this->guess(static fn($guesser) => $guesser->guess_pattern($class, $property));
     }
-
     /**
      * Executes a closure for each guesser and returns the best guess from the
      * return values.
@@ -75,13 +64,11 @@ class FormTypeGuesserChain implements FormTypeGuesserInterface
     private function guess(\Closure $closure): ?Guess
     {
         $guesses = [];
-
         foreach ($this->guessers as $guesser) {
             if ($guess = $closure($guesser)) {
                 $guesses[] = $guess;
             }
         }
-
-        return Guess::getBestGuess($guesses);
+        return Guess::get_best_guess($guesses);
     }
 }

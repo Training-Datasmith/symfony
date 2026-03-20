@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
 /**
@@ -67,19 +65,17 @@ final class Forms
     /**
      * Creates a form factory with the default configuration.
      */
-    public static function createFormFactory(): FormFactoryInterface
+    public static function create_form_factory(): Form_Factory_Interface
     {
-        return self::createFormFactoryBuilder()->getFormFactory();
+        return self::create_form_factory_builder()->get_form_factory();
     }
-
     /**
      * Creates a form factory builder with the default configuration.
      */
-    public static function createFormFactoryBuilder(): FormFactoryBuilderInterface
+    public static function create_form_factory_builder(): Form_Factory_Builder_Interface
     {
-        return new FormFactoryBuilder(true);
+        return new Form_Factory_Builder(true);
     }
-
     /**
      * This class cannot be instantiated.
      */

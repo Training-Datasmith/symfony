@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,23 +9,18 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Extension\Http_Foundation;
 
-namespace Symfony\Component\Form\Extension\HttpFoundation;
-
-use Symfony\Component\Form\AbstractExtension;
-
+use Symfony\Component\Form\Abstract_Extension;
 /**
  * Integrates the HttpFoundation component with the Form library.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class HttpFoundationExtension extends AbstractExtension
+class Http_Foundation_Extension extends Abstract_Extension
 {
-    protected function loadTypeExtensions(): array
+    protected function load_type_extensions(): array
     {
-        return [
-            new Type\FormTypeHttpFoundationExtension(),
-            new Type\FormFlowTypeSessionDataStorageExtension(),
-        ];
+        return [new Type\Form_Type_Http_Foundation_Extension(), new Type\Form_Flow_Type_Session_Data_Storage_Extension()];
     }
 }

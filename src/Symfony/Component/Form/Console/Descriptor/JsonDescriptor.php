@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,20 +9,18 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Console\Descriptor;
 
-use Symfony\Component\Form\ResolvedFormTypeInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Form\Resolved_Form_Type_Interface;
+use Symfony\Component\Options_Resolver\Options_Resolver;
 /**
  * @author Yonel Ceruto <yonelceruto@gmail.com>
  *
  * @internal
  */
-class JsonDescriptor extends Descriptor
+class Json_Descriptor extends Descriptor
 {
-    protected function describeDefaults(array $options): void
+    protected function describe_defaults(array $options): void
     {
         $data['builtin_form_types'] = $options['core_types'];
         $data['service_form_types'] = $options['service_types'];
@@ -31,48 +28,27 @@ class JsonDescriptor extends Descriptor
             $data['type_extensions'] = $options['extensions'];
             $data['type_guessers'] = $options['guessers'];
         }
-
-        $this->writeData($data, $options);
+        $this->write_data($data, $options);
     }
-
-    protected function describeResolvedFormType(ResolvedFormTypeInterface $resolvedFormType, array $options = []): void
+    protected function describe_resolved_form_type(Resolved_Form_Type_Interface $resolved_form_type, array $options = []): void
     {
-        $this->collectOptions($resolvedFormType);
-
+        $this->collect_options($resolved_form_type);
         if ($options['show_deprecated']) {
-            $this->filterOptionsByDeprecated($resolvedFormType);
+            $this->filter_options_by_deprecated($resolved_form_type);
         }
-
-        $formOptions = [
-            'own' => $this->ownOptions,
-            'overridden' => $this->overriddenOptions,
-            'parent' => $this->parentOptions,
-            'extension' => $this->extensionOptions,
-            'required' => $this->requiredOptions,
-        ];
-        $this->sortOptions($formOptions);
-
-        $data = [
-            'class' => $resolvedFormType->getInnerType()::class,
-            'block_prefix' => $resolvedFormType->getInnerType()->getBlockPrefix(),
-            'options' => $formOptions,
-            'parent_types' => $this->parents,
-            'type_extensions' => $this->extensions,
-        ];
-
-        $this->writeData($data, $options);
+        $form_options = ['own' => $this->own_options, 'overridden' => $this->overridden_options, 'parent' => $this->parent_options, 'extension' => $this->extension_options, 'required' => $this->required_options];
+        $this->sort_options($form_options);
+        $data = ['class' => $resolved_form_type->get_inner_type()::class, 'block_prefix' => $resolved_form_type->get_inner_type()->get_block_prefix(), 'options' => $form_options, 'parent_types' => $this->parents, 'type_extensions' => $this->extensions];
+        $this->write_data($data, $options);
     }
-
-    protected function describeOption(OptionsResolver $optionsResolver, array $options): void
+    protected function describe_option(Options_Resolver $options_resolver, array $options): void
     {
-        $data = $this->getOptionDescription($optionsResolver, $options);
-        $this->writeData($data, $options);
+        $data = $this->get_option_description($options_resolver, $options);
+        $this->write_data($data, $options);
     }
-
-    private function getOptionDescription(OptionsResolver $optionsResolver, array $options): array
+    private function get_option_description(Options_Resolver $options_resolver, array $options): array
     {
-        $definition = $this->getOptionDefinition($optionsResolver, $options['option']);
-
+        $definition = $this->get_option_definition($options_resolver, $options['option']);
         $map = [];
         if ($definition['deprecated']) {
             $map['deprecated'] = 'deprecated';
@@ -80,45 +56,33 @@ class JsonDescriptor extends Descriptor
                 $map['deprecation_message'] = 'deprecationMessage';
             }
         }
-        $map += [
-            'info' => 'info',
-            'required' => 'required',
-            'default' => 'default',
-            'allowed_types' => 'allowedTypes',
-            'allowed_values' => 'allowedValues',
-        ];
+        $map += ['info' => 'info', 'required' => 'required', 'default' => 'default', 'allowed_types' => 'allowedTypes', 'allowed_values' => 'allowedValues'];
         foreach ($map as $label => $name) {
             if (\array_key_exists($name, $definition)) {
                 $data[$label] = $definition[$name];
-
                 if ('default' === $name) {
                     $data['is_lazy'] = isset($definition['lazy']);
                 }
             }
         }
         $data['has_normalizer'] = isset($definition['normalizers']);
-
         if ($data['has_nested_options'] = isset($definition['nestedOptions'])) {
-            $nestedResolver = new OptionsResolver();
-            foreach ($definition['nestedOptions'] as $nestedOption) {
-                $nestedOption($nestedResolver, $optionsResolver);
+            $nested_resolver = new Options_Resolver();
+            foreach ($definition['nestedOptions'] as $nested_option) {
+                $nested_option($nested_resolver, $options_resolver);
             }
-            foreach ($nestedResolver->getDefinedOptions() as $option) {
-                $data['nested_options'][$option] = $this->getOptionDescription($nestedResolver, ['option' => $option]);
+            foreach ($nested_resolver->get_defined_options() as $option) {
+                $data['nested_options'][$option] = $this->get_option_description($nested_resolver, ['option' => $option]);
             }
         }
-
         return $data;
     }
-
-    private function writeData(array $data, array $options): void
+    private function write_data(array $data, array $options): void
     {
         $flags = $options['json_encoding'] ?? 0;
-
-        $this->output->write(json_encode($data, $flags | \JSON_PRETTY_PRINT)."\n");
+        $this->output->write(json_encode($data, $flags | \JSON_PRETTY_PRINT) . "\n");
     }
-
-    private function sortOptions(array &$options): void
+    private function sort_options(array &$options): void
     {
         foreach ($options as &$opts) {
             $sorted = false;

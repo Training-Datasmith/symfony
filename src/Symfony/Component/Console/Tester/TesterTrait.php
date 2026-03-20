@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,118 +9,98 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Tester;
 
-use PHPUnit\Framework\Assert;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\ConsoleOutput;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\StreamOutput;
-use Symfony\Component\Console\Tester\Constraint\CommandFailed;
-use Symfony\Component\Console\Tester\Constraint\CommandIsInvalid;
-use Symfony\Component\Console\Tester\Constraint\CommandIsSuccessful;
-
+use Php_Unit\Framework\Assert;
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Console\Output\Console_Output;
+use Symfony\Component\Console\Output\Output_Interface;
+use Symfony\Component\Console\Output\Stream_Output;
+use Symfony\Component\Console\Tester\Constraint\Command_Failed;
+use Symfony\Component\Console\Tester\Constraint\Command_Is_Invalid;
+use Symfony\Component\Console\Tester\Constraint\Command_Is_Successful;
 /**
  * @author Amrouche Hamza <hamza.simperfit@gmail.com>
  */
-trait TesterTrait
+trait Tester_Trait
 {
-    private StreamOutput $output;
-
+    private Stream_Output $output;
     /**
      * @var list<string>
      */
     private array $inputs = [];
-    private bool $captureStreamsIndependently = false;
-    private InputInterface $input;
-    private int $statusCode;
-
+    private bool $capture_streams_independently = false;
+    private Input_Interface $input;
+    private int $status_code;
     /**
      * Gets the display returned by the last execution of the command or application.
      *
      * @throws \RuntimeException If it's called before the execute method
      */
-    public function getDisplay(bool $normalize = false): string
+    public function get_display(bool $normalize = false): string
     {
         if (!isset($this->output)) {
             throw new \RuntimeException('Output not initialized, did you execute the command before requesting the display?');
         }
-
-        rewind($this->output->getStream());
-
-        $display = stream_get_contents($this->output->getStream());
-
+        rewind($this->output->get_stream());
+        $display = stream_get_contents($this->output->get_stream());
         if ($normalize) {
             return str_replace(\PHP_EOL, "\n", $display);
         }
-
         return $display;
     }
-
     /**
      * Gets the output written to STDERR by the application.
      *
      * @param bool $normalize Whether to normalize end of lines to \n or not
      */
-    public function getErrorOutput(bool $normalize = false): string
+    public function get_error_output(bool $normalize = false): string
     {
-        if (!$this->captureStreamsIndependently) {
+        if (!$this->capture_streams_independently) {
             throw new \LogicException('The error output is not available when the tester is run without "capture_stderr_separately" option set.');
         }
-
-        rewind($this->output->getErrorOutput()->getStream());
-
-        $display = stream_get_contents($this->output->getErrorOutput()->getStream());
-
+        rewind($this->output->get_error_output()->get_stream());
+        $display = stream_get_contents($this->output->get_error_output()->get_stream());
         if ($normalize) {
             return str_replace(\PHP_EOL, "\n", $display);
         }
-
         return $display;
     }
-
     /**
      * Gets the input instance used by the last execution of the command or application.
      */
-    public function getInput(): InputInterface
+    public function get_input(): Input_Interface
     {
         return $this->input;
     }
-
     /**
      * Gets the output instance used by the last execution of the command or application.
      */
-    public function getOutput(): OutputInterface
+    public function get_output(): Output_Interface
     {
         return $this->output;
     }
-
     /**
      * Gets the status code returned by the last execution of the command or application.
      *
      * @throws \RuntimeException If it's called before the execute method
      */
-    public function getStatusCode(): int
+    public function get_status_code(): int
     {
-        return $this->statusCode ?? throw new \RuntimeException('Status code not initialized, did you execute the command before requesting the status code?');
+        return $this->status_code ?? throw new \RuntimeException('Status code not initialized, did you execute the command before requesting the status code?');
     }
-
-    public function assertCommandIsSuccessful(string $message = ''): void
+    public function assert_command_is_successful(string $message = ''): void
     {
-        Assert::assertThat($this->statusCode, new CommandIsSuccessful(), $message);
+        Assert::assert_that($this->status_code, new Command_Is_Successful(), $message);
     }
-
-    public function assertCommandFailed(string $message = ''): void
+    public function assert_command_failed(string $message = ''): void
     {
-        Assert::assertThat($this->statusCode, new CommandFailed(), $message);
+        Assert::assert_that($this->status_code, new Command_Failed(), $message);
     }
-
-    public function assertCommandIsInvalid(string $message = ''): void
+    public function assert_command_is_invalid(string $message = ''): void
     {
-        Assert::assertThat($this->statusCode, new CommandIsInvalid(), $message);
+        Assert::assert_that($this->status_code, new Command_Is_Invalid(), $message);
     }
-
     /**
      * Sets the user inputs.
      *
@@ -130,13 +109,11 @@ trait TesterTrait
      *
      * @return $this
      */
-    public function setInputs(array $inputs): static
+    public function set_inputs(array $inputs): static
     {
         $this->inputs = $inputs;
-
         return $this;
     }
-
     /**
      * Initializes the output property.
      *
@@ -146,57 +123,46 @@ trait TesterTrait
      *  * verbosity:                 Sets the output verbosity flag
      *  * capture_stderr_separately: Make output of stdOut and stdErr separately available
      */
-    private function initOutput(array $options): void
+    private function init_output(array $options): void
     {
-        $this->captureStreamsIndependently = $options['capture_stderr_separately'] ?? false;
-        if (!$this->captureStreamsIndependently) {
-            $this->output = new StreamOutput(fopen('php://memory', 'w', false));
+        $this->capture_streams_independently = $options['capture_stderr_separately'] ?? false;
+        if (!$this->capture_streams_independently) {
+            $this->output = new Stream_Output(fopen('php://memory', 'w', false));
             if (isset($options['decorated'])) {
-                $this->output->setDecorated($options['decorated']);
+                $this->output->set_decorated($options['decorated']);
             }
             if (isset($options['verbosity'])) {
-                $this->output->setVerbosity($options['verbosity']);
+                $this->output->set_verbosity($options['verbosity']);
             }
         } else {
-            $this->output = new ConsoleOutput(
-                $options['verbosity'] ?? ConsoleOutput::VERBOSITY_NORMAL,
-                $options['decorated'] ?? null
-            );
-
-            $errorOutput = new StreamOutput(fopen('php://memory', 'w', false));
-            $errorOutput->setFormatter($this->output->getFormatter());
-            $errorOutput->setVerbosity($this->output->getVerbosity());
-            $errorOutput->setDecorated($this->output->isDecorated());
-
-            $reflectedOutput = new \ReflectionObject($this->output);
-            $strErrProperty = $reflectedOutput->getProperty('stderr');
-            $strErrProperty->setValue($this->output, $errorOutput);
-
-            $reflectedParent = $reflectedOutput->getParentClass();
-            $streamProperty = $reflectedParent->getProperty('stream');
-            $streamProperty->setValue($this->output, fopen('php://memory', 'w', false));
+            $this->output = new Console_Output($options['verbosity'] ?? Console_Output::VERBOSITY_NORMAL, $options['decorated'] ?? null);
+            $error_output = new Stream_Output(fopen('php://memory', 'w', false));
+            $error_output->set_formatter($this->output->get_formatter());
+            $error_output->set_verbosity($this->output->get_verbosity());
+            $error_output->set_decorated($this->output->is_decorated());
+            $reflected_output = new \Reflection_Object($this->output);
+            $str_err_property = $reflected_output->get_property('stderr');
+            $str_err_property->set_value($this->output, $error_output);
+            $reflected_parent = $reflected_output->get_parent_class();
+            $stream_property = $reflected_parent->get_property('stream');
+            $stream_property->set_value($this->output, fopen('php://memory', 'w', false));
         }
     }
-
     /**
      * @param list<string> $inputs
      *
      * @return resource
      */
-    private static function createStream(array $inputs)
+    private static function create_stream(array $inputs)
     {
         $stream = fopen('php://memory', 'r+', false);
-
         foreach ($inputs as $input) {
             fwrite($stream, $input);
-
-            if (!str_ends_with($input, "\x4")) {
+            if (!str_ends_with($input, "\x04")) {
                 fwrite($stream, \PHP_EOL);
             }
         }
-
         rewind($stream);
-
         return $stream;
     }
 }

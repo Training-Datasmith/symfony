@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Web_Profiler_Bundle\Dependency_Injection;
 
-namespace Symfony\Bundle\WebProfilerBundle\DependencyInjection;
-
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
-
+use Symfony\Component\Config\Definition\Builder\Tree_Builder;
+use Symfony\Component\Config\Definition\Configuration_Interface;
 /**
  * This class contains the configuration information for the bundle.
  *
@@ -24,34 +21,15 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class Configuration implements ConfigurationInterface
+class Configuration implements Configuration_Interface
 {
     /**
      * Generates the configuration tree builder.
      */
-    public function getConfigTreeBuilder(): TreeBuilder
+    public function get_config_tree_builder(): Tree_Builder
     {
-        $treeBuilder = new TreeBuilder('web_profiler');
-
-        $treeBuilder
-            ->getRootNode()
-            ->docUrl('https://symfony.com/doc/{version:major}.{version:minor}/reference/configuration/web_profiler.html', 'symfony/web-profiler-bundle')
-            ->children()
-                ->arrayNode('toolbar')
-                    ->info('Profiler toolbar configuration')
-                    ->canBeEnabled()
-                    ->children()
-                        ->booleanNode('ajax_replace')
-                            ->defaultFalse()
-                            ->info('Replace toolbar on AJAX requests')
-                        ->end()
-                    ->end()
-                ->end()
-                ->booleanNode('intercept_redirects')->defaultFalse()->end()
-                ->scalarNode('excluded_ajax_paths')->defaultValue('^/((index|app(_[\w]+)?)\.php/)?_wdt')->end()
-            ->end()
-        ;
-
-        return $treeBuilder;
+        $tree_builder = new Tree_Builder('web_profiler');
+        $tree_builder->get_root_node()->doc_url('https://symfony.com/doc/{version:major}.{version:minor}/reference/configuration/web_profiler.html', 'symfony/web-profiler-bundle')->children()->array_node('toolbar')->info('Profiler toolbar configuration')->can_be_enabled()->children()->boolean_node('ajax_replace')->default_false()->info('Replace toolbar on AJAX requests')->end()->end()->end()->boolean_node('intercept_redirects')->default_false()->end()->scalar_node('excluded_ajax_paths')->default_value('^/((index|app(_[\w]+)?)\.php/)?_wdt')->end()->end();
+        return $tree_builder;
     }
 }

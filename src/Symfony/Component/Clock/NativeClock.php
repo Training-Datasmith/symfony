@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Clock;
 
 /**
@@ -18,46 +16,39 @@ namespace Symfony\Component\Clock;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class NativeClock implements ClockInterface
+final class Native_Clock implements Clock_Interface
 {
     private \DateTimeZone $timezone;
-
     /**
      * @throws \DateInvalidTimeZoneException When $timezone is invalid
      */
     public function __construct(\DateTimeZone|string|null $timezone = null)
     {
-        $this->timezone = \is_string($timezone ??= date_default_timezone_get()) ? $this->withTimeZone($timezone)->timezone : $timezone;
+        $this->timezone = \is_string($timezone ??= date_default_timezone_get()) ? $this->with_time_zone($timezone)->timezone : $timezone;
     }
-
-    public function now(): DatePoint
+    public function now(): Date_Point
     {
-        return DatePoint::createFromInterface(new \DateTimeImmutable('now', $this->timezone));
+        return Date_Point::create_from_interface(new \DateTimeImmutable('now', $this->timezone));
     }
-
     public function sleep(float|int $seconds): void
     {
         if (0 < $s = (int) $seconds) {
             sleep($s);
         }
-
         if (0 < $us = $seconds - $s) {
-            usleep((int) ($us * 1E6));
+            usleep((int) ($us * 1000000.0));
         }
     }
-
     /**
      * @throws \DateInvalidTimeZoneException When $timezone is invalid
      */
-    public function withTimeZone(\DateTimeZone|string $timezone): static
+    public function with_time_zone(\DateTimeZone|string $timezone): static
     {
         if (\is_string($timezone)) {
             $timezone = new \DateTimeZone($timezone);
         }
-
         $clone = clone $this;
         $clone->timezone = $timezone;
-
         return $clone;
     }
 }

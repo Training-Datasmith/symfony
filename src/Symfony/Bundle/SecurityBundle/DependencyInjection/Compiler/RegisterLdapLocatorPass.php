@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,32 +9,28 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Dependency_Injection\Compiler;
 
-namespace Symfony\Bundle\SecurityBundle\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\DependencyInjection\ServiceLocator;
-
+use Symfony\Component\Dependency_Injection\Argument\Service_Closure_Argument;
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Reference;
+use Symfony\Component\Dependency_Injection\Service_Locator;
 /**
  * @author Wouter de Jong <wouter@wouterj.nl>
  *
  * @internal
  */
-class RegisterLdapLocatorPass implements CompilerPassInterface
+class Register_Ldap_Locator_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        $definition = $container->setDefinition('security.ldap_locator', new Definition(ServiceLocator::class));
-
+        $definition = $container->set_definition('security.ldap_locator', new Definition(Service_Locator::class));
         $locators = [];
-        foreach ($container->findTaggedServiceIds('ldap') as $serviceId => $tags) {
-            $locators[$serviceId] = new ServiceClosureArgument(new Reference($serviceId));
+        foreach ($container->find_tagged_service_ids('ldap') as $service_id => $tags) {
+            $locators[$service_id] = new Service_Closure_Argument(new Reference($service_id));
         }
-
-        $definition->addArgument($locators);
+        $definition->add_argument($locators);
     }
 }

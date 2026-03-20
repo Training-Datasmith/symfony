@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Asset;
 
 /**
@@ -18,15 +16,14 @@ namespace Symfony\Component\Asset;
  *
  * @author Kris Wallsmith <kris@symfony.com>
  */
-interface PackageInterface
+interface Package_Interface
 {
     /**
      * Returns the asset version for an asset.
      */
-    public function getVersion(string $path): string;
-
+    public function get_version(string $path): string;
     /**
      * Returns an absolute or root-relative public path.
      */
-    public function getUrl(string $path): string;
+    public function get_url(string $path): string;
 }

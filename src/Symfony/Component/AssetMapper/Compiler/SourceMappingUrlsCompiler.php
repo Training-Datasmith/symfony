@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,42 +9,35 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Asset_Mapper\Compiler;
 
-namespace Symfony\Component\AssetMapper\Compiler;
-
-use Symfony\Component\AssetMapper\AssetMapperInterface;
-use Symfony\Component\AssetMapper\MappedAsset;
+use Symfony\Component\Asset_Mapper\Asset_Mapper_Interface;
+use Symfony\Component\Asset_Mapper\Mapped_Asset;
 use Symfony\Component\Filesystem\Path;
-
 /**
  * Rewrites already-existing source map URLs to their final digested path.
  *
  * Originally sourced from https://github.com/rails/propshaft/blob/main/lib/propshaft/compiler/source_mapping_urls.rb
  */
-final class SourceMappingUrlsCompiler implements AssetCompilerInterface
+final class Source_Mapping_Urls_Compiler implements Asset_Compiler_Interface
 {
     private const SOURCE_MAPPING_PATTERN = '{^(//|/\*)# sourceMappingURL=(.+\.map)}m';
-
-    public function supports(MappedAsset $asset): bool
+    public function supports(Mapped_Asset $asset): bool
     {
-        return \in_array($asset->publicExtension, ['css', 'js'], true);
+        return \in_array($asset->public_extension, ['css', 'js'], true);
     }
-
-    public function compile(string $content, MappedAsset $asset, AssetMapperInterface $assetMapper): string
+    public function compile(string $content, Mapped_Asset $asset, Asset_Mapper_Interface $asset_mapper): string
     {
-        return preg_replace_callback(self::SOURCE_MAPPING_PATTERN, static function ($matches) use ($asset, $assetMapper): string {
-            $resolvedPath = Path::join(\dirname($asset->sourcePath), $matches[2]);
-
-            $dependentAsset = $assetMapper->getAssetFromSourcePath($resolvedPath);
-            if (!$dependentAsset) {
+        return preg_replace_callback(self::SOURCE_MAPPING_PATTERN, static function ($matches) use ($asset, $asset_mapper): string {
+            $resolved_path = Path::join(\dirname($asset->source_path), $matches[2]);
+            $dependent_asset = $asset_mapper->get_asset_from_source_path($resolved_path);
+            if (!$dependent_asset) {
                 // return original, unchanged path
                 return $matches[0];
             }
-
-            $asset->addDependency($dependentAsset);
-            $relativePath = Path::makeRelative($dependentAsset->publicPath, \dirname($asset->publicPathWithoutDigest));
-
-            return $matches[1].'# sourceMappingURL='.$relativePath;
+            $asset->add_dependency($dependent_asset);
+            $relative_path = Path::make_relative($dependent_asset->public_path, \dirname($asset->public_path_without_digest));
+            return $matches[1] . '# sourceMappingURL=' . $relative_path;
         }, $content);
     }
 }

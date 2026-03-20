@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,45 +9,41 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Adapter;
 
-use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\Array_Parameter_Type;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Driver_Manager;
 use Doctrine\DBAL\Exception as DBALException;
-use Doctrine\DBAL\Exception\TableNotFoundException;
-use Doctrine\DBAL\ParameterType;
-use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
-use Doctrine\DBAL\Platforms\OraclePlatform;
-use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
-use Doctrine\DBAL\Platforms\SQLitePlatform;
-use Doctrine\DBAL\Platforms\SQLServerPlatform;
-use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
+use Doctrine\DBAL\Exception\Table_Not_Found_Exception;
+use Doctrine\DBAL\Parameter_Type;
+use Doctrine\DBAL\Platforms\Abstract_My_Sql_Platform;
+use Doctrine\DBAL\Platforms\Oracle_Platform;
+use Doctrine\DBAL\Platforms\Postgre_Sql_Platform;
+use Doctrine\DBAL\Platforms\Sq_Lite_Platform;
+use Doctrine\DBAL\Platforms\Sql_Server_Platform;
+use Doctrine\DBAL\Schema\Default_Schema_Manager_Factory;
 use Doctrine\DBAL\Schema\Name\Identifier;
-use Doctrine\DBAL\Schema\Name\UnqualifiedName;
-use Doctrine\DBAL\Schema\PrimaryKeyConstraint;
+use Doctrine\DBAL\Schema\Name\Unqualified_Name;
+use Doctrine\DBAL\Schema\Primary_Key_Constraint;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Tools\DsnParser;
+use Doctrine\DBAL\Tools\Dsn_Parser;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
-use Symfony\Component\Cache\Marshaller\DefaultMarshaller;
-use Symfony\Component\Cache\Marshaller\MarshallerInterface;
-use Symfony\Component\Cache\PruneableInterface;
-
-class DoctrineDbalAdapter extends AbstractAdapter implements PruneableInterface
+use Symfony\Component\Cache\Marshaller\Default_Marshaller;
+use Symfony\Component\Cache\Marshaller\Marshaller_Interface;
+use Symfony\Component\Cache\Pruneable_Interface;
+class Doctrine_Dbal_Adapter extends Abstract_Adapter implements Pruneable_Interface
 {
     private const MAX_KEY_LENGTH = 255;
-
-    private static int $savepointCounter = 0;
+    private static int $savepoint_counter = 0;
     private Connection $conn;
-    private string $platformName;
+    private string $platform_name;
     private string $table = 'cache_items';
-    private string $idCol = 'item_id';
-    private string $dataCol = 'item_data';
-    private string $lifetimeCol = 'item_lifetime';
-    private string $timeCol = 'item_time';
-
+    private string $id_col = 'item_id';
+    private string $data_col = 'item_data';
+    private string $lifetime_col = 'item_lifetime';
+    private string $time_col = 'item_time';
     /**
      * You can either pass an existing database Doctrine DBAL Connection or
      * a DSN string that will be used to connect to the database.
@@ -65,51 +60,30 @@ class DoctrineDbalAdapter extends AbstractAdapter implements PruneableInterface
      *
      * @throws InvalidArgumentException When namespace contains invalid characters
      */
-    public function __construct(
-        Connection|string $connOrDsn,
-        private readonly string $namespace = '',
-        int $defaultLifetime = 0,
-        array $options = [],
-        private readonly ?MarshallerInterface $marshaller = new DefaultMarshaller(),
-    ) {
+    public function __construct(Connection|string $conn_or_dsn, private readonly string $namespace = '', int $default_lifetime = 0, array $options = [], private readonly ?Marshaller_Interface $marshaller = new Default_Marshaller())
+    {
         if (isset($namespace[0]) && preg_match('#[^-+.A-Za-z0-9]#', $namespace, $match)) {
             throw new InvalidArgumentException(\sprintf('Namespace contains "%s" but only characters in [-+.A-Za-z0-9] are allowed.', $match[0]));
         }
-
-        if ($connOrDsn instanceof Connection) {
-            $this->conn = $connOrDsn;
+        if ($conn_or_dsn instanceof Connection) {
+            $this->conn = $conn_or_dsn;
         } else {
-            if (!class_exists(DriverManager::class)) {
+            if (!class_exists(Driver_Manager::class)) {
                 throw new InvalidArgumentException('Failed to parse DSN. Try running "composer require doctrine/dbal".');
             }
-            $params = (new DsnParser([
-                'db2' => 'ibm_db2',
-                'mssql' => 'pdo_sqlsrv',
-                'mysql' => 'pdo_mysql',
-                'mysql2' => 'pdo_mysql',
-                'postgres' => 'pdo_pgsql',
-                'postgresql' => 'pdo_pgsql',
-                'pgsql' => 'pdo_pgsql',
-                'sqlite' => 'pdo_sqlite',
-                'sqlite3' => 'pdo_sqlite',
-            ]))->parse($connOrDsn);
-
+            $params = (new Dsn_Parser(['db2' => 'ibm_db2', 'mssql' => 'pdo_sqlsrv', 'mysql' => 'pdo_mysql', 'mysql2' => 'pdo_mysql', 'postgres' => 'pdo_pgsql', 'postgresql' => 'pdo_pgsql', 'pgsql' => 'pdo_pgsql', 'sqlite' => 'pdo_sqlite', 'sqlite3' => 'pdo_sqlite']))->parse($conn_or_dsn);
             $config = new Configuration();
-            $config->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
-
-            $this->conn = DriverManager::getConnection($params, $config);
+            $config->set_schema_manager_factory(new Default_Schema_Manager_Factory());
+            $this->conn = Driver_Manager::get_connection($params, $config);
         }
-
-        $this->maxIdLength = self::MAX_KEY_LENGTH;
+        $this->max_id_length = self::MAX_KEY_LENGTH;
         $this->table = $options['db_table'] ?? $this->table;
-        $this->idCol = $options['db_id_col'] ?? $this->idCol;
-        $this->dataCol = $options['db_data_col'] ?? $this->dataCol;
-        $this->lifetimeCol = $options['db_lifetime_col'] ?? $this->lifetimeCol;
-        $this->timeCol = $options['db_time_col'] ?? $this->timeCol;
-
-        parent::__construct($namespace, $defaultLifetime);
+        $this->id_col = $options['db_id_col'] ?? $this->id_col;
+        $this->data_col = $options['db_data_col'] ?? $this->data_col;
+        $this->lifetime_col = $options['db_lifetime_col'] ?? $this->lifetime_col;
+        $this->time_col = $options['db_time_col'] ?? $this->time_col;
+        parent::__construct($namespace, $default_lifetime);
     }
-
     /**
      * Creates the table to store cache items which can be called once for setup.
      *
@@ -118,63 +92,46 @@ class DoctrineDbalAdapter extends AbstractAdapter implements PruneableInterface
      *
      * @throws DBALException When the table already exists
      */
-    public function createTable(): void
+    public function create_table(): void
     {
         $schema = new Schema();
-        $this->addTableToSchema($schema);
-
-        foreach ($schema->toSql($this->conn->getDatabasePlatform()) as $sql) {
-            $this->conn->executeStatement($sql);
+        $this->add_table_to_schema($schema);
+        foreach ($schema->to_sql($this->conn->get_database_platform()) as $sql) {
+            $this->conn->execute_statement($sql);
         }
     }
-
-    public function configureSchema(Schema $schema, Connection $forConnection, \Closure $isSameDatabase): void
+    public function configure_schema(Schema $schema, Connection $for_connection, \Closure $is_same_database): void
     {
-        if ($schema->hasTable($this->table)) {
+        if ($schema->has_table($this->table)) {
             return;
         }
-
-        if ($forConnection !== $this->conn && !$isSameDatabase($this->conn->executeStatement(...))) {
+        if ($for_connection !== $this->conn && !$is_same_database($this->conn->execute_statement(...))) {
             return;
         }
-
-        $this->addTableToSchema($schema);
+        $this->add_table_to_schema($schema);
     }
-
     public function prune(): bool
     {
-        $deleteSql = "DELETE FROM $this->table WHERE $this->lifetimeCol + $this->timeCol <= ?";
+        $delete_sql = "DELETE FROM {$this->table} WHERE {$this->lifetime_col} + {$this->time_col} <= ?";
         $params = [time()];
-        $paramTypes = [ParameterType::INTEGER];
-
+        $param_types = [Parameter_Type::INTEGER];
         if ('' !== $this->namespace) {
-            $deleteSql .= " AND $this->idCol LIKE ?";
+            $delete_sql .= " AND {$this->id_col} LIKE ?";
             $params[] = \sprintf('%s%%', $this->namespace);
-            $paramTypes[] = ParameterType::STRING;
+            $param_types[] = Parameter_Type::STRING;
         }
-
         try {
-            $this->conn->executeStatement($deleteSql, $params, $paramTypes);
-        } catch (TableNotFoundException) {
+            $this->conn->execute_statement($delete_sql, $params, $param_types);
+        } catch (Table_Not_Found_Exception) {
         }
-
         return true;
     }
-
-    protected function doFetch(array $ids): iterable
+    protected function do_fetch(array $ids): iterable
     {
         $now = time();
         $expired = [];
-
-        $sql = "SELECT $this->idCol, CASE WHEN $this->lifetimeCol IS NULL OR $this->lifetimeCol + $this->timeCol > ? THEN $this->dataCol ELSE NULL END FROM $this->table WHERE $this->idCol IN (?)";
-        $result = $this->conn->executeQuery($sql, [
-            $now,
-            $ids,
-        ], [
-            ParameterType::INTEGER,
-            ArrayParameterType::STRING,
-        ])->iterateNumeric();
-
+        $sql = "SELECT {$this->id_col}, CASE WHEN {$this->lifetime_col} IS NULL OR {$this->lifetime_col} + {$this->time_col} > ? THEN {$this->data_col} ELSE NULL END FROM {$this->table} WHERE {$this->id_col} IN (?)";
+        $result = $this->conn->execute_query($sql, [$now, $ids], [Parameter_Type::INTEGER, Array_Parameter_Type::STRING])->iterate_numeric();
         foreach ($result as $row) {
             if (null === $row[1]) {
                 $expired[] = $row[0];
@@ -182,232 +139,183 @@ class DoctrineDbalAdapter extends AbstractAdapter implements PruneableInterface
                 yield $row[0] => $this->marshaller->unmarshall(\is_resource($row[1]) ? stream_get_contents($row[1]) : $row[1]);
             }
         }
-
         if ($expired) {
-            $sql = "DELETE FROM $this->table WHERE $this->lifetimeCol + $this->timeCol <= ? AND $this->idCol IN (?)";
-            $this->conn->executeStatement($sql, [
-                $now,
-                $expired,
-            ], [
-                ParameterType::INTEGER,
-                ArrayParameterType::STRING,
-            ]);
+            $sql = "DELETE FROM {$this->table} WHERE {$this->lifetime_col} + {$this->time_col} <= ? AND {$this->id_col} IN (?)";
+            $this->conn->execute_statement($sql, [$now, $expired], [Parameter_Type::INTEGER, Array_Parameter_Type::STRING]);
         }
     }
-
-    protected function doHave(string $id): bool
+    protected function do_have(string $id): bool
     {
-        $sql = "SELECT 1 FROM $this->table WHERE $this->idCol = ? AND ($this->lifetimeCol IS NULL OR $this->lifetimeCol + $this->timeCol > ?)";
-        $result = $this->conn->executeQuery($sql, [
-            $id,
-            time(),
-        ], [
-            ParameterType::STRING,
-            ParameterType::INTEGER,
-        ]);
-
-        return (bool) $result->fetchOne();
+        $sql = "SELECT 1 FROM {$this->table} WHERE {$this->id_col} = ? AND ({$this->lifetime_col} IS NULL OR {$this->lifetime_col} + {$this->time_col} > ?)";
+        $result = $this->conn->execute_query($sql, [$id, time()], [Parameter_Type::STRING, Parameter_Type::INTEGER]);
+        return (bool) $result->fetch_one();
     }
-
-    protected function doClear(string $namespace): bool
+    protected function do_clear(string $namespace): bool
     {
         if ('' === $namespace) {
-            $sql = $this->conn->getDatabasePlatform()->getTruncateTableSQL($this->table);
+            $sql = $this->conn->get_database_platform()->get_truncate_table_sql($this->table);
         } else {
-            $sql = "DELETE FROM $this->table WHERE $this->idCol LIKE '$namespace%'";
+            $sql = "DELETE FROM {$this->table} WHERE {$this->id_col} LIKE '{$namespace}%'";
         }
-
         try {
-            $this->conn->executeStatement($sql);
-        } catch (TableNotFoundException) {
+            $this->conn->execute_statement($sql);
+        } catch (Table_Not_Found_Exception) {
         }
-
         return true;
     }
-
-    protected function doDelete(array $ids): bool
+    protected function do_delete(array $ids): bool
     {
-        $sql = "DELETE FROM $this->table WHERE $this->idCol IN (?)";
+        $sql = "DELETE FROM {$this->table} WHERE {$this->id_col} IN (?)";
         try {
-            $this->conn->executeStatement($sql, [array_values($ids)], [ArrayParameterType::STRING]);
-        } catch (TableNotFoundException) {
+            $this->conn->execute_statement($sql, [array_values($ids)], [Array_Parameter_Type::STRING]);
+        } catch (Table_Not_Found_Exception) {
         }
-
         return true;
     }
-
-    protected function doSave(array $values, int $lifetime): array|bool
+    protected function do_save(array $values, int $lifetime): array|bool
     {
         if (!$values = $this->marshaller->marshall($values, $failed)) {
             return $failed;
         }
-
-        if ($this->conn->isTransactionActive() && $this->conn->getDatabasePlatform()->supportsSavepoints()) {
-            $savepoint = 'cache_save_'.++self::$savepointCounter;
+        if ($this->conn->is_transaction_active() && $this->conn->get_database_platform()->supports_savepoints()) {
+            $savepoint = 'cache_save_' . ++self::$savepoint_counter;
             try {
-                $this->conn->createSavepoint($savepoint);
-                $failed = $this->doSaveInner($values, $lifetime, $failed);
-                $this->conn->releaseSavepoint($savepoint);
-
+                $this->conn->create_savepoint($savepoint);
+                $failed = $this->do_save_inner($values, $lifetime, $failed);
+                $this->conn->release_savepoint($savepoint);
                 return $failed;
             } catch (\Throwable $e) {
-                $this->conn->rollbackSavepoint($savepoint);
-
+                $this->conn->rollback_savepoint($savepoint);
                 throw $e;
             }
         }
-
-        return $this->doSaveInner($values, $lifetime, $failed);
+        return $this->do_save_inner($values, $lifetime, $failed);
     }
-
-    private function doSaveInner(array $values, int $lifetime, array $failed): array
+    private function do_save_inner(array $values, int $lifetime, array $failed): array
     {
-        $platformName = $this->getPlatformName();
-        $insertSql = "INSERT INTO $this->table ($this->idCol, $this->dataCol, $this->lifetimeCol, $this->timeCol) VALUES (?, ?, ?, ?)";
-
-        switch ($platformName) {
+        $platform_name = $this->get_platform_name();
+        $insert_sql = "INSERT INTO {$this->table} ({$this->id_col}, {$this->data_col}, {$this->lifetime_col}, {$this->time_col}) VALUES (?, ?, ?, ?)";
+        switch ($platform_name) {
             case 'mysql':
-                $sql = $insertSql." ON DUPLICATE KEY UPDATE $this->dataCol = VALUES($this->dataCol), $this->lifetimeCol = VALUES($this->lifetimeCol), $this->timeCol = VALUES($this->timeCol)";
+                $sql = $insert_sql . " ON DUPLICATE KEY UPDATE {$this->data_col} = VALUES({$this->data_col}), {$this->lifetime_col} = VALUES({$this->lifetime_col}), {$this->time_col} = VALUES({$this->time_col})";
                 break;
             case 'oci':
                 // DUAL is Oracle specific dummy table
-                $sql = "MERGE INTO $this->table USING DUAL ON ($this->idCol = ?) ".
-                    "WHEN NOT MATCHED THEN INSERT ($this->idCol, $this->dataCol, $this->lifetimeCol, $this->timeCol) VALUES (?, ?, ?, ?) ".
-                    "WHEN MATCHED THEN UPDATE SET $this->dataCol = ?, $this->lifetimeCol = ?, $this->timeCol = ?";
+                $sql = "MERGE INTO {$this->table} USING DUAL ON ({$this->id_col} = ?) " . "WHEN NOT MATCHED THEN INSERT ({$this->id_col}, {$this->data_col}, {$this->lifetime_col}, {$this->time_col}) VALUES (?, ?, ?, ?) " . "WHEN MATCHED THEN UPDATE SET {$this->data_col} = ?, {$this->lifetime_col} = ?, {$this->time_col} = ?";
                 break;
             case 'sqlsrv':
                 // MERGE is only available since SQL Server 2008 and must be terminated by semicolon
                 // It also requires HOLDLOCK according to http://weblogs.sqlteam.com/dang/archive/2009/01/31/UPSERT-Race-Condition-With-MERGE.aspx
-                $sql = "MERGE INTO $this->table WITH (HOLDLOCK) USING (SELECT 1 AS dummy) AS src ON ($this->idCol = ?) ".
-                    "WHEN NOT MATCHED THEN INSERT ($this->idCol, $this->dataCol, $this->lifetimeCol, $this->timeCol) VALUES (?, ?, ?, ?) ".
-                    "WHEN MATCHED THEN UPDATE SET $this->dataCol = ?, $this->lifetimeCol = ?, $this->timeCol = ?;";
+                $sql = "MERGE INTO {$this->table} WITH (HOLDLOCK) USING (SELECT 1 AS dummy) AS src ON ({$this->id_col} = ?) " . "WHEN NOT MATCHED THEN INSERT ({$this->id_col}, {$this->data_col}, {$this->lifetime_col}, {$this->time_col}) VALUES (?, ?, ?, ?) " . "WHEN MATCHED THEN UPDATE SET {$this->data_col} = ?, {$this->lifetime_col} = ?, {$this->time_col} = ?;";
                 break;
             case 'sqlite':
-                $sql = 'INSERT OR REPLACE'.substr($insertSql, 6);
+                $sql = 'INSERT OR REPLACE' . substr($insert_sql, 6);
                 break;
             case 'pgsql':
-                $sql = $insertSql." ON CONFLICT ($this->idCol) DO UPDATE SET ($this->dataCol, $this->lifetimeCol, $this->timeCol) = (EXCLUDED.$this->dataCol, EXCLUDED.$this->lifetimeCol, EXCLUDED.$this->timeCol)";
+                $sql = $insert_sql . " ON CONFLICT ({$this->id_col}) DO UPDATE SET ({$this->data_col}, {$this->lifetime_col}, {$this->time_col}) = (EXCLUDED.{$this->data_col}, EXCLUDED.{$this->lifetime_col}, EXCLUDED.{$this->time_col})";
                 break;
             default:
-                $platformName = null;
-                $sql = "UPDATE $this->table SET $this->dataCol = ?, $this->lifetimeCol = ?, $this->timeCol = ? WHERE $this->idCol = ?";
+                $platform_name = null;
+                $sql = "UPDATE {$this->table} SET {$this->data_col} = ?, {$this->lifetime_col} = ?, {$this->time_col} = ? WHERE {$this->id_col} = ?";
                 break;
         }
-
         $now = time();
         $lifetime = $lifetime ?: null;
         try {
             $stmt = $this->conn->prepare($sql);
-        } catch (TableNotFoundException) {
-            if (!$this->conn->isTransactionActive() || \in_array($platformName, ['pgsql', 'sqlite', 'sqlsrv'], true)) {
-                $this->createTable();
+        } catch (Table_Not_Found_Exception) {
+            if (!$this->conn->is_transaction_active() || \in_array($platform_name, ['pgsql', 'sqlite', 'sqlsrv'], true)) {
+                $this->create_table();
             }
             $stmt = $this->conn->prepare($sql);
         }
-
-        if ('sqlsrv' === $platformName || 'oci' === $platformName) {
+        if ('sqlsrv' === $platform_name || 'oci' === $platform_name) {
             $bind = static function ($id, $data) use ($stmt): void {
-                $stmt->bindValue(1, $id);
-                $stmt->bindValue(2, $id);
-                $stmt->bindValue(3, $data, ParameterType::LARGE_OBJECT);
-                $stmt->bindValue(6, $data, ParameterType::LARGE_OBJECT);
+                $stmt->bind_value(1, $id);
+                $stmt->bind_value(2, $id);
+                $stmt->bind_value(3, $data, Parameter_Type::LARGE_OBJECT);
+                $stmt->bind_value(6, $data, Parameter_Type::LARGE_OBJECT);
             };
-            $stmt->bindValue(4, $lifetime, ParameterType::INTEGER);
-            $stmt->bindValue(5, $now, ParameterType::INTEGER);
-            $stmt->bindValue(7, $lifetime, ParameterType::INTEGER);
-            $stmt->bindValue(8, $now, ParameterType::INTEGER);
-        } elseif (null !== $platformName) {
+            $stmt->bind_value(4, $lifetime, Parameter_Type::INTEGER);
+            $stmt->bind_value(5, $now, Parameter_Type::INTEGER);
+            $stmt->bind_value(7, $lifetime, Parameter_Type::INTEGER);
+            $stmt->bind_value(8, $now, Parameter_Type::INTEGER);
+        } elseif (null !== $platform_name) {
             $bind = static function ($id, $data) use ($stmt): void {
-                $stmt->bindValue(1, $id);
-                $stmt->bindValue(2, $data, ParameterType::LARGE_OBJECT);
+                $stmt->bind_value(1, $id);
+                $stmt->bind_value(2, $data, Parameter_Type::LARGE_OBJECT);
             };
-            $stmt->bindValue(3, $lifetime, ParameterType::INTEGER);
-            $stmt->bindValue(4, $now, ParameterType::INTEGER);
+            $stmt->bind_value(3, $lifetime, Parameter_Type::INTEGER);
+            $stmt->bind_value(4, $now, Parameter_Type::INTEGER);
         } else {
-            $stmt->bindValue(2, $lifetime, ParameterType::INTEGER);
-            $stmt->bindValue(3, $now, ParameterType::INTEGER);
-
-            $insertStmt = $this->conn->prepare($insertSql);
-            $insertStmt->bindValue(3, $lifetime, ParameterType::INTEGER);
-            $insertStmt->bindValue(4, $now, ParameterType::INTEGER);
-
-            $bind = static function ($id, $data) use ($stmt, $insertStmt): void {
-                $stmt->bindValue(1, $data, ParameterType::LARGE_OBJECT);
-                $stmt->bindValue(4, $id);
-                $insertStmt->bindValue(1, $id);
-                $insertStmt->bindValue(2, $data, ParameterType::LARGE_OBJECT);
+            $stmt->bind_value(2, $lifetime, Parameter_Type::INTEGER);
+            $stmt->bind_value(3, $now, Parameter_Type::INTEGER);
+            $insert_stmt = $this->conn->prepare($insert_sql);
+            $insert_stmt->bind_value(3, $lifetime, Parameter_Type::INTEGER);
+            $insert_stmt->bind_value(4, $now, Parameter_Type::INTEGER);
+            $bind = static function ($id, $data) use ($stmt, $insert_stmt): void {
+                $stmt->bind_value(1, $data, Parameter_Type::LARGE_OBJECT);
+                $stmt->bind_value(4, $id);
+                $insert_stmt->bind_value(1, $id);
+                $insert_stmt->bind_value(2, $data, Parameter_Type::LARGE_OBJECT);
             };
         }
-
         foreach ($values as $id => $data) {
             $bind($id, $data);
             try {
-                $rowCount = $stmt->executeStatement();
-            } catch (TableNotFoundException) {
-                if (!$this->conn->isTransactionActive() || \in_array($platformName, ['pgsql', 'sqlite', 'sqlsrv'], true)) {
-                    $this->createTable();
+                $row_count = $stmt->execute_statement();
+            } catch (Table_Not_Found_Exception) {
+                if (!$this->conn->is_transaction_active() || \in_array($platform_name, ['pgsql', 'sqlite', 'sqlsrv'], true)) {
+                    $this->create_table();
                 }
-                $rowCount = $stmt->executeStatement();
+                $row_count = $stmt->execute_statement();
             }
-            if (null === $platformName && 0 === $rowCount) {
+            if (null === $platform_name && 0 === $row_count) {
                 try {
-                    $insertStmt->executeStatement();
-                } catch (DBALException) {
+                    $insert_stmt->execute_statement();
+                } catch (Dbal_Exception) {
                     // A concurrent write won, let it be
                 }
             }
         }
-
         return $failed;
     }
-
     /**
      * @internal
      */
-    protected function getId(mixed $key, ?string $namespace = null): string
+    protected function get_id(mixed $key, ?string $namespace = null): string
     {
-        if ('pgsql' !== $this->platformName ??= $this->getPlatformName()) {
-            return parent::getId($key, $namespace);
+        if ('pgsql' !== $this->platform_name ??= $this->get_platform_name()) {
+            return parent::get_id($key, $namespace);
         }
-
-        if (str_contains((string) $key, "\0") || str_contains((string) $key, '%') || !preg_match('//u', (string) $key)) {
+        if (str_contains((string) $key, "\x00") || str_contains((string) $key, '%') || !preg_match('//u', (string) $key)) {
             $key = rawurlencode((string) $key);
         }
-
-        return parent::getId($key, $namespace);
+        return parent::get_id($key, $namespace);
     }
-
-    private function getPlatformName(): string
+    private function get_platform_name(): string
     {
-        if (isset($this->platformName)) {
-            return $this->platformName;
+        if (isset($this->platform_name)) {
+            return $this->platform_name;
         }
-
-        $platform = $this->conn->getDatabasePlatform();
-
-        return $this->platformName = match (true) {
-            $platform instanceof AbstractMySQLPlatform => 'mysql',
-            $platform instanceof SQLitePlatform => 'sqlite',
-            $platform instanceof PostgreSQLPlatform => 'pgsql',
-            $platform instanceof OraclePlatform => 'oci',
-            $platform instanceof SQLServerPlatform => 'sqlsrv',
+        $platform = $this->conn->get_database_platform();
+        return $this->platform_name = match (true) {
+            $platform instanceof Abstract_My_Sql_Platform => 'mysql',
+            $platform instanceof Sq_Lite_Platform => 'sqlite',
+            $platform instanceof Postgre_Sql_Platform => 'pgsql',
+            $platform instanceof Oracle_Platform => 'oci',
+            $platform instanceof Sql_Server_Platform => 'sqlsrv',
             default => $platform::class,
         };
     }
-
-    private function addTableToSchema(Schema $schema): void
+    private function add_table_to_schema(Schema $schema): void
     {
-        $types = [
-            'mysql' => 'binary',
-            'sqlite' => 'text',
-        ];
-
-        $table = $schema->createTable($this->table);
-        $table->addColumn($this->idCol, $types[$this->getPlatformName()] ?? 'string', ['length' => 255]);
-        $table->addColumn($this->dataCol, 'blob', ['length' => 16777215]);
-        $table->addColumn($this->lifetimeCol, 'integer', ['unsigned' => true, 'notnull' => false]);
-        $table->addColumn($this->timeCol, 'integer', ['unsigned' => true]);
-
-        $table->addPrimaryKeyConstraint(new PrimaryKeyConstraint(null, [new UnqualifiedName(Identifier::unquoted($this->idCol))], true));
+        $types = ['mysql' => 'binary', 'sqlite' => 'text'];
+        $table = $schema->create_table($this->table);
+        $table->add_column($this->id_col, $types[$this->get_platform_name()] ?? 'string', ['length' => 255]);
+        $table->add_column($this->data_col, 'blob', ['length' => 16777215]);
+        $table->add_column($this->lifetime_col, 'integer', ['unsigned' => true, 'notnull' => false]);
+        $table->add_column($this->time_col, 'integer', ['unsigned' => true]);
+        $table->add_primary_key_constraint(new Primary_Key_Constraint(null, [new Unqualified_Name(Identifier::unquoted($this->id_col))], true));
     }
 }

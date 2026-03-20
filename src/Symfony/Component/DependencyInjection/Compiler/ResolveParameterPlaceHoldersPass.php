@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,95 +9,78 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Exception\Parameter_Not_Found_Exception;
+use Symfony\Component\Dependency_Injection\Parameter_Bag\Parameter_Bag_Interface;
 /**
  * Resolves all parameter placeholders "%somevalue%" to their real values.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ResolveParameterPlaceHoldersPass extends AbstractRecursivePass
+class Resolve_Parameter_Place_Holders_Pass extends Abstract_Recursive_Pass
 {
-    protected bool $skipScalars = false;
-
-    private ParameterBagInterface $bag;
-
-    public function __construct(
-        private readonly bool $resolveArrays = true,
-        private readonly bool $throwOnResolveException = true,
-    ) {
+    protected bool $skip_scalars = false;
+    private Parameter_Bag_Interface $bag;
+    public function __construct(private readonly bool $resolve_arrays = true, private readonly bool $throw_on_resolve_exception = true)
+    {
     }
-
     /**
      * @throws ParameterNotFoundException
      */
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        $this->bag = $container->getParameterBag();
-
+        $this->bag = $container->get_parameter_bag();
         try {
             parent::process($container);
-
             $aliases = [];
-            foreach ($container->getAliases() as $name => $target) {
-                $this->currentId = $name;
-                $aliases[$this->bag->resolveValue($name)] = $target;
+            foreach ($container->get_aliases() as $name => $target) {
+                $this->current_id = $name;
+                $aliases[$this->bag->resolve_value($name)] = $target;
             }
-            $container->setAliases($aliases);
-        } catch (ParameterNotFoundException $e) {
-            $e->setSourceId($this->currentId);
-
+            $container->set_aliases($aliases);
+        } catch (Parameter_Not_Found_Exception $e) {
+            $e->set_source_id($this->current_id);
             throw $e;
         }
-
         $this->bag->resolve();
         unset($this->bag);
     }
-
-    protected function processValue(mixed $value, bool $isRoot = false): mixed
+    protected function process_value(mixed $value, bool $is_root = false): mixed
     {
         if (\is_string($value)) {
             try {
-                $v = $this->bag->resolveValue($value);
-            } catch (ParameterNotFoundException $e) {
-                if ($this->throwOnResolveException) {
+                $v = $this->bag->resolve_value($value);
+            } catch (Parameter_Not_Found_Exception $e) {
+                if ($this->throw_on_resolve_exception) {
                     throw $e;
                 }
-
                 $v = null;
-                $this->container->getDefinition($this->currentId)->addError($e->getMessage());
+                $this->container->get_definition($this->current_id)->add_error($e->get_message());
             }
-
-            return $this->resolveArrays || !$v || !\is_array($v) ? $v : $value;
+            return $this->resolve_arrays || !$v || !\is_array($v) ? $v : $value;
         }
         if ($value instanceof Definition) {
-            $value->setBindings($this->processValue($value->getBindings()));
-            $changes = $value->getChanges();
+            $value->set_bindings($this->process_value($value->get_bindings()));
+            $changes = $value->get_changes();
             if (isset($changes['class'])) {
-                $value->setClass($this->bag->resolveValue($value->getClass()));
+                $value->set_class($this->bag->resolve_value($value->get_class()));
             }
             if (isset($changes['file'])) {
-                $value->setFile($this->bag->resolveValue($value->getFile()));
+                $value->set_file($this->bag->resolve_value($value->get_file()));
             }
-            $tags = $value->getTags();
+            $tags = $value->get_tags();
             if (isset($tags['proxy'])) {
-                $tags['proxy'] = $this->bag->resolveValue($tags['proxy']);
-                $value->setTags($tags);
+                $tags['proxy'] = $this->bag->resolve_value($tags['proxy']);
+                $value->set_tags($tags);
             }
         }
-
-        $value = parent::processValue($value, $isRoot);
-
+        $value = parent::process_value($value, $is_root);
         if ($value && \is_array($value)) {
-            return array_combine($this->bag->resolveValue(array_keys($value)), $value);
+            return array_combine($this->bag->resolve_value(array_keys($value)), $value);
         }
-
         return $value;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Security;
 
-namespace Symfony\Bundle\SecurityBundle\Security;
-
-use Psr\Container\ContainerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
-use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
-
+use Psr\Container\Container_Interface;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Request_Stack;
+use Symfony\Component\Http_Foundation\Response;
+use Symfony\Component\Security\Core\User\User_Interface;
+use Symfony\Component\Security\Http\Authentication\User_Authenticator_Interface;
+use Symfony\Component\Security\Http\Authenticator\Authenticator_Interface;
 /**
  * A decorator that delegates all method calls to the authenticator
  * manager of the current firewall.
@@ -29,19 +26,17 @@ use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
  *
  * @final
  */
-class UserAuthenticator implements UserAuthenticatorInterface
+class User_Authenticator implements User_Authenticator_Interface
 {
-    use FirewallAwareTrait;
-
-    public function __construct(FirewallMap $firewallMap, ContainerInterface $userAuthenticators, RequestStack $requestStack)
+    use Firewall_Aware_Trait;
+    public function __construct(Firewall_Map $firewall_map, Container_Interface $user_authenticators, Request_Stack $request_stack)
     {
-        $this->firewallMap = $firewallMap;
-        $this->locator = $userAuthenticators;
-        $this->requestStack = $requestStack;
+        $this->firewall_map = $firewall_map;
+        $this->locator = $user_authenticators;
+        $this->request_stack = $request_stack;
     }
-
-    public function authenticateUser(UserInterface $user, AuthenticatorInterface $authenticator, Request $request, array $badges = [], array $attributes = []): ?Response
+    public function authenticate_user(User_Interface $user, Authenticator_Interface $authenticator, Request $request, array $badges = [], array $attributes = []): ?Response
     {
-        return $this->getForFirewall()->authenticateUser($user, $authenticator, $request, $badges, $attributes);
+        return $this->get_for_firewall()->authenticate_user($user, $authenticator, $request, $badges, $attributes);
     }
 }

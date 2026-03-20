@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,166 +9,122 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Finder\Iterator;
 
 use Symfony\Component\Finder\Gitignore;
-
 /**
  * @extends \FilterIterator<string, \SplFileInfo>
  */
-final class VcsIgnoredFilterIterator extends \FilterIterator
+final class Vcs_Ignored_Filter_Iterator extends \Filter_Iterator
 {
-    private string $baseDir;
-
+    private string $base_dir;
     /**
      * @var array<string, array{0: string, 1: string}|null>
      */
-    private array $gitignoreFilesCache = [];
-
+    private array $gitignore_files_cache = [];
     /**
      * @var array<string, bool>
      */
-    private array $ignoredPathsCache = [];
-
+    private array $ignored_paths_cache = [];
     /**
      * @param \Iterator<string, \SplFileInfo> $iterator
      */
-    public function __construct(\Iterator $iterator, string $baseDir)
+    public function __construct(\Iterator $iterator, string $base_dir)
     {
-        $this->baseDir = $this->normalizePath($baseDir);
-
-        foreach ([$this->baseDir, ...$this->parentDirectoriesUpwards($this->baseDir)] as $directory) {
+        $this->base_dir = $this->normalize_path($base_dir);
+        foreach ([$this->base_dir, ...$this->parent_directories_upwards($this->base_dir)] as $directory) {
             if (@is_dir("{$directory}/.git")) {
-                $this->baseDir = $directory;
+                $this->base_dir = $directory;
                 break;
             }
         }
-
         parent::__construct($iterator);
     }
-
     public function accept(): bool
     {
         $file = $this->current();
-
-        $fileRealPath = $this->normalizePath($file->getRealPath());
-
-        return !$this->isIgnored($fileRealPath);
+        $file_real_path = $this->normalize_path($file->get_real_path());
+        return !$this->is_ignored($file_real_path);
     }
-
-    private function isIgnored(string $fileRealPath): bool
+    private function is_ignored(string $file_real_path): bool
     {
-        if (is_dir($fileRealPath) && !str_ends_with($fileRealPath, '/')) {
-            $fileRealPath .= '/';
+        if (is_dir($file_real_path) && !str_ends_with($file_real_path, '/')) {
+            $file_real_path .= '/';
         }
-
-        if (isset($this->ignoredPathsCache[$fileRealPath])) {
-            return $this->ignoredPathsCache[$fileRealPath];
+        if (isset($this->ignored_paths_cache[$file_real_path])) {
+            return $this->ignored_paths_cache[$file_real_path];
         }
-
         $ignored = false;
-
-        foreach ($this->parentDirectoriesDownwards($fileRealPath) as $parentDirectory) {
-            if ($this->isIgnored($parentDirectory)) {
+        foreach ($this->parent_directories_downwards($file_real_path) as $parent_directory) {
+            if ($this->is_ignored($parent_directory)) {
                 // rules in ignored directories are ignored, no need to check further.
                 break;
             }
-
-            $fileRelativePath = substr($fileRealPath, \strlen($parentDirectory) + 1);
-
-            if (null === $regexps = $this->readGitignoreFile("{$parentDirectory}/.gitignore")) {
+            $file_relative_path = substr($file_real_path, \strlen($parent_directory) + 1);
+            if (null === $regexps = $this->read_gitignore_file("{$parent_directory}/.gitignore")) {
                 continue;
             }
-
-            [$exclusionRegex, $inclusionRegex] = $regexps;
-
-            if (preg_match($exclusionRegex, $fileRelativePath)) {
+            [$exclusion_regex, $inclusion_regex] = $regexps;
+            if (preg_match($exclusion_regex, $file_relative_path)) {
                 $ignored = true;
-
                 continue;
             }
-
-            if (preg_match($inclusionRegex, $fileRelativePath)) {
+            if (preg_match($inclusion_regex, $file_relative_path)) {
                 $ignored = false;
             }
         }
-
-        return $this->ignoredPathsCache[$fileRealPath] = $ignored;
+        return $this->ignored_paths_cache[$file_real_path] = $ignored;
     }
-
     /**
      * @return list<string>
      */
-    private function parentDirectoriesUpwards(string $from): array
+    private function parent_directories_upwards(string $from): array
     {
-        $parentDirectories = [];
-
-        $parentDirectory = $from;
-
+        $parent_directories = [];
+        $parent_directory = $from;
         while (true) {
-            $newParentDirectory = \dirname($parentDirectory);
-
+            $new_parent_directory = \dirname($parent_directory);
             // dirname('/') = '/'
-            if ($newParentDirectory === $parentDirectory) {
+            if ($new_parent_directory === $parent_directory) {
                 break;
             }
-
-            $parentDirectories[] = $parentDirectory = $newParentDirectory;
+            $parent_directories[] = $parent_directory = $new_parent_directory;
         }
-
-        return $parentDirectories;
+        return $parent_directories;
     }
-
-    private function parentDirectoriesUpTo(string $from, string $upTo): array
+    private function parent_directories_up_to(string $from, string $up_to): array
     {
-        return array_filter(
-            $this->parentDirectoriesUpwards($from),
-            static fn (string $directory): bool => str_starts_with($directory, $upTo)
-        );
+        return array_filter($this->parent_directories_upwards($from), static fn(string $directory): bool => str_starts_with($directory, $up_to));
     }
-
     /**
      * @return list<string>
      */
-    private function parentDirectoriesDownwards(string $fileRealPath): array
+    private function parent_directories_downwards(string $file_real_path): array
     {
-        return array_reverse(
-            $this->parentDirectoriesUpTo($fileRealPath, $this->baseDir)
-        );
+        return array_reverse($this->parent_directories_up_to($file_real_path, $this->base_dir));
     }
-
     /**
      * @return array{0: string, 1: string}|null
      */
-    private function readGitignoreFile(string $path): ?array
+    private function read_gitignore_file(string $path): ?array
     {
-        if (\array_key_exists($path, $this->gitignoreFilesCache)) {
-            return $this->gitignoreFilesCache[$path];
+        if (\array_key_exists($path, $this->gitignore_files_cache)) {
+            return $this->gitignore_files_cache[$path];
         }
-
         if (!file_exists($path)) {
-            return $this->gitignoreFilesCache[$path] = null;
+            return $this->gitignore_files_cache[$path] = null;
         }
-
         if (!is_file($path) || !is_readable($path)) {
             throw new \RuntimeException("The \"ignoreVCSIgnored\" option cannot be used by the Finder as the \"{$path}\" file is not readable.");
         }
-
-        $gitignoreFileContent = file_get_contents($path);
-
-        return $this->gitignoreFilesCache[$path] = [
-            Gitignore::toRegex($gitignoreFileContent),
-            Gitignore::toRegexMatchingNegatedPatterns($gitignoreFileContent),
-        ];
+        $gitignore_file_content = file_get_contents($path);
+        return $this->gitignore_files_cache[$path] = [Gitignore::to_regex($gitignore_file_content), Gitignore::to_regex_matching_negated_patterns($gitignore_file_content)];
     }
-
-    private function normalizePath(string $path): string
+    private function normalize_path(string $path): string
     {
         if ('\\' === \DIRECTORY_SEPARATOR) {
             return str_replace('\\', '/', $path);
         }
-
         return $path;
     }
 }

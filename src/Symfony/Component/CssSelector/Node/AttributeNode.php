@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\CssSelector\Node;
+namespace Symfony\Component\Css_Selector\Node;
 
 /**
  * Represents a "<selector>[<namespace>|<attribute> <operator> <value>]" node.
@@ -23,53 +21,38 @@ namespace Symfony\Component\CssSelector\Node;
  *
  * @internal
  */
-class AttributeNode extends AbstractNode
+class Attribute_Node extends Abstract_Node
 {
-    public function __construct(
-        private readonly NodeInterface $selector,
-        private readonly ?string $namespace,
-        private readonly string $attribute,
-        private readonly string $operator,
-        private readonly ?string $value,
-    ) {
+    public function __construct(private readonly Node_Interface $selector, private readonly ?string $namespace, private readonly string $attribute, private readonly string $operator, private readonly ?string $value)
+    {
     }
-
-    public function getSelector(): NodeInterface
+    public function get_selector(): Node_Interface
     {
         return $this->selector;
     }
-
-    public function getNamespace(): ?string
+    public function get_namespace(): ?string
     {
         return $this->namespace;
     }
-
-    public function getAttribute(): string
+    public function get_attribute(): string
     {
         return $this->attribute;
     }
-
-    public function getOperator(): string
+    public function get_operator(): string
     {
         return $this->operator;
     }
-
-    public function getValue(): ?string
+    public function get_value(): ?string
     {
         return $this->value;
     }
-
-    public function getSpecificity(): Specificity
+    public function get_specificity(): Specificity
     {
-        return $this->selector->getSpecificity()->plus(new Specificity(0, 1, 0));
+        return $this->selector->get_specificity()->plus(new Specificity(0, 1, 0));
     }
-
     public function __toString(): string
     {
-        $attribute = $this->namespace ? $this->namespace.'|'.$this->attribute : $this->attribute;
-
-        return 'exists' === $this->operator
-            ? \sprintf('%s[%s[%s]]', $this->getNodeName(), $this->selector, $attribute)
-            : \sprintf("%s[%s[%s %s '%s']]", $this->getNodeName(), $this->selector, $attribute, $this->operator, $this->value);
+        $attribute = $this->namespace ? $this->namespace . '|' . $this->attribute : $this->attribute;
+        return 'exists' === $this->operator ? \sprintf('%s[%s[%s]]', $this->get_node_name(), $this->selector, $attribute) : \sprintf("%s[%s[%s %s '%s']]", $this->get_node_name(), $this->selector, $attribute, $this->operator, $this->value);
     }
 }

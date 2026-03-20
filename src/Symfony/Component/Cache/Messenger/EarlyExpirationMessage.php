@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,19 +9,17 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Messenger;
 
-use Symfony\Component\Cache\Adapter\AdapterInterface;
-use Symfony\Component\Cache\CacheItem;
-use Symfony\Component\DependencyInjection\ReverseContainer;
-
+use Symfony\Component\Cache\Adapter\Adapter_Interface;
+use Symfony\Component\Cache\Cache_Item;
+use Symfony\Component\Dependency_Injection\Reverse_Container;
 /**
  * Conveys a cached value that needs to be computed.
  */
-final readonly class EarlyExpirationMessage
+final readonly class Early_Expiration_Message
 {
-    public static function create(ReverseContainer $reverseContainer, callable $callback, CacheItem $item, AdapterInterface $pool): ?self
+    public static function create(Reverse_Container $reverse_container, callable $callback, Cache_Item $item, Adapter_Interface $pool): ?self
     {
         try {
             $item = clone $item;
@@ -30,74 +27,58 @@ final readonly class EarlyExpirationMessage
         } catch (\Exception) {
             return null;
         }
-
-        $pool = $reverseContainer->getId($pool);
-
-        if ($callback instanceof \Closure && !($r = new \ReflectionFunction($callback))->isAnonymous()) {
-            $callback = [$r->getClosureThis() ?? $r->getClosureCalledClass()?->name, $r->name];
+        $pool = $reverse_container->get_id($pool);
+        if ($callback instanceof \Closure && !($r = new \ReflectionFunction($callback))->is_anonymous()) {
+            $callback = [$r->get_closure_this() ?? $r->get_closure_called_class()?->name, $r->name];
             $callback[0] ?: $callback = $r->name;
         }
-
         if (\is_object($callback)) {
-            if (null === $id = $reverseContainer->getId($callback)) {
+            if (null === $id = $reverse_container->get_id($callback)) {
                 return null;
             }
-
-            $callback = '@'.$id;
+            $callback = '@' . $id;
         } elseif (!\is_array($callback)) {
             $callback = (string) $callback;
         } elseif (!\is_object($callback[0])) {
             $callback = [(string) $callback[0], (string) $callback[1]];
         } else {
-            if (null === $id = $reverseContainer->getId($callback[0])) {
+            if (null === $id = $reverse_container->get_id($callback[0])) {
                 return null;
             }
-
-            $callback = ['@'.$id, (string) $callback[1]];
+            $callback = ['@' . $id, (string) $callback[1]];
         }
-
         return new self($item, $pool, $callback);
     }
-
-    public function getItem(): CacheItem
+    public function get_item(): Cache_Item
     {
         return $this->item;
     }
-
-    public function getPool(): string
+    public function get_pool(): string
     {
         return $this->pool;
     }
-
     /**
      * @return string|string[]
      */
-    public function getCallback(): string|array
+    public function get_callback(): string|array
     {
         return $this->callback;
     }
-
-    public function findPool(ReverseContainer $reverseContainer): AdapterInterface
+    public function find_pool(Reverse_Container $reverse_container): Adapter_Interface
     {
-        return $reverseContainer->getService($this->pool);
+        return $reverse_container->get_service($this->pool);
     }
-
-    public function findCallback(ReverseContainer $reverseContainer): callable
+    public function find_callback(Reverse_Container $reverse_container): callable
     {
         if (\is_string($callback = $this->callback)) {
-            return '@' === $callback[0] ? $reverseContainer->getService(substr($callback, 1)) : $callback;
+            return '@' === $callback[0] ? $reverse_container->get_service(substr($callback, 1)) : $callback;
         }
         if ('@' === $callback[0][0]) {
-            $callback[0] = $reverseContainer->getService(substr((string) $callback[0], 1));
+            $callback[0] = $reverse_container->get_service(substr((string) $callback[0], 1));
         }
-
         return $callback;
     }
-
-    private function __construct(
-        private CacheItem $item,
-        private string $pool,
-        private string|array $callback,
-    ) {
+    private function __construct(private Cache_Item $item, private string $pool, private string|array $callback)
+    {
     }
 }

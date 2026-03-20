@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,78 +9,80 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpFoundation\Session\Storage\Handler;
+namespace Symfony\Component\Http_Foundation\Session\Storage\Handler;
 
 /**
  * Adds basic `SessionUpdateTimestampHandlerInterface` behaviors to another `SessionHandlerInterface`.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class StrictSessionHandler extends AbstractSessionHandler
+class Strict_Session_Handler extends Abstract_Session_Handler
 {
-    private bool $doDestroy;
-
-    public function __construct(
-        private readonly \SessionHandlerInterface $handler,
-    ) {
-        if ($handler instanceof \SessionUpdateTimestampHandlerInterface) {
+    private bool $do_destroy;
+    public function __construct(private readonly \Session_Handler_Interface $handler)
+    {
+        if ($handler instanceof \Session_Update_Timestamp_Handler_Interface) {
             throw new \LogicException(\sprintf('"%s" is already an instance of "SessionUpdateTimestampHandlerInterface", you cannot wrap it with "%s".', get_debug_type($handler), self::class));
         }
     }
-
     /**
      * Returns true if this handler wraps an internal PHP session save handler using \SessionHandler.
      *
      * @internal
      */
-    public function isWrapper(): bool
+    public function is_wrapper(): bool
     {
-        return $this->handler instanceof \SessionHandler;
+        return $this->handler instanceof \Session_Handler;
     }
-
-    public function open(string $savePath, string $sessionName): bool
+    public function open(string $save_path, string $session_name): bool
     {
-        parent::open($savePath, $sessionName);
-
-        return $this->handler->open($savePath, $sessionName);
+        parent::open($save_path, $session_name);
+        return $this->handler->open($save_path, $session_name);
     }
-
-    protected function doRead(#[\SensitiveParameter] string $sessionId): string
+    protected function do_read(
+        #[\Sensitive_Parameter]
+        string $session_id
+    ): string
     {
-        return $this->handler->read($sessionId);
+        return $this->handler->read($session_id);
     }
-
-    public function updateTimestamp(#[\SensitiveParameter] string $sessionId, string $data): bool
+    public function update_timestamp(
+        #[\Sensitive_Parameter]
+        string $session_id,
+        string $data
+    ): bool
     {
-        return $this->write($sessionId, $data);
+        return $this->write($session_id, $data);
     }
-
-    protected function doWrite(#[\SensitiveParameter] string $sessionId, string $data): bool
+    protected function do_write(
+        #[\Sensitive_Parameter]
+        string $session_id,
+        string $data
+    ): bool
     {
-        return $this->handler->write($sessionId, $data);
+        return $this->handler->write($session_id, $data);
     }
-
-    public function destroy(#[\SensitiveParameter] string $sessionId): bool
+    public function destroy(
+        #[\Sensitive_Parameter]
+        string $session_id
+    ): bool
     {
-        $this->doDestroy = true;
-        $destroyed = parent::destroy($sessionId);
-
-        return $this->doDestroy ? $this->doDestroy($sessionId) : $destroyed;
+        $this->do_destroy = true;
+        $destroyed = parent::destroy($session_id);
+        return $this->do_destroy ? $this->do_destroy($session_id) : $destroyed;
     }
-
-    protected function doDestroy(#[\SensitiveParameter] string $sessionId): bool
+    protected function do_destroy(
+        #[\Sensitive_Parameter]
+        string $session_id
+    ): bool
     {
-        $this->doDestroy = false;
-
-        return $this->handler->destroy($sessionId);
+        $this->do_destroy = false;
+        return $this->handler->destroy($session_id);
     }
-
     public function close(): bool
     {
         return $this->handler->close();
     }
-
     public function gc(int $maxlifetime): int|false
     {
         return $this->handler->gc($maxlifetime);

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,37 +9,32 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Extension\Data_Collector\Type;
 
-namespace Symfony\Component\Form\Extension\DataCollector\Type;
-
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\DataCollector\EventListener\DataCollectorListener;
-use Symfony\Component\Form\Extension\DataCollector\FormDataCollectorInterface;
-use Symfony\Component\Form\FormBuilderInterface;
-
+use Symfony\Component\Form\Abstract_Type_Extension;
+use Symfony\Component\Form\Extension\Core\Type\Form_Type;
+use Symfony\Component\Form\Extension\Data_Collector\Event_Listener\Data_Collector_Listener;
+use Symfony\Component\Form\Extension\Data_Collector\Form_Data_Collector_Interface;
+use Symfony\Component\Form\Form_Builder_Interface;
 /**
  * Type extension for collecting data of a form with this type.
  *
  * @author Robert Schönthal <robert.schoenthal@gmail.com>
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class DataCollectorTypeExtension extends AbstractTypeExtension
+class Data_Collector_Type_Extension extends Abstract_Type_Extension
 {
-    private readonly DataCollectorListener $listener;
-
-    public function __construct(FormDataCollectorInterface $dataCollector)
+    private readonly Data_Collector_Listener $listener;
+    public function __construct(Form_Data_Collector_Interface $data_collector)
     {
-        $this->listener = new DataCollectorListener($dataCollector);
+        $this->listener = new Data_Collector_Listener($data_collector);
     }
-
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function build_form(Form_Builder_Interface $builder, array $options): void
     {
-        $builder->addEventSubscriber($this->listener);
+        $builder->add_event_subscriber($this->listener);
     }
-
-    public static function getExtendedTypes(): iterable
+    public static function get_extended_types(): iterable
     {
-        return [FormType::class];
+        return [Form_Type::class];
     }
 }

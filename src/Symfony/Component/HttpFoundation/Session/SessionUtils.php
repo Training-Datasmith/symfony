@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpFoundation\Session;
+namespace Symfony\Component\Http_Foundation\Session;
 
 /**
  * Session utility functions.
@@ -21,41 +19,42 @@ namespace Symfony\Component\HttpFoundation\Session;
  *
  * @internal
  */
-final class SessionUtils
+final class Session_Utils
 {
     /**
      * Finds the session header amongst the headers that are to be sent, removes it, and returns
      * it so the caller can process it further.
      */
-    public static function popSessionCookie(string $sessionName, #[\SensitiveParameter] string $sessionId): ?string
+    public static function pop_session_cookie(
+        string $session_name,
+        #[\Sensitive_Parameter]
+        string $session_id
+    ): ?string
     {
-        $sessionCookie = null;
-        $sessionCookiePrefix = \sprintf(' %s=', urlencode($sessionName));
-        $sessionCookieWithId = \sprintf('%s%s;', $sessionCookiePrefix, urlencode($sessionId));
-        $otherCookies = [];
+        $session_cookie = null;
+        $session_cookie_prefix = \sprintf(' %s=', urlencode($session_name));
+        $session_cookie_with_id = \sprintf('%s%s;', $session_cookie_prefix, urlencode($session_id));
+        $other_cookies = [];
         foreach (headers_list() as $h) {
             if (0 !== stripos($h, 'Set-Cookie:')) {
                 continue;
             }
-            if (11 === strpos($h, $sessionCookiePrefix, 11)) {
-                $sessionCookie = $h;
-
-                if (11 !== strpos($h, $sessionCookieWithId, 11)) {
-                    $otherCookies[] = $h;
+            if (11 === strpos($h, $session_cookie_prefix, 11)) {
+                $session_cookie = $h;
+                if (11 !== strpos($h, $session_cookie_with_id, 11)) {
+                    $other_cookies[] = $h;
                 }
             } else {
-                $otherCookies[] = $h;
+                $other_cookies[] = $h;
             }
         }
-        if (null === $sessionCookie) {
+        if (null === $session_cookie) {
             return null;
         }
-
         header_remove('Set-Cookie');
-        foreach ($otherCookies as $h) {
+        foreach ($other_cookies as $h) {
             header($h, false);
         }
-
-        return $sessionCookie;
+        return $session_cookie;
     }
 }

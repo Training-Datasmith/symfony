@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition\Builder;
 
-use Symfony\Component\Config\Definition\NodeInterface;
-use Symfony\Component\Config\Definition\VariableNode;
-
+use Symfony\Component\Config\Definition\Node_Interface;
+use Symfony\Component\Config\Definition\Variable_Node;
 /**
  * This class provides a fluent interface for defining a node.
  *
@@ -25,43 +22,35 @@ use Symfony\Component\Config\Definition\VariableNode;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class VariableNodeDefinition extends NodeDefinition
+class Variable_Node_Definition extends Node_Definition
 {
-    protected function instantiateNode(): VariableNode
+    protected function instantiate_node(): Variable_Node
     {
-        return new VariableNode($this->name, $this->parent, $this->pathSeparator);
+        return new Variable_Node($this->name, $this->parent, $this->path_separator);
     }
-
-    protected function createNode(): NodeInterface
+    protected function create_node(): Node_Interface
     {
-        $node = $this->instantiateNode();
-
+        $node = $this->instantiate_node();
         if (isset($this->normalization)) {
-            $node->setNormalizationClosures($this->normalization->before);
+            $node->set_normalization_closures($this->normalization->before);
         }
-
         if (isset($this->merge)) {
-            $node->setAllowOverwrite($this->merge->allowOverwrite);
+            $node->set_allow_overwrite($this->merge->allow_overwrite);
         }
-
         if (true === $this->default) {
-            $node->setDefaultValue($this->defaultValue);
+            $node->set_default_value($this->default_value);
         }
-
-        $node->setAllowEmptyValue($this->allowEmptyValue);
-        $node->addEquivalentValue(null, $this->nullEquivalent);
-        $node->addEquivalentValue(true, $this->trueEquivalent);
-        $node->addEquivalentValue(false, $this->falseEquivalent);
-        $node->setRequired($this->required);
-
+        $node->set_allow_empty_value($this->allow_empty_value);
+        $node->add_equivalent_value(null, $this->null_equivalent);
+        $node->add_equivalent_value(true, $this->true_equivalent);
+        $node->add_equivalent_value(false, $this->false_equivalent);
+        $node->set_required($this->required);
         if ($this->deprecation) {
-            $node->setDeprecated($this->deprecation['package'], $this->deprecation['version'], $this->deprecation['message']);
+            $node->set_deprecated($this->deprecation['package'], $this->deprecation['version'], $this->deprecation['message']);
         }
-
         if (isset($this->validation)) {
-            $node->setFinalValidationClosures($this->validation->rules);
+            $node->set_final_validation_closures($this->validation->rules);
         }
-
         return $node;
     }
 }

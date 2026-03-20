@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Asset;
 
-use Symfony\Component\Asset\Context\ContextInterface;
-use Symfony\Component\Asset\VersionStrategy\VersionStrategyInterface;
-
+use Symfony\Component\Asset\Context\Context_Interface;
+use Symfony\Component\Asset\Version_Strategy\Version_Strategy_Interface;
 /**
  * Package that adds a base path to asset URLs in addition to a version.
  *
@@ -26,45 +23,38 @@ use Symfony\Component\Asset\VersionStrategy\VersionStrategyInterface;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class PathPackage extends Package
+class Path_Package extends Package
 {
-    private string $basePath;
-
+    private string $base_path;
     /**
      * @param string $basePath The base path to be prepended to relative paths
      */
-    public function __construct(string $basePath, VersionStrategyInterface $versionStrategy, ?ContextInterface $context = null)
+    public function __construct(string $base_path, Version_Strategy_Interface $version_strategy, ?Context_Interface $context = null)
     {
-        parent::__construct($versionStrategy, $context);
-
-        if (!$basePath) {
-            $this->basePath = '/';
+        parent::__construct($version_strategy, $context);
+        if (!$base_path) {
+            $this->base_path = '/';
         } else {
-            if ('/' != $basePath[0]) {
-                $basePath = '/'.$basePath;
+            if ('/' != $base_path[0]) {
+                $base_path = '/' . $base_path;
             }
-
-            $this->basePath = rtrim($basePath, '/').'/';
+            $this->base_path = rtrim($base_path, '/') . '/';
         }
     }
-
-    public function getUrl(string $path): string
+    public function get_url(string $path): string
     {
-        $versionedPath = parent::getUrl($path);
-
+        $versioned_path = parent::get_url($path);
         // if absolute or begins with /, we're done
-        if ($this->isAbsoluteUrl($versionedPath) || ($versionedPath && '/' === $versionedPath[0])) {
-            return $versionedPath;
+        if ($this->is_absolute_url($versioned_path) || $versioned_path && '/' === $versioned_path[0]) {
+            return $versioned_path;
         }
-
-        return $this->getBasePath().ltrim($versionedPath, '/');
+        return $this->get_base_path() . ltrim($versioned_path, '/');
     }
-
     /**
      * Returns the base path.
      */
-    public function getBasePath(): string
+    public function get_base_path(): string
     {
-        return $this->getContext()->getBasePath().$this->basePath;
+        return $this->get_context()->get_base_path() . $this->base_path;
     }
 }

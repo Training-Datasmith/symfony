@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,48 +9,39 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Expression_Language;
 
-namespace Symfony\Component\ExpressionLanguage;
-
-use Symfony\Contracts\Service\ResetInterface;
-
+use Symfony\Contracts\Service\Reset_Interface;
 /**
  * Compiles a node to PHP code.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class Compiler implements ResetInterface
+class Compiler implements Reset_Interface
 {
     private string $source = '';
-
-    public function __construct(
-        private array $functions,
-    ) {
+    public function __construct(private array $functions)
+    {
     }
-
-    public function getFunction(string $name): array
+    public function get_function(string $name): array
     {
         return $this->functions[$name];
     }
-
     /**
      * Gets the current PHP code after compilation.
      */
-    public function getSource(): string
+    public function get_source(): string
     {
         return $this->source;
     }
-
     /**
      * @return $this
      */
     public function reset(): static
     {
         $this->source = '';
-
         return $this;
     }
-
     /**
      * Compiles a node.
      *
@@ -60,23 +50,17 @@ class Compiler implements ResetInterface
     public function compile(Node\Node $node): static
     {
         $node->compile($this);
-
         return $this;
     }
-
     public function subcompile(Node\Node $node): string
     {
         $current = $this->source;
         $this->source = '';
-
         $node->compile($this);
-
         $source = $this->source;
         $this->source = $current;
-
         return $source;
     }
-
     /**
      * Adds a raw string to the compiled code.
      *
@@ -85,10 +69,8 @@ class Compiler implements ResetInterface
     public function raw(string $string): static
     {
         $this->source .= $string;
-
         return $this;
     }
-
     /**
      * Adds a quoted string to the compiled code.
      *
@@ -96,11 +78,9 @@ class Compiler implements ResetInterface
      */
     public function string(string $value): static
     {
-        $this->source .= \sprintf('"%s"', addcslashes($value, "\0\t\"\$\\"));
-
+        $this->source .= \sprintf('"%s"', addcslashes($value, "\x00\t\"\$\\"));
         return $this;
     }
-
     /**
      * Returns a PHP representation of a given value.
      *
@@ -130,7 +110,6 @@ class Compiler implements ResetInterface
         } else {
             $this->string($value);
         }
-
         return $this;
     }
 }

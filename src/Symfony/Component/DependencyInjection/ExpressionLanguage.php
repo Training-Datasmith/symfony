@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,16 +9,13 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection;
 
-namespace Symfony\Component\DependencyInjection;
-
-use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage as BaseExpressionLanguage;
-
-if (!class_exists(BaseExpressionLanguage::class)) {
+use Psr\Cache\Cache_Item_Pool_Interface;
+use Symfony\Component\Expression_Language\Expression_Language as BaseExpressionLanguage;
+if (!class_exists(Base_Expression_Language::class)) {
     return;
 }
-
 /**
  * Adds some function to the default ExpressionLanguage.
  *
@@ -27,17 +23,15 @@ if (!class_exists(BaseExpressionLanguage::class)) {
  *
  * @see ExpressionLanguageProvider
  */
-class ExpressionLanguage extends BaseExpressionLanguage
+class Expression_Language extends Base_Expression_Language
 {
-    public function __construct(?CacheItemPoolInterface $cache = null, iterable $providers = [], ?callable $serviceCompiler = null, ?\Closure $getEnv = null)
+    public function __construct(?Cache_Item_Pool_Interface $cache = null, iterable $providers = [], ?callable $service_compiler = null, ?\Closure $get_env = null)
     {
         if (!\is_array($providers)) {
             $providers = iterator_to_array($providers, false);
         }
-
         // prepend the default provider to let users override it easily
-        array_unshift($providers, new ExpressionLanguageProvider($serviceCompiler, $getEnv));
-
+        array_unshift($providers, new Expression_Language_Provider($service_compiler, $get_env));
         parent::__construct($cache, $providers);
     }
 }

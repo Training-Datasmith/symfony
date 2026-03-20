@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\ExpressionLanguage;
+namespace Symfony\Component\Expression_Language;
 
 /**
  * Represents a token.
@@ -26,18 +24,13 @@ class Token implements \Stringable
     public const STRING_TYPE = 'string';
     public const OPERATOR_TYPE = 'operator';
     public const PUNCTUATION_TYPE = 'punctuation';
-
     /**
      * @param self::*_TYPE $type
      * @param int|null     $cursor The cursor position in the source
      */
-    public function __construct(
-        public string $type,
-        public string|int|float|null $value,
-        public ?int $cursor,
-    ) {
+    public function __construct(public string $type, public string|int|float|null $value, public ?int $cursor)
+    {
     }
-
     /**
      * Returns a string representation of the token.
      */
@@ -45,7 +38,6 @@ class Token implements \Stringable
     {
         return \sprintf('%3d %-11s %s', $this->cursor, strtoupper($this->type), $this->value);
     }
-
     /**
      * Tests the current token for a type and/or a value.
      */

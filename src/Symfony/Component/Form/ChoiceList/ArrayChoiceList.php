@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\Form\ChoiceList;
+namespace Symfony\Component\Form\Choice_List;
 
 /**
  * A list of choices with arbitrary data types.
@@ -24,21 +22,18 @@ namespace Symfony\Component\Form\ChoiceList;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ArrayChoiceList implements ChoiceListInterface
+class Array_Choice_List implements Choice_List_Interface
 {
     protected array $choices;
-
     /**
      * The values indexed by the original keys.
      */
-    protected array $structuredValues;
-
+    protected array $structured_values;
     /**
      * The original keys of the choices array.
      */
-    protected array $originalKeys;
-    protected ?\Closure $valueCallback = null;
-
+    protected array $original_keys;
+    protected ?\Closure $value_callback = null;
     /**
      * Creates a list with the given choices and values.
      *
@@ -55,94 +50,75 @@ class ArrayChoiceList implements ChoiceListInterface
         if ($choices instanceof \Traversable) {
             $choices = iterator_to_array($choices);
         }
-
-        if (null === $value && $this->castableToString($choices)) {
-            $value = static fn ($choice): string => false === $choice ? '0' : (string) $choice;
+        if (null === $value && $this->castable_to_string($choices)) {
+            $value = static fn($choice): string => false === $choice ? '0' : (string) $choice;
         }
-
         if (null !== $value) {
             // If a deterministic value generator was passed, use it later
-            $this->valueCallback = $value(...);
+            $this->value_callback = $value(...);
         } else {
             // Otherwise generate incrementing integers as values
             $value = static function () {
                 static $i = 0;
-
                 return $i++;
             };
         }
-
         // If the choices are given as recursive array (i.e. with explicit
         // choice groups), flatten the array. The grouping information is needed
         // in the view only.
-        $this->flatten($choices, $value, $choicesByValues, $keysByValues, $structuredValues);
-
-        $this->choices = $choicesByValues;
-        $this->originalKeys = $keysByValues;
-        $this->structuredValues = $structuredValues;
+        $this->flatten($choices, $value, $choices_by_values, $keys_by_values, $structured_values);
+        $this->choices = $choices_by_values;
+        $this->original_keys = $keys_by_values;
+        $this->structured_values = $structured_values;
     }
-
-    public function getChoices(): array
+    public function get_choices(): array
     {
         return $this->choices;
     }
-
-    public function getValues(): array
+    public function get_values(): array
     {
         return array_map(strval(...), array_keys($this->choices));
     }
-
-    public function getStructuredValues(): array
+    public function get_structured_values(): array
     {
-        return $this->structuredValues;
+        return $this->structured_values;
     }
-
-    public function getOriginalKeys(): array
+    public function get_original_keys(): array
     {
-        return $this->originalKeys;
+        return $this->original_keys;
     }
-
-    public function getChoicesForValues(array $values): array
+    public function get_choices_for_values(array $values): array
     {
         $choices = [];
-
-        foreach ($values as $i => $givenValue) {
-            if (\array_key_exists($givenValue ?? '', $this->choices)) {
-                $choices[$i] = $this->choices[$givenValue];
+        foreach ($values as $i => $given_value) {
+            if (\array_key_exists($given_value ?? '', $this->choices)) {
+                $choices[$i] = $this->choices[$given_value];
             }
         }
-
         return $choices;
     }
-
-    public function getValuesForChoices(array $choices): array
+    public function get_values_for_choices(array $choices): array
     {
         $values = [];
-
         // Use the value callback to compare choices by their values, if present
-        if ($this->valueCallback) {
-            $givenValues = [];
-
-            foreach ($choices as $i => $givenChoice) {
-                $givenValues[$i] = (string) ($this->valueCallback)($givenChoice);
+        if ($this->value_callback) {
+            $given_values = [];
+            foreach ($choices as $i => $given_choice) {
+                $given_values[$i] = (string) ($this->value_callback)($given_choice);
             }
-
-            return array_intersect($givenValues, array_keys($this->choices));
+            return array_intersect($given_values, array_keys($this->choices));
         }
-
         // Otherwise compare choices by identity
-        foreach ($choices as $i => $givenChoice) {
+        foreach ($choices as $i => $given_choice) {
             foreach ($this->choices as $value => $choice) {
-                if ($choice === $givenChoice) {
+                if ($choice === $given_choice) {
                     $values[$i] = (string) $value;
                     break;
                 }
             }
         }
-
         return $values;
     }
-
     /**
      * Flattens an array into the given output variables.
      *
@@ -156,39 +132,35 @@ class ArrayChoiceList implements ChoiceListInterface
      *
      * @internal
      */
-    protected function flatten(array $choices, callable $value, ?array &$choicesByValues, ?array &$keysByValues, ?array &$structuredValues): void
+    protected function flatten(array $choices, callable $value, ?array &$choices_by_values, ?array &$keys_by_values, ?array &$structured_values): void
     {
-        if (null === $choicesByValues) {
-            $choicesByValues = [];
-            $keysByValues = [];
-            $structuredValues = [];
+        if (null === $choices_by_values) {
+            $choices_by_values = [];
+            $keys_by_values = [];
+            $structured_values = [];
         }
-
         foreach ($choices as $key => $choice) {
             if (\is_array($choice)) {
-                $this->flatten($choice, $value, $choicesByValues, $keysByValues, $structuredValues[$key]);
-
+                $this->flatten($choice, $value, $choices_by_values, $keys_by_values, $structured_values[$key]);
                 continue;
             }
-
-            $choiceValue = (string) $value($choice);
-            $choicesByValues[$choiceValue] = $choice;
-            $keysByValues[$choiceValue] = $key;
-            $structuredValues[$key] = $choiceValue;
+            $choice_value = (string) $value($choice);
+            $choices_by_values[$choice_value] = $choice;
+            $keys_by_values[$choice_value] = $key;
+            $structured_values[$key] = $choice_value;
         }
     }
-
     /**
      * Checks whether the given choices can be cast to strings without
      * generating duplicates.
      * This method is responsible for preventing conflict between scalar values
      * and the empty value.
      */
-    private function castableToString(array $choices, array &$cache = []): bool
+    private function castable_to_string(array $choices, array &$cache = []): bool
     {
         foreach ($choices as $choice) {
             if (\is_array($choice)) {
-                if (!$this->castableToString($choice, $cache)) {
+                if (!$this->castable_to_string($choice, $cache)) {
                     return false;
                 }
                 continue;
@@ -196,17 +168,13 @@ class ArrayChoiceList implements ChoiceListInterface
             if (!\is_scalar($choice)) {
                 return false;
             }
-
             // prevent having false casted to the empty string by isset()
             $choice = false === $choice ? '0' : (string) $choice;
-
             if (isset($cache[$choice])) {
                 return false;
             }
-
             $cache[$choice] = true;
         }
-
         return true;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\Form\ChoiceList\View;
+namespace Symfony\Component\Form\Choice_List\View;
 
 /**
  * Represents a group of choices in templates.
@@ -20,19 +18,16 @@ namespace Symfony\Component\Form\ChoiceList\View;
  *
  * @implements \IteratorAggregate<array-key, ChoiceGroupView|ChoiceView>
  */
-class ChoiceGroupView implements \IteratorAggregate
+class Choice_Group_View implements \IteratorAggregate
 {
     /**
      * Creates a new choice group view.
      *
      * @param array<ChoiceGroupView|ChoiceView> $choices the choice views in the group
      */
-    public function __construct(
-        public string $label,
-        public array $choices = [],
-    ) {
+    public function __construct(public string $label, public array $choices = [])
+    {
     }
-
     /**
      * @return \Traversable<array-key, ChoiceGroupView|ChoiceView>
      */

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,103 +9,74 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Extension\Password_Hasher\Event_Listener;
 
-namespace Symfony\Component\Form\Extension\PasswordHasher\EventListener;
-
-use Symfony\Component\Form\Exception\InvalidConfigurationException;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-
+use Symfony\Component\Form\Exception\Invalid_Configuration_Exception;
+use Symfony\Component\Form\Extension\Core\Type\Repeated_Type;
+use Symfony\Component\Form\Form_Event;
+use Symfony\Component\Form\Form_Interface;
+use Symfony\Component\Password_Hasher\Hasher\User_Password_Hasher_Interface;
+use Symfony\Component\Property_Access\Property_Access;
+use Symfony\Component\Property_Access\Property_Accessor_Interface;
+use Symfony\Component\Security\Core\User\Password_Authenticated_User_Interface;
 /**
  * @author Sébastien Alfaiate <s.alfaiate@webarea.fr>
  * @author Gábor Egyed <gabor.egyed@gmail.com>
  */
-class PasswordHasherListener
+class Password_Hasher_Listener
 {
     private array $passwords = [];
-
-    public function __construct(
-        private readonly UserPasswordHasherInterface $passwordHasher,
-        private ?PropertyAccessorInterface $propertyAccessor = null,
-    ) {
-        $this->propertyAccessor ??= PropertyAccess::createPropertyAccessor();
-    }
-
-    public function registerPassword(FormEvent $event): void
+    public function __construct(private readonly User_Password_Hasher_Interface $password_hasher, private ?Property_Accessor_Interface $property_accessor = null)
     {
-        if (null === $event->getData() || '' === $event->getData()) {
+        $this->property_accessor ??= Property_Access::create_property_accessor();
+    }
+    public function register_password(Form_Event $event): void
+    {
+        if (null === $event->get_data() || '' === $event->get_data()) {
             return;
         }
-
-        $this->assertNotMapped($event->getForm());
-
-        $this->passwords[] = [
-            'form' => $event->getForm(),
-            'property_path' => $event->getForm()->getConfig()->getOption('hash_property_path'),
-            'password' => $event->getData(),
-        ];
+        $this->assert_not_mapped($event->get_form());
+        $this->passwords[] = ['form' => $event->get_form(), 'property_path' => $event->get_form()->get_config()->get_option('hash_property_path'), 'password' => $event->get_data()];
     }
-
-    public function hashPasswords(FormEvent $event): void
+    public function hash_passwords(Form_Event $event): void
     {
-        $form = $event->getForm();
-
-        if (!$form->isRoot()) {
+        $form = $event->get_form();
+        if (!$form->is_root()) {
             return;
         }
-
-        if ($form->isValid()) {
+        if ($form->is_valid()) {
             foreach ($this->passwords as $password) {
-                $user = $this->getUser($password['form']);
-
-                $this->propertyAccessor->setValue(
-                    $user,
-                    $password['property_path'],
-                    $this->passwordHasher->hashPassword($user, $password['password'])
-                );
+                $user = $this->get_user($password['form']);
+                $this->property_accessor->set_value($user, $password['property_path'], $this->password_hasher->hash_password($user, $password['password']));
             }
         }
-
         $this->passwords = [];
     }
-
-    private function getTargetForm(FormInterface $form): FormInterface
+    private function get_target_form(Form_Interface $form): Form_Interface
     {
-        if (!$parentForm = $form->getParent()) {
+        if (!$parent_form = $form->get_parent()) {
             return $form;
         }
-
-        $parentType = $parentForm->getConfig()->getType();
-
+        $parent_type = $parent_form->get_config()->get_type();
         do {
-            if ($parentType->getInnerType() instanceof RepeatedType) {
-                return $parentForm;
+            if ($parent_type->get_inner_type() instanceof Repeated_Type) {
+                return $parent_form;
             }
-        } while ($parentType = $parentType->getParent());
-
+        } while ($parent_type = $parent_type->get_parent());
         return $form;
     }
-
-    private function getUser(FormInterface $form): PasswordAuthenticatedUserInterface
+    private function get_user(Form_Interface $form): Password_Authenticated_User_Interface
     {
-        $parent = $this->getTargetForm($form)->getParent();
-
-        if (!($user = $parent?->getData()) || !$user instanceof PasswordAuthenticatedUserInterface) {
-            throw new InvalidConfigurationException(\sprintf('The "hash_property_path" option only supports "%s" objects, "%s" given.', PasswordAuthenticatedUserInterface::class, get_debug_type($user)));
+        $parent = $this->get_target_form($form)->get_parent();
+        if (!($user = $parent?->get_data()) || !$user instanceof Password_Authenticated_User_Interface) {
+            throw new Invalid_Configuration_Exception(\sprintf('The "hash_property_path" option only supports "%s" objects, "%s" given.', Password_Authenticated_User_Interface::class, get_debug_type($user)));
         }
-
         return $user;
     }
-
-    private function assertNotMapped(FormInterface $form): void
+    private function assert_not_mapped(Form_Interface $form): void
     {
-        if ($this->getTargetForm($form)->getConfig()->getMapped()) {
-            throw new InvalidConfigurationException('The "hash_property_path" option cannot be used on mapped field.');
+        if ($this->get_target_form($form)->get_config()->get_mapped()) {
+            throw new Invalid_Configuration_Exception('The "hash_property_path" option cannot be used on mapped field.');
         }
     }
 }

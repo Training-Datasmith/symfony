@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Input;
 
 /**
@@ -19,7 +17,7 @@ namespace Symfony\Component\Console\Input;
  *
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-interface StreamableInputInterface extends InputInterface
+interface Streamable_Input_Interface extends Input_Interface
 {
     /**
      * Sets the input stream to read from when interacting with the user.
@@ -28,12 +26,11 @@ interface StreamableInputInterface extends InputInterface
      *
      * @param resource $stream The input stream
      */
-    public function setStream($stream): void;
-
+    public function set_stream($stream): void;
     /**
      * Returns the input stream.
      *
      * @return resource|null
      */
-    public function getStream();
+    public function get_stream();
 }

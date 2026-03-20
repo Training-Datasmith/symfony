@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,148 +9,106 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Psr_Http_Message\Factory;
 
-namespace Symfony\Bridge\PsrHttpMessage\Factory;
-
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamInterface;
-use Psr\Http\Message\UploadedFileInterface;
-use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-
+use Psr\Http\Message\Response_Interface;
+use Psr\Http\Message\Server_Request_Interface;
+use Psr\Http\Message\Stream_Interface;
+use Psr\Http\Message\Uploaded_File_Interface;
+use Symfony\Bridge\Psr_Http_Message\Http_Foundation_Factory_Interface;
+use Symfony\Component\Http_Foundation\Cookie;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Response;
+use Symfony\Component\Http_Foundation\Streamed_Response;
 /**
  * @author Kévin Dunglas <dunglas@gmail.com>
  */
-class HttpFoundationFactory implements HttpFoundationFactoryInterface
+class Http_Foundation_Factory implements Http_Foundation_Factory_Interface
 {
     /**
      * @param int $responseBufferMaxLength The maximum output buffering size for each iteration when sending the response
      */
-    public function __construct(
-        private readonly int $responseBufferMaxLength = 16372,
-    ) {
+    public function __construct(private readonly int $response_buffer_max_length = 16372)
+    {
     }
-
-    public function createRequest(ServerRequestInterface $psrRequest, bool $streamed = false): Request
+    public function create_request(Server_Request_Interface $psr_request, bool $streamed = false): Request
     {
         $server = [];
-        $uri = $psrRequest->getUri();
-
-        $server['SERVER_NAME'] = $uri->getHost();
-        $server['SERVER_PORT'] = $uri->getPort() ?: ('https' === $uri->getScheme() ? 443 : 80);
-        $server['REQUEST_URI'] = $uri->getPath();
-        $server['QUERY_STRING'] = $uri->getQuery();
-
+        $uri = $psr_request->get_uri();
+        $server['SERVER_NAME'] = $uri->get_host();
+        $server['SERVER_PORT'] = $uri->get_port() ?: ('https' === $uri->get_scheme() ? 443 : 80);
+        $server['REQUEST_URI'] = $uri->get_path();
+        $server['QUERY_STRING'] = $uri->get_query();
         if ('' !== $server['QUERY_STRING']) {
-            $server['REQUEST_URI'] .= '?'.$server['QUERY_STRING'];
+            $server['REQUEST_URI'] .= '?' . $server['QUERY_STRING'];
         }
-
-        if ('https' === $uri->getScheme()) {
+        if ('https' === $uri->get_scheme()) {
             $server['HTTPS'] = 'on';
         }
-
-        $server['REQUEST_METHOD'] = $psrRequest->getMethod();
-
-        $server = array_replace($psrRequest->getServerParams(), $server);
-
-        $parsedBody = $psrRequest->getParsedBody();
-        $parsedBody = \is_array($parsedBody) ? $parsedBody : [];
-
-        $request = new Request(
-            $psrRequest->getQueryParams(),
-            $parsedBody,
-            $psrRequest->getAttributes(),
-            $psrRequest->getCookieParams(),
-            $this->getFiles($psrRequest->getUploadedFiles()),
-            $server,
-            $streamed ? $psrRequest->getBody()->detach() : $psrRequest->getBody()->__toString()
-        );
-        $request->headers->add($psrRequest->getHeaders());
-
+        $server['REQUEST_METHOD'] = $psr_request->get_method();
+        $server = array_replace($psr_request->get_server_params(), $server);
+        $parsed_body = $psr_request->get_parsed_body();
+        $parsed_body = \is_array($parsed_body) ? $parsed_body : [];
+        $request = new Request($psr_request->get_query_params(), $parsed_body, $psr_request->get_attributes(), $psr_request->get_cookie_params(), $this->get_files($psr_request->get_uploaded_files()), $server, $streamed ? $psr_request->get_body()->detach() : $psr_request->get_body()->__toString());
+        $request->headers->add($psr_request->get_headers());
         return $request;
     }
-
     /**
      * Converts to the input array to $_FILES structure.
      */
-    private function getFiles(array $uploadedFiles): array
+    private function get_files(array $uploaded_files): array
     {
         $files = [];
-
-        foreach ($uploadedFiles as $key => $value) {
-            if ($value instanceof UploadedFileInterface) {
-                $files[$key] = $this->createUploadedFile($value);
+        foreach ($uploaded_files as $key => $value) {
+            if ($value instanceof Uploaded_File_Interface) {
+                $files[$key] = $this->create_uploaded_file($value);
             } else {
-                $files[$key] = $this->getFiles($value);
+                $files[$key] = $this->get_files($value);
             }
         }
-
         return $files;
     }
-
     /**
      * Creates Symfony UploadedFile instance from PSR-7 ones.
      */
-    private function createUploadedFile(UploadedFileInterface $psrUploadedFile): UploadedFile
+    private function create_uploaded_file(Uploaded_File_Interface $psr_uploaded_file): Uploaded_File
     {
-        return new UploadedFile($psrUploadedFile, fn (): string => $this->getTemporaryPath());
+        return new Uploaded_File($psr_uploaded_file, fn(): string => $this->get_temporary_path());
     }
-
     /**
      * Gets a temporary file path.
      */
-    protected function getTemporaryPath(): string
+    protected function get_temporary_path(): string
     {
         return tempnam(sys_get_temp_dir(), 'symfony');
     }
-
-    public function createResponse(ResponseInterface $psrResponse, bool $streamed = false): Response
+    public function create_response(Response_Interface $psr_response, bool $streamed = false): Response
     {
-        $cookies = $psrResponse->getHeader('Set-Cookie');
-        $psrResponse = $psrResponse->withoutHeader('Set-Cookie');
-
+        $cookies = $psr_response->get_header('Set-Cookie');
+        $psr_response = $psr_response->without_header('Set-Cookie');
         if ($streamed) {
-            $response = new StreamedResponse(
-                $this->createStreamedResponseCallback($psrResponse->getBody()),
-                $psrResponse->getStatusCode(),
-                $psrResponse->getHeaders()
-            );
+            $response = new Streamed_Response($this->create_streamed_response_callback($psr_response->get_body()), $psr_response->get_status_code(), $psr_response->get_headers());
         } else {
-            $response = new Response(
-                $psrResponse->getBody()->__toString(),
-                $psrResponse->getStatusCode(),
-                $psrResponse->getHeaders()
-            );
+            $response = new Response($psr_response->get_body()->__toString(), $psr_response->get_status_code(), $psr_response->get_headers());
         }
-
-        $response->setProtocolVersion($psrResponse->getProtocolVersion());
-
+        $response->set_protocol_version($psr_response->get_protocol_version());
         foreach ($cookies as $cookie) {
-            $response->headers->setCookie(Cookie::fromString($cookie));
+            $response->headers->set_cookie(Cookie::from_string($cookie));
         }
-
         return $response;
     }
-
-    private function createStreamedResponseCallback(StreamInterface $body): callable
+    private function create_streamed_response_callback(Stream_Interface $body): callable
     {
         return function () use ($body): void {
-            if ($body->isSeekable()) {
+            if ($body->is_seekable()) {
                 $body->rewind();
             }
-
-            if (!$body->isReadable()) {
+            if (!$body->is_readable()) {
                 echo $body;
-
                 return;
             }
-
             while (!$body->eof()) {
-                echo $body->read($this->responseBufferMaxLength);
+                echo $body->read($this->response_buffer_max_length);
             }
         };
     }

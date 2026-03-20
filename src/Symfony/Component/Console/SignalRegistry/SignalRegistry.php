@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,70 +9,57 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Console\Signal_Registry;
 
-namespace Symfony\Component\Console\SignalRegistry;
-
-final class SignalRegistry
+final class Signal_Registry
 {
     /**
      * @var array<int, array<callable>>
      */
-    private array $signalHandlers = [];
-
+    private array $signal_handlers = [];
     /**
      * @var array<array<int, array<callable>>>
      */
     private array $stack = [];
-
     /**
      * @var array<int, callable|int|string>
      */
-    private array $originalHandlers = [];
-
+    private array $original_handlers = [];
     public function __construct()
     {
         if (\function_exists('pcntl_async_signals')) {
             pcntl_async_signals(true);
         }
     }
-
-    public function register(int $signal, callable $signalHandler): void
+    public function register(int $signal, callable $signal_handler): void
     {
         $previous = pcntl_signal_get_handler($signal);
-
-        if (!isset($this->originalHandlers[$signal])) {
-            $this->originalHandlers[$signal] = $previous;
+        if (!isset($this->original_handlers[$signal])) {
+            $this->original_handlers[$signal] = $previous;
         }
-
-        if (!isset($this->signalHandlers[$signal])) {
+        if (!isset($this->signal_handlers[$signal])) {
             if (\is_callable($previous) && $this->handle(...) !== $previous) {
-                $this->signalHandlers[$signal][] = $previous;
+                $this->signal_handlers[$signal][] = $previous;
             }
         }
-
-        $this->signalHandlers[$signal][] = $signalHandler;
-
+        $this->signal_handlers[$signal][] = $signal_handler;
         pcntl_signal($signal, $this->handle(...));
     }
-
-    public static function isSupported(): bool
+    public static function is_supported(): bool
     {
         return \function_exists('pcntl_signal');
     }
-
     /**
      * @internal
      */
     public function handle(int $signal): void
     {
-        $count = \count($this->signalHandlers[$signal]);
-
-        foreach ($this->signalHandlers[$signal] as $i => $signalHandler) {
-            $hasNext = $i !== $count - 1;
-            $signalHandler($signal, $hasNext);
+        $count = \count($this->signal_handlers[$signal]);
+        foreach ($this->signal_handlers[$signal] as $i => $signal_handler) {
+            $has_next = $i !== $count - 1;
+            $signal_handler($signal, $has_next);
         }
     }
-
     /**
      * Pushes the current active handlers onto the stack and clears the active list.
      *
@@ -81,12 +67,11 @@ final class SignalRegistry
      *
      * @internal
      */
-    public function pushCurrentHandlers(): void
+    public function push_current_handlers(): void
     {
-        $this->stack[] = $this->signalHandlers;
-        $this->signalHandlers = [];
+        $this->stack[] = $this->signal_handlers;
+        $this->signal_handlers = [];
     }
-
     /**
      * Restores the previous handlers from the stack, making them active.
      *
@@ -95,23 +80,21 @@ final class SignalRegistry
      *
      * @internal
      */
-    public function popPreviousHandlers(): void
+    public function pop_previous_handlers(): void
     {
-        $popped = $this->signalHandlers;
-        $this->signalHandlers = array_pop($this->stack) ?? [];
-
+        $popped = $this->signal_handlers;
+        $this->signal_handlers = array_pop($this->stack) ?? [];
         // Restore OS handler if no more Symfony handlers for this signal
         foreach ($popped as $signal => $handlers) {
-            if (!($this->signalHandlers[$signal] ?? false) && isset($this->originalHandlers[$signal])) {
-                pcntl_signal($signal, $this->originalHandlers[$signal]);
+            if (!($this->signal_handlers[$signal] ?? false) && isset($this->original_handlers[$signal])) {
+                pcntl_signal($signal, $this->original_handlers[$signal]);
             }
         }
     }
-
     /**
      * @internal
      */
-    public function scheduleAlarm(int $seconds): void
+    public function schedule_alarm(int $seconds): void
     {
         pcntl_alarm($seconds);
     }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,64 +9,51 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Command;
 
-namespace Symfony\Bundle\FrameworkBundle\Command;
-
-use Symfony\Component\Cache\PruneableInterface;
-use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Cache\Pruneable_Interface;
+use Symfony\Component\Console\Attribute\As_Command;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Console\Output\Output_Interface;
+use Symfony\Component\Console\Style\Symfony_Style;
 /**
  * Cache pool pruner command.
  *
  * @author Rob Frawley 2nd <rmf@src.run>
  */
-#[AsCommand(name: 'cache:pool:prune', description: 'Prune cache pools')]
-final class CachePoolPruneCommand extends Command
+#[As_Command(name: 'cache:pool:prune', description: 'Prune cache pools')]
+final class Cache_Pool_Prune_Command extends Command
 {
     /**
      * @param iterable<mixed, PruneableInterface> $pools
      */
-    public function __construct(
-        private readonly iterable $pools,
-    ) {
+    public function __construct(private readonly iterable $pools)
+    {
         parent::__construct();
     }
-
     protected function configure(): void
     {
-        $this
-            ->setHelp(
-                <<<'EOF'
-                The <info>%command.name%</info> command deletes all expired items from all pruneable pools.
-
-                    %command.full_name%
-                EOF
-            )
-        ;
+        $this->set_help(<<<'EOF'
+        The <info>%command.name%</info> command deletes all expired items from all pruneable pools.
+        
+            %command.full_name%
+        EOF);
     }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(Input_Interface $input, Output_Interface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
-        $exitCode = Command::SUCCESS;
-
+        $io = new Symfony_Style($input, $output);
+        $exit_code = Command::SUCCESS;
         foreach ($this->pools as $name => $pool) {
             $io->comment(\sprintf('Pruning cache pool: <info>%s</info>', $name));
-
             if (!$pool->prune()) {
                 $io->error(\sprintf('Cache pool "%s" could not be pruned.', $name));
-                $exitCode = Command::FAILURE;
+                $exit_code = Command::FAILURE;
             }
         }
-
-        if (Command::SUCCESS === $exitCode) {
+        if (Command::SUCCESS === $exit_code) {
             $io->success('Successfully pruned cache pool(s).');
         }
-
-        return $exitCode;
+        return $exit_code;
     }
 }

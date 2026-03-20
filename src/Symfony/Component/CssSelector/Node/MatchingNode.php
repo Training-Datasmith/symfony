@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\CssSelector\Node;
+namespace Symfony\Component\Css_Selector\Node;
 
 /**
  * Represents a "<selector>:is(<subSelectorList>)" node.
@@ -23,35 +21,22 @@ namespace Symfony\Component\CssSelector\Node;
  *
  * @internal
  */
-class MatchingNode extends AbstractNode
+class Matching_Node extends Abstract_Node
 {
     /**
      * @param array<NodeInterface> $arguments
      */
-    public function __construct(
-        public readonly NodeInterface $selector,
-        public readonly array $arguments = [],
-    ) {
-    }
-
-    public function getSpecificity(): Specificity
+    public function __construct(public readonly Node_Interface $selector, public readonly array $arguments = [])
     {
-        $argumentsSpecificity = array_reduce(
-            $this->arguments,
-            static fn ($c, $n) => 1 === $n->getSpecificity()->compareTo($c) ? $n->getSpecificity() : $c,
-            new Specificity(0, 0, 0),
-        );
-
-        return $this->selector->getSpecificity()->plus($argumentsSpecificity);
     }
-
+    public function get_specificity(): Specificity
+    {
+        $arguments_specificity = array_reduce($this->arguments, static fn($c, $n) => 1 === $n->get_specificity()->compare_to($c) ? $n->get_specificity() : $c, new Specificity(0, 0, 0));
+        return $this->selector->get_specificity()->plus($arguments_specificity);
+    }
     public function __toString(): string
     {
-        $selectorArguments = array_map(
-            static fn (\Symfony\Component\CssSelector\Node\NodeInterface $n): string => ltrim((string) $n, '*'),
-            $this->arguments,
-        );
-
-        return \sprintf('%s[%s:is(%s)]', $this->getNodeName(), $this->selector, implode(', ', $selectorArguments));
+        $selector_arguments = array_map(static fn(\Symfony\Component\Css_Selector\Node\Node_Interface $n): string => ltrim((string) $n, '*'), $this->arguments);
+        return \sprintf('%s[%s:is(%s)]', $this->get_node_name(), $this->selector, implode(', ', $selector_arguments));
     }
 }

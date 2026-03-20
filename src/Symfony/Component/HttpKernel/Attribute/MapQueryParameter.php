@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Attribute;
 
-namespace Symfony\Component\HttpKernel\Attribute;
-
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver\QueryParameterValueResolver;
-use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
-
+use Symfony\Component\Http_Foundation\Response;
+use Symfony\Component\Http_Kernel\Controller\Argument_Resolver\Query_Parameter_Value_Resolver;
+use Symfony\Component\Http_Kernel\Controller\Value_Resolver_Interface;
 /**
  * Can be used to pass a query parameter to a controller argument.
  *
@@ -24,7 +21,7 @@ use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
  * @author Ionut Enache <i.ovidiuenache@yahoo.com>
  */
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
-final class MapQueryParameter extends ValueResolver
+final class Map_Query_Parameter extends Value_Resolver
 {
     /**
      * @see https://php.net/manual/filter.constants for filter, flags and options
@@ -35,14 +32,8 @@ final class MapQueryParameter extends ValueResolver
      * @param array{min_range?: int|float, max_range?: int|float, regexp?: string, ...} $options
      * @param class-string<ValueResolverInterface>|string         $resolver The name of the resolver to use
      */
-    public function __construct(
-        public ?string $name = null,
-        public ?int $filter = null,
-        public int $flags = 0,
-        public array $options = [],
-        string $resolver = QueryParameterValueResolver::class,
-        public int $validationFailedStatusCode = Response::HTTP_NOT_FOUND,
-    ) {
+    public function __construct(public ?string $name = null, public ?int $filter = null, public int $flags = 0, public array $options = [], string $resolver = Query_Parameter_Value_Resolver::class, public int $validation_failed_status_code = Response::HTTP_NOT_FOUND)
+    {
         parent::__construct($resolver);
     }
 }

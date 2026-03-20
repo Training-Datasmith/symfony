@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,10 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator\Traits;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
-
-trait AbstractTrait
+trait Abstract_Trait
 {
     /**
      * Whether this definition is abstract, that means it merely serves as a
@@ -23,8 +21,7 @@ trait AbstractTrait
      */
     final public function abstract(bool $abstract = true): static
     {
-        $this->definition->setAbstract($abstract);
-
+        $this->definition->set_abstract($abstract);
         return $this;
     }
 }

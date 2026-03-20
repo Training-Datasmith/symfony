@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,75 +9,57 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator;
-
-use Symfony\Component\Config\Loader\ParamConfigurator;
-use Symfony\Component\DependencyInjection\Argument\AbstractArgument;
-use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
-use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
-use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
-use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
-use Symfony\Component\DependencyInjection\Loader\UndefinedExtensionHandler;
-use Symfony\Component\ExpressionLanguage\Expression;
-
+use Symfony\Component\Config\Loader\Param_Configurator;
+use Symfony\Component\Dependency_Injection\Argument\Abstract_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Iterator_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Service_Locator_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Tagged_Iterator_Argument;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+use Symfony\Component\Dependency_Injection\Extension\Extension_Interface;
+use Symfony\Component\Dependency_Injection\Loader\Php_File_Loader;
+use Symfony\Component\Dependency_Injection\Loader\Undefined_Extension_Handler;
+use Symfony\Component\Expression_Language\Expression;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ContainerConfigurator extends AbstractConfigurator
+class Container_Configurator extends Abstract_Configurator
 {
     public const FACTORY = 'container';
-
     private array $instanceof;
-    private int $anonymousCount = 0;
-
-    public function __construct(
-        private ContainerBuilder $container,
-        private PhpFileLoader $loader,
-        array &$instanceof,
-        private string $path,
-        private string $file,
-        private ?string $env = null,
-    ) {
-        $this->instanceof = &$instanceof;
+    private int $anonymous_count = 0;
+    public function __construct(private Container_Builder $container, private Php_File_Loader $loader, array &$instanceof, private string $path, private string $file, private ?string $env = null)
+    {
+        $this->instanceof =& $instanceof;
     }
-
     final public function extension(string $namespace, array $config, bool $prepend = false): void
     {
         if ($prepend) {
-            $this->container->prependExtensionConfig($namespace, static::processValue($config));
-
+            $this->container->prepend_extension_config($namespace, static::process_value($config));
             return;
         }
-
-        if (!$this->container->hasExtension($namespace)) {
-            $extensions = array_filter(array_map(static fn (ExtensionInterface $ext): string => $ext->getAlias(), $this->container->getExtensions()));
-            throw new InvalidArgumentException(UndefinedExtensionHandler::getErrorMessage($namespace, $this->file, $namespace, $extensions));
+        if (!$this->container->has_extension($namespace)) {
+            $extensions = array_filter(array_map(static fn(Extension_Interface $ext): string => $ext->get_alias(), $this->container->get_extensions()));
+            throw new InvalidArgumentException(Undefined_Extension_Handler::get_error_message($namespace, $this->file, $namespace, $extensions));
         }
-
-        $this->container->loadFromExtension($namespace, static::processValue($config));
+        $this->container->load_from_extension($namespace, static::process_value($config));
     }
-
-    final public function import(string $resource, ?string $type = null, bool|string $ignoreErrors = false, string|array|null $exclude = null): void
+    final public function import(string $resource, ?string $type = null, bool|string $ignore_errors = false, string|array|null $exclude = null): void
     {
-        $this->loader->setCurrentDir(\dirname($this->path));
-        $this->loader->import($resource, $type, $ignoreErrors, $this->file, $exclude);
+        $this->loader->set_current_dir(\dirname($this->path));
+        $this->loader->import($resource, $type, $ignore_errors, $this->file, $exclude);
     }
-
-    final public function parameters(): ParametersConfigurator
+    final public function parameters(): Parameters_Configurator
     {
-        return new ParametersConfigurator($this->container);
+        return new Parameters_Configurator($this->container);
     }
-
-    final public function services(): ServicesConfigurator
+    final public function services(): Services_Configurator
     {
-        return new ServicesConfigurator($this->container, $this->loader, $this->instanceof, $this->path, $this->anonymousCount);
+        return new Services_Configurator($this->container, $this->loader, $this->instanceof, $this->path, $this->anonymous_count);
     }
-
     /**
      * Get the current environment to be able to write conditional configuration.
      */
@@ -86,63 +67,54 @@ class ContainerConfigurator extends AbstractConfigurator
     {
         return $this->env;
     }
-
-    final public function withPath(string $path): static
+    final public function with_path(string $path): static
     {
         $clone = clone $this;
         $clone->path = $clone->file = $path;
-        $clone->loader->setCurrentDir(\dirname($path));
-
+        $clone->loader->set_current_dir(\dirname($path));
         return $clone;
     }
 }
-
 /**
  * Creates a parameter.
  */
-function param(string $name): ParamConfigurator
+function param(string $name): Param_Configurator
 {
-    return new ParamConfigurator($name);
+    return new Param_Configurator($name);
 }
-
 /**
  * Creates a reference to a service.
  */
-function service(string $serviceId): ReferenceConfigurator
+function service(string $service_id): Reference_Configurator
 {
-    return new ReferenceConfigurator($serviceId);
+    return new Reference_Configurator($service_id);
 }
-
 /**
  * Creates an inline service.
  */
-function inline_service(?string $class = null): InlineServiceConfigurator
+function inline_service(?string $class = null): Inline_Service_Configurator
 {
-    return new InlineServiceConfigurator(new Definition($class));
+    return new Inline_Service_Configurator(new Definition($class));
 }
-
 /**
  * Creates a service locator.
  *
  * @param array<ReferenceConfigurator|InlineServiceConfigurator> $values
  */
-function service_locator(array $values): ServiceLocatorArgument
+function service_locator(array $values): Service_Locator_Argument
 {
-    $values = AbstractConfigurator::processValue($values, true);
-
-    return new ServiceLocatorArgument($values);
+    $values = Abstract_Configurator::process_value($values, true);
+    return new Service_Locator_Argument($values);
 }
-
 /**
  * Creates a lazy iterator.
  *
  * @param ReferenceConfigurator[] $values
  */
-function iterator(array $values): IteratorArgument
+function iterator(array $values): Iterator_Argument
 {
-    return new IteratorArgument(AbstractConfigurator::processValue($values, true));
+    return new Iterator_Argument(Abstract_Configurator::process_value($values, true));
 }
-
 /**
  * Creates a lazy iterator by tag name.
  *
@@ -151,22 +123,19 @@ function iterator(array $values): IteratorArgument
  * @param string|string[] $exclude        Services to exclude from the iterator
  * @param bool            $excludeSelf    Whether to automatically exclude the referencing service from the iterator
  */
-function tagged_iterator(string $tag, ?string $indexAttribute = null, string|array|null $exclude = [], bool|string|null $excludeSelf = true, ...$_): TaggedIteratorArgument
+function tagged_iterator(string $tag, ?string $index_attribute = null, string|array|null $exclude = [], bool|string|null $exclude_self = true, ...$_): Tagged_Iterator_Argument
 {
-    if (\func_num_args() > 4 || !\is_bool($excludeSelf) || null === $exclude || (\is_string($exclude) && str_starts_with($exclude, 'get') && !\array_key_exists('defaultIndexMethod', $_))) {
-        [, , $defaultIndexMethod, $defaultPriorityMethod, $exclude, $excludeSelf] = \func_get_args() + [2 => null, null, [], true];
+    if (\func_num_args() > 4 || !\is_bool($exclude_self) || null === $exclude || \is_string($exclude) && str_starts_with($exclude, 'get') && !\array_key_exists('defaultIndexMethod', $_)) {
+        [, , $default_index_method, $default_priority_method, $exclude, $exclude_self] = \func_get_args() + [2 => null, null, [], true];
     } else {
-        $defaultIndexMethod = \array_key_exists('defaultIndexMethod', $_) ? $_['defaultIndexMethod'] : false;
-        $defaultPriorityMethod = \array_key_exists('defaultPriorityMethod', $_) ? $_['defaultPriorityMethod'] : false;
+        $default_index_method = \array_key_exists('defaultIndexMethod', $_) ? $_['defaultIndexMethod'] : false;
+        $default_priority_method = \array_key_exists('defaultPriorityMethod', $_) ? $_['defaultPriorityMethod'] : false;
     }
-
-    if (false !== $defaultIndexMethod || false !== $defaultPriorityMethod) {
-        return new TaggedIteratorArgument($tag, $indexAttribute, $defaultIndexMethod, false, $defaultPriorityMethod, (array) $exclude, $excludeSelf);
+    if (false !== $default_index_method || false !== $default_priority_method) {
+        return new Tagged_Iterator_Argument($tag, $index_attribute, $default_index_method, false, $default_priority_method, (array) $exclude, $exclude_self);
     }
-
-    return new TaggedIteratorArgument($tag, $indexAttribute, false, (array) $exclude, $excludeSelf);
+    return new Tagged_Iterator_Argument($tag, $index_attribute, false, (array) $exclude, $exclude_self);
 }
-
 /**
  * Creates a service locator by tag name.
  *
@@ -175,60 +144,51 @@ function tagged_iterator(string $tag, ?string $indexAttribute = null, string|arr
  * @param string|string[] $exclude        Services to exclude from the iterator
  * @param bool            $excludeSelf    Whether to automatically exclude the referencing service from the iterator
  */
-function tagged_locator(string $tag, ?string $indexAttribute = null, string|array|null $exclude = [], bool|string|null $excludeSelf = true, ...$_): ServiceLocatorArgument
+function tagged_locator(string $tag, ?string $index_attribute = null, string|array|null $exclude = [], bool|string|null $exclude_self = true, ...$_): Service_Locator_Argument
 {
-    if (\func_num_args() > 4 || !\is_bool($excludeSelf) || null === $exclude || (\is_string($exclude) && str_starts_with($exclude, 'get') && !\array_key_exists('defaultIndexMethod', $_))) {
-        [, , $defaultIndexMethod, $defaultPriorityMethod, $exclude, $excludeSelf] = \func_get_args() + [2 => null, null, [], true];
+    if (\func_num_args() > 4 || !\is_bool($exclude_self) || null === $exclude || \is_string($exclude) && str_starts_with($exclude, 'get') && !\array_key_exists('defaultIndexMethod', $_)) {
+        [, , $default_index_method, $default_priority_method, $exclude, $exclude_self] = \func_get_args() + [2 => null, null, [], true];
     } else {
-        $defaultIndexMethod = \array_key_exists('defaultIndexMethod', $_) ? $_['defaultIndexMethod'] : false;
-        $defaultPriorityMethod = \array_key_exists('defaultPriorityMethod', $_) ? $_['defaultPriorityMethod'] : false;
+        $default_index_method = \array_key_exists('defaultIndexMethod', $_) ? $_['defaultIndexMethod'] : false;
+        $default_priority_method = \array_key_exists('defaultPriorityMethod', $_) ? $_['defaultPriorityMethod'] : false;
     }
-
-    if (false !== $defaultIndexMethod || false !== $defaultPriorityMethod) {
-        return new ServiceLocatorArgument(new TaggedIteratorArgument($tag, $indexAttribute, $defaultIndexMethod, true, $defaultPriorityMethod, (array) $exclude, $excludeSelf));
+    if (false !== $default_index_method || false !== $default_priority_method) {
+        return new Service_Locator_Argument(new Tagged_Iterator_Argument($tag, $index_attribute, $default_index_method, true, $default_priority_method, (array) $exclude, $exclude_self));
     }
-
-    return new ServiceLocatorArgument(new TaggedIteratorArgument($tag, $indexAttribute, true, (array) $exclude, $excludeSelf));
+    return new Service_Locator_Argument(new Tagged_Iterator_Argument($tag, $index_attribute, true, (array) $exclude, $exclude_self));
 }
-
 /**
  * Creates an expression.
  */
-function expr(string $expression): ExpressionConfigurator
+function expr(string $expression): Expression_Configurator
 {
-    return new ExpressionConfigurator($expression);
+    return new Expression_Configurator($expression);
 }
-
 /**
  * Creates an abstract argument.
  */
-function abstract_arg(string $description): AbstractArgument
+function abstract_arg(string $description): Abstract_Argument
 {
-    return new AbstractArgument($description);
+    return new Abstract_Argument($description);
 }
-
 /**
  * Creates an environment variable reference.
  */
-function env(string $name): EnvConfigurator
+function env(string $name): Env_Configurator
 {
-    return new EnvConfigurator($name);
+    return new Env_Configurator($name);
 }
-
 /**
  * Creates a closure service reference.
  */
-function service_closure(string $serviceId): ClosureReferenceConfigurator
+function service_closure(string $service_id): Closure_Reference_Configurator
 {
-    return new ClosureReferenceConfigurator($serviceId);
+    return new Closure_Reference_Configurator($service_id);
 }
-
 /**
  * Creates a closure.
  */
-function closure(string|array|\Closure|ReferenceConfigurator|Expression $callable): InlineServiceConfigurator
+function closure(string|array|\Closure|Reference_Configurator|Expression $callable): Inline_Service_Configurator
 {
-    return (new InlineServiceConfigurator(new Definition('Closure')))
-        ->factory(['Closure', 'fromCallable'])
-        ->args([$callable]);
+    return (new Inline_Service_Configurator(new Definition('Closure')))->factory(['Closure', 'fromCallable'])->args([$callable]);
 }

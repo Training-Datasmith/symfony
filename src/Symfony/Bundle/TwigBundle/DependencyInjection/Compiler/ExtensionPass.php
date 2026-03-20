@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,143 +9,113 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Twig_Bundle\Dependency_Injection\Compiler;
 
-namespace Symfony\Bundle\TwigBundle\DependencyInjection\Compiler;
-
-use Symfony\Bridge\Twig\Extension\FormExtension;
+use Symfony\Bridge\Twig\Extension\Form_Extension;
 use Symfony\Component\Asset\Packages;
-use Symfony\Component\DependencyInjection\Alias;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Emoji\EmojiTransliterator;
-use Symfony\Component\ExpressionLanguage\Expression;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Dependency_Injection\Alias;
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Emoji\Emoji_Transliterator;
+use Symfony\Component\Expression_Language\Expression;
+use Symfony\Component\Routing\Generator\Url_Generator_Interface;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\Workflow\Workflow;
 use Symfony\Component\Yaml\Yaml;
-
 /**
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
  */
-class ExtensionPass implements CompilerPassInterface
+class Extension_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
         if (!class_exists(Packages::class)) {
-            $container->removeDefinition('twig.extension.assets');
+            $container->remove_definition('twig.extension.assets');
         }
-
-        if (!class_exists(\Transliterator::class) || !class_exists(EmojiTransliterator::class)) {
-            $container->removeDefinition('twig.extension.emoji');
+        if (!class_exists(\Transliterator::class) || !class_exists(Emoji_Transliterator::class)) {
+            $container->remove_definition('twig.extension.emoji');
         }
-
         if (!class_exists(Expression::class)) {
-            $container->removeDefinition('twig.extension.expression');
+            $container->remove_definition('twig.extension.expression');
         }
-
-        if (!interface_exists(UrlGeneratorInterface::class)) {
-            $container->removeDefinition('twig.extension.routing');
+        if (!interface_exists(Url_Generator_Interface::class)) {
+            $container->remove_definition('twig.extension.routing');
         }
-
         if (!class_exists(Yaml::class)) {
-            $container->removeDefinition('twig.extension.yaml');
+            $container->remove_definition('twig.extension.yaml');
         }
-
         if (!$container->has('asset_mapper')) {
             // edge case where AssetMapper is installed, but not enabled
-            $container->removeDefinition('twig.extension.importmap');
-            $container->removeDefinition('twig.runtime.importmap');
+            $container->remove_definition('twig.extension.importmap');
+            $container->remove_definition('twig.runtime.importmap');
         }
-
-        $viewDir = \dirname((new \ReflectionClass(FormExtension::class))->getFileName(), 2).'/Resources/views';
-        $templateIterator = $container->getDefinition('twig.template_iterator');
-        $templatePaths = $templateIterator->getArgument(1);
-        $loader = $container->getDefinition('twig.loader.native_filesystem');
-
+        $view_dir = \dirname((new \ReflectionClass(Form_Extension::class))->get_file_name(), 2) . '/Resources/views';
+        $template_iterator = $container->get_definition('twig.template_iterator');
+        $template_paths = $template_iterator->get_argument(1);
+        $loader = $container->get_definition('twig.loader.native_filesystem');
         if ($container->has('mailer')) {
-            $emailPath = $viewDir.'/Email';
-            $loader->addMethodCall('addPath', [$emailPath, 'email']);
-            $loader->addMethodCall('addPath', [$emailPath, '!email']);
-            $templatePaths[$emailPath] = 'email';
+            $email_path = $view_dir . '/Email';
+            $loader->add_method_call('addPath', [$email_path, 'email']);
+            $loader->add_method_call('addPath', [$email_path, '!email']);
+            $template_paths[$email_path] = 'email';
         }
-
         if ($container->has('form.extension')) {
-            $container->getDefinition('twig.extension.form')->addTag('twig.extension');
-
-            $coreThemePath = $viewDir.'/Form';
-            $loader->addMethodCall('addPath', [$coreThemePath]);
-            $templatePaths[$coreThemePath] = null;
+            $container->get_definition('twig.extension.form')->add_tag('twig.extension');
+            $core_theme_path = $view_dir . '/Form';
+            $loader->add_method_call('addPath', [$core_theme_path]);
+            $template_paths[$core_theme_path] = null;
         }
-
-        $templateIterator->replaceArgument(1, $templatePaths);
-
+        $template_iterator->replace_argument(1, $template_paths);
         if ($container->has('router')) {
-            $container->getDefinition('twig.extension.routing')->addTag('twig.extension');
+            $container->get_definition('twig.extension.routing')->add_tag('twig.extension');
         }
-
         if ($container->has('html_sanitizer')) {
-            $container->getDefinition('twig.extension.htmlsanitizer')->addTag('twig.extension');
+            $container->get_definition('twig.extension.htmlsanitizer')->add_tag('twig.extension');
         }
-
         if ($container->has('fragment.handler')) {
-            $container->getDefinition('twig.extension.httpkernel')->addTag('twig.extension');
-            $container->getDefinition('twig.runtime.httpkernel')->addTag('twig.runtime');
-
-            if ($container->hasDefinition('fragment.renderer.hinclude')) {
-                $container->getDefinition('fragment.renderer.hinclude')
-                    ->addTag('kernel.fragment_renderer', ['alias' => 'hinclude'])
-                ;
+            $container->get_definition('twig.extension.httpkernel')->add_tag('twig.extension');
+            $container->get_definition('twig.runtime.httpkernel')->add_tag('twig.runtime');
+            if ($container->has_definition('fragment.renderer.hinclude')) {
+                $container->get_definition('fragment.renderer.hinclude')->add_tag('kernel.fragment_renderer', ['alias' => 'hinclude']);
             }
         }
-
         if ($container->has('request_stack')) {
-            $container->getDefinition('twig.extension.httpfoundation')->addTag('twig.extension');
+            $container->get_definition('twig.extension.httpfoundation')->add_tag('twig.extension');
         }
-
-        if ($container->getParameter('kernel.debug')) {
-            $container->getDefinition('twig.extension.profiler')->addTag('twig.extension');
-
+        if ($container->get_parameter('kernel.debug')) {
+            $container->get_definition('twig.extension.profiler')->add_tag('twig.extension');
             // only register if the improved version from DebugBundle is *not* present
             if (!$container->has('twig.extension.dump')) {
-                $container->getDefinition('twig.extension.debug')->addTag('twig.extension');
+                $container->get_definition('twig.extension.debug')->add_tag('twig.extension');
             }
         }
-
         if ($container->has('web_link.add_link_header_listener')) {
-            $container->getDefinition('twig.extension.weblink')->addTag('twig.extension');
+            $container->get_definition('twig.extension.weblink')->add_tag('twig.extension');
         }
-
-        $container->setAlias('twig.loader.filesystem', new Alias('twig.loader.native_filesystem', false));
-
+        $container->set_alias('twig.loader.filesystem', new Alias('twig.loader.native_filesystem', false));
         if ($container->has('assets.packages')) {
-            $container->getDefinition('twig.extension.assets')->addTag('twig.extension');
+            $container->get_definition('twig.extension.assets')->add_tag('twig.extension');
         }
-
-        if ($container->hasDefinition('twig.extension.yaml')) {
-            $container->getDefinition('twig.extension.yaml')->addTag('twig.extension');
+        if ($container->has_definition('twig.extension.yaml')) {
+            $container->get_definition('twig.extension.yaml')->add_tag('twig.extension');
         }
-
         if (class_exists(Stopwatch::class)) {
-            $container->getDefinition('twig.extension.debug.stopwatch')->addTag('twig.extension');
+            $container->get_definition('twig.extension.debug.stopwatch')->add_tag('twig.extension');
         }
-
-        if ($container->hasDefinition('twig.extension.expression')) {
-            $container->getDefinition('twig.extension.expression')->addTag('twig.extension');
+        if ($container->has_definition('twig.extension.expression')) {
+            $container->get_definition('twig.extension.expression')->add_tag('twig.extension');
         }
-
-        if ($container->hasDefinition('twig.extension.emoji')) {
-            $container->getDefinition('twig.extension.emoji')->addTag('twig.extension');
+        if ($container->has_definition('twig.extension.emoji')) {
+            $container->get_definition('twig.extension.emoji')->add_tag('twig.extension');
         }
-
         if (!class_exists(Workflow::class) || !$container->has('workflow.registry')) {
-            $container->removeDefinition('workflow.twig_extension');
+            $container->remove_definition('workflow.twig_extension');
         } else {
-            $container->getDefinition('workflow.twig_extension')->addTag('twig.extension');
+            $container->get_definition('workflow.twig_extension')->add_tag('twig.extension');
         }
-
         if ($container->has('serializer')) {
-            $container->getDefinition('twig.runtime.serializer')->addTag('twig.runtime');
-            $container->getDefinition('twig.extension.serializer')->addTag('twig.extension');
+            $container->get_definition('twig.runtime.serializer')->add_tag('twig.runtime');
+            $container->get_definition('twig.extension.serializer')->add_tag('twig.extension');
         }
     }
 }

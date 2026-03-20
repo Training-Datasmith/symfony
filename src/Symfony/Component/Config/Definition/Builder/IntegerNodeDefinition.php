@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition\Builder;
 
-use Symfony\Component\Config\Definition\IntegerNode;
-
+use Symfony\Component\Config\Definition\Integer_Node;
 /**
  * This class provides a fluent interface for defining an integer node.
  *
@@ -24,10 +21,10 @@ use Symfony\Component\Config\Definition\IntegerNode;
  *
  * @author Jeanmonod David <david.jeanmonod@gmail.com>
  */
-class IntegerNodeDefinition extends NumericNodeDefinition
+class Integer_Node_Definition extends Numeric_Node_Definition
 {
-    protected function instantiateNode(): IntegerNode
+    protected function instantiate_node(): Integer_Node
     {
-        return new IntegerNode($this->name, $this->parent, $this->min, $this->max, $this->pathSeparator);
+        return new Integer_Node($this->name, $this->parent, $this->min, $this->max, $this->path_separator);
     }
 }

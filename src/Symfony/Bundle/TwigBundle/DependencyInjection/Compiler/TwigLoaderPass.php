@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,53 +9,45 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Twig_Bundle\Dependency_Injection\Compiler;
 
-namespace Symfony\Bundle\TwigBundle\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Exception\LogicException;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Exception\LogicException;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * Adds services tagged twig.loader as Twig loaders.
  *
  * @author Daniel Leech <daniel@dantleech.com>
  */
-class TwigLoaderPass implements CompilerPassInterface
+class Twig_Loader_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (false === $container->hasDefinition('twig')) {
+        if (false === $container->has_definition('twig')) {
             return;
         }
-
-        $prioritizedLoaders = [];
+        $prioritized_loaders = [];
         $found = 0;
-
-        foreach ($container->findTaggedServiceIds('twig.loader', true) as $id => $attributes) {
+        foreach ($container->find_tagged_service_ids('twig.loader', true) as $id => $attributes) {
             $priority = $attributes[0]['priority'] ?? 0;
-            $prioritizedLoaders[$priority][] = $id;
+            $prioritized_loaders[$priority][] = $id;
             ++$found;
         }
-
         if (!$found) {
             throw new LogicException('No twig loaders found. You need to tag at least one loader with "twig.loader".');
         }
-
         if (1 === $found) {
-            $container->setAlias('twig.loader', $id);
+            $container->set_alias('twig.loader', $id);
         } else {
-            $chainLoader = $container->getDefinition('twig.loader.chain');
-            krsort($prioritizedLoaders);
-
-            foreach ($prioritizedLoaders as $loaders) {
+            $chain_loader = $container->get_definition('twig.loader.chain');
+            krsort($prioritized_loaders);
+            foreach ($prioritized_loaders as $loaders) {
                 foreach ($loaders as $loader) {
-                    $chainLoader->addMethodCall('addLoader', [new Reference($loader)]);
+                    $chain_loader->add_method_call('addLoader', [new Reference($loader)]);
                 }
             }
-
-            $container->setAlias('twig.loader', 'twig.loader.chain');
+            $container->set_alias('twig.loader', 'twig.loader.chain');
         }
     }
 }

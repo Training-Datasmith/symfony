@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Foundation;
 
-namespace Symfony\Component\HttpFoundation;
-
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
-use Symfony\Component\HttpFoundation\Exception\UnexpectedValueException;
-
+use Symfony\Component\Http_Foundation\Exception\Bad_Request_Exception;
+use Symfony\Component\Http_Foundation\Exception\UnexpectedValueException;
 /**
  * ParameterBag is a container for key/value pairs.
  *
@@ -23,16 +20,14 @@ use Symfony\Component\HttpFoundation\Exception\UnexpectedValueException;
  *
  * @implements \IteratorAggregate<string, mixed>
  */
-class ParameterBag implements \IteratorAggregate, \Countable
+class Parameter_Bag implements \IteratorAggregate, \Countable
 {
     /**
      * @param array<string, mixed> $parameters
      */
-    public function __construct(
-        protected array $parameters = [],
-    ) {
+    public function __construct(protected array $parameters = [])
+    {
     }
-
     /**
      * Returns the parameters.
      *
@@ -49,14 +44,11 @@ class ParameterBag implements \IteratorAggregate, \Countable
         if (null === $key) {
             return $this->parameters;
         }
-
         if (!\is_array($value = $this->parameters[$key] ?? [])) {
-            throw new BadRequestException(\sprintf('Unexpected value for parameter "%s": expecting "array", got "%s".', $key, get_debug_type($value)));
+            throw new Bad_Request_Exception(\sprintf('Unexpected value for parameter "%s": expecting "array", got "%s".', $key, get_debug_type($value)));
         }
-
         return $value;
     }
-
     /**
      * Returns the parameter keys.
      *
@@ -66,7 +58,6 @@ class ParameterBag implements \IteratorAggregate, \Countable
     {
         return array_keys($this->parameters);
     }
-
     /**
      * Replaces the current parameters by a new set.
      *
@@ -76,7 +67,6 @@ class ParameterBag implements \IteratorAggregate, \Countable
     {
         $this->parameters = $parameters;
     }
-
     /**
      * Adds parameters.
      *
@@ -86,17 +76,14 @@ class ParameterBag implements \IteratorAggregate, \Countable
     {
         $this->parameters = array_replace($this->parameters, $parameters);
     }
-
     public function get(string $key, mixed $default = null): mixed
     {
         return \array_key_exists($key, $this->parameters) ? $this->parameters[$key] : $default;
     }
-
     public function set(string $key, mixed $value): void
     {
         $this->parameters[$key] = $value;
     }
-
     /**
      * Returns true if the parameter is defined.
      */
@@ -104,7 +91,6 @@ class ParameterBag implements \IteratorAggregate, \Countable
     {
         return \array_key_exists($key, $this->parameters);
     }
-
     /**
      * Removes a parameter.
      */
@@ -112,72 +98,64 @@ class ParameterBag implements \IteratorAggregate, \Countable
     {
         unset($this->parameters[$key]);
     }
-
     /**
      * Returns the alphabetic characters of the parameter value.
      *
      * @throws UnexpectedValueException if the value cannot be converted to string
      */
-    public function getAlpha(string $key, string $default = ''): string
+    public function get_alpha(string $key, string $default = ''): string
     {
-        return preg_replace('/[^[:alpha:]]/', '', $this->getString($key, $default));
+        return preg_replace('/[^[:alpha:]]/', '', $this->get_string($key, $default));
     }
-
     /**
      * Returns the alphabetic characters and digits of the parameter value.
      *
      * @throws UnexpectedValueException if the value cannot be converted to string
      */
-    public function getAlnum(string $key, string $default = ''): string
+    public function get_alnum(string $key, string $default = ''): string
     {
-        return preg_replace('/[^[:alnum:]]/', '', $this->getString($key, $default));
+        return preg_replace('/[^[:alnum:]]/', '', $this->get_string($key, $default));
     }
-
     /**
      * Returns the digits of the parameter value.
      *
      * @throws UnexpectedValueException if the value cannot be converted to string
      */
-    public function getDigits(string $key, string $default = ''): string
+    public function get_digits(string $key, string $default = ''): string
     {
-        return preg_replace('/[^[:digit:]]/', '', $this->getString($key, $default));
+        return preg_replace('/[^[:digit:]]/', '', $this->get_string($key, $default));
     }
-
     /**
      * Returns the parameter as string.
      *
      * @throws UnexpectedValueException if the value cannot be converted to string
      */
-    public function getString(string $key, string $default = ''): string
+    public function get_string(string $key, string $default = ''): string
     {
         $value = $this->get($key, $default);
         if (!\is_scalar($value) && !$value instanceof \Stringable) {
             throw new UnexpectedValueException(\sprintf('Parameter value "%s" cannot be converted to "string".', $key));
         }
-
         return (string) $value;
     }
-
     /**
      * Returns the parameter value converted to integer.
      *
      * @throws UnexpectedValueException if the value cannot be converted to integer
      */
-    public function getInt(string $key, int $default = 0): int
+    public function get_int(string $key, int $default = 0): int
     {
         return $this->filter($key, $default, \FILTER_VALIDATE_INT, ['flags' => \FILTER_REQUIRE_SCALAR | \FILTER_NULL_ON_FAILURE]) ?? throw new \UnexpectedValueException(\sprintf('Parameter value "%s" cannot be converted to "int".', $key));
     }
-
     /**
      * Returns the parameter value converted to boolean.
      *
      * @throws UnexpectedValueException if the value cannot be converted to a boolean
      */
-    public function getBoolean(string $key, bool $default = false): bool
+    public function get_boolean(string $key, bool $default = false): bool
     {
         return $this->filter($key, $default, \FILTER_VALIDATE_BOOL, ['flags' => \FILTER_REQUIRE_SCALAR | \FILTER_NULL_ON_FAILURE]) ?? throw new \UnexpectedValueException(\sprintf('Parameter value "%s" cannot be converted to "bool".', $key));
     }
-
     /**
      * Returns the parameter value converted to an enum.
      *
@@ -192,19 +170,17 @@ class ParameterBag implements \IteratorAggregate, \Countable
      *
      * @throws UnexpectedValueException if the parameter value cannot be converted to an enum
      */
-    public function getEnum(string $key, string $class, ?\BackedEnum $default = null): ?\BackedEnum
+    public function get_enum(string $key, string $class, ?\Backed_Enum $default = null): ?\Backed_Enum
     {
         if ($default === $value = $this->get($key, $default)) {
             return $default;
         }
-
         try {
             return $class::from($value);
-        } catch (\ValueError|\TypeError $e) {
-            throw new UnexpectedValueException(\sprintf('Parameter "%s" cannot be converted to enum: ', $key).$e->getMessage().'.', $e->getCode(), $e);
+        } catch (\Value_Error|\TypeError $e) {
+            throw new UnexpectedValueException(\sprintf('Parameter "%s" cannot be converted to enum: ', $key) . $e->get_message() . '.', $e->get_code(), $e);
         }
     }
-
     /**
      * Filter key.
      *
@@ -219,38 +195,29 @@ class ParameterBag implements \IteratorAggregate, \Countable
     public function filter(string $key, mixed $default = null, int $filter = \FILTER_DEFAULT, mixed $options = []): mixed
     {
         $value = $this->get($key, $default);
-
         // Always turn $options into an array - this allows filter_var option shortcuts.
         if (!\is_array($options) && $options) {
             $options = ['flags' => $options];
         }
-
         // Add a convenience check for arrays.
         if (\is_array($value) && !isset($options['flags'])) {
             $options['flags'] = \FILTER_REQUIRE_ARRAY;
         }
-
         if (\is_object($value) && !$value instanceof \Stringable) {
             throw new UnexpectedValueException(\sprintf('Parameter value "%s" cannot be filtered.', $key));
         }
-
-        if ((\FILTER_CALLBACK & $filter) && !(($options['options'] ?? null) instanceof \Closure)) {
+        if (\FILTER_CALLBACK & $filter && !($options['options'] ?? null) instanceof \Closure) {
             throw new \InvalidArgumentException(\sprintf('A Closure must be passed to "%s()" when FILTER_CALLBACK is used, "%s" given.', __METHOD__, get_debug_type($options['options'] ?? null)));
         }
-
         $options['flags'] ??= 0;
-        $nullOnFailure = $options['flags'] & \FILTER_NULL_ON_FAILURE;
+        $null_on_failure = $options['flags'] & \FILTER_NULL_ON_FAILURE;
         $options['flags'] |= \FILTER_NULL_ON_FAILURE;
-
         $value = filter_var($value, $filter, $options);
-
-        if (null !== $value || $nullOnFailure) {
+        if (null !== $value || $null_on_failure) {
             return $value;
         }
-
         throw new \UnexpectedValueException(\sprintf('Parameter value "%s" is invalid and flag "FILTER_NULL_ON_FAILURE" was not set.', $key));
     }
-
     /**
      * Returns an iterator for parameters.
      *
@@ -260,7 +227,6 @@ class ParameterBag implements \IteratorAggregate, \Countable
     {
         return new \ArrayIterator($this->parameters);
     }
-
     /**
      * Returns the number of parameters.
      */

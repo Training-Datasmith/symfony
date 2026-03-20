@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,50 +9,43 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Twig_Bundle\Dependency_Injection\Compiler;
 
-namespace Symfony\Bundle\TwigBundle\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Compiler\Priority_Tagged_Service_Trait;
+use Symfony\Component\Dependency_Injection\Container_Builder;
 /**
  * Adds tagged twig.extension services to twig service.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class TwigEnvironmentPass implements CompilerPassInterface
+class Twig_Environment_Pass implements Compiler_Pass_Interface
 {
-    use PriorityTaggedServiceTrait;
-
-    public function process(ContainerBuilder $container): void
+    use Priority_Tagged_Service_Trait;
+    public function process(Container_Builder $container): void
     {
-        if (false === $container->hasDefinition('twig')) {
+        if (false === $container->has_definition('twig')) {
             return;
         }
-
-        $definition = $container->getDefinition('twig');
-
+        $definition = $container->get_definition('twig');
         // Extensions must always be registered before everything else.
         // For instance, global variable definitions must be registered
         // afterward. If not, the globals from the extensions will never
         // be registered.
-        $currentMethodCalls = $definition->getMethodCalls();
-        $twigBridgeExtensionsMethodCalls = [];
-        $othersExtensionsMethodCalls = [];
-        foreach ($this->findAndSortTaggedServices('twig.extension', $container) as $extension) {
-            $methodCall = ['addExtension', [$extension]];
-            $extensionClass = $container->getDefinition((string) $extension)->getClass();
-
-            if (\is_string($extensionClass) && str_starts_with($extensionClass, 'Symfony\Bridge\Twig\Extension')) {
-                $twigBridgeExtensionsMethodCalls[] = $methodCall;
+        $current_method_calls = $definition->get_method_calls();
+        $twig_bridge_extensions_method_calls = [];
+        $others_extensions_method_calls = [];
+        foreach ($this->find_and_sort_tagged_services('twig.extension', $container) as $extension) {
+            $method_call = ['addExtension', [$extension]];
+            $extension_class = $container->get_definition((string) $extension)->get_class();
+            if (\is_string($extension_class) && str_starts_with($extension_class, 'Symfony\Bridge\Twig\Extension')) {
+                $twig_bridge_extensions_method_calls[] = $method_call;
             } else {
-                $othersExtensionsMethodCalls[] = $methodCall;
+                $others_extensions_method_calls[] = $method_call;
             }
         }
-
-        if ($twigBridgeExtensionsMethodCalls || $othersExtensionsMethodCalls) {
-            $definition->setMethodCalls(array_merge($twigBridgeExtensionsMethodCalls, $othersExtensionsMethodCalls, $currentMethodCalls));
+        if ($twig_bridge_extensions_method_calls || $others_extensions_method_calls) {
+            $definition->set_method_calls(array_merge($twig_bridge_extensions_method_calls, $others_extensions_method_calls, $current_method_calls));
         }
     }
 }

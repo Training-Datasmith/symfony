@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,73 +9,60 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Bridge\PhpUnit\Metadata;
+namespace Symfony\Bridge\Php_Unit\Metadata;
 
 /**
  * @internal
  *
  * @template T of object
  */
-final class AttributeReader
+final class Attribute_Reader
 {
     /**
      * @var array<string, array<class-string<T>, list<T>>>
      */
     private array $cache = [];
-
     /**
      * @param class-string    $className
      * @param class-string<T> $name
      *
      * @return list<T>
      */
-    public function forClass(string $className, string $name): array
+    public function for_class(string $class_name, string $name): array
     {
-        $attributes = $this->cache[$className] ??= $this->readAttributes(new \ReflectionClass($className));
-
+        $attributes = $this->cache[$class_name] ??= $this->read_attributes(new \ReflectionClass($class_name));
         return $attributes[$name] ?? [];
     }
-
     /**
      * @param class-string    $className
      * @param class-string<T> $name
      *
      * @return list<T>
      */
-    public function forMethod(string $className, string $methodName, string $name): array
+    public function for_method(string $class_name, string $method_name, string $name): array
     {
-        $attributes = $this->cache[$className.'::'.$methodName] ??= $this->readAttributes(new \ReflectionMethod($className, $methodName));
-
+        $attributes = $this->cache[$class_name . '::' . $method_name] ??= $this->read_attributes(new \ReflectionMethod($class_name, $method_name));
         return $attributes[$name] ?? [];
     }
-
     /**
      * @param class-string    $className
      * @param class-string<T> $name
      *
      * @return list<T>
      */
-    public function forClassAndMethod(string $className, string $methodName, string $name): array
+    public function for_class_and_method(string $class_name, string $method_name, string $name): array
     {
-        return [
-            ...$this->forClass($className, $name),
-            ...$this->forMethod($className, $methodName, $name),
-        ];
+        return [...$this->for_class($class_name, $name), ...$this->for_method($class_name, $method_name, $name)];
     }
-
-    private function readAttributes(\ReflectionClass|\ReflectionMethod $reflection): array
+    private function read_attributes(\ReflectionClass|\ReflectionMethod $reflection): array
     {
-        $attributeInstances = [];
-
-        foreach ($reflection->getAttributes() as $attribute) {
-            if (!str_starts_with($name = $attribute->getName(), 'Symfony\\Bridge\\PhpUnit\\Attribute\\')) {
+        $attribute_instances = [];
+        foreach ($reflection->get_attributes() as $attribute) {
+            if (!str_starts_with($name = $attribute->get_name(), 'Symfony\Bridge\PhpUnit\Attribute\\')) {
                 continue;
             }
-
-            $attributeInstances[$name][] = $attribute->newInstance();
+            $attribute_instances[$name][] = $attribute->new_instance();
         }
-
-        return $attributeInstances;
+        return $attribute_instances;
     }
 }

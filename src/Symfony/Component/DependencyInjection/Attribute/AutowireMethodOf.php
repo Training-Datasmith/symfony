@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Attribute;
 
-namespace Symfony\Component\DependencyInjection\Attribute;
-
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * Tells which method should be turned into a Closure based on the name of the parameter it's attached to.
  */
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
-class AutowireMethodOf extends AutowireCallable
+class Autowire_Method_Of extends Autowire_Callable
 {
     /**
      * @param string            $service The service containing the method to autowire
@@ -30,11 +27,9 @@ class AutowireMethodOf extends AutowireCallable
     {
         parent::__construct([new Reference($service)], lazy: $lazy);
     }
-
-    public function buildDefinition(mixed $value, ?string $type, \ReflectionParameter $parameter): Definition
+    public function build_definition(mixed $value, ?string $type, \ReflectionParameter $parameter): Definition
     {
         $value[1] = $parameter->name;
-
-        return parent::buildDefinition($value, $type, $parameter);
+        return parent::build_definition($value, $type, $parameter);
     }
 }

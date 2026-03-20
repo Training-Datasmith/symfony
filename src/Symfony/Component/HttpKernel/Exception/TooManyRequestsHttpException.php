@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,25 +9,23 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpKernel\Exception;
+namespace Symfony\Component\Http_Kernel\Exception;
 
 /**
  * @author Ben Ramsey <ben@benramsey.com>
  *
  * @see http://tools.ietf.org/html/rfc6585
  */
-class TooManyRequestsHttpException extends HttpException
+class Too_Many_Requests_Http_Exception extends Http_Exception
 {
     /**
      * @param int|string|null $retryAfter The number of seconds or HTTP-date after which the request may be retried
      */
-    public function __construct(int|string|null $retryAfter = null, string $message = '', ?\Throwable $previous = null, int $code = 0, array $headers = [])
+    public function __construct(int|string|null $retry_after = null, string $message = '', ?\Throwable $previous = null, int $code = 0, array $headers = [])
     {
-        if ($retryAfter) {
-            $headers['Retry-After'] = $retryAfter;
+        if ($retry_after) {
+            $headers['Retry-After'] = $retry_after;
         }
-
         parent::__construct(429, $message, $previous, $headers, $code);
     }
 }

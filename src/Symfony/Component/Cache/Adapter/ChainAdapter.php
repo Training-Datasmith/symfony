@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,21 +9,19 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Adapter;
 
-use Psr\Cache\CacheItemInterface;
-use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\Cache\CacheItem;
+use Psr\Cache\Cache_Item_Interface;
+use Psr\Cache\Cache_Item_Pool_Interface;
+use Symfony\Component\Cache\Cache_Item;
 use Symfony\Component\Cache\Exception\BadMethodCallException;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
-use Symfony\Component\Cache\PruneableInterface;
-use Symfony\Component\Cache\ResettableInterface;
-use Symfony\Component\Cache\Traits\ContractsTrait;
-use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\NamespacedPoolInterface;
-use Symfony\Contracts\Service\ResetInterface;
-
+use Symfony\Component\Cache\Pruneable_Interface;
+use Symfony\Component\Cache\Resettable_Interface;
+use Symfony\Component\Cache\Traits\Contracts_Trait;
+use Symfony\Contracts\Cache\Cache_Interface;
+use Symfony\Contracts\Cache\Namespaced_Pool_Interface;
+use Symfony\Contracts\Service\Reset_Interface;
 /**
  * Chains several adapters together.
  *
@@ -33,278 +30,219 @@ use Symfony\Contracts\Service\ResetInterface;
  *
  * @author Kévin Dunglas <dunglas@gmail.com>
  */
-class ChainAdapter implements AdapterInterface, CacheInterface, NamespacedPoolInterface, PruneableInterface, ResettableInterface
+class Chain_Adapter implements Adapter_Interface, Cache_Interface, Namespaced_Pool_Interface, Pruneable_Interface, Resettable_Interface
 {
-    use ContractsTrait;
-
+    use Contracts_Trait;
     private array $adapters = [];
-    private int $adapterCount;
-
-    private static \Closure $syncItem;
-
+    private int $adapter_count;
+    private static \Closure $sync_item;
     /**
      * @param CacheItemPoolInterface[] $adapters        The ordered list of adapters used to fetch cached items
      * @param int                      $defaultLifetime The default lifetime of items propagated from lower adapters to upper ones
      */
-    public function __construct(
-        array $adapters,
-        private int $defaultLifetime = 0,
-    ) {
+    public function __construct(array $adapters, private int $default_lifetime = 0)
+    {
         if (!$adapters) {
             throw new InvalidArgumentException('At least one adapter must be specified.');
         }
-
         foreach ($adapters as $adapter) {
-            if (!$adapter instanceof CacheItemPoolInterface) {
-                throw new InvalidArgumentException(\sprintf('The class "%s" does not implement the "%s" interface.', get_debug_type($adapter), CacheItemPoolInterface::class));
+            if (!$adapter instanceof Cache_Item_Pool_Interface) {
+                throw new InvalidArgumentException(\sprintf('The class "%s" does not implement the "%s" interface.', get_debug_type($adapter), Cache_Item_Pool_Interface::class));
             }
-            if ('cli' === \PHP_SAPI && $adapter instanceof ApcuAdapter && !filter_var(\ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOL)) {
-                continue; // skip putting APCu in the chain when the backend is disabled
+            if ('cli' === \PHP_SAPI && $adapter instanceof Apcu_Adapter && !filter_var(\ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOL)) {
+                continue;
+                // skip putting APCu in the chain when the backend is disabled
             }
-
-            if ($adapter instanceof AdapterInterface) {
+            if ($adapter instanceof Adapter_Interface) {
                 $this->adapters[] = $adapter;
             } else {
-                $this->adapters[] = new ProxyAdapter($adapter);
+                $this->adapters[] = new Proxy_Adapter($adapter);
             }
         }
-        $this->adapterCount = \count($this->adapters);
-
-        self::$syncItem ??= \Closure::bind(
-            static function ($sourceItem, $item, $defaultLifetime, $sourceMetadata = null) {
-                $sourceItem->isTaggable = false;
-                $sourceMetadata ??= $sourceItem->metadata;
-
-                $item->value = $sourceItem->value;
-                $item->isHit = $sourceItem->isHit;
-                $item->metadata = $item->newMetadata = $sourceItem->metadata = $sourceMetadata;
-
-                if (isset($item->metadata[CacheItem::METADATA_EXPIRY])) {
-                    $item->expiresAt(\DateTimeImmutable::createFromFormat('U.u', \sprintf('%.6F', $item->metadata[CacheItem::METADATA_EXPIRY])));
-                } elseif (0 < $defaultLifetime) {
-                    $item->expiresAfter($defaultLifetime);
-                }
-
-                return $item;
-            },
-            null,
-            CacheItem::class
-        );
+        $this->adapter_count = \count($this->adapters);
+        self::$sync_item ??= \Closure::bind(static function ($source_item, $item, $default_lifetime, $source_metadata = null) {
+            $source_item->is_taggable = false;
+            $source_metadata ??= $source_item->metadata;
+            $item->value = $source_item->value;
+            $item->is_hit = $source_item->is_hit;
+            $item->metadata = $item->new_metadata = $source_item->metadata = $source_metadata;
+            if (isset($item->metadata[Cache_Item::METADATA_EXPIRY])) {
+                $item->expires_at(\DateTimeImmutable::create_from_format('U.u', \sprintf('%.6F', $item->metadata[Cache_Item::METADATA_EXPIRY])));
+            } elseif (0 < $default_lifetime) {
+                $item->expires_after($default_lifetime);
+            }
+            return $item;
+        }, null, Cache_Item::class);
     }
-
     public function get(string $key, callable $callback, ?float $beta = null, ?array &$metadata = null): mixed
     {
-        $doSave = true;
-        $callback = static function (CacheItem $item, bool &$save) use ($callback, &$doSave) {
+        $do_save = true;
+        $callback = static function (Cache_Item $item, bool &$save) use ($callback, &$do_save) {
             $value = $callback($item, $save);
-            $doSave = $save;
-
+            $do_save = $save;
             return $value;
         };
-
-        $wrap = function (?CacheItem $item = null, bool &$save = true) use ($key, $callback, $beta, &$wrap, &$doSave, &$metadata) {
-            static $lastItem;
+        $wrap = function (?Cache_Item $item = null, bool &$save = true) use ($key, $callback, $beta, &$wrap, &$do_save, &$metadata) {
+            static $last_item;
             static $i = 0;
             $adapter = $this->adapters[$i];
             if (isset($this->adapters[++$i])) {
                 $callback = $wrap;
                 $beta = \INF === $beta ? \INF : 0;
             }
-            if ($adapter instanceof CacheInterface && $i !== $this->adapterCount) {
+            if ($adapter instanceof Cache_Interface && $i !== $this->adapter_count) {
                 $value = $adapter->get($key, $callback, $beta, $metadata);
             } else {
-                $value = $this->doGet($adapter, $key, $callback, $beta, $metadata);
+                $value = $this->do_get($adapter, $key, $callback, $beta, $metadata);
             }
             if (null !== $item) {
-                (self::$syncItem)($lastItem ??= $item, $item, $this->defaultLifetime, $metadata);
+                (self::$sync_item)($last_item ??= $item, $item, $this->default_lifetime, $metadata);
             }
-            $save = $doSave;
-
+            $save = $do_save;
             return $value;
         };
-
         return $wrap();
     }
-
-    public function getItem(mixed $key): CacheItem
+    public function get_item(mixed $key): Cache_Item
     {
-        $syncItem = self::$syncItem;
+        $sync_item = self::$sync_item;
         $misses = [];
-
         foreach ($this->adapters as $i => $adapter) {
-            $item = $adapter->getItem($key);
-
-            if ($item->isHit()) {
+            $item = $adapter->get_item($key);
+            if ($item->is_hit()) {
                 while (0 <= --$i) {
-                    $this->adapters[$i]->save($syncItem($item, $misses[$i], $this->defaultLifetime));
+                    $this->adapters[$i]->save($sync_item($item, $misses[$i], $this->default_lifetime));
                 }
-
                 return $item;
             }
-
             $misses[$i] = $item;
         }
-
         return $item;
     }
-
-    public function getItems(array $keys = []): iterable
+    public function get_items(array $keys = []): iterable
     {
-        return $this->generateItems($this->adapters[0]->getItems($keys), 0);
+        return $this->generate_items($this->adapters[0]->get_items($keys), 0);
     }
-
-    private function generateItems(iterable $items, int $adapterIndex): \Generator
+    private function generate_items(iterable $items, int $adapter_index): \Generator
     {
         $missing = [];
         $misses = [];
-        $nextAdapterIndex = $adapterIndex + 1;
-        $nextAdapter = $this->adapters[$nextAdapterIndex] ?? null;
-
+        $next_adapter_index = $adapter_index + 1;
+        $next_adapter = $this->adapters[$next_adapter_index] ?? null;
         foreach ($items as $k => $item) {
-            if (!$nextAdapter || $item->isHit()) {
+            if (!$next_adapter || $item->is_hit()) {
                 yield $k => $item;
             } else {
                 $missing[] = $k;
                 $misses[$k] = $item;
             }
         }
-
         if ($missing) {
-            $syncItem = self::$syncItem;
-            $adapter = $this->adapters[$adapterIndex];
-            $items = $this->generateItems($nextAdapter->getItems($missing), $nextAdapterIndex);
-
+            $sync_item = self::$sync_item;
+            $adapter = $this->adapters[$adapter_index];
+            $items = $this->generate_items($next_adapter->get_items($missing), $next_adapter_index);
             foreach ($items as $k => $item) {
-                if ($item->isHit()) {
-                    $adapter->save($syncItem($item, $misses[$k], $this->defaultLifetime));
+                if ($item->is_hit()) {
+                    $adapter->save($sync_item($item, $misses[$k], $this->default_lifetime));
                 }
-
                 yield $k => $item;
             }
         }
     }
-
-    public function hasItem(mixed $key): bool
+    public function has_item(mixed $key): bool
     {
         foreach ($this->adapters as $adapter) {
-            if ($adapter->hasItem($key)) {
+            if ($adapter->has_item($key)) {
                 return true;
             }
         }
-
         return false;
     }
-
     public function clear(string $prefix = ''): bool
     {
         $cleared = true;
-        $i = $this->adapterCount;
-
+        $i = $this->adapter_count;
         while ($i--) {
-            if ($this->adapters[$i] instanceof AdapterInterface) {
+            if ($this->adapters[$i] instanceof Adapter_Interface) {
                 $cleared = $this->adapters[$i]->clear($prefix) && $cleared;
             } else {
                 $cleared = $this->adapters[$i]->clear() && $cleared;
             }
         }
-
         return $cleared;
     }
-
-    public function deleteItem(mixed $key): bool
+    public function delete_item(mixed $key): bool
     {
         $deleted = true;
-        $i = $this->adapterCount;
-
+        $i = $this->adapter_count;
         while ($i--) {
-            $deleted = $this->adapters[$i]->deleteItem($key) && $deleted;
+            $deleted = $this->adapters[$i]->delete_item($key) && $deleted;
         }
-
         return $deleted;
     }
-
-    public function deleteItems(array $keys): bool
+    public function delete_items(array $keys): bool
     {
         $deleted = true;
-        $i = $this->adapterCount;
-
+        $i = $this->adapter_count;
         while ($i--) {
-            $deleted = $this->adapters[$i]->deleteItems($keys) && $deleted;
+            $deleted = $this->adapters[$i]->delete_items($keys) && $deleted;
         }
-
         return $deleted;
     }
-
-    public function save(CacheItemInterface $item): bool
+    public function save(Cache_Item_Interface $item): bool
     {
         $saved = true;
-        $i = $this->adapterCount;
-
+        $i = $this->adapter_count;
         while ($i--) {
             $saved = $this->adapters[$i]->save($item) && $saved;
         }
-
         return $saved;
     }
-
-    public function saveDeferred(CacheItemInterface $item): bool
+    public function save_deferred(Cache_Item_Interface $item): bool
     {
         $saved = true;
-        $i = $this->adapterCount;
-
+        $i = $this->adapter_count;
         while ($i--) {
-            $saved = $this->adapters[$i]->saveDeferred($item) && $saved;
+            $saved = $this->adapters[$i]->save_deferred($item) && $saved;
         }
-
         return $saved;
     }
-
     public function commit(): bool
     {
         $committed = true;
-        $i = $this->adapterCount;
-
+        $i = $this->adapter_count;
         while ($i--) {
             $committed = $this->adapters[$i]->commit() && $committed;
         }
-
         return $committed;
     }
-
     public function prune(): bool
     {
         $pruned = true;
-
         foreach ($this->adapters as $adapter) {
-            if ($adapter instanceof PruneableInterface) {
+            if ($adapter instanceof Pruneable_Interface) {
                 $pruned = $adapter->prune() && $pruned;
             }
         }
-
         return $pruned;
     }
-
-    public function withSubNamespace(string $namespace): static
+    public function with_sub_namespace(string $namespace): static
     {
         $clone = clone $this;
         $adapters = [];
-
         foreach ($this->adapters as $adapter) {
-            if (!$adapter instanceof NamespacedPoolInterface) {
+            if (!$adapter instanceof Namespaced_Pool_Interface) {
                 throw new BadMethodCallException('All adapters must implement NamespacedPoolInterface to support namespaces.');
             }
-
-            $adapters[] = $adapter->withSubNamespace($namespace);
+            $adapters[] = $adapter->with_sub_namespace($namespace);
         }
         $clone->adapters = $adapters;
-
         return $clone;
     }
-
     public function reset(): void
     {
         foreach ($this->adapters as $adapter) {
-            if ($adapter instanceof ResetInterface) {
+            if ($adapter instanceof Reset_Interface) {
                 $adapter->reset();
             }
         }

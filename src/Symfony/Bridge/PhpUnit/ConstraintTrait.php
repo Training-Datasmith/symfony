@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,20 +9,18 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Php_Unit;
 
-namespace Symfony\Bridge\PhpUnit;
-
-use PHPUnit\Framework\Constraint\Constraint;
-
+use Php_Unit\Framework\Constraint\Constraint;
 $r = new \ReflectionClass(Constraint::class);
-if (!$r->getMethod('evaluate')->hasReturnType()) {
-    trait ConstraintTrait
+if (!$r->get_method('evaluate')->has_return_type()) {
+    trait Constraint_Trait
     {
-        use Legacy\ConstraintTraitForV8;
+        use Legacy\Constraint_Trait_For_V8;
     }
 } else {
-    trait ConstraintTrait
+    trait Constraint_Trait
     {
-        use Legacy\ConstraintTraitForV9;
+        use Legacy\Constraint_Trait_For_V9;
     }
 }

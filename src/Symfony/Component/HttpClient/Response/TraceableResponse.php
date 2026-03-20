@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,47 +9,38 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Client\Response;
 
-namespace Symfony\Component\HttpClient\Response;
-
-use Symfony\Component\HttpClient\Chunk\ErrorChunk;
-use Symfony\Component\HttpClient\Exception\ClientException;
-use Symfony\Component\HttpClient\Exception\RedirectionException;
-use Symfony\Component\HttpClient\Exception\ServerException;
-use Symfony\Component\HttpClient\TraceableHttpClient;
-use Symfony\Component\Stopwatch\StopwatchEvent;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface;
-
+use Symfony\Component\Http_Client\Chunk\Error_Chunk;
+use Symfony\Component\Http_Client\Exception\Client_Exception;
+use Symfony\Component\Http_Client\Exception\Redirection_Exception;
+use Symfony\Component\Http_Client\Exception\Server_Exception;
+use Symfony\Component\Http_Client\Traceable_Http_Client;
+use Symfony\Component\Stopwatch\Stopwatch_Event;
+use Symfony\Contracts\Http_Client\Exception\Client_Exception_Interface;
+use Symfony\Contracts\Http_Client\Exception\Redirection_Exception_Interface;
+use Symfony\Contracts\Http_Client\Exception\Server_Exception_Interface;
+use Symfony\Contracts\Http_Client\Exception\Transport_Exception_Interface;
+use Symfony\Contracts\Http_Client\Http_Client_Interface;
+use Symfony\Contracts\Http_Client\Response_Interface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
  * @internal
  */
-class TraceableResponse implements ResponseInterface, StreamableInterface
+class Traceable_Response implements Response_Interface, Streamable_Interface
 {
-    public function __construct(
-        private readonly HttpClientInterface $client,
-        private readonly ResponseInterface $response,
-        private mixed &$content = false,
-        private readonly ?StopwatchEvent $event = null,
-    ) {
+    public function __construct(private readonly Http_Client_Interface $client, private readonly Response_Interface $response, private mixed &$content = false, private readonly ?Stopwatch_Event $event = null)
+    {
     }
-
     public function __serialize(): array
     {
-        throw new \BadMethodCallException('Cannot serialize '.self::class);
+        throw new \BadMethodCallException('Cannot serialize ' . self::class);
     }
-
     public function __unserialize(array $data): void
     {
-        throw new \BadMethodCallException('Cannot unserialize '.self::class);
+        throw new \BadMethodCallException('Cannot unserialize ' . self::class);
     }
-
     public function __destruct()
     {
         try {
@@ -58,84 +48,74 @@ class TraceableResponse implements ResponseInterface, StreamableInterface
                 $this->response->__destruct();
             }
         } finally {
-            if ($this->event?->isStarted()) {
+            if ($this->event?->is_started()) {
                 $this->event->stop();
             }
         }
     }
-
-    public function getStatusCode(): int
+    public function get_status_code(): int
     {
         try {
-            return $this->response->getStatusCode();
+            return $this->response->get_status_code();
         } finally {
-            if ($this->event?->isStarted()) {
+            if ($this->event?->is_started()) {
                 $this->event->lap();
             }
         }
     }
-
-    public function getHeaders(bool $throw = true): array
+    public function get_headers(bool $throw = true): array
     {
         try {
-            return $this->response->getHeaders($throw);
+            return $this->response->get_headers($throw);
         } finally {
-            if ($this->event?->isStarted()) {
+            if ($this->event?->is_started()) {
                 $this->event->lap();
             }
         }
     }
-
-    public function getContent(bool $throw = true): string
+    public function get_content(bool $throw = true): string
     {
         try {
             if (false === $this->content) {
-                return $this->response->getContent($throw);
+                return $this->response->get_content($throw);
             }
-
-            return $this->content = $this->response->getContent(false);
+            return $this->content = $this->response->get_content(false);
         } finally {
-            if ($this->event?->isStarted()) {
+            if ($this->event?->is_started()) {
                 $this->event->stop();
             }
             if ($throw) {
-                $this->checkStatusCode($this->response->getStatusCode());
+                $this->check_status_code($this->response->get_status_code());
             }
         }
     }
-
-    public function toArray(bool $throw = true): array
+    public function to_array(bool $throw = true): array
     {
         try {
             if (false === $this->content) {
-                return $this->response->toArray($throw);
+                return $this->response->to_array($throw);
             }
-
-            return $this->content = $this->response->toArray(false);
+            return $this->content = $this->response->to_array(false);
         } finally {
-            if ($this->event?->isStarted()) {
+            if ($this->event?->is_started()) {
                 $this->event->stop();
             }
             if ($throw) {
-                $this->checkStatusCode($this->response->getStatusCode());
+                $this->check_status_code($this->response->get_status_code());
             }
         }
     }
-
     public function cancel(): void
     {
         $this->response->cancel();
-
-        if ($this->event?->isStarted()) {
+        if ($this->event?->is_started()) {
             $this->event->stop();
         }
     }
-
-    public function getInfo(?string $type = null): mixed
+    public function get_info(?string $type = null): mixed
     {
-        return $this->response->getInfo($type);
+        return $this->response->get_info($type);
     }
-
     /**
      * Casts the response to a PHP stream resource.
      *
@@ -146,73 +126,64 @@ class TraceableResponse implements ResponseInterface, StreamableInterface
      * @throws ClientExceptionInterface      On a 4xx when $throw is true
      * @throws ServerExceptionInterface      On a 5xx when $throw is true
      */
-    public function toStream(bool $throw = true)
+    public function to_stream(bool $throw = true)
     {
         if ($throw) {
             // Ensure headers arrived
-            $this->response->getHeaders(true);
+            $this->response->get_headers(true);
         }
-
-        if ($this->response instanceof StreamableInterface) {
-            return $this->response->toStream(false);
+        if ($this->response instanceof Streamable_Interface) {
+            return $this->response->to_stream(false);
         }
-
-        return StreamWrapper::createResource($this->response, $this->client);
+        return Stream_Wrapper::create_resource($this->response, $this->client);
     }
-
     /**
      * @internal
      */
-    public static function stream(HttpClientInterface $client, iterable $responses, ?float $timeout): \Generator
+    public static function stream(Http_Client_Interface $client, iterable $responses, ?float $timeout): \Generator
     {
-        $wrappedResponses = [];
-        $traceableMap = new \SplObjectStorage();
-
+        $wrapped_responses = [];
+        $traceable_map = new \Spl_Object_Storage();
         foreach ($responses as $r) {
             if (!$r instanceof self) {
-                throw new \TypeError(\sprintf('"%s::stream()" expects parameter 1 to be an iterable of TraceableResponse objects, "%s" given.', TraceableHttpClient::class, get_debug_type($r)));
+                throw new \TypeError(\sprintf('"%s::stream()" expects parameter 1 to be an iterable of TraceableResponse objects, "%s" given.', Traceable_Http_Client::class, get_debug_type($r)));
             }
-
-            $traceableMap[$r->response] = $r;
-            $wrappedResponses[] = $r->response;
-            if ($r->event && !$r->event->isStarted()) {
+            $traceable_map[$r->response] = $r;
+            $wrapped_responses[] = $r->response;
+            if ($r->event && !$r->event->is_started()) {
                 $r->event->start();
             }
         }
-
-        foreach ($client->stream($wrappedResponses, $timeout) as $r => $chunk) {
-            if ($traceableMap[$r]->event && $traceableMap[$r]->event->isStarted()) {
+        foreach ($client->stream($wrapped_responses, $timeout) as $r => $chunk) {
+            if ($traceable_map[$r]->event && $traceable_map[$r]->event->is_started()) {
                 try {
-                    if ($chunk->isTimeout() || !$chunk->isLast()) {
-                        $traceableMap[$r]->event->lap();
+                    if ($chunk->is_timeout() || !$chunk->is_last()) {
+                        $traceable_map[$r]->event->lap();
                     } else {
-                        $traceableMap[$r]->event->stop();
+                        $traceable_map[$r]->event->stop();
                     }
-                } catch (TransportExceptionInterface $e) {
-                    $traceableMap[$r]->event->stop();
-                    if ($chunk instanceof ErrorChunk) {
-                        $chunk->didThrow(false);
+                } catch (Transport_Exception_Interface $e) {
+                    $traceable_map[$r]->event->stop();
+                    if ($chunk instanceof Error_Chunk) {
+                        $chunk->did_throw(false);
                     } else {
-                        $chunk = new ErrorChunk($chunk->getOffset(), $e);
+                        $chunk = new Error_Chunk($chunk->get_offset(), $e);
                     }
                 }
             }
-            yield $traceableMap[$r] => $chunk;
+            yield $traceable_map[$r] => $chunk;
         }
     }
-
-    private function checkStatusCode(int $code): void
+    private function check_status_code(int $code): void
     {
         if (500 <= $code) {
-            throw new ServerException($this);
+            throw new Server_Exception($this);
         }
-
         if (400 <= $code) {
-            throw new ClientException($this);
+            throw new Client_Exception($this);
         }
-
         if (300 <= $code) {
-            throw new RedirectionException($this);
+            throw new Redirection_Exception($this);
         }
     }
 }

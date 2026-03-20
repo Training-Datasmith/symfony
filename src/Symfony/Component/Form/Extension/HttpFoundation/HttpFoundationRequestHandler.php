@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,60 +9,51 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Extension\Http_Foundation;
 
-namespace Symfony\Component\Form\Extension\HttpFoundation;
-
-use Symfony\Component\Form\Exception\UnexpectedTypeException;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\MissingDataHandler;
-use Symfony\Component\Form\RequestHandlerInterface;
-use Symfony\Component\Form\Util\FormUtil;
-use Symfony\Component\Form\Util\ServerParams;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\Form\Exception\Unexpected_Type_Exception;
+use Symfony\Component\Form\Form_Error;
+use Symfony\Component\Form\Form_Interface;
+use Symfony\Component\Form\Missing_Data_Handler;
+use Symfony\Component\Form\Request_Handler_Interface;
+use Symfony\Component\Form\Util\Form_Util;
+use Symfony\Component\Form\Util\Server_Params;
+use Symfony\Component\Http_Foundation\File\File;
+use Symfony\Component\Http_Foundation\File\Uploaded_File;
+use Symfony\Component\Http_Foundation\Request;
 /**
  * A request processor using the {@link Request} class of the HttpFoundation
  * component.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class HttpFoundationRequestHandler implements RequestHandlerInterface
+class Http_Foundation_Request_Handler implements Request_Handler_Interface
 {
-    private readonly MissingDataHandler $missingDataHandler;
-
-    public function __construct(private readonly ?ServerParams $serverParams = new ServerParams())
+    private readonly Missing_Data_Handler $missing_data_handler;
+    public function __construct(private readonly ?Server_Params $server_params = new Server_Params())
     {
-        $this->missingDataHandler = new MissingDataHandler();
+        $this->missing_data_handler = new Missing_Data_Handler();
     }
-
-    public function handleRequest(FormInterface $form, mixed $request = null): void
+    public function handle_request(Form_Interface $form, mixed $request = null): void
     {
         if (!$request instanceof Request) {
-            throw new UnexpectedTypeException($request, Request::class);
+            throw new Unexpected_Type_Exception($request, Request::class);
         }
-
-        $name = $form->getName();
-        $method = $form->getConfig()->getMethod();
-        $missingData = $this->missingDataHandler->missingData;
-
-        if ($method !== $request->getMethod()) {
+        $name = $form->get_name();
+        $method = $form->get_config()->get_method();
+        $missing_data = $this->missing_data_handler->missing_data;
+        if ($method !== $request->get_method()) {
             return;
         }
-
         // For request methods that must not have a request body we fetch data
         // from the query string. Otherwise we look for data in the request body.
         if ('GET' === $method || 'HEAD' === $method || 'TRACE' === $method) {
             if ('' === $name) {
                 $data = $request->query->all();
             } else {
-                $queryData = $request->query->all()[$name] ?? $missingData;
-
-                $data = $this->missingDataHandler->handle($form, $queryData);
-
-                if ($missingData === $data) {
+                $query_data = $request->query->all()[$name] ?? $missing_data;
+                $data = $this->missing_data_handler->handle($form, $query_data);
+                if ($missing_data === $data) {
                     // Don't submit GET requests if the form's name does not exist
                     // in the request
                     return;
@@ -73,66 +63,51 @@ class HttpFoundationRequestHandler implements RequestHandlerInterface
             // Mark the form with an error if the uploaded size was too large
             // This is done here and not in FormValidator because $_POST is
             // empty when that error occurs. Hence the form is never submitted.
-            if ($this->serverParams->hasPostMaxSizeBeenExceeded()) {
+            if ($this->server_params->has_post_max_size_been_exceeded()) {
                 // Submit the form, but don't clear the default values
                 $form->submit(null, false);
-
-                $form->addError(new FormError(
-                    $form->getConfig()->getOption('upload_max_size_message')(),
-                    null,
-                    ['{{ max }}' => $this->serverParams->getNormalizedIniPostMaxSize()]
-                ));
-
+                $form->add_error(new Form_Error($form->get_config()->get_option('upload_max_size_message')(), null, ['{{ max }}' => $this->server_params->get_normalized_ini_post_max_size()]));
                 return;
             }
-
             if ('' === $name) {
                 $params = $request->request->all();
                 $files = $request->files->all();
             } elseif ($request->request->has($name) || $request->files->has($name)) {
-                $default = $form->getConfig()->getCompound() ? [] : null;
+                $default = $form->get_config()->get_compound() ? [] : null;
                 $params = $request->request->all()[$name] ?? $default;
                 $files = $request->files->get($name, $default);
             } else {
-                $params = $missingData;
+                $params = $missing_data;
                 $files = null;
             }
-
             if ('PATCH' !== $method) {
-                $params = $this->missingDataHandler->handle($form, $params);
+                $params = $this->missing_data_handler->handle($form, $params);
             }
-
-            if ($missingData === $params) {
+            if ($missing_data === $params) {
                 // Don't submit the form if it is not present in the request
                 return;
             }
-
             if (\is_array($params) && \is_array($files)) {
-                $data = FormUtil::mergeParamsAndFiles($params, $files);
+                $data = Form_Util::merge_params_and_files($params, $files);
             } else {
                 $data = $params ?: $files;
             }
         }
-
         // Don't auto-submit the form unless at least one field is present.
         if ('' === $name && \count(array_intersect_key($data, $form->all())) <= 0) {
             return;
         }
-
         $form->submit($data, 'PATCH' !== $method);
     }
-
-    public function isFileUpload(mixed $data): bool
+    public function is_file_upload(mixed $data): bool
     {
         return $data instanceof File;
     }
-
-    public function getUploadFileError(mixed $data): ?int
+    public function get_upload_file_error(mixed $data): ?int
     {
-        if (!$data instanceof UploadedFile || $data->isValid()) {
+        if (!$data instanceof Uploaded_File || $data->is_valid()) {
             return null;
         }
-
-        return $data->getError();
+        return $data->get_error();
     }
 }

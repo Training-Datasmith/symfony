@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,68 +9,37 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Extension\Core\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\DataTransformer\PercentToLocalizedStringTransformer;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-class PercentType extends AbstractType
+use Symfony\Component\Form\Abstract_Type;
+use Symfony\Component\Form\Extension\Core\Data_Transformer\Percent_To_Localized_String_Transformer;
+use Symfony\Component\Form\Form_Builder_Interface;
+use Symfony\Component\Form\Form_Interface;
+use Symfony\Component\Form\Form_View;
+use Symfony\Component\Options_Resolver\Options_Resolver;
+class Percent_Type extends Abstract_Type
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function build_form(Form_Builder_Interface $builder, array $options): void
     {
-        $builder->addViewTransformer(new PercentToLocalizedStringTransformer(
-            $options['scale'],
-            $options['type'],
-            $options['rounding_mode'],
-            $options['html5']
-        ));
+        $builder->add_view_transformer(new Percent_To_Localized_String_Transformer($options['scale'], $options['type'], $options['rounding_mode'], $options['html5']));
     }
-
-    public function buildView(FormView $view, FormInterface $form, array $options): void
+    public function build_view(Form_View $view, Form_Interface $form, array $options): void
     {
         $view->vars['symbol'] = $options['symbol'];
-
         if ($options['html5']) {
             $view->vars['type'] = 'number';
         }
     }
-
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configure_options(Options_Resolver $resolver): void
     {
-        $resolver->setDefaults([
-            'scale' => 0,
-            'rounding_mode' => \NumberFormatter::ROUND_HALFUP,
-            'symbol' => '%',
-            'type' => 'fractional',
-            'compound' => false,
-            'html5' => false,
-            'invalid_message' => 'Please enter a percentage value.',
-        ]);
-
-        $resolver->setAllowedValues('type', [
-            'fractional',
-            'integer',
-        ]);
-        $resolver->setAllowedValues('rounding_mode', [
-            \NumberFormatter::ROUND_FLOOR,
-            \NumberFormatter::ROUND_DOWN,
-            \NumberFormatter::ROUND_HALFDOWN,
-            \NumberFormatter::ROUND_HALFEVEN,
-            \NumberFormatter::ROUND_HALFUP,
-            \NumberFormatter::ROUND_UP,
-            \NumberFormatter::ROUND_CEILING,
-        ]);
-        $resolver->setAllowedTypes('scale', 'int');
-        $resolver->setAllowedTypes('symbol', ['bool', 'string']);
-        $resolver->setAllowedTypes('html5', 'bool');
+        $resolver->set_defaults(['scale' => 0, 'rounding_mode' => \Number_Formatter::ROUND_HALFUP, 'symbol' => '%', 'type' => 'fractional', 'compound' => false, 'html5' => false, 'invalid_message' => 'Please enter a percentage value.']);
+        $resolver->set_allowed_values('type', ['fractional', 'integer']);
+        $resolver->set_allowed_values('rounding_mode', [\Number_Formatter::ROUND_FLOOR, \Number_Formatter::ROUND_DOWN, \Number_Formatter::ROUND_HALFDOWN, \Number_Formatter::ROUND_HALFEVEN, \Number_Formatter::ROUND_HALFUP, \Number_Formatter::ROUND_UP, \Number_Formatter::ROUND_CEILING]);
+        $resolver->set_allowed_types('scale', 'int');
+        $resolver->set_allowed_types('symbol', ['bool', 'string']);
+        $resolver->set_allowed_types('html5', 'bool');
     }
-
-    public function getBlockPrefix(): string
+    public function get_block_prefix(): string
     {
         return 'percent';
     }

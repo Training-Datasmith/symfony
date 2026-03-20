@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Traits;
 
 /**
@@ -24,26 +22,21 @@ namespace Symfony\Component\Cache\Traits;
  *
  * @internal
  */
-class RedisClusterNodeProxy
+class Redis_Cluster_Node_Proxy
 {
-    public function __construct(
-        private readonly array $host,
-        private readonly \RedisCluster $redis,
-    ) {
+    public function __construct(private readonly array $host, private readonly \Redis_Cluster $redis)
+    {
     }
-
     public function __call(string $method, array $args)
     {
         return $this->redis->{$method}($this->host, ...$args);
     }
-
-    public function scan(null|int|string &$iIterator, ?string $strPattern = null, ?int $iCount = null): bool|array
+    public function scan(null|int|string &$i_iterator, ?string $str_pattern = null, ?int $i_count = null): bool|array
     {
-        return $this->redis->scan($iIterator, $this->host, $strPattern, $iCount);
+        return $this->redis->scan($i_iterator, $this->host, $str_pattern, $i_count);
     }
-
-    public function getOption(int $name): int
+    public function get_option(int $name): int
     {
-        return $this->redis->getOption($name);
+        return $this->redis->get_option($name);
     }
 }

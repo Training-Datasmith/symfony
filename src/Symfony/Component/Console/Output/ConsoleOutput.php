@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Output;
 
-use Symfony\Component\Console\Formatter\OutputFormatterInterface;
-
+use Symfony\Component\Console\Formatter\Output_Formatter_Interface;
 /**
  * ConsoleOutput is the default class for all CLI output. It uses STDOUT and STDERR.
  *
@@ -29,126 +26,103 @@ use Symfony\Component\Console\Formatter\OutputFormatterInterface;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
+class Console_Output extends Stream_Output implements Console_Output_Interface
 {
-    private OutputInterface $stderr;
-    private array $consoleSectionOutputs = [];
-
+    private Output_Interface $stderr;
+    private array $console_section_outputs = [];
     /**
      * @param int                           $verbosity The verbosity level (one of the VERBOSITY constants in OutputInterface)
      * @param bool|null                     $decorated Whether to decorate messages (null for auto-guessing)
      * @param OutputFormatterInterface|null $formatter Output formatter instance (null to use default OutputFormatter)
      */
-    public function __construct(int $verbosity = self::VERBOSITY_NORMAL, ?bool $decorated = null, ?OutputFormatterInterface $formatter = null)
+    public function __construct(int $verbosity = self::VERBOSITY_NORMAL, ?bool $decorated = null, ?Output_Formatter_Interface $formatter = null)
     {
-        parent::__construct($this->openOutputStream(), $verbosity, $decorated, $formatter);
-
+        parent::__construct($this->open_output_stream(), $verbosity, $decorated, $formatter);
         if (null === $formatter) {
             // for BC reasons, stdErr has it own Formatter only when user don't inject a specific formatter.
-            $this->stderr = new StreamOutput($this->openErrorStream(), $verbosity, $decorated);
-
+            $this->stderr = new Stream_Output($this->open_error_stream(), $verbosity, $decorated);
             return;
         }
-
-        $actualDecorated = $this->isDecorated();
-        $this->stderr = new StreamOutput($this->openErrorStream(), $verbosity, $decorated, $this->getFormatter());
-
+        $actual_decorated = $this->is_decorated();
+        $this->stderr = new Stream_Output($this->open_error_stream(), $verbosity, $decorated, $this->get_formatter());
         if (null === $decorated) {
-            $this->setDecorated($actualDecorated && $this->stderr->isDecorated());
+            $this->set_decorated($actual_decorated && $this->stderr->is_decorated());
         }
     }
-
     /**
      * Creates a new output section.
      */
-    public function section(): ConsoleSectionOutput
+    public function section(): Console_Section_Output
     {
-        return new ConsoleSectionOutput($this->getStream(), $this->consoleSectionOutputs, $this->getVerbosity(), $this->isDecorated(), $this->getFormatter());
+        return new Console_Section_Output($this->get_stream(), $this->console_section_outputs, $this->get_verbosity(), $this->is_decorated(), $this->get_formatter());
     }
-
-    public function setDecorated(bool $decorated): void
+    public function set_decorated(bool $decorated): void
     {
-        parent::setDecorated($decorated);
-        $this->stderr->setDecorated($decorated);
+        parent::set_decorated($decorated);
+        $this->stderr->set_decorated($decorated);
     }
-
-    public function setFormatter(OutputFormatterInterface $formatter): void
+    public function set_formatter(Output_Formatter_Interface $formatter): void
     {
-        parent::setFormatter($formatter);
-        $this->stderr->setFormatter($formatter);
+        parent::set_formatter($formatter);
+        $this->stderr->set_formatter($formatter);
     }
-
-    public function setVerbosity(int $level): void
+    public function set_verbosity(int $level): void
     {
-        parent::setVerbosity($level);
-        $this->stderr->setVerbosity($level);
+        parent::set_verbosity($level);
+        $this->stderr->set_verbosity($level);
     }
-
-    public function getErrorOutput(): OutputInterface
+    public function get_error_output(): Output_Interface
     {
         return $this->stderr;
     }
-
-    public function setErrorOutput(OutputInterface $error): void
+    public function set_error_output(Output_Interface $error): void
     {
         $this->stderr = $error;
     }
-
     /**
      * Returns true if current environment supports writing console output to
      * STDOUT.
      */
-    protected function hasStdoutSupport(): bool
+    protected function has_stdout_support(): bool
     {
-        return false === $this->isRunningOS400();
+        return false === $this->is_running_os400();
     }
-
     /**
      * Returns true if current environment supports writing console output to
      * STDERR.
      */
-    protected function hasStderrSupport(): bool
+    protected function has_stderr_support(): bool
     {
-        return false === $this->isRunningOS400();
+        return false === $this->is_running_os400();
     }
-
     /**
      * Checks if current executing environment is IBM iSeries (OS400), which
      * doesn't properly convert character-encodings between ASCII to EBCDIC.
      */
-    private function isRunningOS400(): bool
+    private function is_running_os400(): bool
     {
-        $checks = [
-            \function_exists('php_uname') ? php_uname('s') : '',
-            getenv('OSTYPE'),
-            \PHP_OS,
-        ];
-
+        $checks = [\function_exists('php_uname') ? php_uname('s') : '', getenv('OSTYPE'), \PHP_OS];
         return false !== stripos(implode(';', $checks), 'OS400');
     }
-
     /**
      * @return resource
      */
-    private function openOutputStream()
+    private function open_output_stream()
     {
-        if (!$this->hasStdoutSupport()) {
+        if (!$this->has_stdout_support()) {
             return fopen('php://output', 'w');
         }
-
         // Use STDOUT when possible to prevent from opening too many file descriptors
         return \defined('STDOUT') ? \STDOUT : (@fopen('php://stdout', 'w') ?: fopen('php://output', 'w'));
     }
-
     /**
      * @return resource
      */
-    private function openErrorStream()
+    private function open_error_stream()
     {
-        if (!$this->hasStderrSupport()) {
+        if (!$this->has_stderr_support()) {
             return fopen('php://output', 'w');
         }
-
         // Use STDERR when possible to prevent from opening too many file descriptors
         return \defined('STDERR') ? \STDERR : (@fopen('php://stderr', 'w') ?: fopen('php://output', 'w'));
     }

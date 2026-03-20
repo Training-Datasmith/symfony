@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * This is a directed graph of your services.
  *
@@ -26,42 +23,37 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * @final
  */
-class ServiceReferenceGraph
+class Service_Reference_Graph
 {
     /**
      * @var ServiceReferenceGraphNode[]
      */
     private array $nodes = [];
-
-    public function hasNode(string $id): bool
+    public function has_node(string $id): bool
     {
         return isset($this->nodes[$id]);
     }
-
     /**
      * Gets a node by identifier.
      *
      * @throws InvalidArgumentException if no node matches the supplied identifier
      */
-    public function getNode(string $id): ServiceReferenceGraphNode
+    public function get_node(string $id): Service_Reference_Graph_Node
     {
         if (!isset($this->nodes[$id])) {
             throw new InvalidArgumentException(\sprintf('There is no node with id "%s".', $id));
         }
-
         return $this->nodes[$id];
     }
-
     /**
      * Returns all nodes.
      *
      * @return ServiceReferenceGraphNode[]
      */
-    public function getNodes(): array
+    public function get_nodes(): array
     {
         return $this->nodes;
     }
-
     /**
      * Clears all nodes.
      */
@@ -72,30 +64,25 @@ class ServiceReferenceGraph
         }
         $this->nodes = [];
     }
-
     /**
      * Connects 2 nodes together in the Graph.
      */
-    public function connect(?string $sourceId, mixed $sourceValue, ?string $destId, mixed $destValue = null, ?Reference $reference = null, bool $lazy = false, bool $weak = false, bool $byConstructor = false, bool $byMultiUseArgument = false): void
+    public function connect(?string $source_id, mixed $source_value, ?string $dest_id, mixed $dest_value = null, ?Reference $reference = null, bool $lazy = false, bool $weak = false, bool $by_constructor = false, bool $by_multi_use_argument = false): void
     {
-        if (null === $sourceId || null === $destId) {
+        if (null === $source_id || null === $dest_id) {
             return;
         }
-
-        $sourceNode = $this->createNode($sourceId, $sourceValue);
-        $destNode = $this->createNode($destId, $destValue);
-        $edge = new ServiceReferenceGraphEdge($sourceNode, $destNode, $reference, $lazy, $weak, $byConstructor, $byMultiUseArgument);
-
-        $sourceNode->addOutEdge($edge);
-        $destNode->addInEdge($edge);
+        $source_node = $this->create_node($source_id, $source_value);
+        $dest_node = $this->create_node($dest_id, $dest_value);
+        $edge = new Service_Reference_Graph_Edge($source_node, $dest_node, $reference, $lazy, $weak, $by_constructor, $by_multi_use_argument);
+        $source_node->add_out_edge($edge);
+        $dest_node->add_in_edge($edge);
     }
-
-    private function createNode(string $id, mixed $value): ServiceReferenceGraphNode
+    private function create_node(string $id, mixed $value): Service_Reference_Graph_Node
     {
-        if (isset($this->nodes[$id]) && $this->nodes[$id]->getValue() === $value) {
+        if (isset($this->nodes[$id]) && $this->nodes[$id]->get_value() === $value) {
             return $this->nodes[$id];
         }
-
-        return $this->nodes[$id] = new ServiceReferenceGraphNode($id, $value);
+        return $this->nodes[$id] = new Service_Reference_Graph_Node($id, $value);
     }
 }

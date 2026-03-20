@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,35 +9,31 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Attribute;
 
-use Symfony\Component\Console\Attribute\Reflection\ReflectionMember;
-use Symfony\Component\Console\Completion\CompletionInput;
+use Symfony\Component\Console\Attribute\Reflection\Reflection_Member;
+use Symfony\Component\Console\Completion\Completion_Input;
 use Symfony\Component\Console\Completion\Suggestion;
 use Symfony\Component\Console\Exception\LogicException;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\String\UnicodeString;
-
+use Symfony\Component\Console\Input\Input_Option;
+use Symfony\Component\String\Unicode_String;
 #[\Attribute(\Attribute::TARGET_PARAMETER | \Attribute::TARGET_PROPERTY)]
 class Option
 {
     public const ALLOWED_UNION_TYPES = ['bool|string', 'bool|int', 'bool|float'];
     public mixed $default = null;
-    public array|\Closure $suggestedValues;
-
+    public array|\Closure $suggested_values;
     /**
      * @internal
      *
      * @var string|class-string<\BackedEnum>
      */
-    public string $typeName = '';
+    public string $type_name = '';
     /** @internal */
-    public bool $allowNull = false;
+    public bool $allow_null = false;
     private ?int $mode = null;
-    private string $memberName = '';
-    private string $sourceName = '';
-
+    private string $member_name = '';
+    private string $source_name = '';
     /**
      * Represents a console command --option definition.
      *
@@ -47,116 +42,84 @@ class Option
      * @param array|string|null                                                          $shortcut        The shortcuts, can be null, a string of shortcuts delimited by | or an array of shortcuts
      * @param array<string|Suggestion>|callable(CompletionInput):list<string|Suggestion> $suggestedValues The values used for input completion
      */
-    public function __construct(
-        public string $description = '',
-        public string $name = '',
-        public array|string|null $shortcut = null,
-        array|callable $suggestedValues = [],
-    ) {
-        $this->suggestedValues = \is_callable($suggestedValues) ? $suggestedValues(...) : $suggestedValues;
+    public function __construct(public string $description = '', public string $name = '', public array|string|null $shortcut = null, array|callable $suggested_values = [])
+    {
+        $this->suggested_values = \is_callable($suggested_values) ? $suggested_values(...) : $suggested_values;
     }
-
     /**
      * @internal
      */
-    public static function tryFrom(\ReflectionParameter|\ReflectionProperty $member): ?self
+    public static function try_from(\ReflectionParameter|\ReflectionProperty $member): ?self
     {
-        $reflection = new ReflectionMember($member);
-
-        if (!$self = $reflection->getAttribute(self::class)) {
+        $reflection = new Reflection_Member($member);
+        if (!$self = $reflection->get_attribute(self::class)) {
             return null;
         }
-
-        $self->memberName = $reflection->getMemberName();
-        $self->sourceName = $reflection->getSourceName();
-
-        $name = $reflection->getName();
-        $type = $reflection->getType();
-
+        $self->member_name = $reflection->get_member_name();
+        $self->source_name = $reflection->get_source_name();
+        $name = $reflection->get_name();
+        $type = $reflection->get_type();
         // Variadic parameters implicitly default to an empty array
-        if (!$reflection->isVariadic() && !$reflection->hasDefaultValue()) {
-            throw new LogicException(\sprintf('The option %s "$%s" of "%s" must declare a default value.', $self->memberName, $name, $self->sourceName));
+        if (!$reflection->is_variadic() && !$reflection->has_default_value()) {
+            throw new LogicException(\sprintf('The option %s "$%s" of "%s" must declare a default value.', $self->member_name, $name, $self->source_name));
         }
-
         if (!$self->name) {
-            $self->name = (new UnicodeString($name))->kebab();
+            $self->name = (new Unicode_String($name))->kebab();
         }
-
-        $self->default = $reflection->isVariadic() ? [] : $reflection->getDefaultValue();
-        $self->allowNull = $reflection->isNullable();
-
+        $self->default = $reflection->is_variadic() ? [] : $reflection->get_default_value();
+        $self->allow_null = $reflection->is_nullable();
         if ($type instanceof \ReflectionUnionType) {
-            return $self->handleUnion($type);
+            return $self->handle_union($type);
         }
-
         if (!$type instanceof \ReflectionNamedType) {
-            throw new LogicException(\sprintf('The %s "$%s" of "%s" must have a named type. Untyped or Intersection types are not supported for command options.', $self->memberName, $name, $self->sourceName));
+            throw new LogicException(\sprintf('The %s "$%s" of "%s" must have a named type. Untyped or Intersection types are not supported for command options.', $self->member_name, $name, $self->source_name));
         }
-
-        $self->typeName = $type->getName();
-
-        if ('bool' === $self->typeName && $self->allowNull && \in_array($self->default, [true, false], true)) {
-            throw new LogicException(\sprintf('The option %s "$%s" of "%s" must not be nullable when it has a default boolean value.', $self->memberName, $name, $self->sourceName));
+        $self->type_name = $type->get_name();
+        if ('bool' === $self->type_name && $self->allow_null && \in_array($self->default, [true, false], true)) {
+            throw new LogicException(\sprintf('The option %s "$%s" of "%s" must not be nullable when it has a default boolean value.', $self->member_name, $name, $self->source_name));
         }
-
-        if ($self->allowNull && null !== $self->default) {
-            throw new LogicException(\sprintf('The option %s "$%s" of "%s" must either be not-nullable or have a default of null.', $self->memberName, $name, $self->sourceName));
+        if ($self->allow_null && null !== $self->default) {
+            throw new LogicException(\sprintf('The option %s "$%s" of "%s" must either be not-nullable or have a default of null.', $self->member_name, $name, $self->source_name));
         }
-
-        if ('bool' === $self->typeName) {
-            $self->mode = InputOption::VALUE_NONE;
+        if ('bool' === $self->type_name) {
+            $self->mode = Input_Option::VALUE_NONE;
             if (false !== $self->default) {
-                $self->mode |= InputOption::VALUE_NEGATABLE;
+                $self->mode |= Input_Option::VALUE_NEGATABLE;
             }
-        } elseif ('array' === $self->typeName || $reflection->isVariadic()) {
-            $self->mode = InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY;
+        } elseif ('array' === $self->type_name || $reflection->is_variadic()) {
+            $self->mode = Input_Option::VALUE_REQUIRED | Input_Option::VALUE_IS_ARRAY;
         } else {
-            $self->mode = InputOption::VALUE_REQUIRED;
+            $self->mode = Input_Option::VALUE_REQUIRED;
         }
-
-        if (\is_array($self->suggestedValues) && !\is_callable($self->suggestedValues) && 2 === \count($self->suggestedValues) && ($instance = $reflection->getSourceThis()) && $instance::class === $self->suggestedValues[0] && \is_callable([$instance, $self->suggestedValues[1]])) {
-            $self->suggestedValues = [$instance, $self->suggestedValues[1]];
+        if (\is_array($self->suggested_values) && !\is_callable($self->suggested_values) && 2 === \count($self->suggested_values) && ($instance = $reflection->get_source_this()) && $instance::class === $self->suggested_values[0] && \is_callable([$instance, $self->suggested_values[1]])) {
+            $self->suggested_values = [$instance, $self->suggested_values[1]];
         }
-
-        if (is_subclass_of($self->typeName, \BackedEnum::class) && !$self->suggestedValues) {
-            $self->suggestedValues = array_column($self->typeName::cases(), 'value');
+        if (is_subclass_of($self->type_name, \Backed_Enum::class) && !$self->suggested_values) {
+            $self->suggested_values = array_column($self->type_name::cases(), 'value');
         }
-
         return $self;
     }
-
     /**
      * @internal
      */
-    public function toInputOption(): InputOption
+    public function to_input_option(): Input_Option
     {
-        $default = InputOption::VALUE_NONE === (InputOption::VALUE_NONE & $this->mode) ? null : $this->default;
-        $suggestedValues = \is_callable($this->suggestedValues) ? ($this->suggestedValues)(...) : $this->suggestedValues;
-
-        return new InputOption($this->name, $this->shortcut, $this->mode, $this->description, $default, $suggestedValues);
+        $default = Input_Option::VALUE_NONE === (Input_Option::VALUE_NONE & $this->mode) ? null : $this->default;
+        $suggested_values = \is_callable($this->suggested_values) ? ($this->suggested_values)(...) : $this->suggested_values;
+        return new Input_Option($this->name, $this->shortcut, $this->mode, $this->description, $default, $suggested_values);
     }
-
-    private function handleUnion(\ReflectionUnionType $type): self
+    private function handle_union(\ReflectionUnionType $type): self
     {
-        $types = array_map(
-            static fn (\ReflectionType $t) => $t instanceof \ReflectionNamedType ? $t->getName() : null,
-            $type->getTypes(),
-        );
-
+        $types = array_map(static fn(\Reflection_Type $t) => $t instanceof \ReflectionNamedType ? $t->get_name() : null, $type->get_types());
         sort($types);
-
-        $this->typeName = implode('|', array_filter($types));
-
-        if (!\in_array($this->typeName, self::ALLOWED_UNION_TYPES, true)) {
-            throw new LogicException(\sprintf('The union type for %s "$%s" of "%s" is not supported as a command option. Only "%s" types are allowed.', $this->memberName, $this->name, $this->sourceName, implode('", "', self::ALLOWED_UNION_TYPES)));
+        $this->type_name = implode('|', array_filter($types));
+        if (!\in_array($this->type_name, self::ALLOWED_UNION_TYPES, true)) {
+            throw new LogicException(\sprintf('The union type for %s "$%s" of "%s" is not supported as a command option. Only "%s" types are allowed.', $this->member_name, $this->name, $this->source_name, implode('", "', self::ALLOWED_UNION_TYPES)));
         }
-
         if (false !== $this->default) {
-            throw new LogicException(\sprintf('The option %s "$%s" of "%s" must have a default value of false.', $this->memberName, $this->name, $this->sourceName));
+            throw new LogicException(\sprintf('The option %s "$%s" of "%s" must have a default value of false.', $this->member_name, $this->name, $this->source_name));
         }
-
-        $this->mode = InputOption::VALUE_OPTIONAL;
-
+        $this->mode = Input_Option::VALUE_OPTIONAL;
         return $this;
     }
 }

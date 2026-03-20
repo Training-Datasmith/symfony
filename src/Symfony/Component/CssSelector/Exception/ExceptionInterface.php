@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\CssSelector\Exception;
+namespace Symfony\Component\Css_Selector\Exception;
 
 /**
  * Interface for exceptions.
@@ -21,6 +19,6 @@ namespace Symfony\Component\CssSelector\Exception;
  *
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
  */
-interface ExceptionInterface extends \Throwable
+interface Exception_Interface extends \Throwable
 {
 }

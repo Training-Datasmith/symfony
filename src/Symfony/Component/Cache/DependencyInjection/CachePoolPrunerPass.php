@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,34 +9,29 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Cache\Dependency_Injection;
 
-namespace Symfony\Component\Cache\DependencyInjection;
-
-use Symfony\Component\Cache\PruneableInterface;
-use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Cache\Pruneable_Interface;
+use Symfony\Component\Dependency_Injection\Argument\Iterator_Argument;
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * @author Rob Frawley 2nd <rmf@src.run>
  */
-class CachePoolPrunerPass implements CompilerPassInterface
+class Cache_Pool_Pruner_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (!$container->hasDefinition('console.command.cache_pool_prune')) {
+        if (!$container->has_definition('console.command.cache_pool_prune')) {
             return;
         }
-
         $services = [];
-
-        foreach ($container->findTaggedServiceIds('cache.pool') as $id => $tags) {
-            if ($tags[0]['pruneable'] ?? $container->getReflectionClass($container->getDefinition($id)->getClass(), false)?->implementsInterface(PruneableInterface::class) ?? false) {
+        foreach ($container->find_tagged_service_ids('cache.pool') as $id => $tags) {
+            if ($tags[0]['pruneable'] ?? $container->get_reflection_class($container->get_definition($id)->get_class(), false)?->implements_interface(Pruneable_Interface::class) ?? false) {
                 $services[$tags[0]['name'] ?? $id] = new Reference($id);
             }
         }
-
-        $container->getDefinition('console.command.cache_pool_prune')->replaceArgument(0, new IteratorArgument($services));
+        $container->get_definition('console.command.cache_pool_prune')->replace_argument(0, new Iterator_Argument($services));
     }
 }

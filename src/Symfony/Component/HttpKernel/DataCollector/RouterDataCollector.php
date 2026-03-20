@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,89 +9,71 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Data_Collector;
 
-namespace Symfony\Component\HttpKernel\DataCollector;
-
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\ControllerEvent;
-
+use Symfony\Component\Http_Foundation\Redirect_Response;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Response;
+use Symfony\Component\Http_Kernel\Event\Controller_Event;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class RouterDataCollector extends DataCollector
+class Router_Data_Collector extends Data_Collector
 {
     /**
      * @var \SplObjectStorage<Request, callable>
      */
-    protected \SplObjectStorage $controllers;
-
+    protected \Spl_Object_Storage $controllers;
     public function __construct()
     {
         $this->reset();
     }
-
     /**
      * @final
      */
     public function collect(Request $request, Response $response, ?\Throwable $exception = null): void
     {
-        if ($response instanceof RedirectResponse) {
+        if ($response instanceof Redirect_Response) {
             $this->data['redirect'] = true;
-            $this->data['url'] = $response->getTargetUrl();
-
+            $this->data['url'] = $response->get_target_url();
             if ($this->controllers->offsetExists($request)) {
-                $this->data['route'] = $this->guessRoute($request, $this->controllers[$request]);
+                $this->data['route'] = $this->guess_route($request, $this->controllers[$request]);
             }
         }
-
         unset($this->controllers[$request]);
     }
-
     public function reset(): void
     {
-        $this->controllers = new \SplObjectStorage();
-
-        $this->data = [
-            'redirect' => false,
-            'url' => null,
-            'route' => null,
-        ];
+        $this->controllers = new \Spl_Object_Storage();
+        $this->data = ['redirect' => false, 'url' => null, 'route' => null];
     }
-
-    protected function guessRoute(Request $request, string|object|array $controller): string
+    protected function guess_route(Request $request, string|object|array $controller): string
     {
         return 'n/a';
     }
-
     /**
      * Remembers the controller associated to each request.
      */
-    public function onKernelController(ControllerEvent $event): void
+    public function on_kernel_controller(Controller_Event $event): void
     {
-        $this->controllers[$event->getRequest()] = $event->getController();
+        $this->controllers[$event->get_request()] = $event->get_controller();
     }
-
     /**
      * @return bool Whether this request will result in a redirect
      */
-    public function getRedirect(): bool
+    public function get_redirect(): bool
     {
         return $this->data['redirect'];
     }
-
-    public function getTargetUrl(): ?string
+    public function get_target_url(): ?string
     {
         return $this->data['url'];
     }
-
-    public function getTargetRoute(): ?string
+    public function get_target_route(): ?string
     {
         return $this->data['route'];
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return 'router';
     }

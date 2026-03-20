@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Util;
 
 /**
@@ -71,80 +69,68 @@ namespace Symfony\Component\Form\Util;
  * @implements \ArrayAccess<string, TValue>
  * @implements \IteratorAggregate<string, TValue>
  */
-class OrderedHashMap implements \ArrayAccess, \IteratorAggregate, \Countable
+class Ordered_Hash_Map implements \ArrayAccess, \IteratorAggregate, \Countable
 {
     /**
      * The keys of the map in the order in which they were inserted or changed.
      *
      * @var list<string>
      */
-    private array $orderedKeys = [];
-
+    private array $ordered_keys = [];
     /**
      * References to the cursors of all open iterators.
      *
      * @var array<int, int>
      */
-    private array $managedCursors = [];
-
+    private array $managed_cursors = [];
     /**
      * Creates a new map.
      *
      * @param TValue[] $elements The initial elements of the map, indexed by their keys
      */
-    public function __construct(
-        private array $elements = [],
-    ) {
+    public function __construct(private array $elements = [])
+    {
         // the explicit string type-cast is necessary as digit-only keys would be returned as integers otherwise
-        $this->orderedKeys = array_map(strval(...), array_keys($elements));
+        $this->ordered_keys = array_map(strval(...), array_keys($elements));
     }
-
     public function offsetExists(mixed $key): bool
     {
         return isset($this->elements[$key]);
     }
-
     public function offsetGet(mixed $key): mixed
     {
         if (!isset($this->elements[$key])) {
             throw new \OutOfBoundsException(\sprintf('The offset "%s" does not exist.', $key));
         }
-
         return $this->elements[$key];
     }
-
     public function offsetSet(mixed $key, mixed $value): void
     {
         if (null === $key) {
             $this->elements[] = $value;
             $key = array_key_last($this->elements);
-            $this->orderedKeys[] = (string) $key;
+            $this->ordered_keys[] = (string) $key;
         } elseif (!\array_key_exists($key, $this->elements)) {
-            $this->orderedKeys[] = (string) $key;
+            $this->ordered_keys[] = (string) $key;
         }
-
         $this->elements[$key] = $value;
     }
-
     public function offsetUnset(mixed $key): void
     {
-        if (false !== ($position = array_search((string) $key, $this->orderedKeys))) {
-            array_splice($this->orderedKeys, $position, 1);
+        if (false !== $position = array_search((string) $key, $this->ordered_keys)) {
+            array_splice($this->ordered_keys, $position, 1);
             unset($this->elements[$key]);
-
-            foreach ($this->managedCursors as $i => $cursor) {
+            foreach ($this->managed_cursors as $i => $cursor) {
                 if ($cursor >= $position) {
-                    --$this->managedCursors[$i];
+                    --$this->managed_cursors[$i];
                 }
             }
         }
     }
-
     public function getIterator(): \Traversable
     {
-        return new OrderedHashMapIterator($this->elements, $this->orderedKeys, $this->managedCursors);
+        return new Ordered_Hash_Map_Iterator($this->elements, $this->ordered_keys, $this->managed_cursors);
     }
-
     public function count(): int
     {
         return \count($this->elements);

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,15 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpKernel\Exception;
+namespace Symfony\Component\Http_Kernel\Exception;
 
 /**
  * @author Ben Ramsey <ben@benramsey.com>
  *
  * @see http://tools.ietf.org/html/rfc6585
  */
-class PreconditionRequiredHttpException extends HttpException
+class Precondition_Required_Http_Exception extends Http_Exception
 {
     public function __construct(string $message = '', ?\Throwable $previous = null, int $code = 0, array $headers = [])
     {

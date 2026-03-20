@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,15 +9,13 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
 use Symfony\Component\Form\Exception\BadMethodCallException;
 use Symfony\Component\Form\Exception\InvalidArgumentException;
 use Symfony\Component\Form\Exception\LogicException;
 use Symfony\Component\Form\Exception\OutOfBoundsException;
-use Symfony\Component\Validator\ConstraintViolation;
-
+use Symfony\Component\Validator\Constraint_Violation;
 /**
  * Iterates over the errors of a form.
  *
@@ -37,74 +34,63 @@ use Symfony\Component\Validator\ConstraintViolation;
  * @implements \RecursiveIterator<int, T>
  * @implements \SeekableIterator<int, T>
  */
-class FormErrorIterator implements \RecursiveIterator, \SeekableIterator, \ArrayAccess, \Countable, \Stringable
+class Form_Error_Iterator implements \Recursive_Iterator, \Seekable_Iterator, \ArrayAccess, \Countable, \Stringable
 {
     /**
      * The prefix used for indenting nested error messages.
      */
     public const INDENTATION = '    ';
-
     /**
      * @var list<T>
      */
     private array $errors;
-
     /**
      * @param list<T> $errors
      *
      * @throws InvalidArgumentException If the errors are invalid
      */
-    public function __construct(
-        private readonly FormInterface $form,
-        array $errors,
-    ) {
+    public function __construct(private readonly Form_Interface $form, array $errors)
+    {
         foreach ($errors as $error) {
-            if (!($error instanceof FormError || $error instanceof self)) {
+            if (!($error instanceof Form_Error || $error instanceof self)) {
                 throw new InvalidArgumentException(\sprintf('The errors must be instances of "Symfony\Component\Form\FormError" or "%s". Got: "%s".', self::class, get_debug_type($error)));
             }
         }
-
         $this->errors = $errors;
     }
-
     /**
      * Returns all iterated error messages as string.
      */
     public function __toString(): string
     {
         $string = '';
-
         foreach ($this->errors as $error) {
-            if ($error instanceof FormError) {
-                $string .= 'ERROR: '.$error->getMessage()."\n";
+            if ($error instanceof Form_Error) {
+                $string .= 'ERROR: ' . $error->get_message() . "\n";
             } else {
                 /** @var self $error */
-                $string .= $error->getForm()->getName().":\n";
+                $string .= $error->get_form()->get_name() . ":\n";
                 $string .= self::indent((string) $error);
             }
         }
-
         return $string;
     }
-
     /**
      * Returns the iterated form.
      */
-    public function getForm(): FormInterface
+    public function get_form(): Form_Interface
     {
         return $this->form;
     }
-
     /**
      * Returns the current element of the iterator.
      *
      * @return T An error or an iterator containing nested errors
      */
-    public function current(): FormError|self
+    public function current(): Form_Error|self
     {
         return current($this->errors);
     }
-
     /**
      * Advances the iterator to the next position.
      */
@@ -112,7 +98,6 @@ class FormErrorIterator implements \RecursiveIterator, \SeekableIterator, \Array
     {
         next($this->errors);
     }
-
     /**
      * Returns the current position of the iterator.
      */
@@ -120,7 +105,6 @@ class FormErrorIterator implements \RecursiveIterator, \SeekableIterator, \Array
     {
         return key($this->errors);
     }
-
     /**
      * Returns whether the iterator's position is valid.
      */
@@ -128,7 +112,6 @@ class FormErrorIterator implements \RecursiveIterator, \SeekableIterator, \Array
     {
         return null !== key($this->errors);
     }
-
     /**
      * Sets the iterator's position to the beginning.
      *
@@ -139,7 +122,6 @@ class FormErrorIterator implements \RecursiveIterator, \SeekableIterator, \Array
     {
         reset($this->errors);
     }
-
     /**
      * Returns whether a position exists in the iterator.
      *
@@ -149,7 +131,6 @@ class FormErrorIterator implements \RecursiveIterator, \SeekableIterator, \Array
     {
         return isset($this->errors[$position]);
     }
-
     /**
      * Returns the element at a position in the iterator.
      *
@@ -159,15 +140,13 @@ class FormErrorIterator implements \RecursiveIterator, \SeekableIterator, \Array
      *
      * @throws OutOfBoundsException If the given position does not exist
      */
-    public function offsetGet(mixed $position): FormError|self
+    public function offsetGet(mixed $position): Form_Error|self
     {
         if (!isset($this->errors[$position])) {
-            throw new OutOfBoundsException('The offset '.$position.' does not exist.');
+            throw new OutOfBoundsException('The offset ' . $position . ' does not exist.');
         }
-
         return $this->errors[$position];
     }
-
     /**
      * Unsupported method.
      *
@@ -177,7 +156,6 @@ class FormErrorIterator implements \RecursiveIterator, \SeekableIterator, \Array
     {
         throw new BadMethodCallException('The iterator doesn\'t support modification of elements.');
     }
-
     /**
      * Unsupported method.
      *
@@ -187,28 +165,23 @@ class FormErrorIterator implements \RecursiveIterator, \SeekableIterator, \Array
     {
         throw new BadMethodCallException('The iterator doesn\'t support modification of elements.');
     }
-
     /**
      * Returns whether the current element of the iterator can be recursed
      * into.
      */
-    public function hasChildren(): bool
+    public function has_children(): bool
     {
         return current($this->errors) instanceof self;
     }
-
-    public function getChildren(): self
+    public function get_children(): self
     {
-        if (!$this->hasChildren()) {
-            throw new LogicException(\sprintf('The current element is not iterable. Use "%s" to get the current element.', self::class.'::current()'));
+        if (!$this->has_children()) {
+            throw new LogicException(\sprintf('The current element is not iterable. Use "%s" to get the current element.', self::class . '::current()'));
         }
-
         /** @var self $children */
         $children = current($this->errors);
-
         return $children;
     }
-
     /**
      * Returns the number of elements in the iterator.
      *
@@ -228,7 +201,6 @@ class FormErrorIterator implements \RecursiveIterator, \SeekableIterator, \Array
     {
         return \count($this->errors);
     }
-
     /**
      * Sets the position of the iterator.
      *
@@ -237,40 +209,35 @@ class FormErrorIterator implements \RecursiveIterator, \SeekableIterator, \Array
     public function seek(int $position): void
     {
         if (!isset($this->errors[$position])) {
-            throw new OutOfBoundsException('The offset '.$position.' does not exist.');
+            throw new OutOfBoundsException('The offset ' . $position . ' does not exist.');
         }
-
         reset($this->errors);
-
         while ($position !== key($this->errors)) {
             next($this->errors);
         }
     }
-
     /**
      * Creates iterator for errors with specific codes.
      *
      * @param string|string[] $codes The codes to find
      */
-    public function findByCodes(string|array $codes): static
+    public function find_by_codes(string|array $codes): static
     {
         $codes = (array) $codes;
         $errors = [];
         foreach ($this as $error) {
-            $cause = $error->getCause();
-            if ($cause instanceof ConstraintViolation && \in_array($cause->getCode(), $codes, true)) {
+            $cause = $error->get_cause();
+            if ($cause instanceof Constraint_Violation && \in_array($cause->get_code(), $codes, true)) {
                 $errors[] = $error;
             }
         }
-
         return new static($this->form, $errors);
     }
-
     /**
      * Utility function for indenting multi-line strings.
      */
     private static function indent(string $string): string
     {
-        return rtrim(self::INDENTATION.str_replace("\n", "\n".self::INDENTATION, $string), ' ');
+        return rtrim(self::INDENTATION . str_replace("\n", "\n" . self::INDENTATION, $string), ' ');
     }
 }

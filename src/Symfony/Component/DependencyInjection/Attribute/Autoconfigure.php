@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DependencyInjection\Attribute;
+namespace Symfony\Component\Dependency_Injection\Attribute;
 
 /**
  * An attribute to tell how a base type should be autoconfigured.
@@ -34,18 +32,7 @@ class Autoconfigure
      * @param string|null                       $constructor  The public static method to use to instantiate the service
      * @param array<array<mixed>>|string[]|null $resourceTags The resource tags to add to the service
      */
-    public function __construct(
-        public ?array $tags = null,
-        public ?array $calls = null,
-        public ?array $bind = null,
-        public bool|string|null $lazy = null,
-        public ?bool $public = null,
-        public ?bool $shared = null,
-        public ?bool $autowire = null,
-        public ?array $properties = null,
-        public array|string|null $configurator = null,
-        public ?string $constructor = null,
-        public ?array $resourceTags = null,
-    ) {
+    public function __construct(public ?array $tags = null, public ?array $calls = null, public ?array $bind = null, public bool|string|null $lazy = null, public ?bool $public = null, public ?bool $shared = null, public ?bool $autowire = null, public ?array $properties = null, public array|string|null $configurator = null, public ?string $constructor = null, public ?array $resource_tags = null)
+    {
     }
 }

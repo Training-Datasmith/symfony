@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,53 +9,45 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Container_Interface;
+use Symfony\Component\Dependency_Injection\Exception\Service_Not_Found_Exception;
 /**
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
  */
-final class TagDecoratorPass implements CompilerPassInterface
+final class Tag_Decorator_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        foreach ($container->findTaggedResourceIds('container.tag_decorator', false) as $id => $tags) {
-            $definition = $container->getDefinition($id);
-
+        foreach ($container->find_tagged_resource_ids('container.tag_decorator', false) as $id => $tags) {
+            $definition = $container->get_definition($id);
             foreach ($tags as $tag) {
-                if (!$decoratesTag = $tag['decorates_tag'] ?? null) {
+                if (!$decorates_tag = $tag['decorates_tag'] ?? null) {
                     continue;
                 }
-
                 $priority = $tag['priority'] ?? 0;
-                $invalidBehavior = $tag['on_invalid'] ?? ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE;
-                $taggedServices = $container->findTaggedServiceIds($decoratesTag);
-
-                if (!$taggedServices) {
-                    if (ContainerInterface::IGNORE_ON_INVALID_REFERENCE === $invalidBehavior) {
+                $invalid_behavior = $tag['on_invalid'] ?? Container_Interface::EXCEPTION_ON_INVALID_REFERENCE;
+                $tagged_services = $container->find_tagged_service_ids($decorates_tag);
+                if (!$tagged_services) {
+                    if (Container_Interface::IGNORE_ON_INVALID_REFERENCE === $invalid_behavior) {
                         continue;
                     }
-
-                    if (ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE === $invalidBehavior) {
-                        throw new ServiceNotFoundException($decoratesTag, $id);
+                    if (Container_Interface::EXCEPTION_ON_INVALID_REFERENCE === $invalid_behavior) {
+                        throw new Service_Not_Found_Exception($decorates_tag, $id);
                     }
                 }
-
-                foreach ($taggedServices as $taggedServiceId => $_) {
-                    $clonedDefinition = clone $definition;
-                    $clonedDefinition->clearTag('container.tag_decorator');
-                    $clonedDefinition->clearTag('container.excluded');
-                    $clonedDefinition->setDecoratedService($taggedServiceId, null, $priority, $invalidBehavior);
-                    $decoratorId = \sprintf('.decorator.%s.%s', $taggedServiceId, $id);
-                    $container->setDefinition($decoratorId, $clonedDefinition);
+                foreach ($tagged_services as $tagged_service_id => $_) {
+                    $cloned_definition = clone $definition;
+                    $cloned_definition->clear_tag('container.tag_decorator');
+                    $cloned_definition->clear_tag('container.excluded');
+                    $cloned_definition->set_decorated_service($tagged_service_id, null, $priority, $invalid_behavior);
+                    $decorator_id = \sprintf('.decorator.%s.%s', $tagged_service_id, $id);
+                    $container->set_definition($decorator_id, $cloned_definition);
                 }
             }
-
-            $container->removeDefinition($id);
+            $container->remove_definition($id);
         }
     }
 }

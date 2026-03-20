@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpKernel\Attribute;
+namespace Symfony\Component\Http_Kernel\Attribute;
 
 /**
  * Validates the request signature for specific HTTP methods.
@@ -27,17 +25,15 @@ namespace Symfony\Component\HttpKernel\Attribute;
  * @author Santiago San Martin <sanmartindev@gmail.com>
  */
 #[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION)]
-final readonly class IsSignatureValid
+final readonly class Is_Signature_Valid
 {
     /** @var string[] */
     public array $methods;
-
     /**
      * @param string[]|string $methods HTTP methods that require signature validation. An empty array means that no method filtering is done
      */
-    public function __construct(
-        array|string $methods = [],
-    ) {
+    public function __construct(array|string $methods = [])
+    {
         $this->methods = (array) $methods;
     }
 }

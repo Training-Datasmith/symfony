@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Dependency_Injection\Security\Factory;
 
-namespace Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory;
-
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
-use Symfony\Component\DependencyInjection\ChildDefinition;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Config\Definition\Builder\Node_Definition;
+use Symfony\Component\Dependency_Injection\Child_Definition;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * RemoteUserFactory creates services for REMOTE_USER based authentication.
  *
@@ -26,40 +23,25 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * @internal
  */
-class RemoteUserFactory implements AuthenticatorFactoryInterface
+class Remote_User_Factory implements Authenticator_Factory_Interface
 {
     public const PRIORITY = -10;
-
-    public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId): string
+    public function create_authenticator(Container_Builder $container, string $firewall_name, array $config, string $user_provider_id): string
     {
-        $authenticatorId = 'security.authenticator.remote_user.'.$firewallName;
-        $container
-            ->setDefinition($authenticatorId, new ChildDefinition('security.authenticator.remote_user'))
-            ->replaceArgument(0, new Reference($userProviderId))
-            ->replaceArgument(2, $firewallName)
-            ->replaceArgument(3, $config['user'])
-        ;
-
-        return $authenticatorId;
+        $authenticator_id = 'security.authenticator.remote_user.' . $firewall_name;
+        $container->set_definition($authenticator_id, new Child_Definition('security.authenticator.remote_user'))->replace_argument(0, new Reference($user_provider_id))->replace_argument(2, $firewall_name)->replace_argument(3, $config['user']);
+        return $authenticator_id;
     }
-
-    public function getPriority(): int
+    public function get_priority(): int
     {
         return self::PRIORITY;
     }
-
-    public function getKey(): string
+    public function get_key(): string
     {
         return 'remote-user';
     }
-
-    public function addConfiguration(NodeDefinition $node): void
+    public function add_configuration(Node_Definition $node): void
     {
-        $node
-            ->children()
-                ->scalarNode('provider')->end()
-                ->scalarNode('user')->defaultValue('REMOTE_USER')->end()
-            ->end()
-        ;
+        $node->children()->scalar_node('provider')->end()->scalar_node('user')->default_value('REMOTE_USER')->end()->end();
     }
 }

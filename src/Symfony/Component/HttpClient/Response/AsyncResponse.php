@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,76 +9,67 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Client\Response;
 
-namespace Symfony\Component\HttpClient\Response;
-
-use Symfony\Component\HttpClient\Chunk\ErrorChunk;
-use Symfony\Component\HttpClient\Chunk\LastChunk;
-use Symfony\Component\HttpClient\Exception\TransportException;
-use Symfony\Contracts\HttpClient\ChunkInterface;
-use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface;
-
+use Symfony\Component\Http_Client\Chunk\Error_Chunk;
+use Symfony\Component\Http_Client\Chunk\Last_Chunk;
+use Symfony\Component\Http_Client\Exception\Transport_Exception;
+use Symfony\Contracts\Http_Client\Chunk_Interface;
+use Symfony\Contracts\Http_Client\Exception\Exception_Interface;
+use Symfony\Contracts\Http_Client\Exception\Http_Exception_Interface;
+use Symfony\Contracts\Http_Client\Exception\Transport_Exception_Interface;
+use Symfony\Contracts\Http_Client\Http_Client_Interface;
+use Symfony\Contracts\Http_Client\Response_Interface;
 /**
  * Provides a single extension point to process a response's content stream.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class AsyncResponse implements ResponseInterface, StreamableInterface
+class Async_Response implements Response_Interface, Streamable_Interface
 {
-    use CommonResponseTrait;
-
+    use Common_Response_Trait;
     private const FIRST_CHUNK_YIELDED = 1;
     private const LAST_CHUNK_YIELDED = 2;
-    private ResponseInterface $response;
+    private Response_Interface $response;
     private array $info = ['canceled' => false];
     /** @var callable|null */
     private $passthru;
     private ?\Iterator $stream = null;
-    private ?int $yieldedState = null;
-    private bool $hasThrown = false;
-
+    private ?int $yielded_state = null;
+    private bool $has_thrown = false;
     /**
      * @param ?callable(ChunkInterface, AsyncContext): ?\Iterator $passthru
      */
-    public function __construct(private ?HttpClientInterface $client, string $method, string $url, array $options, ?callable $passthru = null)
+    public function __construct(private ?Http_Client_Interface $client, string $method, string $url, array $options, ?callable $passthru = null)
     {
-        $this->shouldBuffer = $options['buffer'] ?? true;
-
-        if (null !== $onProgress = $options['on_progress'] ?? null) {
-            $thisInfo = &$this->info;
-            $options['on_progress'] = static function (int $dlNow, int $dlSize, array $info) use (&$thisInfo, $onProgress): void {
-                $onProgress($dlNow, $dlSize, $thisInfo + $info);
+        $this->should_buffer = $options['buffer'] ?? true;
+        if (null !== $on_progress = $options['on_progress'] ?? null) {
+            $this_info =& $this->info;
+            $options['on_progress'] = static function (int $dl_now, int $dl_size, array $info) use (&$this_info, $on_progress): void {
+                $on_progress($dl_now, $dl_size, $this_info + $info);
             };
         }
         $this->response = $this->client->request($method, $url, ['buffer' => false] + $options);
         $this->passthru = $passthru;
         $this->initializer = static function (self $response, ?float $timeout = null) {
-            if (null === $response->shouldBuffer) {
+            if (null === $response->should_buffer) {
                 return false;
             }
-
             while (true) {
                 foreach (self::stream([$response], $timeout) as $chunk) {
-                    if ($chunk->isTimeout() && ($response->passthru || $response = self::findInnerPassthru($response))) {
+                    if ($chunk->is_timeout() && ($response->passthru || $response = self::find_inner_passthru($response))) {
                         // Timeouts thrown during initialization are transport errors
-                        foreach (self::passthru($response->client, $response, new ErrorChunk($response->offset, new TransportException($chunk->getError()))) as $chunk) {
-                            if ($chunk->isFirst()) {
+                        foreach (self::passthru($response->client, $response, new Error_Chunk($response->offset, new Transport_Exception($chunk->get_error()))) as $chunk) {
+                            if ($chunk->is_first()) {
                                 return false;
                             }
                         }
-
                         continue 2;
                     }
-
-                    if ($chunk->isFirst()) {
+                    if ($chunk->is_first()) {
                         return false;
                     }
                 }
-
                 return false;
             }
         };
@@ -90,411 +80,330 @@ class AsyncResponse implements ResponseInterface, StreamableInterface
             $this->info['max_duration'] = $options['max_duration'];
         }
     }
-
-    public function getStatusCode(): int
+    public function get_status_code(): int
     {
         if ($this->initializer) {
             self::initialize($this);
         }
-
-        return $this->response->getStatusCode();
+        return $this->response->get_status_code();
     }
-
-    public function getHeaders(bool $throw = true): array
+    public function get_headers(bool $throw = true): array
     {
         if ($this->initializer) {
             self::initialize($this);
         }
-
-        $headers = $this->response->getHeaders(false);
-
+        $headers = $this->response->get_headers(false);
         if ($throw) {
-            $this->checkStatusCode();
+            $this->check_status_code();
         }
-
         return $headers;
     }
-
-    public function getInfo(?string $type = null): mixed
+    public function get_info(?string $type = null): mixed
     {
         if ('debug' === ($type ?? 'debug')) {
             $debug = implode('', array_column($this->info['previous_info'] ?? [], 'debug'));
-            $debug .= $this->response->getInfo('debug');
-
+            $debug .= $this->response->get_info('debug');
             if ('debug' === $type) {
                 return $debug;
             }
         }
-
         if (null !== $type) {
-            return $this->info[$type] ?? $this->response->getInfo($type);
+            return $this->info[$type] ?? $this->response->get_info($type);
         }
-
-        return array_merge($this->info + $this->response->getInfo(), ['debug' => $debug]);
+        return array_merge($this->info + $this->response->get_info(), ['debug' => $debug]);
     }
-
     /**
      * @return resource
      */
-    public function toStream(bool $throw = true)
+    public function to_stream(bool $throw = true)
     {
         if ($throw) {
             // Ensure headers arrived
-            $this->getHeaders(true);
+            $this->get_headers(true);
         }
-
         $handle = function () {
-            $stream = $this->response instanceof StreamableInterface ? $this->response->toStream(false) : StreamWrapper::createResource($this->response);
-
+            $stream = $this->response instanceof Streamable_Interface ? $this->response->to_stream(false) : Stream_Wrapper::create_resource($this->response);
             return stream_get_meta_data($stream)['wrapper_data']->stream_cast(\STREAM_CAST_FOR_SELECT);
         };
-
-        $stream = StreamWrapper::createResource($this);
-        stream_get_meta_data($stream)['wrapper_data']
-            ->bindHandles($handle, $this->content);
-
+        $stream = Stream_Wrapper::create_resource($this);
+        stream_get_meta_data($stream)['wrapper_data']->bind_handles($handle, $this->content);
         return $stream;
     }
-
     public function cancel(): void
     {
         if ($this->info['canceled']) {
             return;
         }
-
         $this->info['canceled'] = true;
         $this->info['error'] = 'Response has been canceled.';
         $this->close();
         $client = $this->client;
         $this->client = null;
-
         if (!$this->passthru) {
             return;
         }
-
         try {
-            foreach (self::passthru($client, $this, new LastChunk()) as $chunk) {
+            foreach (self::passthru($client, $this, new Last_Chunk()) as $chunk) {
                 // no-op
             }
-
             $this->passthru = null;
-        } catch (ExceptionInterface) {
+        } catch (Exception_Interface) {
             // ignore any errors when canceling
         }
     }
-
     public function __destruct()
     {
-        $httpException = null;
-
-        if ($this->initializer && null === $this->getInfo('error') && !$this->hasThrown) {
+        $http_exception = null;
+        if ($this->initializer && null === $this->get_info('error') && !$this->has_thrown) {
             try {
                 self::initialize($this);
-                $this->getHeaders(true);
-            } catch (HttpExceptionInterface) {
+                $this->get_headers(true);
+            } catch (Http_Exception_Interface) {
                 // no-op
             }
         }
-
-        if ($this->passthru && null === $this->getInfo('error')) {
+        if ($this->passthru && null === $this->get_info('error')) {
             $this->info['canceled'] = true;
-
             try {
-                foreach (self::passthru($this->client, $this, new LastChunk()) as $chunk) {
+                foreach (self::passthru($this->client, $this, new Last_Chunk()) as $chunk) {
                     // no-op
                 }
-            } catch (ExceptionInterface) {
+            } catch (Exception_Interface) {
                 // ignore any errors when destructing
             }
         }
-
-        if (null !== $httpException) {
-            throw $httpException;
+        if (null !== $http_exception) {
+            throw $http_exception;
         }
     }
-
     /**
      * @internal
      */
     public static function stream(iterable $responses, ?float $timeout = null, ?string $class = null): \Generator
     {
         while ($responses) {
-            $wrappedResponses = [];
-            $asyncMap = new \SplObjectStorage();
+            $wrapped_responses = [];
+            $async_map = new \Spl_Object_Storage();
             $client = null;
-
             foreach ($responses as $r) {
                 if (!$r instanceof self) {
                     throw new \TypeError(\sprintf('"%s::stream()" expects parameter 1 to be an iterable of AsyncResponse objects, "%s" given.', $class ?? static::class, get_debug_type($r)));
                 }
-
                 if (null !== $e = $r->info['error'] ?? null) {
-                    yield $r => $chunk = new ErrorChunk($r->offset, new TransportException($e));
-                    $chunk->didThrow() ?: $chunk->getContent();
+                    yield $r => $chunk = new Error_Chunk($r->offset, new Transport_Exception($e));
+                    $chunk->did_throw() ?: $chunk->get_content();
                     continue;
                 }
-
                 if (null === $client) {
                     $client = $r->client;
                 } elseif ($r->client !== $client) {
-                    throw new TransportException('Cannot stream AsyncResponse objects with many clients.');
+                    throw new Transport_Exception('Cannot stream AsyncResponse objects with many clients.');
                 }
-
-                $asyncMap[$r->response] = $r;
-                $wrappedResponses[] = $r->response;
-
+                $async_map[$r->response] = $r;
+                $wrapped_responses[] = $r->response;
                 if ($r->stream) {
-                    yield from self::passthruStream($response = $r->response, $r, $asyncMap, new LastChunk());
-
-                    if (!isset($asyncMap[$response])) {
-                        array_pop($wrappedResponses);
+                    yield from self::passthru_stream($response = $r->response, $r, $async_map, new Last_Chunk());
+                    if (!isset($async_map[$response])) {
+                        array_pop($wrapped_responses);
                     }
-
-                    if ($r->response !== $response && !isset($asyncMap[$r->response])) {
-                        $asyncMap[$r->response] = $r;
-                        $wrappedResponses[] = $r->response;
+                    if ($r->response !== $response && !isset($async_map[$r->response])) {
+                        $async_map[$r->response] = $r;
+                        $wrapped_responses[] = $r->response;
                     }
                 }
             }
-
-            if (!$client || !$wrappedResponses) {
+            if (!$client || !$wrapped_responses) {
                 return;
             }
-
             $chunk = null;
-            foreach ($client->stream($wrappedResponses, $timeout) as $response => $chunk) {
-                $r = $asyncMap[$response];
-
-                if (null === $chunk->getError()) {
-                    if ($chunk->isFirst()) {
+            foreach ($client->stream($wrapped_responses, $timeout) as $response => $chunk) {
+                $r = $async_map[$response];
+                if (null === $chunk->get_error()) {
+                    if ($chunk->is_first()) {
                         // Ensure no exception is thrown on destruct for the wrapped response
-                        $r->response->getStatusCode();
-                    } elseif (0 === $r->offset && null === $r->content && $chunk->isLast()) {
+                        $r->response->get_status_code();
+                    } elseif (0 === $r->offset && null === $r->content && $chunk->is_last()) {
                         $r->content = fopen('php://memory', 'w+');
                     }
                 }
-
-                $innerR = null;
-                if (!$r->passthru && !$innerR = null !== $chunk->getError() ? self::findInnerPassthru($r) : null) {
-                    $r->stream = (static fn () => yield $chunk)();
-                    yield from self::passthruStream($response, $r, $asyncMap);
-
+                $inner_r = null;
+                if (!$r->passthru && !$inner_r = null !== $chunk->get_error() ? self::find_inner_passthru($r) : null) {
+                    $r->stream = (static fn() => yield $chunk)();
+                    yield from self::passthru_stream($response, $r, $async_map);
                     continue;
                 }
-
-                if (null !== $chunk->getError()) {
+                if (null !== $chunk->get_error()) {
                     // no-op
-                } elseif ($chunk->isFirst()) {
-                    $r->yieldedState = self::FIRST_CHUNK_YIELDED;
-                } elseif (self::FIRST_CHUNK_YIELDED !== $r->yieldedState && null === $chunk->getInformationalStatus()) {
+                } elseif ($chunk->is_first()) {
+                    $r->yielded_state = self::FIRST_CHUNK_YIELDED;
+                } elseif (self::FIRST_CHUNK_YIELDED !== $r->yielded_state && null === $chunk->get_informational_status()) {
                     throw new \LogicException(\sprintf('Instance of "%s" is already consumed and cannot be managed by "%s". A decorated client should not call any of the response\'s methods in its "request()" method.', get_debug_type($response), $class ?? static::class));
                 }
-
-                $innerR ??= $r;
-                foreach (self::passthru($innerR->client, $innerR, $chunk, $asyncMap) as $chunk) {
+                $inner_r ??= $r;
+                foreach (self::passthru($inner_r->client, $inner_r, $chunk, $async_map) as $chunk) {
                     yield $r => $chunk;
                 }
-
-                if ($innerR->response !== $response && isset($asyncMap[$response])) {
+                if ($inner_r->response !== $response && isset($async_map[$response])) {
                     break;
                 }
             }
-
             if (null === $chunk) {
                 throw new \LogicException(\sprintf('"%s" is not compliant with HttpClientInterface: its "stream()" method didn\'t yield any chunks when it should have.', get_debug_type($client)));
             }
-            if (null === $chunk->getError() && $chunk->isLast()) {
-                $r->yieldedState = self::LAST_CHUNK_YIELDED;
+            if (null === $chunk->get_error() && $chunk->is_last()) {
+                $r->yielded_state = self::LAST_CHUNK_YIELDED;
             }
-            if (null === $chunk->getError() && self::LAST_CHUNK_YIELDED !== $r->yieldedState && $r->response === $response && null !== $r->client) {
+            if (null === $chunk->get_error() && self::LAST_CHUNK_YIELDED !== $r->yielded_state && $r->response === $response && null !== $r->client) {
                 throw new \LogicException('A chunk passthru must yield an "isLast()" chunk before ending a stream.');
             }
-
             $responses = [];
-            foreach ($asyncMap as $response) {
-                $r = $asyncMap[$response];
-
+            foreach ($async_map as $response) {
+                $r = $async_map[$response];
                 if (null !== $r->client) {
                     $responses[] = $r;
                 }
             }
         }
     }
-
     /**
      * @param \SplObjectStorage<ResponseInterface, AsyncResponse>|null $asyncMap
      */
-    private static function passthru(HttpClientInterface $client, self $r, ChunkInterface $chunk, ?\SplObjectStorage $asyncMap = null): \Generator
+    private static function passthru(Http_Client_Interface $client, self $r, Chunk_Interface $chunk, ?\Spl_Object_Storage $async_map = null): \Generator
     {
         $r->stream = null;
         $response = $r->response;
-        $context = new AsyncContext($r->passthru, $client, $r->response, $r->info, $r->content, $r->offset);
+        $context = new Async_Context($r->passthru, $client, $r->response, $r->info, $r->content, $r->offset);
         if (null === $stream = ($r->passthru)($chunk, $context)) {
-            if ($r->response === $response && (null !== $chunk->getError() || $chunk->isLast())) {
+            if ($r->response === $response && (null !== $chunk->get_error() || $chunk->is_last())) {
                 throw new \LogicException('A chunk passthru cannot swallow the last chunk.');
             }
-
             return;
         }
-
         if (!$stream instanceof \Iterator) {
             throw new \LogicException(\sprintf('A chunk passthru must return an "Iterator", "%s" returned.', get_debug_type($stream)));
         }
         $r->stream = $stream;
-
-        yield from self::passthruStream($response, $r, $asyncMap);
+        yield from self::passthru_stream($response, $r, $async_map);
     }
-
-    private static function findInnerPassthru(self $response): ?self
+    private static function find_inner_passthru(self $response): ?self
     {
-        $innerResponse = $response->response ?? null;
-
-        while ($innerResponse instanceof self) {
-            if ($innerResponse->passthru) {
-                return $innerResponse;
+        $inner_response = $response->response ?? null;
+        while ($inner_response instanceof self) {
+            if ($inner_response->passthru) {
+                return $inner_response;
             }
-
-            $innerResponse = $innerResponse->response ?? null;
+            $inner_response = $inner_response->response ?? null;
         }
-
         return null;
     }
-
     /**
      * @param \SplObjectStorage<ResponseInterface, AsyncResponse>|null $asyncMap
      */
-    private static function passthruStream(ResponseInterface $response, self $r, ?\SplObjectStorage $asyncMap, ?ChunkInterface $chunk = null): \Generator
+    private static function passthru_stream(Response_Interface $response, self $r, ?\Spl_Object_Storage $async_map, ?Chunk_Interface $chunk = null): \Generator
     {
         while (true) {
             try {
                 if (null !== $chunk && $r->stream) {
                     $r->stream->next();
                 }
-
                 if (!$r->stream || !$r->stream->valid() || !$r->stream) {
                     $r->stream = null;
                     break;
                 }
             } catch (\Throwable $e) {
-                unset($asyncMap[$response]);
+                unset($async_map[$response]);
                 $r->stream = null;
-                $r->info['error'] = $e->getMessage();
+                $r->info['error'] = $e->get_message();
                 $r->response->cancel();
-
-                yield $r => $chunk = new ErrorChunk($r->offset, $e);
-                $chunk->didThrow() ?: $chunk->getContent();
+                yield $r => $chunk = new Error_Chunk($r->offset, $e);
+                $chunk->did_throw() ?: $chunk->get_content();
                 break;
             }
-
             $chunk = $r->stream->current();
-
-            if (!$chunk instanceof ChunkInterface) {
-                throw new \LogicException(\sprintf('A chunk passthru must yield instances of "%s", "%s" yielded.', ChunkInterface::class, get_debug_type($chunk)));
+            if (!$chunk instanceof Chunk_Interface) {
+                throw new \LogicException(\sprintf('A chunk passthru must yield instances of "%s", "%s" yielded.', Chunk_Interface::class, get_debug_type($chunk)));
             }
-
-            if (null !== $chunk->getError()) {
+            if (null !== $chunk->get_error()) {
                 // no-op
-            } elseif ($chunk->isFirst()) {
-                $e = $r->openBuffer();
-
+            } elseif ($chunk->is_first()) {
+                $e = $r->open_buffer();
                 yield $r => $chunk;
-
-                if ($r->initializer && null === $r->getInfo('error')) {
+                if ($r->initializer && null === $r->get_info('error')) {
                     // Ensure the HTTP status code is always checked
-                    $r->getHeaders(true);
+                    $r->get_headers(true);
                 }
-
                 if (null === $e) {
                     continue;
                 }
-
                 $r->response->cancel();
-                $chunk = new ErrorChunk($r->offset, $e);
-            } elseif ('' !== $content = $chunk->getContent()) {
-                if (null !== $r->shouldBuffer) {
+                $chunk = new Error_Chunk($r->offset, $e);
+            } elseif ('' !== $content = $chunk->get_content()) {
+                if (null !== $r->should_buffer) {
                     throw new \LogicException('A chunk passthru must yield an "isFirst()" chunk before any content chunk.');
                 }
-
                 if (null !== $r->content && \strlen($content) !== fwrite($r->content, $content)) {
-                    $chunk = new ErrorChunk($r->offset, new TransportException(\sprintf('Failed writing %d bytes to the response buffer.', \strlen($content))));
-                    $r->info['error'] = $chunk->getError();
+                    $chunk = new Error_Chunk($r->offset, new Transport_Exception(\sprintf('Failed writing %d bytes to the response buffer.', \strlen($content))));
+                    $r->info['error'] = $chunk->get_error();
                     $r->response->cancel();
                 }
             }
-
-            if (null !== $chunk->getError() || $chunk->isLast()) {
+            if (null !== $chunk->get_error() || $chunk->is_last()) {
                 $stream = $r->stream;
                 $r->stream = null;
-                unset($asyncMap[$response]);
+                unset($async_map[$response]);
             }
-
-            if (null === $chunk->getError()) {
+            if (null === $chunk->get_error()) {
                 $r->offset += \strlen($content);
-
                 yield $r => $chunk;
-
-                if (!$chunk->isLast()) {
+                if (!$chunk->is_last()) {
                     continue;
                 }
-
                 $stream->next();
-
                 if ($stream->valid()) {
                     throw new \LogicException('A chunk passthru cannot yield after an "isLast()" chunk.');
                 }
-
                 $r->passthru = null;
             } else {
-                if ($chunk instanceof ErrorChunk) {
-                    $chunk->didThrow(false);
+                if ($chunk instanceof Error_Chunk) {
+                    $chunk->did_throw(false);
                 } else {
                     try {
-                        $chunk = new ErrorChunk($chunk->getOffset(), !$chunk->isTimeout() ?: $chunk->getError());
-                    } catch (TransportExceptionInterface $e) {
-                        $chunk = new ErrorChunk($chunk->getOffset(), $e);
+                        $chunk = new Error_Chunk($chunk->get_offset(), !$chunk->is_timeout() ?: $chunk->get_error());
+                    } catch (Transport_Exception_Interface $e) {
+                        $chunk = new Error_Chunk($chunk->get_offset(), $e);
                     }
                 }
-
-                $r->hasThrown = true;
-
+                $r->has_thrown = true;
                 yield $r => $chunk;
-                $chunk->didThrow() ?: $chunk->getContent();
+                $chunk->did_throw() ?: $chunk->get_content();
             }
-
             break;
         }
     }
-
-    private function openBuffer(): ?\Throwable
+    private function open_buffer(): ?\Throwable
     {
-        if (null === $shouldBuffer = $this->shouldBuffer) {
+        if (null === $should_buffer = $this->should_buffer) {
             throw new \LogicException('A chunk passthru cannot yield more than one "isFirst()" chunk.');
         }
-
-        $e = $this->shouldBuffer = null;
-
-        if ($shouldBuffer instanceof \Closure) {
+        $e = $this->should_buffer = null;
+        if ($should_buffer instanceof \Closure) {
             try {
-                $shouldBuffer = $shouldBuffer($this->getHeaders(false));
-
-                if (null !== $e = $this->response->getInfo('error')) {
-                    throw new TransportException($e);
+                $should_buffer = $should_buffer($this->get_headers(false));
+                if (null !== $e = $this->response->get_info('error')) {
+                    throw new Transport_Exception($e);
                 }
             } catch (\Throwable $e) {
-                $this->info['error'] = $e->getMessage();
+                $this->info['error'] = $e->get_message();
                 $this->response->cancel();
             }
         }
-
-        if (true === $shouldBuffer) {
+        if (true === $should_buffer) {
             $this->content = fopen('php://temp', 'w+');
-        } elseif (\is_resource($shouldBuffer)) {
-            $this->content = $shouldBuffer;
+        } elseif (\is_resource($should_buffer)) {
+            $this->content = $should_buffer;
         }
-
         return $e;
     }
-
     private function close(): void
     {
         $this->response->cancel();

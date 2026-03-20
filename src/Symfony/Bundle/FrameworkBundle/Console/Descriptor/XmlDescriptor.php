@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,608 +9,494 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Bundle\FrameworkBundle\Console\Descriptor;
+namespace Symfony\Bundle\Framework_Bundle\Console\Descriptor;
 
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Exception\RuntimeException;
-use Symfony\Component\DependencyInjection\Alias;
-use Symfony\Component\DependencyInjection\Argument\AbstractArgument;
-use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
-use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
-use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Dependency_Injection\Alias;
+use Symfony\Component\Dependency_Injection\Argument\Abstract_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Iterator_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Service_Closure_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Service_Locator_Argument;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Parameter_Bag\Parameter_Bag;
+use Symfony\Component\Dependency_Injection\Reference;
+use Symfony\Component\Event_Dispatcher\Event_Dispatcher_Interface;
 use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\RouteCollection;
-
+use Symfony\Component\Routing\Route_Collection;
 /**
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
  *
  * @internal
  */
-class XmlDescriptor extends Descriptor
+class Xml_Descriptor extends Descriptor
 {
-    protected function describeRouteCollection(RouteCollection $routes, array $options = []): void
+    protected function describe_route_collection(Route_Collection $routes, array $options = []): void
     {
-        $this->writeDocument($this->getRouteCollectionDocument($routes, $options));
+        $this->write_document($this->get_route_collection_document($routes, $options));
     }
-
-    protected function describeRoute(Route $route, array $options = []): void
+    protected function describe_route(Route $route, array $options = []): void
     {
-        $this->writeDocument($this->getRouteDocument($route, $options['name'] ?? null));
+        $this->write_document($this->get_route_document($route, $options['name'] ?? null));
     }
-
-    protected function describeContainerParameters(ParameterBag $parameters, array $options = []): void
+    protected function describe_container_parameters(Parameter_Bag $parameters, array $options = []): void
     {
-        $this->writeDocument($this->getContainerParametersDocument($parameters));
+        $this->write_document($this->get_container_parameters_document($parameters));
     }
-
-    protected function describeContainerTags(ContainerBuilder $container, array $options = []): void
+    protected function describe_container_tags(Container_Builder $container, array $options = []): void
     {
-        $this->writeDocument($this->getContainerTagsDocument($container, isset($options['show_hidden']) && $options['show_hidden']));
+        $this->write_document($this->get_container_tags_document($container, isset($options['show_hidden']) && $options['show_hidden']));
     }
-
-    protected function describeContainerService(object $service, array $options = [], ?ContainerBuilder $container = null): void
+    protected function describe_container_service(object $service, array $options = [], ?Container_Builder $container = null): void
     {
         if (!isset($options['id'])) {
             throw new \InvalidArgumentException('An "id" option must be provided.');
         }
-
-        $this->writeDocument($this->getContainerServiceDocument($service, $options['id'], $container));
+        $this->write_document($this->get_container_service_document($service, $options['id'], $container));
     }
-
-    protected function describeContainerServices(ContainerBuilder $container, array $options = []): void
+    protected function describe_container_services(Container_Builder $container, array $options = []): void
     {
-        $this->writeDocument($this->getContainerServicesDocument($container, $options['tag'] ?? null, isset($options['show_hidden']) && $options['show_hidden'], $options['filter'] ?? null));
+        $this->write_document($this->get_container_services_document($container, $options['tag'] ?? null, isset($options['show_hidden']) && $options['show_hidden'], $options['filter'] ?? null));
     }
-
-    protected function describeContainerDefinition(Definition $definition, array $options = [], ?ContainerBuilder $container = null): void
+    protected function describe_container_definition(Definition $definition, array $options = [], ?Container_Builder $container = null): void
     {
-        $this->writeDocument($this->getContainerDefinitionDocument($definition, $options['id'] ?? null, isset($options['omit_tags']) && $options['omit_tags'], $container));
+        $this->write_document($this->get_container_definition_document($definition, $options['id'] ?? null, isset($options['omit_tags']) && $options['omit_tags'], $container));
     }
-
-    protected function describeContainerAlias(Alias $alias, array $options = [], ?ContainerBuilder $container = null): void
+    protected function describe_container_alias(Alias $alias, array $options = [], ?Container_Builder $container = null): void
     {
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-        $dom->appendChild($dom->importNode($this->getContainerAliasDocument($alias, $options['id'] ?? null)->childNodes->item(0), true));
+        $dom = new \Dom_Document('1.0', 'UTF-8');
+        $dom->append_child($dom->import_node($this->get_container_alias_document($alias, $options['id'] ?? null)->child_nodes->item(0), true));
         if ($container) {
-            $dom->appendChild($dom->importNode($this->getContainerDefinitionDocument($container->getDefinition((string) $alias), (string) $alias, false, $container)->childNodes->item(0), true));
+            $dom->append_child($dom->import_node($this->get_container_definition_document($container->get_definition((string) $alias), (string) $alias, false, $container)->child_nodes->item(0), true));
         }
-
-        $this->writeDocument($dom);
+        $this->write_document($dom);
     }
-
-    protected function describeEventDispatcherListeners(EventDispatcherInterface $eventDispatcher, array $options = []): void
+    protected function describe_event_dispatcher_listeners(Event_Dispatcher_Interface $event_dispatcher, array $options = []): void
     {
-        $this->writeDocument($this->getEventDispatcherListenersDocument($eventDispatcher, $options));
+        $this->write_document($this->get_event_dispatcher_listeners_document($event_dispatcher, $options));
     }
-
-    protected function describeCallable(mixed $callable, array $options = []): void
+    protected function describe_callable(mixed $callable, array $options = []): void
     {
-        $this->writeDocument($this->getCallableDocument($callable));
+        $this->write_document($this->get_callable_document($callable));
     }
-
-    protected function describeContainerParameter(mixed $parameter, ?array $deprecation, array $options = []): void
+    protected function describe_container_parameter(mixed $parameter, ?array $deprecation, array $options = []): void
     {
-        $this->writeDocument($this->getContainerParameterDocument($parameter, $deprecation, $options));
+        $this->write_document($this->get_container_parameter_document($parameter, $deprecation, $options));
     }
-
-    protected function describeContainerEnvVars(array $envs, array $options = []): void
+    protected function describe_container_env_vars(array $envs, array $options = []): void
     {
         throw new LogicException('Using the XML format to debug environment variables is not supported.');
     }
-
-    protected function describeContainerDeprecations(ContainerBuilder $container, array $options = []): void
+    protected function describe_container_deprecations(Container_Builder $container, array $options = []): void
     {
-        $containerDeprecationFilePath = \sprintf('%s/%sDeprecations.log', $container->getParameter('kernel.build_dir'), $container->getParameter('kernel.container_class'));
-        if (!file_exists($containerDeprecationFilePath)) {
+        $container_deprecation_file_path = \sprintf('%s/%sDeprecations.log', $container->get_parameter('kernel.build_dir'), $container->get_parameter('kernel.container_class'));
+        if (!file_exists($container_deprecation_file_path)) {
             throw new RuntimeException('The deprecation file does not exist, please try warming the cache first.');
         }
-
-        $logs = unserialize(file_get_contents($containerDeprecationFilePath));
-
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-        $dom->appendChild($deprecationsXML = $dom->createElement('deprecations'));
-
-        $remainingCount = 0;
+        $logs = unserialize(file_get_contents($container_deprecation_file_path));
+        $dom = new \Dom_Document('1.0', 'UTF-8');
+        $dom->append_child($deprecations_xml = $dom->create_element('deprecations'));
+        $remaining_count = 0;
         foreach ($logs as $log) {
-            $deprecationsXML->appendChild($deprecationXML = $dom->createElement('deprecation'));
-            $deprecationXML->setAttribute('count', $log['count']);
-            $deprecationXML->appendChild($dom->createElement('message', $log['message']));
-            $deprecationXML->appendChild($dom->createElement('file', $log['file']));
-            $deprecationXML->appendChild($dom->createElement('line', $log['line']));
-            $remainingCount += $log['count'];
+            $deprecations_xml->append_child($deprecation_xml = $dom->create_element('deprecation'));
+            $deprecation_xml->set_attribute('count', $log['count']);
+            $deprecation_xml->append_child($dom->create_element('message', $log['message']));
+            $deprecation_xml->append_child($dom->create_element('file', $log['file']));
+            $deprecation_xml->append_child($dom->create_element('line', $log['line']));
+            $remaining_count += $log['count'];
         }
-
-        $deprecationsXML->setAttribute('remainingCount', $remainingCount);
-
-        $this->writeDocument($dom);
+        $deprecations_xml->set_attribute('remainingCount', $remaining_count);
+        $this->write_document($dom);
     }
-
-    private function writeDocument(\DOMDocument $dom): void
+    private function write_document(\Dom_Document $dom): void
     {
-        $dom->formatOutput = true;
-        $this->write($dom->saveXML());
+        $dom->format_output = true;
+        $this->write($dom->save_xml());
     }
-
-    private function getRouteCollectionDocument(RouteCollection $routes, array $options): \DOMDocument
+    private function get_route_collection_document(Route_Collection $routes, array $options): \Dom_Document
     {
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-        $dom->appendChild($routesXML = $dom->createElement('routes'));
-
+        $dom = new \Dom_Document('1.0', 'UTF-8');
+        $dom->append_child($routes_xml = $dom->create_element('routes'));
         foreach ($routes->all() as $name => $route) {
-            $routeXML = $this->getRouteDocument($route, $name);
-            if (($showAliases ??= $options['show_aliases'] ?? false) && $aliases = ($reverseAliases ??= $this->getReverseAliases($routes))[$name] ?? []) {
-                $routeXML->firstChild->appendChild($aliasesXML = $routeXML->createElement('aliases'));
+            $route_xml = $this->get_route_document($route, $name);
+            if (($show_aliases ??= $options['show_aliases'] ?? false) && $aliases = ($reverse_aliases ??= $this->get_reverse_aliases($routes))[$name] ?? []) {
+                $route_xml->first_child->append_child($aliases_xml = $route_xml->create_element('aliases'));
                 foreach ($aliases as $alias) {
-                    $aliasesXML->appendChild($aliasXML = $routeXML->createElement('alias'));
-                    $aliasXML->appendChild(new \DOMText($alias));
+                    $aliases_xml->append_child($alias_xml = $route_xml->create_element('alias'));
+                    $alias_xml->append_child(new \Dom_Text($alias));
                 }
             }
-
-            $routesXML->appendChild($routesXML->ownerDocument->importNode($routeXML->childNodes->item(0), true));
+            $routes_xml->append_child($routes_xml->owner_document->import_node($route_xml->child_nodes->item(0), true));
         }
-
         return $dom;
     }
-
-    private function getRouteDocument(Route $route, ?string $name = null): \DOMDocument
+    private function get_route_document(Route $route, ?string $name = null): \Dom_Document
     {
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-        $dom->appendChild($routeXML = $dom->createElement('route'));
-
+        $dom = new \Dom_Document('1.0', 'UTF-8');
+        $dom->append_child($route_xml = $dom->create_element('route'));
         if ($name) {
-            $routeXML->setAttribute('name', $name);
+            $route_xml->set_attribute('name', $name);
         }
-
-        $routeXML->setAttribute('class', $route::class);
-
-        $routeXML->appendChild($pathXML = $dom->createElement('path'));
-        $pathXML->setAttribute('regex', $route->compile()->getRegex());
-        $pathXML->appendChild(new \DOMText($route->getPath()));
-
-        if ('' !== $route->getHost()) {
-            $routeXML->appendChild($hostXML = $dom->createElement('host'));
-            $hostXML->setAttribute('regex', $route->compile()->getHostRegex());
-            $hostXML->appendChild(new \DOMText($route->getHost()));
+        $route_xml->set_attribute('class', $route::class);
+        $route_xml->append_child($path_xml = $dom->create_element('path'));
+        $path_xml->set_attribute('regex', $route->compile()->get_regex());
+        $path_xml->append_child(new \Dom_Text($route->get_path()));
+        if ('' !== $route->get_host()) {
+            $route_xml->append_child($host_xml = $dom->create_element('host'));
+            $host_xml->set_attribute('regex', $route->compile()->get_host_regex());
+            $host_xml->append_child(new \Dom_Text($route->get_host()));
         }
-
-        foreach ($route->getSchemes() as $scheme) {
-            $routeXML->appendChild($schemeXML = $dom->createElement('scheme'));
-            $schemeXML->appendChild(new \DOMText($scheme));
+        foreach ($route->get_schemes() as $scheme) {
+            $route_xml->append_child($scheme_xml = $dom->create_element('scheme'));
+            $scheme_xml->append_child(new \Dom_Text($scheme));
         }
-
-        foreach ($route->getMethods() as $method) {
-            $routeXML->appendChild($methodXML = $dom->createElement('method'));
-            $methodXML->appendChild(new \DOMText($method));
+        foreach ($route->get_methods() as $method) {
+            $route_xml->append_child($method_xml = $dom->create_element('method'));
+            $method_xml->append_child(new \Dom_Text($method));
         }
-
-        if ($route->getDefaults()) {
-            $routeXML->appendChild($defaultsXML = $dom->createElement('defaults'));
-            foreach ($route->getDefaults() as $attribute => $value) {
-                $defaultsXML->appendChild($defaultXML = $dom->createElement('default'));
-                $defaultXML->setAttribute('key', $attribute);
-                $defaultXML->appendChild(new \DOMText($this->formatValue($value)));
+        if ($route->get_defaults()) {
+            $route_xml->append_child($defaults_xml = $dom->create_element('defaults'));
+            foreach ($route->get_defaults() as $attribute => $value) {
+                $defaults_xml->append_child($default_xml = $dom->create_element('default'));
+                $default_xml->set_attribute('key', $attribute);
+                $default_xml->append_child(new \Dom_Text($this->format_value($value)));
             }
         }
-
-        $originRequirements = $requirements = $route->getRequirements();
+        $origin_requirements = $requirements = $route->get_requirements();
         unset($requirements['_scheme'], $requirements['_method']);
         if ($requirements) {
-            $routeXML->appendChild($requirementsXML = $dom->createElement('requirements'));
-            foreach ($originRequirements as $attribute => $pattern) {
-                $requirementsXML->appendChild($requirementXML = $dom->createElement('requirement'));
-                $requirementXML->setAttribute('key', $attribute);
-                $requirementXML->appendChild(new \DOMText($pattern));
+            $route_xml->append_child($requirements_xml = $dom->create_element('requirements'));
+            foreach ($origin_requirements as $attribute => $pattern) {
+                $requirements_xml->append_child($requirement_xml = $dom->create_element('requirement'));
+                $requirement_xml->set_attribute('key', $attribute);
+                $requirement_xml->append_child(new \Dom_Text($pattern));
             }
         }
-
-        if ($route->getOptions()) {
-            $routeXML->appendChild($optionsXML = $dom->createElement('options'));
-            foreach ($route->getOptions() as $name => $value) {
-                $optionsXML->appendChild($optionXML = $dom->createElement('option'));
-                $optionXML->setAttribute('key', $name);
-                $optionXML->appendChild(new \DOMText($this->formatValue($value)));
+        if ($route->get_options()) {
+            $route_xml->append_child($options_xml = $dom->create_element('options'));
+            foreach ($route->get_options() as $name => $value) {
+                $options_xml->append_child($option_xml = $dom->create_element('option'));
+                $option_xml->set_attribute('key', $name);
+                $option_xml->append_child(new \Dom_Text($this->format_value($value)));
             }
         }
-
-        if ('' !== $route->getCondition()) {
-            $routeXML->appendChild($conditionXML = $dom->createElement('condition'));
-            $conditionXML->appendChild(new \DOMText($route->getCondition()));
+        if ('' !== $route->get_condition()) {
+            $route_xml->append_child($condition_xml = $dom->create_element('condition'));
+            $condition_xml->append_child(new \Dom_Text($route->get_condition()));
         }
-
         return $dom;
     }
-
-    private function getContainerParametersDocument(ParameterBag $parameters): \DOMDocument
+    private function get_container_parameters_document(Parameter_Bag $parameters): \Dom_Document
     {
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-        $dom->appendChild($parametersXML = $dom->createElement('parameters'));
-
-        $deprecatedParameters = $parameters->allDeprecated();
-
-        foreach ($this->sortParameters($parameters) as $key => $value) {
-            $parametersXML->appendChild($parameterXML = $dom->createElement('parameter'));
-            $parameterXML->setAttribute('key', $key);
-            $parameterXML->appendChild(new \DOMText($this->formatParameter($value)));
-
-            if (isset($deprecatedParameters[$key])) {
-                $parameterXML->setAttribute('deprecated', \sprintf('Since %s %s: %s', $deprecatedParameters[$key][0], $deprecatedParameters[$key][1], \sprintf(...\array_slice($deprecatedParameters[$key], 2))));
+        $dom = new \Dom_Document('1.0', 'UTF-8');
+        $dom->append_child($parameters_xml = $dom->create_element('parameters'));
+        $deprecated_parameters = $parameters->all_deprecated();
+        foreach ($this->sort_parameters($parameters) as $key => $value) {
+            $parameters_xml->append_child($parameter_xml = $dom->create_element('parameter'));
+            $parameter_xml->set_attribute('key', $key);
+            $parameter_xml->append_child(new \Dom_Text($this->format_parameter($value)));
+            if (isset($deprecated_parameters[$key])) {
+                $parameter_xml->set_attribute('deprecated', \sprintf('Since %s %s: %s', $deprecated_parameters[$key][0], $deprecated_parameters[$key][1], \sprintf(...\array_slice($deprecated_parameters[$key], 2))));
             }
         }
-
         return $dom;
     }
-
-    private function getContainerTagsDocument(ContainerBuilder $container, bool $showHidden = false): \DOMDocument
+    private function get_container_tags_document(Container_Builder $container, bool $show_hidden = false): \Dom_Document
     {
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-        $dom->appendChild($containerXML = $dom->createElement('container'));
-
-        foreach ($this->findDefinitionsByTag($container, $showHidden) as $tag => $definitions) {
-            $containerXML->appendChild($tagXML = $dom->createElement('tag'));
-            $tagXML->setAttribute('name', $tag);
-
-            foreach ($definitions as $serviceId => $definition) {
-                $definitionXML = $this->getContainerDefinitionDocument($definition, $serviceId, true, $container);
-                $tagXML->appendChild($dom->importNode($definitionXML->childNodes->item(0), true));
+        $dom = new \Dom_Document('1.0', 'UTF-8');
+        $dom->append_child($container_xml = $dom->create_element('container'));
+        foreach ($this->find_definitions_by_tag($container, $show_hidden) as $tag => $definitions) {
+            $container_xml->append_child($tag_xml = $dom->create_element('tag'));
+            $tag_xml->set_attribute('name', $tag);
+            foreach ($definitions as $service_id => $definition) {
+                $definition_xml = $this->get_container_definition_document($definition, $service_id, true, $container);
+                $tag_xml->append_child($dom->import_node($definition_xml->child_nodes->item(0), true));
             }
         }
-
         return $dom;
     }
-
-    private function getContainerServiceDocument(object $service, string $id, ?ContainerBuilder $container = null): \DOMDocument
+    private function get_container_service_document(object $service, string $id, ?Container_Builder $container = null): \Dom_Document
     {
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-
+        $dom = new \Dom_Document('1.0', 'UTF-8');
         if ($service instanceof Alias) {
-            $dom->appendChild($dom->importNode($this->getContainerAliasDocument($service, $id)->childNodes->item(0), true));
+            $dom->append_child($dom->import_node($this->get_container_alias_document($service, $id)->child_nodes->item(0), true));
             if ($container) {
-                $dom->appendChild($dom->importNode($this->getContainerDefinitionDocument($container->getDefinition((string) $service), (string) $service, false, $container)->childNodes->item(0), true));
+                $dom->append_child($dom->import_node($this->get_container_definition_document($container->get_definition((string) $service), (string) $service, false, $container)->child_nodes->item(0), true));
             }
         } elseif ($service instanceof Definition) {
-            $dom->appendChild($dom->importNode($this->getContainerDefinitionDocument($service, $id, false, $container)->childNodes->item(0), true));
+            $dom->append_child($dom->import_node($this->get_container_definition_document($service, $id, false, $container)->child_nodes->item(0), true));
         } else {
-            $dom->appendChild($serviceXML = $dom->createElement('service'));
-            $serviceXML->setAttribute('id', $id);
-            $serviceXML->setAttribute('class', $service::class);
+            $dom->append_child($service_xml = $dom->create_element('service'));
+            $service_xml->set_attribute('id', $id);
+            $service_xml->set_attribute('class', $service::class);
         }
-
         return $dom;
     }
-
     /**
      * @param (callable(string):bool)|null $filter
      */
-    private function getContainerServicesDocument(ContainerBuilder $container, ?string $tag = null, bool $showHidden = false, ?callable $filter = null): \DOMDocument
+    private function get_container_services_document(Container_Builder $container, ?string $tag = null, bool $show_hidden = false, ?callable $filter = null): \Dom_Document
     {
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-        $dom->appendChild($containerXML = $dom->createElement('container'));
-
-        $serviceIds = $tag
-            ? $this->sortTaggedServicesByPriority($container->findTaggedServiceIds($tag))
-            : $this->sortServiceIds($container->getServiceIds());
+        $dom = new \Dom_Document('1.0', 'UTF-8');
+        $dom->append_child($container_xml = $dom->create_element('container'));
+        $service_ids = $tag ? $this->sort_tagged_services_by_priority($container->find_tagged_service_ids($tag)) : $this->sort_service_ids($container->get_service_ids());
         if ($filter) {
-            $serviceIds = array_filter($serviceIds, $filter);
+            $service_ids = array_filter($service_ids, $filter);
         }
-
-        foreach ($serviceIds as $serviceId) {
-            $service = $this->resolveServiceDefinition($container, $serviceId);
-
-            if ($showHidden xor '.' === ($serviceId[0] ?? null)) {
+        foreach ($service_ids as $service_id) {
+            $service = $this->resolve_service_definition($container, $service_id);
+            if ($show_hidden xor '.' === ($service_id[0] ?? null)) {
                 continue;
             }
-
-            if ($service instanceof Definition && $service->hasTag('container.excluded')) {
+            if ($service instanceof Definition && $service->has_tag('container.excluded')) {
                 continue;
             }
-
-            $serviceXML = $this->getContainerServiceDocument($service, $serviceId, $service instanceof Definition ? $container : null);
-            $containerXML->appendChild($containerXML->ownerDocument->importNode($serviceXML->childNodes->item(0), true));
+            $service_xml = $this->get_container_service_document($service, $service_id, $service instanceof Definition ? $container : null);
+            $container_xml->append_child($container_xml->owner_document->import_node($service_xml->child_nodes->item(0), true));
         }
-
         return $dom;
     }
-
-    private function getContainerDefinitionDocument(Definition $definition, ?string $id = null, bool $omitTags = false, ?ContainerBuilder $container = null): \DOMDocument
+    private function get_container_definition_document(Definition $definition, ?string $id = null, bool $omit_tags = false, ?Container_Builder $container = null): \Dom_Document
     {
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-        $dom->appendChild($serviceXML = $dom->createElement('definition'));
-
+        $dom = new \Dom_Document('1.0', 'UTF-8');
+        $dom->append_child($service_xml = $dom->create_element('definition'));
         if ($id) {
-            $serviceXML->setAttribute('id', $id);
+            $service_xml->set_attribute('id', $id);
         }
-
-        if ('' !== $classDescription = $this->getClassDescription((string) $definition->getClass())) {
-            $serviceXML->appendChild($descriptionXML = $dom->createElement('description'));
-            $descriptionXML->appendChild($dom->createCDATASection($classDescription));
+        if ('' !== $class_description = $this->get_class_description((string) $definition->get_class())) {
+            $service_xml->append_child($description_xml = $dom->create_element('description'));
+            $description_xml->append_child($dom->create_cdata_section($class_description));
         }
-
-        $serviceXML->setAttribute('class', $definition->getClass() ?? '');
-
-        if ($factory = $definition->getFactory()) {
-            $serviceXML->appendChild($factoryXML = $dom->createElement('factory'));
-
+        $service_xml->set_attribute('class', $definition->get_class() ?? '');
+        if ($factory = $definition->get_factory()) {
+            $service_xml->append_child($factory_xml = $dom->create_element('factory'));
             if (\is_array($factory)) {
                 if ($factory[0] instanceof Reference) {
-                    $factoryXML->setAttribute('service', (string) $factory[0]);
+                    $factory_xml->set_attribute('service', (string) $factory[0]);
                 } elseif ($factory[0] instanceof Definition) {
-                    $factoryXML->setAttribute('service', \sprintf('inline factory service (%s)', $factory[0]->getClass() ?? 'not configured'));
+                    $factory_xml->set_attribute('service', \sprintf('inline factory service (%s)', $factory[0]->get_class() ?? 'not configured'));
                 } else {
-                    $factoryXML->setAttribute('class', $factory[0]);
+                    $factory_xml->set_attribute('class', $factory[0]);
                 }
-                $factoryXML->setAttribute('method', $factory[1]);
+                $factory_xml->set_attribute('method', $factory[1]);
             } else {
-                $factoryXML->setAttribute('function', $factory);
+                $factory_xml->set_attribute('function', $factory);
             }
         }
-
-        $serviceXML->setAttribute('public', $definition->isPublic() ? 'true' : 'false');
-        $serviceXML->setAttribute('synthetic', $definition->isSynthetic() ? 'true' : 'false');
-        $serviceXML->setAttribute('lazy', $definition->isLazy() ? 'true' : 'false');
-        $serviceXML->setAttribute('shared', $definition->isShared() ? 'true' : 'false');
-        $serviceXML->setAttribute('abstract', $definition->isAbstract() ? 'true' : 'false');
-        $serviceXML->setAttribute('autowired', $definition->isAutowired() ? 'true' : 'false');
-        $serviceXML->setAttribute('autoconfigured', $definition->isAutoconfigured() ? 'true' : 'false');
-        if ($definition->isDeprecated()) {
-            $serviceXML->setAttribute('deprecated', 'true');
-            $serviceXML->setAttribute('deprecation_message', $definition->getDeprecation($id)['message']);
+        $service_xml->set_attribute('public', $definition->is_public() ? 'true' : 'false');
+        $service_xml->set_attribute('synthetic', $definition->is_synthetic() ? 'true' : 'false');
+        $service_xml->set_attribute('lazy', $definition->is_lazy() ? 'true' : 'false');
+        $service_xml->set_attribute('shared', $definition->is_shared() ? 'true' : 'false');
+        $service_xml->set_attribute('abstract', $definition->is_abstract() ? 'true' : 'false');
+        $service_xml->set_attribute('autowired', $definition->is_autowired() ? 'true' : 'false');
+        $service_xml->set_attribute('autoconfigured', $definition->is_autoconfigured() ? 'true' : 'false');
+        if ($definition->is_deprecated()) {
+            $service_xml->set_attribute('deprecated', 'true');
+            $service_xml->set_attribute('deprecation_message', $definition->get_deprecation($id)['message']);
         } else {
-            $serviceXML->setAttribute('deprecated', 'false');
+            $service_xml->set_attribute('deprecated', 'false');
         }
-        $serviceXML->setAttribute('file', $definition->getFile() ?? '');
-
-        $calls = $definition->getMethodCalls();
+        $service_xml->set_attribute('file', $definition->get_file() ?? '');
+        $calls = $definition->get_method_calls();
         if (\count($calls) > 0) {
-            $serviceXML->appendChild($callsXML = $dom->createElement('calls'));
-            foreach ($calls as $callData) {
-                $callsXML->appendChild($callXML = $dom->createElement('call'));
-                $callXML->setAttribute('method', $callData[0]);
-                if ($callData[2] ?? false) {
-                    $callXML->setAttribute('returns-clone', 'true');
+            $service_xml->append_child($calls_xml = $dom->create_element('calls'));
+            foreach ($calls as $call_data) {
+                $calls_xml->append_child($call_xml = $dom->create_element('call'));
+                $call_xml->set_attribute('method', $call_data[0]);
+                if ($call_data[2] ?? false) {
+                    $call_xml->set_attribute('returns-clone', 'true');
                 }
             }
         }
-
-        foreach ($this->getArgumentNodes($definition->getArguments(), $dom, $container) as $node) {
-            $serviceXML->appendChild($node);
+        foreach ($this->get_argument_nodes($definition->get_arguments(), $dom, $container) as $node) {
+            $service_xml->append_child($node);
         }
-
-        if (!$omitTags) {
-            if ($tags = $this->sortTagsByPriority($container ? $this->resolvePriorityServiceTags($container, $definition) : $definition->getTags())) {
-                $serviceXML->appendChild($tagsXML = $dom->createElement('tags'));
-                foreach ($tags as $tagName => $tagData) {
-                    foreach ($tagData as $parameters) {
-                        $tagsXML->appendChild($tagXML = $dom->createElement('tag'));
-                        $tagXML->setAttribute('name', $tagName);
+        if (!$omit_tags) {
+            if ($tags = $this->sort_tags_by_priority($container ? $this->resolve_priority_service_tags($container, $definition) : $definition->get_tags())) {
+                $service_xml->append_child($tags_xml = $dom->create_element('tags'));
+                foreach ($tags as $tag_name => $tag_data) {
+                    foreach ($tag_data as $parameters) {
+                        $tags_xml->append_child($tag_xml = $dom->create_element('tag'));
+                        $tag_xml->set_attribute('name', $tag_name);
                         foreach ($parameters as $name => $value) {
-                            $tagXML->appendChild($parameterXML = $dom->createElement('parameter'));
-                            $parameterXML->setAttribute('name', $name);
-                            $parameterXML->appendChild(new \DOMText($this->formatParameter($value)));
+                            $tag_xml->append_child($parameter_xml = $dom->create_element('parameter'));
+                            $parameter_xml->set_attribute('name', $name);
+                            $parameter_xml->append_child(new \Dom_Text($this->format_parameter($value)));
                         }
                     }
                 }
             }
         }
-
         if (null !== $container && null !== $id) {
-            $edges = $this->getServiceEdges($container, $id);
+            $edges = $this->get_service_edges($container, $id);
             if ($edges) {
-                $serviceXML->appendChild($usagesXML = $dom->createElement('usages'));
+                $service_xml->append_child($usages_xml = $dom->create_element('usages'));
                 foreach ($edges as $edge) {
-                    $usagesXML->appendChild($usageXML = $dom->createElement('usage'));
-                    $usageXML->appendChild(new \DOMText($edge));
+                    $usages_xml->append_child($usage_xml = $dom->create_element('usage'));
+                    $usage_xml->append_child(new \Dom_Text($edge));
                 }
             }
-
-            $stack = $this->getDecorationStack($container, $id);
+            $stack = $this->get_decoration_stack($container, $id);
             if (\count($stack) > 1) {
-                $serviceXML->appendChild($stackXML = $dom->createElement('decoration-stack'));
+                $service_xml->append_child($stack_xml = $dom->create_element('decoration-stack'));
                 foreach ($stack as $item) {
-                    $stackXML->appendChild($itemXML = $dom->createElement('service'));
-                    $itemXML->setAttribute('id', $item['id']);
-                    $itemXML->setAttribute('class', $item['class']);
-                    $itemXML->setAttribute('priority', $item['priority']);
+                    $stack_xml->append_child($item_xml = $dom->create_element('service'));
+                    $item_xml->set_attribute('id', $item['id']);
+                    $item_xml->set_attribute('class', $item['class']);
+                    $item_xml->set_attribute('priority', $item['priority']);
                 }
             }
         }
-
         return $dom;
     }
-
     /**
      * @return \DOMNode[]
      */
-    private function getArgumentNodes(array $arguments, \DOMDocument $dom, ?ContainerBuilder $container = null): array
+    private function get_argument_nodes(array $arguments, \Dom_Document $dom, ?Container_Builder $container = null): array
     {
         $nodes = [];
-
-        foreach ($arguments as $argumentKey => $argument) {
-            $argumentXML = $dom->createElement('argument');
-
-            if (\is_string($argumentKey)) {
-                $argumentXML->setAttribute('key', $argumentKey);
+        foreach ($arguments as $argument_key => $argument) {
+            $argument_xml = $dom->create_element('argument');
+            if (\is_string($argument_key)) {
+                $argument_xml->set_attribute('key', $argument_key);
             }
-
-            if ($argument instanceof ServiceClosureArgument) {
-                $argument = $argument->getValues()[0];
+            if ($argument instanceof Service_Closure_Argument) {
+                $argument = $argument->get_values()[0];
             }
-
             if ($argument instanceof Reference) {
-                $argumentXML->setAttribute('type', 'service');
-                $argumentXML->setAttribute('id', (string) $argument);
-            } elseif ($argument instanceof IteratorArgument || $argument instanceof ServiceLocatorArgument) {
-                $argumentXML->setAttribute('type', $argument instanceof IteratorArgument ? 'iterator' : 'service_locator');
-
-                foreach ($this->getArgumentNodes($argument->getValues(), $dom, $container) as $childArgumentXML) {
-                    $argumentXML->appendChild($childArgumentXML);
+                $argument_xml->set_attribute('type', 'service');
+                $argument_xml->set_attribute('id', (string) $argument);
+            } elseif ($argument instanceof Iterator_Argument || $argument instanceof Service_Locator_Argument) {
+                $argument_xml->set_attribute('type', $argument instanceof Iterator_Argument ? 'iterator' : 'service_locator');
+                foreach ($this->get_argument_nodes($argument->get_values(), $dom, $container) as $child_argument_xml) {
+                    $argument_xml->append_child($child_argument_xml);
                 }
             } elseif ($argument instanceof Definition) {
-                $argumentXML->appendChild($dom->importNode($this->getContainerDefinitionDocument($argument, null, false, $container)->childNodes->item(0), true));
-            } elseif ($argument instanceof AbstractArgument) {
-                $argumentXML->setAttribute('type', 'abstract');
-                $argumentXML->appendChild(new \DOMText($argument->getText()));
+                $argument_xml->append_child($dom->import_node($this->get_container_definition_document($argument, null, false, $container)->child_nodes->item(0), true));
+            } elseif ($argument instanceof Abstract_Argument) {
+                $argument_xml->set_attribute('type', 'abstract');
+                $argument_xml->append_child(new \Dom_Text($argument->get_text()));
             } elseif (\is_array($argument)) {
-                $argumentXML->setAttribute('type', 'collection');
-
-                foreach ($this->getArgumentNodes($argument, $dom, $container) as $childArgumentXML) {
-                    $argumentXML->appendChild($childArgumentXML);
+                $argument_xml->set_attribute('type', 'collection');
+                foreach ($this->get_argument_nodes($argument, $dom, $container) as $child_argument_xml) {
+                    $argument_xml->append_child($child_argument_xml);
                 }
-            } elseif ($argument instanceof \UnitEnum) {
-                $argumentXML->setAttribute('type', 'constant');
-                $argumentXML->appendChild(new \DOMText(ltrim(var_export($argument, true), '\\')));
+            } elseif ($argument instanceof \Unit_Enum) {
+                $argument_xml->set_attribute('type', 'constant');
+                $argument_xml->append_child(new \Dom_Text(ltrim(var_export($argument, true), '\\')));
             } else {
-                $argumentXML->appendChild(new \DOMText($argument));
+                $argument_xml->append_child(new \Dom_Text($argument));
             }
-
-            $nodes[] = $argumentXML;
+            $nodes[] = $argument_xml;
         }
-
         return $nodes;
     }
-
-    private function getContainerAliasDocument(Alias $alias, ?string $id = null): \DOMDocument
+    private function get_container_alias_document(Alias $alias, ?string $id = null): \Dom_Document
     {
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-        $dom->appendChild($aliasXML = $dom->createElement('alias'));
-
+        $dom = new \Dom_Document('1.0', 'UTF-8');
+        $dom->append_child($alias_xml = $dom->create_element('alias'));
         if ($id) {
-            $aliasXML->setAttribute('id', $id);
+            $alias_xml->set_attribute('id', $id);
         }
-
-        $aliasXML->setAttribute('service', (string) $alias);
-        $aliasXML->setAttribute('public', $alias->isPublic() ? 'true' : 'false');
-
+        $alias_xml->set_attribute('service', (string) $alias);
+        $alias_xml->set_attribute('public', $alias->is_public() ? 'true' : 'false');
         return $dom;
     }
-
-    private function getContainerParameterDocument(mixed $parameter, ?array $deprecation, array $options = []): \DOMDocument
+    private function get_container_parameter_document(mixed $parameter, ?array $deprecation, array $options = []): \Dom_Document
     {
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-        $dom->appendChild($parameterXML = $dom->createElement('parameter'));
-
+        $dom = new \Dom_Document('1.0', 'UTF-8');
+        $dom->append_child($parameter_xml = $dom->create_element('parameter'));
         if (isset($options['parameter'])) {
-            $parameterXML->setAttribute('key', $options['parameter']);
-
+            $parameter_xml->set_attribute('key', $options['parameter']);
             if ($deprecation) {
-                $parameterXML->setAttribute('deprecated', \sprintf('Since %s %s: %s', $deprecation[0], $deprecation[1], \sprintf(...\array_slice($deprecation, 2))));
+                $parameter_xml->set_attribute('deprecated', \sprintf('Since %s %s: %s', $deprecation[0], $deprecation[1], \sprintf(...\array_slice($deprecation, 2))));
             }
         }
-
-        $parameterXML->appendChild(new \DOMText($this->formatParameter($parameter)));
-
+        $parameter_xml->append_child(new \Dom_Text($this->format_parameter($parameter)));
         return $dom;
     }
-
-    private function getEventDispatcherListenersDocument(EventDispatcherInterface $eventDispatcher, array $options): \DOMDocument
+    private function get_event_dispatcher_listeners_document(Event_Dispatcher_Interface $event_dispatcher, array $options): \Dom_Document
     {
         $event = $options['event'] ?? null;
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-        $dom->appendChild($eventDispatcherXML = $dom->createElement('event-dispatcher'));
-
+        $dom = new \Dom_Document('1.0', 'UTF-8');
+        $dom->append_child($event_dispatcher_xml = $dom->create_element('event-dispatcher'));
         if (null !== $event) {
-            $registeredListeners = $eventDispatcher->getListeners($event);
-            $this->appendEventListenerDocument($eventDispatcher, $event, $eventDispatcherXML, $registeredListeners);
+            $registered_listeners = $event_dispatcher->get_listeners($event);
+            $this->append_event_listener_document($event_dispatcher, $event, $event_dispatcher_xml, $registered_listeners);
         } else {
             // Try to see if "events" exists
-            $registeredListeners = \array_key_exists('events', $options) ? array_combine($options['events'], array_map($eventDispatcher->getListeners(...), $options['events'])) : $eventDispatcher->getListeners();
-            ksort($registeredListeners);
-
-            foreach ($registeredListeners as $eventListened => $eventListeners) {
-                $eventDispatcherXML->appendChild($eventXML = $dom->createElement('event'));
-                $eventXML->setAttribute('name', $eventListened);
-
-                $this->appendEventListenerDocument($eventDispatcher, $eventListened, $eventXML, $eventListeners);
+            $registered_listeners = \array_key_exists('events', $options) ? array_combine($options['events'], array_map($event_dispatcher->get_listeners(...), $options['events'])) : $event_dispatcher->get_listeners();
+            ksort($registered_listeners);
+            foreach ($registered_listeners as $event_listened => $event_listeners) {
+                $event_dispatcher_xml->append_child($event_xml = $dom->create_element('event'));
+                $event_xml->set_attribute('name', $event_listened);
+                $this->append_event_listener_document($event_dispatcher, $event_listened, $event_xml, $event_listeners);
             }
         }
-
         return $dom;
     }
-
-    private function appendEventListenerDocument(EventDispatcherInterface $eventDispatcher, string $event, \DOMElement $element, array $eventListeners): void
+    private function append_event_listener_document(Event_Dispatcher_Interface $event_dispatcher, string $event, \Dom_Element $element, array $event_listeners): void
     {
-        foreach ($eventListeners as $listener) {
-            $callableXML = $this->getCallableDocument($listener);
-            $callableXML->childNodes->item(0)->setAttribute('priority', $eventDispatcher->getListenerPriority($event, $listener));
-
-            $element->appendChild($element->ownerDocument->importNode($callableXML->childNodes->item(0), true));
+        foreach ($event_listeners as $listener) {
+            $callable_xml = $this->get_callable_document($listener);
+            $callable_xml->child_nodes->item(0)->set_attribute('priority', $event_dispatcher->get_listener_priority($event, $listener));
+            $element->append_child($element->owner_document->import_node($callable_xml->child_nodes->item(0), true));
         }
     }
-
-    private function getCallableDocument(mixed $callable): \DOMDocument
+    private function get_callable_document(mixed $callable): \Dom_Document
     {
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-        $dom->appendChild($callableXML = $dom->createElement('callable'));
-
+        $dom = new \Dom_Document('1.0', 'UTF-8');
+        $dom->append_child($callable_xml = $dom->create_element('callable'));
         if (\is_array($callable)) {
-            $callableXML->setAttribute('type', 'function');
-
+            $callable_xml->set_attribute('type', 'function');
             if (\is_object($callable[0])) {
-                $callableXML->setAttribute('name', $callable[1]);
-                $callableXML->setAttribute('class', $callable[0]::class);
+                $callable_xml->set_attribute('name', $callable[1]);
+                $callable_xml->set_attribute('class', $callable[0]::class);
+            } else if (!str_starts_with((string) $callable[1], 'parent::')) {
+                $callable_xml->set_attribute('name', $callable[1]);
+                $callable_xml->set_attribute('class', $callable[0]);
+                $callable_xml->set_attribute('static', 'true');
             } else {
-                if (!str_starts_with((string) $callable[1], 'parent::')) {
-                    $callableXML->setAttribute('name', $callable[1]);
-                    $callableXML->setAttribute('class', $callable[0]);
-                    $callableXML->setAttribute('static', 'true');
-                } else {
-                    $callableXML->setAttribute('name', substr((string) $callable[1], 8));
-                    $callableXML->setAttribute('class', $callable[0]);
-                    $callableXML->setAttribute('static', 'true');
-                    $callableXML->setAttribute('parent', 'true');
-                }
+                $callable_xml->set_attribute('name', substr((string) $callable[1], 8));
+                $callable_xml->set_attribute('class', $callable[0]);
+                $callable_xml->set_attribute('static', 'true');
+                $callable_xml->set_attribute('parent', 'true');
             }
-
             return $dom;
         }
-
         if (\is_string($callable)) {
-            $callableXML->setAttribute('type', 'function');
-
+            $callable_xml->set_attribute('type', 'function');
             if (!str_contains($callable, '::')) {
-                $callableXML->setAttribute('name', $callable);
+                $callable_xml->set_attribute('name', $callable);
             } else {
-                $callableParts = explode('::', $callable);
-
-                $callableXML->setAttribute('name', $callableParts[1]);
-                $callableXML->setAttribute('class', $callableParts[0]);
-                $callableXML->setAttribute('static', 'true');
+                $callable_parts = explode('::', $callable);
+                $callable_xml->set_attribute('name', $callable_parts[1]);
+                $callable_xml->set_attribute('class', $callable_parts[0]);
+                $callable_xml->set_attribute('static', 'true');
             }
-
             return $dom;
         }
-
         if ($callable instanceof \Closure) {
-            $callableXML->setAttribute('type', 'closure');
-
+            $callable_xml->set_attribute('type', 'closure');
             $r = new \ReflectionFunction($callable);
-            if ($r->isAnonymous()) {
+            if ($r->is_anonymous()) {
                 return $dom;
             }
-            $callableXML->setAttribute('name', $r->name);
-
-            if ($class = $r->getClosureCalledClass()) {
-                $callableXML->setAttribute('class', $class->name);
-                if (!$r->getClosureThis()) {
-                    $callableXML->setAttribute('static', 'true');
+            $callable_xml->set_attribute('name', $r->name);
+            if ($class = $r->get_closure_called_class()) {
+                $callable_xml->set_attribute('class', $class->name);
+                if (!$r->get_closure_this()) {
+                    $callable_xml->set_attribute('static', 'true');
                 }
             }
-
             return $dom;
         }
-
         if (method_exists($callable, '__invoke')) {
-            $callableXML->setAttribute('type', 'object');
-            $callableXML->setAttribute('name', $callable::class);
-
+            $callable_xml->set_attribute('type', 'object');
+            $callable_xml->set_attribute('name', $callable::class);
             return $dom;
         }
-
         throw new \InvalidArgumentException('Callable is not describable.');
     }
 }

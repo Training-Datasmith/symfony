@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Marshaller;
 
 /**
@@ -18,23 +16,19 @@ namespace Symfony\Component\Cache\Marshaller;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class TagAwareMarshaller implements MarshallerInterface
+class Tag_Aware_Marshaller implements Marshaller_Interface
 {
-    public function __construct(private readonly ?MarshallerInterface $marshaller = new DefaultMarshaller())
+    public function __construct(private readonly ?Marshaller_Interface $marshaller = new Default_Marshaller())
     {
     }
-
     public function marshall(array $values, ?array &$failed): array
     {
-        $failed = $notSerialized = $serialized = [];
-
+        $failed = $not_serialized = $serialized = [];
         foreach ($values as $id => $value) {
             if (\is_array($value) && \is_array($value['tags'] ?? null) && \array_key_exists('value', $value) && \count($value) === 2 + (\is_string($value['meta'] ?? null) && 8 === \strlen($value['meta']))) {
                 // if the value is an array with keys "tags", "value" and "meta", use a compact serialization format
                 // magic numbers in the form 9D-..-..-..-..-00-..-..-..-5F allow detecting this format quickly in unmarshall()
-
                 $v = $this->marshaller->marshall($value, $f);
-
                 if ($f) {
                     $f = [];
                     $failed[] = $id;
@@ -42,41 +36,31 @@ class TagAwareMarshaller implements MarshallerInterface
                     if ([] === $value['tags']) {
                         $v['tags'] = '';
                     }
-
-                    $serialized[$id] = "\x9D".($value['meta'] ?? "\0\0\0\0\0\0\0\0").pack('N', \strlen((string) $v['tags'])).$v['tags'].$v['value'];
-                    $serialized[$id][9] = "\x5F";
+                    $serialized[$id] = "\x9d" . ($value['meta'] ?? "\x00\x00\x00\x00\x00\x00\x00\x00") . pack('N', \strlen((string) $v['tags'])) . $v['tags'] . $v['value'];
+                    $serialized[$id][9] = "_";
                 }
             } else {
                 // other arbitrary values are serialized using the decorated marshaller below
-                $notSerialized[$id] = $value;
+                $not_serialized[$id] = $value;
             }
         }
-
-        if ($notSerialized) {
-            $serialized += $this->marshaller->marshall($notSerialized, $f);
+        if ($not_serialized) {
+            $serialized += $this->marshaller->marshall($not_serialized, $f);
             $failed = array_merge($failed, $f);
         }
-
         return $serialized;
     }
-
     public function unmarshall(string $value): mixed
     {
         // detect the compact format used in marshall() using magic numbers in the form 9D-..-..-..-..-00-..-..-..-5F
-        if (13 >= \strlen($value) || "\x9D" !== $value[0] || "\0" !== $value[5] || "\x5F" !== $value[9]) {
+        if (13 >= \strlen($value) || "\x9d" !== $value[0] || "\x00" !== $value[5] || "_" !== $value[9]) {
             return $this->marshaller->unmarshall($value);
         }
-
         // data consists of value, tags and metadata which we need to unpack
         $meta = substr($value, 1, 12);
-        $meta[8] = "\0";
-        $tagLen = unpack('Nlen', $meta, 8)['len'];
+        $meta[8] = "\x00";
+        $tag_len = unpack('Nlen', $meta, 8)['len'];
         $meta = substr($meta, 0, 8);
-
-        return [
-            'value' => $this->marshaller->unmarshall(substr($value, 13 + $tagLen)),
-            'tags' => $tagLen ? $this->marshaller->unmarshall(substr($value, 13, $tagLen)) : [],
-            'meta' => "\0\0\0\0\0\0\0\0" === $meta ? null : $meta,
-        ];
+        return ['value' => $this->marshaller->unmarshall(substr($value, 13 + $tag_len)), 'tags' => $tag_len ? $this->marshaller->unmarshall(substr($value, 13, $tag_len)) : [], 'meta' => "\x00\x00\x00\x00\x00\x00\x00\x00" === $meta ? null : $meta];
     }
 }

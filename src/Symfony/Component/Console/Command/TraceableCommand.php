@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,361 +9,271 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Command;
 
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Completion\CompletionInput;
-use Symfony\Component\Console\Completion\CompletionSuggestions;
-use Symfony\Component\Console\Helper\HelperInterface;
-use Symfony\Component\Console\Helper\HelperSet;
-use Symfony\Component\Console\Input\InputDefinition;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Completion\Completion_Input;
+use Symfony\Component\Console\Completion\Completion_Suggestions;
+use Symfony\Component\Console\Helper\Helper_Interface;
+use Symfony\Component\Console\Helper\Helper_Set;
+use Symfony\Component\Console\Input\Input_Definition;
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Console\Output\Console_Output_Interface;
+use Symfony\Component\Console\Output\Output_Interface;
 use Symfony\Component\Stopwatch\Stopwatch;
-
 /**
  * @internal
  *
  * @author Jules Pietri <jules@heahprod.com>
  */
-final class TraceableCommand extends Command
+final class Traceable_Command extends Command
 {
     public readonly Command $command;
-    public int $exitCode;
-    public ?int $interruptedBySignal = null;
-    public bool $ignoreValidation;
-    public bool $isInteractive = false;
+    public int $exit_code;
+    public ?int $interrupted_by_signal = null;
+    public bool $ignore_validation;
+    public bool $is_interactive = false;
     public string $duration = 'n/a';
-    public string $maxMemoryUsage = 'n/a';
-    public InputInterface $input;
-    public OutputInterface $output;
+    public string $max_memory_usage = 'n/a';
+    public Input_Interface $input;
+    public Output_Interface $output;
     /** @var array<string, mixed> */
     public array $arguments;
     /** @var array<string, mixed> */
     public array $options;
     /** @var array<string, mixed> */
-    public array $interactiveInputs = [];
-    public array $handledSignals = [];
-    public ?array $invokableCommandInfo = null;
-
-    public function __construct(
-        Command $command,
-        private readonly Stopwatch $stopwatch,
-    ) {
-        if ($command instanceof LazyCommand) {
-            $command = $command->getCommand();
+    public array $interactive_inputs = [];
+    public array $handled_signals = [];
+    public ?array $invokable_command_info = null;
+    public function __construct(Command $command, private readonly Stopwatch $stopwatch)
+    {
+        if ($command instanceof Lazy_Command) {
+            $command = $command->get_command();
         }
-
         $this->command = $command;
-
         // prevent call to self::getDefaultDescription()
-        $this->setDescription($command->getDescription());
-
-        parent::__construct($command->getName());
-
+        $this->set_description($command->get_description());
+        parent::__construct($command->get_name());
         // init below enables calling {@see parent::run()}
-        [$code, $processTitle, $ignoreValidationErrors] = \Closure::bind(fn (): array => [$this->code, $this->processTitle, $this->ignoreValidationErrors], $command, Command::class)();
-
+        [$code, $process_title, $ignore_validation_errors] = \Closure::bind(fn(): array => [$this->code, $this->process_title, $this->ignore_validation_errors], $command, Command::class)();
         if (\is_callable($code)) {
-            $this->setCode($code);
+            $this->set_code($code);
         }
-
-        if ($processTitle) {
-            parent::setProcessTitle($processTitle);
+        if ($process_title) {
+            parent::set_process_title($process_title);
         }
-
-        if ($ignoreValidationErrors) {
-            parent::ignoreValidationErrors();
+        if ($ignore_validation_errors) {
+            parent::ignore_validation_errors();
         }
-
-        $this->ignoreValidation = $ignoreValidationErrors;
+        $this->ignore_validation = $ignore_validation_errors;
     }
-
     public function __call(string $name, array $arguments): mixed
     {
         return $this->command->{$name}(...$arguments);
     }
-
-    public function getSubscribedSignals(): array
+    public function get_subscribed_signals(): array
     {
-        return $this->command->getSubscribedSignals();
+        return $this->command->get_subscribed_signals();
     }
-
-    public function handleSignal(int $signal, int|false $previousExitCode = 0): int|false
+    public function handle_signal(int $signal, int|false $previous_exit_code = 0): int|false
     {
-        $event = $this->stopwatch->start($this->getName().'.handle_signal');
-
-        $exit = $this->command->handleSignal($signal, $previousExitCode);
-
+        $event = $this->stopwatch->start($this->get_name() . '.handle_signal');
+        $exit = $this->command->handle_signal($signal, $previous_exit_code);
         $event->stop();
-
-        if (!isset($this->handledSignals[$signal])) {
-            $this->handledSignals[$signal] = [
-                'handled' => 0,
-                'duration' => 0,
-                'memory' => 0,
-            ];
+        if (!isset($this->handled_signals[$signal])) {
+            $this->handled_signals[$signal] = ['handled' => 0, 'duration' => 0, 'memory' => 0];
         }
-
-        ++$this->handledSignals[$signal]['handled'];
-        $this->handledSignals[$signal]['duration'] += $event->getDuration();
-        $this->handledSignals[$signal]['memory'] = max(
-            $this->handledSignals[$signal]['memory'],
-            $event->getMemory() >> 20
-        );
-
+        ++$this->handled_signals[$signal]['handled'];
+        $this->handled_signals[$signal]['duration'] += $event->get_duration();
+        $this->handled_signals[$signal]['memory'] = max($this->handled_signals[$signal]['memory'], $event->get_memory() >> 20);
         return $exit;
     }
-
     /**
      * {@inheritdoc}
      *
      * Calling parent method is required to be used in {@see parent::run()}.
      */
-    public function ignoreValidationErrors(): void
+    public function ignore_validation_errors(): void
     {
-        $this->ignoreValidation = true;
-        $this->command->ignoreValidationErrors();
-
-        parent::ignoreValidationErrors();
+        $this->ignore_validation = true;
+        $this->command->ignore_validation_errors();
+        parent::ignore_validation_errors();
     }
-
-    public function setApplication(?Application $application = null): void
+    public function set_application(?Application $application = null): void
     {
-        $this->command->setApplication($application);
+        $this->command->set_application($application);
     }
-
-    public function getApplication(): ?Application
+    public function get_application(): ?Application
     {
-        return $this->command->getApplication();
+        return $this->command->get_application();
     }
-
-    public function setHelperSet(HelperSet $helperSet): void
+    public function set_helper_set(Helper_Set $helper_set): void
     {
-        $this->command->setHelperSet($helperSet);
+        $this->command->set_helper_set($helper_set);
     }
-
-    public function getHelperSet(): ?HelperSet
+    public function get_helper_set(): ?Helper_Set
     {
-        return $this->command->getHelperSet();
+        return $this->command->get_helper_set();
     }
-
-    public function isEnabled(): bool
+    public function is_enabled(): bool
     {
-        return $this->command->isEnabled();
+        return $this->command->is_enabled();
     }
-
-    public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void
+    public function complete(Completion_Input $input, Completion_Suggestions $suggestions): void
     {
         $this->command->complete($input, $suggestions);
     }
-
     /**
      * {@inheritdoc}
      *
      * Calling parent method is required to be used in {@see parent::run()}.
      */
-    public function setCode(callable $code): static
+    public function set_code(callable $code): static
     {
-        if ($code instanceof InvokableCommand) {
-            $r = \Closure::bind(fn (): \ReflectionFunction => $this->invokable, $code, InvokableCommand::class)();
-
-            $this->invokableCommandInfo = [
-                'class' => $r->getClosureScopeClass()->name,
-                'file' => $r->getFileName(),
-                'line' => $r->getStartLine(),
-            ];
-
+        if ($code instanceof Invokable_Command) {
+            $r = \Closure::bind(fn(): \ReflectionFunction => $this->invokable, $code, Invokable_Command::class)();
+            $this->invokable_command_info = ['class' => $r->get_closure_scope_class()->name, 'file' => $r->get_file_name(), 'line' => $r->get_start_line()];
             // Pass the original callable to avoid double-wrapping in Command::setCode()
-            $this->command->setCode($code->getCode());
+            $this->command->set_code($code->get_code());
         } else {
-            $this->command->setCode($code);
+            $this->command->set_code($code);
         }
-
-        return parent::setCode(function (InputInterface $input, OutputInterface $output) use ($code): int {
-            $event = $this->stopwatch->start($this->getName().'.code');
-
-            $this->exitCode = $code($input, $output);
-
+        return parent::set_code(function (Input_Interface $input, Output_Interface $output) use ($code): int {
+            $event = $this->stopwatch->start($this->get_name() . '.code');
+            $this->exit_code = $code($input, $output);
             $event->stop();
-
-            return $this->exitCode;
+            return $this->exit_code;
         });
     }
-
     /**
      * @internal
      */
-    public function mergeApplicationDefinition(bool $mergeArgs = true): void
+    public function merge_application_definition(bool $merge_args = true): void
     {
-        $this->command->mergeApplicationDefinition($mergeArgs);
+        $this->command->merge_application_definition($merge_args);
     }
-
-    public function setDefinition(array|InputDefinition $definition): static
+    public function set_definition(array|Input_Definition $definition): static
     {
-        $this->command->setDefinition($definition);
-
+        $this->command->set_definition($definition);
         return $this;
     }
-
-    public function getDefinition(): InputDefinition
+    public function get_definition(): Input_Definition
     {
-        return $this->command->getDefinition();
+        return $this->command->get_definition();
     }
-
-    public function getNativeDefinition(): InputDefinition
+    public function get_native_definition(): Input_Definition
     {
-        return $this->command->getNativeDefinition();
+        return $this->command->get_native_definition();
     }
-
-    public function addArgument(string $name, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = []): static
+    public function add_argument(string $name, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggested_values = []): static
     {
-        $this->command->addArgument($name, $mode, $description, $default, $suggestedValues);
-
+        $this->command->add_argument($name, $mode, $description, $default, $suggested_values);
         return $this;
     }
-
-    public function addOption(string $name, string|array|null $shortcut = null, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = []): static
+    public function add_option(string $name, string|array|null $shortcut = null, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggested_values = []): static
     {
-        $this->command->addOption($name, $shortcut, $mode, $description, $default, $suggestedValues);
-
+        $this->command->add_option($name, $shortcut, $mode, $description, $default, $suggested_values);
         return $this;
     }
-
     /**
      * {@inheritdoc}
      *
      * Calling parent method is required to be used in {@see parent::run()}.
      */
-    public function setProcessTitle(string $title): static
+    public function set_process_title(string $title): static
     {
-        $this->command->setProcessTitle($title);
-
-        return parent::setProcessTitle($title);
+        $this->command->set_process_title($title);
+        return parent::set_process_title($title);
     }
-
-    public function setHelp(string $help): static
+    public function set_help(string $help): static
     {
-        $this->command->setHelp($help);
-
+        $this->command->set_help($help);
         return $this;
     }
-
-    public function getHelp(): string
+    public function get_help(): string
     {
-        return $this->command->getHelp();
+        return $this->command->get_help();
     }
-
-    public function getProcessedHelp(): string
+    public function get_processed_help(): string
     {
-        return $this->command->getProcessedHelp();
+        return $this->command->get_processed_help();
     }
-
-    public function getSynopsis(bool $short = false): string
+    public function get_synopsis(bool $short = false): string
     {
-        return $this->command->getSynopsis($short);
+        return $this->command->get_synopsis($short);
     }
-
-    public function addUsage(string $usage): static
+    public function add_usage(string $usage): static
     {
-        $this->command->addUsage($usage);
-
+        $this->command->add_usage($usage);
         return $this;
     }
-
-    public function getUsages(): array
+    public function get_usages(): array
     {
-        return $this->command->getUsages();
+        return $this->command->get_usages();
     }
-
-    public function getHelper(string $name): HelperInterface
+    public function get_helper(string $name): Helper_Interface
     {
-        return $this->command->getHelper($name);
+        return $this->command->get_helper($name);
     }
-
-    public function run(InputInterface $input, OutputInterface $output): int
+    public function run(Input_Interface $input, Output_Interface $output): int
     {
         $this->input = $input;
         $this->output = $output;
-        $initialArguments = $input->getArguments();
-        $initialOptions = $input->getOptions();
-        $event = $this->stopwatch->start($this->getName(), 'command');
-
+        $initial_arguments = $input->get_arguments();
+        $initial_options = $input->get_options();
+        $event = $this->stopwatch->start($this->get_name(), 'command');
         try {
-            $this->exitCode = $this->command->run($input, $output);
+            $this->exit_code = $this->command->run($input, $output);
         } finally {
             $event->stop();
-
-            if ($output instanceof ConsoleOutputInterface && $output->isDebug()) {
-                $output->getErrorOutput()->writeln((string) $event);
+            if ($output instanceof Console_Output_Interface && $output->is_debug()) {
+                $output->get_error_output()->writeln((string) $event);
             }
-
-            $this->duration = $event->getDuration().' ms';
-            $this->maxMemoryUsage = ($event->getMemory() >> 20).' MiB';
-
-            $this->arguments = $input->getArguments();
-            $this->options = $input->getOptions();
-
-            $this->extractInteractiveInputs($initialArguments, $initialOptions);
-            $this->isInteractive = $this->isInteractive || $this->interactiveInputs;
+            $this->duration = $event->get_duration() . ' ms';
+            $this->max_memory_usage = ($event->get_memory() >> 20) . ' MiB';
+            $this->arguments = $input->get_arguments();
+            $this->options = $input->get_options();
+            $this->extract_interactive_inputs($initial_arguments, $initial_options);
+            $this->is_interactive = $this->is_interactive || $this->interactive_inputs;
         }
-
-        return $this->exitCode;
+        return $this->exit_code;
     }
-
-    protected function initialize(InputInterface $input, OutputInterface $output): void
+    protected function initialize(Input_Interface $input, Output_Interface $output): void
     {
-        $event = $this->stopwatch->start($this->getName().'.init', 'command');
-
+        $event = $this->stopwatch->start($this->get_name() . '.init', 'command');
         $this->command->initialize($input, $output);
-
         $event->stop();
     }
-
-    protected function interact(InputInterface $input, OutputInterface $output): void
+    protected function interact(Input_Interface $input, Output_Interface $output): void
     {
-        if (!$this->isInteractive = Command::class !== (new \ReflectionMethod($this->command, 'interact'))->class) {
+        if (!$this->is_interactive = Command::class !== (new \ReflectionMethod($this->command, 'interact'))->class) {
             return;
         }
-
-        $event = $this->stopwatch->start($this->getName().'.interact', 'command');
-
+        $event = $this->stopwatch->start($this->get_name() . '.interact', 'command');
         $this->command->interact($input, $output);
-
         $event->stop();
     }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(Input_Interface $input, Output_Interface $output): int
     {
-        $event = $this->stopwatch->start($this->getName().'.execute', 'command');
-
-        $exitCode = $this->command->execute($input, $output);
-
+        $event = $this->stopwatch->start($this->get_name() . '.execute', 'command');
+        $exit_code = $this->command->execute($input, $output);
         $event->stop();
-
-        return $exitCode;
+        return $exit_code;
     }
-
-    private function extractInteractiveInputs(array $initialArguments, array $initialOptions): void
+    private function extract_interactive_inputs(array $initial_arguments, array $initial_options): void
     {
-        $nativeDefinition = $this->command->getNativeDefinition();
-
-        foreach ($nativeDefinition->getArguments() as $argName => $argument) {
-            if (\array_key_exists($argName, $initialArguments) && $initialArguments[$argName] === $this->arguments[$argName]) {
+        $native_definition = $this->command->get_native_definition();
+        foreach ($native_definition->get_arguments() as $arg_name => $argument) {
+            if (\array_key_exists($arg_name, $initial_arguments) && $initial_arguments[$arg_name] === $this->arguments[$arg_name]) {
                 continue;
             }
-
-            $this->interactiveInputs[$argName] = $this->arguments[$argName];
+            $this->interactive_inputs[$arg_name] = $this->arguments[$arg_name];
         }
-
-        foreach ($nativeDefinition->getOptions() as $optName => $option) {
-            if (\array_key_exists($optName, $initialOptions) && $initialOptions[$optName] === $this->options[$optName]) {
+        foreach ($native_definition->get_options() as $opt_name => $option) {
+            if (\array_key_exists($opt_name, $initial_options) && $initial_options[$opt_name] === $this->options[$opt_name]) {
                 continue;
             }
-
-            $this->interactiveInputs['--'.$optName] = $this->options[$optName];
+            $this->interactive_inputs['--' . $opt_name] = $this->options[$opt_name];
         }
     }
 }

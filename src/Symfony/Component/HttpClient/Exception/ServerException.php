@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Client\Exception;
 
-namespace Symfony\Component\HttpClient\Exception;
-
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-
+use Symfony\Contracts\Http_Client\Exception\Server_Exception_Interface;
 /**
  * Represents a 5xx response.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class ServerException extends \RuntimeException implements ServerExceptionInterface
+final class Server_Exception extends \RuntimeException implements Server_Exception_Interface
 {
-    use HttpExceptionTrait;
+    use Http_Exception_Trait;
 }

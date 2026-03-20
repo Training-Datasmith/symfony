@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,42 +9,32 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Psr_Http_Message\Argument_Value_Resolver;
 
-namespace Symfony\Bridge\PsrHttpMessage\ArgumentValueResolver;
-
-use Psr\Http\Message\MessageInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
-use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
-
+use Psr\Http\Message\Message_Interface;
+use Psr\Http\Message\Request_Interface;
+use Psr\Http\Message\Server_Request_Interface;
+use Symfony\Bridge\Psr_Http_Message\Http_Message_Factory_Interface;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Kernel\Controller\Value_Resolver_Interface;
+use Symfony\Component\Http_Kernel\Controller_Metadata\Argument_Metadata;
 /**
  * Injects the RequestInterface, MessageInterface or ServerRequestInterface when requested.
  *
  * @author Iltar van der Berg <kjarli@gmail.com>
  * @author Alexander M. Turek <me@derrabus.de>
  */
-final readonly class PsrServerRequestResolver implements ValueResolverInterface
+final readonly class Psr_Server_Request_Resolver implements Value_Resolver_Interface
 {
-    private const SUPPORTED_TYPES = [
-        ServerRequestInterface::class => true,
-        RequestInterface::class => true,
-        MessageInterface::class => true,
-    ];
-
-    public function __construct(
-        private HttpMessageFactoryInterface $httpMessageFactory,
-    ) {
-    }
-
-    public function resolve(Request $request, ArgumentMetadata $argument): \Traversable
+    private const SUPPORTED_TYPES = [Server_Request_Interface::class => true, Request_Interface::class => true, Message_Interface::class => true];
+    public function __construct(private Http_Message_Factory_Interface $http_message_factory)
     {
-        if (!isset(self::SUPPORTED_TYPES[$argument->getType()])) {
+    }
+    public function resolve(Request $request, Argument_Metadata $argument): \Traversable
+    {
+        if (!isset(self::SUPPORTED_TYPES[$argument->get_type()])) {
             return;
         }
-
-        yield $this->httpMessageFactory->createRequest($request);
+        yield $this->http_message_factory->create_request($request);
     }
 }

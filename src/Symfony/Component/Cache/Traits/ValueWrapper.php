@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * A short namespace-less class to serialize items with metadata.
  *
@@ -22,11 +20,9 @@ class ©
 {
     private const EXPIRY_OFFSET = 1648206727;
     private const INT32_MAX = 2147483647;
-
     public function __construct(public readonly mixed $value, public readonly array $metadata)
     {
     }
-
     public function __serialize(): array
     {
         // pack 31-bits ctime into 14bits
@@ -41,38 +37,29 @@ class ©
             $c <<= 1;
             ++$e;
         }
-        $c = (0x7FE0 & ($c >> 16)) | $e;
-
+        $c = 0x7fe0 & $c >> 16 | $e;
         $pack = pack('Vn', (int) (0.1 + ($this->metadata['expiry'] ?: self::INT32_MAX + self::EXPIRY_OFFSET) - self::EXPIRY_OFFSET), $c);
-
         if (isset($this->metadata['tags'])) {
             $pack[4] = $pack[4] | "\x80";
         }
-
         return [$pack => $this->value] + ($this->metadata['tags'] ?? []);
     }
-
     public function __unserialize(array $data): void
     {
         $pack = array_key_first($data);
         $this->value = $data[$pack];
-
-        if ($hasTags = "\x80" === ($pack[4] & "\x80")) {
+        if ($has_tags = "\x80" === ($pack[4] & "\x80")) {
             unset($data[$pack]);
-            $pack[4] = $pack[4] & "\x7F";
+            $pack[4] = $pack[4] & "";
         }
-
         $metadata = unpack('Vexpiry/nctime', $pack);
         $metadata['expiry'] += self::EXPIRY_OFFSET;
-
-        if (!$metadata['ctime'] = ((0x4000 | $metadata['ctime']) << 16 >> (0x1F & $metadata['ctime'])) - 1) {
+        if (!$metadata['ctime'] = ((0x4000 | $metadata['ctime']) << 16 >> (0x1f & $metadata['ctime'])) - 1) {
             unset($metadata['ctime']);
         }
-
-        if ($hasTags) {
+        if ($has_tags) {
             $metadata['tags'] = $data;
         }
-
         $this->metadata = $metadata;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Foundation\Rate_Limiter;
 
-namespace Symfony\Component\HttpFoundation\RateLimiter;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\RateLimiter\RateLimit;
-
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Rate_Limiter\Rate_Limit;
 /**
  * A request limiter which allows peeking ahead.
  *
@@ -31,7 +28,7 @@ use Symfony\Component\RateLimiter\RateLimit;
  *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
-interface PeekableRequestRateLimiterInterface extends RequestRateLimiterInterface
+interface Peekable_Request_Rate_Limiter_Interface extends Request_Rate_Limiter_Interface
 {
-    public function peek(Request $request): RateLimit;
+    public function peek(Request $request): Rate_Limit;
 }

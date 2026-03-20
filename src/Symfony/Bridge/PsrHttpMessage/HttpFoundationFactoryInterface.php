@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,28 +9,25 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Psr_Http_Message;
 
-namespace Symfony\Bridge\PsrHttpMessage;
-
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
+use Psr\Http\Message\Response_Interface;
+use Psr\Http\Message\Server_Request_Interface;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Response;
 /**
  * Creates Symfony Request and Response instances from PSR-7 ones.
  *
  * @author Kévin Dunglas <dunglas@gmail.com>
  */
-interface HttpFoundationFactoryInterface
+interface Http_Foundation_Factory_Interface
 {
     /**
      * Creates a Symfony Request instance from a PSR-7 one.
      */
-    public function createRequest(ServerRequestInterface $psrRequest, bool $streamed = false): Request;
-
+    public function create_request(Server_Request_Interface $psr_request, bool $streamed = false): Request;
     /**
      * Creates a Symfony Response instance from a PSR-7 one.
      */
-    public function createResponse(ResponseInterface $psrResponse, bool $streamed = false): Response;
+    public function create_response(Response_Interface $psr_response, bool $streamed = false): Response;
 }

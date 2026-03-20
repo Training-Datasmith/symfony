@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,32 +9,26 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Doctrine\Types;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types\TimeImmutableType;
-use Symfony\Component\Clock\DatePoint;
-
-final class TimePointType extends TimeImmutableType
+use Doctrine\DBAL\Platforms\Abstract_Platform;
+use Doctrine\DBAL\Types\Time_Immutable_Type;
+use Symfony\Component\Clock\Date_Point;
+final class Time_Point_Type extends Time_Immutable_Type
 {
     public const NAME = 'time_point';
-
     /**
      * @return ($value is null ? null : DatePoint)
      */
-    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?DatePoint
+    public function convert_to_php_value(mixed $value, Abstract_Platform $platform): ?Date_Point
     {
-        if (null === $value || $value instanceof DatePoint) {
+        if (null === $value || $value instanceof Date_Point) {
             return $value;
         }
-
-        $value = parent::convertToPHPValue($value, $platform);
-
-        return DatePoint::createFromInterface($value);
+        $value = parent::convert_to_php_value($value, $platform);
+        return Date_Point::create_from_interface($value);
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return self::NAME;
     }

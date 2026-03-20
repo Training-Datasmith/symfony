@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,23 +9,21 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpKernel\Exception;
+namespace Symfony\Component\Http_Kernel\Exception;
 
 /**
  * Interface for HTTP error exceptions.
  *
  * @author Kris Wallsmith <kris@symfony.com>
  */
-interface HttpExceptionInterface extends \Throwable
+interface Http_Exception_Interface extends \Throwable
 {
     /**
      * Returns the status code.
      */
-    public function getStatusCode(): int;
-
+    public function get_status_code(): int;
     /**
      * Returns response headers.
      */
-    public function getHeaders(): array;
+    public function get_headers(): array;
 }

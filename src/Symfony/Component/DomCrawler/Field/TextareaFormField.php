@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,15 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DomCrawler\Field;
+namespace Symfony\Component\Dom_Crawler\Field;
 
 /**
  * TextareaFormField represents a textarea form field (an HTML textarea tag).
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class TextareaFormField extends FormField
+class Textarea_Form_Field extends Form_Field
 {
     /**
      * Initializes the form field.
@@ -27,13 +25,12 @@ class TextareaFormField extends FormField
      */
     protected function initialize(): void
     {
-        if ('textarea' !== $this->node->nodeName) {
-            throw new \LogicException(\sprintf('A TextareaFormField can only be created from a textarea tag (%s given).', $this->node->nodeName));
+        if ('textarea' !== $this->node->node_name) {
+            throw new \LogicException(\sprintf('A TextareaFormField can only be created from a textarea tag (%s given).', $this->node->node_name));
         }
-
         $this->value = '';
-        foreach ($this->node->childNodes as $node) {
-            $this->value .= $node->wholeText;
+        foreach ($this->node->child_nodes as $node) {
+            $this->value .= $node->whole_text;
         }
     }
 }

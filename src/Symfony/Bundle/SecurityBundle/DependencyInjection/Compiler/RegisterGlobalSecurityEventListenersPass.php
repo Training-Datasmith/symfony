@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,22 +9,20 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Dependency_Injection\Compiler;
 
-namespace Symfony\Bundle\SecurityBundle\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Security\Core\AuthenticationEvents;
-use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
-use Symfony\Component\Security\Http\Event\AuthenticationTokenCreatedEvent;
-use Symfony\Component\Security\Http\Event\CheckPassportEvent;
-use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
-use Symfony\Component\Security\Http\Event\LoginFailureEvent;
-use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
-use Symfony\Component\Security\Http\Event\LogoutEvent;
-use Symfony\Component\Security\Http\Event\TokenDeauthenticatedEvent;
-use Symfony\Component\Security\Http\SecurityEvents;
-
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Security\Core\Authentication_Events;
+use Symfony\Component\Security\Core\Event\Authentication_Success_Event;
+use Symfony\Component\Security\Http\Event\Authentication_Token_Created_Event;
+use Symfony\Component\Security\Http\Event\Check_Passport_Event;
+use Symfony\Component\Security\Http\Event\Interactive_Login_Event;
+use Symfony\Component\Security\Http\Event\Login_Failure_Event;
+use Symfony\Component\Security\Http\Event\Login_Success_Event;
+use Symfony\Component\Security\Http\Event\Logout_Event;
+use Symfony\Component\Security\Http\Event\Token_Deauthenticated_Event;
+use Symfony\Component\Security\Http\Security_Events;
 /**
  * Makes sure all event listeners on the global dispatcher are also listening
  * to events on the firewall-specific dispatchers.
@@ -37,51 +34,44 @@ use Symfony\Component\Security\Http\SecurityEvents;
  *
  * @internal
  */
-class RegisterGlobalSecurityEventListenersPass implements CompilerPassInterface
+class Register_Global_Security_Event_Listeners_Pass implements Compiler_Pass_Interface
 {
     private const EVENT_BUBBLING_EVENTS = [
-        CheckPassportEvent::class,
-        LoginFailureEvent::class,
-        LoginSuccessEvent::class,
-        LogoutEvent::class,
-        AuthenticationTokenCreatedEvent::class,
-        AuthenticationSuccessEvent::class,
-        InteractiveLoginEvent::class,
-        TokenDeauthenticatedEvent::class,
-
+        Check_Passport_Event::class,
+        Login_Failure_Event::class,
+        Login_Success_Event::class,
+        Logout_Event::class,
+        Authentication_Token_Created_Event::class,
+        Authentication_Success_Event::class,
+        Interactive_Login_Event::class,
+        Token_Deauthenticated_Event::class,
         // When events are registered by their name
-        AuthenticationEvents::AUTHENTICATION_SUCCESS,
-        SecurityEvents::INTERACTIVE_LOGIN,
+        Authentication_Events::AUTHENTICATION_SUCCESS,
+        Security_Events::INTERACTIVE_LOGIN,
     ];
-
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (!$container->has('event_dispatcher') || !$container->hasParameter('security.firewalls')) {
+        if (!$container->has('event_dispatcher') || !$container->has_parameter('security.firewalls')) {
             return;
         }
-
-        $firewallDispatchers = [];
-        foreach ($container->getParameter('security.firewalls') as $firewallName) {
-            if (!$container->has('security.event_dispatcher.'.$firewallName)) {
+        $firewall_dispatchers = [];
+        foreach ($container->get_parameter('security.firewalls') as $firewall_name) {
+            if (!$container->has('security.event_dispatcher.' . $firewall_name)) {
                 continue;
             }
-
-            $firewallDispatchers[] = $container->findDefinition('security.event_dispatcher.'.$firewallName);
+            $firewall_dispatchers[] = $container->find_definition('security.event_dispatcher.' . $firewall_name);
         }
-
-        $globalDispatcher = $container->findDefinition('event_dispatcher');
-        foreach ($globalDispatcher->getMethodCalls() as $methodCall) {
-            if ('addListener' !== $methodCall[0]) {
+        $global_dispatcher = $container->find_definition('event_dispatcher');
+        foreach ($global_dispatcher->get_method_calls() as $method_call) {
+            if ('addListener' !== $method_call[0]) {
                 continue;
             }
-
-            $methodCallArguments = $methodCall[1];
-            if (!\in_array($methodCallArguments[0], self::EVENT_BUBBLING_EVENTS, true)) {
+            $method_call_arguments = $method_call[1];
+            if (!\in_array($method_call_arguments[0], self::EVENT_BUBBLING_EVENTS, true)) {
                 continue;
             }
-
-            foreach ($firewallDispatchers as $firewallDispatcher) {
-                $firewallDispatcher->addMethodCall('addListener', $methodCallArguments);
+            foreach ($firewall_dispatchers as $firewall_dispatcher) {
+                $firewall_dispatcher->add_method_call('addListener', $method_call_arguments);
             }
         }
     }

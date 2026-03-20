@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,197 +9,145 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Bridge\PsrHttpMessage\Factory;
+namespace Symfony\Bridge\Psr_Http_Message\Factory;
 
 use Http\Discovery\Psr17Factory as DiscoveryPsr17Factory;
 use Nyholm\Psr7\Factory\Psr17Factory as NyholmPsr17Factory;
-use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestFactoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\UploadedFileFactoryInterface;
-use Psr\Http\Message\UploadedFileInterface;
-use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-
+use Psr\Http\Message\Response_Factory_Interface;
+use Psr\Http\Message\Response_Interface;
+use Psr\Http\Message\Server_Request_Factory_Interface;
+use Psr\Http\Message\Server_Request_Interface;
+use Psr\Http\Message\Stream_Factory_Interface;
+use Psr\Http\Message\Uploaded_File_Factory_Interface;
+use Psr\Http\Message\Uploaded_File_Interface;
+use Symfony\Bridge\Psr_Http_Message\Http_Message_Factory_Interface;
+use Symfony\Component\Http_Foundation\Binary_File_Response;
+use Symfony\Component\Http_Foundation\File\Uploaded_File;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Response;
+use Symfony\Component\Http_Foundation\Streamed_Response;
 /**
  * Builds Psr\HttpMessage instances using a PSR-17 implementation.
  *
  * @author Antonio J. García Lagar <aj@garcialagar.es>
  * @author Aurélien Pillevesse <aurelienpillevesse@hotmail.fr>
  */
-class PsrHttpFactory implements HttpMessageFactoryInterface
+class Psr_Http_Factory implements Http_Message_Factory_Interface
 {
-    private readonly ServerRequestFactoryInterface $serverRequestFactory;
-    private readonly StreamFactoryInterface $streamFactory;
-    private readonly UploadedFileFactoryInterface $uploadedFileFactory;
-    private readonly ResponseFactoryInterface $responseFactory;
-
-    public function __construct(
-        ?ServerRequestFactoryInterface $serverRequestFactory = null,
-        ?StreamFactoryInterface $streamFactory = null,
-        ?UploadedFileFactoryInterface $uploadedFileFactory = null,
-        ?ResponseFactoryInterface $responseFactory = null,
-    ) {
-        if (null === $serverRequestFactory || null === $streamFactory || null === $uploadedFileFactory || null === $responseFactory) {
+    private readonly Server_Request_Factory_Interface $server_request_factory;
+    private readonly Stream_Factory_Interface $stream_factory;
+    private readonly Uploaded_File_Factory_Interface $uploaded_file_factory;
+    private readonly Response_Factory_Interface $response_factory;
+    public function __construct(?Server_Request_Factory_Interface $server_request_factory = null, ?Stream_Factory_Interface $stream_factory = null, ?Uploaded_File_Factory_Interface $uploaded_file_factory = null, ?Response_Factory_Interface $response_factory = null)
+    {
+        if (null === $server_request_factory || null === $stream_factory || null === $uploaded_file_factory || null === $response_factory) {
             $psr17Factory = match (true) {
-                class_exists(DiscoveryPsr17Factory::class) => new DiscoveryPsr17Factory(),
-                class_exists(NyholmPsr17Factory::class) => new NyholmPsr17Factory(),
+                class_exists(Discovery_Psr17factory::class) => new Discovery_Psr17factory(),
+                class_exists(Nyholm_Psr17factory::class) => new Nyholm_Psr17factory(),
                 default => throw new \LogicException(\sprintf('You cannot use the "%s" as no PSR-17 factories have been provided. Try running "composer require php-http/discovery psr/http-factory-implementation:*".', self::class)),
             };
-
-            $serverRequestFactory ??= $psr17Factory;
-            $streamFactory ??= $psr17Factory;
-            $uploadedFileFactory ??= $psr17Factory;
-            $responseFactory ??= $psr17Factory;
+            $server_request_factory ??= $psr17Factory;
+            $stream_factory ??= $psr17Factory;
+            $uploaded_file_factory ??= $psr17Factory;
+            $response_factory ??= $psr17Factory;
         }
-
-        $this->serverRequestFactory = $serverRequestFactory;
-        $this->streamFactory = $streamFactory;
-        $this->uploadedFileFactory = $uploadedFileFactory;
-        $this->responseFactory = $responseFactory;
+        $this->server_request_factory = $server_request_factory;
+        $this->stream_factory = $stream_factory;
+        $this->uploaded_file_factory = $uploaded_file_factory;
+        $this->response_factory = $response_factory;
     }
-
-    public function createRequest(Request $symfonyRequest): ServerRequestInterface
+    public function create_request(Request $symfony_request): Server_Request_Interface
     {
-        $uri = $symfonyRequest->server->get('QUERY_STRING', '');
-        $uri = $symfonyRequest->getSchemeAndHttpHost().$symfonyRequest->getBaseUrl().$symfonyRequest->getPathInfo().('' !== $uri ? '?'.$uri : '');
-
-        $request = $this->serverRequestFactory->createServerRequest(
-            $symfonyRequest->getMethod(),
-            $uri,
-            $symfonyRequest->server->all()
-        );
-
-        foreach ($symfonyRequest->headers->all() as $name => $value) {
+        $uri = $symfony_request->server->get('QUERY_STRING', '');
+        $uri = $symfony_request->get_scheme_and_http_host() . $symfony_request->get_base_url() . $symfony_request->get_path_info() . ('' !== $uri ? '?' . $uri : '');
+        $request = $this->server_request_factory->create_server_request($symfony_request->get_method(), $uri, $symfony_request->server->all());
+        foreach ($symfony_request->headers->all() as $name => $value) {
             try {
-                $request = $request->withHeader($name, $value);
+                $request = $request->with_header($name, $value);
             } catch (\InvalidArgumentException) {
                 // ignore invalid header
             }
         }
-
-        $body = $this->streamFactory->createStreamFromResource($symfonyRequest->getContent(true));
-        $format = $symfonyRequest->getContentTypeFormat();
-
+        $body = $this->stream_factory->create_stream_from_resource($symfony_request->get_content(true));
+        $format = $symfony_request->get_content_type_format();
         if ('json' === $format) {
-            $parsedBody = json_decode($symfonyRequest->getContent(), true, 512, \JSON_BIGINT_AS_STRING);
-
-            if (!\is_array($parsedBody)) {
-                $parsedBody = null;
+            $parsed_body = json_decode($symfony_request->get_content(), true, 512, \JSON_BIGINT_AS_STRING);
+            if (!\is_array($parsed_body)) {
+                $parsed_body = null;
             }
         } else {
-            $parsedBody = $symfonyRequest->request->all();
+            $parsed_body = $symfony_request->request->all();
         }
-
-        $request = $request
-            ->withBody($body)
-            ->withUploadedFiles($this->getFiles($symfonyRequest->files->all()))
-            ->withCookieParams($symfonyRequest->cookies->all())
-            ->withQueryParams($symfonyRequest->query->all())
-            ->withParsedBody($parsedBody)
-        ;
-
-        foreach ($symfonyRequest->attributes->all() as $key => $value) {
-            $request = $request->withAttribute($key, $value);
+        $request = $request->with_body($body)->with_uploaded_files($this->get_files($symfony_request->files->all()))->with_cookie_params($symfony_request->cookies->all())->with_query_params($symfony_request->query->all())->with_parsed_body($parsed_body);
+        foreach ($symfony_request->attributes->all() as $key => $value) {
+            $request = $request->with_attribute($key, $value);
         }
-
         return $request;
     }
-
     /**
      * Converts Symfony uploaded files array to the PSR one.
      */
-    private function getFiles(array $uploadedFiles): array
+    private function get_files(array $uploaded_files): array
     {
         $files = [];
-
-        foreach ($uploadedFiles as $key => $value) {
+        foreach ($uploaded_files as $key => $value) {
             if (null === $value) {
-                $files[$key] = $this->uploadedFileFactory->createUploadedFile($this->streamFactory->createStream(), 0, \UPLOAD_ERR_NO_FILE);
+                $files[$key] = $this->uploaded_file_factory->create_uploaded_file($this->stream_factory->create_stream(), 0, \UPLOAD_ERR_NO_FILE);
                 continue;
             }
-            if ($value instanceof UploadedFile) {
-                $files[$key] = $this->createUploadedFile($value);
+            if ($value instanceof Uploaded_File) {
+                $files[$key] = $this->create_uploaded_file($value);
             } else {
-                $files[$key] = $this->getFiles($value);
+                $files[$key] = $this->get_files($value);
             }
         }
-
         return $files;
     }
-
     /**
      * Creates a PSR-7 UploadedFile instance from a Symfony one.
      */
-    private function createUploadedFile(UploadedFile $symfonyUploadedFile): UploadedFileInterface
+    private function create_uploaded_file(Uploaded_File $symfony_uploaded_file): Uploaded_File_Interface
     {
-        return $this->uploadedFileFactory->createUploadedFile(
-            $this->streamFactory->createStreamFromFile(
-                $symfonyUploadedFile->getRealPath()
-            ),
-            (int) $symfonyUploadedFile->getSize(),
-            $symfonyUploadedFile->getError(),
-            $symfonyUploadedFile->getClientOriginalName(),
-            $symfonyUploadedFile->getClientMimeType()
-        );
+        return $this->uploaded_file_factory->create_uploaded_file($this->stream_factory->create_stream_from_file($symfony_uploaded_file->get_real_path()), (int) $symfony_uploaded_file->get_size(), $symfony_uploaded_file->get_error(), $symfony_uploaded_file->get_client_original_name(), $symfony_uploaded_file->get_client_mime_type());
     }
-
-    public function createResponse(Response $symfonyResponse): ResponseInterface
+    public function create_response(Response $symfony_response): Response_Interface
     {
-        $response = $this->responseFactory->createResponse($symfonyResponse->getStatusCode(), Response::$statusTexts[$symfonyResponse->getStatusCode()] ?? '');
-
-        if ($symfonyResponse instanceof BinaryFileResponse && !$symfonyResponse->headers->has('Content-Range')) {
-            $stream = $this->streamFactory->createStreamFromFile(
-                $symfonyResponse->getFile()->getPathname()
-            );
+        $response = $this->response_factory->create_response($symfony_response->get_status_code(), Response::$status_texts[$symfony_response->get_status_code()] ?? '');
+        if ($symfony_response instanceof Binary_File_Response && !$symfony_response->headers->has('Content-Range')) {
+            $stream = $this->stream_factory->create_stream_from_file($symfony_response->get_file()->get_pathname());
         } else {
-            $stream = $this->streamFactory->createStreamFromFile('php://temp', 'wb+');
-            if ($symfonyResponse instanceof StreamedResponse || $symfonyResponse instanceof BinaryFileResponse) {
+            $stream = $this->stream_factory->create_stream_from_file('php://temp', 'wb+');
+            if ($symfony_response instanceof Streamed_Response || $symfony_response instanceof Binary_File_Response) {
                 ob_start(static function ($buffer) use ($stream): string {
                     $stream->write($buffer);
-
                     return '';
                 }, 1);
-
                 try {
-                    $symfonyResponse->sendContent();
+                    $symfony_response->send_content();
                 } finally {
                     ob_end_clean();
                 }
             } else {
-                $stream->write($symfonyResponse->getContent());
+                $stream->write($symfony_response->get_content());
             }
         }
-
-        $response = $response->withBody($stream);
-
-        $headers = $symfonyResponse->headers->all();
-        $cookies = $symfonyResponse->headers->getCookies();
+        $response = $response->with_body($stream);
+        $headers = $symfony_response->headers->all();
+        $cookies = $symfony_response->headers->get_cookies();
         if ($cookies) {
             $headers['Set-Cookie'] = [];
-
             foreach ($cookies as $cookie) {
                 $headers['Set-Cookie'][] = $cookie->__toString();
             }
         }
-
         foreach ($headers as $name => $value) {
             try {
-                $response = $response->withHeader($name, $value);
+                $response = $response->with_header($name, $value);
             } catch (\InvalidArgumentException) {
                 // ignore invalid header
             }
         }
-
-        $protocolVersion = $symfonyResponse->getProtocolVersion();
-
-        return $response->withProtocolVersion($protocolVersion);
+        $protocol_version = $symfony_response->get_protocol_version();
+        return $response->with_protocol_version($protocol_version);
     }
 }

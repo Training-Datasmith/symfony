@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,109 +9,85 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Adapter;
 
-use Psr\Cache\CacheItemInterface;
-use Symfony\Component\Cache\CacheItem;
-use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\NamespacedPoolInterface;
-
+use Psr\Cache\Cache_Item_Interface;
+use Symfony\Component\Cache\Cache_Item;
+use Symfony\Contracts\Cache\Cache_Interface;
+use Symfony\Contracts\Cache\Namespaced_Pool_Interface;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-class NullAdapter implements AdapterInterface, CacheInterface, NamespacedPoolInterface, TagAwareAdapterInterface
+class Null_Adapter implements Adapter_Interface, Cache_Interface, Namespaced_Pool_Interface, Tag_Aware_Adapter_Interface
 {
-    private static \Closure $createCacheItem;
-
+    private static \Closure $create_cache_item;
     public function __construct()
     {
-        self::$createCacheItem ??= \Closure::bind(
-            static function ($key): \Symfony\Component\Cache\CacheItem {
-                $item = new CacheItem();
-                $item->isTaggable = true;
-                $item->key = $key;
-                $item->isHit = false;
-
-                return $item;
-            },
-            null,
-            CacheItem::class
-        );
+        self::$create_cache_item ??= \Closure::bind(static function ($key): \Symfony\Component\Cache\Cache_Item {
+            $item = new Cache_Item();
+            $item->is_taggable = true;
+            $item->key = $key;
+            $item->is_hit = false;
+            return $item;
+        }, null, Cache_Item::class);
     }
-
     public function get(string $key, callable $callback, ?float $beta = null, ?array &$metadata = null): mixed
     {
         $save = true;
-
-        return $callback((self::$createCacheItem)($key), $save);
+        return $callback((self::$create_cache_item)($key), $save);
     }
-
-    public function getItem(mixed $key): CacheItem
+    public function get_item(mixed $key): Cache_Item
     {
-        return (self::$createCacheItem)($key);
+        return (self::$create_cache_item)($key);
     }
-
-    public function getItems(array $keys = []): iterable
+    public function get_items(array $keys = []): iterable
     {
-        return $this->generateItems($keys);
+        return $this->generate_items($keys);
     }
-
-    public function hasItem(mixed $key): bool
+    public function has_item(mixed $key): bool
     {
         return false;
     }
-
     public function clear(string $prefix = ''): bool
     {
         return true;
     }
-
-    public function deleteItem(mixed $key): bool
+    public function delete_item(mixed $key): bool
     {
         return true;
     }
-
-    public function deleteItems(array $keys): bool
+    public function delete_items(array $keys): bool
     {
         return true;
     }
-
-    public function save(CacheItemInterface $item): bool
+    public function save(Cache_Item_Interface $item): bool
     {
         return true;
     }
-
-    public function saveDeferred(CacheItemInterface $item): bool
+    public function save_deferred(Cache_Item_Interface $item): bool
     {
         return true;
     }
-
     public function commit(): bool
     {
         return true;
     }
-
     public function delete(string $key): bool
     {
-        return $this->deleteItem($key);
+        return $this->delete_item($key);
     }
-
-    public function withSubNamespace(string $namespace): static
+    public function with_sub_namespace(string $namespace): static
     {
         return clone $this;
     }
-
-    private function generateItems(array $keys): \Generator
+    private function generate_items(array $keys): \Generator
     {
-        $f = self::$createCacheItem;
-
+        $f = self::$create_cache_item;
         foreach ($keys as $key) {
             yield $key => $f($key);
         }
     }
-
-    public function invalidateTags(array $tags): bool
+    public function invalidate_tags(array $tags): bool
     {
         return true;
     }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
-
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Exception\Service_Circular_Reference_Exception;
 /**
  * Checks your services for circular references.
  *
@@ -26,27 +23,23 @@ use Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceExce
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class CheckCircularReferencesPass implements CompilerPassInterface
+class Check_Circular_References_Pass implements Compiler_Pass_Interface
 {
-    private array $currentPath;
-    private array $checkedNodes;
-    private array $checkedLazyNodes;
-
+    private array $current_path;
+    private array $checked_nodes;
+    private array $checked_lazy_nodes;
     /**
      * Checks the ContainerBuilder object for circular references.
      */
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        $graph = $container->getCompiler()->getServiceReferenceGraph();
-
-        $this->checkedNodes = [];
-        foreach ($graph->getNodes() as $id => $node) {
-            $this->currentPath = [$id];
-
-            $this->checkOutEdges($node->getOutEdges());
+        $graph = $container->get_compiler()->get_service_reference_graph();
+        $this->checked_nodes = [];
+        foreach ($graph->get_nodes() as $id => $node) {
+            $this->current_path = [$id];
+            $this->check_out_edges($node->get_out_edges());
         }
     }
-
     /**
      * Checks for circular references.
      *
@@ -54,42 +47,34 @@ class CheckCircularReferencesPass implements CompilerPassInterface
      *
      * @throws ServiceCircularReferenceException when a circular reference is found
      */
-    private function checkOutEdges(array $edges): void
+    private function check_out_edges(array $edges): void
     {
         foreach ($edges as $edge) {
-            $node = $edge->getDestNode();
-            $id = $node->getId();
-
-            if (!empty($this->checkedNodes[$id])) {
+            $node = $edge->get_dest_node();
+            $id = $node->get_id();
+            if (!empty($this->checked_nodes[$id])) {
                 continue;
             }
-
-            $isLeaf = (bool) $node->getValue();
-            $isConcrete = !$edge->isLazy() && !$edge->isWeak();
-
+            $is_leaf = (bool) $node->get_value();
+            $is_concrete = !$edge->is_lazy() && !$edge->is_weak();
             // Skip already checked lazy services if they are still lazy. Will not gain any new information.
-            if (!empty($this->checkedLazyNodes[$id]) && (!$isLeaf || !$isConcrete)) {
+            if (!empty($this->checked_lazy_nodes[$id]) && (!$is_leaf || !$is_concrete)) {
                 continue;
             }
-
             // Process concrete references, otherwise defer check circular references for lazy edges.
-            if (!$isLeaf || $isConcrete) {
-                $searchKey = array_search($id, $this->currentPath);
-                $this->currentPath[] = $id;
-
-                if (false !== $searchKey) {
-                    throw new ServiceCircularReferenceException($id, \array_slice($this->currentPath, $searchKey));
+            if (!$is_leaf || $is_concrete) {
+                $search_key = array_search($id, $this->current_path);
+                $this->current_path[] = $id;
+                if (false !== $search_key) {
+                    throw new Service_Circular_Reference_Exception($id, \array_slice($this->current_path, $search_key));
                 }
-
-                $this->checkOutEdges($node->getOutEdges());
-
-                $this->checkedNodes[$id] = true;
-                unset($this->checkedLazyNodes[$id]);
+                $this->check_out_edges($node->get_out_edges());
+                $this->checked_nodes[$id] = true;
+                unset($this->checked_lazy_nodes[$id]);
             } else {
-                $this->checkedLazyNodes[$id] = true;
+                $this->checked_lazy_nodes[$id] = true;
             }
-
-            array_pop($this->currentPath);
+            array_pop($this->current_path);
         }
     }
 }

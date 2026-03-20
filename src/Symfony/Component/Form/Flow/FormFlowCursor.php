@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,96 +9,76 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Flow;
 
 use Symfony\Component\Form\Exception\InvalidArgumentException;
-
 /**
  * @author Yonel Ceruto <open@yceruto.dev>
  */
-class FormFlowCursor
+class Form_Flow_Cursor
 {
     /**
      * @param array<string> $steps
      */
-    public function __construct(
-        private readonly array $steps,
-        private readonly string $currentStep,
-    ) {
-        if (!\in_array($currentStep, $steps, true)) {
-            throw new InvalidArgumentException(\sprintf('Step "%s" does not exist. Available steps are: "%s".', $currentStep, implode('", "', $steps)));
+    public function __construct(private readonly array $steps, private readonly string $current_step)
+    {
+        if (!\in_array($current_step, $steps, true)) {
+            throw new InvalidArgumentException(\sprintf('Step "%s" does not exist. Available steps are: "%s".', $current_step, implode('", "', $steps)));
         }
     }
-
-    public function getSteps(): array
+    public function get_steps(): array
     {
         return $this->steps;
     }
-
-    public function getTotalSteps(): int
+    public function get_total_steps(): int
     {
         return \count($this->steps);
     }
-
-    public function getStepIndex(): int
+    public function get_step_index(): int
     {
-        return (int) array_search($this->currentStep, $this->steps, true);
+        return (int) array_search($this->current_step, $this->steps, true);
     }
-
-    public function getFirstStep(): string
+    public function get_first_step(): string
     {
         return $this->steps[0];
     }
-
-    public function getPreviousStep(): ?string
+    public function get_previous_step(): ?string
     {
-        $currentPos = array_search($this->currentStep, $this->steps, true);
-
-        return $this->steps[$currentPos - 1] ?? null;
+        $current_pos = array_search($this->current_step, $this->steps, true);
+        return $this->steps[$current_pos - 1] ?? null;
     }
-
-    public function getCurrentStep(): string
+    public function get_current_step(): string
     {
-        return $this->currentStep;
+        return $this->current_step;
     }
-
-    public function withCurrentStep(string $step): self
+    public function with_current_step(string $step): self
     {
         return new self($this->steps, $step);
     }
-
-    public function getNextStep(): ?string
+    public function get_next_step(): ?string
     {
-        $currentPos = array_search($this->currentStep, $this->steps, true);
-
-        return $this->steps[$currentPos + 1] ?? null;
+        $current_pos = array_search($this->current_step, $this->steps, true);
+        return $this->steps[$current_pos + 1] ?? null;
     }
-
-    public function getLastStep(): string
+    public function get_last_step(): string
     {
         return $this->steps[\count($this->steps) - 1];
     }
-
-    public function isFirstStep(): bool
+    public function is_first_step(): bool
     {
-        return 0 === array_search($this->currentStep, $this->steps, true);
+        return 0 === array_search($this->current_step, $this->steps, true);
     }
-
-    public function isLastStep(): bool
+    public function is_last_step(): bool
     {
-        $currentPos = array_search($this->currentStep, $this->steps, true);
-
-        return \count($this->steps) === $currentPos + 1;
+        $current_pos = array_search($this->current_step, $this->steps, true);
+        return \count($this->steps) === $current_pos + 1;
     }
-
-    public function canMoveBack(): bool
+    public function can_move_back(): bool
     {
-        return null !== $this->getPreviousStep();
+        return null !== $this->get_previous_step();
     }
-
-    public function canMoveNext(): bool
+    public function can_move_next(): bool
     {
-        return null !== $this->getNextStep();
+        return null !== $this->get_next_step();
     }
 }

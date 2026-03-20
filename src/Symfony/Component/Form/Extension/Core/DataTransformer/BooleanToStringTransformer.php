@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Extension\Core\Data_Transformer;
 
-namespace Symfony\Component\Form\Extension\Core\DataTransformer;
-
-use Symfony\Component\Form\DataTransformerInterface;
+use Symfony\Component\Form\Data_Transformer_Interface;
 use Symfony\Component\Form\Exception\InvalidArgumentException;
-use Symfony\Component\Form\Exception\TransformationFailedException;
-
+use Symfony\Component\Form\Exception\Transformation_Failed_Exception;
 /**
  * Transforms between a Boolean and a string.
  *
@@ -25,43 +22,35 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
  *
  * @implements DataTransformerInterface<bool, string>
  */
-class BooleanToStringTransformer implements DataTransformerInterface
+class Boolean_To_String_Transformer implements Data_Transformer_Interface
 {
     /**
      * @param string $trueValue The value emitted upon transform if the input is true
      */
-    public function __construct(
-        private readonly string $trueValue,
-        private readonly array $falseValues = [null],
-    ) {
-        if (\in_array($this->trueValue, $this->falseValues, true)) {
+    public function __construct(private readonly string $true_value, private readonly array $false_values = [null])
+    {
+        if (\in_array($this->true_value, $this->false_values, true)) {
             throw new InvalidArgumentException('The specified "true" value is contained in the false-values.');
         }
     }
-
     public function transform(mixed $value): ?string
     {
         if (null === $value) {
             return null;
         }
-
         if (!\is_bool($value)) {
-            throw new TransformationFailedException('Expected a Boolean.');
+            throw new Transformation_Failed_Exception('Expected a Boolean.');
         }
-
-        return $value ? $this->trueValue : null;
+        return $value ? $this->true_value : null;
     }
-
-    public function reverseTransform(mixed $value): bool
+    public function reverse_transform(mixed $value): bool
     {
-        if (\in_array($value, $this->falseValues, true)) {
+        if (\in_array($value, $this->false_values, true)) {
             return false;
         }
-
         if (!\is_string($value)) {
-            throw new TransformationFailedException('Expected a string.');
+            throw new Transformation_Failed_Exception('Expected a string.');
         }
-
         return true;
     }
 }

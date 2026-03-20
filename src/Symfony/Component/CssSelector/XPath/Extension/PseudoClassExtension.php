@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Css_Selector\X_Path\Extension;
 
-namespace Symfony\Component\CssSelector\XPath\Extension;
-
-use Symfony\Component\CssSelector\Exception\ExpressionErrorException;
-use Symfony\Component\CssSelector\XPath\XPathExpr;
-
+use Symfony\Component\Css_Selector\Exception\Expression_Error_Exception;
+use Symfony\Component\Css_Selector\X_Path\X_Path_Expr;
 /**
  * XPath expression translator pseudo-class extension.
  *
@@ -26,98 +23,62 @@ use Symfony\Component\CssSelector\XPath\XPathExpr;
  *
  * @internal
  */
-class PseudoClassExtension extends AbstractExtension
+class Pseudo_Class_Extension extends Abstract_Extension
 {
-    public function getPseudoClassTranslators(): array
+    public function get_pseudo_class_translators(): array
     {
-        return [
-            'root' => $this->translateRoot(...),
-            'scope' => $this->translateScopePseudo(...),
-            'first-child' => $this->translateFirstChild(...),
-            'last-child' => $this->translateLastChild(...),
-            'first-of-type' => $this->translateFirstOfType(...),
-            'last-of-type' => $this->translateLastOfType(...),
-            'only-child' => $this->translateOnlyChild(...),
-            'only-of-type' => $this->translateOnlyOfType(...),
-            'empty' => $this->translateEmpty(...),
-        ];
+        return ['root' => $this->translate_root(...), 'scope' => $this->translate_scope_pseudo(...), 'first-child' => $this->translate_first_child(...), 'last-child' => $this->translate_last_child(...), 'first-of-type' => $this->translate_first_of_type(...), 'last-of-type' => $this->translate_last_of_type(...), 'only-child' => $this->translate_only_child(...), 'only-of-type' => $this->translate_only_of_type(...), 'empty' => $this->translate_empty(...)];
     }
-
-    public function translateRoot(XPathExpr $xpath): XPathExpr
+    public function translate_root(X_Path_Expr $xpath): X_Path_Expr
     {
-        return $xpath->addCondition('not(parent::*)');
+        return $xpath->add_condition('not(parent::*)');
     }
-
-    public function translateScopePseudo(XPathExpr $xpath): XPathExpr
+    public function translate_scope_pseudo(X_Path_Expr $xpath): X_Path_Expr
     {
-        return $xpath->addCondition('1');
+        return $xpath->add_condition('1');
     }
-
-    public function translateFirstChild(XPathExpr $xpath): XPathExpr
+    public function translate_first_child(X_Path_Expr $xpath): X_Path_Expr
     {
-        return $xpath
-            ->addStarPrefix()
-            ->addNameTest()
-            ->addCondition('position() = 1');
+        return $xpath->add_star_prefix()->add_name_test()->add_condition('position() = 1');
     }
-
-    public function translateLastChild(XPathExpr $xpath): XPathExpr
+    public function translate_last_child(X_Path_Expr $xpath): X_Path_Expr
     {
-        return $xpath
-            ->addStarPrefix()
-            ->addNameTest()
-            ->addCondition('position() = last()');
+        return $xpath->add_star_prefix()->add_name_test()->add_condition('position() = last()');
     }
-
     /**
      * @throws ExpressionErrorException
      */
-    public function translateFirstOfType(XPathExpr $xpath): XPathExpr
+    public function translate_first_of_type(X_Path_Expr $xpath): X_Path_Expr
     {
-        if ('*' === $xpath->getElement()) {
-            throw new ExpressionErrorException('"*:first-of-type" is not implemented.');
+        if ('*' === $xpath->get_element()) {
+            throw new Expression_Error_Exception('"*:first-of-type" is not implemented.');
         }
-
-        return $xpath
-            ->addStarPrefix()
-            ->addCondition('position() = 1');
+        return $xpath->add_star_prefix()->add_condition('position() = 1');
     }
-
     /**
      * @throws ExpressionErrorException
      */
-    public function translateLastOfType(XPathExpr $xpath): XPathExpr
+    public function translate_last_of_type(X_Path_Expr $xpath): X_Path_Expr
     {
-        if ('*' === $xpath->getElement()) {
-            throw new ExpressionErrorException('"*:last-of-type" is not implemented.');
+        if ('*' === $xpath->get_element()) {
+            throw new Expression_Error_Exception('"*:last-of-type" is not implemented.');
         }
-
-        return $xpath
-            ->addStarPrefix()
-            ->addCondition('position() = last()');
+        return $xpath->add_star_prefix()->add_condition('position() = last()');
     }
-
-    public function translateOnlyChild(XPathExpr $xpath): XPathExpr
+    public function translate_only_child(X_Path_Expr $xpath): X_Path_Expr
     {
-        return $xpath
-            ->addStarPrefix()
-            ->addNameTest()
-            ->addCondition('last() = 1');
+        return $xpath->add_star_prefix()->add_name_test()->add_condition('last() = 1');
     }
-
-    public function translateOnlyOfType(XPathExpr $xpath): XPathExpr
+    public function translate_only_of_type(X_Path_Expr $xpath): X_Path_Expr
     {
-        $element = $xpath->getElement();
-
-        return $xpath->addCondition(\sprintf('count(preceding-sibling::%s)=0 and count(following-sibling::%s)=0', $element, $element));
+        $element = $xpath->get_element();
+        return $xpath->add_condition(\sprintf('count(preceding-sibling::%s)=0 and count(following-sibling::%s)=0', $element, $element));
     }
-
-    public function translateEmpty(XPathExpr $xpath): XPathExpr
+    public function translate_empty(X_Path_Expr $xpath): X_Path_Expr
     {
-        return $xpath->addCondition('not(*) and not(string-length())');
+        return $xpath->add_condition('not(*) and not(string-length())');
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return 'pseudo-class';
     }

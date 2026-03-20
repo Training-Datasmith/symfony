@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,33 +9,27 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event;
 
-namespace Symfony\Component\HttpKernel\Event;
-
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-
+use Symfony\Component\Expression_Language\Expression_Language;
 /**
  * Provides read-only access to controller metadata.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ControllerMetadata
+class Controller_Metadata
 {
-    public function __construct(
-        private readonly ControllerEvent $controllerEvent,
-    ) {
-    }
-
-    public function getController(): callable
+    public function __construct(private readonly Controller_Event $controller_event)
     {
-        return $this->controllerEvent->getController();
     }
-
-    public function getReflector(): \ReflectionFunctionAbstract
+    public function get_controller(): callable
     {
-        return $this->controllerEvent->getControllerReflector();
+        return $this->controller_event->get_controller();
     }
-
+    public function get_reflector(): \Reflection_Function_Abstract
+    {
+        return $this->controller_event->get_controller_reflector();
+    }
     /**
      * @template T of object
      *
@@ -44,13 +37,12 @@ class ControllerMetadata
      *
      * @return ($className is null ? array<class-string, list<object>> : ($className is '*' ? list<object> : list<T>))
      */
-    public function getAttributes(?string $className = null): array
+    public function get_attributes(?string $class_name = null): array
     {
-        return $this->controllerEvent->getAttributes($className);
+        return $this->controller_event->get_attributes($class_name);
     }
-
-    public function evaluate(mixed $value, ?ExpressionLanguage $expressionLanguage): mixed
+    public function evaluate(mixed $value, ?Expression_Language $expression_language): mixed
     {
-        return $this->controllerEvent->evaluate($value, $expressionLanguage);
+        return $this->controller_event->evaluate($value, $expression_language);
     }
 }

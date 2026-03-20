@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,15 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DependencyInjection\Exception;
+namespace Symfony\Component\Dependency_Injection\Exception;
 
 /**
  * This exception wraps exceptions whose messages contain a reference to an env parameter.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class EnvParameterException extends InvalidArgumentException
+class Env_Parameter_Exception extends InvalidArgumentException
 {
     public function __construct(array $envs, ?\Throwable $previous = null, string $message = 'Incompatible use of dynamic environment variables "%s" found in parameters.')
     {

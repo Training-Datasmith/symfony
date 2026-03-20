@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\AssetMapper\ImportMap;
+namespace Symfony\Component\Asset_Mapper\Import_Map;
 
 /**
  * Holds the collection of importmap entries defined in importmap.php.
@@ -20,10 +18,9 @@ namespace Symfony\Component\AssetMapper\ImportMap;
  *
  * @author Ryan Weaver <ryan@symfonycasts.com>
  */
-class ImportMapEntries implements \IteratorAggregate
+class Import_Map_Entries implements \IteratorAggregate
 {
     private array $entries = [];
-
     /**
      * @param ImportMapEntry[] $entries
      */
@@ -33,26 +30,21 @@ class ImportMapEntries implements \IteratorAggregate
             $this->add($entry);
         }
     }
-
-    public function add(ImportMapEntry $entry): void
+    public function add(Import_Map_Entry $entry): void
     {
-        $this->entries[$entry->importName] = $entry;
+        $this->entries[$entry->import_name] = $entry;
     }
-
-    public function has(string $importName): bool
+    public function has(string $import_name): bool
     {
-        return isset($this->entries[$importName]);
+        return isset($this->entries[$import_name]);
     }
-
-    public function get(string $importName): ImportMapEntry
+    public function get(string $import_name): Import_Map_Entry
     {
-        if (!$this->has($importName)) {
-            throw new \InvalidArgumentException(\sprintf('The importmap entry "%s" does not exist.', $importName));
+        if (!$this->has($import_name)) {
+            throw new \InvalidArgumentException(\sprintf('The importmap entry "%s" does not exist.', $import_name));
         }
-
-        return $this->entries[$importName];
+        return $this->entries[$import_name];
     }
-
     /**
      * @return \Traversable<ImportMapEntry>
      */
@@ -60,9 +52,8 @@ class ImportMapEntries implements \IteratorAggregate
     {
         return new \ArrayIterator(array_values($this->entries));
     }
-
-    public function remove(string $packageName): void
+    public function remove(string $package_name): void
     {
-        unset($this->entries[$packageName]);
+        unset($this->entries[$package_name]);
     }
 }

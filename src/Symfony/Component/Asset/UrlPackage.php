@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Asset;
 
-use Symfony\Component\Asset\Context\ContextInterface;
+use Symfony\Component\Asset\Context\Context_Interface;
 use Symfony\Component\Asset\Exception\InvalidArgumentException;
 use Symfony\Component\Asset\Exception\LogicException;
-use Symfony\Component\Asset\VersionStrategy\VersionStrategyInterface;
-
+use Symfony\Component\Asset\Version_Strategy\Version_Strategy_Interface;
 /**
  * Package that adds a base URL to asset URLs in addition to a version.
  *
@@ -35,94 +32,77 @@ use Symfony\Component\Asset\VersionStrategy\VersionStrategyInterface;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class UrlPackage extends Package
+class Url_Package extends Package
 {
-    private array $baseUrls = [];
-    private ?self $sslPackage = null;
-
+    private array $base_urls = [];
+    private ?self $ssl_package = null;
     /**
      * @param string|string[] $baseUrls Base asset URLs
      */
-    public function __construct(string|array $baseUrls, VersionStrategyInterface $versionStrategy, ?ContextInterface $context = null)
+    public function __construct(string|array $base_urls, Version_Strategy_Interface $version_strategy, ?Context_Interface $context = null)
     {
-        parent::__construct($versionStrategy, $context);
-
-        if (!\is_array($baseUrls)) {
-            $baseUrls = (array) $baseUrls;
+        parent::__construct($version_strategy, $context);
+        if (!\is_array($base_urls)) {
+            $base_urls = (array) $base_urls;
         }
-
-        if (!$baseUrls) {
+        if (!$base_urls) {
             throw new LogicException('You must provide at least one base URL.');
         }
-
-        foreach ($baseUrls as $baseUrl) {
-            $this->baseUrls[] = rtrim($baseUrl, '/');
+        foreach ($base_urls as $base_url) {
+            $this->base_urls[] = rtrim($base_url, '/');
         }
-
-        $sslUrls = $this->getSslUrls($baseUrls);
-
-        if ($sslUrls && $baseUrls !== $sslUrls) {
-            $this->sslPackage = new self($sslUrls, $versionStrategy);
+        $ssl_urls = $this->get_ssl_urls($base_urls);
+        if ($ssl_urls && $base_urls !== $ssl_urls) {
+            $this->ssl_package = new self($ssl_urls, $version_strategy);
         }
     }
-
-    public function getUrl(string $path): string
+    public function get_url(string $path): string
     {
-        if ($this->isAbsoluteUrl($path)) {
+        if ($this->is_absolute_url($path)) {
             return $path;
         }
-
-        if (null !== $this->sslPackage && $this->getContext()->isSecure()) {
-            return $this->sslPackage->getUrl($path);
+        if (null !== $this->ssl_package && $this->get_context()->is_secure()) {
+            return $this->ssl_package->get_url($path);
         }
-
-        $url = $this->getVersionStrategy()->applyVersion($path);
-
-        if ($this->isAbsoluteUrl($url)) {
+        $url = $this->get_version_strategy()->apply_version($path);
+        if ($this->is_absolute_url($url)) {
             return $url;
         }
-
         if ($url && '/' != $url[0]) {
-            $url = '/'.$url;
+            $url = '/' . $url;
         }
-
-        return $this->getBaseUrl($path).$url;
+        return $this->get_base_url($path) . $url;
     }
-
     /**
      * Returns the base URL for a path.
      */
-    public function getBaseUrl(string $path): string
+    public function get_base_url(string $path): string
     {
-        if (1 === \count($this->baseUrls)) {
-            return $this->baseUrls[0];
+        if (1 === \count($this->base_urls)) {
+            return $this->base_urls[0];
         }
-
-        return $this->baseUrls[$this->chooseBaseUrl($path)];
+        return $this->base_urls[$this->choose_base_url($path)];
     }
-
     /**
      * Determines which base URL to use for the given path.
      *
      * Override this method to change the default distribution strategy.
      * This method should always return the same base URL index for a given path.
      */
-    protected function chooseBaseUrl(string $path): int
+    protected function choose_base_url(string $path): int
     {
-        return abs(crc32($path)) % \count($this->baseUrls);
+        return abs(crc32($path)) % \count($this->base_urls);
     }
-
-    private function getSslUrls(array $urls): array
+    private function get_ssl_urls(array $urls): array
     {
-        $sslUrls = [];
+        $ssl_urls = [];
         foreach ($urls as $url) {
             if (str_starts_with((string) $url, 'https://') || str_starts_with((string) $url, '//') || '' === $url) {
-                $sslUrls[] = $url;
+                $ssl_urls[] = $url;
             } elseif (!parse_url((string) $url, \PHP_URL_SCHEME)) {
                 throw new InvalidArgumentException(\sprintf('"%s" is not a valid URL.', $url));
             }
         }
-
-        return $sslUrls;
+        return $ssl_urls;
     }
 }

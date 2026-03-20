@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Finder;
 
 /**
@@ -26,68 +24,57 @@ class Gitignore
      *
      * Format specification: https://git-scm.com/docs/gitignore#_pattern_format
      */
-    public static function toRegex(string $gitignoreFileContent): string
+    public static function to_regex(string $gitignore_file_content): string
     {
-        return self::buildRegex($gitignoreFileContent, false);
+        return self::build_regex($gitignore_file_content, false);
     }
-
-    public static function toRegexMatchingNegatedPatterns(string $gitignoreFileContent): string
+    public static function to_regex_matching_negated_patterns(string $gitignore_file_content): string
     {
-        return self::buildRegex($gitignoreFileContent, true);
+        return self::build_regex($gitignore_file_content, true);
     }
-
-    private static function buildRegex(string $gitignoreFileContent, bool $inverted): string
+    private static function build_regex(string $gitignore_file_content, bool $inverted): string
     {
-        $gitignoreFileContent = preg_replace('~(?<!\\\\)#[^\n\r]*~', '', $gitignoreFileContent);
-        $gitignoreLines = preg_split('~\r\n?|\n~', (string) $gitignoreFileContent);
-
-        $res = self::lineToRegex('');
-        foreach ($gitignoreLines as $line) {
+        $gitignore_file_content = preg_replace('~(?<!\\\\)#[^\n\r]*~', '', $gitignore_file_content);
+        $gitignore_lines = preg_split('~\r\n?|\n~', (string) $gitignore_file_content);
+        $res = self::line_to_regex('');
+        foreach ($gitignore_lines as $line) {
             $line = preg_replace('~(?<!\\\\)[ \t]+$~', '', $line);
-
             if (str_starts_with((string) $line, '!')) {
                 $line = substr((string) $line, 1);
-                $isNegative = true;
+                $is_negative = true;
             } else {
-                $isNegative = false;
+                $is_negative = false;
             }
-
             if ('' !== $line) {
-                if ($isNegative xor $inverted) {
-                    $res = '(?!'.self::lineToRegex($line).'$)'.$res;
+                if ($is_negative xor $inverted) {
+                    $res = '(?!' . self::line_to_regex($line) . '$)' . $res;
                 } else {
-                    $res = '(?:'.$res.'|'.self::lineToRegex($line).')';
+                    $res = '(?:' . $res . '|' . self::line_to_regex($line) . ')';
                 }
             }
         }
-
-        return '~^(?:'.$res.')~s';
+        return '~^(?:' . $res . ')~s';
     }
-
-    private static function lineToRegex(string $gitignoreLine): string
+    private static function line_to_regex(string $gitignore_line): string
     {
-        if ('' === $gitignoreLine) {
-            return '$f'; // always false
+        if ('' === $gitignore_line) {
+            return '$f';
+            // always false
         }
-
-        $slashPos = strpos($gitignoreLine, '/');
-        if (false !== $slashPos && \strlen($gitignoreLine) - 1 !== $slashPos) {
-            if (0 === $slashPos) {
-                $gitignoreLine = substr($gitignoreLine, 1);
+        $slash_pos = strpos($gitignore_line, '/');
+        if (false !== $slash_pos && \strlen($gitignore_line) - 1 !== $slash_pos) {
+            if (0 === $slash_pos) {
+                $gitignore_line = substr($gitignore_line, 1);
             }
-            $isAbsolute = true;
+            $is_absolute = true;
         } else {
-            $isAbsolute = false;
+            $is_absolute = false;
         }
-
-        $regex = preg_quote(str_replace('\\', '', $gitignoreLine), '~');
-        $regex = preg_replace_callback('~\\\\\[((?:\\\\!)?)([^\[\]]*)\\\\\]~', static fn (array $matches): string => '['.('' !== $matches[1] ? '^' : '').str_replace('\\-', '-', $matches[2]).']', $regex);
-        $regex = preg_replace('~(?:(?:\\\\\*){2,}(/?))+~', '(?:(?:(?!//).(?<!//))+$1)?', (string) $regex);
-        $regex = preg_replace('~\\\\\*~', '[^/]*', (string) $regex);
-        $regex = preg_replace('~\\\\\?~', '[^/]', (string) $regex);
-
-        return ($isAbsolute ? '' : '(?:[^/]+/)*')
-            .$regex
-            .(!str_ends_with($gitignoreLine, '/') ? '(?:$|/)' : '');
+        $regex = preg_quote(str_replace('\\', '', $gitignore_line), '~');
+        $regex = preg_replace_callback('~\\\\\\[((?:\\\\!)?)([^\[\]]*)\\\\\\]~', static fn(array $matches): string => '[' . ('' !== $matches[1] ? '^' : '') . str_replace('\-', '-', $matches[2]) . ']', $regex);
+        $regex = preg_replace('~(?:(?:\\\\\\*){2,}(/?))+~', '(?:(?:(?!//).(?<!//))+$1)?', (string) $regex);
+        $regex = preg_replace('~\\\\\\*~', '[^/]*', (string) $regex);
+        $regex = preg_replace('~\\\\\\?~', '[^/]', (string) $regex);
+        return ($is_absolute ? '' : '(?:[^/]+/)*') . $regex . (!str_ends_with($gitignore_line, '/') ? '(?:$|/)' : '');
     }
 }

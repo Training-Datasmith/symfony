@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,57 +9,43 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Asset_Mapper\Path;
 
-namespace Symfony\Component\AssetMapper\Path;
-
-use Symfony\Component\AssetMapper\Compressor\CompressorInterface;
+use Symfony\Component\Asset_Mapper\Compressor\Compressor_Interface;
 use Symfony\Component\Filesystem\Filesystem;
-
-class LocalPublicAssetsFilesystem implements PublicAssetsFilesystemInterface
+class Local_Public_Assets_Filesystem implements Public_Assets_Filesystem_Interface
 {
     private readonly Filesystem $filesystem;
-
     /**
      * @param string[] $extensionsToCompress
      */
-    public function __construct(
-        private readonly string $publicDir,
-        private readonly ?CompressorInterface $compressor = null,
-        private readonly array $extensionsToCompress = [],
-    ) {
+    public function __construct(private readonly string $public_dir, private readonly ?Compressor_Interface $compressor = null, private readonly array $extensions_to_compress = [])
+    {
         $this->filesystem = new Filesystem();
     }
-
     public function write(string $path, string $contents): void
     {
-        $targetPath = $this->publicDir.'/'.ltrim($path, '/');
-
-        $this->filesystem->dumpFile($targetPath, $contents);
-        $this->compress($targetPath);
+        $target_path = $this->public_dir . '/' . ltrim($path, '/');
+        $this->filesystem->dump_file($target_path, $contents);
+        $this->compress($target_path);
     }
-
-    public function copy(string $originPath, string $path): void
+    public function copy(string $origin_path, string $path): void
     {
-        $targetPath = $this->publicDir.'/'.ltrim($path, '/');
-
-        $this->filesystem->copy($originPath, $targetPath, true);
-        $this->compress($targetPath);
+        $target_path = $this->public_dir . '/' . ltrim($path, '/');
+        $this->filesystem->copy($origin_path, $target_path, true);
+        $this->compress($target_path);
     }
-
-    public function getDestinationPath(): string
+    public function get_destination_path(): string
     {
-        return $this->publicDir;
+        return $this->public_dir;
     }
-
-    private function compress(string $targetPath): void
+    private function compress(string $target_path): void
     {
-        foreach ($this->extensionsToCompress as $ext) {
-            if (!str_ends_with($targetPath, ".$ext")) {
+        foreach ($this->extensions_to_compress as $ext) {
+            if (!str_ends_with($target_path, ".{$ext}")) {
                 continue;
             }
-
-            $this->compressor?->compress($targetPath);
-
+            $this->compressor?->compress($target_path);
             return;
         }
     }

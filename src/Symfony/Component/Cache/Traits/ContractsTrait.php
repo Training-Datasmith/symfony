@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,102 +9,80 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Traits;
 
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
-use Symfony\Component\Cache\CacheItem;
+use Psr\Log\Logger_Interface;
+use Symfony\Component\Cache\Adapter\Adapter_Interface;
+use Symfony\Component\Cache\Cache_Item;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
-use Symfony\Component\Cache\LockRegistry;
-use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\CacheTrait;
-use Symfony\Contracts\Cache\ItemInterface;
-
+use Symfony\Component\Cache\Lock_Registry;
+use Symfony\Contracts\Cache\Cache_Interface;
+use Symfony\Contracts\Cache\Cache_Trait;
+use Symfony\Contracts\Cache\Item_Interface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
  * @internal
  */
-trait ContractsTrait
+trait Contracts_Trait
 {
-    use CacheTrait {
+    use Cache_Trait {
         doGet as private contractsGet;
     }
-
-    private \Closure $callbackWrapper;
+    private \Closure $callback_wrapper;
     private array $computing = [];
-
     /**
      * Wraps the callback passed to ->get() in a callable.
      *
      * @return callable the previous callback wrapper
      */
-    public function setCallbackWrapper(?callable $callbackWrapper): callable
+    public function set_callback_wrapper(?callable $callback_wrapper): callable
     {
-        if (!isset($this->callbackWrapper)) {
-            $this->callbackWrapper = LockRegistry::compute(...);
-
+        if (!isset($this->callback_wrapper)) {
+            $this->callback_wrapper = Lock_Registry::compute(...);
             if (\in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true)) {
-                $this->setCallbackWrapper(null);
+                $this->set_callback_wrapper(null);
             }
         }
-
-        if (null !== $callbackWrapper && !$callbackWrapper instanceof \Closure) {
-            $callbackWrapper = $callbackWrapper(...);
+        if (null !== $callback_wrapper && !$callback_wrapper instanceof \Closure) {
+            $callback_wrapper = $callback_wrapper(...);
         }
-
-        $previousWrapper = $this->callbackWrapper;
-        $this->callbackWrapper = $callbackWrapper ?? static fn (callable $callback, ItemInterface $item, bool &$save, CacheInterface $pool, \Closure $setMetadata, ?LoggerInterface $logger, ?float $beta = null) => $callback($item, $save);
-
-        return $previousWrapper;
+        $previous_wrapper = $this->callback_wrapper;
+        $this->callback_wrapper = $callback_wrapper ?? static fn(callable $callback, Item_Interface $item, bool &$save, Cache_Interface $pool, \Closure $set_metadata, ?Logger_Interface $logger, ?float $beta = null) => $callback($item, $save);
+        return $previous_wrapper;
     }
-
-    private function doGet(AdapterInterface $pool, string $key, callable $callback, ?float $beta, ?array &$metadata = null): mixed
+    private function do_get(Adapter_Interface $pool, string $key, callable $callback, ?float $beta, ?array &$metadata = null): mixed
     {
         if (0 > $beta ??= 1.0) {
             throw new InvalidArgumentException(\sprintf('Argument "$beta" provided to "%s::get()" must be a positive number, %f given.', static::class, $beta));
         }
-
-        static $setMetadata;
-
-        $setMetadata ??= \Closure::bind(
-            static function (CacheItem $item, float $startTime, ?array &$metadata): void {
-                if ($item->expiry > $endTime = microtime(true)) {
-                    $item->newMetadata[CacheItem::METADATA_EXPIRY] = $metadata[CacheItem::METADATA_EXPIRY] = $item->expiry;
-                    $item->newMetadata[CacheItem::METADATA_CTIME] = $metadata[CacheItem::METADATA_CTIME] = (int) ceil(1000 * ($endTime - $startTime));
-                } else {
-                    unset($metadata[CacheItem::METADATA_EXPIRY], $metadata[CacheItem::METADATA_CTIME], $metadata[CacheItem::METADATA_TAGS]);
-                }
-            },
-            null,
-            CacheItem::class
-        );
-
-        $this->callbackWrapper ??= LockRegistry::compute(...);
-
-        return $this->contractsGet($pool, $key, function (CacheItem $item, bool &$save) use ($pool, $callback, $setMetadata, &$metadata, $key, $beta) {
+        static $set_metadata;
+        $set_metadata ??= \Closure::bind(static function (Cache_Item $item, float $start_time, ?array &$metadata): void {
+            if ($item->expiry > $end_time = microtime(true)) {
+                $item->new_metadata[Cache_Item::METADATA_EXPIRY] = $metadata[Cache_Item::METADATA_EXPIRY] = $item->expiry;
+                $item->new_metadata[Cache_Item::METADATA_CTIME] = $metadata[Cache_Item::METADATA_CTIME] = (int) ceil(1000 * ($end_time - $start_time));
+            } else {
+                unset($metadata[Cache_Item::METADATA_EXPIRY], $metadata[Cache_Item::METADATA_CTIME], $metadata[Cache_Item::METADATA_TAGS]);
+            }
+        }, null, Cache_Item::class);
+        $this->callback_wrapper ??= Lock_Registry::compute(...);
+        return $this->contracts_get($pool, $key, function (Cache_Item $item, bool &$save) use ($pool, $callback, $set_metadata, &$metadata, $key, $beta) {
             // don't wrap nor save recursive calls
             if (isset($this->computing[$key])) {
                 $value = $callback($item, $save);
                 $save = false;
-
                 return $value;
             }
-
             $this->computing[$key] = $key;
-            $startTime = microtime(true);
-
-            if (!isset($this->callbackWrapper)) {
-                $this->setCallbackWrapper($this->setCallbackWrapper(null));
+            $start_time = microtime(true);
+            if (!isset($this->callback_wrapper)) {
+                $this->set_callback_wrapper($this->set_callback_wrapper(null));
             }
-
             try {
-                $value = ($this->callbackWrapper)($callback, $item, $save, $pool, static function (CacheItem $item) use ($setMetadata, $startTime, &$metadata): void {
-                    $setMetadata($item, $startTime, $metadata);
+                $value = ($this->callback_wrapper)($callback, $item, $save, $pool, static function (Cache_Item $item) use ($set_metadata, $start_time, &$metadata): void {
+                    $set_metadata($item, $start_time, $metadata);
                 }, $this->logger ?? null, $beta);
-                $setMetadata($item, $startTime, $metadata);
-
+                $set_metadata($item, $start_time, $metadata);
                 return $value;
             } finally {
                 unset($this->computing[$key]);

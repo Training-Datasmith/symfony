@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\CssSelector\Node;
+namespace Symfony\Component\Css_Selector\Node;
 
 /**
  * Represents a "<selector>:has(<subselector>)" node.
@@ -23,37 +21,29 @@ namespace Symfony\Component\CssSelector\Node;
  *
  * @internal
  */
-class RelationNode extends AbstractNode
+class Relation_Node extends Abstract_Node
 {
-    public function __construct(
-        private readonly NodeInterface $selector,
-        private readonly string $combinator,
-        private readonly NodeInterface $subSelector,
-    ) {
+    public function __construct(private readonly Node_Interface $selector, private readonly string $combinator, private readonly Node_Interface $sub_selector)
+    {
     }
-
-    public function getSelector(): NodeInterface
+    public function get_selector(): Node_Interface
     {
         return $this->selector;
     }
-
-    public function getCombinator(): string
+    public function get_combinator(): string
     {
         return $this->combinator;
     }
-
-    public function getSubSelector(): NodeInterface
+    public function get_sub_selector(): Node_Interface
     {
-        return $this->subSelector;
+        return $this->sub_selector;
     }
-
-    public function getSpecificity(): Specificity
+    public function get_specificity(): Specificity
     {
-        return $this->selector->getSpecificity()->plus($this->subSelector->getSpecificity());
+        return $this->selector->get_specificity()->plus($this->sub_selector->get_specificity());
     }
-
     public function __toString(): string
     {
-        return \sprintf('%s[%s:has(%s)]', $this->getNodeName(), $this->selector, $this->subSelector);
+        return \sprintf('%s[%s:has(%s)]', $this->get_node_name(), $this->selector, $this->sub_selector);
     }
 }

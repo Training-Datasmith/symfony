@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,70 +9,56 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Data_Collector;
 
-namespace Symfony\Component\HttpKernel\DataCollector;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Response;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @final
  */
-class MemoryDataCollector extends DataCollector implements LateDataCollectorInterface
+class Memory_Data_Collector extends Data_Collector implements Late_Data_Collector_Interface
 {
     public function __construct()
     {
         $this->reset();
     }
-
     public function collect(Request $request, Response $response, ?\Throwable $exception = null): void
     {
-        $this->updateMemoryUsage();
+        $this->update_memory_usage();
     }
-
     public function reset(): void
     {
-        $this->data = [
-            'memory' => 0,
-            'memory_limit' => $this->convertToBytes(\ini_get('memory_limit')),
-        ];
+        $this->data = ['memory' => 0, 'memory_limit' => $this->convert_to_bytes(\ini_get('memory_limit'))];
     }
-
-    public function lateCollect(): void
+    public function late_collect(): void
     {
-        $this->updateMemoryUsage();
+        $this->update_memory_usage();
     }
-
-    public function getMemory(): int
+    public function get_memory(): int
     {
         return $this->data['memory'];
     }
-
-    public function getMemoryLimit(): int|float
+    public function get_memory_limit(): int|float
     {
         return $this->data['memory_limit'];
     }
-
-    public function updateMemoryUsage(): void
+    public function update_memory_usage(): void
     {
         $this->data['memory'] = memory_get_peak_usage(true);
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return 'memory';
     }
-
-    private function convertToBytes(string $memoryLimit): int
+    private function convert_to_bytes(string $memory_limit): int
     {
-        if ('-1' === $memoryLimit) {
+        if ('-1' === $memory_limit) {
             return -1;
         }
-
-        $memoryLimit = strtolower($memoryLimit);
-        $max = strtolower(ltrim($memoryLimit, '+'));
+        $memory_limit = strtolower($memory_limit);
+        $max = strtolower(ltrim($memory_limit, '+'));
         if (str_starts_with($max, '0x')) {
             $max = \intval($max, 16);
         } elseif (str_starts_with($max, '0')) {
@@ -81,17 +66,19 @@ class MemoryDataCollector extends DataCollector implements LateDataCollectorInte
         } else {
             $max = (int) $max;
         }
-
-        switch (substr($memoryLimit, -1)) {
-            case 't': $max *= 1024;
-                // no break
-            case 'g': $max *= 1024;
-                // no break
-            case 'm': $max *= 1024;
-                // no break
-            case 'k': $max *= 1024;
+        switch (substr($memory_limit, -1)) {
+            case 't':
+                $max *= 1024;
+            // no break
+            case 'g':
+                $max *= 1024;
+            // no break
+            case 'm':
+                $max *= 1024;
+            // no break
+            case 'k':
+                $max *= 1024;
         }
-
         return $max;
     }
 }

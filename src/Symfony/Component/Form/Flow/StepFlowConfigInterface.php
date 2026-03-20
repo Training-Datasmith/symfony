@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,26 +9,23 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Flow;
 
 /**
  * @author Yonel Ceruto <open@yceruto.dev>
  */
-interface StepFlowConfigInterface
+interface Step_Flow_Config_Interface
 {
     /**
      * Returns the name of the step.
      */
-    public function getName(): string;
-
+    public function get_name(): string;
     /**
      * Returns the closure that determines if the step should be skipped.
      */
-    public function getSkip(): ?\Closure;
-
+    public function get_skip(): ?\Closure;
     /**
      * Determines if the step should be skipped based on the provided data.
      */
-    public function isSkipped(mixed $data): bool;
+    public function is_skipped(mixed $data): bool;
 }

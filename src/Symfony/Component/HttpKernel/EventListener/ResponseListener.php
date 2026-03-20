@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event_Listener;
 
-namespace Symfony\Component\HttpKernel\EventListener;
-
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
-
+use Symfony\Component\Event_Dispatcher\Event_Subscriber_Interface;
+use Symfony\Component\Http_Kernel\Event\Response_Event;
+use Symfony\Component\Http_Kernel\Kernel_Events;
 /**
  * ResponseListener fixes the Response headers based on the Request.
  *
@@ -24,44 +21,33 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * @final
  */
-class ResponseListener implements EventSubscriberInterface
+class Response_Listener implements Event_Subscriber_Interface
 {
-    public function __construct(
-        private readonly string $charset,
-        private readonly bool $addContentLanguageHeader = false,
-    ) {
+    public function __construct(private readonly string $charset, private readonly bool $add_content_language_header = false)
+    {
     }
-
     /**
      * Filters the Response.
      */
-    public function onKernelResponse(ResponseEvent $event): void
+    public function on_kernel_response(Response_Event $event): void
     {
-        if (!$event->isMainRequest()) {
+        if (!$event->is_main_request()) {
             return;
         }
-
-        $response = $event->getResponse();
-
-        if (null === $response->getCharset()) {
-            $response->setCharset($this->charset);
+        $response = $event->get_response();
+        if (null === $response->get_charset()) {
+            $response->set_charset($this->charset);
         }
-
-        if ($this->addContentLanguageHeader && !$response->isInformational() && !$response->isEmpty() && !$response->headers->has('Content-Language')) {
-            $response->headers->set('Content-Language', $event->getRequest()->getLocale());
+        if ($this->add_content_language_header && !$response->is_informational() && !$response->is_empty() && !$response->headers->has('Content-Language')) {
+            $response->headers->set('Content-Language', $event->get_request()->get_locale());
         }
-
-        if ($event->getRequest()->attributes->get('_vary_by_language')) {
-            $response->setVary('Accept-Language', false);
+        if ($event->get_request()->attributes->get('_vary_by_language')) {
+            $response->set_vary('Accept-Language', false);
         }
-
-        $response->prepare($event->getRequest());
+        $response->prepare($event->get_request());
     }
-
-    public static function getSubscribedEvents(): array
+    public static function get_subscribed_events(): array
     {
-        return [
-            KernelEvents::RESPONSE => 'onKernelResponse',
-        ];
+        return [Kernel_Events::RESPONSE => 'onKernelResponse'];
     }
 }

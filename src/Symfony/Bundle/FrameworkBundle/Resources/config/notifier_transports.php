@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,132 +9,20 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator;
 
 use Symfony\Component\Notifier\Bridge;
-use Symfony\Component\Notifier\Transport\AbstractTransportFactory;
-use Symfony\Component\Notifier\Transport\NullTransportFactory;
-
-return static function (ContainerConfigurator $container): void {
-    $container->services()
-
-        ->set('notifier.transport_factory.abstract', AbstractTransportFactory::class)
-            ->abstract()
-            ->args([
-                service('event_dispatcher'),
-                service('http_client')->ignoreOnInvalid(),
-            ]);
-
-    $chatterFactories = [
-        'bluesky' => Bridge\Bluesky\BlueskyTransportFactory::class,
-        'chatwork' => Bridge\Chatwork\ChatworkTransportFactory::class,
-        'discord' => Bridge\Discord\DiscordTransportFactory::class,
-        'fake-chat' => Bridge\FakeChat\FakeChatTransportFactory::class,
-        'firebase' => Bridge\Firebase\FirebaseTransportFactory::class,
-        'google-chat' => Bridge\GoogleChat\GoogleChatTransportFactory::class,
-        'line-bot' => Bridge\LineBot\LineBotTransportFactory::class,
-        'line-notify' => Bridge\LineNotify\LineNotifyTransportFactory::class,
-        'linked-in' => Bridge\LinkedIn\LinkedInTransportFactory::class,
-        'mastodon' => Bridge\Mastodon\MastodonTransportFactory::class,
-        'matrix' => Bridge\Matrix\MatrixTransportFactory::class,
-        'mattermost' => Bridge\Mattermost\MattermostTransportFactory::class,
-        'mercure' => Bridge\Mercure\MercureTransportFactory::class,
-        'microsoft-teams' => Bridge\MicrosoftTeams\MicrosoftTeamsTransportFactory::class,
-        'pager-duty' => Bridge\PagerDuty\PagerDutyTransportFactory::class,
-        'rocket-chat' => Bridge\RocketChat\RocketChatTransportFactory::class,
-        'slack' => Bridge\Slack\SlackTransportFactory::class,
-        'telegram' => Bridge\Telegram\TelegramTransportFactory::class,
-        'twitter' => Bridge\Twitter\TwitterTransportFactory::class,
-        'zendesk' => Bridge\Zendesk\ZendeskTransportFactory::class,
-        'zulip' => Bridge\Zulip\ZulipTransportFactory::class,
-    ];
-
-    foreach ($chatterFactories as $name => $class) {
-        $container->services()
-            ->set('notifier.transport_factory.'.$name, $class)
-                ->parent('notifier.transport_factory.abstract')
-                ->tag('chatter.transport_factory');
+use Symfony\Component\Notifier\Transport\Abstract_Transport_Factory;
+use Symfony\Component\Notifier\Transport\Null_Transport_Factory;
+return static function (Container_Configurator $container): void {
+    $container->services()->set('notifier.transport_factory.abstract', Abstract_Transport_Factory::class)->abstract()->args([service('event_dispatcher'), service('http_client')->ignore_on_invalid()]);
+    $chatter_factories = ['bluesky' => Bridge\Bluesky\Bluesky_Transport_Factory::class, 'chatwork' => Bridge\Chatwork\Chatwork_Transport_Factory::class, 'discord' => Bridge\Discord\Discord_Transport_Factory::class, 'fake-chat' => Bridge\Fake_Chat\Fake_Chat_Transport_Factory::class, 'firebase' => Bridge\Firebase\Firebase_Transport_Factory::class, 'google-chat' => Bridge\Google_Chat\Google_Chat_Transport_Factory::class, 'line-bot' => Bridge\Line_Bot\Line_Bot_Transport_Factory::class, 'line-notify' => Bridge\Line_Notify\Line_Notify_Transport_Factory::class, 'linked-in' => Bridge\Linked_In\Linked_In_Transport_Factory::class, 'mastodon' => Bridge\Mastodon\Mastodon_Transport_Factory::class, 'matrix' => Bridge\Matrix\Matrix_Transport_Factory::class, 'mattermost' => Bridge\Mattermost\Mattermost_Transport_Factory::class, 'mercure' => Bridge\Mercure\Mercure_Transport_Factory::class, 'microsoft-teams' => Bridge\Microsoft_Teams\Microsoft_Teams_Transport_Factory::class, 'pager-duty' => Bridge\Pager_Duty\Pager_Duty_Transport_Factory::class, 'rocket-chat' => Bridge\Rocket_Chat\Rocket_Chat_Transport_Factory::class, 'slack' => Bridge\Slack\Slack_Transport_Factory::class, 'telegram' => Bridge\Telegram\Telegram_Transport_Factory::class, 'twitter' => Bridge\Twitter\Twitter_Transport_Factory::class, 'zendesk' => Bridge\Zendesk\Zendesk_Transport_Factory::class, 'zulip' => Bridge\Zulip\Zulip_Transport_Factory::class];
+    foreach ($chatter_factories as $name => $class) {
+        $container->services()->set('notifier.transport_factory.' . $name, $class)->parent('notifier.transport_factory.abstract')->tag('chatter.transport_factory');
     }
-
-    $texterFactories = [
-        'all-my-sms' => Bridge\AllMySms\AllMySmsTransportFactory::class,
-        'bandwidth' => Bridge\Bandwidth\BandwidthTransportFactory::class,
-        'brevo' => Bridge\Brevo\BrevoTransportFactory::class,
-        'click-send' => Bridge\ClickSend\ClickSendTransportFactory::class,
-        'clickatell' => Bridge\Clickatell\ClickatellTransportFactory::class,
-        'contact-everyone' => Bridge\ContactEveryone\ContactEveryoneTransportFactory::class,
-        'engagespot' => Bridge\Engagespot\EngagespotTransportFactory::class,
-        'esendex' => Bridge\Esendex\EsendexTransportFactory::class,
-        'expo' => Bridge\Expo\ExpoTransportFactory::class,
-        'fake-sms' => Bridge\FakeSms\FakeSmsTransportFactory::class,
-        'forty-six-elks' => Bridge\FortySixElks\FortySixElksTransportFactory::class,
-        'free-mobile' => Bridge\FreeMobile\FreeMobileTransportFactory::class,
-        'gateway-api' => Bridge\GatewayApi\GatewayApiTransportFactory::class,
-        'go-ip' => Bridge\GoIp\GoIpTransportFactory::class,
-        'infobip' => Bridge\Infobip\InfobipTransportFactory::class,
-        'iqsms' => Bridge\Iqsms\IqsmsTransportFactory::class,
-        'isendpro' => Bridge\Isendpro\IsendproTransportFactory::class,
-        'joli-notif' => Bridge\JoliNotif\JoliNotifTransportFactory::class,
-        'kaz-info-teh' => Bridge\KazInfoTeh\KazInfoTehTransportFactory::class,
-        'light-sms' => Bridge\LightSms\LightSmsTransportFactory::class,
-        'lox24' => Bridge\Lox24\Lox24TransportFactory::class,
-        'mailjet' => Bridge\Mailjet\MailjetTransportFactory::class,
-        'message-bird' => Bridge\MessageBird\MessageBirdTransportFactory::class,
-        'message-media' => Bridge\MessageMedia\MessageMediaTransportFactory::class,
-        'mobyt' => Bridge\Mobyt\MobytTransportFactory::class,
-        'novu' => Bridge\Novu\NovuTransportFactory::class,
-        'ntfy' => Bridge\Ntfy\NtfyTransportFactory::class,
-        'octopush' => Bridge\Octopush\OctopushTransportFactory::class,
-        'one-signal' => Bridge\OneSignal\OneSignalTransportFactory::class,
-        'orange-sms' => Bridge\OrangeSms\OrangeSmsTransportFactory::class,
-        'ovh-cloud' => Bridge\OvhCloud\OvhCloudTransportFactory::class,
-        'plivo' => Bridge\Plivo\PlivoTransportFactory::class,
-        'primotexto' => Bridge\Primotexto\PrimotextoTransportFactory::class,
-        'pushover' => Bridge\Pushover\PushoverTransportFactory::class,
-        'pushy' => Bridge\Pushy\PushyTransportFactory::class,
-        'redlink' => Bridge\Redlink\RedlinkTransportFactory::class,
-        'ring-central' => Bridge\RingCentral\RingCentralTransportFactory::class,
-        'sendberry' => Bridge\Sendberry\SendberryTransportFactory::class,
-        'sevenio' => Bridge\Sevenio\SevenIoTransportFactory::class,
-        'sipgate' => Bridge\Sipgate\SipgateTransportFactory::class,
-        'simple-textin' => Bridge\SimpleTextin\SimpleTextinTransportFactory::class,
-        'sinch' => Bridge\Sinch\SinchTransportFactory::class,
-        'sms-biuras' => Bridge\SmsBiuras\SmsBiurasTransportFactory::class,
-        'sms-factor' => Bridge\SmsFactor\SmsFactorTransportFactory::class,
-        'sms-sluzba' => Bridge\SmsSluzba\SmsSluzbaTransportFactory::class,
-        'smsapi' => Bridge\Smsapi\SmsapiTransportFactory::class,
-        'smsbox' => Bridge\Smsbox\SmsboxTransportFactory::class,
-        'smsc' => Bridge\Smsc\SmscTransportFactory::class,
-        'smsense' => Bridge\Smsense\SmsenseTransportFactory::class,
-        'smsmode' => Bridge\Smsmode\SmsmodeTransportFactory::class,
-        'spot-hit' => Bridge\SpotHit\SpotHitTransportFactory::class,
-        'sweego' => Bridge\Sweego\SweegoTransportFactory::class,
-        'telnyx' => Bridge\Telnyx\TelnyxTransportFactory::class,
-        'termii' => Bridge\Termii\TermiiTransportFactory::class,
-        'turbo-sms' => Bridge\TurboSms\TurboSmsTransportFactory::class,
-        'twilio' => Bridge\Twilio\TwilioTransportFactory::class,
-        'unifonic' => Bridge\Unifonic\UnifonicTransportFactory::class,
-        'vonage' => Bridge\Vonage\VonageTransportFactory::class,
-        'yunpian' => Bridge\Yunpian\YunpianTransportFactory::class,
-    ];
-
-    foreach ($texterFactories as $name => $class) {
-        $container->services()
-            ->set('notifier.transport_factory.'.$name, $class)
-                ->parent('notifier.transport_factory.abstract')
-                ->tag('texter.transport_factory');
+    $texter_factories = ['all-my-sms' => Bridge\All_My_Sms\All_My_Sms_Transport_Factory::class, 'bandwidth' => Bridge\Bandwidth\Bandwidth_Transport_Factory::class, 'brevo' => Bridge\Brevo\Brevo_Transport_Factory::class, 'click-send' => Bridge\Click_Send\Click_Send_Transport_Factory::class, 'clickatell' => Bridge\Clickatell\Clickatell_Transport_Factory::class, 'contact-everyone' => Bridge\Contact_Everyone\Contact_Everyone_Transport_Factory::class, 'engagespot' => Bridge\Engagespot\Engagespot_Transport_Factory::class, 'esendex' => Bridge\Esendex\Esendex_Transport_Factory::class, 'expo' => Bridge\Expo\Expo_Transport_Factory::class, 'fake-sms' => Bridge\Fake_Sms\Fake_Sms_Transport_Factory::class, 'forty-six-elks' => Bridge\Forty_Six_Elks\Forty_Six_Elks_Transport_Factory::class, 'free-mobile' => Bridge\Free_Mobile\Free_Mobile_Transport_Factory::class, 'gateway-api' => Bridge\Gateway_Api\Gateway_Api_Transport_Factory::class, 'go-ip' => Bridge\Go_Ip\Go_Ip_Transport_Factory::class, 'infobip' => Bridge\Infobip\Infobip_Transport_Factory::class, 'iqsms' => Bridge\Iqsms\Iqsms_Transport_Factory::class, 'isendpro' => Bridge\Isendpro\Isendpro_Transport_Factory::class, 'joli-notif' => Bridge\Joli_Notif\Joli_Notif_Transport_Factory::class, 'kaz-info-teh' => Bridge\Kaz_Info_Teh\Kaz_Info_Teh_Transport_Factory::class, 'light-sms' => Bridge\Light_Sms\Light_Sms_Transport_Factory::class, 'lox24' => Bridge\Lox24\Lox24transport_Factory::class, 'mailjet' => Bridge\Mailjet\Mailjet_Transport_Factory::class, 'message-bird' => Bridge\Message_Bird\Message_Bird_Transport_Factory::class, 'message-media' => Bridge\Message_Media\Message_Media_Transport_Factory::class, 'mobyt' => Bridge\Mobyt\Mobyt_Transport_Factory::class, 'novu' => Bridge\Novu\Novu_Transport_Factory::class, 'ntfy' => Bridge\Ntfy\Ntfy_Transport_Factory::class, 'octopush' => Bridge\Octopush\Octopush_Transport_Factory::class, 'one-signal' => Bridge\One_Signal\One_Signal_Transport_Factory::class, 'orange-sms' => Bridge\Orange_Sms\Orange_Sms_Transport_Factory::class, 'ovh-cloud' => Bridge\Ovh_Cloud\Ovh_Cloud_Transport_Factory::class, 'plivo' => Bridge\Plivo\Plivo_Transport_Factory::class, 'primotexto' => Bridge\Primotexto\Primotexto_Transport_Factory::class, 'pushover' => Bridge\Pushover\Pushover_Transport_Factory::class, 'pushy' => Bridge\Pushy\Pushy_Transport_Factory::class, 'redlink' => Bridge\Redlink\Redlink_Transport_Factory::class, 'ring-central' => Bridge\Ring_Central\Ring_Central_Transport_Factory::class, 'sendberry' => Bridge\Sendberry\Sendberry_Transport_Factory::class, 'sevenio' => Bridge\Sevenio\Seven_Io_Transport_Factory::class, 'sipgate' => Bridge\Sipgate\Sipgate_Transport_Factory::class, 'simple-textin' => Bridge\Simple_Textin\Simple_Textin_Transport_Factory::class, 'sinch' => Bridge\Sinch\Sinch_Transport_Factory::class, 'sms-biuras' => Bridge\Sms_Biuras\Sms_Biuras_Transport_Factory::class, 'sms-factor' => Bridge\Sms_Factor\Sms_Factor_Transport_Factory::class, 'sms-sluzba' => Bridge\Sms_Sluzba\Sms_Sluzba_Transport_Factory::class, 'smsapi' => Bridge\Smsapi\Smsapi_Transport_Factory::class, 'smsbox' => Bridge\Smsbox\Smsbox_Transport_Factory::class, 'smsc' => Bridge\Smsc\Smsc_Transport_Factory::class, 'smsense' => Bridge\Smsense\Smsense_Transport_Factory::class, 'smsmode' => Bridge\Smsmode\Smsmode_Transport_Factory::class, 'spot-hit' => Bridge\Spot_Hit\Spot_Hit_Transport_Factory::class, 'sweego' => Bridge\Sweego\Sweego_Transport_Factory::class, 'telnyx' => Bridge\Telnyx\Telnyx_Transport_Factory::class, 'termii' => Bridge\Termii\Termii_Transport_Factory::class, 'turbo-sms' => Bridge\Turbo_Sms\Turbo_Sms_Transport_Factory::class, 'twilio' => Bridge\Twilio\Twilio_Transport_Factory::class, 'unifonic' => Bridge\Unifonic\Unifonic_Transport_Factory::class, 'vonage' => Bridge\Vonage\Vonage_Transport_Factory::class, 'yunpian' => Bridge\Yunpian\Yunpian_Transport_Factory::class];
+    foreach ($texter_factories as $name => $class) {
+        $container->services()->set('notifier.transport_factory.' . $name, $class)->parent('notifier.transport_factory.abstract')->tag('texter.transport_factory');
     }
-
-    $container->services()
-        ->set('notifier.transport_factory.amazon-sns', Bridge\AmazonSns\AmazonSnsTransportFactory::class)
-            ->parent('notifier.transport_factory.abstract')
-            ->tag('texter.transport_factory')
-            ->tag('chatter.transport_factory')
-
-        ->set('notifier.transport_factory.null', NullTransportFactory::class)
-            ->parent('notifier.transport_factory.abstract')
-            ->tag('chatter.transport_factory')
-            ->tag('texter.transport_factory')
-    ;
+    $container->services()->set('notifier.transport_factory.amazon-sns', Bridge\Amazon_Sns\Amazon_Sns_Transport_Factory::class)->parent('notifier.transport_factory.abstract')->tag('texter.transport_factory')->tag('chatter.transport_factory')->set('notifier.transport_factory.null', Null_Transport_Factory::class)->parent('notifier.transport_factory.abstract')->tag('chatter.transport_factory')->tag('texter.transport_factory');
 };

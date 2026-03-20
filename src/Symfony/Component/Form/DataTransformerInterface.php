@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
-use Symfony\Component\Form\Exception\TransformationFailedException;
-
+use Symfony\Component\Form\Exception\Transformation_Failed_Exception;
 /**
  * Transforms a value between different representations.
  *
@@ -23,7 +20,7 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
  * @template TValue
  * @template TTransformedValue
  */
-interface DataTransformerInterface
+interface Data_Transformer_Interface
 {
     /**
      * Transforms a value from the original representation to a transformed representation.
@@ -65,7 +62,6 @@ interface DataTransformerInterface
      * @throws TransformationFailedException when the transformation fails
      */
     public function transform(mixed $value): mixed;
-
     /**
      * Transforms a value from the transformed representation to its original
      * representation.
@@ -93,5 +89,5 @@ interface DataTransformerInterface
      *
      * @throws TransformationFailedException when the transformation fails
      */
-    public function reverseTransform(mixed $value): mixed;
+    public function reverse_transform(mixed $value): mixed;
 }

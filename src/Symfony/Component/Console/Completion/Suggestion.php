@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Completion;
 
 /**
@@ -20,24 +18,19 @@ namespace Symfony\Component\Console\Completion;
  */
 class Suggestion implements \Stringable
 {
-    public function __construct(
-        private readonly string $value,
-        private readonly string $description = '',
-    ) {
+    public function __construct(private readonly string $value, private readonly string $description = '')
+    {
     }
-
-    public function getValue(): string
+    public function get_value(): string
     {
         return $this->value;
     }
-
-    public function getDescription(): string
+    public function get_description(): string
     {
         return $this->description;
     }
-
     public function __toString(): string
     {
-        return $this->getValue();
+        return $this->get_value();
     }
 }

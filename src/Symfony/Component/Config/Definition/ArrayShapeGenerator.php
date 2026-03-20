@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,145 +9,111 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition;
 
-use Symfony\Component\Config\Loader\ParamConfigurator;
-
+use Symfony\Component\Config\Loader\Param_Configurator;
 /**
  * @author Alexandre Daubois <alex.daubois@gmail.com>
  */
-final class ArrayShapeGenerator
+final class Array_Shape_Generator
 {
-    public static function generate(NodeInterface $node): string
+    public static function generate(Node_Interface $node): string
     {
-        return str_replace("\n", "\n * ", self::doGeneratePhpDoc($node));
+        return str_replace("\n", "\n * ", self::do_generate_php_doc($node));
     }
-
-    private static function doGeneratePhpDoc(NodeInterface $node, int $nestingLevel = 1): string
+    private static function do_generate_php_doc(Node_Interface $node, int $nesting_level = 1): string
     {
-        if (!$node instanceof ArrayNode) {
-            $typeString = match (true) {
-                $node instanceof BooleanNode => $node->hasDefaultValue() && null === $node->getDefaultValue() ? 'bool|null' : 'bool',
-                $node instanceof StringNode => 'string',
-                $node instanceof NumericNode => self::handleNumericNode($node),
-                $node instanceof EnumNode => $node->getPermissibleValues('|', false),
-                $node instanceof ScalarNode => 'scalar|null',
+        if (!$node instanceof Array_Node) {
+            $type_string = match (true) {
+                $node instanceof Boolean_Node => $node->has_default_value() && null === $node->get_default_value() ? 'bool|null' : 'bool',
+                $node instanceof String_Node => 'string',
+                $node instanceof Numeric_Node => self::handle_numeric_node($node),
+                $node instanceof Enum_Node => $node->get_permissible_values('|', false),
+                $node instanceof Scalar_Node => 'scalar|null',
                 default => 'mixed',
             };
-
-            if ('mixed' === $typeString) {
-                return $typeString;
+            if ('mixed' === $type_string) {
+                return $type_string;
             }
-
-            if (str_ends_with($typeString, '|null')) {
-                return substr_replace($typeString, '|\\'.ParamConfigurator::class, -5, 0);
+            if (str_ends_with($type_string, '|null')) {
+                return substr_replace($type_string, '|\\' . Param_Configurator::class, -5, 0);
             }
-
-            return $typeString.'|\\'.ParamConfigurator::class;
+            return $type_string . '|\\' . Param_Configurator::class;
         }
-
-        if ($node instanceof PrototypedArrayNode) {
-            $isHashmap = (bool) $node->getKeyAttribute();
-            $arrayShape = ($isHashmap ? 'array<string, ' : 'list<').self::doGeneratePhpDoc($node->getPrototype(), 1 + $nestingLevel).'>';
-
-            return implode('|', [...self::getNormalizedTypes($node, ['array', 'any']), $arrayShape]);
+        if ($node instanceof Prototyped_Array_Node) {
+            $is_hashmap = (bool) $node->get_key_attribute();
+            $array_shape = ($is_hashmap ? 'array<string, ' : 'list<') . self::do_generate_php_doc($node->get_prototype(), 1 + $nesting_level) . '>';
+            return implode('|', [...self::get_normalized_types($node, ['array', 'any']), $array_shape]);
         }
-
-        if (!($children = $node->getChildren()) && !$node->getParent() instanceof PrototypedArrayNode) {
-            return $node->hasDefaultValue() && null === $node->getDefaultValue() ? 'array<mixed>|null' : 'array<mixed>';
+        if (!($children = $node->get_children()) && !$node->get_parent() instanceof Prototyped_Array_Node) {
+            return $node->has_default_value() && null === $node->get_default_value() ? 'array<mixed>|null' : 'array<mixed>';
         }
-
-        $arrayShape = \sprintf("array{%s\n", self::generateInlinePhpDocForNode($node));
-
+        $array_shape = \sprintf("array{%s\n", self::generate_inline_php_doc_for_node($node));
         foreach ($children as $child) {
-            $arrayShape .= str_repeat('    ', $nestingLevel).self::dumpNodeKey($child, $node).': ';
-
-            if ($child instanceof PrototypedArrayNode) {
-                $isHashmap = (bool) $child->getKeyAttribute();
-                $childArrayType = ($isHashmap ? 'array<string, ' : 'list<').self::doGeneratePhpDoc($child->getPrototype(), 1 + $nestingLevel).'>';
-                $arrayShape .= $child->hasDefaultValue() && null === $child->getDefaultValue() ? $childArrayType.'|null' : $childArrayType;
+            $array_shape .= str_repeat('    ', $nesting_level) . self::dump_node_key($child, $node) . ': ';
+            if ($child instanceof Prototyped_Array_Node) {
+                $is_hashmap = (bool) $child->get_key_attribute();
+                $child_array_type = ($is_hashmap ? 'array<string, ' : 'list<') . self::do_generate_php_doc($child->get_prototype(), 1 + $nesting_level) . '>';
+                $array_shape .= $child->has_default_value() && null === $child->get_default_value() ? $child_array_type . '|null' : $child_array_type;
             } else {
-                $arrayShape .= self::doGeneratePhpDoc($child, 1 + $nestingLevel);
+                $array_shape .= self::do_generate_php_doc($child, 1 + $nesting_level);
             }
-
-            $arrayShape .= \sprintf(",%s\n", !$child instanceof ArrayNode ? self::generateInlinePhpDocForNode($child) : '');
+            $array_shape .= \sprintf(",%s\n", !$child instanceof Array_Node ? self::generate_inline_php_doc_for_node($child) : '');
         }
-
-        if ($node->shouldIgnoreExtraKeys()) {
-            $arrayShape .= str_repeat('    ', $nestingLevel)."...<mixed>\n";
+        if ($node->should_ignore_extra_keys()) {
+            $array_shape .= str_repeat('    ', $nesting_level) . "...<mixed>\n";
         }
-
-        $arrayShape = $arrayShape.str_repeat('    ', $nestingLevel - 1).'}';
-
-        return implode('|', [...self::getNormalizedTypes($node, ['array', 'any']), $arrayShape]);
+        $array_shape = $array_shape . str_repeat('    ', $nesting_level - 1) . '}';
+        return implode('|', [...self::get_normalized_types($node, ['array', 'any']), $array_shape]);
     }
-
-    private static function dumpNodeKey(NodeInterface $node, ?ArrayNode $parent = null): string
+    private static function dump_node_key(Node_Interface $node, ?Array_Node $parent = null): string
     {
-        $name = $node->getName();
-        $quoted = str_starts_with($name, '@')
-            || \in_array(strtolower($name), ['int', 'float', 'bool', 'null', 'scalar'], true)
-            || strpbrk($name, '\'"');
-
+        $name = $node->get_name();
+        $quoted = str_starts_with($name, '@') || \in_array(strtolower($name), ['int', 'float', 'bool', 'null', 'scalar'], true) || strpbrk($name, '\'"');
         if ($quoted) {
-            $name = "'".addslashes($name)."'";
+            $name = "'" . addslashes($name) . "'";
         }
-
-        $optional = !$node->isRequired() || ($parent instanceof ArrayNode && $parent->shouldPerformDeepMerging());
-
-        return $name.($optional ? '?' : '');
+        $optional = !$node->is_required() || $parent instanceof Array_Node && $parent->should_perform_deep_merging();
+        return $name . ($optional ? '?' : '');
     }
-
-    private static function handleNumericNode(NumericNode $node): string
+    private static function handle_numeric_node(Numeric_Node $node): string
     {
         // We could use int<%s, %s> but PhpStorm doesn't support it yet
         // $min = $node->getMin() ?? 'min';
         // $max = $node->getMax() ?? 'max';
-
-        if ($node instanceof IntegerNode) {
+        if ($node instanceof Integer_Node) {
             return 'int';
         }
-        if ($node instanceof FloatNode) {
+        if ($node instanceof Float_Node) {
             return 'float';
         }
-
         return 'int|float';
     }
-
-    private static function generateInlinePhpDocForNode(BaseNode $node): string
+    private static function generate_inline_php_doc_for_node(Base_Node $node): string
     {
         $comment = '';
-        if ($node->isDeprecated()) {
-            $comment .= ' // Deprecated: '.$node->getDeprecation($node->getName(), $node->getPath())['message'];
+        if ($node->is_deprecated()) {
+            $comment .= ' // Deprecated: ' . $node->get_deprecation($node->get_name(), $node->get_path())['message'];
         }
-
-        if ($info = $node->getInfo()) {
-            $comment .= ' // '.$info;
+        if ($info = $node->get_info()) {
+            $comment .= ' // ' . $info;
         }
-
-        if ((!$node instanceof ArrayNode || ($node = $node->getParent()) instanceof PrototypedArrayNode) && $node->hasDefaultValue()) {
-            $comment .= ' // Default: '.json_encode($node->getDefaultValue(), \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION);
+        if ((!$node instanceof Array_Node || ($node = $node->get_parent()) instanceof Prototyped_Array_Node) && $node->has_default_value()) {
+            $comment .= ' // Default: ' . json_encode($node->get_default_value(), \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION);
         }
-
         return rtrim((string) preg_replace('/\s+/', ' ', $comment));
     }
-
     /**
      * @return list<string>
      */
-    private static function getNormalizedTypes(BaseNode $node, array $excluded = []): array
+    private static function get_normalized_types(Base_Node $node, array $excluded = []): array
     {
-        $types = array_diff($node->getNormalizedTypes(), $excluded);
-
-        if ($node->hasDefaultValue() && null === $node->getDefaultValue()) {
+        $types = array_diff($node->get_normalized_types(), $excluded);
+        if ($node->has_default_value() && null === $node->get_default_value()) {
             $types[] = 'null';
         }
-
         $types = array_unique($types);
-
         sort($types);
-
         return $types;
     }
 }

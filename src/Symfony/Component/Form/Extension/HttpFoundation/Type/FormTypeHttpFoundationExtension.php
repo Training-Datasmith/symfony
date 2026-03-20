@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,31 +9,27 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Extension\Http_Foundation\Type;
 
-namespace Symfony\Component\Form\Extension\HttpFoundation\Type;
-
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationRequestHandler;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\RequestHandlerInterface;
-
+use Symfony\Component\Form\Abstract_Type_Extension;
+use Symfony\Component\Form\Extension\Core\Type\Form_Type;
+use Symfony\Component\Form\Extension\Http_Foundation\Http_Foundation_Request_Handler;
+use Symfony\Component\Form\Form_Builder_Interface;
+use Symfony\Component\Form\Request_Handler_Interface;
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class FormTypeHttpFoundationExtension extends AbstractTypeExtension
+class Form_Type_Http_Foundation_Extension extends Abstract_Type_Extension
 {
-    public function __construct(private readonly ?RequestHandlerInterface $requestHandler = new HttpFoundationRequestHandler())
+    public function __construct(private readonly ?Request_Handler_Interface $request_handler = new Http_Foundation_Request_Handler())
     {
     }
-
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function build_form(Form_Builder_Interface $builder, array $options): void
     {
-        $builder->setRequestHandler($this->requestHandler);
+        $builder->set_request_handler($this->request_handler);
     }
-
-    public static function getExtendedTypes(): iterable
+    public static function get_extended_types(): iterable
     {
-        return [FormType::class];
+        return [Form_Type::class];
     }
 }

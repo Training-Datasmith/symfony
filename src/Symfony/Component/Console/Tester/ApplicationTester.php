@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Tester;
 
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Input\ArrayInput;
-
+use Symfony\Component\Console\Input\Array_Input;
 /**
  * Eases the testing of console applications.
  *
@@ -26,15 +23,12 @@ use Symfony\Component\Console\Input\ArrayInput;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ApplicationTester
+class Application_Tester
 {
-    use TesterTrait;
-
-    public function __construct(
-        private Application $application,
-    ) {
+    use Tester_Trait;
+    public function __construct(private Application $application)
+    {
     }
-
     /**
      * Executes the application.
      *
@@ -49,17 +43,14 @@ class ApplicationTester
      */
     public function run(array $input, array $options = []): int
     {
-        $this->input = new ArrayInput($input);
+        $this->input = new Array_Input($input);
         if (isset($options['interactive'])) {
-            $this->input->setInteractive($options['interactive']);
+            $this->input->set_interactive($options['interactive']);
         }
-
         if ($this->inputs) {
-            $this->input->setStream(self::createStream($this->inputs));
+            $this->input->set_stream(self::create_stream($this->inputs));
         }
-
-        $this->initOutput($options);
-
-        return $this->statusCode = $this->application->run($this->input, $this->output);
+        $this->init_output($options);
+        return $this->status_code = $this->application->run($this->input, $this->output);
     }
 }

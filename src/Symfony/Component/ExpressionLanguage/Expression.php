@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\ExpressionLanguage;
+namespace Symfony\Component\Expression_Language;
 
 /**
  * Represents an expression.
@@ -20,11 +18,9 @@ namespace Symfony\Component\ExpressionLanguage;
  */
 class Expression implements \Stringable
 {
-    public function __construct(
-        protected string $expression,
-    ) {
+    public function __construct(protected string $expression)
+    {
     }
-
     /**
      * Gets the expression.
      */

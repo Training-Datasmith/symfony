@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,71 +9,58 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Dependency_Injection\Compiler;
 
-namespace Symfony\Bundle\SecurityBundle\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\Security\Http\Firewall\FirewallListenerInterface;
-
+use Symfony\Component\Dependency_Injection\Argument\Iterator_Argument;
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+use Symfony\Component\Dependency_Injection\Reference;
+use Symfony\Component\Security\Http\Firewall\Firewall_Listener_Interface;
 /**
  * Sorts firewall listeners based on the execution order provided by FirewallListenerInterface::getPriority().
  *
  * @author Christian Scheb <me@christianscheb.de>
  */
-class SortFirewallListenersPass implements CompilerPassInterface
+class Sort_Firewall_Listeners_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (!$container->hasParameter('security.firewalls')) {
+        if (!$container->has_parameter('security.firewalls')) {
             return;
         }
-
-        foreach ($container->getParameter('security.firewalls') as $firewallName) {
-            $firewallContextDefinition = $container->getDefinition('security.firewall.map.context.'.$firewallName);
-            $this->sortFirewallContextListeners($firewallContextDefinition, $container);
+        foreach ($container->get_parameter('security.firewalls') as $firewall_name) {
+            $firewall_context_definition = $container->get_definition('security.firewall.map.context.' . $firewall_name);
+            $this->sort_firewall_context_listeners($firewall_context_definition, $container);
         }
     }
-
-    private function sortFirewallContextListeners(Definition $definition, ContainerBuilder $container): void
+    private function sort_firewall_context_listeners(Definition $definition, Container_Builder $container): void
     {
         /** @var IteratorArgument $listenerIteratorArgument */
-        $listenerIteratorArgument = $definition->getArgument(0);
-        $prioritiesByServiceId = $this->getListenerPriorities($listenerIteratorArgument, $container);
-
-        $listeners = $listenerIteratorArgument->getValues();
-        usort($listeners, static fn (Reference $a, Reference $b): int => $prioritiesByServiceId[(string) $b] <=> $prioritiesByServiceId[(string) $a]);
-
-        $listenerIteratorArgument->setValues(array_values($listeners));
+        $listener_iterator_argument = $definition->get_argument(0);
+        $priorities_by_service_id = $this->get_listener_priorities($listener_iterator_argument, $container);
+        $listeners = $listener_iterator_argument->get_values();
+        usort($listeners, static fn(Reference $a, Reference $b): int => $priorities_by_service_id[(string) $b] <=> $priorities_by_service_id[(string) $a]);
+        $listener_iterator_argument->set_values(array_values($listeners));
     }
-
-    private function getListenerPriorities(IteratorArgument $listeners, ContainerBuilder $container): array
+    private function get_listener_priorities(Iterator_Argument $listeners, Container_Builder $container): array
     {
         $priorities = [];
-
-        foreach ($listeners->getValues() as $reference) {
+        foreach ($listeners->get_values() as $reference) {
             $id = (string) $reference;
-            $def = $container->getDefinition($id);
-
+            $def = $container->get_definition($id);
             // We must assume that the class value has been correctly filled, even if the service is created by a factory
-            $class = $def->getClass();
-
-            if (!$r = $container->getReflectionClass($class)) {
+            $class = $def->get_class();
+            if (!$r = $container->get_reflection_class($class)) {
                 throw new InvalidArgumentException(\sprintf('Class "%s" used for service "%s" cannot be found.', $class, $id));
             }
-
             $priority = 0;
-            if ($r->isSubclassOf(FirewallListenerInterface::class)) {
-                $priority = $r->getMethod('getPriority')->invoke(null);
+            if ($r->is_subclass_of(Firewall_Listener_Interface::class)) {
+                $priority = $r->get_method('getPriority')->invoke(null);
             }
-
             $priorities[$id] = $priority;
         }
-
         return $priorities;
     }
 }

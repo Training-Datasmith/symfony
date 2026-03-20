@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,55 +9,22 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Debug_Bundle\Dependency_Injection;
 
-namespace Symfony\Bundle\DebugBundle\DependencyInjection;
-
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
-
+use Symfony\Component\Config\Definition\Builder\Tree_Builder;
+use Symfony\Component\Config\Definition\Configuration_Interface;
 /**
  * DebugExtension configuration structure.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class Configuration implements ConfigurationInterface
+class Configuration implements Configuration_Interface
 {
-    public function getConfigTreeBuilder(): TreeBuilder
+    public function get_config_tree_builder(): Tree_Builder
     {
-        $treeBuilder = new TreeBuilder('debug');
-
-        $rootNode = $treeBuilder->getRootNode();
-        $rootNode
-            ->docUrl('https://symfony.com/doc/{version:major}.{version:minor}/reference/configuration/debug.html', 'symfony/debug-bundle')
-            ->children()
-                ->integerNode('max_items')
-                    ->info('Max number of displayed items past the first level, -1 means no limit.')
-                    ->min(-1)
-                    ->defaultValue(2500)
-                ->end()
-                ->integerNode('min_depth')
-                    ->info('Minimum tree depth to clone all the items, 1 is default.')
-                    ->min(0)
-                    ->defaultValue(1)
-                ->end()
-                ->integerNode('max_string_length')
-                    ->info('Max length of displayed strings, -1 means no limit.')
-                    ->min(-1)
-                    ->defaultValue(-1)
-                ->end()
-                ->scalarNode('dump_destination')
-                    ->info('A stream URL where dumps should be written to.')
-                    ->example('php://stderr, or tcp://%env(VAR_DUMPER_SERVER)% when using the "server:dump" command')
-                    ->defaultNull()
-                ->end()
-                ->enumNode('theme')
-                    ->info('Changes the color of the dump() output when rendered directly on the templating. "dark" (default) or "light".')
-                    ->example('dark')
-                    ->values(['dark', 'light'])
-                    ->defaultValue('dark')
-                ->end()
-        ;
-
-        return $treeBuilder;
+        $tree_builder = new Tree_Builder('debug');
+        $root_node = $tree_builder->get_root_node();
+        $root_node->doc_url('https://symfony.com/doc/{version:major}.{version:minor}/reference/configuration/debug.html', 'symfony/debug-bundle')->children()->integer_node('max_items')->info('Max number of displayed items past the first level, -1 means no limit.')->min(-1)->default_value(2500)->end()->integer_node('min_depth')->info('Minimum tree depth to clone all the items, 1 is default.')->min(0)->default_value(1)->end()->integer_node('max_string_length')->info('Max length of displayed strings, -1 means no limit.')->min(-1)->default_value(-1)->end()->scalar_node('dump_destination')->info('A stream URL where dumps should be written to.')->example('php://stderr, or tcp://%env(VAR_DUMPER_SERVER)% when using the "server:dump" command')->default_null()->end()->enum_node('theme')->info('Changes the color of the dump() output when rendered directly on the templating. "dark" (default) or "light".')->example('dark')->values(['dark', 'light'])->default_value('dark')->end();
+        return $tree_builder;
     }
 }

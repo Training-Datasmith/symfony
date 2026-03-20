@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,40 +9,31 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Asset\Context;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-
+use Symfony\Component\Http_Foundation\Request_Stack;
 /**
  * Uses a RequestStack to populate the context.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class RequestStackContext implements ContextInterface
+class Request_Stack_Context implements Context_Interface
 {
-    public function __construct(
-        private readonly RequestStack $requestStack,
-        private readonly string $basePath = '',
-        private readonly bool $secure = false,
-    ) {
-    }
-
-    public function getBasePath(): string
+    public function __construct(private readonly Request_Stack $request_stack, private readonly string $base_path = '', private readonly bool $secure = false)
     {
-        if (!$request = $this->requestStack->getMainRequest()) {
-            return $this->basePath;
+    }
+    public function get_base_path(): string
+    {
+        if (!$request = $this->request_stack->get_main_request()) {
+            return $this->base_path;
         }
-
-        return $request->getBasePath();
+        return $request->get_base_path();
     }
-
-    public function isSecure(): bool
+    public function is_secure(): bool
     {
-        if (!$request = $this->requestStack->getMainRequest()) {
+        if (!$request = $this->request_stack->get_main_request()) {
             return $this->secure;
         }
-
-        return $request->isSecure();
+        return $request->is_secure();
     }
 }

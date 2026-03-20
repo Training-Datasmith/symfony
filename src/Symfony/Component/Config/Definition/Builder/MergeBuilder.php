@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition\Builder;
 
 /**
@@ -20,49 +18,42 @@ namespace Symfony\Component\Config\Definition\Builder;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class MergeBuilder
+class Merge_Builder
 {
-    public bool $allowFalse = false;
-    public bool $allowOverwrite = true;
-
+    public bool $allow_false = false;
+    public bool $allow_overwrite = true;
     /**
      * @param T $node
      */
-    public function __construct(
-        protected NodeDefinition $node,
-    ) {
+    public function __construct(protected Node_Definition $node)
+    {
     }
-
     /**
      * Sets whether the node can be unset.
      *
      * @return $this
      */
-    public function allowUnset(bool $allow = true): static
+    public function allow_unset(bool $allow = true): static
     {
-        $this->allowFalse = $allow;
-
+        $this->allow_false = $allow;
         return $this;
     }
-
     /**
      * Sets whether the node can be overwritten.
      *
      * @return $this
      */
-    public function denyOverwrite(bool $deny = true): static
+    public function deny_overwrite(bool $deny = true): static
     {
-        $this->allowOverwrite = !$deny;
-
+        $this->allow_overwrite = !$deny;
         return $this;
     }
-
     /**
      * Returns the related node.
      *
      * @return T
      */
-    public function end(): NodeDefinition
+    public function end(): Node_Definition
     {
         return $this->node;
     }

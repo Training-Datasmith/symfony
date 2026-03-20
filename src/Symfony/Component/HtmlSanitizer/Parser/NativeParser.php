@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,19 +9,17 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HtmlSanitizer\Parser;
+namespace Symfony\Component\Html_Sanitizer\Parser;
 
 /**
  * Parser using PHP 8.4's new Dom API.
  */
-final class NativeParser implements ParserInterface
+final class Native_Parser implements Parser_Interface
 {
     public function parse(string $html, string $context = 'body'): ?\Dom\Node
     {
-        $document = @\Dom\HTMLDocument::createFromString(\sprintf('<!DOCTYPE html><%s>%s</%1$s>', $context, $html));
-        $element = $document->getElementsByTagName($context)->item(0);
-
-        return $element->hasChildNodes() ? $element : null;
+        $document = @\Dom\Html_Document::create_from_string(\sprintf('<!DOCTYPE html><%s>%s</%1$s>', $context, $html));
+        $element = $document->get_elements_by_tag_name($context)->item(0);
+        return $element->has_child_nodes() ? $element : null;
     }
 }

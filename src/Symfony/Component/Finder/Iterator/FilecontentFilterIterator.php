@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Finder\Iterator;
 
-use Symfony\Component\Finder\SplFileInfo;
-
+use Symfony\Component\Finder\Spl_File_Info;
 /**
  * FilecontentFilterIterator filters files by their contents using patterns (regexps or strings).
  *
@@ -23,38 +20,33 @@ use Symfony\Component\Finder\SplFileInfo;
  *
  * @extends MultiplePcreFilterIterator<string, SplFileInfo>
  */
-class FilecontentFilterIterator extends MultiplePcreFilterIterator
+class Filecontent_Filter_Iterator extends Multiple_Pcre_Filter_Iterator
 {
     /**
      * Filters the iterator values.
      */
     public function accept(): bool
     {
-        if (!$this->matchRegexps && !$this->noMatchRegexps) {
+        if (!$this->match_regexps && !$this->no_match_regexps) {
             return true;
         }
-
         $fileinfo = $this->current();
-
-        if ($fileinfo->isDir() || !$fileinfo->isReadable()) {
+        if ($fileinfo->is_dir() || !$fileinfo->is_readable()) {
             return false;
         }
-
-        $content = $fileinfo->getContents();
+        $content = $fileinfo->get_contents();
         if (!$content) {
             return false;
         }
-
-        return $this->isAccepted($content);
+        return $this->is_accepted($content);
     }
-
     /**
      * Converts string to regexp if necessary.
      *
      * @param string $str Pattern: string or regexp
      */
-    protected function toRegex(string $str): string
+    protected function to_regex(string $str): string
     {
-        return $this->isRegex($str) ? $str : '/'.preg_quote($str, '/').'/';
+        return $this->is_regex($str) ? $str : '/' . preg_quote($str, '/') . '/';
     }
 }

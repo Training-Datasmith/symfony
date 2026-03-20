@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,58 +9,47 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DependencyInjection\Extension;
+namespace Symfony\Component\Dependency_Injection\Extension;
 
 use Symfony\Component\Config\Definition\Configuration;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-
+use Symfony\Component\Config\Definition\Configuration_Interface;
+use Symfony\Component\Config\Definition\Configurator\Definition_Configurator;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Loader\Configurator\Container_Configurator;
 /**
  * An Extension that provides configuration hooks.
  *
  * @author Yonel Ceruto <yonelceruto@gmail.com>
  */
-abstract class AbstractExtension extends Extension implements ConfigurableExtensionInterface, PrependExtensionInterface
+abstract class Abstract_Extension extends Extension implements Configurable_Extension_Interface, Prepend_Extension_Interface
 {
-    use ExtensionTrait;
-
-    public function configure(DefinitionConfigurator $definition): void
+    use Extension_Trait;
+    public function configure(Definition_Configurator $definition): void
     {
     }
-
-    public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
+    public function prepend_extension(Container_Configurator $container, Container_Builder $builder): void
     {
     }
-
-    public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
+    public function load_extension(array $config, Container_Configurator $container, Container_Builder $builder): void
     {
     }
-
-    public function getConfiguration(array $config, ContainerBuilder $container): ?ConfigurationInterface
+    public function get_configuration(array $config, Container_Builder $container): ?Configuration_Interface
     {
-        return new Configuration($this, $container, $this->getAlias());
+        return new Configuration($this, $container, $this->get_alias());
     }
-
-    final public function prepend(ContainerBuilder $container): void
+    final public function prepend(Container_Builder $container): void
     {
-        $callback = function (ContainerConfigurator $configurator) use ($container): void {
-            $this->prependExtension($configurator, $container);
+        $callback = function (Container_Configurator $configurator) use ($container): void {
+            $this->prepend_extension($configurator, $container);
         };
-
-        $this->executeConfiguratorCallback($container, $callback, $this, true);
+        $this->execute_configurator_callback($container, $callback, $this, true);
     }
-
-    final public function load(array $configs, ContainerBuilder $container): void
+    final public function load(array $configs, Container_Builder $container): void
     {
-        $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
-
-        $callback = function (ContainerConfigurator $configurator) use ($config, $container): void {
-            $this->loadExtension($config, $configurator, $container);
+        $config = $this->process_configuration($this->get_configuration([], $container), $configs);
+        $callback = function (Container_Configurator $configurator) use ($config, $container): void {
+            $this->load_extension($config, $configurator, $container);
         };
-
-        $this->executeConfiguratorCallback($container, $callback, $this);
+        $this->execute_configurator_callback($container, $callback, $this);
     }
 }

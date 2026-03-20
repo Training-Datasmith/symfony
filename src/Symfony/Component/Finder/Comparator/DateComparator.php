@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Finder\Comparator;
 
 /**
@@ -18,7 +16,7 @@ namespace Symfony\Component\Finder\Comparator;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class DateComparator extends Comparator
+class Date_Comparator extends Comparator
 {
     /**
      * @param string $test A comparison string
@@ -30,23 +28,19 @@ class DateComparator extends Comparator
         if (!preg_match('#^\s*(==|!=|[<>]=?|after|since|before|until)?\s*(.+?)\s*$#i', $test, $matches)) {
             throw new \InvalidArgumentException(\sprintf('Don\'t understand "%s" as a date test.', $test));
         }
-
         try {
             $date = new \DateTimeImmutable($matches[2]);
             $target = $date->format('U');
         } catch (\Exception) {
             throw new \InvalidArgumentException(\sprintf('"%s" is not a valid date.', $matches[2]));
         }
-
         $operator = $matches[1] ?: '==';
         if ('since' === $operator || 'after' === $operator) {
             $operator = '>';
         }
-
         if ('until' === $operator || 'before' === $operator) {
             $operator = '<';
         }
-
         parent::__construct($target, $operator);
     }
 }

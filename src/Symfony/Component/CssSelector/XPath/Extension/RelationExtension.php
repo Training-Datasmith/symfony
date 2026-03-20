@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Css_Selector\X_Path\Extension;
 
-namespace Symfony\Component\CssSelector\XPath\Extension;
-
-use Symfony\Component\CssSelector\XPath\XPathExpr;
-
+use Symfony\Component\Css_Selector\X_Path\X_Path_Expr;
 /**
  * XPath expression translator combination extension.
  *
@@ -25,44 +22,30 @@ use Symfony\Component\CssSelector\XPath\XPathExpr;
  *
  * @internal
  */
-class RelationExtension extends AbstractExtension
+class Relation_Extension extends Abstract_Extension
 {
-    public function getRelativeCombinationTranslators(): array
+    public function get_relative_combination_translators(): array
     {
-        return [
-            ' ' => $this->translateRelationDescendant(...),
-            '>' => $this->translateRelationChild(...),
-            '+' => $this->translateRelationDirectAdjacent(...),
-            '~' => $this->translateRelationIndirectAdjacent(...),
-        ];
+        return [' ' => $this->translate_relation_descendant(...), '>' => $this->translate_relation_child(...), '+' => $this->translate_relation_direct_adjacent(...), '~' => $this->translate_relation_indirect_adjacent(...)];
     }
-
-    public function translateRelationDescendant(XPathExpr $xpath, XPathExpr $combinedXpath): XPathExpr
+    public function translate_relation_descendant(X_Path_Expr $xpath, X_Path_Expr $combined_xpath): X_Path_Expr
     {
-        return $xpath->join('[descendant-or-self::', $combinedXpath, ']', true);
+        return $xpath->join('[descendant-or-self::', $combined_xpath, ']', true);
     }
-
-    public function translateRelationChild(XPathExpr $xpath, XPathExpr $combinedXpath): XPathExpr
+    public function translate_relation_child(X_Path_Expr $xpath, X_Path_Expr $combined_xpath): X_Path_Expr
     {
-        return $xpath->join('[./', $combinedXpath, ']', true);
+        return $xpath->join('[./', $combined_xpath, ']', true);
     }
-
-    public function translateRelationDirectAdjacent(XPathExpr $xpath, XPathExpr $combinedXpath): XPathExpr
+    public function translate_relation_direct_adjacent(X_Path_Expr $xpath, X_Path_Expr $combined_xpath): X_Path_Expr
     {
-        $combinedXpath
-            ->addNameTest()
-            ->addCondition('position() = 1');
-
-        return $xpath
-            ->join('[following-sibling::', $combinedXpath, ']', true);
+        $combined_xpath->add_name_test()->add_condition('position() = 1');
+        return $xpath->join('[following-sibling::', $combined_xpath, ']', true);
     }
-
-    public function translateRelationIndirectAdjacent(XPathExpr $xpath, XPathExpr $combinedXpath): XPathExpr
+    public function translate_relation_indirect_adjacent(X_Path_Expr $xpath, X_Path_Expr $combined_xpath): X_Path_Expr
     {
-        return $xpath->join('[following-sibling::', $combinedXpath, ']', true);
+        return $xpath->join('[following-sibling::', $combined_xpath, ']', true);
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return 'relation';
     }

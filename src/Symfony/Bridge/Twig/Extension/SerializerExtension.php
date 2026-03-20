@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,21 +9,17 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Twig\Extension;
 
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
-
+use Twig\Extension\Abstract_Extension;
+use Twig\Twig_Filter;
 /**
  * @author Jesse Rushlow <jr@rushlow.dev>
  */
-final class SerializerExtension extends AbstractExtension
+final class Serializer_Extension extends Abstract_Extension
 {
-    public function getFilters(): array
+    public function get_filters(): array
     {
-        return [
-            new TwigFilter('serialize', [SerializerRuntime::class, 'serialize']),
-        ];
+        return [new Twig_Filter('serialize', [Serializer_Runtime::class, 'serialize'])];
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,78 +9,68 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Dependency_Injection\Compiler;
 
-namespace Symfony\Bundle\SecurityBundle\DependencyInjection\Compiler;
-
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\DependencyInjection\ChildDefinition;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
-
+use Symfony\Component\Config\Definition\Exception\Invalid_Configuration_Exception;
+use Symfony\Component\Dependency_Injection\Child_Definition;
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Reference;
+use Symfony\Component\Security\Http\Entry_Point\Authentication_Entry_Point_Interface;
 /**
  * @author Wouter de Jong <wouter@wouterj.nl>
  */
-class RegisterEntryPointPass implements CompilerPassInterface
+class Register_Entry_Point_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (!$container->hasParameter('security.firewalls')) {
+        if (!$container->has_parameter('security.firewalls')) {
             return;
         }
-
-        $firewalls = $container->getParameter('security.firewalls');
-        foreach ($firewalls as $firewallName) {
-            if (!$container->hasDefinition('security.authenticator.manager.'.$firewallName)) {
+        $firewalls = $container->get_parameter('security.firewalls');
+        foreach ($firewalls as $firewall_name) {
+            if (!$container->has_definition('security.authenticator.manager.' . $firewall_name)) {
                 continue;
             }
-            if (!$container->hasParameter('security.'.$firewallName.'._indexed_authenticators')) {
+            if (!$container->has_parameter('security.' . $firewall_name . '._indexed_authenticators')) {
                 continue;
             }
-            $entryPoints = [];
-            $indexedAuthenticators = $container->getParameter('security.'.$firewallName.'._indexed_authenticators');
+            $entry_points = [];
+            $indexed_authenticators = $container->get_parameter('security.' . $firewall_name . '._indexed_authenticators');
             // this is a compile-only parameter, removing it cleans up space and avoids unintended usage
-            $container->getParameterBag()->remove('security.'.$firewallName.'._indexed_authenticators');
-            foreach ($indexedAuthenticators as $key => $authenticatorId) {
-                if (!$container->has($authenticatorId)) {
+            $container->get_parameter_bag()->remove('security.' . $firewall_name . '._indexed_authenticators');
+            foreach ($indexed_authenticators as $key => $authenticator_id) {
+                if (!$container->has($authenticator_id)) {
                     continue;
                 }
-
                 // because this pass runs before ResolveChildDefinitionPass, child definitions didn't inherit the parent class yet
-                $definition = $container->findDefinition($authenticatorId);
-                while (!($authenticatorClass = $definition->getClass()) && $definition instanceof ChildDefinition) {
-                    $definition = $container->findDefinition($definition->getParent());
+                $definition = $container->find_definition($authenticator_id);
+                while (!($authenticator_class = $definition->get_class()) && $definition instanceof Child_Definition) {
+                    $definition = $container->find_definition($definition->get_parent());
                 }
-
-                if (is_a($authenticatorClass, AuthenticationEntryPointInterface::class, true)) {
-                    $entryPoints[$key] = $authenticatorId;
+                if (is_a($authenticator_class, Authentication_Entry_Point_Interface::class, true)) {
+                    $entry_points[$key] = $authenticator_id;
                 }
             }
-
-            if (!$entryPoints) {
+            if (!$entry_points) {
                 continue;
             }
-
-            $config = $container->getDefinition('security.firewall.map.config.'.$firewallName);
-            $configuredEntryPoint = $config->getArgument(7);
-
-            if (null !== $configuredEntryPoint) {
+            $config = $container->get_definition('security.firewall.map.config.' . $firewall_name);
+            $configured_entry_point = $config->get_argument(7);
+            if (null !== $configured_entry_point) {
                 // allow entry points to be configured by authenticator key (e.g. "http_basic")
-                $entryPoint = $entryPoints[$configuredEntryPoint] ?? $configuredEntryPoint;
-            } elseif (1 === \count($entryPoints)) {
-                $entryPoint = array_shift($entryPoints);
+                $entry_point = $entry_points[$configured_entry_point] ?? $configured_entry_point;
+            } elseif (1 === \count($entry_points)) {
+                $entry_point = array_shift($entry_points);
             } else {
-                $entryPointNames = [];
-                foreach ($entryPoints as $key => $serviceId) {
-                    $entryPointNames[] = is_numeric($key) ? $serviceId : $key;
+                $entry_point_names = [];
+                foreach ($entry_points as $key => $service_id) {
+                    $entry_point_names[] = is_numeric($key) ? $service_id : $key;
                 }
-
-                throw new InvalidConfigurationException(\sprintf('Because you have multiple authenticators in firewall "%s", you need to set the "entry_point" key to one of your authenticators ("%s") or a service ID implementing "%s". The "entry_point" determines what should happen (e.g. redirect to "/login") when an anonymous user tries to access a protected page.', $firewallName, implode('", "', $entryPointNames), AuthenticationEntryPointInterface::class));
+                throw new Invalid_Configuration_Exception(\sprintf('Because you have multiple authenticators in firewall "%s", you need to set the "entry_point" key to one of your authenticators ("%s") or a service ID implementing "%s". The "entry_point" determines what should happen (e.g. redirect to "/login") when an anonymous user tries to access a protected page.', $firewall_name, implode('", "', $entry_point_names), Authentication_Entry_Point_Interface::class));
             }
-
-            $config->replaceArgument(7, $entryPoint);
-            $container->getDefinition('security.exception_listener.'.$firewallName)->replaceArgument(4, new Reference($entryPoint));
+            $config->replace_argument(7, $entry_point);
+            $container->get_definition('security.exception_listener.' . $firewall_name)->replace_argument(4, new Reference($entry_point));
         }
     }
 }

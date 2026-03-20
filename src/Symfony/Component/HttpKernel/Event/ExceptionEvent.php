@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event;
 
-namespace Symfony\Component\HttpKernel\Event;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Kernel\Http_Kernel_Interface;
 /**
  * Allows to create a response for a thrown exception.
  *
@@ -29,57 +26,44 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-final class ExceptionEvent extends RequestEvent
+final class Exception_Event extends Request_Event
 {
     private \Throwable $throwable;
-    private bool $allowCustomResponseCode = false;
-
-    public function __construct(
-        HttpKernelInterface $kernel,
-        Request $request,
-        int $requestType,
-        \Throwable $e,
-        private readonly bool $isKernelTerminating = false,
-        public readonly ?ControllerMetadata $controllerMetadata = null,
-    ) {
-        parent::__construct($kernel, $request, $requestType);
-
-        $this->setThrowable($e);
+    private bool $allow_custom_response_code = false;
+    public function __construct(Http_Kernel_Interface $kernel, Request $request, int $request_type, \Throwable $e, private readonly bool $is_kernel_terminating = false, public readonly ?Controller_Metadata $controller_metadata = null)
+    {
+        parent::__construct($kernel, $request, $request_type);
+        $this->set_throwable($e);
     }
-
-    public function getThrowable(): \Throwable
+    public function get_throwable(): \Throwable
     {
         return $this->throwable;
     }
-
     /**
      * Replaces the thrown exception.
      *
      * This exception will be thrown if no response is set in the event.
      */
-    public function setThrowable(\Throwable $exception): void
+    public function set_throwable(\Throwable $exception): void
     {
         $this->throwable = $exception;
     }
-
     /**
      * Mark the event as allowing a custom response code.
      */
-    public function allowCustomResponseCode(): void
+    public function allow_custom_response_code(): void
     {
-        $this->allowCustomResponseCode = true;
+        $this->allow_custom_response_code = true;
     }
-
     /**
      * Returns true if the event allows a custom response code.
      */
-    public function isAllowingCustomResponseCode(): bool
+    public function is_allowing_custom_response_code(): bool
     {
-        return $this->allowCustomResponseCode;
+        return $this->allow_custom_response_code;
     }
-
-    public function isKernelTerminating(): bool
+    public function is_kernel_terminating(): bool
     {
-        return $this->isKernelTerminating;
+        return $this->is_kernel_terminating;
     }
 }

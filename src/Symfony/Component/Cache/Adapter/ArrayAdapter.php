@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,19 +9,17 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Adapter;
 
-use Psr\Cache\CacheItemInterface;
-use Psr\Clock\ClockInterface;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\Cache\CacheItem;
+use Psr\Cache\Cache_Item_Interface;
+use Psr\Clock\Clock_Interface;
+use Psr\Log\Logger_Aware_Interface;
+use Psr\Log\Logger_Aware_Trait;
+use Symfony\Component\Cache\Cache_Item;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
-use Symfony\Component\Cache\ResettableInterface;
-use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\NamespacedPoolInterface;
-
+use Symfony\Component\Cache\Resettable_Interface;
+use Symfony\Contracts\Cache\Cache_Interface;
+use Symfony\Contracts\Cache\Namespaced_Pool_Interface;
 /**
  * An in-memory cache storage.
  *
@@ -30,245 +27,188 @@ use Symfony\Contracts\Cache\NamespacedPoolInterface;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ArrayAdapter implements AdapterInterface, CacheInterface, NamespacedPoolInterface, LoggerAwareInterface, ResettableInterface
+class Array_Adapter implements Adapter_Interface, Cache_Interface, Namespaced_Pool_Interface, Logger_Aware_Interface, Resettable_Interface
 {
-    use LoggerAwareTrait;
-
+    use Logger_Aware_Trait;
     private array $values = [];
     private array $tags = [];
     private array $expiries = [];
-    private array $subPools = [];
-
-    private static \Closure $createCacheItem;
-
+    private array $sub_pools = [];
+    private static \Closure $create_cache_item;
     /**
      * @param bool $storeSerialized Disabling serialization can lead to cache corruptions when storing mutable values but increases performance otherwise
      */
-    public function __construct(
-        private int $defaultLifetime = 0,
-        private bool $storeSerialized = true,
-        private float $maxLifetime = 0,
-        private int $maxItems = 0,
-        private ?ClockInterface $clock = null,
-    ) {
-        if (0 > $maxLifetime) {
-            throw new InvalidArgumentException(\sprintf('Argument $maxLifetime must be positive, %F passed.', $maxLifetime));
+    public function __construct(private int $default_lifetime = 0, private bool $store_serialized = true, private float $max_lifetime = 0, private int $max_items = 0, private ?Clock_Interface $clock = null)
+    {
+        if (0 > $max_lifetime) {
+            throw new InvalidArgumentException(\sprintf('Argument $maxLifetime must be positive, %F passed.', $max_lifetime));
         }
-
-        if (0 > $maxItems) {
-            throw new InvalidArgumentException(\sprintf('Argument $maxItems must be a positive integer, %d passed.', $maxItems));
+        if (0 > $max_items) {
+            throw new InvalidArgumentException(\sprintf('Argument $maxItems must be a positive integer, %d passed.', $max_items));
         }
-
-        self::$createCacheItem ??= \Closure::bind(
-            static function ($key, $value, $isHit, $tags): \Symfony\Component\Cache\CacheItem {
-                $item = new CacheItem();
-                $item->key = $key;
-                $item->value = $value;
-                $item->isHit = $isHit;
-                if (null !== $tags) {
-                    $item->metadata[CacheItem::METADATA_TAGS] = $tags;
-                }
-
-                return $item;
-            },
-            null,
-            CacheItem::class
-        );
+        self::$create_cache_item ??= \Closure::bind(static function ($key, $value, $is_hit, $tags): \Symfony\Component\Cache\Cache_Item {
+            $item = new Cache_Item();
+            $item->key = $key;
+            $item->value = $value;
+            $item->is_hit = $is_hit;
+            if (null !== $tags) {
+                $item->metadata[Cache_Item::METADATA_TAGS] = $tags;
+            }
+            return $item;
+        }, null, Cache_Item::class);
     }
-
     public function get(string $key, callable $callback, ?float $beta = null, ?array &$metadata = null): mixed
     {
-        $item = $this->getItem($key);
-        $metadata = $item->getMetadata();
-
+        $item = $this->get_item($key);
+        $metadata = $item->get_metadata();
         // ArrayAdapter works in memory, we don't care about stampede protection
-        if (\INF === $beta || !$item->isHit()) {
+        if (\INF === $beta || !$item->is_hit()) {
             $save = true;
             $item->set($callback($item, $save));
             $this->save($item);
         }
-
         return $item->get();
     }
-
     public function delete(string $key): bool
     {
-        return $this->deleteItem($key);
+        return $this->delete_item($key);
     }
-
-    public function hasItem(mixed $key): bool
+    public function has_item(mixed $key): bool
     {
-        if (\is_string($key) && isset($this->expiries[$key]) && $this->expiries[$key] > $this->getCurrentTime()) {
-            if ($this->maxItems) {
+        if (\is_string($key) && isset($this->expiries[$key]) && $this->expiries[$key] > $this->get_current_time()) {
+            if ($this->max_items) {
                 // Move the item last in the storage
                 $value = $this->values[$key];
                 unset($this->values[$key]);
                 $this->values[$key] = $value;
             }
-
             return true;
         }
-        \assert('' !== CacheItem::validateKey($key));
-
-        return isset($this->expiries[$key]) && !$this->deleteItem($key);
+        \assert('' !== Cache_Item::validate_key($key));
+        return isset($this->expiries[$key]) && !$this->delete_item($key);
     }
-
-    public function getItem(mixed $key): CacheItem
+    public function get_item(mixed $key): Cache_Item
     {
-        if (!$isHit = $this->hasItem($key)) {
+        if (!$is_hit = $this->has_item($key)) {
             $value = null;
-
-            if (!$this->maxItems) {
+            if (!$this->max_items) {
                 // Track misses in non-LRU mode only
                 $this->values[$key] = null;
             }
         } else {
-            $value = $this->storeSerialized ? $this->unfreeze($key, $isHit) : $this->values[$key];
+            $value = $this->store_serialized ? $this->unfreeze($key, $is_hit) : $this->values[$key];
         }
-
-        return (self::$createCacheItem)($key, $value, $isHit, $this->tags[$key] ?? null);
+        return (self::$create_cache_item)($key, $value, $is_hit, $this->tags[$key] ?? null);
     }
-
-    public function getItems(array $keys = []): iterable
+    public function get_items(array $keys = []): iterable
     {
-        \assert(self::validateKeys($keys));
-
-        return $this->generateItems($keys, $this->getCurrentTime(), self::$createCacheItem);
+        \assert(self::validate_keys($keys));
+        return $this->generate_items($keys, $this->get_current_time(), self::$create_cache_item);
     }
-
-    public function deleteItem(mixed $key): bool
+    public function delete_item(mixed $key): bool
     {
-        \assert('' !== CacheItem::validateKey($key));
+        \assert('' !== Cache_Item::validate_key($key));
         unset($this->values[$key], $this->tags[$key], $this->expiries[$key]);
-
         return true;
     }
-
-    public function deleteItems(array $keys): bool
+    public function delete_items(array $keys): bool
     {
         foreach ($keys as $key) {
-            $this->deleteItem($key);
+            $this->delete_item($key);
         }
-
         return true;
     }
-
-    public function save(CacheItemInterface $item): bool
+    public function save(Cache_Item_Interface $item): bool
     {
-        if (!$item instanceof CacheItem) {
+        if (!$item instanceof Cache_Item) {
             return false;
         }
         $item = (array) $item;
-        $key = $item["\0*\0key"];
-        $value = $item["\0*\0value"];
-        $expiry = $item["\0*\0expiry"];
-
-        $now = $this->getCurrentTime();
-
+        $key = $item["\x00*\x00key"];
+        $value = $item["\x00*\x00value"];
+        $expiry = $item["\x00*\x00expiry"];
+        $now = $this->get_current_time();
         if (null !== $expiry) {
             if (!$expiry) {
                 $expiry = \PHP_INT_MAX;
             } elseif ($expiry <= $now) {
-                $this->deleteItem($key);
-
+                $this->delete_item($key);
                 return true;
             }
         }
-        if ($this->storeSerialized && null === $value = $this->freeze($value, $key)) {
+        if ($this->store_serialized && null === $value = $this->freeze($value, $key)) {
             return false;
         }
-        if (null === $expiry && 0 < $this->defaultLifetime) {
-            $expiry = $this->defaultLifetime;
-            $expiry = $now + ($expiry > ($this->maxLifetime ?: $expiry) ? $this->maxLifetime : $expiry);
-        } elseif ($this->maxLifetime && (null === $expiry || $expiry > $now + $this->maxLifetime)) {
-            $expiry = $now + $this->maxLifetime;
+        if (null === $expiry && 0 < $this->default_lifetime) {
+            $expiry = $this->default_lifetime;
+            $expiry = $now + ($expiry > ($this->max_lifetime ?: $expiry) ? $this->max_lifetime : $expiry);
+        } elseif ($this->max_lifetime && (null === $expiry || $expiry > $now + $this->max_lifetime)) {
+            $expiry = $now + $this->max_lifetime;
         }
-
-        if ($this->maxItems) {
+        if ($this->max_items) {
             unset($this->values[$key], $this->tags[$key]);
-
             // Iterate items and vacuum expired ones while we are at it
             foreach ($this->values as $k => $v) {
-                if ($this->expiries[$k] > $now && \count($this->values) < $this->maxItems) {
+                if ($this->expiries[$k] > $now && \count($this->values) < $this->max_items) {
                     break;
                 }
-
                 unset($this->values[$k], $this->tags[$k], $this->expiries[$k]);
             }
         }
-
         $this->values[$key] = $value;
         $this->expiries[$key] = $expiry ?? \PHP_INT_MAX;
-
-        if (null === $this->tags[$key] = $item["\0*\0newMetadata"][CacheItem::METADATA_TAGS] ?? null) {
+        if (null === $this->tags[$key] = $item["\x00*\x00newMetadata"][Cache_Item::METADATA_TAGS] ?? null) {
             unset($this->tags[$key]);
         }
-
         return true;
     }
-
-    public function saveDeferred(CacheItemInterface $item): bool
+    public function save_deferred(Cache_Item_Interface $item): bool
     {
         return $this->save($item);
     }
-
     public function commit(): bool
     {
         return true;
     }
-
     public function clear(string $prefix = ''): bool
     {
         if ('' !== $prefix) {
-            $now = $this->getCurrentTime();
-
+            $now = $this->get_current_time();
             foreach ($this->values as $key => $value) {
                 if (!isset($this->expiries[$key]) || $this->expiries[$key] <= $now || str_starts_with((string) $key, $prefix)) {
                     unset($this->values[$key], $this->tags[$key], $this->expiries[$key]);
                 }
             }
-
             return true;
         }
-
-        foreach ($this->subPools as $pool) {
+        foreach ($this->sub_pools as $pool) {
             $pool->clear();
         }
-
-        $this->subPools = $this->values = $this->tags = $this->expiries = [];
-
+        $this->sub_pools = $this->values = $this->tags = $this->expiries = [];
         return true;
     }
-
-    public function withSubNamespace(string $namespace): static
+    public function with_sub_namespace(string $namespace): static
     {
-        CacheItem::validateKey($namespace);
-
-        $subPools = $this->subPools;
-
-        if (isset($subPools[$namespace])) {
-            return $subPools[$namespace];
+        Cache_Item::validate_key($namespace);
+        $sub_pools = $this->sub_pools;
+        if (isset($sub_pools[$namespace])) {
+            return $sub_pools[$namespace];
         }
-
-        $this->subPools = [];
+        $this->sub_pools = [];
         $clone = clone $this;
         $clone->clear();
-
-        $subPools[$namespace] = $clone;
-        $this->subPools = $subPools;
-
+        $sub_pools[$namespace] = $clone;
+        $this->sub_pools = $sub_pools;
         return $clone;
     }
-
     /**
      * Returns all cached values, with cache miss as null.
      */
-    public function getValues(): array
+    public function get_values(): array
     {
-        if (!$this->storeSerialized) {
+        if (!$this->store_serialized) {
             return $this->values;
         }
-
         $values = $this->values;
         foreach ($values as $k => $v) {
             if (null === $v) {
@@ -281,60 +221,51 @@ class ArrayAdapter implements AdapterInterface, CacheInterface, NamespacedPoolIn
                 $values[$k] = serialize($v);
             }
         }
-
         return $values;
     }
-
     public function reset(): void
     {
         $this->clear();
     }
-
     public function __clone()
     {
-        foreach ($this->subPools as $i => $pool) {
-            $this->subPools[$i] = clone $pool;
+        foreach ($this->sub_pools as $i => $pool) {
+            $this->sub_pools[$i] = clone $pool;
         }
     }
-
-    private function generateItems(array $keys, float $now, \Closure $f): \Generator
+    private function generate_items(array $keys, float $now, \Closure $f): \Generator
     {
         foreach ($keys as $i => $key) {
-            if (!$isHit = isset($this->expiries[$key]) && ($this->expiries[$key] > $now || !$this->deleteItem($key))) {
+            if (!$is_hit = isset($this->expiries[$key]) && ($this->expiries[$key] > $now || !$this->delete_item($key))) {
                 $value = null;
-
-                if (!$this->maxItems) {
+                if (!$this->max_items) {
                     // Track misses in non-LRU mode only
                     $this->values[$key] = null;
                 }
             } else {
-                if ($this->maxItems) {
+                if ($this->max_items) {
                     // Move the item last in the storage
                     $value = $this->values[$key];
                     unset($this->values[$key]);
                     $this->values[$key] = $value;
                 }
-
-                $value = $this->storeSerialized ? $this->unfreeze($key, $isHit) : $this->values[$key];
+                $value = $this->store_serialized ? $this->unfreeze($key, $is_hit) : $this->values[$key];
             }
             unset($keys[$i]);
-
-            yield $key => $f($key, $value, $isHit, $this->tags[$key] ?? null);
+            yield $key => $f($key, $value, $is_hit, $this->tags[$key] ?? null);
         }
-
         foreach ($keys as $key) {
             yield $key => $f($key, null, false);
         }
     }
-
-    private function freeze($value, string $key): string|int|float|bool|array|\UnitEnum|null
+    private function freeze($value, string $key): string|int|float|bool|array|\Unit_Enum|null
     {
         if (null === $value) {
             return 'N;';
         }
         if (\is_string($value)) {
             // Serialize strings if they could be confused with serialized objects or arrays
-            if ('N;' === $value || (isset($value[2]) && ':' === $value[1])) {
+            if ('N;' === $value || isset($value[2]) && ':' === $value[1]) {
                 return serialize($value);
             }
         } elseif (!\is_scalar($value)) {
@@ -345,9 +276,8 @@ class ArrayAdapter implements AdapterInterface, CacheInterface, NamespacedPoolIn
                     unset($this->values[$key]);
                 }
                 $type = get_debug_type($value);
-                $message = \sprintf('Failed to save key "{key}" of type %s: %s', $type, $e->getMessage());
-                CacheItem::log($this->logger, $message, ['key' => $key, 'exception' => $e, 'cache-adapter' => get_debug_type($this)]);
-
+                $message = \sprintf('Failed to save key "{key}" of type %s: %s', $type, $e->get_message());
+                Cache_Item::log($this->logger, $message, ['key' => $key, 'exception' => $e, 'cache-adapter' => get_debug_type($this)]);
                 return null;
             }
             // Keep value serialized if it contains any objects or any internal references
@@ -355,11 +285,9 @@ class ArrayAdapter implements AdapterInterface, CacheInterface, NamespacedPoolIn
                 return $serialized;
             }
         }
-
         return $value;
     }
-
-    private function unfreeze(string $key, bool &$isHit): mixed
+    private function unfreeze(string $key, bool &$is_hit): mixed
     {
         if ('N;' === $value = $this->values[$key]) {
             return null;
@@ -368,34 +296,29 @@ class ArrayAdapter implements AdapterInterface, CacheInterface, NamespacedPoolIn
             try {
                 $value = unserialize($value);
             } catch (\Exception $e) {
-                CacheItem::log($this->logger, 'Failed to unserialize key "{key}": '.$e->getMessage(), ['key' => $key, 'exception' => $e, 'cache-adapter' => get_debug_type($this)]);
+                Cache_Item::log($this->logger, 'Failed to unserialize key "{key}": ' . $e->get_message(), ['key' => $key, 'exception' => $e, 'cache-adapter' => get_debug_type($this)]);
                 $value = false;
             }
             if (false === $value) {
                 $value = null;
-                $isHit = false;
-
-                if (!$this->maxItems) {
+                $is_hit = false;
+                if (!$this->max_items) {
                     $this->values[$key] = null;
                 }
             }
         }
-
         return $value;
     }
-
-    private function validateKeys(array $keys): bool
+    private function validate_keys(array $keys): bool
     {
         foreach ($keys as $key) {
             if (!\is_string($key) || !isset($this->expiries[$key])) {
-                CacheItem::validateKey($key);
+                Cache_Item::validate_key($key);
             }
         }
-
         return true;
     }
-
-    private function getCurrentTime(): float
+    private function get_current_time(): float
     {
         return $this->clock?->now()->format('U.u') ?? microtime(true);
     }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,36 +9,30 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DependencyInjection\Argument;
+namespace Symfony\Component\Dependency_Injection\Argument;
 
 /**
  * @internal
  */
-class RewindableGenerator implements \IteratorAggregate, \Countable
+class Rewindable_Generator implements \IteratorAggregate, \Countable
 {
     private readonly \Closure $generator;
     private \Closure|int $count;
-
     public function __construct(callable $generator, int|callable $count)
     {
         $this->generator = $generator(...);
         $this->count = \is_int($count) ? $count : $count(...);
     }
-
     public function getIterator(): \Traversable
     {
         $g = $this->generator;
-
         return $g();
     }
-
     public function count(): int
     {
         if (!\is_int($count = $this->count)) {
             $this->count = $count();
         }
-
         return $this->count;
     }
 }

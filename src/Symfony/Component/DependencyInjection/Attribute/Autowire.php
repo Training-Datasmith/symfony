@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Attribute;
 
-namespace Symfony\Component\DependencyInjection\Attribute;
-
-use Symfony\Component\DependencyInjection\Argument\ArgumentInterface;
-use Symfony\Component\DependencyInjection\Exception\LogicException;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\ExpressionLanguage\Expression;
-
+use Symfony\Component\Dependency_Injection\Argument\Argument_Interface;
+use Symfony\Component\Dependency_Injection\Exception\LogicException;
+use Symfony\Component\Dependency_Injection\Reference;
+use Symfony\Component\Expression_Language\Expression;
 /**
  * Attribute to tell a parameter how to be autowired.
  *
@@ -26,9 +23,8 @@ use Symfony\Component\ExpressionLanguage\Expression;
 #[\Attribute(\Attribute::TARGET_PARAMETER | \Attribute::TARGET_PROPERTY)]
 class Autowire
 {
-    public readonly string|array|Expression|Reference|ArgumentInterface|null $value;
+    public readonly string|array|Expression|Reference|Argument_Interface|null $value;
     public readonly bool|array $lazy;
-
     /**
      * Use only ONE of the following.
      *
@@ -39,14 +35,8 @@ class Autowire
      * @param string|null                         $param      Parameter name (ie 'some.parameter.name')
      * @param bool|class-string|class-string[]    $lazy       Whether to use lazy-loading for this argument
      */
-    public function __construct(
-        string|array|ArgumentInterface|null $value = null,
-        ?string $service = null,
-        ?string $expression = null,
-        ?string $env = null,
-        ?string $param = null,
-        bool|string|array $lazy = false,
-    ) {
+    public function __construct(string|array|Argument_Interface|null $value = null, ?string $service = null, ?string $expression = null, ?string $env = null, ?string $param = null, bool|string|array $lazy = false)
+    {
         if ($this->lazy = \is_string($lazy) ? [$lazy] : $lazy) {
             if (null !== ($expression ?? $env ?? $param)) {
                 throw new LogicException('#[Autowire] attribute cannot be $lazy and use $expression, $env, or $param.');
@@ -57,7 +47,6 @@ class Autowire
         } elseif (1 !== (null !== $value) + (null !== $service) + (null !== $expression) + (null !== $env) + (null !== $param)) {
             throw new LogicException('#[Autowire] attribute must declare exactly one of $service, $expression, $env, $param or $value.');
         }
-
         if (\is_string($value) && str_starts_with($value, '@')) {
             match (true) {
                 str_starts_with($value, '@@') => $value = substr($value, 1),
@@ -65,12 +54,11 @@ class Autowire
                 default => $service = substr($value, 1),
             };
         }
-
         $this->value = match (true) {
             null !== $service => new Reference($service),
             null !== $expression => class_exists(Expression::class) ? new Expression($expression) : throw new LogicException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed. Try running "composer require symfony/expression-language".'),
-            null !== $env => "%env($env)%",
-            null !== $param => "%$param%",
+            null !== $env => "%env({$env})%",
+            null !== $param => "%{$param}%",
             default => $value,
         };
     }

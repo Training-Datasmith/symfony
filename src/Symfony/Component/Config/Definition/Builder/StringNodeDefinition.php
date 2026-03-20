@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition\Builder;
 
-use Symfony\Component\Config\Definition\StringNode;
-
+use Symfony\Component\Config\Definition\String_Node;
 /**
  * This class provides a fluent interface for defining a node.
  *
@@ -24,20 +21,18 @@ use Symfony\Component\Config\Definition\StringNode;
  *
  * @author Raffaele Carelle <raffaele.carelle@gmail.com>
  */
-class StringNodeDefinition extends ScalarNodeDefinition
+class String_Node_Definition extends Scalar_Node_Definition
 {
     /**
      * @param TParent $parent
      */
-    public function __construct(?string $name, ?NodeParentInterface $parent = null)
+    public function __construct(?string $name, ?Node_Parent_Interface $parent = null)
     {
         parent::__construct($name, $parent);
-
-        $this->nullEquivalent = '';
+        $this->null_equivalent = '';
     }
-
-    protected function instantiateNode(): StringNode
+    protected function instantiate_node(): String_Node
     {
-        return new StringNode($this->name, $this->parent, $this->pathSeparator);
+        return new String_Node($this->name, $this->parent, $this->path_separator);
     }
 }

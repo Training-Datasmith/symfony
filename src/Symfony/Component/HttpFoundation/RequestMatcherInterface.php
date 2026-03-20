@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,15 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpFoundation;
+namespace Symfony\Component\Http_Foundation;
 
 /**
  * RequestMatcherInterface is an interface for strategies to match a Request.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-interface RequestMatcherInterface
+interface Request_Matcher_Interface
 {
     /**
      * Decides whether the rule(s) implemented by the strategy matches the supplied request.

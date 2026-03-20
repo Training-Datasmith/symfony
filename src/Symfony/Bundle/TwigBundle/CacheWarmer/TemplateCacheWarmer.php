@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,57 +9,47 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Twig_Bundle\Cache_Warmer;
 
-namespace Symfony\Bundle\TwigBundle\CacheWarmer;
-
-use Psr\Container\ContainerInterface;
-use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
-use Symfony\Contracts\Service\ServiceSubscriberInterface;
-use Twig\Cache\CacheInterface;
-use Twig\Cache\NullCache;
+use Psr\Container\Container_Interface;
+use Symfony\Component\Http_Kernel\Cache_Warmer\Cache_Warmer_Interface;
+use Symfony\Contracts\Service\Service_Subscriber_Interface;
+use Twig\Cache\Cache_Interface;
+use Twig\Cache\Null_Cache;
 use Twig\Environment;
 use Twig\Error\Error;
-
 /**
  * Generates the Twig cache for all templates.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class TemplateCacheWarmer implements CacheWarmerInterface, ServiceSubscriberInterface
+final class Template_Cache_Warmer implements Cache_Warmer_Interface, Service_Subscriber_Interface
 {
     private Environment $twig;
-
     /**
      * As this cache warmer is optional, dependencies should be lazy-loaded, that's why a container should be injected.
      */
-    public function __construct(
-        private readonly ContainerInterface $container,
-        private readonly iterable $iterator,
-        private readonly ?CacheInterface $cache = null,
-    ) {
+    public function __construct(private readonly Container_Interface $container, private readonly iterable $iterator, private readonly ?Cache_Interface $cache = null)
+    {
     }
-
-    public function warmUp(string $cacheDir, ?string $buildDir = null): array
+    public function warm_up(string $cache_dir, ?string $build_dir = null): array
     {
         $this->twig ??= $this->container->get('twig');
-
-        $originalCache = $this->twig->getCache();
-        if ($originalCache instanceof NullCache) {
+        $original_cache = $this->twig->get_cache();
+        if ($original_cache instanceof Null_Cache) {
             // There's no point to warm up a cache that won't be used afterward
             return [];
         }
-
         if (null !== $this->cache) {
-            if (!$buildDir) {
+            if (!$build_dir) {
                 /*
                  * The cache has already been warmup during the build of the container, when $buildDir was set.
                  */
                 return [];
             }
             // Swap the cache for the warmup as the Twig Environment has the ChainCache injected
-            $this->twig->setCache($this->cache);
+            $this->twig->set_cache($this->cache);
         }
-
         try {
             foreach ($this->iterator as $template) {
                 try {
@@ -77,21 +66,16 @@ final class TemplateCacheWarmer implements CacheWarmerInterface, ServiceSubscrib
                 }
             }
         } finally {
-            $this->twig->setCache($originalCache);
+            $this->twig->set_cache($original_cache);
         }
-
         return [];
     }
-
-    public function isOptional(): bool
+    public function is_optional(): bool
     {
         return true;
     }
-
-    public static function getSubscribedServices(): array
+    public static function get_subscribed_services(): array
     {
-        return [
-            'twig' => Environment::class,
-        ];
+        return ['twig' => Environment::class];
     }
 }

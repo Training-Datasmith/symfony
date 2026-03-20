@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,19 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\Form\Flow\DataStorage;
+namespace Symfony\Component\Form\Flow\Data_Storage;
 
 /**
  * Handles storing and retrieving form data between steps.
  *
  * @author Yonel Ceruto <open@yceruto.dev>
  */
-interface DataStorageInterface
+interface Data_Storage_Interface
 {
     public function save(object|array $data): void;
-
     public function load(object|array|null $default = null): object|array|null;
-
     public function clear(): void;
 }

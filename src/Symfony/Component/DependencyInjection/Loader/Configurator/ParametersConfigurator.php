@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,25 +9,20 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator;
-
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\ExpressionLanguage\Expression;
-
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+use Symfony\Component\Expression_Language\Expression;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ParametersConfigurator extends AbstractConfigurator
+class Parameters_Configurator extends Abstract_Configurator
 {
     public const FACTORY = 'parameters';
-
-    public function __construct(
-        private readonly ContainerBuilder $container,
-    ) {
+    public function __construct(private readonly Container_Builder $container)
+    {
     }
-
     /**
      * @return $this
      */
@@ -37,12 +31,9 @@ class ParametersConfigurator extends AbstractConfigurator
         if ($value instanceof Expression) {
             throw new InvalidArgumentException(\sprintf('Using an expression in parameter "%s" is not allowed.', $name));
         }
-
-        $this->container->setParameter($name, static::processValue($value, true));
-
+        $this->container->set_parameter($name, static::process_value($value, true));
         return $this;
     }
-
     /**
      * @return $this
      */

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Css_Selector\Parser\Handler;
 
-namespace Symfony\Component\CssSelector\Parser\Handler;
-
-use Symfony\Component\CssSelector\Parser\Reader;
-use Symfony\Component\CssSelector\Parser\TokenStream;
-
+use Symfony\Component\Css_Selector\Parser\Reader;
+use Symfony\Component\Css_Selector\Parser\Token_Stream;
 /**
  * CSS selector comment handler.
  *
@@ -26,22 +23,19 @@ use Symfony\Component\CssSelector\Parser\TokenStream;
  *
  * @internal
  */
-class CommentHandler implements HandlerInterface
+class Comment_Handler implements Handler_Interface
 {
-    public function handle(Reader $reader, TokenStream $stream): bool
+    public function handle(Reader $reader, Token_Stream $stream): bool
     {
-        if ('/*' !== $reader->getSubstring(2)) {
+        if ('/*' !== $reader->get_substring(2)) {
             return false;
         }
-
-        $offset = $reader->getOffset('*/');
-
+        $offset = $reader->get_offset('*/');
         if (false === $offset) {
-            $reader->moveToEnd();
+            $reader->move_to_end();
         } else {
-            $reader->moveForward($offset + 2);
+            $reader->move_forward($offset + 2);
         }
-
         return true;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Clock;
 
 /**
@@ -18,7 +16,7 @@ namespace Symfony\Component\Clock;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class DatePoint extends \DateTimeImmutable
+final class Date_Point extends \DateTimeImmutable
 {
     /**
      * @throws \DateMalformedStringException When $datetime is invalid
@@ -26,60 +24,48 @@ final class DatePoint extends \DateTimeImmutable
     public function __construct(string $datetime = 'now', ?\DateTimeZone $timezone = null, ?parent $reference = null)
     {
         $now = $reference ?? Clock::get()->now();
-
         if ('now' !== $datetime) {
             if (!$now instanceof static) {
-                $now = static::createFromInterface($now);
+                $now = static::create_from_interface($now);
             }
-
-            $builtInDate = new parent($datetime, $timezone ?? $now->getTimezone());
-            $timezone = $builtInDate->getTimezone();
-
-            $now = $now->setTimezone($timezone)->modify($datetime);
-
-            if ('00:00:00.000000' === $builtInDate->format('H:i:s.u')) {
-                $now = $now->setTime(0, 0);
+            $built_in_date = new parent($datetime, $timezone ?? $now->get_timezone());
+            $timezone = $built_in_date->get_timezone();
+            $now = $now->set_timezone($timezone)->modify($datetime);
+            if ('00:00:00.000000' === $built_in_date->format('H:i:s.u')) {
+                $now = $now->set_time(0, 0);
             }
         } elseif (null !== $timezone) {
-            $now = $now->setTimezone($timezone);
+            $now = $now->set_timezone($timezone);
         }
-
         $this->__unserialize((array) $now);
     }
-
     /**
      * @throws \DateMalformedStringException When $format or $datetime are invalid
      */
-    public static function createFromFormat(string $format, string $datetime, ?\DateTimeZone $timezone = null): static
+    public static function create_from_format(string $format, string $datetime, ?\DateTimeZone $timezone = null): static
     {
-        return parent::createFromFormat($format, $datetime, $timezone) ?: throw new \DateMalformedStringException(static::getLastErrors()['errors'][0] ?? 'Invalid date string or format.');
+        return parent::create_from_format($format, $datetime, $timezone) ?: throw new \Date_Malformed_String_Exception(static::get_last_errors()['errors'][0] ?? 'Invalid date string or format.');
     }
-
-    public static function createFromInterface(\DateTimeInterface $object): static
+    public static function create_from_interface(\DateTimeInterface $object): static
     {
-        return parent::createFromInterface($object);
+        return parent::create_from_interface($object);
     }
-
-    public static function createFromMutable(\DateTime $object): static
+    public static function create_from_mutable(\DateTime $object): static
     {
-        return parent::createFromMutable($object);
+        return parent::create_from_mutable($object);
     }
-
-    public static function createFromTimestamp(int|float $timestamp): static
+    public static function create_from_timestamp(int|float $timestamp): static
     {
-        return parent::createFromTimestamp($timestamp);
+        return parent::create_from_timestamp($timestamp);
     }
-
     public function add(\DateInterval $interval): static
     {
         return parent::add($interval);
     }
-
     public function sub(\DateInterval $interval): static
     {
         return parent::sub($interval);
     }
-
     /**
      * @throws \DateMalformedStringException When $modifier is invalid
      */
@@ -87,43 +73,35 @@ final class DatePoint extends \DateTimeImmutable
     {
         return parent::modify($modifier);
     }
-
-    public function setTimestamp(int $value): static
+    public function set_timestamp(int $value): static
     {
-        return parent::setTimestamp($value);
+        return parent::set_timestamp($value);
     }
-
-    public function setDate(int $year, int $month, int $day): static
+    public function set_date(int $year, int $month, int $day): static
     {
-        return parent::setDate($year, $month, $day);
+        return parent::set_date($year, $month, $day);
     }
-
-    public function setISODate(int $year, int $week, int $day = 1): static
+    public function set_iso_date(int $year, int $week, int $day = 1): static
     {
-        return parent::setISODate($year, $week, $day);
+        return parent::set_iso_date($year, $week, $day);
     }
-
-    public function setTime(int $hour, int $minute, int $second = 0, int $microsecond = 0): static
+    public function set_time(int $hour, int $minute, int $second = 0, int $microsecond = 0): static
     {
-        return parent::setTime($hour, $minute, $second, $microsecond);
+        return parent::set_time($hour, $minute, $second, $microsecond);
     }
-
-    public function setTimezone(\DateTimeZone $timezone): static
+    public function set_timezone(\DateTimeZone $timezone): static
     {
-        return parent::setTimezone($timezone);
+        return parent::set_timezone($timezone);
     }
-
-    public function getTimezone(): \DateTimeZone
+    public function get_timezone(): \DateTimeZone
     {
-        return parent::getTimezone() ?: throw new \DateInvalidTimeZoneException('The DatePoint object has no timezone.');
+        return parent::get_timezone() ?: throw new \Date_Invalid_Time_Zone_Exception('The DatePoint object has no timezone.');
     }
-
-    public function setMicrosecond(int $microsecond): static
+    public function set_microsecond(int $microsecond): static
     {
         if ($microsecond < 0 || $microsecond > 999999) {
-            throw new \DateRangeError('DatePoint::setMicrosecond(): Argument #1 ($microsecond) must be between 0 and 999999, '.$microsecond.' given');
+            throw new \Date_Range_Error('DatePoint::setMicrosecond(): Argument #1 ($microsecond) must be between 0 and 999999, ' . $microsecond . ' given');
         }
-
-        return parent::setMicrosecond($microsecond);
+        return parent::set_microsecond($microsecond);
     }
 }

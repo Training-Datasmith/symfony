@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,50 +9,43 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Php_Unit\Legacy;
 
-namespace Symfony\Bridge\PhpUnit\Legacy;
-
-use PHPUnit\TextUI\Command as BaseCommand;
-use PHPUnit\TextUI\TestRunner as BaseRunner;
-use PHPUnit\Util\Configuration;
-use Symfony\Bridge\PhpUnit\SymfonyTestsListener;
-
+use Php_Unit\Text_Ui\Command as BaseCommand;
+use Php_Unit\Text_Ui\Test_Runner as BaseRunner;
+use Php_Unit\Util\Configuration;
+use Symfony\Bridge\Php_Unit\Symfony_Tests_Listener;
 /**
  * @internal
  */
-class CommandForV8 extends BaseCommand
+class Command_For_V8 extends Base_Command
 {
-    protected function createRunner(): BaseRunner
+    protected function create_runner(): Base_Runner
     {
         $this->arguments['listeners'] ?? $this->arguments['listeners'] = [];
-
-        $registeredLocally = false;
-
-        foreach ($this->arguments['listeners'] as $registeredListener) {
-            if ($registeredListener instanceof SymfonyTestsListener) {
-                $registeredListener->globalListenerDisabled();
-                $registeredLocally = true;
+        $registered_locally = false;
+        foreach ($this->arguments['listeners'] as $registered_listener) {
+            if ($registered_listener instanceof Symfony_Tests_Listener) {
+                $registered_listener->global_listener_disabled();
+                $registered_locally = true;
                 break;
             }
         }
-
         if (isset($this->arguments['configuration'])) {
             $configuration = $this->arguments['configuration'];
             if (!$configuration instanceof Configuration) {
-                $configuration = Configuration::getInstance($this->arguments['configuration']);
+                $configuration = Configuration::get_instance($this->arguments['configuration']);
             }
-            foreach ($configuration->getListenerConfiguration() as $registeredListener) {
-                if (\Symfony\Bridge\PhpUnit\SymfonyTestsListener::class === ltrim((string) $registeredListener['class'], '\\')) {
-                    $registeredLocally = true;
+            foreach ($configuration->get_listener_configuration() as $registered_listener) {
+                if (\Symfony\Bridge\Php_Unit\Symfony_Tests_Listener::class === ltrim((string) $registered_listener['class'], '\\')) {
+                    $registered_locally = true;
                     break;
                 }
             }
         }
-
-        if (!$registeredLocally) {
-            $this->arguments['listeners'][] = new SymfonyTestsListener();
+        if (!$registered_locally) {
+            $this->arguments['listeners'][] = new Symfony_Tests_Listener();
         }
-
-        return parent::createRunner();
+        return parent::create_runner();
     }
 }

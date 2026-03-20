@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Css_Selector\Parser\Shortcut;
 
-namespace Symfony\Component\CssSelector\Parser\Shortcut;
-
-use Symfony\Component\CssSelector\Node\ElementNode;
-use Symfony\Component\CssSelector\Node\SelectorNode;
-use Symfony\Component\CssSelector\Parser\ParserInterface;
-
+use Symfony\Component\Css_Selector\Node\Element_Node;
+use Symfony\Component\Css_Selector\Node\Selector_Node;
+use Symfony\Component\Css_Selector\Parser\Parser_Interface;
 /**
  * CSS selector element parser shortcut.
  *
@@ -27,7 +24,7 @@ use Symfony\Component\CssSelector\Parser\ParserInterface;
  *
  * @internal
  */
-class ElementParser implements ParserInterface
+class Element_Parser implements Parser_Interface
 {
     public function parse(string $source): array
     {
@@ -38,9 +35,8 @@ class ElementParser implements ParserInterface
         //     1 => string 'testns' (length=6)
         //     2 => string 'testel' (length=6)
         if (preg_match('/^(?:([a-z]++)\|)?([\w-]++|\*)$/i', trim($source), $matches)) {
-            return [new SelectorNode(new ElementNode($matches[1] ?: null, $matches[2]))];
+            return [new Selector_Node(new Element_Node($matches[1] ?: null, $matches[2]))];
         }
-
         return [];
     }
 }

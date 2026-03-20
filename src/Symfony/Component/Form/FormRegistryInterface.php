@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
 /**
@@ -18,7 +16,7 @@ namespace Symfony\Component\Form;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface FormRegistryInterface
+interface Form_Registry_Interface
 {
     /**
      * Returns a form type by name.
@@ -27,22 +25,19 @@ interface FormRegistryInterface
      *
      * @throws Exception\InvalidArgumentException if the type cannot be retrieved from any extension
      */
-    public function getType(string $name): ResolvedFormTypeInterface;
-
+    public function get_type(string $name): Resolved_Form_Type_Interface;
     /**
      * Returns whether the given form type is supported.
      */
-    public function hasType(string $name): bool;
-
+    public function has_type(string $name): bool;
     /**
      * Returns the guesser responsible for guessing types.
      */
-    public function getTypeGuesser(): ?FormTypeGuesserInterface;
-
+    public function get_type_guesser(): ?Form_Type_Guesser_Interface;
     /**
      * Returns the extensions loaded by the framework.
      *
      * @return FormExtensionInterface[]
      */
-    public function getExtensions(): array;
+    public function get_extensions(): array;
 }

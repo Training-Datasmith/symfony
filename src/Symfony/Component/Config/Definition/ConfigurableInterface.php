@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,18 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition;
 
-use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
-
+use Symfony\Component\Config\Definition\Configurator\Definition_Configurator;
 /**
  * @author Yonel Ceruto <yonelceruto@gmail.com>
  */
-interface ConfigurableInterface
+interface Configurable_Interface
 {
     /**
      * Generates the configuration tree builder.
      */
-    public function configure(DefinitionConfigurator $definition): void;
+    public function configure(Definition_Configurator $definition): void;
 }

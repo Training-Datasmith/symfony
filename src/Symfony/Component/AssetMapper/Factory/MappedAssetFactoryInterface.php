@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Asset_Mapper\Factory;
 
-namespace Symfony\Component\AssetMapper\Factory;
-
-use Symfony\Component\AssetMapper\MappedAsset;
-
-interface MappedAssetFactoryInterface
+use Symfony\Component\Asset_Mapper\Mapped_Asset;
+interface Mapped_Asset_Factory_Interface
 {
-    public function createMappedAsset(string $logicalPath, string $sourcePath): ?MappedAsset;
+    public function create_mapped_asset(string $logical_path, string $source_path): ?Mapped_Asset;
 }

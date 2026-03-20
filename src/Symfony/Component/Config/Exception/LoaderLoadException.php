@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Exception;
 
 /**
@@ -18,7 +16,7 @@ namespace Symfony\Component\Config\Exception;
  *
  * @author Ryan Weaver <ryan@thatsquality.com>
  */
-class LoaderLoadException extends \Exception
+class Loader_Load_Exception extends \Exception
 {
     /**
      * @param mixed           $resource       The resource that could not be imported
@@ -27,44 +25,39 @@ class LoaderLoadException extends \Exception
      * @param \Throwable|null $previous       A previous exception
      * @param string|null     $type           The type of resource
      */
-    public function __construct(mixed $resource, ?string $sourceResource = null, int $code = 0, ?\Throwable $previous = null, ?string $type = null)
+    public function __construct(mixed $resource, ?string $source_resource = null, int $code = 0, ?\Throwable $previous = null, ?string $type = null)
     {
         if (!\is_string($resource)) {
             try {
                 $resource = json_encode($resource, \JSON_THROW_ON_ERROR);
-            } catch (\JsonException) {
+            } catch (\Json_Exception) {
                 $resource = \sprintf('resource of type "%s"', get_debug_type($resource));
             }
         }
-
         $message = '';
         if ($previous) {
             // Include the previous exception, to help the user see what might be the underlying cause
-
             // Trim the trailing period of the previous message. We only want 1 period remove so no rtrim...
-            if (str_ends_with($previous->getMessage(), '.')) {
-                $trimmedMessage = substr($previous->getMessage(), 0, -1);
-                $message .= \sprintf('%s', $trimmedMessage).' in ';
+            if (str_ends_with($previous->get_message(), '.')) {
+                $trimmed_message = substr($previous->get_message(), 0, -1);
+                $message .= \sprintf('%s', $trimmed_message) . ' in ';
             } else {
-                $message .= \sprintf('%s', $previous->getMessage()).' in ';
+                $message .= \sprintf('%s', $previous->get_message()) . ' in ';
             }
-            $message .= $resource.' ';
-
+            $message .= $resource . ' ';
             // show tweaked trace to complete the human readable sentence
-            if (null === $sourceResource) {
+            if (null === $source_resource) {
                 $message .= \sprintf('(which is loaded in resource "%s")', $resource);
             } else {
-                $message .= \sprintf('(which is being imported from "%s")', $sourceResource);
+                $message .= \sprintf('(which is being imported from "%s")', $source_resource);
             }
             $message .= '.';
-
             // if there's no previous message, present it the default way
-        } elseif (null === $sourceResource) {
+        } elseif (null === $source_resource) {
             $message .= \sprintf('Cannot load resource "%s".', $resource);
         } else {
-            $message .= \sprintf('Cannot import resource "%s" from "%s".', $resource, $sourceResource);
+            $message .= \sprintf('Cannot import resource "%s" from "%s".', $resource, $source_resource);
         }
-
         // Is the resource located inside a bundle?
         if ('@' === $resource[0]) {
             $parts = explode(\DIRECTORY_SEPARATOR, $resource);
@@ -74,41 +67,32 @@ class LoaderLoadException extends \Exception
         } elseif (null !== $type) {
             $message .= \sprintf(' Make sure there is a loader supporting the "%s" type.', $type);
         }
-
         parent::__construct($message, $code, $previous);
     }
-
-    protected function varToString(mixed $var): string
+    protected function var_to_string(mixed $var): string
     {
         if (\is_object($var)) {
             return \sprintf('Object(%s)', $var::class);
         }
-
         if (\is_array($var)) {
             $a = [];
             foreach ($var as $k => $v) {
-                $a[] = \sprintf('%s => %s', $k, $this->varToString($v));
+                $a[] = \sprintf('%s => %s', $k, $this->var_to_string($v));
             }
-
             return \sprintf('Array(%s)', implode(', ', $a));
         }
-
         if (\is_resource($var)) {
             return \sprintf('Resource(%s)', get_resource_type($var));
         }
-
         if (null === $var) {
             return 'null';
         }
-
         if (false === $var) {
             return 'false';
         }
-
         if (true === $var) {
             return 'true';
         }
-
         return (string) $var;
     }
 }

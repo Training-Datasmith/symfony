@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config;
 
-use Symfony\Component\Config\Resource\ResourceInterface;
-use Symfony\Component\Config\Resource\SelfCheckingResourceChecker;
-use Symfony\Component\Config\Resource\SkippingResourceChecker;
-
+use Symfony\Component\Config\Resource\Resource_Interface;
+use Symfony\Component\Config\Resource\Self_Checking_Resource_Checker;
+use Symfony\Component\Config\Resource\Skipping_Resource_Checker;
 /**
  * ConfigCache caches arbitrary content in files on disk.
  *
@@ -27,7 +24,7 @@ use Symfony\Component\Config\Resource\SkippingResourceChecker;
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Matthias Pigulla <mp@webfactory.de>
  */
-class ConfigCache extends ResourceCheckerConfigCache
+class Config_Cache extends Resource_Checker_Config_Cache
 {
     /**
      * @param string                                 $file                 The absolute cache path
@@ -35,35 +32,28 @@ class ConfigCache extends ResourceCheckerConfigCache
      * @param string|null                            $metaFile             The absolute path to the meta file
      * @param class-string<ResourceInterface>[]|null $skippedResourceTypes
      */
-    public function __construct(
-        string $file,
-        private readonly bool $debug,
-        ?string $metaFile = null,
-        ?array $skippedResourceTypes = null,
-    ) {
+    public function __construct(string $file, private readonly bool $debug, ?string $meta_file = null, ?array $skipped_resource_types = null)
+    {
         $checkers = [];
         if ($this->debug) {
-            if (null !== $skippedResourceTypes) {
-                $checkers[] = new SkippingResourceChecker($skippedResourceTypes);
+            if (null !== $skipped_resource_types) {
+                $checkers[] = new Skipping_Resource_Checker($skipped_resource_types);
             }
-            $checkers[] = new SelfCheckingResourceChecker();
+            $checkers[] = new Self_Checking_Resource_Checker();
         }
-
-        parent::__construct($file, $checkers, $metaFile);
+        parent::__construct($file, $checkers, $meta_file);
     }
-
     /**
      * Checks if the cache is still fresh.
      *
      * This implementation always returns true when debug is off and the
      * cache file exists.
      */
-    public function isFresh(): bool
+    public function is_fresh(): bool
     {
-        if (!$this->debug && is_file($this->getPath())) {
+        if (!$this->debug && is_file($this->get_path())) {
             return true;
         }
-
-        return parent::isFresh();
+        return parent::is_fresh();
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\CssSelector\Node;
+namespace Symfony\Component\Css_Selector\Node;
 
 /**
  * Represents a "<selector>.<name>" node.
@@ -23,31 +21,25 @@ namespace Symfony\Component\CssSelector\Node;
  *
  * @internal
  */
-class ClassNode extends AbstractNode
+class Class_Node extends Abstract_Node
 {
-    public function __construct(
-        private readonly NodeInterface $selector,
-        private readonly string $name,
-    ) {
+    public function __construct(private readonly Node_Interface $selector, private readonly string $name)
+    {
     }
-
-    public function getSelector(): NodeInterface
+    public function get_selector(): Node_Interface
     {
         return $this->selector;
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return $this->name;
     }
-
-    public function getSpecificity(): Specificity
+    public function get_specificity(): Specificity
     {
-        return $this->selector->getSpecificity()->plus(new Specificity(0, 1, 0));
+        return $this->selector->get_specificity()->plus(new Specificity(0, 1, 0));
     }
-
     public function __toString(): string
     {
-        return \sprintf('%s[%s.%s]', $this->getNodeName(), $this->selector, $this->name);
+        return \sprintf('%s[%s.%s]', $this->get_node_name(), $this->selector, $this->name);
     }
 }

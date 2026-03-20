@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,68 +9,51 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Asset_Mapper\Import_Map;
 
-namespace Symfony\Component\AssetMapper\ImportMap;
-
-use Symfony\Component\AssetMapper\Exception\RuntimeException;
-use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-
-class ImportMapAuditor
+use Symfony\Component\Asset_Mapper\Exception\RuntimeException;
+use Symfony\Component\Http_Client\Http_Client;
+use Symfony\Contracts\Http_Client\Http_Client_Interface;
+class Import_Map_Auditor
 {
     private const AUDIT_URL = 'https://api.github.com/advisories';
-
-    private readonly HttpClientInterface $httpClient;
-
-    public function __construct(
-        private readonly ImportMapConfigReader $configReader,
-        ?HttpClientInterface $httpClient = null,
-    ) {
-        $this->httpClient = $httpClient ?? HttpClient::create();
+    private readonly Http_Client_Interface $http_client;
+    public function __construct(private readonly Import_Map_Config_Reader $config_reader, ?Http_Client_Interface $http_client = null)
+    {
+        $this->http_client = $http_client ?? Http_Client::create();
     }
-
     /**
      * @return list<ImportMapPackageAudit>
      */
     public function audit(): array
     {
-        $entries = $this->configReader->getEntries();
-
+        $entries = $this->config_reader->get_entries();
         /** @var array<string, ImportMapPackageAudit> $packageAudits */
-        $packageAudits = [];
-
+        $package_audits = [];
         /** @var array<string, list<string>> $installed */
         $installed = [];
-        $affectsQuery = [];
+        $affects_query = [];
         foreach ($entries as $entry) {
-            if (!$entry->isRemotePackage()) {
+            if (!$entry->is_remote_package()) {
                 continue;
             }
             $version = $entry->version;
-
-            $packageName = $entry->getPackageName();
-            $installed[$packageName] ??= [];
-            $installed[$packageName][] = $version;
-
-            $packageVersion = $packageName.'@'.$version;
-            $packageAudits[$packageVersion] ??= new ImportMapPackageAudit($packageName, $version);
-            $affectsQuery[] = $packageVersion;
+            $package_name = $entry->get_package_name();
+            $installed[$package_name] ??= [];
+            $installed[$package_name][] = $version;
+            $package_version = $package_name . '@' . $version;
+            $package_audits[$package_version] ??= new Import_Map_Package_Audit($package_name, $version);
+            $affects_query[] = $package_version;
         }
-
-        if (!$affectsQuery) {
+        if (!$affects_query) {
             return [];
         }
-
         // @see https://docs.github.com/en/rest/security-advisories/global-advisories?apiVersion=2022-11-28#list-global-security-advisories
-        $response = $this->httpClient->request('GET', self::AUDIT_URL, [
-            'query' => ['affects' => implode(',', $affectsQuery)],
-        ]);
-
-        if (200 !== $response->getStatusCode()) {
-            throw new RuntimeException(\sprintf('Error %d auditing packages. Response: '.$response->getContent(false), $response->getStatusCode()));
+        $response = $this->http_client->request('GET', self::AUDIT_URL, ['query' => ['affects' => implode(',', $affects_query)]]);
+        if (200 !== $response->get_status_code()) {
+            throw new RuntimeException(\sprintf('Error %d auditing packages. Response: ' . $response->get_content(false), $response->get_status_code()));
         }
-
-        foreach ($response->toArray() as $advisory) {
+        foreach ($response->to_array() as $advisory) {
             foreach ($advisory['vulnerabilities'] ?? [] as $vulnerability) {
                 if (null === $vulnerability['package']) {
                     continue;
@@ -86,40 +68,26 @@ class ImportMapAuditor
                     if (!$version) {
                         continue;
                     }
-                    if (!$this->versionMatches($version, $vulnerability['vulnerable_version_range'] ?? '>= *')) {
+                    if (!$this->version_matches($version, $vulnerability['vulnerable_version_range'] ?? '>= *')) {
                         continue;
                     }
-                    $packageAudits[$package.'@'.$version] = $packageAudits[$package.'@'.$version]->withVulnerability(
-                        new ImportMapPackageAuditVulnerability(
-                            $advisory['ghsa_id'],
-                            $advisory['cve_id'],
-                            $advisory['url'],
-                            $advisory['summary'],
-                            $advisory['severity'],
-                            $vulnerability['vulnerable_version_range'],
-                            $vulnerability['first_patched_version'],
-                        )
-                    );
+                    $package_audits[$package . '@' . $version] = $package_audits[$package . '@' . $version]->with_vulnerability(new Import_Map_Package_Audit_Vulnerability($advisory['ghsa_id'], $advisory['cve_id'], $advisory['url'], $advisory['summary'], $advisory['severity'], $vulnerability['vulnerable_version_range'], $vulnerability['first_patched_version']));
                 }
             }
         }
-
-        return array_values($packageAudits);
+        return array_values($package_audits);
     }
-
-    private function versionMatches(string $version, string $ranges): bool
+    private function version_matches(string $version, string $ranges): bool
     {
-        foreach (explode(',', $ranges) as $rangeString) {
-            $range = explode(' ', trim($rangeString));
+        foreach (explode(',', $ranges) as $range_string) {
+            $range = explode(' ', trim($range_string));
             if (1 === \count($range)) {
                 $range = ['=', $range[0]];
             }
-
             if (!version_compare($version, $range[1], $range[0])) {
                 return false;
             }
         }
-
         return true;
     }
 }

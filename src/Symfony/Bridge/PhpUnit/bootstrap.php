@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,35 +9,27 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 use Doctrine\Deprecations\Deprecation;
-use Symfony\Bridge\PhpUnit\DeprecationErrorHandler;
-
+use Symfony\Bridge\Php_Unit\Deprecation_Error_Handler;
 // Skip if we're using PHPUnit >=10
-if (class_exists(PHPUnit\Metadata\Metadata::class)) {
+if (class_exists(Php_Unit\Metadata\Metadata::class)) {
     return;
 }
-
 // Detect if we need to serialize deprecations to a file.
 if (in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) && $file = getenv('SYMFONY_DEPRECATIONS_SERIALIZE')) {
-    DeprecationErrorHandler::collectDeprecations($file);
-
+    Deprecation_Error_Handler::collect_deprecations($file);
     return;
 }
-
 // Detect if we're loaded by an actual run of phpunit
-if (!defined('PHPUNIT_COMPOSER_INSTALL') && !class_exists(PHPUnit\TextUI\Command::class, false)) {
+if (!defined('PHPUNIT_COMPOSER_INSTALL') && !class_exists(Php_Unit\Text_Ui\Command::class, false)) {
     return;
 }
-
-if (isset($fileIdentifier)) {
-    unset($GLOBALS['__composer_autoload_files'][$fileIdentifier]);
+if (isset($file_identifier)) {
+    unset($GLOBALS['__composer_autoload_files'][$file_identifier]);
 }
-
 if (class_exists(Deprecation::class)) {
-    Deprecation::withoutDeduplication();
+    Deprecation::without_deduplication();
 }
-
 if ('disabled' !== getenv('SYMFONY_DEPRECATIONS_HELPER')) {
-    DeprecationErrorHandler::register(getenv('SYMFONY_DEPRECATIONS_HELPER'));
+    Deprecation_Error_Handler::register(getenv('SYMFONY_DEPRECATIONS_HELPER'));
 }

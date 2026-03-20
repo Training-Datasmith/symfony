@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,54 +9,26 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Dependency_Injection\Security\Access_Token;
 
-namespace Symfony\Bundle\SecurityBundle\DependencyInjection\Security\AccessToken;
-
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
-use Symfony\Component\DependencyInjection\ChildDefinition;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\Security\Http\AccessToken\Cas\Cas2Handler;
-
-class CasTokenHandlerFactory implements TokenHandlerFactoryInterface
+use Symfony\Component\Config\Definition\Builder\Node_Builder;
+use Symfony\Component\Dependency_Injection\Child_Definition;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Reference;
+use Symfony\Component\Security\Http\Access_Token\Cas\Cas2Handler;
+class Cas_Token_Handler_Factory implements Token_Handler_Factory_Interface
 {
-    public function create(ContainerBuilder $container, string $id, array|string $config): void
+    public function create(Container_Builder $container, string $id, array|string $config): void
     {
-        $container->setDefinition($id, new ChildDefinition('security.access_token_handler.cas'));
-
-        $container
-            ->register('security.access_token_handler.cas', Cas2Handler::class)
-            ->setArguments([
-                new Reference('request_stack'),
-                $config['validation_url'],
-                $config['prefix'],
-                $config['http_client'] ? new Reference($config['http_client']) : null,
-            ]);
+        $container->set_definition($id, new Child_Definition('security.access_token_handler.cas'));
+        $container->register('security.access_token_handler.cas', Cas2Handler::class)->set_arguments([new Reference('request_stack'), $config['validation_url'], $config['prefix'], $config['http_client'] ? new Reference($config['http_client']) : null]);
     }
-
-    public function getKey(): string
+    public function get_key(): string
     {
         return 'cas';
     }
-
-    public function addConfiguration(NodeBuilder $node): void
+    public function add_configuration(Node_Builder $node): void
     {
-        $node
-            ->arrayNode($this->getKey())
-                ->children()
-                    ->scalarNode('validation_url')
-                        ->info('CAS server validation URL')
-                        ->isRequired()
-                    ->end()
-                    ->scalarNode('prefix')
-                        ->info('CAS prefix')
-                        ->defaultValue('cas')
-                    ->end()
-                    ->scalarNode('http_client')
-                        ->info('HTTP Client service')
-                        ->defaultNull()
-                    ->end()
-                ->end()
-            ->end();
+        $node->array_node($this->get_key())->children()->scalar_node('validation_url')->info('CAS server validation URL')->is_required()->end()->scalar_node('prefix')->info('CAS prefix')->default_value('cas')->end()->scalar_node('http_client')->info('HTTP Client service')->default_null()->end()->end()->end();
     }
 }

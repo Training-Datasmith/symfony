@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,127 +9,111 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Argument\ArgumentInterface;
-use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\DependencyInjection\TypedReference;
-
+use Symfony\Component\Dependency_Injection\Argument\Argument_Interface;
+use Symfony\Component\Dependency_Injection\Argument\Service_Closure_Argument;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Container_Interface;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Exception\RuntimeException;
+use Symfony\Component\Dependency_Injection\Exception\Service_Not_Found_Exception;
+use Symfony\Component\Dependency_Injection\Reference;
+use Symfony\Component\Dependency_Injection\Typed_Reference;
 /**
  * Emulates the invalid behavior if the reference is not found within the
  * container.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ResolveInvalidReferencesPass implements CompilerPassInterface
+class Resolve_Invalid_References_Pass implements Compiler_Pass_Interface
 {
-    private ContainerBuilder $container;
-    private RuntimeException $signalingException;
-    private readonly string $currentId;
-
+    private Container_Builder $container;
+    private RuntimeException $signaling_exception;
+    private readonly string $current_id;
     /**
      * Process the ContainerBuilder to resolve invalid references.
      */
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
         $this->container = $container;
-        $this->signalingException = new RuntimeException('Invalid reference.');
-
+        $this->signaling_exception = new RuntimeException('Invalid reference.');
         try {
-            foreach ($container->getDefinitions() as $this->currentId => $definition) {
-                $this->processValue($definition);
+            foreach ($container->get_definitions() as $this->current_id => $definition) {
+                $this->process_value($definition);
             }
         } finally {
-            unset($this->container, $this->signalingException);
+            unset($this->container, $this->signaling_exception);
         }
     }
-
     /**
      * Processes arguments to determine invalid references.
      *
      * @throws RuntimeException When an invalid reference is found
      */
-    private function processValue(mixed $value, int $rootLevel = 0, int $level = 0): mixed
+    private function process_value(mixed $value, int $root_level = 0, int $level = 0): mixed
     {
-        if ($value instanceof ServiceClosureArgument) {
-            $value->setValues($this->processValue($value->getValues(), 1, 1));
-        } elseif ($value instanceof ArgumentInterface) {
-            $value->setValues($this->processValue($value->getValues(), $rootLevel, 1 + $level));
+        if ($value instanceof Service_Closure_Argument) {
+            $value->set_values($this->process_value($value->get_values(), 1, 1));
+        } elseif ($value instanceof Argument_Interface) {
+            $value->set_values($this->process_value($value->get_values(), $root_level, 1 + $level));
         } elseif ($value instanceof Definition) {
-            if ($value->isSynthetic() || $value->isAbstract() || $value->hasTag('container.excluded')) {
+            if ($value->is_synthetic() || $value->is_abstract() || $value->has_tag('container.excluded')) {
                 return $value;
             }
-            $value->setArguments($this->processValue($value->getArguments(), 0));
-            $value->setProperties($this->processValue($value->getProperties(), 1));
-            $value->setMethodCalls($this->processValue($value->getMethodCalls(), 2));
+            $value->set_arguments($this->process_value($value->get_arguments(), 0));
+            $value->set_properties($this->process_value($value->get_properties(), 1));
+            $value->set_method_calls($this->process_value($value->get_method_calls(), 2));
         } elseif (\is_array($value)) {
             $i = 0;
-
             foreach ($value as $k => $v) {
                 try {
                     if (false !== $i && $k !== $i++) {
                         $i = false;
                     }
-                    if ($v !== $processedValue = $this->processValue($v, $rootLevel, 1 + $level)) {
-                        $value[$k] = $processedValue;
+                    if ($v !== $processed_value = $this->process_value($v, $root_level, 1 + $level)) {
+                        $value[$k] = $processed_value;
                     }
                 } catch (RuntimeException $e) {
-                    if ($rootLevel < $level || ($rootLevel && !$level)) {
+                    if ($root_level < $level || $root_level && !$level) {
                         unset($value[$k]);
-                    } elseif ($rootLevel) {
+                    } elseif ($root_level) {
                         throw $e;
                     } else {
                         $value[$k] = null;
                     }
                 }
             }
-
             // Ensure numerically indexed arguments have sequential numeric keys.
             if (false !== $i) {
                 $value = array_values($value);
             }
         } elseif ($value instanceof Reference) {
-            if ($this->container->hasDefinition($id = (string) $value) ? !$this->container->getDefinition($id)->hasTag('container.excluded') : $this->container->hasAlias($id)) {
+            if ($this->container->has_definition($id = (string) $value) ? !$this->container->get_definition($id)->has_tag('container.excluded') : $this->container->has_alias($id)) {
                 return $value;
             }
-
-            $currentDefinition = $this->container->getDefinition($this->currentId);
-
+            $current_definition = $this->container->get_definition($this->current_id);
             // resolve decorated service behavior depending on decorator service
-            if ($currentDefinition->innerServiceId === $id && ContainerInterface::NULL_ON_INVALID_REFERENCE === $currentDefinition->decorationOnInvalid) {
+            if ($current_definition->inner_service_id === $id && Container_Interface::NULL_ON_INVALID_REFERENCE === $current_definition->decoration_on_invalid) {
                 return null;
             }
-
-            $invalidBehavior = $value->getInvalidBehavior();
-
-            if (ContainerInterface::RUNTIME_EXCEPTION_ON_INVALID_REFERENCE === $invalidBehavior && $value instanceof TypedReference && !$this->container->has($id)) {
-                $e = new ServiceNotFoundException($id, $this->currentId);
-
+            $invalid_behavior = $value->get_invalid_behavior();
+            if (Container_Interface::RUNTIME_EXCEPTION_ON_INVALID_REFERENCE === $invalid_behavior && $value instanceof Typed_Reference && !$this->container->has($id)) {
+                $e = new Service_Not_Found_Exception($id, $this->current_id);
                 // since the error message varies by $id and $this->currentId, so should the id of the dummy errored definition
-                $this->container->register($id = \sprintf('.errored.%s.%s', $this->currentId, $id), $value->getType())
-                    ->addError($e->getMessage());
-
-                return new TypedReference($id, $value->getType(), $value->getInvalidBehavior());
+                $this->container->register($id = \sprintf('.errored.%s.%s', $this->current_id, $id), $value->get_type())->add_error($e->get_message());
+                return new Typed_Reference($id, $value->get_type(), $value->get_invalid_behavior());
             }
-
             // resolve invalid behavior
-            if (ContainerInterface::NULL_ON_INVALID_REFERENCE === $invalidBehavior) {
+            if (Container_Interface::NULL_ON_INVALID_REFERENCE === $invalid_behavior) {
                 $value = null;
-            } elseif (ContainerInterface::IGNORE_ON_INVALID_REFERENCE === $invalidBehavior) {
-                if (0 < $level || $rootLevel) {
-                    throw $this->signalingException;
+            } elseif (Container_Interface::IGNORE_ON_INVALID_REFERENCE === $invalid_behavior) {
+                if (0 < $level || $root_level) {
+                    throw $this->signaling_exception;
                 }
                 $value = null;
             }
         }
-
         return $value;
     }
 }

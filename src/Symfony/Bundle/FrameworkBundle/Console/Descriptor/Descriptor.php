@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,425 +9,331 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Console\Descriptor;
 
-namespace Symfony\Bundle\FrameworkBundle\Console\Descriptor;
-
-use Symfony\Component\Config\Resource\ClassExistenceResource;
-use Symfony\Component\Console\Descriptor\DescriptorInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\Alias;
-use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
-use Symfony\Component\DependencyInjection\Compiler\AnalyzeServiceReferencesPass;
-use Symfony\Component\DependencyInjection\Compiler\ServiceReferenceGraphEdge;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Config\Resource\Class_Existence_Resource;
+use Symfony\Component\Console\Descriptor\Descriptor_Interface;
+use Symfony\Component\Console\Output\Output_Interface;
+use Symfony\Component\Dependency_Injection\Alias;
+use Symfony\Component\Dependency_Injection\Attribute\As_Tagged_Item;
+use Symfony\Component\Dependency_Injection\Compiler\Analyze_Service_References_Pass;
+use Symfony\Component\Dependency_Injection\Compiler\Service_Reference_Graph_Edge;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Container_Interface;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+use Symfony\Component\Dependency_Injection\Parameter_Bag\Parameter_Bag;
+use Symfony\Component\Event_Dispatcher\Event_Dispatcher_Interface;
 use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\RouteCollection;
-
+use Symfony\Component\Routing\Route_Collection;
 /**
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
  *
  * @internal
  */
-abstract class Descriptor implements DescriptorInterface
+abstract class Descriptor implements Descriptor_Interface
 {
-    protected OutputInterface $output;
-
-    public function describe(OutputInterface $output, mixed $object, array $options = []): void
+    protected Output_Interface $output;
+    public function describe(Output_Interface $output, mixed $object, array $options = []): void
     {
         $this->output = $output;
-
-        if ($object instanceof ContainerBuilder) {
-            (new AnalyzeServiceReferencesPass(false, false))->process($object);
+        if ($object instanceof Container_Builder) {
+            (new Analyze_Service_References_Pass(false, false))->process($object);
         }
-
-        $deprecatedParameters = [];
-        if ($object instanceof ContainerBuilder && isset($options['parameter']) && ($parameterBag = $object->getParameterBag()) instanceof ParameterBag) {
-            $deprecatedParameters = $parameterBag->allDeprecated();
+        $deprecated_parameters = [];
+        if ($object instanceof Container_Builder && isset($options['parameter']) && ($parameter_bag = $object->get_parameter_bag()) instanceof Parameter_Bag) {
+            $deprecated_parameters = $parameter_bag->all_deprecated();
         }
-
         match (true) {
-            $object instanceof RouteCollection => $this->describeRouteCollection($this->filterRoutesByHttpMethod($object, $options['method'] ?? ''), $options),
-            $object instanceof Route => $this->describeRoute($object, $options),
-            $object instanceof ParameterBag => $this->describeContainerParameters($object, $options),
-            $object instanceof ContainerBuilder && !empty($options['env-vars']) => $this->describeContainerEnvVars($this->getContainerEnvVars($object), $options),
-            $object instanceof ContainerBuilder && isset($options['group_by']) && 'tags' === $options['group_by'] => $this->describeContainerTags($object, $options),
-            $object instanceof ContainerBuilder && isset($options['id']) => $this->describeContainerService($this->resolveServiceDefinition($object, $options['id']), $options, $object),
-            $object instanceof ContainerBuilder && isset($options['parameter']) => $this->describeContainerParameter($object->resolveEnvPlaceholders($object->getParameter($options['parameter'])), $deprecatedParameters[$options['parameter']] ?? null, $options),
-            $object instanceof ContainerBuilder && isset($options['deprecations']) => $this->describeContainerDeprecations($object, $options),
-            $object instanceof ContainerBuilder => $this->describeContainerServices($object, $options),
-            $object instanceof Definition => $this->describeContainerDefinition($object, $options),
-            $object instanceof Alias => $this->describeContainerAlias($object, $options),
-            $object instanceof EventDispatcherInterface => $this->describeEventDispatcherListeners($object, $options),
-            \is_callable($object) => $this->describeCallable($object, $options),
+            $object instanceof Route_Collection => $this->describe_route_collection($this->filter_routes_by_http_method($object, $options['method'] ?? ''), $options),
+            $object instanceof Route => $this->describe_route($object, $options),
+            $object instanceof Parameter_Bag => $this->describe_container_parameters($object, $options),
+            $object instanceof Container_Builder && !empty($options['env-vars']) => $this->describe_container_env_vars($this->get_container_env_vars($object), $options),
+            $object instanceof Container_Builder && isset($options['group_by']) && 'tags' === $options['group_by'] => $this->describe_container_tags($object, $options),
+            $object instanceof Container_Builder && isset($options['id']) => $this->describe_container_service($this->resolve_service_definition($object, $options['id']), $options, $object),
+            $object instanceof Container_Builder && isset($options['parameter']) => $this->describe_container_parameter($object->resolve_env_placeholders($object->get_parameter($options['parameter'])), $deprecated_parameters[$options['parameter']] ?? null, $options),
+            $object instanceof Container_Builder && isset($options['deprecations']) => $this->describe_container_deprecations($object, $options),
+            $object instanceof Container_Builder => $this->describe_container_services($object, $options),
+            $object instanceof Definition => $this->describe_container_definition($object, $options),
+            $object instanceof Alias => $this->describe_container_alias($object, $options),
+            $object instanceof Event_Dispatcher_Interface => $this->describe_event_dispatcher_listeners($object, $options),
+            \is_callable($object) => $this->describe_callable($object, $options),
             default => throw new \InvalidArgumentException(\sprintf('Object of type "%s" is not describable.', get_debug_type($object))),
         };
-
-        if ($object instanceof ContainerBuilder) {
-            $object->getCompiler()->getServiceReferenceGraph()->clear();
+        if ($object instanceof Container_Builder) {
+            $object->get_compiler()->get_service_reference_graph()->clear();
         }
     }
-
-    protected function getOutput(): OutputInterface
+    protected function get_output(): Output_Interface
     {
         return $this->output;
     }
-
     protected function write(string $content, bool $decorated = false): void
     {
-        $this->output->write($content, false, $decorated ? OutputInterface::OUTPUT_NORMAL : OutputInterface::OUTPUT_RAW);
+        $this->output->write($content, false, $decorated ? Output_Interface::OUTPUT_NORMAL : Output_Interface::OUTPUT_RAW);
     }
-
-    abstract protected function describeRouteCollection(RouteCollection $routes, array $options = []): void;
-
-    abstract protected function describeRoute(Route $route, array $options = []): void;
-
-    abstract protected function describeContainerParameters(ParameterBag $parameters, array $options = []): void;
-
-    abstract protected function describeContainerTags(ContainerBuilder $container, array $options = []): void;
-
+    abstract protected function describe_route_collection(Route_Collection $routes, array $options = []): void;
+    abstract protected function describe_route(Route $route, array $options = []): void;
+    abstract protected function describe_container_parameters(Parameter_Bag $parameters, array $options = []): void;
+    abstract protected function describe_container_tags(Container_Builder $container, array $options = []): void;
     /**
      * Describes a container service by its name.
      *
      * Common options are:
      * * name: name of described service
      */
-    abstract protected function describeContainerService(object $service, array $options = [], ?ContainerBuilder $container = null): void;
-
+    abstract protected function describe_container_service(object $service, array $options = [], ?Container_Builder $container = null): void;
     /**
      * Describes container services.
      *
      * Common options are:
      * * tag: filters described services by given tag
      */
-    abstract protected function describeContainerServices(ContainerBuilder $container, array $options = []): void;
-
-    abstract protected function describeContainerDeprecations(ContainerBuilder $container, array $options = []): void;
-
-    abstract protected function describeContainerDefinition(Definition $definition, array $options = [], ?ContainerBuilder $container = null): void;
-
-    abstract protected function describeContainerAlias(Alias $alias, array $options = [], ?ContainerBuilder $container = null): void;
-
-    abstract protected function describeContainerParameter(mixed $parameter, ?array $deprecation, array $options = []): void;
-
-    abstract protected function describeContainerEnvVars(array $envs, array $options = []): void;
-
+    abstract protected function describe_container_services(Container_Builder $container, array $options = []): void;
+    abstract protected function describe_container_deprecations(Container_Builder $container, array $options = []): void;
+    abstract protected function describe_container_definition(Definition $definition, array $options = [], ?Container_Builder $container = null): void;
+    abstract protected function describe_container_alias(Alias $alias, array $options = [], ?Container_Builder $container = null): void;
+    abstract protected function describe_container_parameter(mixed $parameter, ?array $deprecation, array $options = []): void;
+    abstract protected function describe_container_env_vars(array $envs, array $options = []): void;
     /**
      * Describes event dispatcher listeners.
      *
      * Common options are:
      * * name: name of listened event
      */
-    abstract protected function describeEventDispatcherListeners(EventDispatcherInterface $eventDispatcher, array $options = []): void;
-
-    abstract protected function describeCallable(mixed $callable, array $options = []): void;
-
-    protected function formatValue(mixed $value): string
+    abstract protected function describe_event_dispatcher_listeners(Event_Dispatcher_Interface $event_dispatcher, array $options = []): void;
+    abstract protected function describe_callable(mixed $callable, array $options = []): void;
+    protected function format_value(mixed $value): string
     {
-        if ($value instanceof \UnitEnum) {
+        if ($value instanceof \Unit_Enum) {
             return ltrim(var_export($value, true), '\\');
         }
-
         if (\is_object($value)) {
             return \sprintf('object(%s)', $value::class);
         }
-
         if (\is_string($value)) {
             return $value;
         }
-
-        return preg_replace("/\n\s*/s", '', var_export($value, true));
+        return preg_replace("/\n\\s*/s", '', var_export($value, true));
     }
-
-    protected function formatParameter(mixed $value): string
+    protected function format_parameter(mixed $value): string
     {
-        if ($value instanceof \UnitEnum) {
+        if ($value instanceof \Unit_Enum) {
             return ltrim(var_export($value, true), '\\');
         }
-
         // Recursively search for enum values, so we can replace it
         // before json_encode (which will not display anything for \UnitEnum otherwise)
         if (\is_array($value)) {
             array_walk_recursive($value, static function (&$value): void {
-                if ($value instanceof \UnitEnum) {
+                if ($value instanceof \Unit_Enum) {
                     $value = ltrim(var_export($value, true), '\\');
                 }
             });
         }
-
-        if (\is_bool($value) || \is_array($value) || (null === $value)) {
-            $jsonString = json_encode($value);
-
-            if (preg_match('/^(.{60})./us', $jsonString, $matches)) {
-                return $matches[1].'...';
+        if (\is_bool($value) || \is_array($value) || null === $value) {
+            $json_string = json_encode($value);
+            if (preg_match('/^(.{60})./us', $json_string, $matches)) {
+                return $matches[1] . '...';
             }
-
-            return $jsonString;
+            return $json_string;
         }
-
         return (string) $value;
     }
-
-    protected function resolveServiceDefinition(ContainerBuilder $container, string $serviceId): mixed
+    protected function resolve_service_definition(Container_Builder $container, string $service_id): mixed
     {
-        if ($container->hasDefinition($serviceId)) {
-            return $container->getDefinition($serviceId);
+        if ($container->has_definition($service_id)) {
+            return $container->get_definition($service_id);
         }
-
         // Some service IDs don't have a Definition, they're aliases
-        if ($container->hasAlias($serviceId)) {
-            return $container->getAlias($serviceId);
+        if ($container->has_alias($service_id)) {
+            return $container->get_alias($service_id);
         }
-
-        if ('service_container' === $serviceId) {
-            return (new Definition(ContainerInterface::class))->setPublic(true)->setSynthetic(true);
+        if ('service_container' === $service_id) {
+            return (new Definition(Container_Interface::class))->set_public(true)->set_synthetic(true);
         }
-
         // the service has been injected in some special way, just return the service
-        return $container->get($serviceId);
+        return $container->get($service_id);
     }
-
-    protected function findDefinitionsByTag(ContainerBuilder $container, bool $showHidden): array
+    protected function find_definitions_by_tag(Container_Builder $container, bool $show_hidden): array
     {
         $definitions = [];
-        $tags = $container->findTags();
+        $tags = $container->find_tags();
         asort($tags);
-
         foreach ($tags as $tag) {
-            foreach ($container->findTaggedServiceIds($tag) as $serviceId => $attributes) {
-                $definition = $this->resolveServiceDefinition($container, $serviceId);
-
-                if ($showHidden xor '.' === ($serviceId[0] ?? null)) {
+            foreach ($container->find_tagged_service_ids($tag) as $service_id => $attributes) {
+                $definition = $this->resolve_service_definition($container, $service_id);
+                if ($show_hidden xor '.' === ($service_id[0] ?? null)) {
                     continue;
                 }
-
                 if (!isset($definitions[$tag])) {
                     $definitions[$tag] = [];
                 }
-
-                $definitions[$tag][$serviceId] = $definition;
+                $definitions[$tag][$service_id] = $definition;
             }
         }
-
         return $definitions;
     }
-
-    protected function sortParameters(ParameterBag $parameters): array
+    protected function sort_parameters(Parameter_Bag $parameters): array
     {
         $parameters = $parameters->all();
         ksort($parameters);
-
         return $parameters;
     }
-
-    protected function sortServiceIds(array $serviceIds): array
+    protected function sort_service_ids(array $service_ids): array
     {
-        asort($serviceIds);
-
-        return $serviceIds;
+        asort($service_ids);
+        return $service_ids;
     }
-
-    protected function sortTaggedServicesByPriority(array $services): array
+    protected function sort_tagged_services_by_priority(array $services): array
     {
-        $maxPriority = [];
+        $max_priority = [];
         foreach ($services as $service => $tags) {
-            $maxPriority[$service] = \PHP_INT_MIN;
+            $max_priority[$service] = \PHP_INT_MIN;
             foreach ($tags as $tag) {
-                $currentPriority = $tag['priority'] ?? 0;
-                if ($maxPriority[$service] < $currentPriority) {
-                    $maxPriority[$service] = $currentPriority;
+                $current_priority = $tag['priority'] ?? 0;
+                if ($max_priority[$service] < $current_priority) {
+                    $max_priority[$service] = $current_priority;
                 }
             }
         }
-        uasort($maxPriority, static fn ($a, $b): int => $b <=> $a);
-
-        return array_keys($maxPriority);
+        uasort($max_priority, static fn($a, $b): int => $b <=> $a);
+        return array_keys($max_priority);
     }
-
-    protected function sortTagsByPriority(array $tags): array
+    protected function sort_tags_by_priority(array $tags): array
     {
-        $sortedTags = [];
-        foreach ($tags as $tagName => $tag) {
-            $sortedTags[$tagName] = $this->sortByPriority($tag);
+        $sorted_tags = [];
+        foreach ($tags as $tag_name => $tag) {
+            $sorted_tags[$tag_name] = $this->sort_by_priority($tag);
         }
-
-        return $sortedTags;
+        return $sorted_tags;
     }
-
-    protected function resolvePriorityServiceTags(ContainerBuilder $container, Definition $definition, ?string $tagName = null): array
+    protected function resolve_priority_service_tags(Container_Builder $container, Definition $definition, ?string $tag_name = null): array
     {
-        $tags = null !== $tagName ? $definition->getTag($tagName) : $definition->getTags();
-
-        $priority = ($container->getReflectionClass($definition->getClass())?->getAttributes(AsTaggedItem::class)[0] ?? null)?->newInstance()->priority;
+        $tags = null !== $tag_name ? $definition->get_tag($tag_name) : $definition->get_tags();
+        $priority = ($container->get_reflection_class($definition->get_class())?->get_attributes(As_Tagged_Item::class)[0] ?? null)?->new_instance()->priority;
         if (!$priority) {
             return $tags;
         }
-
-        if (null !== $tagName) {
+        if (null !== $tag_name) {
             foreach ($tags as &$tag) {
                 $tag['priority'] ??= $priority;
             }
         } else {
-            foreach ($tags as &$tagConfigs) {
-                foreach ($tagConfigs as &$tag) {
+            foreach ($tags as &$tag_configs) {
+                foreach ($tag_configs as &$tag) {
                     $tag['priority'] ??= $priority;
                 }
             }
         }
-
         return $tags;
     }
-
-    protected function sortByPriority(array $tag): array
+    protected function sort_by_priority(array $tag): array
     {
-        usort($tag, static fn (array $a, array $b): int => ($b['priority'] ?? 0) <=> ($a['priority'] ?? 0));
-
+        usort($tag, static fn(array $a, array $b): int => ($b['priority'] ?? 0) <=> ($a['priority'] ?? 0));
         return $tag;
     }
-
     /**
      * @return array<string, string[]>
      */
-    protected function getReverseAliases(RouteCollection $routes): array
+    protected function get_reverse_aliases(Route_Collection $routes): array
     {
-        $reverseAliases = [];
-        foreach ($routes->getAliases() as $name => $alias) {
-            $reverseAliases[$alias->getId()][] = $name;
+        $reverse_aliases = [];
+        foreach ($routes->get_aliases() as $name => $alias) {
+            $reverse_aliases[$alias->get_id()][] = $name;
         }
-
-        return $reverseAliases;
+        return $reverse_aliases;
     }
-
-    public static function getClassDescription(string $class, ?string &$resolvedClass = null): string
+    public static function get_class_description(string $class, ?string &$resolved_class = null): string
     {
-        $resolvedClass = $class;
+        $resolved_class = $class;
         try {
-            $resource = new ClassExistenceResource($class, false);
-
+            $resource = new Class_Existence_Resource($class, false);
             // isFresh() will explode ONLY if a parent class/trait does not exist
-            $resource->isFresh(0);
-
+            $resource->is_fresh(0);
             $r = new \ReflectionClass($class);
-            $resolvedClass = $r->name;
-
-            if ($docComment = $r->getDocComment()) {
-                $docComment = preg_split('#\n\s*\*\s*[\n@]#', substr($docComment, 3, -2), 2)[0];
-
-                return trim((string) preg_replace('#\s*\n\s*\*\s*#', ' ', $docComment));
+            $resolved_class = $r->name;
+            if ($doc_comment = $r->get_doc_comment()) {
+                $doc_comment = preg_split('#\n\s*\*\s*[\n@]#', substr($doc_comment, 3, -2), 2)[0];
+                return trim((string) preg_replace('#\s*\n\s*\*\s*#', ' ', $doc_comment));
             }
-        } catch (\ReflectionException) {
+        } catch (\Reflection_Exception) {
         }
-
         return '';
     }
-
-    private function getContainerEnvVars(ContainerBuilder $container): array
+    private function get_container_env_vars(Container_Builder $container): array
     {
-        if (!$container->hasParameter('debug.container.dump')) {
+        if (!$container->has_parameter('debug.container.dump')) {
             return [];
         }
-
-        if (!$container->getParameter('debug.container.dump') || !is_file($container->getParameter('debug.container.dump'))) {
+        if (!$container->get_parameter('debug.container.dump') || !is_file($container->get_parameter('debug.container.dump'))) {
             return [];
         }
-
-        $file = file_get_contents($container->getParameter('debug.container.dump'));
-        preg_match_all('{%env\(((?:\w++:)*+\w++)\)%}', $file, $envVars);
-        $envVars = array_unique($envVars[1]);
-
-        $bag = $container->getParameterBag();
-        $getDefaultParameter = fn (string $name) => parent::get($name);
-        $getDefaultParameter = $getDefaultParameter->bindTo($bag, $bag::class);
-
-        $getEnvReflection = new \ReflectionMethod($container, 'getEnv');
-
+        $file = file_get_contents($container->get_parameter('debug.container.dump'));
+        preg_match_all('{%env\(((?:\w++:)*+\w++)\)%}', $file, $env_vars);
+        $env_vars = array_unique($env_vars[1]);
+        $bag = $container->get_parameter_bag();
+        $get_default_parameter = fn(string $name) => parent::get($name);
+        $get_default_parameter = $get_default_parameter->bind_to($bag, $bag::class);
+        $get_env_reflection = new \ReflectionMethod($container, 'getEnv');
         $envs = [];
-
-        foreach ($envVars as $env) {
+        foreach ($env_vars as $env) {
             $processor = 'string';
             if (false !== $i = strrpos($name = $env, ':')) {
                 $name = substr($env, $i + 1);
                 $processor = substr($env, 0, $i);
             }
-            $defaultValue = ($hasDefault = $container->hasParameter("env($name)")) ? $getDefaultParameter("env($name)") : null;
-            if (false === ($runtimeValue = $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name))) {
-                $runtimeValue = null;
+            $default_value = ($has_default = $container->has_parameter("env({$name})")) ? $get_default_parameter("env({$name})") : null;
+            if (false === $runtime_value = $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name)) {
+                $runtime_value = null;
             }
-            $processedValue = ($hasRuntime = null !== $runtimeValue) || $hasDefault ? $getEnvReflection->invoke($container, $env) : null;
-            $envs["$name$processor"] = [
-                'name' => $name,
-                'processor' => $processor,
-                'default_available' => $hasDefault,
-                'default_value' => $defaultValue,
-                'runtime_available' => $hasRuntime,
-                'runtime_value' => $runtimeValue,
-                'processed_value' => $processedValue,
-            ];
+            $processed_value = ($has_runtime = null !== $runtime_value) || $has_default ? $get_env_reflection->invoke($container, $env) : null;
+            $envs["{$name}{$processor}"] = ['name' => $name, 'processor' => $processor, 'default_available' => $has_default, 'default_value' => $default_value, 'runtime_available' => $has_runtime, 'runtime_value' => $runtime_value, 'processed_value' => $processed_value];
         }
         ksort($envs);
-
         return array_values($envs);
     }
-
-    protected function getServiceEdges(ContainerBuilder $container, string $serviceId): array
+    protected function get_service_edges(Container_Builder $container, string $service_id): array
     {
         try {
-            return array_values(array_unique(array_map(
-                static fn (ServiceReferenceGraphEdge $edge): string => $edge->getSourceNode()->getId(),
-                $container->getCompiler()->getServiceReferenceGraph()->getNode($serviceId)->getInEdges()
-            )));
+            return array_values(array_unique(array_map(static fn(Service_Reference_Graph_Edge $edge): string => $edge->get_source_node()->get_id(), $container->get_compiler()->get_service_reference_graph()->get_node($service_id)->get_in_edges())));
         } catch (InvalidArgumentException) {
             return [];
         }
     }
-
     /**
      * @return array<array{id: string, class: ?string, priority: int}>
      */
-    protected function getDecorationStack(ContainerBuilder $container, string $id): array
+    protected function get_decoration_stack(Container_Builder $container, string $id): array
     {
         $stack = [];
-
-        while ($container->hasDefinition($id) || $container->hasAlias($id)) {
+        while ($container->has_definition($id) || $container->has_alias($id)) {
             // resolve Alias and continue
-            if ($container->hasAlias($id)) {
-                $id = (string) $container->getAlias($id);
+            if ($container->has_alias($id)) {
+                $id = (string) $container->get_alias($id);
                 continue;
             }
-
-            $definition = $container->getDefinition($id);
-            $class = $definition->getClass();
-            $priority = $definition->decorationPriority ?? 0;
-
+            $definition = $container->get_definition($id);
+            $class = $definition->get_class();
+            $priority = $definition->decoration_priority ?? 0;
             $stack[] = ['id' => $id, 'class' => $class, 'priority' => $priority];
-
-            if (!$nextId = $definition->innerServiceId) {
+            if (!$next_id = $definition->inner_service_id) {
                 break;
             }
-
-            $id = $nextId;
+            $id = $next_id;
         }
-
         return $stack;
     }
-
-    private function filterRoutesByHttpMethod(RouteCollection $routes, string $method): RouteCollection
+    private function filter_routes_by_http_method(Route_Collection $routes, string $method): Route_Collection
     {
         if (!$method) {
             return $routes;
         }
-        $filteredRoutes = clone $routes;
-
-        foreach ($filteredRoutes as $routeName => $route) {
-            if ($route->getMethods() && !\in_array($method, $route->getMethods(), true)) {
-                $filteredRoutes->remove($routeName);
+        $filtered_routes = clone $routes;
+        foreach ($filtered_routes as $route_name => $route) {
+            if ($route->get_methods() && !\in_array($method, $route->get_methods(), true)) {
+                $filtered_routes->remove($route_name);
             }
         }
-
-        return $filteredRoutes;
+        return $filtered_routes;
     }
 }

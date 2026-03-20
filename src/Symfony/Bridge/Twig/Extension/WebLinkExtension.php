@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,39 +9,27 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Twig\Extension;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\WebLink\GenericLinkProvider;
-use Symfony\Component\WebLink\Link;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
-
+use Symfony\Component\Http_Foundation\Request_Stack;
+use Symfony\Component\Web_Link\Generic_Link_Provider;
+use Symfony\Component\Web_Link\Link;
+use Twig\Extension\Abstract_Extension;
+use Twig\Twig_Function;
 /**
  * Twig extension for the Symfony WebLink component.
  *
  * @author Kévin Dunglas <dunglas@gmail.com>
  */
-final class WebLinkExtension extends AbstractExtension
+final class Web_Link_Extension extends Abstract_Extension
 {
-    public function __construct(
-        private readonly RequestStack $requestStack,
-    ) {
-    }
-
-    public function getFunctions(): array
+    public function __construct(private readonly Request_Stack $request_stack)
     {
-        return [
-            new TwigFunction('link', $this->link(...)),
-            new TwigFunction('preload', $this->preload(...)),
-            new TwigFunction('dns_prefetch', $this->dnsPrefetch(...)),
-            new TwigFunction('preconnect', $this->preconnect(...)),
-            new TwigFunction('prefetch', $this->prefetch(...)),
-            new TwigFunction('prerender', $this->prerender(...)),
-        ];
     }
-
+    public function get_functions(): array
+    {
+        return [new Twig_Function('link', $this->link(...)), new Twig_Function('preload', $this->preload(...)), new Twig_Function('dns_prefetch', $this->dns_prefetch(...)), new Twig_Function('preconnect', $this->preconnect(...)), new Twig_Function('prefetch', $this->prefetch(...)), new Twig_Function('prerender', $this->prerender(...))];
+    }
     /**
      * Adds a "Link" HTTP header.
      *
@@ -53,21 +40,17 @@ final class WebLinkExtension extends AbstractExtension
      */
     public function link(string $uri, string $rel, array $attributes = []): string
     {
-        if (!$request = $this->requestStack->getMainRequest()) {
+        if (!$request = $this->request_stack->get_main_request()) {
             return $uri;
         }
-
         $link = new Link($rel, $uri);
         foreach ($attributes as $key => $value) {
-            $link = $link->withAttribute($key, $value);
+            $link = $link->with_attribute($key, $value);
         }
-
-        $linkProvider = $request->attributes->get('_links', new GenericLinkProvider());
-        $request->attributes->set('_links', $linkProvider->withLink($link));
-
+        $link_provider = $request->attributes->get('_links', new Generic_Link_Provider());
+        $request->attributes->set('_links', $link_provider->with_link($link));
         return $uri;
     }
-
     /**
      * Preloads a resource.
      *
@@ -79,7 +62,6 @@ final class WebLinkExtension extends AbstractExtension
     {
         return $this->link($uri, 'preload', $attributes);
     }
-
     /**
      * Resolves a resource origin as early as possible.
      *
@@ -87,11 +69,10 @@ final class WebLinkExtension extends AbstractExtension
      *
      * @return string The path of the asset
      */
-    public function dnsPrefetch(string $uri, array $attributes = []): string
+    public function dns_prefetch(string $uri, array $attributes = []): string
     {
         return $this->link($uri, 'dns-prefetch', $attributes);
     }
-
     /**
      * Initiates a early connection to a resource (DNS resolution, TCP handshake, TLS negotiation).
      *
@@ -103,7 +84,6 @@ final class WebLinkExtension extends AbstractExtension
     {
         return $this->link($uri, 'preconnect', $attributes);
     }
-
     /**
      * Indicates to the client that it should prefetch this resource.
      *
@@ -115,7 +95,6 @@ final class WebLinkExtension extends AbstractExtension
     {
         return $this->link($uri, 'prefetch', $attributes);
     }
-
     /**
      * Indicates to the client that it should prerender this resource.
      *

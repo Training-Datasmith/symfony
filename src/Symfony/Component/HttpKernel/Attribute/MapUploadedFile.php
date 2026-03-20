@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,26 +9,24 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Attribute;
 
-namespace Symfony\Component\HttpKernel\Attribute;
-
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestPayloadValueResolver;
-use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\Http_Foundation\Response;
+use Symfony\Component\Http_Kernel\Controller\Argument_Resolver\Request_Payload_Value_Resolver;
+use Symfony\Component\Http_Kernel\Controller_Metadata\Argument_Metadata;
 use Symfony\Component\Validator\Constraint;
-
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
-class MapUploadedFile extends ValueResolver
+class Map_Uploaded_File extends Value_Resolver
 {
-    public ArgumentMetadata $metadata;
-
+    public Argument_Metadata $metadata;
     public function __construct(
         /** @var Constraint|array<Constraint>|null */
         public Constraint|array|null $constraints = null,
         public ?string $name = null,
-        string $resolver = RequestPayloadValueResolver::class,
-        public readonly int $validationFailedStatusCode = Response::HTTP_UNPROCESSABLE_ENTITY,
-    ) {
+        string $resolver = Request_Payload_Value_Resolver::class,
+        public readonly int $validation_failed_status_code = Response::HTTP_UNPROCESSABLE_ENTITY
+    )
+    {
         parent::__construct($resolver);
     }
 }

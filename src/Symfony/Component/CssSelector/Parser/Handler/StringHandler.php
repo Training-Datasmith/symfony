@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Css_Selector\Parser\Handler;
 
-namespace Symfony\Component\CssSelector\Parser\Handler;
-
-use Symfony\Component\CssSelector\Exception\InternalErrorException;
-use Symfony\Component\CssSelector\Exception\SyntaxErrorException;
-use Symfony\Component\CssSelector\Parser\Reader;
-use Symfony\Component\CssSelector\Parser\Token;
-use Symfony\Component\CssSelector\Parser\Tokenizer\TokenizerEscaping;
-use Symfony\Component\CssSelector\Parser\Tokenizer\TokenizerPatterns;
-use Symfony\Component\CssSelector\Parser\TokenStream;
-
+use Symfony\Component\Css_Selector\Exception\Internal_Error_Exception;
+use Symfony\Component\Css_Selector\Exception\Syntax_Error_Exception;
+use Symfony\Component\Css_Selector\Parser\Reader;
+use Symfony\Component\Css_Selector\Parser\Token;
+use Symfony\Component\Css_Selector\Parser\Tokenizer\Tokenizer_Escaping;
+use Symfony\Component\Css_Selector\Parser\Tokenizer\Tokenizer_Patterns;
+use Symfony\Component\Css_Selector\Parser\Token_Stream;
 /**
  * CSS selector comment handler.
  *
@@ -31,43 +28,33 @@ use Symfony\Component\CssSelector\Parser\TokenStream;
  *
  * @internal
  */
-class StringHandler implements HandlerInterface
+class String_Handler implements Handler_Interface
 {
-    public function __construct(
-        private readonly TokenizerPatterns $patterns,
-        private readonly TokenizerEscaping $escaping,
-    ) {
-    }
-
-    public function handle(Reader $reader, TokenStream $stream): bool
+    public function __construct(private readonly Tokenizer_Patterns $patterns, private readonly Tokenizer_Escaping $escaping)
     {
-        $quote = $reader->getSubstring(1);
-
+    }
+    public function handle(Reader $reader, Token_Stream $stream): bool
+    {
+        $quote = $reader->get_substring(1);
         if (!\in_array($quote, ["'", '"'], true)) {
             return false;
         }
-
-        $reader->moveForward(1);
-        $match = $reader->findPattern($this->patterns->getQuotedStringPattern($quote));
-
+        $reader->move_forward(1);
+        $match = $reader->find_pattern($this->patterns->get_quoted_string_pattern($quote));
         if (!$match) {
-            throw new InternalErrorException(\sprintf('Should have found at least an empty match at %d.', $reader->getPosition()));
+            throw new Internal_Error_Exception(\sprintf('Should have found at least an empty match at %d.', $reader->get_position()));
         }
-
         // check unclosed strings
-        if (\strlen((string) $match[0]) === $reader->getRemainingLength()) {
-            throw SyntaxErrorException::unclosedString($reader->getPosition() - 1);
+        if (\strlen((string) $match[0]) === $reader->get_remaining_length()) {
+            throw Syntax_Error_Exception::unclosed_string($reader->get_position() - 1);
         }
-
         // check quotes pairs validity
-        if ($quote !== $reader->getSubstring(1, \strlen((string) $match[0]))) {
-            throw SyntaxErrorException::unclosedString($reader->getPosition() - 1);
+        if ($quote !== $reader->get_substring(1, \strlen((string) $match[0]))) {
+            throw Syntax_Error_Exception::unclosed_string($reader->get_position() - 1);
         }
-
-        $string = $this->escaping->escapeUnicodeAndNewLine($match[0]);
-        $stream->push(new Token(Token::TYPE_STRING, $string, $reader->getPosition()));
-        $reader->moveForward(\strlen((string) $match[0]) + 1);
-
+        $string = $this->escaping->escape_unicode_and_new_line($match[0]);
+        $stream->push(new Token(Token::TYPE_STRING, $string, $reader->get_position()));
+        $reader->move_forward(\strlen((string) $match[0]) + 1);
         return true;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,69 +9,55 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Argument\ArgumentInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Dependency_Injection\Argument\Argument_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * Propagate "container.hot_path" tags to referenced services.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ResolveHotPathPass extends AbstractRecursivePass
+class Resolve_Hot_Path_Pass extends Abstract_Recursive_Pass
 {
-    protected bool $skipScalars = true;
-
-    private array $resolvedIds = [];
-
-    public function process(ContainerBuilder $container): void
+    protected bool $skip_scalars = true;
+    private array $resolved_ids = [];
+    public function process(Container_Builder $container): void
     {
         try {
             parent::process($container);
-            $container->getDefinition('service_container')->clearTag('container.hot_path');
+            $container->get_definition('service_container')->clear_tag('container.hot_path');
         } finally {
-            $this->resolvedIds = [];
+            $this->resolved_ids = [];
         }
     }
-
-    protected function processValue(mixed $value, bool $isRoot = false): mixed
+    protected function process_value(mixed $value, bool $is_root = false): mixed
     {
-        if ($value instanceof ArgumentInterface) {
+        if ($value instanceof Argument_Interface) {
             return $value;
         }
-
-        if ($value instanceof Definition && $isRoot) {
-            if ($value->isDeprecated()) {
-                return $value->clearTag('container.hot_path');
+        if ($value instanceof Definition && $is_root) {
+            if ($value->is_deprecated()) {
+                return $value->clear_tag('container.hot_path');
             }
-
-            $this->resolvedIds[$this->currentId ?? ''] = true;
-
-            if (!$value->hasTag('container.hot_path')) {
+            $this->resolved_ids[$this->current_id ?? ''] = true;
+            if (!$value->has_tag('container.hot_path')) {
                 return $value;
             }
         }
-
-        if ($value instanceof Reference && ContainerBuilder::IGNORE_ON_UNINITIALIZED_REFERENCE !== $value->getInvalidBehavior() && $this->container->hasDefinition($id = (string) $value)) {
-            $definition = $this->container->getDefinition($id);
-
-            if ($definition->isDeprecated() || $definition->hasTag('container.hot_path')) {
+        if ($value instanceof Reference && Container_Builder::IGNORE_ON_UNINITIALIZED_REFERENCE !== $value->get_invalid_behavior() && $this->container->has_definition($id = (string) $value)) {
+            $definition = $this->container->get_definition($id);
+            if ($definition->is_deprecated() || $definition->has_tag('container.hot_path')) {
                 return $value;
             }
-
-            $definition->addTag('container.hot_path');
-
-            if (isset($this->resolvedIds[$id])) {
-                parent::processValue($definition, false);
+            $definition->add_tag('container.hot_path');
+            if (isset($this->resolved_ids[$id])) {
+                parent::process_value($definition, false);
             }
-
             return $value;
         }
-
-        return parent::processValue($value, $isRoot);
+        return parent::process_value($value, $is_root);
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Finder\Comparator;
 
 /**
@@ -19,34 +17,27 @@ namespace Symfony\Component\Finder\Comparator;
 class Comparator
 {
     private readonly string $operator;
-
-    public function __construct(
-        private readonly string $target,
-        string $operator = '==',
-    ) {
+    public function __construct(private readonly string $target, string $operator = '==')
+    {
         if (!\in_array($operator, ['>', '<', '>=', '<=', '==', '!='], true)) {
             throw new \InvalidArgumentException(\sprintf('Invalid operator "%s".', $operator));
         }
-
         $this->operator = $operator;
     }
-
     /**
      * Gets the target value.
      */
-    public function getTarget(): string
+    public function get_target(): string
     {
         return $this->target;
     }
-
     /**
      * Gets the comparison operator.
      */
-    public function getOperator(): string
+    public function get_operator(): string
     {
         return $this->operator;
     }
-
     /**
      * Tests against the target.
      */

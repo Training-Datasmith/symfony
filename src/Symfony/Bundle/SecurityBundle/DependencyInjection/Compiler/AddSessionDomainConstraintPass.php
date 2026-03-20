@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,38 +9,31 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Dependency_Injection\Compiler;
 
-namespace Symfony\Bundle\SecurityBundle\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
 /**
  * Uses the session domain to restrict allowed redirection targets.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class AddSessionDomainConstraintPass implements CompilerPassInterface
+class Add_Session_Domain_Constraint_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (!$container->hasParameter('session.storage.options') || !$container->has('security.http_utils')) {
+        if (!$container->has_parameter('session.storage.options') || !$container->has('security.http_utils')) {
             return;
         }
-
-        $sessionOptions = $container->getParameter('session.storage.options');
-        $domainRegexp = empty($sessionOptions['cookie_domain']) ? '%%s' : \sprintf('(?:%%%%s|(?:.+\.)?%s)', preg_quote(trim((string) $sessionOptions['cookie_domain'], '.')));
-
-        if ('auto' === ($sessionOptions['cookie_secure'] ?? null)) {
-            $secureDomainRegexp = \sprintf('{^https://%s$}i', $domainRegexp);
-            $domainRegexp = 'https?://'.$domainRegexp;
+        $session_options = $container->get_parameter('session.storage.options');
+        $domain_regexp = empty($session_options['cookie_domain']) ? '%%s' : \sprintf('(?:%%%%s|(?:.+\.)?%s)', preg_quote(trim((string) $session_options['cookie_domain'], '.')));
+        if ('auto' === ($session_options['cookie_secure'] ?? null)) {
+            $secure_domain_regexp = \sprintf('{^https://%s$}i', $domain_regexp);
+            $domain_regexp = 'https?://' . $domain_regexp;
         } else {
-            $secureDomainRegexp = null;
-            $domainRegexp = (empty($sessionOptions['cookie_secure']) ? 'https?://' : 'https://').$domainRegexp;
+            $secure_domain_regexp = null;
+            $domain_regexp = (empty($session_options['cookie_secure']) ? 'https?://' : 'https://') . $domain_regexp;
         }
-
-        $container->getDefinition('security.http_utils')
-            ->addArgument(\sprintf('{^%s$}i', $domainRegexp))
-            ->addArgument($secureDomainRegexp);
+        $container->get_definition('security.http_utils')->add_argument(\sprintf('{^%s$}i', $domain_regexp))->add_argument($secure_domain_regexp);
     }
 }

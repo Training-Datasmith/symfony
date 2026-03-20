@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\CssSelector\Exception;
+namespace Symfony\Component\Css_Selector\Exception;
 
 /**
  * ParseException is thrown when a CSS selector syntax is not valid.
@@ -21,6 +19,6 @@ namespace Symfony\Component\CssSelector\Exception;
  *
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
  */
-class ExpressionErrorException extends ParseException
+class Expression_Error_Exception extends Parse_Exception
 {
 }

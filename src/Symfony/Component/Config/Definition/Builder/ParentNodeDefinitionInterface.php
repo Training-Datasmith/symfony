@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition\Builder;
 
 /**
@@ -18,15 +16,14 @@ namespace Symfony\Component\Config\Definition\Builder;
  *
  * @author Victor Berchet <victor@suumit.com>
  */
-interface ParentNodeDefinitionInterface extends BuilderAwareInterface
+interface Parent_Node_Definition_Interface extends Builder_Aware_Interface
 {
     /**
      * Returns a builder to add children nodes.
      *
      * @return NodeBuilder<static>
      */
-    public function children(): NodeBuilder;
-
+    public function children(): Node_Builder;
     /**
      * Appends a node definition.
      *
@@ -42,12 +39,11 @@ interface ParentNodeDefinitionInterface extends BuilderAwareInterface
      *
      * @return $this
      */
-    public function append(NodeDefinition $node): static;
-
+    public function append(Node_Definition $node): static;
     /**
      * Gets the child node definitions.
      *
      * @return NodeDefinition<static>[]
      */
-    public function getChildNodeDefinitions(): array;
+    public function get_child_node_definitions(): array;
 }

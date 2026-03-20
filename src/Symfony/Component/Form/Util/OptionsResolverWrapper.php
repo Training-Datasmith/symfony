@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,98 +9,84 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Util;
 
-use Symfony\Component\OptionsResolver\Exception\AccessException;
-use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Options_Resolver\Exception\Access_Exception;
+use Symfony\Component\Options_Resolver\Exception\Undefined_Options_Exception;
+use Symfony\Component\Options_Resolver\Options_Resolver;
 /**
  * @author Yonel Ceruto <yonelceruto@gmail.com>
  *
  * @internal
  */
-class OptionsResolverWrapper extends OptionsResolver
+class Options_Resolver_Wrapper extends Options_Resolver
 {
     private array $undefined = [];
-
     /**
      * @return $this
      */
-    public function setNormalizer(string $option, \Closure $normalizer): static
+    public function set_normalizer(string $option, \Closure $normalizer): static
     {
         try {
-            parent::setNormalizer($option, $normalizer);
-        } catch (UndefinedOptionsException) {
+            parent::set_normalizer($option, $normalizer);
+        } catch (Undefined_Options_Exception) {
             $this->undefined[$option] = true;
         }
-
         return $this;
     }
-
     /**
      * @return $this
      */
-    public function setAllowedValues(string $option, mixed $allowedValues): static
+    public function set_allowed_values(string $option, mixed $allowed_values): static
     {
         try {
-            parent::setAllowedValues($option, $allowedValues);
-        } catch (UndefinedOptionsException) {
+            parent::set_allowed_values($option, $allowed_values);
+        } catch (Undefined_Options_Exception) {
             $this->undefined[$option] = true;
         }
-
         return $this;
     }
-
     /**
      * @return $this
      */
-    public function addAllowedValues(string $option, mixed $allowedValues): static
+    public function add_allowed_values(string $option, mixed $allowed_values): static
     {
         try {
-            parent::addAllowedValues($option, $allowedValues);
-        } catch (UndefinedOptionsException) {
+            parent::add_allowed_values($option, $allowed_values);
+        } catch (Undefined_Options_Exception) {
             $this->undefined[$option] = true;
         }
-
         return $this;
     }
-
     /**
      * @return $this
      */
-    public function setAllowedTypes(string $option, string|array $allowedTypes): static
+    public function set_allowed_types(string $option, string|array $allowed_types): static
     {
         try {
-            parent::setAllowedTypes($option, $allowedTypes);
-        } catch (UndefinedOptionsException) {
+            parent::set_allowed_types($option, $allowed_types);
+        } catch (Undefined_Options_Exception) {
             $this->undefined[$option] = true;
         }
-
         return $this;
     }
-
     /**
      * @return $this
      */
-    public function addAllowedTypes(string $option, string|array $allowedTypes): static
+    public function add_allowed_types(string $option, string|array $allowed_types): static
     {
         try {
-            parent::addAllowedTypes($option, $allowedTypes);
-        } catch (UndefinedOptionsException) {
+            parent::add_allowed_types($option, $allowed_types);
+        } catch (Undefined_Options_Exception) {
             $this->undefined[$option] = true;
         }
-
         return $this;
     }
-
     public function resolve(array $options = []): array
     {
-        throw new AccessException('Resolve options is not supported.');
+        throw new Access_Exception('Resolve options is not supported.');
     }
-
-    public function getUndefinedOptions(): array
+    public function get_undefined_options(): array
     {
         return array_keys($this->undefined);
     }

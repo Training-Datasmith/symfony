@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,54 +9,36 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Flow\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Flow\ButtonFlowTypeInterface;
-use Symfony\Component\Form\Flow\FormFlowCursor;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Form\Abstract_Type;
+use Symfony\Component\Form\Extension\Core\Type\Submit_Type;
+use Symfony\Component\Form\Flow\Button_Flow_Type_Interface;
+use Symfony\Component\Form\Flow\Form_Flow_Cursor;
+use Symfony\Component\Options_Resolver\Options;
+use Symfony\Component\Options_Resolver\Options_Resolver;
 /**
  * A submit button with a callable handler for a form flow.
  *
  * @author Yonel Ceruto <open@yceruto.dev>
  */
-class ButtonFlowType extends AbstractType implements ButtonFlowTypeInterface
+class Button_Flow_Type extends Abstract_Type implements Button_Flow_Type_Interface
 {
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configure_options(Options_Resolver $resolver): void
     {
-        $resolver->define('handler')
-            ->info('The callable that will be called when this button is clicked')
-            ->required()
-            ->allowedTypes('callable');
-
-        $resolver->define('include_if')
-            ->info('Decide whether to include this button in the current form')
-            ->default(null)
-            ->allowedTypes('null', 'array', 'callable')
-            ->normalize(static function (Options $options, mixed $value) {
-                if (\is_array($value)) {
-                    return static fn (FormFlowCursor $cursor): bool => \in_array($cursor->getCurrentStep(), $value, true);
-                }
-
-                return $value;
-            });
-
-        $resolver->define('clear_submission')
-            ->info('Whether the submitted data will be cleared when this button is clicked')
-            ->default(false)
-            ->allowedTypes('bool');
-
-        $resolver->setDefault('validate', static fn (Options $options): bool => !$options['clear_submission']);
-
-        $resolver->setDefault('validation_groups', static fn (Options $options): ?false => $options['clear_submission'] ? false : null);
+        $resolver->define('handler')->info('The callable that will be called when this button is clicked')->required()->allowed_types('callable');
+        $resolver->define('include_if')->info('Decide whether to include this button in the current form')->default(null)->allowed_types('null', 'array', 'callable')->normalize(static function (Options $options, mixed $value) {
+            if (\is_array($value)) {
+                return static fn(Form_Flow_Cursor $cursor): bool => \in_array($cursor->get_current_step(), $value, true);
+            }
+            return $value;
+        });
+        $resolver->define('clear_submission')->info('Whether the submitted data will be cleared when this button is clicked')->default(false)->allowed_types('bool');
+        $resolver->set_default('validate', static fn(Options $options): bool => !$options['clear_submission']);
+        $resolver->set_default('validation_groups', static fn(Options $options): ?false => $options['clear_submission'] ? false : null);
     }
-
-    public function getParent(): string
+    public function get_parent(): string
     {
-        return SubmitType::class;
+        return Submit_Type::class;
     }
 }

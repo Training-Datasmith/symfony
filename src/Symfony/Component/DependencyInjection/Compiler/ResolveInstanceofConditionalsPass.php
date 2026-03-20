@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,105 +9,87 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\ChildDefinition;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Exception\RuntimeException;
-
+use Symfony\Component\Dependency_Injection\Child_Definition;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+use Symfony\Component\Dependency_Injection\Exception\RuntimeException;
 /**
  * Applies instanceof conditionals to definitions.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ResolveInstanceofConditionalsPass implements CompilerPassInterface
+class Resolve_Instanceof_Conditionals_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        foreach ($container->getAutoconfiguredInstanceof() as $interface => $definition) {
-            if ($definition->getArguments()) {
+        foreach ($container->get_autoconfigured_instanceof() as $interface => $definition) {
+            if ($definition->get_arguments()) {
                 throw new InvalidArgumentException(\sprintf('Autoconfigured instanceof for type "%s" defines arguments but these are not supported and should be removed.', $interface));
             }
         }
-
-        $tagsToKeep = [];
-
-        if ($container->hasParameter('container.behavior_describing_tags')) {
-            $tagsToKeep = $container->getParameter('container.behavior_describing_tags');
+        $tags_to_keep = [];
+        if ($container->has_parameter('container.behavior_describing_tags')) {
+            $tags_to_keep = $container->get_parameter('container.behavior_describing_tags');
         }
-
-        foreach ($container->getDefinitions() as $id => $definition) {
-            $container->setDefinition($id, $this->processDefinition($container, $id, $definition, $tagsToKeep));
+        foreach ($container->get_definitions() as $id => $definition) {
+            $container->set_definition($id, $this->process_definition($container, $id, $definition, $tags_to_keep));
         }
-
-        if ($container->hasParameter('container.behavior_describing_tags')) {
-            $container->getParameterBag()->remove('container.behavior_describing_tags');
+        if ($container->has_parameter('container.behavior_describing_tags')) {
+            $container->get_parameter_bag()->remove('container.behavior_describing_tags');
         }
     }
-
-    private function processDefinition(ContainerBuilder $container, string $id, Definition $definition, array $tagsToKeep): Definition
+    private function process_definition(Container_Builder $container, string $id, Definition $definition, array $tags_to_keep): Definition
     {
-        $instanceofConditionals = $definition->getInstanceofConditionals();
-        $autoconfiguredInstanceof = $definition->isAutoconfigured() ? $container->getAutoconfiguredInstanceof() : [];
-        if (!$instanceofConditionals && !$autoconfiguredInstanceof) {
+        $instanceof_conditionals = $definition->get_instanceof_conditionals();
+        $autoconfigured_instanceof = $definition->is_autoconfigured() ? $container->get_autoconfigured_instanceof() : [];
+        if (!$instanceof_conditionals && !$autoconfigured_instanceof) {
             return $definition;
         }
-
-        if (!$class = $container->getParameterBag()->resolveValue($definition->getClass())) {
+        if (!$class = $container->get_parameter_bag()->resolve_value($definition->get_class())) {
             return $definition;
         }
-
-        $conditionals = $this->mergeConditionals($autoconfiguredInstanceof, $instanceofConditionals, $container);
-
-        $definition->setInstanceofConditionals([]);
+        $conditionals = $this->merge_conditionals($autoconfigured_instanceof, $instanceof_conditionals, $container);
+        $definition->set_instanceof_conditionals([]);
         $shared = null;
-        $instanceofTags = [];
-        $instanceofCalls = [];
-        $instanceofBindings = [];
-        $reflectionClass = null;
-        $parent = $definition instanceof ChildDefinition ? $definition->getParent() : null;
-
-        foreach ($conditionals as $interface => $instanceofDefs) {
-            if ($interface !== $class && !($reflectionClass ??= $container->getReflectionClass($class, false) ?: false)) {
+        $instanceof_tags = [];
+        $instanceof_calls = [];
+        $instanceof_bindings = [];
+        $reflection_class = null;
+        $parent = $definition instanceof Child_Definition ? $definition->get_parent() : null;
+        foreach ($conditionals as $interface => $instanceof_defs) {
+            if ($interface !== $class && !$reflection_class ??= $container->get_reflection_class($class, false) ?: false) {
                 continue;
             }
-
             if ($interface !== $class && !is_subclass_of($class, $interface)) {
                 continue;
             }
-
-            foreach ($instanceofDefs as $key => $instanceofDef) {
+            foreach ($instanceof_defs as $key => $instanceof_def) {
                 /** @var ChildDefinition $instanceofDef */
-                $instanceofDef = clone $instanceofDef;
-                $instanceofDef->setAbstract(true)->setParent($parent ?: '.abstract.instanceof.'.$id);
-                $parent = '.instanceof.'.$interface.'.'.$key.'.'.$id;
-                $container->setDefinition($parent, $instanceofDef);
-                $instanceofTags[] = [$interface, $instanceofDef->getTags()];
-                $instanceofBindings = $instanceofDef->getBindings() + $instanceofBindings;
-
-                foreach ($instanceofDef->getMethodCalls() as $methodCall) {
-                    $instanceofCalls[] = $methodCall;
+                $instanceof_def = clone $instanceof_def;
+                $instanceof_def->set_abstract(true)->set_parent($parent ?: '.abstract.instanceof.' . $id);
+                $parent = '.instanceof.' . $interface . '.' . $key . '.' . $id;
+                $container->set_definition($parent, $instanceof_def);
+                $instanceof_tags[] = [$interface, $instanceof_def->get_tags()];
+                $instanceof_bindings = $instanceof_def->get_bindings() + $instanceof_bindings;
+                foreach ($instanceof_def->get_method_calls() as $method_call) {
+                    $instanceof_calls[] = $method_call;
                 }
-
-                $instanceofDef->setTags([]);
-                $instanceofDef->setMethodCalls([]);
-                $instanceofDef->setBindings([]);
-
-                if (isset($instanceofDef->getChanges()['shared'])) {
-                    $shared = $instanceofDef->isShared();
+                $instanceof_def->set_tags([]);
+                $instanceof_def->set_method_calls([]);
+                $instanceof_def->set_bindings([]);
+                if (isset($instanceof_def->get_changes()['shared'])) {
+                    $shared = $instanceof_def->is_shared();
                 }
             }
         }
-
         if ($parent) {
-            $bindings = $definition->getBindings();
-            $abstract = $container->setDefinition('.abstract.instanceof.'.$id, $definition);
-            $definition->setBindings([]);
+            $bindings = $definition->get_bindings();
+            $abstract = $container->set_definition('.abstract.instanceof.' . $id, $definition);
+            $definition->set_bindings([]);
             $definition = serialize($definition);
-
             if (Definition::class === $abstract::class) {
                 // cast Definition to ChildDefinition
                 $definition = substr_replace($definition, '53', 2, 2);
@@ -116,67 +97,50 @@ class ResolveInstanceofConditionalsPass implements CompilerPassInterface
             }
             /** @var ChildDefinition $definition */
             $definition = unserialize($definition);
-            $definition->setParent($parent);
-
-            if (null !== $shared && !isset($definition->getChanges()['shared'])) {
-                $definition->setShared($shared);
+            $definition->set_parent($parent);
+            if (null !== $shared && !isset($definition->get_changes()['shared'])) {
+                $definition->set_shared($shared);
             }
-
             // Don't add tags to service decorators
-            $i = \count($instanceofTags);
+            $i = \count($instanceof_tags);
             while (0 <= --$i) {
-                [$interface, $tags] = $instanceofTags[$i];
+                [$interface, $tags] = $instanceof_tags[$i];
                 foreach ($tags as $k => $v) {
-                    if (null === $definition->getDecoratedService() || $interface === $definition->getClass() || \in_array($k, $tagsToKeep, true)) {
+                    if (null === $definition->get_decorated_service() || $interface === $definition->get_class() || \in_array($k, $tags_to_keep, true)) {
                         foreach ($v as $v) {
-                            if ($definition->hasTag($k) && \in_array($v, $definition->getTag($k), true)) {
+                            if ($definition->has_tag($k) && \in_array($v, $definition->get_tag($k), true)) {
                                 continue;
                             }
-                            $definition->addTag($k, $v);
+                            $definition->add_tag($k, $v);
                         }
                     }
                 }
             }
-
-            $definition->setMethodCalls(array_merge($instanceofCalls, $definition->getMethodCalls()));
-            $definition->setBindings($bindings + $instanceofBindings);
-
+            $definition->set_method_calls(array_merge($instanceof_calls, $definition->get_method_calls()));
+            $definition->set_bindings($bindings + $instanceof_bindings);
             // reset fields with "merge" behavior
-            $abstract
-                ->setBindings([])
-                ->setArguments([])
-                ->setMethodCalls([])
-                ->setDecoratedService(null)
-                ->setTags([])
-                ->setAbstract(true);
+            $abstract->set_bindings([])->set_arguments([])->set_method_calls([])->set_decorated_service(null)->set_tags([])->set_abstract(true);
         }
-
-        if ($definition->isSynthetic()) {
+        if ($definition->is_synthetic()) {
             // Ignore container.excluded tag on synthetic services
-            $definition->clearTag('container.excluded');
+            $definition->clear_tag('container.excluded');
         }
-
         return $definition;
     }
-
-    private function mergeConditionals(array $autoconfiguredInstanceof, array $instanceofConditionals, ContainerBuilder $container): array
+    private function merge_conditionals(array $autoconfigured_instanceof, array $instanceof_conditionals, Container_Builder $container): array
     {
         // make each value an array of ChildDefinition
-        $conditionals = array_map(static fn ($childDef): array => [$childDef], $autoconfiguredInstanceof);
-
-        foreach ($instanceofConditionals as $interface => $instanceofDef) {
+        $conditionals = array_map(static fn($child_def): array => [$child_def], $autoconfigured_instanceof);
+        foreach ($instanceof_conditionals as $interface => $instanceof_def) {
             // make sure the interface/class exists (but don't validate automaticInstanceofConditionals)
-            if (!$container->getReflectionClass($interface)) {
+            if (!$container->get_reflection_class($interface)) {
                 throw new RuntimeException(\sprintf('"%s" is set as an "instanceof" conditional, but it does not exist.', $interface));
             }
-
-            if (!isset($autoconfiguredInstanceof[$interface])) {
+            if (!isset($autoconfigured_instanceof[$interface])) {
                 $conditionals[$interface] = [];
             }
-
-            $conditionals[$interface][] = $instanceofDef;
+            $conditionals[$interface][] = $instanceof_def;
         }
-
         return $conditionals;
     }
 }

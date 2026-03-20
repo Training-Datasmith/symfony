@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Exception;
 
 /**
@@ -18,7 +16,7 @@ namespace Symfony\Component\Console\Exception;
  *
  * @author Jérôme Tamarelle <jerome@tamarelle.net>
  */
-class CommandNotFoundException extends \InvalidArgumentException implements ExceptionInterface
+class Command_Not_Found_Exception extends \InvalidArgumentException implements Exception_Interface
 {
     /**
      * @param string          $message      Exception message to throw
@@ -26,19 +24,14 @@ class CommandNotFoundException extends \InvalidArgumentException implements Exce
      * @param int             $code         Exception code
      * @param \Throwable|null $previous     Previous exception used for the exception chaining
      */
-    public function __construct(
-        string $message,
-        private readonly array $alternatives = [],
-        int $code = 0,
-        ?\Throwable $previous = null,
-    ) {
+    public function __construct(string $message, private readonly array $alternatives = [], int $code = 0, ?\Throwable $previous = null)
+    {
         parent::__construct($message, $code, $previous);
     }
-
     /**
      * @return string[]
      */
-    public function getAlternatives(): array
+    public function get_alternatives(): array
     {
         return $this->alternatives;
     }

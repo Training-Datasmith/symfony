@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,16 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event_Listener;
 
-namespace Symfony\Component\HttpKernel\EventListener;
-
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\UriSigner;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\KernelEvents;
-
+use Symfony\Component\Event_Dispatcher\Event_Subscriber_Interface;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Uri_Signer;
+use Symfony\Component\Http_Kernel\Event\Request_Event;
+use Symfony\Component\Http_Kernel\Exception\Access_Denied_Http_Exception;
+use Symfony\Component\Http_Kernel\Kernel_Events;
 /**
  * Handles content fragments represented by special URIs.
  *
@@ -33,67 +30,53 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * @final
  */
-class FragmentListener implements EventSubscriberInterface
+class Fragment_Listener implements Event_Subscriber_Interface
 {
     /**
      * @param string $fragmentPath The path that triggers this listener
      */
-    public function __construct(
-        private readonly UriSigner $signer,
-        private readonly string $fragmentPath = '/_fragment',
-    ) {
+    public function __construct(private readonly Uri_Signer $signer, private readonly string $fragment_path = '/_fragment')
+    {
     }
-
     /**
      * Fixes request attributes when the path is '/_fragment'.
      *
      * @throws AccessDeniedHttpException if the request does not come from a trusted IP
      */
-    public function onKernelRequest(RequestEvent $event): void
+    public function on_kernel_request(Request_Event $event): void
     {
-        $request = $event->getRequest();
-
-        if ($this->fragmentPath !== rawurldecode($request->getPathInfo())) {
+        $request = $event->get_request();
+        if ($this->fragment_path !== rawurldecode($request->get_path_info())) {
             return;
         }
-
         if ($request->attributes->has('_controller')) {
             // Is a sub-request: no need to parse _path but it should still be removed from query parameters as below.
             $request->query->remove('_path');
-
             return;
         }
-
-        if ($event->isMainRequest()) {
-            $this->validateRequest($request);
+        if ($event->is_main_request()) {
+            $this->validate_request($request);
         }
-
         parse_str($request->query->get('_path', ''), $attributes);
         $attributes['_check_controller_is_allowed'] = true;
         $request->attributes->add($attributes);
         $request->attributes->set('_route_params', array_replace($request->attributes->get('_route_params', []), $attributes));
         $request->query->remove('_path');
     }
-
-    protected function validateRequest(Request $request): void
+    protected function validate_request(Request $request): void
     {
         // is the Request safe?
-        if (!$request->isMethodSafe()) {
-            throw new AccessDeniedHttpException();
+        if (!$request->is_method_safe()) {
+            throw new Access_Denied_Http_Exception();
         }
-
         // is the Request signed?
-        if ($this->signer->checkRequest($request)) {
+        if ($this->signer->check_request($request)) {
             return;
         }
-
-        throw new AccessDeniedHttpException();
+        throw new Access_Denied_Http_Exception();
     }
-
-    public static function getSubscribedEvents(): array
+    public static function get_subscribed_events(): array
     {
-        return [
-            KernelEvents::REQUEST => [['onKernelRequest', 48]],
-        ];
+        return [Kernel_Events::REQUEST => [['onKernelRequest', 48]]];
     }
 }

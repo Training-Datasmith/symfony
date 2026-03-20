@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Resource;
 
 /**
@@ -19,12 +17,12 @@ namespace Symfony\Component\Config\Resource;
  *
  * @author Matthias Pigulla <mp@webfactory.de>
  */
-interface SelfCheckingResourceInterface extends ResourceInterface
+interface Self_Checking_Resource_Interface extends Resource_Interface
 {
     /**
      * Returns true if the resource has not been updated since the given timestamp.
      *
      * @param int $timestamp The last time the resource was loaded
      */
-    public function isFresh(int $timestamp): bool;
+    public function is_fresh(int $timestamp): bool;
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Adapter;
 
 use Psr\Cache\InvalidArgumentException;
-
 /**
  * Interface for invalidating cached items using tags.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-interface TagAwareAdapterInterface extends AdapterInterface
+interface Tag_Aware_Adapter_Interface extends Adapter_Interface
 {
     /**
      * Invalidates cached items using tags.
@@ -29,5 +26,5 @@ interface TagAwareAdapterInterface extends AdapterInterface
      *
      * @throws InvalidArgumentException When $tags is not valid
      */
-    public function invalidateTags(array $tags): bool;
+    public function invalidate_tags(array $tags): bool;
 }

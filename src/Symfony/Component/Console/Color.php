@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,126 +9,83 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console;
 
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  */
 final class Color
 {
-    private const COLORS = [
-        'black' => 0,
-        'red' => 1,
-        'green' => 2,
-        'yellow' => 3,
-        'blue' => 4,
-        'magenta' => 5,
-        'cyan' => 6,
-        'white' => 7,
-        'default' => 9,
-    ];
-
-    private const BRIGHT_COLORS = [
-        'gray' => 0,
-        'bright-red' => 1,
-        'bright-green' => 2,
-        'bright-yellow' => 3,
-        'bright-blue' => 4,
-        'bright-magenta' => 5,
-        'bright-cyan' => 6,
-        'bright-white' => 7,
-    ];
-
-    private const AVAILABLE_OPTIONS = [
-        'bold' => ['set' => 1, 'unset' => 22],
-        'underscore' => ['set' => 4, 'unset' => 24],
-        'blink' => ['set' => 5, 'unset' => 25],
-        'reverse' => ['set' => 7, 'unset' => 27],
-        'conceal' => ['set' => 8, 'unset' => 28],
-    ];
-
+    private const COLORS = ['black' => 0, 'red' => 1, 'green' => 2, 'yellow' => 3, 'blue' => 4, 'magenta' => 5, 'cyan' => 6, 'white' => 7, 'default' => 9];
+    private const BRIGHT_COLORS = ['gray' => 0, 'bright-red' => 1, 'bright-green' => 2, 'bright-yellow' => 3, 'bright-blue' => 4, 'bright-magenta' => 5, 'bright-cyan' => 6, 'bright-white' => 7];
+    private const AVAILABLE_OPTIONS = ['bold' => ['set' => 1, 'unset' => 22], 'underscore' => ['set' => 4, 'unset' => 24], 'blink' => ['set' => 5, 'unset' => 25], 'reverse' => ['set' => 7, 'unset' => 27], 'conceal' => ['set' => 8, 'unset' => 28]];
     private readonly string $foreground;
     private readonly string $background;
     private array $options = [];
-
     public function __construct(string $foreground = '', string $background = '', array $options = [])
     {
-        $this->foreground = $this->parseColor($foreground);
-        $this->background = $this->parseColor($background, true);
-
+        $this->foreground = $this->parse_color($foreground);
+        $this->background = $this->parse_color($background, true);
         foreach ($options as $option) {
             if (!isset(self::AVAILABLE_OPTIONS[$option])) {
                 throw new InvalidArgumentException(\sprintf('Invalid option specified: "%s". Expected one of (%s).', $option, implode(', ', array_keys(self::AVAILABLE_OPTIONS))));
             }
-
             $this->options[$option] = self::AVAILABLE_OPTIONS[$option];
         }
     }
-
     public function apply(string $text): string
     {
-        return $this->set().$text.$this->unset();
+        return $this->set() . $text . $this->unset();
     }
-
     public function set(): string
     {
-        $setCodes = [];
+        $set_codes = [];
         if ('' !== $this->foreground) {
-            $setCodes[] = $this->foreground;
+            $set_codes[] = $this->foreground;
         }
         if ('' !== $this->background) {
-            $setCodes[] = $this->background;
+            $set_codes[] = $this->background;
         }
         foreach ($this->options as $option) {
-            $setCodes[] = $option['set'];
+            $set_codes[] = $option['set'];
         }
-        if (0 === \count($setCodes)) {
+        if (0 === \count($set_codes)) {
             return '';
         }
-
-        return \sprintf("\033[%sm", implode(';', $setCodes));
+        return \sprintf("\x1b[%sm", implode(';', $set_codes));
     }
-
     public function unset(): string
     {
-        $unsetCodes = [];
+        $unset_codes = [];
         if ('' !== $this->foreground) {
-            $unsetCodes[] = 39;
+            $unset_codes[] = 39;
         }
         if ('' !== $this->background) {
-            $unsetCodes[] = 49;
+            $unset_codes[] = 49;
         }
         foreach ($this->options as $option) {
-            $unsetCodes[] = $option['unset'];
+            $unset_codes[] = $option['unset'];
         }
-        if (0 === \count($unsetCodes)) {
+        if (0 === \count($unset_codes)) {
             return '';
         }
-
-        return \sprintf("\033[%sm", implode(';', $unsetCodes));
+        return \sprintf("\x1b[%sm", implode(';', $unset_codes));
     }
-
-    private function parseColor(string $color, bool $background = false): string
+    private function parse_color(string $color, bool $background = false): string
     {
         if ('' === $color) {
             return '';
         }
-
         if ('#' === $color[0]) {
-            return ($background ? '4' : '3').Terminal::getColorMode()->convertFromHexToAnsiColorCode($color);
+            return ($background ? '4' : '3') . Terminal::get_color_mode()->convert_from_hex_to_ansi_color_code($color);
         }
-
         if (isset(self::COLORS[$color])) {
-            return ($background ? '4' : '3').self::COLORS[$color];
+            return ($background ? '4' : '3') . self::COLORS[$color];
         }
-
         if (isset(self::BRIGHT_COLORS[$color])) {
-            return ($background ? '10' : '9').self::BRIGHT_COLORS[$color];
+            return ($background ? '10' : '9') . self::BRIGHT_COLORS[$color];
         }
-
         throw new InvalidArgumentException(\sprintf('Invalid "%s" color; expected one of (%s).', $color, implode(', ', array_merge(array_keys(self::COLORS), array_keys(self::BRIGHT_COLORS)))));
     }
 }

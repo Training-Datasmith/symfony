@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,42 +9,32 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Dependency_Injection;
 
-namespace Symfony\Component\HttpKernel\DependencyInjection;
-
-use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Dependency_Injection\Argument\Iterator_Argument;
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * Register all services that have the "kernel.locale_aware" tag into the listener.
  *
  * @author Pierre Bobiet <pierrebobiet@gmail.com>
  */
-class RegisterLocaleAwareServicesPass implements CompilerPassInterface
+class Register_Locale_Aware_Services_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (!$container->hasDefinition('locale_aware_listener')) {
+        if (!$container->has_definition('locale_aware_listener')) {
             return;
         }
-
         $services = [];
-
-        foreach ($container->findTaggedServiceIds('kernel.locale_aware') as $id => $tags) {
+        foreach ($container->find_tagged_service_ids('kernel.locale_aware') as $id => $tags) {
             $services[] = new Reference($id);
         }
-
         if (!$services) {
-            $container->removeDefinition('locale_aware_listener');
-
+            $container->remove_definition('locale_aware_listener');
             return;
         }
-
-        $container
-            ->getDefinition('locale_aware_listener')
-            ->setArgument(0, new IteratorArgument($services))
-        ;
+        $container->get_definition('locale_aware_listener')->set_argument(0, new Iterator_Argument($services));
     }
 }

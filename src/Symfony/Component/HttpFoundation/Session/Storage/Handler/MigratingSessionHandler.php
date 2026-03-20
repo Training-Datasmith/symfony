@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpFoundation\Session\Storage\Handler;
+namespace Symfony\Component\Http_Foundation\Session\Storage\Handler;
 
 /**
  * Migrating session handler for migrating from one handler to another. It reads
@@ -22,81 +20,82 @@ namespace Symfony\Component\HttpFoundation\Session\Storage\Handler;
  * @author Ross Motley <ross.motley@amara.com>
  * @author Oliver Radwell <oliver.radwell@amara.com>
  */
-class MigratingSessionHandler implements \SessionHandlerInterface, \SessionUpdateTimestampHandlerInterface
+class Migrating_Session_Handler implements \Session_Handler_Interface, \Session_Update_Timestamp_Handler_Interface
 {
-    private readonly \SessionHandlerInterface&\SessionUpdateTimestampHandlerInterface $currentHandler;
-    private readonly \SessionHandlerInterface&\SessionUpdateTimestampHandlerInterface $writeOnlyHandler;
-
-    public function __construct(\SessionHandlerInterface $currentHandler, \SessionHandlerInterface $writeOnlyHandler)
+    private readonly \Session_Handler_Interface&\Session_Update_Timestamp_Handler_Interface $current_handler;
+    private readonly \Session_Handler_Interface&\Session_Update_Timestamp_Handler_Interface $write_only_handler;
+    public function __construct(\Session_Handler_Interface $current_handler, \Session_Handler_Interface $write_only_handler)
     {
-        if (!$currentHandler instanceof \SessionUpdateTimestampHandlerInterface) {
-            $currentHandler = new StrictSessionHandler($currentHandler);
+        if (!$current_handler instanceof \Session_Update_Timestamp_Handler_Interface) {
+            $current_handler = new Strict_Session_Handler($current_handler);
         }
-        if (!$writeOnlyHandler instanceof \SessionUpdateTimestampHandlerInterface) {
-            $writeOnlyHandler = new StrictSessionHandler($writeOnlyHandler);
+        if (!$write_only_handler instanceof \Session_Update_Timestamp_Handler_Interface) {
+            $write_only_handler = new Strict_Session_Handler($write_only_handler);
         }
-
-        $this->currentHandler = $currentHandler;
-        $this->writeOnlyHandler = $writeOnlyHandler;
+        $this->current_handler = $current_handler;
+        $this->write_only_handler = $write_only_handler;
     }
-
     public function close(): bool
     {
-        $result = $this->currentHandler->close();
-        $this->writeOnlyHandler->close();
-
+        $result = $this->current_handler->close();
+        $this->write_only_handler->close();
         return $result;
     }
-
-    public function destroy(#[\SensitiveParameter] string $sessionId): bool
+    public function destroy(
+        #[\Sensitive_Parameter]
+        string $session_id
+    ): bool
     {
-        $result = $this->currentHandler->destroy($sessionId);
-        $this->writeOnlyHandler->destroy($sessionId);
-
+        $result = $this->current_handler->destroy($session_id);
+        $this->write_only_handler->destroy($session_id);
         return $result;
     }
-
     public function gc(int $maxlifetime): int|false
     {
-        $result = $this->currentHandler->gc($maxlifetime);
-        $this->writeOnlyHandler->gc($maxlifetime);
-
+        $result = $this->current_handler->gc($maxlifetime);
+        $this->write_only_handler->gc($maxlifetime);
         return $result;
     }
-
-    public function open(string $savePath, string $sessionName): bool
+    public function open(string $save_path, string $session_name): bool
     {
-        $result = $this->currentHandler->open($savePath, $sessionName);
-        $this->writeOnlyHandler->open($savePath, $sessionName);
-
+        $result = $this->current_handler->open($save_path, $session_name);
+        $this->write_only_handler->open($save_path, $session_name);
         return $result;
     }
-
-    public function read(#[\SensitiveParameter] string $sessionId): string
+    public function read(
+        #[\Sensitive_Parameter]
+        string $session_id
+    ): string
     {
         // No reading from new handler until switch-over
-        return $this->currentHandler->read($sessionId);
+        return $this->current_handler->read($session_id);
     }
-
-    public function write(#[\SensitiveParameter] string $sessionId, string $sessionData): bool
+    public function write(
+        #[\Sensitive_Parameter]
+        string $session_id,
+        string $session_data
+    ): bool
     {
-        $result = $this->currentHandler->write($sessionId, $sessionData);
-        $this->writeOnlyHandler->write($sessionId, $sessionData);
-
+        $result = $this->current_handler->write($session_id, $session_data);
+        $this->write_only_handler->write($session_id, $session_data);
         return $result;
     }
-
-    public function validateId(#[\SensitiveParameter] string $sessionId): bool
+    public function validate_id(
+        #[\Sensitive_Parameter]
+        string $session_id
+    ): bool
     {
         // No reading from new handler until switch-over
-        return $this->currentHandler->validateId($sessionId);
+        return $this->current_handler->validate_id($session_id);
     }
-
-    public function updateTimestamp(#[\SensitiveParameter] string $sessionId, string $sessionData): bool
+    public function update_timestamp(
+        #[\Sensitive_Parameter]
+        string $session_id,
+        string $session_data
+    ): bool
     {
-        $result = $this->currentHandler->updateTimestamp($sessionId, $sessionData);
-        $this->writeOnlyHandler->updateTimestamp($sessionId, $sessionData);
-
+        $result = $this->current_handler->update_timestamp($session_id, $session_data);
+        $this->write_only_handler->update_timestamp($session_id, $session_data);
         return $result;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,13 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DependencyInjection\Attribute;
+namespace Symfony\Component\Dependency_Injection\Attribute;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::IS_REPEATABLE)]
-class AutoconfigureResourceTag extends Autoconfigure
+class Autoconfigure_Resource_Tag extends Autoconfigure
 {
     /**
      * @param string|null  $name       The resource tag name to add
@@ -25,10 +23,6 @@ class AutoconfigureResourceTag extends Autoconfigure
      */
     public function __construct(?string $name = null, array $attributes = [])
     {
-        parent::__construct(
-            resourceTags: [
-                [$name ?? 0 => $attributes],
-            ]
-        );
+        parent::__construct(resourceTags: [[$name ?? 0 => $attributes]]);
     }
 }

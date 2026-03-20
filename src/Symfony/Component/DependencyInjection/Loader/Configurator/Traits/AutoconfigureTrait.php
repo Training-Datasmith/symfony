@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator\Traits;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
-
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-
-trait AutoconfigureTrait
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+trait Autoconfigure_Trait
 {
     /**
      * Sets whether or not instanceof conditionals should be prepended with a global set.
@@ -26,8 +23,7 @@ trait AutoconfigureTrait
      */
     final public function autoconfigure(bool $autoconfigured = true): static
     {
-        $this->definition->setAutoconfigured($autoconfigured);
-
+        $this->definition->set_autoconfigured($autoconfigured);
         return $this;
     }
 }

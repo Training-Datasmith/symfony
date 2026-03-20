@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,27 +9,24 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Fragment;
 
-namespace Symfony\Component\HttpKernel\Fragment;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Controller\ControllerReference;
-
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Response;
+use Symfony\Component\Http_Kernel\Controller\Controller_Reference;
 /**
  * Interface implemented by all rendering strategies.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-interface FragmentRendererInterface
+interface Fragment_Renderer_Interface
 {
     /**
      * Renders a URI and returns the Response content.
      */
-    public function render(string|ControllerReference $uri, Request $request, array $options = []): Response;
-
+    public function render(string|Controller_Reference $uri, Request $request, array $options = []): Response;
     /**
      * Gets the name of the strategy.
      */
-    public function getName(): string;
+    public function get_name(): string;
 }

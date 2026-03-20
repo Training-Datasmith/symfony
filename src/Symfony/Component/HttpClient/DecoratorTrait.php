@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,49 +9,41 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Client;
 
-namespace Symfony\Component\HttpClient;
-
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface;
-use Symfony\Contracts\HttpClient\ResponseStreamInterface;
-use Symfony\Contracts\Service\ResetInterface;
-
+use Symfony\Contracts\Http_Client\Http_Client_Interface;
+use Symfony\Contracts\Http_Client\Response_Interface;
+use Symfony\Contracts\Http_Client\Response_Stream_Interface;
+use Symfony\Contracts\Service\Reset_Interface;
 /**
  * Eases with writing decorators.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-trait DecoratorTrait
+trait Decorator_Trait
 {
-    private HttpClientInterface $client;
-
-    public function __construct(?HttpClientInterface $client = null)
+    private Http_Client_Interface $client;
+    public function __construct(?Http_Client_Interface $client = null)
     {
-        $this->client = $client ?? HttpClient::create();
+        $this->client = $client ?? Http_Client::create();
     }
-
-    public function request(string $method, string $url, array $options = []): ResponseInterface
+    public function request(string $method, string $url, array $options = []): Response_Interface
     {
         return $this->client->request($method, $url, $options);
     }
-
-    public function stream(ResponseInterface|iterable $responses, ?float $timeout = null): ResponseStreamInterface
+    public function stream(Response_Interface|iterable $responses, ?float $timeout = null): Response_Stream_Interface
     {
         return $this->client->stream($responses, $timeout);
     }
-
-    public function withOptions(array $options): static
+    public function with_options(array $options): static
     {
         $clone = clone $this;
-        $clone->client = $this->client->withOptions($options);
-
+        $clone->client = $this->client->with_options($options);
         return $clone;
     }
-
     public function reset(): void
     {
-        if ($this->client instanceof ResetInterface) {
+        if ($this->client instanceof Reset_Interface) {
             $this->client->reset();
         }
     }

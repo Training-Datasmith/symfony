@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Css_Selector\Node;
 
-namespace Symfony\Component\CssSelector\Node;
-
-use Symfony\Component\CssSelector\Parser\Token;
-
+use Symfony\Component\Css_Selector\Parser\Token;
 /**
  * Represents a "<selector>:<name>(<arguments>)" node.
  *
@@ -25,48 +22,38 @@ use Symfony\Component\CssSelector\Parser\Token;
  *
  * @internal
  */
-class FunctionNode extends AbstractNode
+class Function_Node extends Abstract_Node
 {
     private readonly string $name;
-
     /**
      * @param Token[] $arguments
      */
-    public function __construct(
-        private readonly NodeInterface $selector,
-        string $name,
-        private readonly array $arguments = [],
-    ) {
+    public function __construct(private readonly Node_Interface $selector, string $name, private readonly array $arguments = [])
+    {
         $this->name = strtolower($name);
     }
-
-    public function getSelector(): NodeInterface
+    public function get_selector(): Node_Interface
     {
         return $this->selector;
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return $this->name;
     }
-
     /**
      * @return Token[]
      */
-    public function getArguments(): array
+    public function get_arguments(): array
     {
         return $this->arguments;
     }
-
-    public function getSpecificity(): Specificity
+    public function get_specificity(): Specificity
     {
-        return $this->selector->getSpecificity()->plus(new Specificity(0, 1, 0));
+        return $this->selector->get_specificity()->plus(new Specificity(0, 1, 0));
     }
-
     public function __toString(): string
     {
-        $arguments = implode(', ', array_map(static fn (Token $token): string => "'".$token->getValue()."'", $this->arguments));
-
-        return \sprintf('%s[%s:%s(%s)]', $this->getNodeName(), $this->selector, $this->name, $arguments ? '['.$arguments.']' : '');
+        $arguments = implode(', ', array_map(static fn(Token $token): string => "'" . $token->get_value() . "'", $this->arguments));
+        return \sprintf('%s[%s:%s(%s)]', $this->get_node_name(), $this->selector, $this->name, $arguments ? '[' . $arguments . ']' : '');
     }
 }

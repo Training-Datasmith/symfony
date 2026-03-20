@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Css_Selector\Parser;
 
-namespace Symfony\Component\CssSelector\Parser;
-
-use Symfony\Component\CssSelector\Exception\InternalErrorException;
-use Symfony\Component\CssSelector\Exception\SyntaxErrorException;
-
+use Symfony\Component\Css_Selector\Exception\Internal_Error_Exception;
+use Symfony\Component\Css_Selector\Exception\Syntax_Error_Exception;
 /**
  * CSS selector token stream.
  *
@@ -26,22 +23,19 @@ use Symfony\Component\CssSelector\Exception\SyntaxErrorException;
  *
  * @internal
  */
-class TokenStream
+class Token_Stream
 {
     /**
      * @var Token[]
      */
     private array $tokens = [];
-
     /**
      * @var Token[]
      */
     private array $used = [];
-
     private int $cursor = 0;
     private ?Token $peeked = null;
     private bool $peeking = false;
-
     /**
      * Pushes a token.
      *
@@ -50,10 +44,8 @@ class TokenStream
     public function push(Token $token): static
     {
         $this->tokens[] = $token;
-
         return $this;
     }
-
     /**
      * Freezes stream.
      *
@@ -63,96 +55,80 @@ class TokenStream
     {
         return $this;
     }
-
     /**
      * Returns next token.
      *
      * @throws InternalErrorException If there is no more token
      */
-    public function getNext(): Token
+    public function get_next(): Token
     {
         if ($this->peeking) {
             $this->peeking = false;
             $this->used[] = $this->peeked;
-
             return $this->peeked;
         }
-
         if (!isset($this->tokens[$this->cursor])) {
-            throw new InternalErrorException('Unexpected token stream end.');
+            throw new Internal_Error_Exception('Unexpected token stream end.');
         }
-
         return $this->tokens[$this->cursor++];
     }
-
     /**
      * Returns peeked token.
      */
-    public function getPeek(): Token
+    public function get_peek(): Token
     {
         if (!$this->peeking) {
-            $this->peeked = $this->getNext();
+            $this->peeked = $this->get_next();
             $this->peeking = true;
         }
-
         return $this->peeked;
     }
-
     /**
      * Returns used tokens.
      *
      * @return Token[]
      */
-    public function getUsed(): array
+    public function get_used(): array
     {
         return $this->used;
     }
-
     /**
      * Returns next identifier token.
      *
      * @throws SyntaxErrorException If next token is not an identifier
      */
-    public function getNextIdentifier(): string
+    public function get_next_identifier(): string
     {
-        $next = $this->getNext();
-
-        if (!$next->isIdentifier()) {
-            throw SyntaxErrorException::unexpectedToken('identifier', $next);
+        $next = $this->get_next();
+        if (!$next->is_identifier()) {
+            throw Syntax_Error_Exception::unexpected_token('identifier', $next);
         }
-
-        return $next->getValue();
+        return $next->get_value();
     }
-
     /**
      * Returns next identifier or null if star delimiter token is found.
      *
      * @throws SyntaxErrorException If next token is not an identifier or a star delimiter
      */
-    public function getNextIdentifierOrStar(): ?string
+    public function get_next_identifier_or_star(): ?string
     {
-        $next = $this->getNext();
-
-        if ($next->isIdentifier()) {
-            return $next->getValue();
+        $next = $this->get_next();
+        if ($next->is_identifier()) {
+            return $next->get_value();
         }
-
-        if ($next->isDelimiter(['*'])) {
+        if ($next->is_delimiter(['*'])) {
             return null;
         }
-
-        throw SyntaxErrorException::unexpectedToken('identifier or "*"', $next);
+        throw Syntax_Error_Exception::unexpected_token('identifier or "*"', $next);
     }
-
     /**
      * Skips next whitespace if any.
      */
-    public function skipWhitespace(): void
+    public function skip_whitespace(): void
     {
-        $peek = $this->getPeek();
-
-        if ($peek->isWhitespace()) {
-            $this->getNext();
+        $peek = $this->get_peek();
+        if ($peek->is_whitespace()) {
+            $this->get_next();
         }
     }
 }

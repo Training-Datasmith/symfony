@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,274 +9,218 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Cache\Dependency_Injection;
 
-namespace Symfony\Component\Cache\DependencyInjection;
-
-use Symfony\Component\Cache\Adapter\AbstractAdapter;
-use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Component\Cache\Adapter\ChainAdapter;
-use Symfony\Component\Cache\Adapter\NullAdapter;
-use Symfony\Component\Cache\Adapter\ParameterNormalizer;
-use Symfony\Component\Cache\Adapter\TagAwareAdapter;
-use Symfony\Component\Cache\Messenger\EarlyExpirationDispatcher;
-use Symfony\Component\Cache\PruneableInterface;
-use Symfony\Component\DependencyInjection\ChildDefinition;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Cache\Adapter\Abstract_Adapter;
+use Symfony\Component\Cache\Adapter\Array_Adapter;
+use Symfony\Component\Cache\Adapter\Chain_Adapter;
+use Symfony\Component\Cache\Adapter\Null_Adapter;
+use Symfony\Component\Cache\Adapter\Parameter_Normalizer;
+use Symfony\Component\Cache\Adapter\Tag_Aware_Adapter;
+use Symfony\Component\Cache\Messenger\Early_Expiration_Dispatcher;
+use Symfony\Component\Cache\Pruneable_Interface;
+use Symfony\Component\Dependency_Injection\Child_Definition;
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class CachePoolPass implements CompilerPassInterface
+class Cache_Pool_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if ($container->hasParameter('cache.prefix.seed')) {
-            $seed = $container->getParameterBag()->resolveValue($container->getParameter('cache.prefix.seed'));
+        if ($container->has_parameter('cache.prefix.seed')) {
+            $seed = $container->get_parameter_bag()->resolve_value($container->get_parameter('cache.prefix.seed'));
         } else {
-            $seed = '_'.$container->getParameter('kernel.project_dir');
-            $seed .= '.'.$container->getParameter('kernel.container_class');
+            $seed = '_' . $container->get_parameter('kernel.project_dir');
+            $seed .= '.' . $container->get_parameter('kernel.container_class');
         }
-
-        $needsMessageHandler = false;
-        $allPools = [];
+        $needs_message_handler = false;
+        $all_pools = [];
         $clearers = [];
-        $attributes = [
-            'provider',
-            'name',
-            'namespace',
-            'default_lifetime',
-            'early_expiration_message_bus',
-            'reset',
-            'pruneable',
-        ];
-        foreach ($container->findTaggedServiceIds('cache.pool') as $id => $tags) {
-            $adapter = $pool = $container->getDefinition($id);
-            if ($pool->isAbstract()) {
+        $attributes = ['provider', 'name', 'namespace', 'default_lifetime', 'early_expiration_message_bus', 'reset', 'pruneable'];
+        foreach ($container->find_tagged_service_ids('cache.pool') as $id => $tags) {
+            $adapter = $pool = $container->get_definition($id);
+            if ($pool->is_abstract()) {
                 continue;
             }
-            $class = $adapter->getClass();
-            $providers = $adapter->getArguments();
-            while ($adapter instanceof ChildDefinition) {
-                $adapter = $container->findDefinition($adapter->getParent());
-                $class = $class ?: $adapter->getClass();
-                $providers += $adapter->getArguments();
-                if ($t = $adapter->getTag('cache.pool')) {
+            $class = $adapter->get_class();
+            $providers = $adapter->get_arguments();
+            while ($adapter instanceof Child_Definition) {
+                $adapter = $container->find_definition($adapter->get_parent());
+                $class = $class ?: $adapter->get_class();
+                $providers += $adapter->get_arguments();
+                if ($t = $adapter->get_tag('cache.pool')) {
                     $tags[0] += $t[0];
                 }
             }
             $name = $tags[0]['name'] ?? $id;
             if (!isset($tags[0]['namespace'])) {
-                $namespaceSeed = $seed;
+                $namespace_seed = $seed;
                 if (null !== $class) {
-                    $namespaceSeed .= '.'.$class;
+                    $namespace_seed .= '.' . $class;
                 }
-
-                $tags[0]['namespace'] = $this->getNamespace($namespaceSeed, $name);
+                $tags[0]['namespace'] = $this->get_namespace($namespace_seed, $name);
             }
             if (isset($tags[0]['clearer'])) {
                 $clearer = $tags[0]['clearer'];
-                while ($container->hasAlias($clearer)) {
-                    $clearer = (string) $container->getAlias($clearer);
+                while ($container->has_alias($clearer)) {
+                    $clearer = (string) $container->get_alias($clearer);
                 }
             } else {
                 $clearer = null;
             }
-            $marshallerServiceId = $tags[0]['marshaller'] ?? null;
+            $marshaller_service_id = $tags[0]['marshaller'] ?? null;
             unset($tags[0]['clearer'], $tags[0]['name'], $tags[0]['marshaller']);
-
             if (isset($tags[0]['provider'])) {
-                $tags[0]['provider'] = new Reference(static::getServiceProvider($container, $tags[0]['provider']));
+                $tags[0]['provider'] = new Reference(static::get_service_provider($container, $tags[0]['provider']));
             }
-
-            $pruneable = $tags[0]['pruneable'] ?? $container->getReflectionClass($class, false)?->implementsInterface(PruneableInterface::class) ?? false;
-
-            if (ChainAdapter::class === $class) {
+            $pruneable = $tags[0]['pruneable'] ?? $container->get_reflection_class($class, false)?->implements_interface(Pruneable_Interface::class) ?? false;
+            if (Chain_Adapter::class === $class) {
                 $adapters = [];
                 foreach ($providers['index_0'] ?? $providers[0] as $provider => $adapter) {
-                    if ($adapter instanceof ChildDefinition) {
-                        $chainedPool = clone $adapter;
+                    if ($adapter instanceof Child_Definition) {
+                        $chained_pool = clone $adapter;
                     } else {
-                        $chainedPool = $adapter = new ChildDefinition($adapter);
+                        $chained_pool = $adapter = new Child_Definition($adapter);
                     }
-
-                    $chainedTags = [\is_int($provider) ? [] : ['provider' => $provider]];
-                    $chainedClass = '';
-
-                    while ($adapter instanceof ChildDefinition) {
-                        $adapter = $container->findDefinition($adapter->getParent());
-                        $chainedClass = $chainedClass ?: $adapter->getClass();
-                        if ($t = $adapter->getTag('cache.pool')) {
-                            $chainedTags[0] += $t[0];
+                    $chained_tags = [\is_int($provider) ? [] : ['provider' => $provider]];
+                    $chained_class = '';
+                    while ($adapter instanceof Child_Definition) {
+                        $adapter = $container->find_definition($adapter->get_parent());
+                        $chained_class = $chained_class ?: $adapter->get_class();
+                        if ($t = $adapter->get_tag('cache.pool')) {
+                            $chained_tags[0] += $t[0];
                         }
                     }
-
-                    if (ChainAdapter::class === $chainedClass) {
-                        throw new InvalidArgumentException(\sprintf('Invalid service "%s": chain of adapters cannot reference another chain, found "%s".', $id, $chainedPool->getParent()));
+                    if (Chain_Adapter::class === $chained_class) {
+                        throw new InvalidArgumentException(\sprintf('Invalid service "%s": chain of adapters cannot reference another chain, found "%s".', $id, $chained_pool->get_parent()));
                     }
-
                     $i = 0;
-
-                    if (isset($chainedTags[0]['provider'])) {
-                        $chainedPool->replaceArgument($i++, new Reference(static::getServiceProvider($container, $chainedTags[0]['provider'])));
+                    if (isset($chained_tags[0]['provider'])) {
+                        $chained_pool->replace_argument($i++, new Reference(static::get_service_provider($container, $chained_tags[0]['provider'])));
                     }
-
-                    if (isset($tags[0]['namespace']) && !\in_array($adapter->getClass(), [ArrayAdapter::class, NullAdapter::class], true)) {
-                        $chainedPool->replaceArgument($i++, $tags[0]['namespace']);
+                    if (isset($tags[0]['namespace']) && !\in_array($adapter->get_class(), [Array_Adapter::class, Null_Adapter::class], true)) {
+                        $chained_pool->replace_argument($i++, $tags[0]['namespace']);
                     }
-
                     if (isset($tags[0]['default_lifetime'])) {
-                        $chainedPool->replaceArgument($i++, $tags[0]['default_lifetime']);
+                        $chained_pool->replace_argument($i++, $tags[0]['default_lifetime']);
                     }
-
-                    if (null !== $marshallerServiceId) {
-                        if (null !== $marshallerIndex = $this->findDefaultMarshallerArgumentIndex($adapter)) {
-                            $chainedPool->replaceArgument($marshallerIndex, new Reference($marshallerServiceId));
-                        } elseif (!\in_array($chainedClass, [ArrayAdapter::class, NullAdapter::class], true)) {
-                            throw new InvalidArgumentException(\sprintf('The "marshaller" attribute of the "cache.pool" tag for service "%s" is not supported by chained adapter "%s".', $id, $chainedClass));
+                    if (null !== $marshaller_service_id) {
+                        if (null !== $marshaller_index = $this->find_default_marshaller_argument_index($adapter)) {
+                            $chained_pool->replace_argument($marshaller_index, new Reference($marshaller_service_id));
+                        } elseif (!\in_array($chained_class, [Array_Adapter::class, Null_Adapter::class], true)) {
+                            throw new InvalidArgumentException(\sprintf('The "marshaller" attribute of the "cache.pool" tag for service "%s" is not supported by chained adapter "%s".', $id, $chained_class));
                         }
                     }
-
-                    $adapters[] = $chainedPool;
+                    $adapters[] = $chained_pool;
                 }
-
-                $pool->replaceArgument(0, $adapters);
+                $pool->replace_argument(0, $adapters);
                 unset($tags[0]['provider'], $tags[0]['namespace']);
                 $i = 1;
             } else {
                 $i = 0;
             }
-
             foreach ($attributes as $attr) {
                 if (!isset($tags[0][$attr])) {
                     // no-op
                 } elseif ('reset' === $attr) {
                     if ($tags[0][$attr]) {
-                        $pool->addTag('kernel.reset', ['method' => $tags[0][$attr]]);
+                        $pool->add_tag('kernel.reset', ['method' => $tags[0][$attr]]);
                     }
                 } elseif ('early_expiration_message_bus' === $attr) {
-                    $needsMessageHandler = true;
-                    $pool->addMethodCall('setCallbackWrapper', [(new Definition(EarlyExpirationDispatcher::class))
-                        ->addArgument(new Reference($tags[0]['early_expiration_message_bus']))
-                        ->addArgument(new Reference('reverse_container'))
-                        ->addArgument(
-                            (new Definition('callable'))
-                            ->setFactory([new Reference($id), 'setCallbackWrapper'])
-                            ->addArgument(null)
-                        ),
-                    ]);
-                    $pool->addTag('container.reversible');
+                    $needs_message_handler = true;
+                    $pool->add_method_call('setCallbackWrapper', [(new Definition(Early_Expiration_Dispatcher::class))->add_argument(new Reference($tags[0]['early_expiration_message_bus']))->add_argument(new Reference('reverse_container'))->add_argument((new Definition('callable'))->set_factory([new Reference($id), 'setCallbackWrapper'])->add_argument(null))]);
+                    $pool->add_tag('container.reversible');
                 } elseif ('pruneable' === $attr) {
                     // no-op
-                } elseif ('namespace' !== $attr || !\in_array($class, [ArrayAdapter::class, NullAdapter::class, TagAwareAdapter::class], true)) {
+                } elseif ('namespace' !== $attr || !\in_array($class, [Array_Adapter::class, Null_Adapter::class, Tag_Aware_Adapter::class], true)) {
                     $argument = $tags[0][$attr];
-
                     if ('default_lifetime' === $attr && !is_numeric($argument)) {
-                        $argument = (new Definition('int', [$argument]))
-                            ->setFactory(ParameterNormalizer::normalizeDuration(...));
+                        $argument = (new Definition('int', [$argument]))->set_factory(Parameter_Normalizer::normalize_duration(...));
                     }
-
-                    $pool->replaceArgument($i++, $argument);
+                    $pool->replace_argument($i++, $argument);
                 }
                 unset($tags[0][$attr]);
             }
-
-            if (null !== $marshallerServiceId && ChainAdapter::class !== $class) {
-                if (null === $marshallerIndex = $this->findDefaultMarshallerArgumentIndex($adapter)) {
+            if (null !== $marshaller_service_id && Chain_Adapter::class !== $class) {
+                if (null === $marshaller_index = $this->find_default_marshaller_argument_index($adapter)) {
                     throw new InvalidArgumentException(\sprintf('The "marshaller" attribute of the "cache.pool" tag for service "%s" is not supported by adapter "%s".', $id, $class));
                 }
-                $pool->replaceArgument($marshallerIndex, new Reference($marshallerServiceId));
+                $pool->replace_argument($marshaller_index, new Reference($marshaller_service_id));
             }
-
             if (!empty($tags[0])) {
                 throw new InvalidArgumentException(\sprintf('Invalid "cache.pool" tag for service "%s": accepted attributes are "clearer", "provider", "name", "namespace", "default_lifetime", "early_expiration_message_bus", "reset", "pruneable" and "marshaller", found "%s".', $id, implode('", "', array_keys($tags[0]))));
             }
-
             if (null !== $clearer) {
                 $clearers[$clearer][$name] = new Reference($id, $container::IGNORE_ON_UNINITIALIZED_REFERENCE);
             }
-
-            $poolTags = $pool->getTags();
-            $poolTags['cache.pool'][0]['pruneable'] ??= $pruneable;
-            $pool->setTags($poolTags);
-
-            $allPools[$name] = new Reference($id, $container::IGNORE_ON_UNINITIALIZED_REFERENCE);
+            $pool_tags = $pool->get_tags();
+            $pool_tags['cache.pool'][0]['pruneable'] ??= $pruneable;
+            $pool->set_tags($pool_tags);
+            $all_pools[$name] = new Reference($id, $container::IGNORE_ON_UNINITIALIZED_REFERENCE);
         }
-
-        if (!$needsMessageHandler) {
-            $container->removeDefinition('cache.early_expiration_handler');
+        if (!$needs_message_handler) {
+            $container->remove_definition('cache.early_expiration_handler');
         }
-
-        $notAliasedCacheClearerId = 'cache.global_clearer';
-        while ($container->hasAlias($notAliasedCacheClearerId)) {
-            $notAliasedCacheClearerId = (string) $container->getAlias($notAliasedCacheClearerId);
+        $not_aliased_cache_clearer_id = 'cache.global_clearer';
+        while ($container->has_alias($not_aliased_cache_clearer_id)) {
+            $not_aliased_cache_clearer_id = (string) $container->get_alias($not_aliased_cache_clearer_id);
         }
-        if ($container->hasDefinition($notAliasedCacheClearerId)) {
-            $clearers[$notAliasedCacheClearerId] = $allPools;
+        if ($container->has_definition($not_aliased_cache_clearer_id)) {
+            $clearers[$not_aliased_cache_clearer_id] = $all_pools;
         }
-
         foreach ($clearers as $id => $pools) {
-            $clearer = $container->getDefinition($id);
-            if ($clearer instanceof ChildDefinition) {
-                $clearer->replaceArgument(0, $pools);
+            $clearer = $container->get_definition($id);
+            if ($clearer instanceof Child_Definition) {
+                $clearer->replace_argument(0, $pools);
             } else {
-                $clearer->setArgument(0, $pools);
+                $clearer->set_argument(0, $pools);
             }
-            $clearer->addTag('cache.pool.clearer');
+            $clearer->add_tag('cache.pool.clearer');
         }
-
-        $allPoolsKeys = array_keys($allPools);
-
-        if ($container->hasDefinition('console.command.cache_pool_list')) {
-            $container->getDefinition('console.command.cache_pool_list')->replaceArgument(0, $allPoolsKeys);
+        $all_pools_keys = array_keys($all_pools);
+        if ($container->has_definition('console.command.cache_pool_list')) {
+            $container->get_definition('console.command.cache_pool_list')->replace_argument(0, $all_pools_keys);
         }
-
-        if ($container->hasDefinition('console.command.cache_pool_clear')) {
-            $container->getDefinition('console.command.cache_pool_clear')->addArgument($allPoolsKeys);
+        if ($container->has_definition('console.command.cache_pool_clear')) {
+            $container->get_definition('console.command.cache_pool_clear')->add_argument($all_pools_keys);
         }
-
-        if ($container->hasDefinition('console.command.cache_pool_delete')) {
-            $container->getDefinition('console.command.cache_pool_delete')->addArgument($allPoolsKeys);
+        if ($container->has_definition('console.command.cache_pool_delete')) {
+            $container->get_definition('console.command.cache_pool_delete')->add_argument($all_pools_keys);
         }
     }
-
-    private function getNamespace(string $seed, string $id): string
+    private function get_namespace(string $seed, string $id): string
     {
-        return substr(str_replace('/', '-', base64_encode(hash('xxh128', $id.$seed, true))), 0, 10);
+        return substr(str_replace('/', '-', base64_encode(hash('xxh128', $id . $seed, true))), 0, 10);
     }
-
     /**
      * @internal
      */
-    public static function getServiceProvider(ContainerBuilder $container, string $name): string
+    public static function get_service_provider(Container_Builder $container, string $name): string
     {
-        $container->resolveEnvPlaceholders($name, null, $usedEnvs);
-
-        if ($usedEnvs || preg_match('#^[a-z]++:#', $name)) {
+        $container->resolve_env_placeholders($name, null, $used_envs);
+        if ($used_envs || preg_match('#^[a-z]++:#', $name)) {
             $dsn = $name;
-
-            if (!$container->hasDefinition($name = '.cache_connection.'.ContainerBuilder::hash($dsn))) {
-                $definition = new Definition(AbstractAdapter::class);
-                $definition->setFactory(AbstractAdapter::createConnection(...));
-                $definition->setArguments([$dsn, ['lazy' => true]]);
-                $container->setDefinition($name, $definition);
+            if (!$container->has_definition($name = '.cache_connection.' . Container_Builder::hash($dsn))) {
+                $definition = new Definition(Abstract_Adapter::class);
+                $definition->set_factory(Abstract_Adapter::create_connection(...));
+                $definition->set_arguments([$dsn, ['lazy' => true]]);
+                $container->set_definition($name, $definition);
             }
         }
-
         return $name;
     }
-
-    private function findDefaultMarshallerArgumentIndex(Definition $definition): int|string|null
+    private function find_default_marshaller_argument_index(Definition $definition): int|string|null
     {
-        foreach ($definition->getArguments() as $index => $argument) {
+        foreach ($definition->get_arguments() as $index => $argument) {
             if ($argument instanceof Reference && 'cache.default_marshaller' === (string) $argument) {
                 return \is_int($index) ? $index : (str_starts_with($index, 'index_') ? (int) substr($index, 6) : $index);
             }
         }
-
         return null;
     }
 }

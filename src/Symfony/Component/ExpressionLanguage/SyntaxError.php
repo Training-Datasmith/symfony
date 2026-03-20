@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,10 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Expression_Language;
 
-namespace Symfony\Component\ExpressionLanguage;
-
-class SyntaxError extends \LogicException
+class Syntax_Error extends \LogicException
 {
     public function __construct(string $message, int $cursor = 0, string $expression = '', ?string $subject = null, ?array $proposals = null)
     {
@@ -22,22 +20,19 @@ class SyntaxError extends \LogicException
             $message = \sprintf('%s for expression `%s`', $message, $expression);
         }
         $message .= '.';
-
         if (null !== $subject && null !== $proposals) {
-            $minScore = \INF;
+            $min_score = \INF;
             foreach ($proposals as $proposal) {
                 $distance = levenshtein($subject, $proposal);
-                if ($distance < $minScore) {
+                if ($distance < $min_score) {
                     $guess = $proposal;
-                    $minScore = $distance;
+                    $min_score = $distance;
                 }
             }
-
-            if (isset($guess) && $minScore < 3) {
+            if (isset($guess) && $min_score < 3) {
                 $message .= \sprintf(' Did you mean "%s"?', $guess);
             }
         }
-
         parent::__construct($message);
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,22 +9,18 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Twig\Extension;
 
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
-
+use Twig\Extension\Abstract_Extension;
+use Twig\Twig_Function;
 /**
  * @author Christian Flothmann <christian.flothmann@sensiolabs.de>
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-final class CsrfExtension extends AbstractExtension
+final class Csrf_Extension extends Abstract_Extension
 {
-    public function getFunctions(): array
+    public function get_functions(): array
     {
-        return [
-            new TwigFunction('csrf_token', [CsrfRuntime::class, 'getCsrfToken']),
-        ];
+        return [new Twig_Function('csrf_token', [Csrf_Runtime::class, 'getCsrfToken'])];
     }
 }

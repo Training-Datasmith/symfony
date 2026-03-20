@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,38 +9,31 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator;
-
-use Symfony\Component\DependencyInjection\Definition;
-
+use Symfony\Component\Dependency_Injection\Definition;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class FromCallableConfigurator extends AbstractServiceConfigurator
+class From_Callable_Configurator extends Abstract_Service_Configurator
 {
-    use Traits\AbstractTrait;
-    use Traits\AutoconfigureTrait;
-    use Traits\AutowireTrait;
-    use Traits\BindTrait;
-    use Traits\DecorateTrait;
-    use Traits\DeprecateTrait;
-    use Traits\LazyTrait;
-    use Traits\PublicTrait;
-    use Traits\ShareTrait;
-    use Traits\TagTrait;
-
+    use Traits\Abstract_Trait;
+    use Traits\Autoconfigure_Trait;
+    use Traits\Autowire_Trait;
+    use Traits\Bind_Trait;
+    use Traits\Decorate_Trait;
+    use Traits\Deprecate_Trait;
+    use Traits\Lazy_Trait;
+    use Traits\Public_Trait;
+    use Traits\Share_Trait;
+    use Traits\Tag_Trait;
     public const FACTORY = 'services';
-
-    public function __construct(
-        private ServiceConfigurator $serviceConfigurator,
-        Definition $definition,
-    ) {
-        parent::__construct($serviceConfigurator->parent, $definition, $serviceConfigurator->id);
+    public function __construct(private Service_Configurator $service_configurator, Definition $definition)
+    {
+        parent::__construct($service_configurator->parent, $definition, $service_configurator->id);
     }
-
     public function __destruct()
     {
-        $this->serviceConfigurator->__destruct();
+        $this->service_configurator->__destruct();
     }
 }

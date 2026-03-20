@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Output;
 
 /**
@@ -19,14 +17,12 @@ namespace Symfony\Component\Console\Output;
  *
  * @author Dariusz Górecki <darek.krk@gmail.com>
  */
-interface ConsoleOutputInterface extends OutputInterface
+interface Console_Output_Interface extends Output_Interface
 {
     /**
      * Gets the OutputInterface for errors.
      */
-    public function getErrorOutput(): OutputInterface;
-
-    public function setErrorOutput(OutputInterface $error): void;
-
-    public function section(): ConsoleSectionOutput;
+    public function get_error_output(): Output_Interface;
+    public function set_error_output(Output_Interface $error): void;
+    public function section(): Console_Section_Output;
 }

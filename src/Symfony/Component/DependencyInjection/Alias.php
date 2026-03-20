@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,48 +9,40 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection;
 
-namespace Symfony\Component\DependencyInjection;
-
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
 class Alias implements \Stringable
 {
     private const DEFAULT_DEPRECATION_TEMPLATE = 'The "%alias_id%" service alias is deprecated. You should stop using it, as it will be removed in the future.';
     private array $deprecation = [];
-
     public function __construct(private readonly string $id, private bool $public = false)
     {
     }
-
     /**
      * Checks if this DI Alias should be public or not.
      */
-    public function isPublic(): bool
+    public function is_public(): bool
     {
         return $this->public;
     }
-
     /**
      * Sets if this Alias is public.
      *
      * @return $this
      */
-    public function setPublic(bool $boolean): static
+    public function set_public(bool $boolean): static
     {
         $this->public = $boolean;
-
         return $this;
     }
-
     /**
      * Whether this alias is private.
      */
-    public function isPrivate(): bool
+    public function is_private(): bool
     {
         return !$this->public;
     }
-
     /**
      * Whether this alias is deprecated, that means it should not be referenced
      * anymore.
@@ -64,45 +55,34 @@ class Alias implements \Stringable
      *
      * @throws InvalidArgumentException when the message template is invalid
      */
-    public function setDeprecated(string $package, string $version, string $message): static
+    public function set_deprecated(string $package, string $version, string $message): static
     {
         if ('' !== $message) {
             if (preg_match('#[\r\n]|\*/#', $message)) {
                 throw new InvalidArgumentException('Invalid characters found in deprecation template.');
             }
-
             if (!str_contains($message, '%alias_id%')) {
                 throw new InvalidArgumentException('The deprecation template must contain the "%alias_id%" placeholder.');
             }
         }
-
         $this->deprecation = ['package' => $package, 'version' => $version, 'message' => $message ?: self::DEFAULT_DEPRECATION_TEMPLATE];
-
         return $this;
     }
-
-    public function isDeprecated(): bool
+    public function is_deprecated(): bool
     {
         return (bool) $this->deprecation;
     }
-
     /**
      * @param string $id Service id relying on this definition
      */
-    public function getDeprecation(string $id): array
+    public function get_deprecation(string $id): array
     {
-        return [
-            'package' => $this->deprecation['package'],
-            'version' => $this->deprecation['version'],
-            'message' => str_replace('%alias_id%', $id, $this->deprecation['message']),
-        ];
+        return ['package' => $this->deprecation['package'], 'version' => $this->deprecation['version'], 'message' => str_replace('%alias_id%', $id, $this->deprecation['message'])];
     }
-
     public function __toString(): string
     {
         return $this->id;
     }
-
     public function __serialize(): array
     {
         $data = [];
@@ -110,12 +90,11 @@ class Alias implements \Stringable
             if (!$v) {
                 continue;
             }
-            if (false !== $i = strrpos((string) $k, "\0")) {
+            if (false !== $i = strrpos((string) $k, "\x00")) {
                 $k = substr((string) $k, 1 + $i);
             }
             $data[$k] = $v;
         }
-
         return $data;
     }
 }

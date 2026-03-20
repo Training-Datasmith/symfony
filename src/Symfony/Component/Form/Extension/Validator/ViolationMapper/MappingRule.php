@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,67 +9,55 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Extension\Validator\Violation_Mapper;
 
-namespace Symfony\Component\Form\Extension\Validator\ViolationMapper;
-
-use Symfony\Component\Form\Exception\ErrorMappingException;
-use Symfony\Component\Form\FormInterface;
-
+use Symfony\Component\Form\Exception\Error_Mapping_Exception;
+use Symfony\Component\Form\Form_Interface;
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class MappingRule
+class Mapping_Rule
 {
-    public function __construct(
-        private readonly FormInterface $origin,
-        private string $propertyPath,
-        private readonly string $targetPath,
-    ) {
+    public function __construct(private readonly Form_Interface $origin, private string $property_path, private readonly string $target_path)
+    {
     }
-
-    public function getOrigin(): FormInterface
+    public function get_origin(): Form_Interface
     {
         return $this->origin;
     }
-
     /**
      * Matches a property path against the rule path.
      *
      * If the rule matches, the form mapped by the rule is returned.
      * Otherwise this method returns false.
      */
-    public function match(string $propertyPath): ?FormInterface
+    public function match(string $property_path): ?Form_Interface
     {
-        return $propertyPath === $this->propertyPath ? $this->getTarget() : null;
+        return $property_path === $this->property_path ? $this->get_target() : null;
     }
-
     /**
      * Matches a property path against a prefix of the rule path.
      */
-    public function isPrefix(string $propertyPath): bool
+    public function is_prefix(string $property_path): bool
     {
-        $length = \strlen($propertyPath);
-        $prefix = substr($this->propertyPath, 0, $length);
-        $next = $this->propertyPath[$length] ?? null;
-
-        return $prefix === $propertyPath && ('[' === $next || '.' === $next);
+        $length = \strlen($property_path);
+        $prefix = substr($this->property_path, 0, $length);
+        $next = $this->property_path[$length] ?? null;
+        return $prefix === $property_path && ('[' === $next || '.' === $next);
     }
-
     /**
      * @throws ErrorMappingException
      */
-    public function getTarget(): FormInterface
+    public function get_target(): Form_Interface
     {
-        $childNames = explode('.', $this->targetPath);
+        $child_names = explode('.', $this->target_path);
         $target = $this->origin;
-
-        foreach ($childNames as $childName) {
-            if (!$target->has($childName)) {
-                throw new ErrorMappingException(\sprintf('The child "%s" of "%s" mapped by the rule "%s" in "%s" does not exist.', $childName, $target->getName(), $this->targetPath, $this->origin->getName()));
+        foreach ($child_names as $child_name) {
+            if (!$target->has($child_name)) {
+                throw new Error_Mapping_Exception(\sprintf('The child "%s" of "%s" mapped by the rule "%s" in "%s" does not exist.', $child_name, $target->get_name(), $this->target_path, $this->origin->get_name()));
             }
-            $target = $target->get($childName);
+            $target = $target->get($child_name);
         }
-
         return $target;
     }
 }

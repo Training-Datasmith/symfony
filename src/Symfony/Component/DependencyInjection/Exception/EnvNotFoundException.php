@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,13 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DependencyInjection\Exception;
+namespace Symfony\Component\Dependency_Injection\Exception;
 
 /**
  * This exception is thrown when an environment variable is not found.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class EnvNotFoundException extends InvalidArgumentException
+class Env_Not_Found_Exception extends InvalidArgumentException
 {
 }

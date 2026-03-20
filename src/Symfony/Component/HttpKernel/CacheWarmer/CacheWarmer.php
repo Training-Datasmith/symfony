@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,25 +9,22 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpKernel\CacheWarmer;
+namespace Symfony\Component\Http_Kernel\Cache_Warmer;
 
 /**
  * Abstract cache warmer that knows how to write a file to the cache.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-abstract class CacheWarmer implements CacheWarmerInterface
+abstract class Cache_Warmer implements Cache_Warmer_Interface
 {
-    protected function writeCacheFile(string $file, $content): void
+    protected function write_cache_file(string $file, $content): void
     {
-        $tmpFile = @tempnam(\dirname($file), basename($file));
-        if (false !== @file_put_contents($tmpFile, $content) && @rename($tmpFile, $file)) {
-            @chmod($file, 0o666 & ~umask());
-
+        $tmp_file = @tempnam(\dirname($file), basename($file));
+        if (false !== @file_put_contents($tmp_file, $content) && @rename($tmp_file, $file)) {
+            @chmod($file, 0666 & ~umask());
             return;
         }
-
         throw new \RuntimeException(\sprintf('Failed to write cache file "%s".', $file));
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Input;
 
 /**
@@ -19,10 +17,10 @@ namespace Symfony\Component\Console\Input;
  *
  * @author Wouter J <waldio.webdesign@gmail.com>
  */
-interface InputAwareInterface
+interface Input_Aware_Interface
 {
     /**
      * Sets the Console Input.
      */
-    public function setInput(InputInterface $input): void;
+    public function set_input(Input_Interface $input): void;
 }

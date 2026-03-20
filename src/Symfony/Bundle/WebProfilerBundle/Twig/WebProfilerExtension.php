@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Web_Profiler_Bundle\Twig;
 
-namespace Symfony\Bundle\WebProfilerBundle\Twig;
-
-use Symfony\Component\VarDumper\Cloner\Data;
-use Symfony\Component\VarDumper\Dumper\HtmlDumper;
+use Symfony\Component\Var_Dumper\Cloner\Data;
+use Symfony\Component\Var_Dumper\Dumper\Html_Dumper;
 use Twig\Environment;
-use Twig\Extension\ProfilerExtension;
+use Twig\Extension\Profiler_Extension;
 use Twig\Profiler\Profile;
-use Twig\Runtime\EscaperRuntime;
-use Twig\TwigFunction;
-
+use Twig\Runtime\Escaper_Runtime;
+use Twig\Twig_Function;
 /**
  * Twig extension for the profiler.
  *
@@ -28,85 +25,65 @@ use Twig\TwigFunction;
  *
  * @internal
  */
-class WebProfilerExtension extends ProfilerExtension
+class Web_Profiler_Extension extends Profiler_Extension
 {
     /**
      * @var resource
      */
     private $output;
-
-    private int $stackLevel = 0;
-
-    public function __construct(private readonly ?HtmlDumper $dumper = new HtmlDumper())
+    private int $stack_level = 0;
+    public function __construct(private readonly ?Html_Dumper $dumper = new Html_Dumper())
     {
-        $this->dumper->setOutput($this->output = fopen('php://memory', 'r+'));
+        $this->dumper->set_output($this->output = fopen('php://memory', 'r+'));
     }
-
     public function enter(Profile $profile): void
     {
-        ++$this->stackLevel;
+        ++$this->stack_level;
     }
-
     public function leave(Profile $profile): void
     {
-        if (0 === --$this->stackLevel) {
-            $this->dumper->setOutput($this->output = fopen('php://memory', 'r+'));
+        if (0 === --$this->stack_level) {
+            $this->dumper->set_output($this->output = fopen('php://memory', 'r+'));
         }
     }
-
-    public function getFunctions(): array
+    public function get_functions(): array
     {
-        return [
-            new TwigFunction('profiler_dump', $this->dumpData(...), ['is_safe' => ['html'], 'needs_environment' => true]),
-            new TwigFunction('profiler_dump_log', $this->dumpLog(...), ['is_safe' => ['html'], 'needs_environment' => true]),
-        ];
+        return [new Twig_Function('profiler_dump', $this->dump_data(...), ['is_safe' => ['html'], 'needs_environment' => true]), new Twig_Function('profiler_dump_log', $this->dump_log(...), ['is_safe' => ['html'], 'needs_environment' => true])];
     }
-
-    public function dumpData(Environment $env, Data $data, int $maxDepth = 0): string
+    public function dump_data(Environment $env, Data $data, int $max_depth = 0): string
     {
-        $this->dumper->setCharset($env->getCharset());
-        $this->dumper->dump($data, null, [
-            'maxDepth' => $maxDepth,
-        ]);
-
+        $this->dumper->set_charset($env->get_charset());
+        $this->dumper->dump($data, null, ['maxDepth' => $max_depth]);
         $dump = stream_get_contents($this->output, -1, 0);
         rewind($this->output);
         ftruncate($this->output, 0);
-
         return str_replace("\n</pre", '</pre', rtrim($dump));
     }
-
-    public function dumpLog(Environment $env, string $message, ?Data $context = null): string
+    public function dump_log(Environment $env, string $message, ?Data $context = null): string
     {
         $message = self::escape($env, $message);
         $message = preg_replace('/&quot;(.*?)&quot;/', '&quot;<b>$1</b>&quot;', $message);
-
         $replacements = [];
         foreach ($context ?? [] as $k => $v) {
-            $k = '{'.self::escape($env, $k).'}';
+            $k = '{' . self::escape($env, $k) . '}';
             if (str_contains((string) $message, $k)) {
                 $replacements[$k] = $v;
             }
         }
-
         if (!$replacements) {
-            return '<span class="dump-inline">'.$message.'</span>';
+            return '<span class="dump-inline">' . $message . '</span>';
         }
-
         foreach ($replacements as $k => $v) {
-            $replacements['&quot;<b>'.$k.'</b>&quot;'] = $replacements['&quot;'.$k.'&quot;'] = $replacements[$k] = $this->dumpData($env, $v);
+            $replacements['&quot;<b>' . $k . '</b>&quot;'] = $replacements['&quot;' . $k . '&quot;'] = $replacements[$k] = $this->dump_data($env, $v);
         }
-
-        return '<span class="dump-inline">'.strtr($message, $replacements).'</span>';
+        return '<span class="dump-inline">' . strtr($message, $replacements) . '</span>';
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return 'profiler';
     }
-
     private static function escape(Environment $env, string $s): string
     {
-        return $env->getRuntime(EscaperRuntime::class)->escape($s);
+        return $env->get_runtime(Escaper_Runtime::class)->escape($s);
     }
 }

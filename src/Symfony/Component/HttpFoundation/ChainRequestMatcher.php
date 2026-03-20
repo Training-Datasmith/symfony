@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,15 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpFoundation;
+namespace Symfony\Component\Http_Foundation;
 
 /**
  * ChainRequestMatcher verifies that all checks match against a Request instance.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ChainRequestMatcher implements RequestMatcherInterface
+class Chain_Request_Matcher implements Request_Matcher_Interface
 {
     /**
      * @param iterable<RequestMatcherInterface> $matchers
@@ -26,7 +24,6 @@ class ChainRequestMatcher implements RequestMatcherInterface
     public function __construct(private readonly iterable $matchers)
     {
     }
-
     public function matches(Request $request): bool
     {
         foreach ($this->matchers as $matcher) {
@@ -34,7 +31,6 @@ class ChainRequestMatcher implements RequestMatcherInterface
                 return false;
             }
         }
-
         return true;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,18 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Debug;
 
-namespace Symfony\Bundle\SecurityBundle\Debug;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\Security\Core\Exception\LazyResponseException;
-use Symfony\Component\Security\Http\Authenticator\Debug\TraceableAuthenticatorManagerListener;
-use Symfony\Component\Security\Http\Firewall\AbstractListener;
-use Symfony\Component\Security\Http\Firewall\FirewallListenerInterface;
-use Symfony\Component\VarDumper\Caster\ClassStub;
-
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Response;
+use Symfony\Component\Http_Kernel\Event\Request_Event;
+use Symfony\Component\Security\Core\Exception\Lazy_Response_Exception;
+use Symfony\Component\Security\Http\Authenticator\Debug\Traceable_Authenticator_Manager_Listener;
+use Symfony\Component\Security\Http\Firewall\Abstract_Listener;
+use Symfony\Component\Security\Http\Firewall\Firewall_Listener_Interface;
+use Symfony\Component\Var_Dumper\Caster\Class_Stub;
 /**
  * Wraps a lazy security listener.
  *
@@ -29,47 +26,35 @@ use Symfony\Component\VarDumper\Caster\ClassStub;
  *
  * @internal
  */
-final class WrappedLazyListener extends AbstractListener
+final class Wrapped_Lazy_Listener extends Abstract_Listener
 {
     private ?Response $response = null;
     private ?float $time = null;
-    private ClassStub $stub;
-
-    public function __construct(private readonly FirewallListenerInterface $listener)
+    private Class_Stub $stub;
+    public function __construct(private readonly Firewall_Listener_Interface $listener)
     {
     }
-
     public function supports(Request $request): ?bool
     {
         return $this->listener->supports($request);
     }
-
-    public function authenticate(RequestEvent $event): void
+    public function authenticate(Request_Event $event): void
     {
-        $startTime = microtime(true);
-
+        $start_time = microtime(true);
         try {
             $this->listener->authenticate($event);
-        } catch (LazyResponseException $e) {
-            $this->response = $e->getResponse();
-
+        } catch (Lazy_Response_Exception $e) {
+            $this->response = $e->get_response();
             throw $e;
         } finally {
-            $this->time = microtime(true) - $startTime;
+            $this->time = microtime(true) - $start_time;
         }
-
-        $this->response = $event->getResponse();
+        $this->response = $event->get_response();
     }
-
-    public function getInfo(): array
+    public function get_info(): array
     {
-        return [
-            'response' => $this->response,
-            'time' => $this->time,
-            'stub' => $this->stub ??= new ClassStub($this->listener instanceof TraceableAuthenticatorManagerListener ? $this->listener->getAuthenticatorManagerListener()::class : $this->listener::class),
-        ];
+        return ['response' => $this->response, 'time' => $this->time, 'stub' => $this->stub ??= new Class_Stub($this->listener instanceof Traceable_Authenticator_Manager_Listener ? $this->listener->get_authenticator_manager_listener()::class : $this->listener::class)];
     }
-
     /**
      * Proxies all method calls to the original listener.
      */

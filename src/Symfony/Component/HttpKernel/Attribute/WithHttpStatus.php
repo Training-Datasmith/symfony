@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpKernel\Attribute;
+namespace Symfony\Component\Http_Kernel\Attribute;
 
 /**
  * Defines the HTTP status code applied to an exception.
@@ -19,15 +17,13 @@ namespace Symfony\Component\HttpKernel\Attribute;
  * @author Dejan Angelov <angelovdejan@protonmail.com>
  */
 #[\Attribute(\Attribute::TARGET_CLASS)]
-class WithHttpStatus
+class With_Http_Status
 {
     /**
      * @param int                   $statusCode The HTTP status code to use
      * @param array<string, string> $headers    The HTTP headers to add to the response
      */
-    public function __construct(
-        public readonly int $statusCode,
-        public readonly array $headers = [],
-    ) {
+    public function __construct(public readonly int $status_code, public readonly array $headers = [])
+    {
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,73 +9,62 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Options_Resolver\Options_Resolver;
 /**
  * A wrapper for a form type and its extensions.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface ResolvedFormTypeInterface
+interface Resolved_Form_Type_Interface
 {
     /**
      * Returns the prefix of the template block name for this type.
      */
-    public function getBlockPrefix(): string;
-
+    public function get_block_prefix(): string;
     /**
      * Returns the parent type.
      */
-    public function getParent(): ?self;
-
+    public function get_parent(): ?self;
     /**
      * Returns the wrapped form type.
      */
-    public function getInnerType(): FormTypeInterface;
-
+    public function get_inner_type(): Form_Type_Interface;
     /**
      * Returns the extensions of the wrapped form type.
      *
      * @return FormTypeExtensionInterface[]
      */
-    public function getTypeExtensions(): array;
-
+    public function get_type_extensions(): array;
     /**
      * Creates a new form builder for this type.
      *
      * @param string $name The name for the builder
      */
-    public function createBuilder(FormFactoryInterface $factory, string $name, array $options = []): FormBuilderInterface;
-
+    public function create_builder(Form_Factory_Interface $factory, string $name, array $options = []): Form_Builder_Interface;
     /**
      * Creates a new form view for a form of this type.
      */
-    public function createView(FormInterface $form, ?FormView $parent = null): FormView;
-
+    public function create_view(Form_Interface $form, ?Form_View $parent = null): Form_View;
     /**
      * Configures a form builder for the type hierarchy.
      */
-    public function buildForm(FormBuilderInterface $builder, array $options): void;
-
+    public function build_form(Form_Builder_Interface $builder, array $options): void;
     /**
      * Configures a form view for the type hierarchy.
      *
      * It is called before the children of the view are built.
      */
-    public function buildView(FormView $view, FormInterface $form, array $options): void;
-
+    public function build_view(Form_View $view, Form_Interface $form, array $options): void;
     /**
      * Finishes a form view for the type hierarchy.
      *
      * It is called after the children of the view have been built.
      */
-    public function finishView(FormView $view, FormInterface $form, array $options): void;
-
+    public function finish_view(Form_View $view, Form_Interface $form, array $options): void;
     /**
      * Returns the configured options resolver used for this type.
      */
-    public function getOptionsResolver(): OptionsResolver;
+    public function get_options_resolver(): Options_Resolver;
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,23 +9,21 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Bridge\Doctrine\Form\ChoiceList;
+namespace Symfony\Bridge\Doctrine\Form\Choice_List;
 
 /**
  * Custom loader for entities in the choice list.
  *
  * @author Benjamin Eberlei <kontakt@beberlei.de>
  */
-interface EntityLoaderInterface
+interface Entity_Loader_Interface
 {
     /**
      * Returns an array of entities that are valid choices in the corresponding choice list.
      */
-    public function getEntities(): array;
-
+    public function get_entities(): array;
     /**
      * Returns an array of entities matching the given identifiers.
      */
-    public function getEntitiesByIds(string $identifier, array $values): array;
+    public function get_entities_by_ids(string $identifier, array $values): array;
 }

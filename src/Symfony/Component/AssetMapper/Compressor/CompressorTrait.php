@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,100 +9,81 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Asset_Mapper\Compressor;
 
-namespace Symfony\Component\AssetMapper\Compressor;
-
-use Symfony\Component\Process\ExecutableFinder;
+use Symfony\Component\Process\Executable_Finder;
 use Symfony\Component\Process\Process;
-
 /**
  * @internal
  *
  * @author Kévin Dunglas <kevin@dunglas.dev>
  */
-trait CompressorTrait
+trait Compressor_Trait
 {
     private ?\Closure $method = null;
     private ?string $executable = null;
     /**
      * @var ?resource
      */
-    private $streamContext;
-    private ?string $unsupportedReason = null;
-
+    private $stream_context;
+    private ?string $unsupported_reason = null;
     private function initialize(): void
     {
         if ('' !== self::WRAPPER && \in_array(self::WRAPPER, stream_get_wrappers(), true)) {
-            $this->method = $this->compressWithExtension(...);
-
+            $this->method = $this->compress_with_extension(...);
             return;
         }
-
         if (!class_exists(Process::class)) {
             if ('' === self::WRAPPER) {
-                $this->unsupportedReason = \sprintf('%s compression is unsupported. Run "composer require symfony/process" and install the "%s" command.', self::COMMAND, self::COMMAND);
+                $this->unsupported_reason = \sprintf('%s compression is unsupported. Run "composer require symfony/process" and install the "%s" command.', self::COMMAND, self::COMMAND);
             } else {
-                $this->unsupportedReason = \sprintf('%s compression is unsupported. Install the "%s" extension or run "composer require symfony/process" and install the "%s" command.', self::COMMAND, self::PHP_EXTENSION, self::COMMAND);
+                $this->unsupported_reason = \sprintf('%s compression is unsupported. Install the "%s" extension or run "composer require symfony/process" and install the "%s" command.', self::COMMAND, self::PHP_EXTENSION, self::COMMAND);
             }
-
             return;
         }
-
         if (null === $this->executable) {
-            $executableFinder = new ExecutableFinder();
-            $this->executable = $executableFinder->find(self::COMMAND);
-
+            $executable_finder = new Executable_Finder();
+            $this->executable = $executable_finder->find(self::COMMAND);
             if (null === $this->executable) {
                 if (self::WRAPPER === '') {
-                    $this->unsupportedReason = \sprintf('%s compression is unsupported. Install the "%s" command.', self::COMMAND, self::COMMAND);
+                    $this->unsupported_reason = \sprintf('%s compression is unsupported. Install the "%s" command.', self::COMMAND, self::COMMAND);
                 } else {
-                    $this->unsupportedReason = \sprintf('%s compression is unsupported. Install the "%s" extension or the "%s" command.', self::COMMAND, self::PHP_EXTENSION, self::COMMAND);
+                    $this->unsupported_reason = \sprintf('%s compression is unsupported. Install the "%s" extension or the "%s" command.', self::COMMAND, self::PHP_EXTENSION, self::COMMAND);
                 }
-
                 return;
             }
         }
-
-        $this->method = $this->compressWithBinary(...);
+        $this->method = $this->compress_with_binary(...);
     }
-
     public function compress(string $path): void
     {
-        if (null === $this->method && null === $this->unsupportedReason) {
+        if (null === $this->method && null === $this->unsupported_reason) {
             $this->initialize();
         }
-        if (null !== $this->unsupportedReason) {
-            throw new \RuntimeException($this->unsupportedReason);
+        if (null !== $this->unsupported_reason) {
+            throw new \RuntimeException($this->unsupported_reason);
         }
-
         ($this->method)($path);
     }
-
-    public function getUnsupportedReason(): ?string
+    public function get_unsupported_reason(): ?string
     {
         if (null !== $this->method) {
             return null;
         }
-
         $this->initialize();
-
-        return $this->unsupportedReason;
+        return $this->unsupported_reason;
     }
-
-    abstract private function compressWithBinary(string $path): void;
-
+    abstract private function compress_with_binary(string $path): void;
     /**
      * @return resource
      */
-    abstract private function createStreamContext();
-
-    private function compressWithExtension(string $path): void
+    abstract private function create_stream_context();
+    private function compress_with_extension(string $path): void
     {
-        if (null === $this->streamContext) {
-            $this->streamContext = $this->createStreamContext();
+        if (null === $this->stream_context) {
+            $this->stream_context = $this->create_stream_context();
         }
-
-        if (!copy($path, \sprintf('%s://%s.%s', self::WRAPPER, $path, self::FILE_EXTENSION), $this->streamContext)) {
+        if (!copy($path, \sprintf('%s://%s.%s', self::WRAPPER, $path, self::FILE_EXTENSION), $this->stream_context)) {
             throw new \RuntimeException(\sprintf('The compressed file "%s.%s" could not be written.', $path, self::FILE_EXTENSION));
         }
     }

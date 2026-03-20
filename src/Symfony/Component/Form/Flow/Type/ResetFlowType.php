@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,27 +9,21 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Flow\Type;
 
-use Symfony\Component\Form\Flow\AbstractButtonFlowType;
-use Symfony\Component\Form\Flow\ButtonFlowInterface;
-use Symfony\Component\Form\Flow\FormFlowInterface;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-class ResetFlowType extends AbstractButtonFlowType
+use Symfony\Component\Form\Flow\Abstract_Button_Flow_Type;
+use Symfony\Component\Form\Flow\Button_Flow_Interface;
+use Symfony\Component\Form\Flow\Form_Flow_Interface;
+use Symfony\Component\Form\Form_Builder_Interface;
+use Symfony\Component\Options_Resolver\Options_Resolver;
+class Reset_Flow_Type extends Abstract_Button_Flow_Type
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function build_form(Form_Builder_Interface $builder, array $options): void
     {
-        $builder->setAttribute('action', 'reset');
+        $builder->set_attribute('action', 'reset');
     }
-
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configure_options(Options_Resolver $resolver): void
     {
-        $resolver->setDefaults([
-            'handler' => static fn (mixed $data, ButtonFlowInterface $button, FormFlowInterface $flow) => $flow->reset(),
-            'clear_submission' => true,
-        ]);
+        $resolver->set_defaults(['handler' => static fn(mixed $data, Button_Flow_Interface $button, Form_Flow_Interface $flow) => $flow->reset(), 'clear_submission' => true]);
     }
 }

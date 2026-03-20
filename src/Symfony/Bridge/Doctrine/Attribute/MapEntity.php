@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Doctrine\Attribute;
 
-use Symfony\Bridge\Doctrine\ArgumentResolver\EntityValueResolver;
-use Symfony\Component\HttpKernel\Attribute\ValueResolver;
-
+use Symfony\Bridge\Doctrine\Argument_Resolver\Entity_Value_Resolver;
+use Symfony\Component\Http_Kernel\Attribute\Value_Resolver;
 /**
  * Indicates that a controller argument should receive an Entity.
  */
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
-class MapEntity extends ValueResolver
+class Map_Entity extends Value_Resolver
 {
     /**
      * @param class-string|null          $class         The entity class
@@ -35,42 +32,27 @@ class MapEntity extends ValueResolver
      * @param string[]|string|null       $id            If an id option is configured and matches a route parameter, then the resolver will find by the primary key
      * @param bool|null                  $evictCache    If true, forces Doctrine to always fetch the entity from the database instead of cache (defaults to false)
      */
-    public function __construct(
-        public ?string $class = null,
-        public ?string $objectManager = null,
-        public ?string $expr = null,
-        public ?array $mapping = null,
-        public ?array $exclude = null,
-        public ?bool $stripNull = null,
-        public array|string|null $id = null,
-        public ?bool $evictCache = null,
-        bool $disabled = false,
-        string $resolver = EntityValueResolver::class,
-        public ?string $message = null,
-    ) {
+    public function __construct(public ?string $class = null, public ?string $object_manager = null, public ?string $expr = null, public ?array $mapping = null, public ?array $exclude = null, public ?bool $strip_null = null, public array|string|null $id = null, public ?bool $evict_cache = null, bool $disabled = false, string $resolver = Entity_Value_Resolver::class, public ?string $message = null)
+    {
         parent::__construct($resolver, $disabled);
-        $this->selfValidate();
+        $this->self_validate();
     }
-
-    public function withDefaults(self $defaults, ?string $class): static
+    public function with_defaults(self $defaults, ?string $class): static
     {
         $clone = clone $this;
         $clone->class ??= class_exists($class ?? '') || interface_exists($class ?? '', false) ? $class : null;
-        $clone->objectManager ??= $defaults->objectManager;
+        $clone->object_manager ??= $defaults->object_manager;
         $clone->expr ??= $defaults->expr;
         $clone->mapping ??= $defaults->mapping;
         $clone->exclude ??= $defaults->exclude ?? [];
-        $clone->stripNull ??= $defaults->stripNull ?? false;
+        $clone->strip_null ??= $defaults->strip_null ?? false;
         $clone->id ??= $defaults->id;
-        $clone->evictCache ??= $defaults->evictCache ?? false;
+        $clone->evict_cache ??= $defaults->evict_cache ?? false;
         $clone->message ??= $defaults->message;
-
-        $clone->selfValidate();
-
+        $clone->self_validate();
         return $clone;
     }
-
-    private function selfValidate(): void
+    private function self_validate(): void
     {
         if (!$this->id) {
             return;

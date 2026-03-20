@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,38 +9,26 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Helper;
 
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-
 /**
  * @author Abdellatif Ait boudad <a.aitboudad@gmail.com>
  */
-class TableCell implements \Stringable
+class Table_Cell implements \Stringable
 {
-    private array $options = [
-        'rowspan' => 1,
-        'colspan' => 1,
-        'style' => null,
-    ];
-
-    public function __construct(
-        private readonly string $value = '',
-        array $options = [],
-    ) {
+    private array $options = ['rowspan' => 1, 'colspan' => 1, 'style' => null];
+    public function __construct(private readonly string $value = '', array $options = [])
+    {
         // check option names
         if ($diff = array_diff(array_keys($options), array_keys($this->options))) {
             throw new InvalidArgumentException(\sprintf('The TableCell does not support the following options: \'%s\'.', implode('\', \'', $diff)));
         }
-
-        if (isset($options['style']) && !$options['style'] instanceof TableCellStyle) {
+        if (isset($options['style']) && !$options['style'] instanceof Table_Cell_Style) {
             throw new InvalidArgumentException('The style option must be an instance of "TableCellStyle".');
         }
-
         $this->options = array_merge($this->options, $options);
     }
-
     /**
      * Returns the cell value.
      */
@@ -49,24 +36,21 @@ class TableCell implements \Stringable
     {
         return $this->value;
     }
-
     /**
      * Gets number of colspan.
      */
-    public function getColspan(): int
+    public function get_colspan(): int
     {
         return (int) $this->options['colspan'];
     }
-
     /**
      * Gets number of rowspan.
      */
-    public function getRowspan(): int
+    public function get_rowspan(): int
     {
         return (int) $this->options['rowspan'];
     }
-
-    public function getStyle(): ?TableCellStyle
+    public function get_style(): ?Table_Cell_Style
     {
         return $this->options['style'];
     }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,39 +9,33 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Debug_Bundle\Dependency_Injection\Compiler;
 
-namespace Symfony\Bundle\DebugBundle\DependencyInjection\Compiler;
-
-use Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Bundle\Web_Profiler_Bundle\Event_Listener\Web_Debug_Toolbar_Listener;
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * Registers the file link format for the {@link \Symfony\Component\HttpKernel\DataCollector\DumpDataCollector}.
  *
  * @author Christian Flothmann <christian.flothmann@xabbuh.de>
  */
-class DumpDataCollectorPass implements CompilerPassInterface
+class Dump_Data_Collector_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (!$container->hasDefinition('data_collector.dump')) {
+        if (!$container->has_definition('data_collector.dump')) {
             return;
         }
-
-        $definition = $container->getDefinition('data_collector.dump');
-
+        $definition = $container->get_definition('data_collector.dump');
         if (!$container->has('.virtual_request_stack')) {
-            $definition->replaceArgument(3, new Reference('request_stack'));
+            $definition->replace_argument(3, new Reference('request_stack'));
         }
-
-        if (!$container->hasParameter('web_profiler.debug_toolbar.mode') || WebDebugToolbarListener::DISABLED === $container->getParameter('web_profiler.debug_toolbar.mode')) {
-            $definition->replaceArgument(3, null);
+        if (!$container->has_parameter('web_profiler.debug_toolbar.mode') || Web_Debug_Toolbar_Listener::DISABLED === $container->get_parameter('web_profiler.debug_toolbar.mode')) {
+            $definition->replace_argument(3, null);
         }
-
-        if (!$container->hasParameter('kernel.runtime_mode.web')) {
-            $definition->replaceArgument(5, null);
+        if (!$container->has_parameter('kernel.runtime_mode.web')) {
+            $definition->replace_argument(5, null);
         }
     }
 }

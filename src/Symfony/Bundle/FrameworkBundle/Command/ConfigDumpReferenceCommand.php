@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,24 +9,22 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Command;
 
-namespace Symfony\Bundle\FrameworkBundle\Command;
-
-use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\Config\Definition\Dumper\XmlReferenceDumper;
-use Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Completion\CompletionInput;
-use Symfony\Component\Console\Completion\CompletionSuggestions;
+use Symfony\Component\Config\Definition\Configuration_Interface;
+use Symfony\Component\Config\Definition\Dumper\Xml_Reference_Dumper;
+use Symfony\Component\Config\Definition\Dumper\Yaml_Reference_Dumper;
+use Symfony\Component\Console\Attribute\As_Command;
+use Symfony\Component\Console\Completion\Completion_Input;
+use Symfony\Component\Console\Completion\Completion_Suggestions;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Extension\ConfigurationExtensionInterface;
+use Symfony\Component\Console\Input\Input_Argument;
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Console\Input\Input_Option;
+use Symfony\Component\Console\Output\Output_Interface;
+use Symfony\Component\Console\Style\Symfony_Style;
+use Symfony\Component\Dependency_Injection\Extension\Configuration_Extension_Interface;
 use Symfony\Component\Yaml\Yaml;
-
 /**
  * A console command for dumping available configuration reference.
  *
@@ -37,171 +34,124 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @final
  */
-#[AsCommand(name: 'config:dump-reference', description: 'Dump the default configuration for an extension')]
-class ConfigDumpReferenceCommand extends AbstractConfigCommand
+#[As_Command(name: 'config:dump-reference', description: 'Dump the default configuration for an extension')]
+class Config_Dump_Reference_Command extends Abstract_Config_Command
 {
     protected function configure(): void
     {
-        $this
-            ->setDefinition([
-                new InputArgument('name', InputArgument::OPTIONAL, 'The Bundle name or the extension alias'),
-                new InputArgument('path', InputArgument::OPTIONAL, 'The configuration option path'),
-                new InputOption('format', null, InputOption::VALUE_REQUIRED, \sprintf('The output format ("%s")', implode('", "', $this->getAvailableFormatOptions())), 'yaml'),
-            ])
-            ->setHelp(
-                <<<EOF
-                The <info>%command.name%</info> command dumps the default configuration for an
-                extension/bundle.
-
-                Either the extension alias or bundle name can be used:
-
-                  <info>php %command.full_name% framework</info>
-                  <info>php %command.full_name% FrameworkBundle</info>
-
-                The <info>--format</info> option specifies the format of the command output:
-
-                  <info>php %command.full_name% FrameworkBundle --format=json</info>
-
-                For dumping a specific option, add its path as second argument (only available for the yaml format):
-
-                  <info>php %command.full_name% framework http_client.default_options</info>
-
-                EOF
-            )
-        ;
+        $this->set_definition([new Input_Argument('name', Input_Argument::OPTIONAL, 'The Bundle name or the extension alias'), new Input_Argument('path', Input_Argument::OPTIONAL, 'The configuration option path'), new Input_Option('format', null, Input_Option::VALUE_REQUIRED, \sprintf('The output format ("%s")', implode('", "', $this->get_available_format_options())), 'yaml')])->set_help(<<<EOF
+        The <info>%command.name%</info> command dumps the default configuration for an
+        extension/bundle.
+        
+        Either the extension alias or bundle name can be used:
+        
+          <info>php %command.full_name% framework</info>
+          <info>php %command.full_name% FrameworkBundle</info>
+        
+        The <info>--format</info> option specifies the format of the command output:
+        
+          <info>php %command.full_name% FrameworkBundle --format=json</info>
+        
+        For dumping a specific option, add its path as second argument (only available for the yaml format):
+        
+          <info>php %command.full_name% framework http_client.default_options</info>
+        
+        EOF);
     }
-
     /**
      * @throws \LogicException
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(Input_Interface $input, Output_Interface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
-        $errorIo = $io->getErrorStyle();
-
-        if (null === $name = $input->getArgument('name')) {
-            $this->listBundles($errorIo);
-            $this->listNonBundleExtensions($errorIo);
-
-            $errorIo->comment([
-                'Provide the name of a bundle as the first argument of this command to dump its default configuration. (e.g. <comment>config:dump-reference FrameworkBundle</comment>)',
-                'For dumping a specific option, add its path as the second argument of this command. (e.g. <comment>config:dump-reference FrameworkBundle http_client.default_options</comment> to dump the <comment>framework.http_client.default_options</comment> configuration)',
-            ]);
-
+        $io = new Symfony_Style($input, $output);
+        $error_io = $io->get_error_style();
+        if (null === $name = $input->get_argument('name')) {
+            $this->list_bundles($error_io);
+            $this->list_non_bundle_extensions($error_io);
+            $error_io->comment(['Provide the name of a bundle as the first argument of this command to dump its default configuration. (e.g. <comment>config:dump-reference FrameworkBundle</comment>)', 'For dumping a specific option, add its path as the second argument of this command. (e.g. <comment>config:dump-reference FrameworkBundle http_client.default_options</comment> to dump the <comment>framework.http_client.default_options</comment> configuration)']);
             return 0;
         }
-
-        $extension = $this->findExtension($name);
-
-        if ($extension instanceof ConfigurationInterface) {
+        $extension = $this->find_extension($name);
+        if ($extension instanceof Configuration_Interface) {
             $configuration = $extension;
         } else {
-            $configuration = $extension->getConfiguration([], $this->getContainerBuilder($this->getApplication()->getKernel()));
+            $configuration = $extension->get_configuration([], $this->get_container_builder($this->get_application()->get_kernel()));
         }
-
-        $this->validateConfiguration($extension, $configuration);
-
-        $format = $input->getOption('format');
-
+        $this->validate_configuration($extension, $configuration);
+        $format = $input->get_option('format');
         if ('yaml' === $format && !class_exists(Yaml::class)) {
-            $errorIo->error('Setting the "format" option to "yaml" requires the Symfony Yaml component. Try running "composer install symfony/yaml" or use "--format=xml" instead.');
-
+            $error_io->error('Setting the "format" option to "yaml" requires the Symfony Yaml component. Try running "composer install symfony/yaml" or use "--format=xml" instead.');
             return 1;
         }
-
-        $path = $input->getArgument('path');
-
+        $path = $input->get_argument('path');
         if (null !== $path && 'yaml' !== $format) {
-            $errorIo->error('The "path" option is only available for the "yaml" format.');
-
+            $error_io->error('The "path" option is only available for the "yaml" format.');
             return 1;
         }
-
-        if ($name === $extension->getAlias()) {
+        if ($name === $extension->get_alias()) {
             $message = \sprintf('Default configuration for extension with alias: "%s"', $name);
         } else {
             $message = \sprintf('Default configuration for "%s"', $name);
         }
-
         if (null !== $path) {
             $message .= \sprintf(' at path "%s"', $path);
         }
-
-        if ($docUrl = $this->getExtensionDocUrl($extension)) {
-            $message .= \sprintf(' (see %s)', $docUrl);
+        if ($doc_url = $this->get_extension_doc_url($extension)) {
+            $message .= \sprintf(' (see %s)', $doc_url);
         }
-
         switch ($format) {
             case 'yaml':
                 $io->writeln(\sprintf('# %s', $message));
-                $dumper = new YamlReferenceDumper();
+                $dumper = new Yaml_Reference_Dumper();
                 break;
             case 'xml':
                 $io->writeln(\sprintf('<!-- %s -->', $message));
-                $dumper = new XmlReferenceDumper();
+                $dumper = new Xml_Reference_Dumper();
                 break;
             default:
                 $io->writeln($message);
-                throw new InvalidArgumentException(\sprintf('Supported formats are "%s".', implode('", "', $this->getAvailableFormatOptions())));
+                throw new InvalidArgumentException(\sprintf('Supported formats are "%s".', implode('", "', $this->get_available_format_options())));
         }
-
-        $io->writeln(null === $path ? $dumper->dump($configuration) : $dumper->dumpAtPath($configuration, $path));
-
+        $io->writeln(null === $path ? $dumper->dump($configuration) : $dumper->dump_at_path($configuration, $path));
         return 0;
     }
-
-    public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void
+    public function complete(Completion_Input $input, Completion_Suggestions $suggestions): void
     {
-        if ($input->mustSuggestArgumentValuesFor('name')) {
-            $suggestions->suggestValues($this->getAvailableExtensions());
-            $suggestions->suggestValues($this->getAvailableBundles());
+        if ($input->must_suggest_argument_values_for('name')) {
+            $suggestions->suggest_values($this->get_available_extensions());
+            $suggestions->suggest_values($this->get_available_bundles());
         }
-
-        if ($input->mustSuggestOptionValuesFor('format')) {
-            $suggestions->suggestValues($this->getAvailableFormatOptions());
+        if ($input->must_suggest_option_values_for('format')) {
+            $suggestions->suggest_values($this->get_available_format_options());
         }
     }
-
-    private function getAvailableExtensions(): array
+    private function get_available_extensions(): array
     {
-        $kernel = $this->getApplication()->getKernel();
-
+        $kernel = $this->get_application()->get_kernel();
         $extensions = [];
-        foreach ($this->getContainerBuilder($kernel)->getExtensions() as $alias => $extension) {
+        foreach ($this->get_container_builder($kernel)->get_extensions() as $alias => $extension) {
             $extensions[] = $alias;
         }
-
         return $extensions;
     }
-
-    private function getAvailableBundles(): array
+    private function get_available_bundles(): array
     {
         $bundles = [];
-
-        foreach ($this->getApplication()->getKernel()->getBundles() as $bundle) {
-            $bundles[] = $bundle->getName();
+        foreach ($this->get_application()->get_kernel()->get_bundles() as $bundle) {
+            $bundles[] = $bundle->get_name();
         }
-
         return $bundles;
     }
-
     /** @return string[] */
-    private function getAvailableFormatOptions(): array
+    private function get_available_format_options(): array
     {
         return ['yaml', 'xml'];
     }
-
-    private function getExtensionDocUrl(ConfigurationInterface|ConfigurationExtensionInterface $extension): ?string
+    private function get_extension_doc_url(Configuration_Interface|Configuration_Extension_Interface $extension): ?string
     {
-        $kernel = $this->getApplication()->getKernel();
-        $container = $this->getContainerBuilder($kernel);
-
-        $configuration = $extension instanceof ConfigurationInterface ? $extension : $extension->getConfiguration($container->getExtensionConfig($extension->getAlias()), $container);
-
-        return $configuration
-            ->getConfigTreeBuilder()
-            ->getRootNode()
-            ->getNode(true)
-            ->getAttribute('docUrl');
+        $kernel = $this->get_application()->get_kernel();
+        $container = $this->get_container_builder($kernel);
+        $configuration = $extension instanceof Configuration_Interface ? $extension : $extension->get_configuration($container->get_extension_config($extension->get_alias()), $container);
+        return $configuration->get_config_tree_builder()->get_root_node()->get_node(true)->get_attribute('docUrl');
     }
 }

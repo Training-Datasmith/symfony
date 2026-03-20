@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition;
 
 /**
@@ -27,27 +25,24 @@ class Processor
      *
      * @param array $configs An array of configuration items to process
      */
-    public function process(NodeInterface $configTree, array $configs): array
+    public function process(Node_Interface $config_tree, array $configs): array
     {
-        $currentConfig = [];
+        $current_config = [];
         foreach ($configs as $config) {
-            $config = $configTree->normalize($config);
-            $currentConfig = $configTree->merge($currentConfig, $config);
+            $config = $config_tree->normalize($config);
+            $current_config = $config_tree->merge($current_config, $config);
         }
-
-        return $configTree->finalize($currentConfig);
+        return $config_tree->finalize($current_config);
     }
-
     /**
      * Processes an array of configurations.
      *
      * @param array $configs An array of configuration items to process
      */
-    public function processConfiguration(ConfigurationInterface $configuration, array $configs): array
+    public function process_configuration(Configuration_Interface $configuration, array $configs): array
     {
-        return $this->process($configuration->getConfigTreeBuilder()->buildTree(), $configs);
+        return $this->process($configuration->get_config_tree_builder()->build_tree(), $configs);
     }
-
     /**
      * Normalizes a configuration entry.
      *
@@ -69,23 +64,19 @@ class Processor
      * @param string      $key    The key to normalize
      * @param string|null $plural The plural form of the key if it is irregular
      */
-    public static function normalizeConfig(array $config, string $key, ?string $plural = null): array
+    public static function normalize_config(array $config, string $key, ?string $plural = null): array
     {
-        $plural ??= $key.'s';
-
+        $plural ??= $key . 's';
         if (isset($config[$plural])) {
             return $config[$plural];
         }
-
         if (isset($config[$key])) {
             if (\is_string($config[$key]) || !\is_int(key($config[$key]))) {
                 // only one
                 return [$config[$key]];
             }
-
             return $config[$key];
         }
-
         return [];
     }
 }

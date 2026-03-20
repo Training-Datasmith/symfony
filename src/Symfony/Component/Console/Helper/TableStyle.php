@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Helper;
 
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
-
 /**
  * Defines the styles for a Table.
  *
@@ -23,58 +20,53 @@ use Symfony\Component\Console\Exception\LogicException;
  * @author Саша Стаменковић <umpirsky@gmail.com>
  * @author Dany Maillard <danymaillard93b@gmail.com>
  */
-class TableStyle
+class Table_Style
 {
-    private string $paddingChar = ' ';
-    private string $horizontalOutsideBorderChar = '-';
-    private string $horizontalInsideBorderChar = '-';
-    private string $verticalOutsideBorderChar = '|';
-    private string $verticalInsideBorderChar = '|';
-    private string $crossingChar = '+';
-    private string $crossingTopRightChar = '+';
-    private string $crossingTopMidChar = '+';
-    private string $crossingTopLeftChar = '+';
-    private string $crossingMidRightChar = '+';
-    private string $crossingBottomRightChar = '+';
-    private string $crossingBottomMidChar = '+';
-    private string $crossingBottomLeftChar = '+';
-    private string $crossingMidLeftChar = '+';
-    private string $crossingTopLeftBottomChar = '+';
-    private string $crossingTopMidBottomChar = '+';
-    private string $crossingTopRightBottomChar = '+';
-    private string $headerTitleFormat = '<fg=black;bg=white;options=bold> %s </>';
-    private string $footerTitleFormat = '<fg=black;bg=white;options=bold> %s </>';
-    private string $cellHeaderFormat = '<info>%s</info>';
-    private string $cellRowFormat = '%s';
-    private string $cellRowContentFormat = ' %s ';
-    private string $borderFormat = '%s';
-    private bool $displayOutsideBorder = true;
-    private int $padType = \STR_PAD_RIGHT;
-
+    private string $padding_char = ' ';
+    private string $horizontal_outside_border_char = '-';
+    private string $horizontal_inside_border_char = '-';
+    private string $vertical_outside_border_char = '|';
+    private string $vertical_inside_border_char = '|';
+    private string $crossing_char = '+';
+    private string $crossing_top_right_char = '+';
+    private string $crossing_top_mid_char = '+';
+    private string $crossing_top_left_char = '+';
+    private string $crossing_mid_right_char = '+';
+    private string $crossing_bottom_right_char = '+';
+    private string $crossing_bottom_mid_char = '+';
+    private string $crossing_bottom_left_char = '+';
+    private string $crossing_mid_left_char = '+';
+    private string $crossing_top_left_bottom_char = '+';
+    private string $crossing_top_mid_bottom_char = '+';
+    private string $crossing_top_right_bottom_char = '+';
+    private string $header_title_format = '<fg=black;bg=white;options=bold> %s </>';
+    private string $footer_title_format = '<fg=black;bg=white;options=bold> %s </>';
+    private string $cell_header_format = '<info>%s</info>';
+    private string $cell_row_format = '%s';
+    private string $cell_row_content_format = ' %s ';
+    private string $border_format = '%s';
+    private bool $display_outside_border = true;
+    private int $pad_type = \STR_PAD_RIGHT;
     /**
      * Sets padding character, used for cell padding.
      *
      * @return $this
      */
-    public function setPaddingChar(string $paddingChar): static
+    public function set_padding_char(string $padding_char): static
     {
-        if (!$paddingChar) {
+        if (!$padding_char) {
             throw new LogicException('The padding char must not be empty.');
         }
-
-        $this->paddingChar = $paddingChar;
-
+        $this->padding_char = $padding_char;
         return $this;
     }
-
     /**
      * Gets padding character, used for cell padding.
      */
-    public function getPaddingChar(): string
+    public function get_padding_char(): string
     {
-        return $this->paddingChar;
+        return $this->padding_char;
     }
-
     /**
      * Sets horizontal border characters.
      *
@@ -92,14 +84,12 @@ class TableStyle
      *
      * @return $this
      */
-    public function setHorizontalBorderChars(string $outside, ?string $inside = null): static
+    public function set_horizontal_border_chars(string $outside, ?string $inside = null): static
     {
-        $this->horizontalOutsideBorderChar = $outside;
-        $this->horizontalInsideBorderChar = $inside ?? $outside;
-
+        $this->horizontal_outside_border_char = $outside;
+        $this->horizontal_inside_border_char = $inside ?? $outside;
         return $this;
     }
-
     /**
      * Sets vertical border characters.
      *
@@ -116,29 +106,21 @@ class TableStyle
      *
      * @return $this
      */
-    public function setVerticalBorderChars(string $outside, ?string $inside = null): static
+    public function set_vertical_border_chars(string $outside, ?string $inside = null): static
     {
-        $this->verticalOutsideBorderChar = $outside;
-        $this->verticalInsideBorderChar = $inside ?? $outside;
-
+        $this->vertical_outside_border_char = $outside;
+        $this->vertical_inside_border_char = $inside ?? $outside;
         return $this;
     }
-
     /**
      * Gets border characters.
      *
      * @internal
      */
-    public function getBorderChars(): array
+    public function get_border_chars(): array
     {
-        return [
-            $this->horizontalOutsideBorderChar,
-            $this->verticalOutsideBorderChar,
-            $this->horizontalInsideBorderChar,
-            $this->verticalInsideBorderChar,
-        ];
+        return [$this->horizontal_outside_border_char, $this->vertical_outside_border_char, $this->horizontal_inside_border_char, $this->vertical_inside_border_char];
     }
-
     /**
      * Sets crossing characters.
      *
@@ -170,208 +152,166 @@ class TableStyle
      *
      * @return $this
      */
-    public function setCrossingChars(string $cross, string $topLeft, string $topMid, string $topRight, string $midRight, string $bottomRight, string $bottomMid, string $bottomLeft, string $midLeft, ?string $topLeftBottom = null, ?string $topMidBottom = null, ?string $topRightBottom = null): static
+    public function set_crossing_chars(string $cross, string $top_left, string $top_mid, string $top_right, string $mid_right, string $bottom_right, string $bottom_mid, string $bottom_left, string $mid_left, ?string $top_left_bottom = null, ?string $top_mid_bottom = null, ?string $top_right_bottom = null): static
     {
-        $this->crossingChar = $cross;
-        $this->crossingTopLeftChar = $topLeft;
-        $this->crossingTopMidChar = $topMid;
-        $this->crossingTopRightChar = $topRight;
-        $this->crossingMidRightChar = $midRight;
-        $this->crossingBottomRightChar = $bottomRight;
-        $this->crossingBottomMidChar = $bottomMid;
-        $this->crossingBottomLeftChar = $bottomLeft;
-        $this->crossingMidLeftChar = $midLeft;
-        $this->crossingTopLeftBottomChar = $topLeftBottom ?? $midLeft;
-        $this->crossingTopMidBottomChar = $topMidBottom ?? $cross;
-        $this->crossingTopRightBottomChar = $topRightBottom ?? $midRight;
-
+        $this->crossing_char = $cross;
+        $this->crossing_top_left_char = $top_left;
+        $this->crossing_top_mid_char = $top_mid;
+        $this->crossing_top_right_char = $top_right;
+        $this->crossing_mid_right_char = $mid_right;
+        $this->crossing_bottom_right_char = $bottom_right;
+        $this->crossing_bottom_mid_char = $bottom_mid;
+        $this->crossing_bottom_left_char = $bottom_left;
+        $this->crossing_mid_left_char = $mid_left;
+        $this->crossing_top_left_bottom_char = $top_left_bottom ?? $mid_left;
+        $this->crossing_top_mid_bottom_char = $top_mid_bottom ?? $cross;
+        $this->crossing_top_right_bottom_char = $top_right_bottom ?? $mid_right;
         return $this;
     }
-
     /**
      * Sets default crossing character used for each cross.
      *
      * @see {@link setCrossingChars()} for setting each crossing individually.
      */
-    public function setDefaultCrossingChar(string $char): self
+    public function set_default_crossing_char(string $char): self
     {
-        return $this->setCrossingChars($char, $char, $char, $char, $char, $char, $char, $char, $char);
+        return $this->set_crossing_chars($char, $char, $char, $char, $char, $char, $char, $char, $char);
     }
-
     /**
      * Gets crossing character.
      */
-    public function getCrossingChar(): string
+    public function get_crossing_char(): string
     {
-        return $this->crossingChar;
+        return $this->crossing_char;
     }
-
     /**
      * Gets crossing characters.
      *
      * @internal
      */
-    public function getCrossingChars(): array
+    public function get_crossing_chars(): array
     {
-        return [
-            $this->crossingChar,
-            $this->crossingTopLeftChar,
-            $this->crossingTopMidChar,
-            $this->crossingTopRightChar,
-            $this->crossingMidRightChar,
-            $this->crossingBottomRightChar,
-            $this->crossingBottomMidChar,
-            $this->crossingBottomLeftChar,
-            $this->crossingMidLeftChar,
-            $this->crossingTopLeftBottomChar,
-            $this->crossingTopMidBottomChar,
-            $this->crossingTopRightBottomChar,
-        ];
+        return [$this->crossing_char, $this->crossing_top_left_char, $this->crossing_top_mid_char, $this->crossing_top_right_char, $this->crossing_mid_right_char, $this->crossing_bottom_right_char, $this->crossing_bottom_mid_char, $this->crossing_bottom_left_char, $this->crossing_mid_left_char, $this->crossing_top_left_bottom_char, $this->crossing_top_mid_bottom_char, $this->crossing_top_right_bottom_char];
     }
-
     /**
      * Sets header cell format.
      *
      * @return $this
      */
-    public function setCellHeaderFormat(string $cellHeaderFormat): static
+    public function set_cell_header_format(string $cell_header_format): static
     {
-        $this->cellHeaderFormat = $cellHeaderFormat;
-
+        $this->cell_header_format = $cell_header_format;
         return $this;
     }
-
     /**
      * Gets header cell format.
      */
-    public function getCellHeaderFormat(): string
+    public function get_cell_header_format(): string
     {
-        return $this->cellHeaderFormat;
+        return $this->cell_header_format;
     }
-
     /**
      * Sets row cell format.
      *
      * @return $this
      */
-    public function setCellRowFormat(string $cellRowFormat): static
+    public function set_cell_row_format(string $cell_row_format): static
     {
-        $this->cellRowFormat = $cellRowFormat;
-
+        $this->cell_row_format = $cell_row_format;
         return $this;
     }
-
     /**
      * Gets row cell format.
      */
-    public function getCellRowFormat(): string
+    public function get_cell_row_format(): string
     {
-        return $this->cellRowFormat;
+        return $this->cell_row_format;
     }
-
     /**
      * Sets row cell content format.
      *
      * @return $this
      */
-    public function setCellRowContentFormat(string $cellRowContentFormat): static
+    public function set_cell_row_content_format(string $cell_row_content_format): static
     {
-        $this->cellRowContentFormat = $cellRowContentFormat;
-
+        $this->cell_row_content_format = $cell_row_content_format;
         return $this;
     }
-
     /**
      * Gets row cell content format.
      */
-    public function getCellRowContentFormat(): string
+    public function get_cell_row_content_format(): string
     {
-        return $this->cellRowContentFormat;
+        return $this->cell_row_content_format;
     }
-
     /**
      * Sets table border format.
      *
      * @return $this
      */
-    public function setBorderFormat(string $borderFormat): static
+    public function set_border_format(string $border_format): static
     {
-        $this->borderFormat = $borderFormat;
-
+        $this->border_format = $border_format;
         return $this;
     }
-
     /**
      * Gets table border format.
      */
-    public function getBorderFormat(): string
+    public function get_border_format(): string
     {
-        return $this->borderFormat;
+        return $this->border_format;
     }
-
     /**
      * Sets cell padding type.
      *
      * @return $this
      */
-    public function setPadType(int $padType): static
+    public function set_pad_type(int $pad_type): static
     {
-        if (!\in_array($padType, [\STR_PAD_LEFT, \STR_PAD_RIGHT, \STR_PAD_BOTH], true)) {
+        if (!\in_array($pad_type, [\STR_PAD_LEFT, \STR_PAD_RIGHT, \STR_PAD_BOTH], true)) {
             throw new InvalidArgumentException('Invalid padding type. Expected one of (STR_PAD_LEFT, STR_PAD_RIGHT, STR_PAD_BOTH).');
         }
-
-        $this->padType = $padType;
-
+        $this->pad_type = $pad_type;
         return $this;
     }
-
     /**
      * Gets cell padding type.
      */
-    public function getPadType(): int
+    public function get_pad_type(): int
     {
-        return $this->padType;
+        return $this->pad_type;
     }
-
-    public function getHeaderTitleFormat(): string
+    public function get_header_title_format(): string
     {
-        return $this->headerTitleFormat;
+        return $this->header_title_format;
     }
-
     /**
      * @return $this
      */
-    public function setHeaderTitleFormat(string $format): static
+    public function set_header_title_format(string $format): static
     {
-        $this->headerTitleFormat = $format;
-
+        $this->header_title_format = $format;
         return $this;
     }
-
-    public function getFooterTitleFormat(): string
+    public function get_footer_title_format(): string
     {
-        return $this->footerTitleFormat;
+        return $this->footer_title_format;
     }
-
     /**
      * @return $this
      */
-    public function setFooterTitleFormat(string $format): static
+    public function set_footer_title_format(string $format): static
     {
-        $this->footerTitleFormat = $format;
-
+        $this->footer_title_format = $format;
         return $this;
     }
-
-    public function setDisplayOutsideBorder(bool $displayOutSideBorder): static
+    public function set_display_outside_border(bool $display_out_side_border): static
     {
-        $this->displayOutsideBorder = $displayOutSideBorder;
-
+        $this->display_outside_border = $display_out_side_border;
         return $this;
     }
-
-    public function displayOutsideBorder(): bool
+    public function display_outside_border(): bool
     {
-        return $this->displayOutsideBorder;
+        return $this->display_outside_border;
     }
 }

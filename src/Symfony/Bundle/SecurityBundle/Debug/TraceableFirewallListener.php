@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,86 +9,70 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Debug;
 
-namespace Symfony\Bundle\SecurityBundle\Debug;
-
-use Symfony\Bundle\SecurityBundle\EventListener\FirewallListener;
-use Symfony\Bundle\SecurityBundle\Security\FirewallContext;
-use Symfony\Bundle\SecurityBundle\Security\LazyFirewallContext;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\Security\Http\Authenticator\Debug\TraceableAuthenticatorManagerListener;
-use Symfony\Contracts\Service\ResetInterface;
-
+use Symfony\Bundle\Security_Bundle\Event_Listener\Firewall_Listener;
+use Symfony\Bundle\Security_Bundle\Security\Firewall_Context;
+use Symfony\Bundle\Security_Bundle\Security\Lazy_Firewall_Context;
+use Symfony\Component\Http_Kernel\Event\Request_Event;
+use Symfony\Component\Security\Http\Authenticator\Debug\Traceable_Authenticator_Manager_Listener;
+use Symfony\Contracts\Service\Reset_Interface;
 /**
  * Firewall collecting called security listeners and authenticators.
  *
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-final class TraceableFirewallListener extends FirewallListener implements ResetInterface
+final class Traceable_Firewall_Listener extends Firewall_Listener implements Reset_Interface
 {
-    private array $wrappedListeners = [];
-    private ?TraceableAuthenticatorManagerListener $authenticatorManagerListener = null;
-
-    public function getWrappedListeners(): array
+    private array $wrapped_listeners = [];
+    private ?Traceable_Authenticator_Manager_Listener $authenticator_manager_listener = null;
+    public function get_wrapped_listeners(): array
     {
-        return array_map(
-            static fn (WrappedLazyListener $listener): array => $listener->getInfo(),
-            $this->wrappedListeners
-        );
+        return array_map(static fn(Wrapped_Lazy_Listener $listener): array => $listener->get_info(), $this->wrapped_listeners);
     }
-
-    public function getAuthenticatorsInfo(): array
+    public function get_authenticators_info(): array
     {
-        return $this->authenticatorManagerListener?->getAuthenticatorsInfo() ?? [];
+        return $this->authenticator_manager_listener?->get_authenticators_info() ?? [];
     }
-
     public function reset(): void
     {
-        $this->wrappedListeners = [];
-        $this->authenticatorManagerListener = null;
+        $this->wrapped_listeners = [];
+        $this->authenticator_manager_listener = null;
     }
-
-    protected function callListeners(RequestEvent $event, iterable $listeners): void
+    protected function call_listeners(Request_Event $event, iterable $listeners): void
     {
-        $requestListeners = [];
+        $request_listeners = [];
         foreach ($listeners as $listener) {
-            if ($listener instanceof LazyFirewallContext) {
-                $contextWrappedListeners = [];
-                $contextAuthenticatorManagerListener = null;
-
-                \Closure::bind(function () use (&$contextWrappedListeners, &$contextAuthenticatorManagerListener): void {
+            if ($listener instanceof Lazy_Firewall_Context) {
+                $context_wrapped_listeners = [];
+                $context_authenticator_manager_listener = null;
+                \Closure::bind(function () use (&$context_wrapped_listeners, &$context_authenticator_manager_listener): void {
                     foreach ($this->listeners as $listener) {
-                        if ($listener instanceof TraceableAuthenticatorManagerListener) {
-                            $contextAuthenticatorManagerListener ??= $listener;
+                        if ($listener instanceof Traceable_Authenticator_Manager_Listener) {
+                            $context_authenticator_manager_listener ??= $listener;
                         }
-                        $contextWrappedListeners[] = new WrappedLazyListener($listener);
+                        $context_wrapped_listeners[] = new Wrapped_Lazy_Listener($listener);
                     }
-                    $this->listeners = $contextWrappedListeners;
-                }, $listener, FirewallContext::class)();
-
-                $this->authenticatorManagerListener ??= $contextAuthenticatorManagerListener;
-                $this->wrappedListeners = array_merge($this->wrappedListeners, $contextWrappedListeners);
-
-                $requestListeners[] = $listener;
+                    $this->listeners = $context_wrapped_listeners;
+                }, $listener, Firewall_Context::class)();
+                $this->authenticator_manager_listener ??= $context_authenticator_manager_listener;
+                $this->wrapped_listeners = array_merge($this->wrapped_listeners, $context_wrapped_listeners);
+                $request_listeners[] = $listener;
             } else {
-                if ($listener instanceof TraceableAuthenticatorManagerListener) {
-                    $this->authenticatorManagerListener ??= $listener;
+                if ($listener instanceof Traceable_Authenticator_Manager_Listener) {
+                    $this->authenticator_manager_listener ??= $listener;
                 }
-                $wrappedListener = new WrappedLazyListener($listener);
-                $this->wrappedListeners[] = $wrappedListener;
-
-                $requestListeners[] = $wrappedListener;
+                $wrapped_listener = new Wrapped_Lazy_Listener($listener);
+                $this->wrapped_listeners[] = $wrapped_listener;
+                $request_listeners[] = $wrapped_listener;
             }
         }
-
-        foreach ($requestListeners as $listener) {
-            if (false === $listener->supports($event->getRequest())) {
+        foreach ($request_listeners as $listener) {
+            if (false === $listener->supports($event->get_request())) {
                 continue;
             }
-
             $listener->authenticate($event);
-
-            if ($event->hasResponse()) {
+            if ($event->has_response()) {
                 break;
             }
         }

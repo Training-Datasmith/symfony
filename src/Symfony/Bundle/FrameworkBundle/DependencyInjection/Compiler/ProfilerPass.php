@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,54 +9,46 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Dependency_Injection\Compiler;
 
-namespace Symfony\Bundle\FrameworkBundle\DependencyInjection\Compiler;
-
-use Symfony\Bundle\FrameworkBundle\DataCollector\TemplateAwareDataCollectorInterface;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Bundle\Framework_Bundle\Data_Collector\Template_Aware_Data_Collector_Interface;
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * Adds tagged data_collector services to profiler service.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ProfilerPass implements CompilerPassInterface
+class Profiler_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (false === $container->hasDefinition('profiler')) {
+        if (false === $container->has_definition('profiler')) {
             return;
         }
-
-        $definition = $container->getDefinition('profiler');
-
+        $definition = $container->get_definition('profiler');
         $collectors = new \SplPriorityQueue();
         $order = \PHP_INT_MAX;
-        foreach ($container->findTaggedServiceIds('data_collector', true) as $id => $attributes) {
+        foreach ($container->find_tagged_service_ids('data_collector', true) as $id => $attributes) {
             $priority = $attributes[0]['priority'] ?? 0;
             $template = null;
-
-            $collectorClass = $container->findDefinition($id)->getClass();
-            if (isset($attributes[0]['template']) || is_subclass_of($collectorClass, TemplateAwareDataCollectorInterface::class)) {
-                $idForTemplate = $attributes[0]['id'] ?? $collectorClass;
-                if (!$idForTemplate) {
+            $collector_class = $container->find_definition($id)->get_class();
+            if (isset($attributes[0]['template']) || is_subclass_of($collector_class, Template_Aware_Data_Collector_Interface::class)) {
+                $id_for_template = $attributes[0]['id'] ?? $collector_class;
+                if (!$id_for_template) {
                     throw new InvalidArgumentException(\sprintf('Data collector service "%s" must have an id attribute in order to specify a template.', $id));
                 }
-                $template = [$idForTemplate, $attributes[0]['template'] ?? $collectorClass::getTemplate()];
+                $template = [$id_for_template, $attributes[0]['template'] ?? $collector_class::get_template()];
             }
-
             $collectors->insert([$id, $template], [$priority, --$order]);
         }
-
         $templates = [];
         foreach ($collectors as $collector) {
-            $definition->addMethodCall('add', [new Reference($collector[0])]);
+            $definition->add_method_call('add', [new Reference($collector[0])]);
             $templates[$collector[0]] = $collector[1];
         }
-
-        $container->setParameter('data_collector.templates', $templates);
+        $container->set_parameter('data_collector.templates', $templates);
     }
 }

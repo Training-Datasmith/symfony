@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,36 +9,30 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Extension\Validator\Type;
 
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
-
+use Symfony\Component\Form\Abstract_Type_Extension;
+use Symfony\Component\Form\Extension\Core\Type\Form_Type;
+use Symfony\Component\Options_Resolver\Options;
+use Symfony\Component\Options_Resolver\Options_Resolver;
+use Symfony\Contracts\Translation\Translator_Interface;
 /**
  * @author Abdellatif Ait boudad <a.aitboudad@gmail.com>
  * @author David Badura <d.a.badura@gmail.com>
  */
-class UploadValidatorExtension extends AbstractTypeExtension
+class Upload_Validator_Extension extends Abstract_Type_Extension
 {
-    public function __construct(
-        private readonly TranslatorInterface $translator,
-        private readonly ?string $translationDomain = null,
-    ) {
+    public function __construct(private readonly Translator_Interface $translator, private readonly ?string $translation_domain = null)
+    {
     }
-
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configure_options(Options_Resolver $resolver): void
     {
         $translator = $this->translator;
-        $translationDomain = $this->translationDomain;
-        $resolver->setNormalizer('upload_max_size_message', static fn (Options $options, $message): \Closure => static fn (): string => $translator->trans($message(), [], $translationDomain));
+        $translation_domain = $this->translation_domain;
+        $resolver->set_normalizer('upload_max_size_message', static fn(Options $options, $message): \Closure => static fn(): string => $translator->trans($message(), [], $translation_domain));
     }
-
-    public static function getExtendedTypes(): iterable
+    public static function get_extended_types(): iterable
     {
-        return [FormType::class];
+        return [Form_Type::class];
     }
 }

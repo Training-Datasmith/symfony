@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,10 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator\Traits;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
-
-trait LazyTrait
+trait Lazy_Trait
 {
     /**
      * Sets the lazy flag of this service.
@@ -24,11 +22,10 @@ trait LazyTrait
      */
     final public function lazy(bool|string $lazy = true): static
     {
-        $this->definition->setLazy((bool) $lazy);
+        $this->definition->set_lazy((bool) $lazy);
         if (\is_string($lazy)) {
-            $this->definition->addTag('proxy', ['interface' => $lazy]);
+            $this->definition->add_tag('proxy', ['interface' => $lazy]);
         }
-
         return $this;
     }
 }

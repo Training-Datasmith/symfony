@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,31 +9,26 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DependencyInjection\Argument;
+namespace Symfony\Component\Dependency_Injection\Argument;
 
 /**
  * Represents a collection of values to lazily iterate over.
  *
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-class IteratorArgument implements ArgumentInterface
+class Iterator_Argument implements Argument_Interface
 {
-    use ArgumentTrait;
-
+    use Argument_Trait;
     private array $values;
-
     public function __construct(array $values)
     {
-        $this->setValues($values);
+        $this->set_values($values);
     }
-
-    public function getValues(): array
+    public function get_values(): array
     {
         return $this->values;
     }
-
-    public function setValues(array $values): void
+    public function set_values(array $values): void
     {
         $this->values = $values;
     }

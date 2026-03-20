@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,33 +9,28 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Expression_Language\Node;
 
-namespace Symfony\Component\ExpressionLanguage\Node;
-
-use Symfony\Component\ExpressionLanguage\Compiler;
-
+use Symfony\Component\Expression_Language\Compiler;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @internal
  */
-class ArgumentsNode extends ArrayNode
+class Arguments_Node extends Array_Node
 {
     public function compile(Compiler $compiler): void
     {
-        $this->compileArguments($compiler, false);
+        $this->compile_arguments($compiler, false);
     }
-
-    public function toArray(): array
+    public function to_array(): array
     {
         $array = [];
-
-        foreach ($this->getKeyValuePairs() as $pair) {
+        foreach ($this->get_key_value_pairs() as $pair) {
             $array[] = $pair['value'];
             $array[] = ', ';
         }
         array_pop($array);
-
         return $array;
     }
 }

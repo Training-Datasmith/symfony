@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,102 +9,90 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+use Symfony\Component\Dependency_Injection\Exception\Service_Not_Found_Exception;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * Replaces aliases with actual service definitions, effectively removing these
  * aliases.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ReplaceAliasByActualDefinitionPass extends AbstractRecursivePass
+class Replace_Alias_By_Actual_Definition_Pass extends Abstract_Recursive_Pass
 {
-    protected bool $skipScalars = true;
-
+    protected bool $skip_scalars = true;
     private array $replacements;
-
     /**
      * Process the Container to replace aliases with service definitions.
      *
      * @throws InvalidArgumentException if the service definition does not exist
      */
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
         // First collect all alias targets that need to be replaced
-        $seenAliasTargets = [];
+        $seen_alias_targets = [];
         $replacements = [];
-
         // Sort aliases so non-deprecated ones come first. This ensures that when
         // multiple aliases point to the same private definition, non-deprecated
         // aliases get priority for renaming. Otherwise, the definition might be
         // renamed to a deprecated alias ID, causing the original service ID to
         // become an alias to the deprecated one (inverting the alias chain).
-        $aliases = $container->getAliases();
-        uasort($aliases, static fn ($a, $b): int => $a->isDeprecated() <=> $b->isDeprecated());
-
-        foreach ($aliases as $definitionId => $target) {
-            $targetId = (string) $target;
+        $aliases = $container->get_aliases();
+        uasort($aliases, static fn($a, $b): int => $a->is_deprecated() <=> $b->is_deprecated());
+        foreach ($aliases as $definition_id => $target) {
+            $target_id = (string) $target;
             // Special case: leave this target alone
-            if ('service_container' === $targetId) {
+            if ('service_container' === $target_id) {
                 continue;
             }
             // Check if target needs to be replaced
-            if (isset($replacements[$targetId])) {
-                $container->setAlias($definitionId, $replacements[$targetId])->setPublic($target->isPublic());
-
-                if ($target->isDeprecated()) {
-                    $container->getAlias($definitionId)->setDeprecated(...array_values($target->getDeprecation('%alias_id%')));
+            if (isset($replacements[$target_id])) {
+                $container->set_alias($definition_id, $replacements[$target_id])->set_public($target->is_public());
+                if ($target->is_deprecated()) {
+                    $container->get_alias($definition_id)->set_deprecated(...array_values($target->get_deprecation('%alias_id%')));
                 }
             }
             // No need to process the same target twice
-            if (isset($seenAliasTargets[$targetId])) {
+            if (isset($seen_alias_targets[$target_id])) {
                 continue;
             }
             // Process new target
-            $seenAliasTargets[$targetId] = true;
+            $seen_alias_targets[$target_id] = true;
             try {
-                $definition = $container->getDefinition($targetId);
-            } catch (ServiceNotFoundException $e) {
-                if ('' !== $e->getId() && '@' === $e->getId()[0]) {
-                    throw new ServiceNotFoundException($e->getId(), $e->getSourceId(), null, [substr($e->getId(), 1)]);
+                $definition = $container->get_definition($target_id);
+            } catch (Service_Not_Found_Exception $e) {
+                if ('' !== $e->get_id() && '@' === $e->get_id()[0]) {
+                    throw new Service_Not_Found_Exception($e->get_id(), $e->get_source_id(), null, [substr($e->get_id(), 1)]);
                 }
-
                 throw $e;
             }
-            if ($definition->isPublic()) {
+            if ($definition->is_public()) {
                 continue;
             }
             // Remove private definition and schedule for replacement
-            $definition->setPublic($target->isPublic());
-            $container->setDefinition($definitionId, $definition);
-            $container->removeDefinition($targetId);
-            $replacements[$targetId] = $definitionId;
-
-            if ($target->isPublic() && $target->isDeprecated()) {
-                $definition->addTag('container.private', $target->getDeprecation('%service_id%'));
+            $definition->set_public($target->is_public());
+            $container->set_definition($definition_id, $definition);
+            $container->remove_definition($target_id);
+            $replacements[$target_id] = $definition_id;
+            if ($target->is_public() && $target->is_deprecated()) {
+                $definition->add_tag('container.private', $target->get_deprecation('%service_id%'));
             }
         }
         $this->replacements = $replacements;
-
         parent::process($container);
         $this->replacements = [];
     }
-
-    protected function processValue(mixed $value, bool $isRoot = false): mixed
+    protected function process_value(mixed $value, bool $is_root = false): mixed
     {
-        if ($value instanceof Reference && isset($this->replacements[$referenceId = (string) $value])) {
+        if ($value instanceof Reference && isset($this->replacements[$reference_id = (string) $value])) {
             // Perform the replacement
-            $newId = $this->replacements[$referenceId];
-            $value = new Reference($newId, $value->getInvalidBehavior());
-            $this->container->log($this, \sprintf('Changed reference of service "%s" previously pointing to "%s" to "%s".', $this->currentId, $referenceId, $newId));
+            $new_id = $this->replacements[$reference_id];
+            $value = new Reference($new_id, $value->get_invalid_behavior());
+            $this->container->log($this, \sprintf('Changed reference of service "%s" previously pointing to "%s" to "%s".', $this->current_id, $reference_id, $new_id));
         }
-
-        return parent::processValue($value, $isRoot);
+        return parent::process_value($value, $is_root);
     }
 }

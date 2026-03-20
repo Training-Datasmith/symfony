@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,106 +9,89 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Client;
 
-namespace Symfony\Component\HttpClient;
-
-use Symfony\Component\HttpClient\Exception\TransportException;
-use Symfony\Component\HttpClient\Response\MockResponse;
-use Symfony\Component\HttpClient\Response\ResponseStream;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface;
-use Symfony\Contracts\HttpClient\ResponseStreamInterface;
-use Symfony\Contracts\Service\ResetInterface;
-
+use Symfony\Component\Http_Client\Exception\Transport_Exception;
+use Symfony\Component\Http_Client\Response\Mock_Response;
+use Symfony\Component\Http_Client\Response\Response_Stream;
+use Symfony\Contracts\Http_Client\Http_Client_Interface;
+use Symfony\Contracts\Http_Client\Response_Interface;
+use Symfony\Contracts\Http_Client\Response_Stream_Interface;
+use Symfony\Contracts\Service\Reset_Interface;
 /**
  * A test-friendly HttpClient that doesn't make actual HTTP requests.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class MockHttpClient implements HttpClientInterface, ResetInterface
+class Mock_Http_Client implements Http_Client_Interface, Reset_Interface
 {
-    use HttpClientTrait;
-
-    private ResponseInterface|\Closure|iterable|null $responseFactory;
-    private int $requestsCount = 0;
-    private array $defaultOptions = [];
-
+    use Http_Client_Trait;
+    private Response_Interface|\Closure|iterable|null $response_factory;
+    private int $requests_count = 0;
+    private array $default_options = [];
     /**
      * @param callable|callable[]|ResponseInterface|ResponseInterface[]|iterable|null $responseFactory
      */
-    public function __construct(callable|iterable|ResponseInterface|null $responseFactory = null, ?string $baseUri = 'https://example.com')
+    public function __construct(callable|iterable|Response_Interface|null $response_factory = null, ?string $base_uri = 'https://example.com')
     {
-        $this->setResponseFactory($responseFactory);
-        $this->defaultOptions['base_uri'] = $baseUri;
+        $this->set_response_factory($response_factory);
+        $this->default_options['base_uri'] = $base_uri;
     }
-
     /**
      * @param callable|callable[]|ResponseInterface|ResponseInterface[]|iterable|null $responseFactory
      */
-    public function setResponseFactory($responseFactory): void
+    public function set_response_factory($response_factory): void
     {
-        if ($responseFactory instanceof ResponseInterface) {
-            $responseFactory = [$responseFactory];
+        if ($response_factory instanceof Response_Interface) {
+            $response_factory = [$response_factory];
         }
-
-        if (!$responseFactory instanceof \Iterator && null !== $responseFactory && !\is_callable($responseFactory)) {
-            $responseFactory = (static function () use ($responseFactory) {
-                yield from $responseFactory;
+        if (!$response_factory instanceof \Iterator && null !== $response_factory && !\is_callable($response_factory)) {
+            $response_factory = (static function () use ($response_factory) {
+                yield from $response_factory;
             })();
         }
-
-        $this->responseFactory = !\is_callable($responseFactory) ? $responseFactory : $responseFactory(...);
+        $this->response_factory = !\is_callable($response_factory) ? $response_factory : $response_factory(...);
     }
-
-    public function request(string $method, string $url, array $options = []): ResponseInterface
+    public function request(string $method, string $url, array $options = []): Response_Interface
     {
-        [$url, $options] = $this->prepareRequest($method, $url, $options, $this->defaultOptions, true);
+        [$url, $options] = $this->prepare_request($method, $url, $options, $this->default_options, true);
         $url = implode('', $url);
-
-        if (null === $this->responseFactory) {
-            $response = new MockResponse();
-        } elseif (\is_callable($this->responseFactory)) {
-            $response = ($this->responseFactory)($method, $url, $options);
-        } elseif (!$this->responseFactory->valid()) {
-            throw new TransportException($this->requestsCount ? 'No more response left in the response factory iterator passed to MockHttpClient: the number of requests exceeds the number of responses.' : 'The response factory iterator passed to MockHttpClient is empty.');
+        if (null === $this->response_factory) {
+            $response = new Mock_Response();
+        } elseif (\is_callable($this->response_factory)) {
+            $response = ($this->response_factory)($method, $url, $options);
+        } elseif (!$this->response_factory->valid()) {
+            throw new Transport_Exception($this->requests_count ? 'No more response left in the response factory iterator passed to MockHttpClient: the number of requests exceeds the number of responses.' : 'The response factory iterator passed to MockHttpClient is empty.');
         } else {
-            $responseFactory = $this->responseFactory->current();
-            $response = \is_callable($responseFactory) ? $responseFactory($method, $url, $options) : $responseFactory;
-            $this->responseFactory->next();
+            $response_factory = $this->response_factory->current();
+            $response = \is_callable($response_factory) ? $response_factory($method, $url, $options) : $response_factory;
+            $this->response_factory->next();
         }
-        ++$this->requestsCount;
-
-        if (!$response instanceof ResponseInterface) {
-            throw new TransportException(\sprintf('The response factory passed to MockHttpClient must return/yield an instance of ResponseInterface, "%s" given.', get_debug_type($response)));
+        ++$this->requests_count;
+        if (!$response instanceof Response_Interface) {
+            throw new Transport_Exception(\sprintf('The response factory passed to MockHttpClient must return/yield an instance of ResponseInterface, "%s" given.', get_debug_type($response)));
         }
-
-        return MockResponse::fromRequest($method, $url, $options, $response);
+        return Mock_Response::from_request($method, $url, $options, $response);
     }
-
-    public function stream(ResponseInterface|iterable $responses, ?float $timeout = null): ResponseStreamInterface
+    public function stream(Response_Interface|iterable $responses, ?float $timeout = null): Response_Stream_Interface
     {
-        if ($responses instanceof ResponseInterface) {
+        if ($responses instanceof Response_Interface) {
             $responses = [$responses];
         }
-
-        return new ResponseStream(MockResponse::stream($responses, $timeout));
+        return new Response_Stream(Mock_Response::stream($responses, $timeout));
     }
-
-    public function getRequestsCount(): int
+    public function get_requests_count(): int
     {
-        return $this->requestsCount;
+        return $this->requests_count;
     }
-
-    public function withOptions(array $options): static
+    public function with_options(array $options): static
     {
         $clone = clone $this;
-        $clone->defaultOptions = self::mergeDefaultOptions($options, $this->defaultOptions, true);
-
+        $clone->default_options = self::merge_default_options($options, $this->default_options, true);
         return $clone;
     }
-
     public function reset(): void
     {
-        $this->requestsCount = 0;
+        $this->requests_count = 0;
     }
 }

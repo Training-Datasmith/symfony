@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,164 +9,135 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\ChildDefinition;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\LogicException;
-use Symfony\Component\DependencyInjection\Exception\RuntimeException;
-
+use Symfony\Component\Dependency_Injection\Child_Definition;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Exception\LogicException;
+use Symfony\Component\Dependency_Injection\Exception\RuntimeException;
 /**
  * @author Alexander M. Turek <me@derrabus.de>
  */
-final class AttributeAutoconfigurationPass extends AbstractRecursivePass
+final class Attribute_Autoconfiguration_Pass extends Abstract_Recursive_Pass
 {
-    protected bool $skipScalars = true;
-
-    private array $classAttributeConfigurators = [];
-    private array $methodAttributeConfigurators = [];
-    private array $propertyAttributeConfigurators = [];
-    private array $parameterAttributeConfigurators = [];
-
-    public function process(ContainerBuilder $container): void
+    protected bool $skip_scalars = true;
+    private array $class_attribute_configurators = [];
+    private array $method_attribute_configurators = [];
+    private array $property_attribute_configurators = [];
+    private array $parameter_attribute_configurators = [];
+    public function process(Container_Builder $container): void
     {
-        if (!$container->getAttributeAutoconfigurators()) {
+        if (!$container->get_attribute_autoconfigurators()) {
             return;
         }
-
-        foreach ($container->getAttributeAutoconfigurators() as $attributeName => $callables) {
+        foreach ($container->get_attribute_autoconfigurators() as $attribute_name => $callables) {
             foreach ($callables as $callable) {
-                $callableReflector = new \ReflectionFunction($callable(...));
-                if ($callableReflector->getNumberOfParameters() <= 2) {
-                    $this->classAttributeConfigurators[$attributeName][] = $callable;
+                $callable_reflector = new \ReflectionFunction($callable(...));
+                if ($callable_reflector->get_number_of_parameters() <= 2) {
+                    $this->class_attribute_configurators[$attribute_name][] = $callable;
                     continue;
                 }
-
-                $reflectorParameter = $callableReflector->getParameters()[2];
-                $parameterType = $reflectorParameter->getType();
+                $reflector_parameter = $callable_reflector->get_parameters()[2];
+                $parameter_type = $reflector_parameter->get_type();
                 $types = [];
-                if ($parameterType instanceof \ReflectionUnionType) {
-                    foreach ($parameterType->getTypes() as $type) {
-                        $types[] = $type->getName();
+                if ($parameter_type instanceof \ReflectionUnionType) {
+                    foreach ($parameter_type->get_types() as $type) {
+                        $types[] = $type->get_name();
                     }
-                } elseif ($parameterType instanceof \ReflectionNamedType) {
-                    $types[] = $parameterType->getName();
+                } elseif ($parameter_type instanceof \ReflectionNamedType) {
+                    $types[] = $parameter_type->get_name();
                 } else {
-                    throw new LogicException(\sprintf('Argument "$%s" of attribute autoconfigurator should have a type, use one or more of "\ReflectionClass|\ReflectionMethod|\ReflectionProperty|\ReflectionParameter|\Reflector" in "%s" on line "%d".', $reflectorParameter->getName(), $callableReflector->getFileName(), $callableReflector->getStartLine()));
+                    throw new LogicException(\sprintf('Argument "$%s" of attribute autoconfigurator should have a type, use one or more of "\ReflectionClass|\ReflectionMethod|\ReflectionProperty|\ReflectionParameter|\Reflector" in "%s" on line "%d".', $reflector_parameter->get_name(), $callable_reflector->get_file_name(), $callable_reflector->get_start_line()));
                 }
-
                 foreach (['Class', 'Method', 'Property', 'Parameter'] as $symbol) {
-                    if (['Reflector'] === $types || \in_array('Reflection'.$symbol, $types, true)) {
-                        $this->{lcfirst($symbol).'AttributeConfigurators'}[$attributeName][] = $callable;
+                    if (['Reflector'] === $types || \in_array('Reflection' . $symbol, $types, true)) {
+                        $this->{lcfirst($symbol) . 'AttributeConfigurators'}[$attribute_name][] = $callable;
                     }
                 }
             }
         }
-
         $this->container = $container;
-        foreach ($container->getDefinitions() as $id => $definition) {
-            $this->currentId = $id;
-            $this->processValue($definition, true);
+        foreach ($container->get_definitions() as $id => $definition) {
+            $this->current_id = $id;
+            $this->process_value($definition, true);
         }
     }
-
-    protected function processValue(mixed $value, bool $isRoot = false): mixed
+    protected function process_value(mixed $value, bool $is_root = false): mixed
     {
-        if (!$value instanceof Definition
-            || !$value->isAutoconfigured()
-            || ($value->isAbstract() && !$value->hasTag('container.excluded'))
-            || $value->hasTag('container.ignore_attributes')
-            || !($classReflector = $this->container->getReflectionClass($value->getClass(), false))
-        ) {
-            return parent::processValue($value, $isRoot);
+        if (!$value instanceof Definition || !$value->is_autoconfigured() || $value->is_abstract() && !$value->has_tag('container.excluded') || $value->has_tag('container.ignore_attributes') || !$class_reflector = $this->container->get_reflection_class($value->get_class(), false)) {
+            return parent::process_value($value, $is_root);
         }
-
-        $instanceof = $value->getInstanceofConditionals();
-        $conditionals = $instanceof[$classReflector->getName()] ?? new ChildDefinition('');
-
-        $this->callConfigurators($this->classAttributeConfigurators, $conditionals, $classReflector);
-
-        if ($this->parameterAttributeConfigurators) {
+        $instanceof = $value->get_instanceof_conditionals();
+        $conditionals = $instanceof[$class_reflector->get_name()] ?? new Child_Definition('');
+        $this->call_configurators($this->class_attribute_configurators, $conditionals, $class_reflector);
+        if ($this->parameter_attribute_configurators) {
             try {
-                $constructorReflector = $this->getConstructor($value, false);
+                $constructor_reflector = $this->get_constructor($value, false);
             } catch (RuntimeException) {
-                $constructorReflector = null;
+                $constructor_reflector = null;
             }
-
-            if ($constructorReflector) {
-                foreach ($constructorReflector->getParameters() as $parameterReflector) {
-                    $this->callConfigurators($this->parameterAttributeConfigurators, $conditionals, $parameterReflector);
+            if ($constructor_reflector) {
+                foreach ($constructor_reflector->get_parameters() as $parameter_reflector) {
+                    $this->call_configurators($this->parameter_attribute_configurators, $conditionals, $parameter_reflector);
                 }
             }
         }
-
-        if ($this->methodAttributeConfigurators || $this->parameterAttributeConfigurators) {
-            foreach ($classReflector->getMethods(\ReflectionMethod::IS_PUBLIC) as $methodReflector) {
-                if ($methodReflector->isConstructor()) {
+        if ($this->method_attribute_configurators || $this->parameter_attribute_configurators) {
+            foreach ($class_reflector->get_methods(\ReflectionMethod::IS_PUBLIC) as $method_reflector) {
+                if ($method_reflector->is_constructor()) {
                     continue;
                 }
-                if ($methodReflector->isDestructor()) {
+                if ($method_reflector->is_destructor()) {
                     continue;
                 }
-                $this->callConfigurators($this->methodAttributeConfigurators, $conditionals, $methodReflector);
-
-                foreach ($methodReflector->getParameters() as $parameterReflector) {
-                    $this->callConfigurators($this->parameterAttributeConfigurators, $conditionals, $parameterReflector);
+                $this->call_configurators($this->method_attribute_configurators, $conditionals, $method_reflector);
+                foreach ($method_reflector->get_parameters() as $parameter_reflector) {
+                    $this->call_configurators($this->parameter_attribute_configurators, $conditionals, $parameter_reflector);
                 }
             }
         }
-
-        if ($this->propertyAttributeConfigurators) {
-            foreach ($classReflector->getProperties(\ReflectionProperty::IS_PUBLIC) as $propertyReflector) {
-                if ($propertyReflector->isStatic()) {
+        if ($this->property_attribute_configurators) {
+            foreach ($class_reflector->get_properties(\ReflectionProperty::IS_PUBLIC) as $property_reflector) {
+                if ($property_reflector->is_static()) {
                     continue;
                 }
-
-                $this->callConfigurators($this->propertyAttributeConfigurators, $conditionals, $propertyReflector);
+                $this->call_configurators($this->property_attribute_configurators, $conditionals, $property_reflector);
             }
         }
-
-        if (!isset($instanceof[$classReflector->getName()]) && new ChildDefinition('') != $conditionals) {
-            $instanceof[$classReflector->getName()] = $conditionals;
-            $value->setInstanceofConditionals($instanceof);
+        if (!isset($instanceof[$class_reflector->get_name()]) && new Child_Definition('') != $conditionals) {
+            $instanceof[$class_reflector->get_name()] = $conditionals;
+            $value->set_instanceof_conditionals($instanceof);
         }
-
-        return parent::processValue($value, $isRoot);
+        return parent::process_value($value, $is_root);
     }
-
     /**
      * Call all the configurators for the given attribute.
      *
      * @param array<class-string, callable[]> $configurators
      */
-    private function callConfigurators(array &$configurators, ChildDefinition $conditionals, \ReflectionClass|\ReflectionMethod|\ReflectionParameter|\ReflectionProperty $reflector): void
+    private function call_configurators(array &$configurators, Child_Definition $conditionals, \ReflectionClass|\ReflectionMethod|\ReflectionParameter|\ReflectionProperty $reflector): void
     {
         if (!$configurators) {
             return;
         }
-
-        foreach ($reflector->getAttributes() as $attribute) {
-            foreach ($this->findConfigurators($configurators, $attribute->getName()) as $configurator) {
-                $configurator($conditionals, $attribute->newInstance(), $reflector);
+        foreach ($reflector->get_attributes() as $attribute) {
+            foreach ($this->find_configurators($configurators, $attribute->get_name()) as $configurator) {
+                $configurator($conditionals, $attribute->new_instance(), $reflector);
             }
         }
     }
-
     /**
      * Find the first configurator for the given attribute name, looking up the class hierarchy.
      */
-    private function findConfigurators(array &$configurators, string $attributeName): array
+    private function find_configurators(array &$configurators, string $attribute_name): array
     {
-        if (\array_key_exists($attributeName, $configurators)) {
-            return $configurators[$attributeName];
+        if (\array_key_exists($attribute_name, $configurators)) {
+            return $configurators[$attribute_name];
         }
-
-        if (class_exists($attributeName) && $parent = get_parent_class($attributeName)) {
-            return $configurators[$attributeName] = $this->findConfigurators($configurators, $parent);
+        if (class_exists($attribute_name) && $parent = get_parent_class($attribute_name)) {
+            return $configurators[$attribute_name] = $this->find_configurators($configurators, $parent);
         }
-
-        return $configurators[$attributeName] = [];
+        return $configurators[$attribute_name] = [];
     }
 }

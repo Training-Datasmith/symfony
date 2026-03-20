@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
 /**
@@ -18,22 +16,20 @@ namespace Symfony\Component\Form;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface FormFactoryBuilderInterface
+interface Form_Factory_Builder_Interface
 {
     /**
      * Sets the factory for creating ResolvedFormTypeInterface instances.
      *
      * @return $this
      */
-    public function setResolvedTypeFactory(ResolvedFormTypeFactoryInterface $resolvedTypeFactory): static;
-
+    public function set_resolved_type_factory(Resolved_Form_Type_Factory_Interface $resolved_type_factory): static;
     /**
      * Adds an extension to be loaded by the factory.
      *
      * @return $this
      */
-    public function addExtension(FormExtensionInterface $extension): static;
-
+    public function add_extension(Form_Extension_Interface $extension): static;
     /**
      * Adds a list of extensions to be loaded by the factory.
      *
@@ -41,15 +37,13 @@ interface FormFactoryBuilderInterface
      *
      * @return $this
      */
-    public function addExtensions(array $extensions): static;
-
+    public function add_extensions(array $extensions): static;
     /**
      * Adds a form type to the factory.
      *
      * @return $this
      */
-    public function addType(FormTypeInterface $type): static;
-
+    public function add_type(Form_Type_Interface $type): static;
     /**
      * Adds a list of form types to the factory.
      *
@@ -57,15 +51,13 @@ interface FormFactoryBuilderInterface
      *
      * @return $this
      */
-    public function addTypes(array $types): static;
-
+    public function add_types(array $types): static;
     /**
      * Adds a form type extension to the factory.
      *
      * @return $this
      */
-    public function addTypeExtension(FormTypeExtensionInterface $typeExtension): static;
-
+    public function add_type_extension(Form_Type_Extension_Interface $type_extension): static;
     /**
      * Adds a list of form type extensions to the factory.
      *
@@ -73,15 +65,13 @@ interface FormFactoryBuilderInterface
      *
      * @return $this
      */
-    public function addTypeExtensions(array $typeExtensions): static;
-
+    public function add_type_extensions(array $type_extensions): static;
     /**
      * Adds a type guesser to the factory.
      *
      * @return $this
      */
-    public function addTypeGuesser(FormTypeGuesserInterface $typeGuesser): static;
-
+    public function add_type_guesser(Form_Type_Guesser_Interface $type_guesser): static;
     /**
      * Adds a list of type guessers to the factory.
      *
@@ -89,10 +79,9 @@ interface FormFactoryBuilderInterface
      *
      * @return $this
      */
-    public function addTypeGuessers(array $typeGuessers): static;
-
+    public function add_type_guessers(array $type_guessers): static;
     /**
      * Builds and returns the factory.
      */
-    public function getFormFactory(): FormFactoryInterface;
+    public function get_form_factory(): Form_Factory_Interface;
 }

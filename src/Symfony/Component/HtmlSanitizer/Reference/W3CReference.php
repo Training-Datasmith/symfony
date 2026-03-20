@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HtmlSanitizer\Reference;
+namespace Symfony\Component\Html_Sanitizer\Reference;
 
 /**
  * Stores reference data from the W3C Sanitizer API standard.
@@ -22,7 +20,7 @@ namespace Symfony\Component\HtmlSanitizer\Reference;
  *
  * @internal
  */
-final class W3CReference
+final class W3c_Reference
 {
     /**
      * Sanitizer supported contexts.
@@ -33,156 +31,18 @@ final class W3CReference
     public const CONTEXT_HEAD = 'head';
     public const CONTEXT_BODY = 'body';
     public const CONTEXT_TEXT = 'text';
-
     // Which context to apply depending on the passed parent element name
-    public const CONTEXTS_MAP = [
-        'head' => self::CONTEXT_HEAD,
-        'textarea' => self::CONTEXT_TEXT,
-        'title' => self::CONTEXT_TEXT,
-    ];
-
+    public const CONTEXTS_MAP = ['head' => self::CONTEXT_HEAD, 'textarea' => self::CONTEXT_TEXT, 'title' => self::CONTEXT_TEXT];
     /**
      * Elements allowed by the Sanitizer standard in <head> as keys, including whether
      * they are safe or not as values (safe meaning no global display/audio/video impact).
      */
-    public const HEAD_ELEMENTS = [
-        'head' => true,
-        'link' => true,
-        'meta' => true,
-        'style' => false,
-        'title' => true,
-    ];
-
+    public const HEAD_ELEMENTS = ['head' => true, 'link' => true, 'meta' => true, 'style' => false, 'title' => true];
     /**
      * Elements allowed by the Sanitizer standard in <body> as keys, including whether
      * they are safe or not as values (safe meaning no global display/audio/video impact).
      */
-    public const BODY_ELEMENTS = [
-        'a' => true,
-        'abbr' => true,
-        'acronym' => true,
-        'address' => true,
-        'area' => true,
-        'article' => true,
-        'aside' => true,
-        'audio' => true,
-        'b' => true,
-        'basefont' => true,
-        'bdi' => true,
-        'bdo' => true,
-        'bgsound' => false,
-        'big' => true,
-        'blockquote' => true,
-        'body' => true,
-        'br' => true,
-        'button' => true,
-        'canvas' => true,
-        'caption' => true,
-        'center' => true,
-        'cite' => true,
-        'code' => true,
-        'col' => true,
-        'colgroup' => true,
-        'command' => true,
-        'data' => true,
-        'datalist' => true,
-        'dd' => true,
-        'del' => true,
-        'details' => true,
-        'dfn' => true,
-        'dialog' => true,
-        'dir' => true,
-        'div' => true,
-        'dl' => true,
-        'dt' => true,
-        'em' => true,
-        'fieldset' => true,
-        'figcaption' => true,
-        'figure' => true,
-        'font' => true,
-        'footer' => true,
-        'form' => false,
-        'h1' => true,
-        'h2' => true,
-        'h3' => true,
-        'h4' => true,
-        'h5' => true,
-        'h6' => true,
-        'header' => true,
-        'hgroup' => true,
-        'hr' => true,
-        'html' => true,
-        'i' => true,
-        'image' => true,
-        'img' => true,
-        'input' => false,
-        'ins' => true,
-        'kbd' => true,
-        'keygen' => true,
-        'label' => true,
-        'layer' => true,
-        'legend' => true,
-        'li' => true,
-        'listing' => true,
-        'main' => true,
-        'map' => true,
-        'mark' => true,
-        'marquee' => true,
-        'menu' => true,
-        'meter' => true,
-        'nav' => true,
-        'nobr' => true,
-        'ol' => true,
-        'optgroup' => true,
-        'option' => true,
-        'output' => true,
-        'p' => true,
-        'picture' => true,
-        'plaintext' => true,
-        'popup' => true,
-        'portal' => true,
-        'pre' => true,
-        'progress' => true,
-        'q' => true,
-        'rb' => true,
-        'rp' => true,
-        'rt' => true,
-        'rtc' => true,
-        'ruby' => true,
-        's' => true,
-        'samp' => true,
-        'section' => true,
-        'select' => false,
-        'selectmenu' => false,
-        'slot' => true,
-        'small' => true,
-        'source' => true,
-        'span' => true,
-        'strike' => true,
-        'strong' => true,
-        'sub' => true,
-        'summary' => true,
-        'sup' => true,
-        'table' => true,
-        'tbody' => true,
-        'td' => true,
-        'template' => true,
-        'textarea' => false,
-        'tfoot' => true,
-        'th' => true,
-        'thead' => true,
-        'time' => true,
-        'tr' => true,
-        'track' => true,
-        'tt' => true,
-        'u' => true,
-        'ul' => true,
-        'var' => true,
-        'video' => true,
-        'wbr' => true,
-        'xmp' => true,
-    ];
-
+    public const BODY_ELEMENTS = ['a' => true, 'abbr' => true, 'acronym' => true, 'address' => true, 'area' => true, 'article' => true, 'aside' => true, 'audio' => true, 'b' => true, 'basefont' => true, 'bdi' => true, 'bdo' => true, 'bgsound' => false, 'big' => true, 'blockquote' => true, 'body' => true, 'br' => true, 'button' => true, 'canvas' => true, 'caption' => true, 'center' => true, 'cite' => true, 'code' => true, 'col' => true, 'colgroup' => true, 'command' => true, 'data' => true, 'datalist' => true, 'dd' => true, 'del' => true, 'details' => true, 'dfn' => true, 'dialog' => true, 'dir' => true, 'div' => true, 'dl' => true, 'dt' => true, 'em' => true, 'fieldset' => true, 'figcaption' => true, 'figure' => true, 'font' => true, 'footer' => true, 'form' => false, 'h1' => true, 'h2' => true, 'h3' => true, 'h4' => true, 'h5' => true, 'h6' => true, 'header' => true, 'hgroup' => true, 'hr' => true, 'html' => true, 'i' => true, 'image' => true, 'img' => true, 'input' => false, 'ins' => true, 'kbd' => true, 'keygen' => true, 'label' => true, 'layer' => true, 'legend' => true, 'li' => true, 'listing' => true, 'main' => true, 'map' => true, 'mark' => true, 'marquee' => true, 'menu' => true, 'meter' => true, 'nav' => true, 'nobr' => true, 'ol' => true, 'optgroup' => true, 'option' => true, 'output' => true, 'p' => true, 'picture' => true, 'plaintext' => true, 'popup' => true, 'portal' => true, 'pre' => true, 'progress' => true, 'q' => true, 'rb' => true, 'rp' => true, 'rt' => true, 'rtc' => true, 'ruby' => true, 's' => true, 'samp' => true, 'section' => true, 'select' => false, 'selectmenu' => false, 'slot' => true, 'small' => true, 'source' => true, 'span' => true, 'strike' => true, 'strong' => true, 'sub' => true, 'summary' => true, 'sup' => true, 'table' => true, 'tbody' => true, 'td' => true, 'template' => true, 'textarea' => false, 'tfoot' => true, 'th' => true, 'thead' => true, 'time' => true, 'tr' => true, 'track' => true, 'tt' => true, 'u' => true, 'ul' => true, 'var' => true, 'video' => true, 'wbr' => true, 'xmp' => true];
     /**
      * Attributes allowed by the standard.
      */

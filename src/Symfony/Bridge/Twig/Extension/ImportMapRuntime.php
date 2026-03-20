@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,23 +9,19 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Twig\Extension;
 
-use Symfony\Component\AssetMapper\ImportMap\ImportMapRenderer;
-
+use Symfony\Component\Asset_Mapper\Import_Map\Import_Map_Renderer;
 /**
  * @author Kévin Dunglas <kevin@dunglas.dev>
  */
-class ImportMapRuntime
+class Import_Map_Runtime
 {
-    public function __construct(
-        private readonly ImportMapRenderer $importMapRenderer,
-    ) {
-    }
-
-    public function importmap(string|array $entryPoint = 'app', array $attributes = []): string
+    public function __construct(private readonly Import_Map_Renderer $import_map_renderer)
     {
-        return $this->importMapRenderer->render($entryPoint, $attributes);
+    }
+    public function importmap(string|array $entry_point = 'app', array $attributes = []): string
+    {
+        return $this->import_map_renderer->render($entry_point, $attributes);
     }
 }

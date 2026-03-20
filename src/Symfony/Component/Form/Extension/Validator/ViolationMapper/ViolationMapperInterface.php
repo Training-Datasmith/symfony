@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,16 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Extension\Validator\Violation_Mapper;
 
-namespace Symfony\Component\Form\Extension\Validator\ViolationMapper;
-
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Validator\ConstraintViolation;
-
+use Symfony\Component\Form\Form_Interface;
+use Symfony\Component\Validator\Constraint_Violation;
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface ViolationMapperInterface
+interface Violation_Mapper_Interface
 {
     /**
      * Maps a constraint violation to a form in the form tree under
@@ -27,5 +24,5 @@ interface ViolationMapperInterface
      *
      * @param bool $allowNonSynchronized Whether to allow mapping to non-synchronized forms
      */
-    public function mapViolation(ConstraintViolation $violation, FormInterface $form, bool $allowNonSynchronized = false): void;
+    public function map_violation(Constraint_Violation $violation, Form_Interface $form, bool $allow_non_synchronized = false): void;
 }

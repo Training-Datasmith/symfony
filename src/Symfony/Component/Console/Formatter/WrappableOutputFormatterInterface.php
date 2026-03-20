@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Formatter;
 
 /**
@@ -18,10 +16,10 @@ namespace Symfony\Component\Console\Formatter;
  *
  * @author Roland Franssen <franssen.roland@gmail.com>
  */
-interface WrappableOutputFormatterInterface extends OutputFormatterInterface
+interface Wrappable_Output_Formatter_Interface extends Output_Formatter_Interface
 {
     /**
      * Formats a message according to the given styles, wrapping at `$width` (0 means no wrapping).
      */
-    public function formatAndWrap(?string $message, int $width): string;
+    public function format_and_wrap(?string $message, int $width): string;
 }

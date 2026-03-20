@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,38 +9,31 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Doctrine\Middleware\Idle_Connection;
 
-namespace Symfony\Bridge\Doctrine\Middleware\IdleConnection;
-
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\KernelEvents;
-
-final readonly class Listener implements EventSubscriberInterface
+use Symfony\Component\Dependency_Injection\Container_Interface;
+use Symfony\Component\Event_Dispatcher\Event_Subscriber_Interface;
+use Symfony\Component\Http_Kernel\Event\Request_Event;
+use Symfony\Component\Http_Kernel\Http_Kernel_Interface;
+use Symfony\Component\Http_Kernel\Kernel_Events;
+final readonly class Listener implements Event_Subscriber_Interface
 {
     /**
      * @param \ArrayObject<string, int> $connectionExpiries
      */
-    public function __construct(
-        private \ArrayObject $connectionExpiries,
-        private ContainerInterface $container,
-    ) {
-    }
-
-    public function onKernelRequest(RequestEvent $event): void
+    public function __construct(private \ArrayObject $connection_expiries, private Container_Interface $container)
     {
-        if (HttpKernelInterface::MAIN_REQUEST !== $event->getRequestType()) {
+    }
+    public function on_kernel_request(Request_Event $event): void
+    {
+        if (Http_Kernel_Interface::MAIN_REQUEST !== $event->get_request_type()) {
             return;
         }
         $timestamp = time();
-
-        foreach ($this->connectionExpiries as $name => $expiry) {
+        foreach ($this->connection_expiries as $name => $expiry) {
             if ($timestamp >= $expiry) {
                 // unset before so that we won't retry in case of any failure
-                $this->connectionExpiries->offsetUnset($name);
-
+                $this->connection_expiries->offsetUnset($name);
                 try {
                     $connection = $this->container->get("doctrine.dbal.{$name}_connection");
                     $connection->close();
@@ -51,11 +43,8 @@ final readonly class Listener implements EventSubscriberInterface
             }
         }
     }
-
-    public static function getSubscribedEvents(): array
+    public static function get_subscribed_events(): array
     {
-        return [
-            KernelEvents::REQUEST => ['onKernelRequest', 192], // before session listeners since they could use the DB
-        ];
+        return [Kernel_Events::REQUEST => ['onKernelRequest', 192]];
     }
 }

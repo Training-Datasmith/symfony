@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,30 +9,25 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Monolog\Handler\Fingers_Crossed;
 
-namespace Symfony\Bridge\Monolog\Handler\FingersCrossed;
-
-use Monolog\Handler\FingersCrossed\ActivationStrategyInterface;
-use Monolog\LogRecord;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-
+use Monolog\Handler\Fingers_Crossed\Activation_Strategy_Interface;
+use Monolog\Log_Record;
+use Symfony\Component\Http_Foundation\Request_Stack;
+use Symfony\Component\Http_Kernel\Exception\Http_Exception_Interface;
 /**
  * Activation strategy that ignores certain HTTP codes.
  *
  * @author Shaun Simmons <shaun@envysphere.com>
  * @author Pierrick Vignand <pierrick.vignand@gmail.com>
  */
-final readonly class HttpCodeActivationStrategy implements ActivationStrategyInterface
+final readonly class Http_Code_Activation_Strategy implements Activation_Strategy_Interface
 {
     /**
      * @param array $exclusions each exclusion must have a "code" and "urls" keys
      */
-    public function __construct(
-        private RequestStack $requestStack,
-        private array $exclusions,
-        private ActivationStrategyInterface $inner,
-    ) {
+    public function __construct(private Request_Stack $request_stack, private array $exclusions, private Activation_Strategy_Interface $inner)
+    {
         foreach ($exclusions as $exclusion) {
             if (!\array_key_exists('code', $exclusion)) {
                 throw new \LogicException('An exclusion must have a "code" key.');
@@ -43,30 +37,20 @@ final readonly class HttpCodeActivationStrategy implements ActivationStrategyInt
             }
         }
     }
-
-    public function isHandlerActivated(LogRecord $record): bool
+    public function is_handler_activated(Log_Record $record): bool
     {
-        $isActivated = $this->inner->isHandlerActivated($record);
-
-        if (
-            $isActivated
-            && isset($record->context['exception'])
-            && $record->context['exception'] instanceof HttpExceptionInterface
-            && ($request = $this->requestStack->getMainRequest())
-        ) {
+        $is_activated = $this->inner->is_handler_activated($record);
+        if ($is_activated && isset($record->context['exception']) && $record->context['exception'] instanceof Http_Exception_Interface && $request = $this->request_stack->get_main_request()) {
             foreach ($this->exclusions as $exclusion) {
-                if ($record->context['exception']->getStatusCode() !== $exclusion['code']) {
+                if ($record->context['exception']->get_status_code() !== $exclusion['code']) {
                     continue;
                 }
-
                 if (\count($exclusion['urls'])) {
-                    return !preg_match('{('.implode('|', $exclusion['urls']).')}i', $request->getPathInfo());
+                    return !preg_match('{(' . implode('|', $exclusion['urls']) . ')}i', $request->get_path_info());
                 }
-
                 return false;
             }
         }
-
-        return $isActivated;
+        return $is_activated;
     }
 }

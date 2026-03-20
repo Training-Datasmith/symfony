@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Php_Unit\Legacy;
 
-namespace Symfony\Bridge\PhpUnit\Legacy;
-
-use PHPUnit\Framework\Test;
-use PHPUnit\Framework\TestListener;
-use PHPUnit\Framework\TestListenerDefaultImplementation;
-use PHPUnit\Framework\TestSuite;
-
+use Php_Unit\Framework\Test;
+use Php_Unit\Framework\Test_Listener;
+use Php_Unit\Framework\Test_Listener_Default_Implementation;
+use Php_Unit\Framework\Test_Suite;
 /**
  * Collects and replays skipped tests.
  *
@@ -25,39 +22,32 @@ use PHPUnit\Framework\TestSuite;
  *
  * @internal
  */
-class SymfonyTestsListenerForV7 implements TestListener
+class Symfony_Tests_Listener_For_V7 implements Test_Listener
 {
-    use TestListenerDefaultImplementation;
-
-    private \Symfony\Bridge\PhpUnit\Legacy\SymfonyTestsListenerTrait $trait;
-
-    public function __construct(array $mockedNamespaces = [])
+    use Test_Listener_Default_Implementation;
+    private \Symfony\Bridge\Php_Unit\Legacy\Symfony_Tests_Listener_Trait $trait;
+    public function __construct(array $mocked_namespaces = [])
     {
-        $this->trait = new SymfonyTestsListenerTrait($mockedNamespaces);
+        $this->trait = new Symfony_Tests_Listener_Trait($mocked_namespaces);
     }
-
-    public function globalListenerDisabled(): void
+    public function global_listener_disabled(): void
     {
-        $this->trait->globalListenerDisabled();
+        $this->trait->global_listener_disabled();
     }
-
-    public function startTestSuite(TestSuite $suite): void
+    public function start_test_suite(Test_Suite $suite): void
     {
-        $this->trait->startTestSuite($suite);
+        $this->trait->start_test_suite($suite);
     }
-
-    public function addSkippedTest(Test $test, \Throwable $t, float $time): void
+    public function add_skipped_test(Test $test, \Throwable $t, float $time): void
     {
-        $this->trait->addSkippedTest($test, $t, $time);
+        $this->trait->add_skipped_test($test, $t, $time);
     }
-
-    public function startTest(Test $test): void
+    public function start_test(Test $test): void
     {
-        $this->trait->startTest($test);
+        $this->trait->start_test($test);
     }
-
-    public function endTest(Test $test, float $time): void
+    public function end_test(Test $test, float $time): void
     {
-        $this->trait->endTest($test, $time);
+        $this->trait->end_test($test, $time);
     }
 }

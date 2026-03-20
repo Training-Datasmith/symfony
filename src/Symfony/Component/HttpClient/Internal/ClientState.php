@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpClient\Internal;
+namespace Symfony\Component\Http_Client\Internal;
 
 /**
  * Internal representation of the client state.
@@ -20,9 +18,9 @@ namespace Symfony\Component\HttpClient\Internal;
  *
  * @internal
  */
-class ClientState
+class Client_State
 {
-    public array $handlesActivity = [];
-    public array $openHandles = [];
-    public ?float $lastTimeout = null;
+    public array $handles_activity = [];
+    public array $open_handles = [];
+    public ?float $last_timeout = null;
 }

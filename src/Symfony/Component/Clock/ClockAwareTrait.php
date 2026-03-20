@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,31 +9,26 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Clock;
 
-use Psr\Clock\ClockInterface;
+use Psr\Clock\Clock_Interface;
 use Symfony\Contracts\Service\Attribute\Required;
-
 /**
  * A trait to help write time-sensitive classes.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-trait ClockAwareTrait
+trait Clock_Aware_Trait
 {
-    private readonly ClockInterface $clock;
-
+    private readonly Clock_Interface $clock;
     #[Required]
-    public function setClock(ClockInterface $clock): void
+    public function set_clock(Clock_Interface $clock): void
     {
         $this->clock = $clock;
     }
-
-    protected function now(): DatePoint
+    protected function now(): Date_Point
     {
         $now = ($this->clock ??= new Clock())->now();
-
-        return $now instanceof DatePoint ? $now : DatePoint::createFromInterface($now);
+        return $now instanceof Date_Point ? $now : Date_Point::create_from_interface($now);
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,43 +9,36 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event;
 
-namespace Symfony\Component\HttpKernel\Event;
-
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-
+use Symfony\Component\Expression_Language\Expression_Language;
 /**
  * Provides read-only access to controller metadata.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ControllerArgumentsMetadata extends ControllerMetadata
+class Controller_Arguments_Metadata extends Controller_Metadata
 {
-    public function __construct(
-        ControllerEvent $controllerEvent,
-        private readonly ControllerArgumentsEvent $controllerArgumentsEvent,
-    ) {
-        parent::__construct($controllerEvent);
+    public function __construct(Controller_Event $controller_event, private readonly Controller_Arguments_Event $controller_arguments_event)
+    {
+        parent::__construct($controller_event);
     }
-
     /**
      * @return list<mixed>
      */
-    public function getArguments(): array
+    public function get_arguments(): array
     {
-        return $this->controllerArgumentsEvent->getArguments();
+        return $this->controller_arguments_event->get_arguments();
     }
-
     /**
      * @return array<string, mixed>
      */
-    public function getNamedArguments(): array
+    public function get_named_arguments(): array
     {
-        return $this->controllerArgumentsEvent->getNamedArguments();
+        return $this->controller_arguments_event->get_named_arguments();
     }
-
-    public function evaluate(mixed $value, ?ExpressionLanguage $expressionLanguage): mixed
+    public function evaluate(mixed $value, ?Expression_Language $expression_language): mixed
     {
-        return $this->controllerArgumentsEvent->evaluate($value, $expressionLanguage);
+        return $this->controller_arguments_event->evaluate($value, $expression_language);
     }
 }

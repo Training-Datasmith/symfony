@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,37 +9,30 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Argument;
 
-namespace Symfony\Component\DependencyInjection\Argument;
-
-use Symfony\Component\DependencyInjection\ServiceLocator as BaseServiceLocator;
-
+use Symfony\Component\Dependency_Injection\Service_Locator as BaseServiceLocator;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
  * @internal
  */
-class ServiceLocator extends BaseServiceLocator
+class Service_Locator extends Base_Service_Locator
 {
-    public function __construct(
-        private readonly \Closure $factory,
-        private array $serviceMap,
-        private ?array $serviceTypes = null,
-    ) {
-        parent::__construct($serviceMap);
+    public function __construct(private readonly \Closure $factory, private array $service_map, private ?array $service_types = null)
+    {
+        parent::__construct($service_map);
     }
-
     public function get(string $id): mixed
     {
-        return match (\count($this->serviceMap[$id] ?? [])) {
+        return match (\count($this->service_map[$id] ?? [])) {
             0 => parent::get($id),
-            1 => $this->serviceMap[$id][0],
-            default => ($this->factory)(...$this->serviceMap[$id]),
+            1 => $this->service_map[$id][0],
+            default => ($this->factory)(...$this->service_map[$id]),
         };
     }
-
-    public function getProvidedServices(): array
+    public function get_provided_services(): array
     {
-        return $this->serviceTypes ??= array_map(static fn (): string => '?', $this->serviceMap);
+        return $this->service_types ??= array_map(static fn(): string => '?', $this->service_map);
     }
 }

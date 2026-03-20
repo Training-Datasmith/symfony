@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpFoundation;
+namespace Symfony\Component\Http_Foundation;
 
 /**
  * Response represents an HTTP response in JSON format.
@@ -24,33 +22,26 @@ namespace Symfony\Component\HttpFoundation;
  *
  * @author Igor Wiedler <igor@wiedler.ch>
  */
-class JsonResponse extends Response
+class Json_Response extends Response
 {
     protected mixed $data;
     protected ?string $callback = null;
-
     // Encode <, >, ', &, and " characters in the JSON, making it also safe to be embedded into HTML.
     // 15 === JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT
     public const DEFAULT_ENCODING_OPTIONS = 15;
-
-    protected int $encodingOptions = self::DEFAULT_ENCODING_OPTIONS;
-
+    protected int $encoding_options = self::DEFAULT_ENCODING_OPTIONS;
     /**
      * @param bool $json If the data is already a JSON string
      */
     public function __construct(mixed $data = null, int $status = 200, array $headers = [], bool $json = false)
     {
         parent::__construct('', $status, $headers);
-
         if ($json && !\is_string($data) && !is_numeric($data) && !$data instanceof \Stringable) {
             throw new \TypeError(\sprintf('"%s": If $json is set to true, argument $data must be a string or object implementing __toString(), "%s" given.', __METHOD__, get_debug_type($data)));
         }
-
         $data ??= new \ArrayObject();
-
-        $json ? $this->setJson($data) : $this->setData($data);
+        $json ? $this->set_json($data) : $this->set_data($data);
     }
-
     /**
      * Factory method for chainability.
      *
@@ -63,11 +54,10 @@ class JsonResponse extends Response
      * @param int    $status  The response status code (200 "OK" by default)
      * @param array  $headers An array of response headers
      */
-    public static function fromJsonString(string $data, int $status = 200, array $headers = []): static
+    public static function from_json_string(string $data, int $status = 200, array $headers = []): static
     {
         return new static($data, $status, $headers, true);
     }
-
     /**
      * Sets the JSONP callback.
      *
@@ -77,19 +67,15 @@ class JsonResponse extends Response
      *
      * @throws \InvalidArgumentException When the callback name is not valid
      */
-    public function setCallback(?string $callback): static
+    public function set_callback(?string $callback): static
     {
         if (null !== $callback) {
             // partially taken from https://geekality.net/2011/08/03/valid-javascript-identifier/
             // partially taken from https://github.com/willdurand/JsonpCallbackValidator
             //      JsonpCallbackValidator is released under the MIT License. See https://github.com/willdurand/JsonpCallbackValidator/blob/v1.1.0/LICENSE for details.
             //      (c) William Durand <william.durand1@gmail.com>
-            $pattern = '/^[$_\p{L}][$_\p{L}\p{Mn}\p{Mc}\p{Nd}\p{Pc}\x{200C}\x{200D}]*(?:\[(?:"(?:\\\.|[^"\\\])*"|\'(?:\\\.|[^\'\\\])*\'|\d+)\])*?$/u';
-            $reserved = [
-                'break', 'do', 'instanceof', 'typeof', 'case', 'else', 'new', 'var', 'catch', 'finally', 'return', 'void', 'continue', 'for', 'switch', 'while',
-                'debugger', 'function', 'this', 'with', 'default', 'if', 'throw', 'delete', 'in', 'try', 'class', 'enum', 'extends', 'super',  'const', 'export',
-                'import', 'implements', 'let', 'private', 'public', 'yield', 'interface', 'package', 'protected', 'static', 'null', 'true', 'false',
-            ];
+            $pattern = '/^[$_\p{L}][$_\p{L}\p{Mn}\p{Mc}\p{Nd}\p{Pc}\x{200C}\x{200D}]*(?:\[(?:"(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\'|\d+)\])*?$/u';
+            $reserved = ['break', 'do', 'instanceof', 'typeof', 'case', 'else', 'new', 'var', 'catch', 'finally', 'return', 'void', 'continue', 'for', 'switch', 'while', 'debugger', 'function', 'this', 'with', 'default', 'if', 'throw', 'delete', 'in', 'try', 'class', 'enum', 'extends', 'super', 'const', 'export', 'import', 'implements', 'let', 'private', 'public', 'yield', 'interface', 'package', 'protected', 'static', 'null', 'true', 'false'];
             $parts = explode('.', $callback);
             foreach ($parts as $part) {
                 if (!preg_match($pattern, $part) || \in_array($part, $reserved, true)) {
@@ -97,24 +83,19 @@ class JsonResponse extends Response
                 }
             }
         }
-
         $this->callback = $callback;
-
         return $this->update();
     }
-
     /**
      * Sets a raw string containing a JSON document to be sent.
      *
      * @return $this
      */
-    public function setJson(string $json): static
+    public function set_json(string $json): static
     {
         $this->data = $json;
-
         return $this->update();
     }
-
     /**
      * Sets the data to be sent as JSON.
      *
@@ -122,48 +103,41 @@ class JsonResponse extends Response
      *
      * @throws \InvalidArgumentException
      */
-    public function setData(mixed $data = []): static
+    public function set_data(mixed $data = []): static
     {
         try {
-            $data = json_encode($data, $this->encodingOptions);
+            $data = json_encode($data, $this->encoding_options);
         } catch (\Exception $e) {
-            if ('Exception' === $e::class && str_starts_with($e->getMessage(), 'Failed calling ')) {
-                throw $e->getPrevious() ?: $e;
+            if ('Exception' === $e::class && str_starts_with($e->get_message(), 'Failed calling ')) {
+                throw $e->get_previous() ?: $e;
             }
             throw $e;
         }
-
-        if (\JSON_THROW_ON_ERROR & $this->encodingOptions) {
-            return $this->setJson($data);
+        if (\JSON_THROW_ON_ERROR & $this->encoding_options) {
+            return $this->set_json($data);
         }
-
         if (\JSON_ERROR_NONE !== json_last_error()) {
             throw new \InvalidArgumentException(json_last_error_msg());
         }
-
-        return $this->setJson($data);
+        return $this->set_json($data);
     }
-
     /**
      * Returns options used while encoding data to JSON.
      */
-    public function getEncodingOptions(): int
+    public function get_encoding_options(): int
     {
-        return $this->encodingOptions;
+        return $this->encoding_options;
     }
-
     /**
      * Sets options used while encoding data to JSON.
      *
      * @return $this
      */
-    public function setEncodingOptions(int $encodingOptions): static
+    public function set_encoding_options(int $encoding_options): static
     {
-        $this->encodingOptions = $encodingOptions;
-
-        return $this->setData(json_decode((string) $this->data));
+        $this->encoding_options = $encoding_options;
+        return $this->set_data(json_decode((string) $this->data));
     }
-
     /**
      * Updates the content and headers according to the JSON data and callback.
      *
@@ -174,16 +148,13 @@ class JsonResponse extends Response
         if (null !== $this->callback) {
             // Not using application/javascript for compatibility reasons with older browsers.
             $this->headers->set('Content-Type', 'text/javascript');
-
-            return $this->setContent(\sprintf('/**/%s(%s);', $this->callback, $this->data));
+            return $this->set_content(\sprintf('/**/%s(%s);', $this->callback, $this->data));
         }
-
         // Only set the header when there is none or when it equals 'text/javascript' (from a previous update with callback)
         // in order to not overwrite a custom definition.
         if (!$this->headers->has('Content-Type') || 'text/javascript' === $this->headers->get('Content-Type')) {
             $this->headers->set('Content-Type', 'application/json');
         }
-
-        return $this->setContent($this->data);
+        return $this->set_content($this->data);
     }
 }

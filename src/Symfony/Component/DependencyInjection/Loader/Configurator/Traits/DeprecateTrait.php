@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator\Traits;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
-
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-
-trait DeprecateTrait
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+trait Deprecate_Trait
 {
     /**
      * Whether this definition is deprecated, that means it should not be called anymore.
@@ -30,8 +27,7 @@ trait DeprecateTrait
      */
     final public function deprecate(string $package, string $version, string $message): static
     {
-        $this->definition->setDeprecated($package, $version, $message);
-
+        $this->definition->set_deprecated($package, $version, $message);
         return $this;
     }
 }

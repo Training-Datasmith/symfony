@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,70 +9,58 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Alias;
-use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
-use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
-use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\DependencyInjection\ServiceLocator;
-
+use Symfony\Component\Dependency_Injection\Alias;
+use Symfony\Component\Dependency_Injection\Argument\Service_Closure_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Service_Locator_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Tagged_Iterator_Argument;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+use Symfony\Component\Dependency_Injection\Reference;
+use Symfony\Component\Dependency_Injection\Service_Locator;
 /**
  * Applies the "container.service_locator" tag by wrapping references into ServiceClosureArgument instances.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class ServiceLocatorTagPass extends AbstractRecursivePass
+final class Service_Locator_Tag_Pass extends Abstract_Recursive_Pass
 {
-    use PriorityTaggedServiceTrait;
-
-    protected bool $skipScalars = true;
-
-    protected function processValue(mixed $value, bool $isRoot = false): mixed
+    use Priority_Tagged_Service_Trait;
+    protected bool $skip_scalars = true;
+    protected function process_value(mixed $value, bool $is_root = false): mixed
     {
-        if ($value instanceof ServiceLocatorArgument) {
-            if ($value->getTaggedIteratorArgument()) {
-                $value->setValues($this->findAndSortTaggedServices($value->getTaggedIteratorArgument(), $this->container));
+        if ($value instanceof Service_Locator_Argument) {
+            if ($value->get_tagged_iterator_argument()) {
+                $value->set_values($this->find_and_sort_tagged_services($value->get_tagged_iterator_argument(), $this->container));
             }
-
-            return self::register($this->container, $value->getValues());
+            return self::register($this->container, $value->get_values());
         }
-
         if ($value instanceof Definition) {
-            $value->setBindings(parent::processValue($value->getBindings()));
+            $value->set_bindings(parent::process_value($value->get_bindings()));
         }
-
-        if (!$value instanceof Definition || !$value->hasTag('container.service_locator')) {
-            return parent::processValue($value, $isRoot);
+        if (!$value instanceof Definition || !$value->has_tag('container.service_locator')) {
+            return parent::process_value($value, $is_root);
         }
-
-        if (!$value->getClass()) {
-            $value->setClass(ServiceLocator::class);
+        if (!$value->get_class()) {
+            $value->set_class(Service_Locator::class);
         }
-
-        $values = $value->getArguments()[0] ?? null;
+        $values = $value->get_arguments()[0] ?? null;
         $services = [];
-
-        if ($values instanceof TaggedIteratorArgument) {
-            foreach ($this->findAndSortTaggedServices($values, $this->container) as $k => $v) {
-                $services[$k] = new ServiceClosureArgument($v);
+        if ($values instanceof Tagged_Iterator_Argument) {
+            foreach ($this->find_and_sort_tagged_services($values, $this->container) as $k => $v) {
+                $services[$k] = new Service_Closure_Argument($v);
             }
         } elseif (!\is_array($values)) {
-            throw new InvalidArgumentException(\sprintf('Invalid definition for service "%s": an array of references is expected as first argument when the "container.service_locator" tag is set.', $this->currentId));
+            throw new InvalidArgumentException(\sprintf('Invalid definition for service "%s": an array of references is expected as first argument when the "container.service_locator" tag is set.', $this->current_id));
         } else {
             $i = 0;
-
             foreach ($values as $k => $v) {
-                if ($v instanceof ServiceClosureArgument) {
+                if ($v instanceof Service_Closure_Argument) {
                     $services[$k] = $v;
                     continue;
                 }
-
                 if ($i === $k) {
                     if ($v instanceof Reference) {
                         $k = (string) $v;
@@ -82,61 +69,42 @@ final class ServiceLocatorTagPass extends AbstractRecursivePass
                 } elseif (\is_int($k)) {
                     $i = null;
                 }
-
-                $services[$k] = new ServiceClosureArgument($v);
+                $services[$k] = new Service_Closure_Argument($v);
             }
             if (\count($services) === $i) {
                 ksort($services);
             }
         }
-
-        $value->setArgument(0, $services);
-
-        $id = '.service_locator.'.ContainerBuilder::hash($value);
-
-        if ($isRoot) {
-            if ($id !== $this->currentId) {
-                $this->container->setAlias($id, new Alias($this->currentId, false));
+        $value->set_argument(0, $services);
+        $id = '.service_locator.' . Container_Builder::hash($value);
+        if ($is_root) {
+            if ($id !== $this->current_id) {
+                $this->container->set_alias($id, new Alias($this->current_id, false));
             }
-
             return $value;
         }
-
-        $this->container->setDefinition($id, $value->setPublic(false));
-
+        $this->container->set_definition($id, $value->set_public(false));
         return new Reference($id);
     }
-
-    public static function register(ContainerBuilder $container, array $map, ?string $callerId = null): Reference
+    public static function register(Container_Builder $container, array $map, ?string $caller_id = null): Reference
     {
         foreach ($map as $k => $v) {
-            $map[$k] = new ServiceClosureArgument($v);
+            $map[$k] = new Service_Closure_Argument($v);
         }
-
-        $locator = (new Definition(ServiceLocator::class))
-            ->addArgument($map)
-            ->addTag('container.service_locator');
-
-        if (null !== $callerId && $container->hasDefinition($callerId)) {
-            $locator->setBindings($container->getDefinition($callerId)->getBindings());
+        $locator = (new Definition(Service_Locator::class))->add_argument($map)->add_tag('container.service_locator');
+        if (null !== $caller_id && $container->has_definition($caller_id)) {
+            $locator->set_bindings($container->get_definition($caller_id)->get_bindings());
         }
-
-        if (!$container->hasDefinition($id = '.service_locator.'.ContainerBuilder::hash($locator))) {
-            $container->setDefinition($id, $locator);
+        if (!$container->has_definition($id = '.service_locator.' . Container_Builder::hash($locator))) {
+            $container->set_definition($id, $locator);
         }
-
-        if (null !== $callerId) {
-            $locatorId = $id;
+        if (null !== $caller_id) {
+            $locator_id = $id;
             // Locators are shared when they hold the exact same list of factories;
             // to have them specialized per consumer service, we use a cloning factory
             // to derivate customized instances from the prototype one.
-            $container->register($id .= '.'.$callerId, ServiceLocator::class)
-                ->setFactory([new Reference($locatorId), 'withContext'])
-                ->addTag('container.service_locator_context', ['id' => $callerId])
-                ->addArgument($callerId)
-                ->addArgument(new Reference('service_container'));
+            $container->register($id .= '.' . $caller_id, Service_Locator::class)->set_factory([new Reference($locator_id), 'withContext'])->add_tag('container.service_locator_context', ['id' => $caller_id])->add_argument($caller_id)->add_argument(new Reference('service_container'));
         }
-
         return new Reference($id);
     }
 }

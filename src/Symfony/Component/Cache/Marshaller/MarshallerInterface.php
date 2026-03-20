@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Marshaller;
 
 /**
@@ -21,7 +19,7 @@ namespace Symfony\Component\Cache\Marshaller;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-interface MarshallerInterface
+interface Marshaller_Interface
 {
     /**
      * Serializes a list of values.
@@ -30,7 +28,6 @@ interface MarshallerInterface
      * thrown. Instead, its key should be listed in $failed.
      */
     public function marshall(array $values, ?array &$failed): array;
-
     /**
      * Unserializes a single value and throws an exception if anything goes wrong.
      *

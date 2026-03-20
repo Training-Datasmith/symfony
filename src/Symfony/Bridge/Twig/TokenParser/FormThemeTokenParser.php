@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,50 +9,42 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Twig\Token_Parser;
 
-namespace Symfony\Bridge\Twig\TokenParser;
-
-use Symfony\Bridge\Twig\Node\FormThemeNode;
-use Twig\Node\Expression\ArrayExpression;
+use Symfony\Bridge\Twig\Node\Form_Theme_Node;
+use Twig\Node\Expression\Array_Expression;
 use Twig\Node\Node;
 use Twig\Token;
-use Twig\TokenParser\AbstractTokenParser;
-
+use Twig\Token_Parser\Abstract_Token_Parser;
 /**
  * Token Parser for the 'form_theme' tag.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class FormThemeTokenParser extends AbstractTokenParser
+final class Form_Theme_Token_Parser extends Abstract_Token_Parser
 {
     public function parse(Token $token): Node
     {
-        $lineno = $token->getLine();
-        $stream = $this->parser->getStream();
-
-        $form = $this->parser->parseExpression();
+        $lineno = $token->get_line();
+        $stream = $this->parser->get_stream();
+        $form = $this->parser->parse_expression();
         $only = false;
-
-        if ($this->parser->getStream()->test(Token::NAME_TYPE, 'with')) {
-            $this->parser->getStream()->next();
-            $resources = $this->parser->parseExpression();
-
-            if ($this->parser->getStream()->nextIf(Token::NAME_TYPE, 'only')) {
+        if ($this->parser->get_stream()->test(Token::NAME_TYPE, 'with')) {
+            $this->parser->get_stream()->next();
+            $resources = $this->parser->parse_expression();
+            if ($this->parser->get_stream()->next_if(Token::NAME_TYPE, 'only')) {
                 $only = true;
             }
         } else {
-            $resources = new ArrayExpression([], $stream->getCurrent()->getLine());
+            $resources = new Array_Expression([], $stream->get_current()->get_line());
             do {
-                $resources->addElement($this->parser->parseExpression());
+                $resources->add_element($this->parser->parse_expression());
             } while (!$stream->test(Token::BLOCK_END_TYPE));
         }
-
         $stream->expect(Token::BLOCK_END_TYPE);
-
-        return new FormThemeNode($form, $resources, $lineno, $only);
+        return new Form_Theme_Node($form, $resources, $lineno, $only);
     }
-
-    public function getTag(): string
+    public function get_tag(): string
     {
         return 'form_theme';
     }

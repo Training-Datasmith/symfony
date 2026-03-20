@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Twig\Node;
 
 use Twig\Compiler;
-use Twig\Node\Expression\FunctionExpression;
-
+use Twig\Node\Expression\Function_Expression;
 /**
  * Compiles a call to {@link \Symfony\Component\Form\FormRendererInterface::renderBlock()}.
  *
@@ -24,24 +21,21 @@ use Twig\Node\Expression\FunctionExpression;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-final class RenderBlockNode extends FunctionExpression
+final class Render_Block_Node extends Function_Expression
 {
     public function compile(Compiler $compiler): void
     {
-        $compiler->addDebugInfo($this);
-        $arguments = iterator_to_array($this->getNode('arguments'));
+        $compiler->add_debug_info($this);
+        $arguments = iterator_to_array($this->get_node('arguments'));
         $compiler->write('$this->env->getRuntime(\'Symfony\Component\Form\FormRenderer\')->renderBlock(');
-
         if (isset($arguments[0])) {
             $compiler->subcompile($arguments[0]);
-            $compiler->raw(', \''.$this->getAttribute('name').'\'');
-
+            $compiler->raw(', \'' . $this->get_attribute('name') . '\'');
             if (isset($arguments[1])) {
                 $compiler->raw(', ');
                 $compiler->subcompile($arguments[1]);
             }
         }
-
         $compiler->raw(')');
     }
 }

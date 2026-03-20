@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,67 +9,71 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Foundation\Session\Storage\Proxy;
 
-namespace Symfony\Component\HttpFoundation\Session\Storage\Proxy;
-
-use Symfony\Component\HttpFoundation\Session\Storage\Handler\StrictSessionHandler;
-
+use Symfony\Component\Http_Foundation\Session\Storage\Handler\Strict_Session_Handler;
 /**
  * @author Drak <drak@zikula.org>
  */
-class SessionHandlerProxy extends AbstractProxy implements \SessionHandlerInterface, \SessionUpdateTimestampHandlerInterface
+class Session_Handler_Proxy extends Abstract_Proxy implements \Session_Handler_Interface, \Session_Update_Timestamp_Handler_Interface
 {
-    public function __construct(
-        protected \SessionHandlerInterface $handler,
-    ) {
-        $this->wrapper = $handler instanceof \SessionHandler;
-        $this->saveHandlerName = $this->wrapper || ($handler instanceof StrictSessionHandler && $handler->isWrapper()) ? \ini_get('session.save_handler') : 'user';
+    public function __construct(protected \Session_Handler_Interface $handler)
+    {
+        $this->wrapper = $handler instanceof \Session_Handler;
+        $this->save_handler_name = $this->wrapper || $handler instanceof Strict_Session_Handler && $handler->is_wrapper() ? \ini_get('session.save_handler') : 'user';
     }
-
-    public function getHandler(): \SessionHandlerInterface
+    public function get_handler(): \Session_Handler_Interface
     {
         return $this->handler;
     }
-
     // \SessionHandlerInterface
-
-    public function open(string $savePath, string $sessionName): bool
+    public function open(string $save_path, string $session_name): bool
     {
-        return $this->handler->open($savePath, $sessionName);
+        return $this->handler->open($save_path, $session_name);
     }
-
     public function close(): bool
     {
         return $this->handler->close();
     }
-
-    public function read(#[\SensitiveParameter] string $sessionId): string|false
+    public function read(
+        #[\Sensitive_Parameter]
+        string $session_id
+    ): string|false
     {
-        return $this->handler->read($sessionId);
+        return $this->handler->read($session_id);
     }
-
-    public function write(#[\SensitiveParameter] string $sessionId, string $data): bool
+    public function write(
+        #[\Sensitive_Parameter]
+        string $session_id,
+        string $data
+    ): bool
     {
-        return $this->handler->write($sessionId, $data);
+        return $this->handler->write($session_id, $data);
     }
-
-    public function destroy(#[\SensitiveParameter] string $sessionId): bool
+    public function destroy(
+        #[\Sensitive_Parameter]
+        string $session_id
+    ): bool
     {
-        return $this->handler->destroy($sessionId);
+        return $this->handler->destroy($session_id);
     }
-
     public function gc(int $maxlifetime): int|false
     {
         return $this->handler->gc($maxlifetime);
     }
-
-    public function validateId(#[\SensitiveParameter] string $sessionId): bool
+    public function validate_id(
+        #[\Sensitive_Parameter]
+        string $session_id
+    ): bool
     {
-        return !$this->handler instanceof \SessionUpdateTimestampHandlerInterface || $this->handler->validateId($sessionId);
+        return !$this->handler instanceof \Session_Update_Timestamp_Handler_Interface || $this->handler->validate_id($session_id);
     }
-
-    public function updateTimestamp(#[\SensitiveParameter] string $sessionId, string $data): bool
+    public function update_timestamp(
+        #[\Sensitive_Parameter]
+        string $session_id,
+        string $data
+    ): bool
     {
-        return $this->handler instanceof \SessionUpdateTimestampHandlerInterface ? $this->handler->updateTimestamp($sessionId, $data) : $this->write($sessionId, $data);
+        return $this->handler instanceof \Session_Update_Timestamp_Handler_Interface ? $this->handler->update_timestamp($session_id, $data) : $this->write($session_id, $data);
     }
 }

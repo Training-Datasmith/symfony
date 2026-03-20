@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,37 +9,29 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Controller;
 
-namespace Symfony\Component\HttpKernel\Controller;
-
-use Symfony\Component\ErrorHandler\ErrorRenderer\ErrorRendererInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-
+use Symfony\Component\Error_Handler\Error_Renderer\Error_Renderer_Interface;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Response;
+use Symfony\Component\Http_Kernel\Exception\Http_Exception;
+use Symfony\Component\Http_Kernel\Http_Kernel_Interface;
 /**
  * Renders error or exception pages from a given FlattenException.
  *
  * @author Yonel Ceruto <yonelceruto@gmail.com>
  * @author Matthias Pigulla <mp@webfactory.de>
  */
-class ErrorController
+class Error_Controller
 {
-    public function __construct(
-        private readonly HttpKernelInterface $kernel,
-        private readonly string|object|array|null $controller,
-        private readonly ErrorRendererInterface $errorRenderer,
-    ) {
+    public function __construct(private readonly Http_Kernel_Interface $kernel, private readonly string|object|array|null $controller, private readonly Error_Renderer_Interface $error_renderer)
+    {
     }
-
     public function __invoke(\Throwable $exception): Response
     {
-        $exception = $this->errorRenderer->render($exception);
-
-        return new Response($exception->getAsString(), $exception->getStatusCode(), $exception->getHeaders());
+        $exception = $this->error_renderer->render($exception);
+        return new Response($exception->get_as_string(), $exception->get_status_code(), $exception->get_headers());
     }
-
     public function preview(Request $request, int $code): Response
     {
         /*
@@ -48,13 +39,7 @@ class ErrorController
          * \Symfony\Component\HttpKernel\EventListener\ErrorListener::duplicateRequest, with
          * the additional "showException" flag.
          */
-        $subRequest = $request->duplicate(null, null, [
-            '_controller' => $this->controller,
-            'exception' => new HttpException($code, 'This is a sample exception.'),
-            'logger' => null,
-            'showException' => false,
-        ]);
-
-        return $this->kernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        $sub_request = $request->duplicate(null, null, ['_controller' => $this->controller, 'exception' => new Http_Exception($code, 'This is a sample exception.'), 'logger' => null, 'showException' => false]);
+        return $this->kernel->handle($sub_request, Http_Kernel_Interface::SUB_REQUEST);
     }
 }

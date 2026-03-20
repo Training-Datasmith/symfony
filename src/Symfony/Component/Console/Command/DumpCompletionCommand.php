@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,145 +9,119 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Command;
 
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Attribute\As_Command;
+use Symfony\Component\Console\Input\Input_Argument;
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Console\Input\Input_Option;
+use Symfony\Component\Console\Output\Console_Output_Interface;
+use Symfony\Component\Console\Output\Output_Interface;
 use Symfony\Component\Process\Process;
-
 /**
  * Dumps the completion script for the current shell.
  *
  * @author Wouter de Jong <wouter@wouterj.nl>
  */
-#[AsCommand(name: 'completion', description: 'Dump the shell completion script')]
-final class DumpCompletionCommand extends Command
+#[As_Command(name: 'completion', description: 'Dump the shell completion script')]
+final class Dump_Completion_Command extends Command
 {
-    private array $supportedShells;
-
+    private array $supported_shells;
     protected function configure(): void
     {
-        $fullCommand = $_SERVER['PHP_SELF'];
-        $commandName = basename((string) $fullCommand);
-        $fullCommand = @realpath($fullCommand) ?: $fullCommand;
-
-        $shell = self::guessShell();
-        [$rcFile, $completionFile] = match ($shell) {
-            'fish' => ['~/.config/fish/config.fish', "/etc/fish/completions/$commandName.fish"],
-            'zsh' => ['~/.zshrc', '$fpath[1]/_'.$commandName],
-            default => ['~/.bashrc', "/etc/bash_completion.d/$commandName"],
+        $full_command = $_SERVER['PHP_SELF'];
+        $command_name = basename((string) $full_command);
+        $full_command = @realpath($full_command) ?: $full_command;
+        $shell = self::guess_shell();
+        [$rc_file, $completion_file] = match ($shell) {
+            'fish' => ['~/.config/fish/config.fish', "/etc/fish/completions/{$command_name}.fish"],
+            'zsh' => ['~/.zshrc', '$fpath[1]/_' . $command_name],
+            default => ['~/.bashrc', "/etc/bash_completion.d/{$command_name}"],
         };
-
-        $supportedShells = implode(', ', $this->getSupportedShells());
-
-        $this
-            ->setHelp(
-                <<<EOH
-                The <info>%command.name%</> command dumps the shell completion script required
-                to use shell autocompletion (currently, {$supportedShells} completion are supported).
-
-                <comment>Static installation
-                -------------------</>
-
-                Dump the script to a global completion file and restart your shell:
-
-                    <info>%command.full_name% {$shell} | sudo tee {$completionFile}</>
-
-                Or dump the script to a local file and source it:
-
-                    <info>%command.full_name% {$shell} > completion.sh</>
-
-                    <comment># source the file whenever you use the project</>
-                    <info>source completion.sh</>
-
-                    <comment># or add this line at the end of your "{$rcFile}" file:</>
-                    <info>source /path/to/completion.sh</>
-
-                <comment>Dynamic installation
-                --------------------</>
-
-                Add this to the end of your shell configuration file (e.g. <info>"{$rcFile}"</>):
-
-                    <info>eval "$({$fullCommand} completion {$shell})"</>
-                EOH
-            )
-            ->addArgument('shell', InputArgument::OPTIONAL, 'The shell type (e.g. "bash"), the value of the "$SHELL" env var will be used if this is not given', null, $this->getSupportedShells(...))
-            ->addOption('debug', null, InputOption::VALUE_NONE, 'Tail the completion debug log')
-        ;
+        $supported_shells = implode(', ', $this->get_supported_shells());
+        $this->set_help(<<<EOH
+        The <info>%command.name%</> command dumps the shell completion script required
+        to use shell autocompletion (currently, {$supported_shells} completion are supported).
+        
+        <comment>Static installation
+        -------------------</>
+        
+        Dump the script to a global completion file and restart your shell:
+        
+            <info>%command.full_name% {$shell} | sudo tee {$completion_file}</>
+        
+        Or dump the script to a local file and source it:
+        
+            <info>%command.full_name% {$shell} > completion.sh</>
+        
+            <comment># source the file whenever you use the project</>
+            <info>source completion.sh</>
+        
+            <comment># or add this line at the end of your "{$rc_file}" file:</>
+            <info>source /path/to/completion.sh</>
+        
+        <comment>Dynamic installation
+        --------------------</>
+        
+        Add this to the end of your shell configuration file (e.g. <info>"{$rc_file}"</>):
+        
+            <info>eval "\$({$full_command} completion {$shell})"</>
+        EOH)->add_argument('shell', Input_Argument::OPTIONAL, 'The shell type (e.g. "bash"), the value of the "$SHELL" env var will be used if this is not given', null, $this->get_supported_shells(...))->add_option('debug', null, Input_Option::VALUE_NONE, 'Tail the completion debug log');
     }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(Input_Interface $input, Output_Interface $output): int
     {
-        $commandName = basename((string) $_SERVER['argv'][0]);
-
-        if ($input->getOption('debug')) {
-            $this->tailDebugLog($commandName, $output);
-
+        $command_name = basename((string) $_SERVER['argv'][0]);
+        if ($input->get_option('debug')) {
+            $this->tail_debug_log($command_name, $output);
             return 0;
         }
-
-        $shell = $input->getArgument('shell') ?? self::guessShell();
-        $completionFile = __DIR__.'/../Resources/completion.'.$shell;
-        if (!file_exists($completionFile)) {
-            $supportedShells = $this->getSupportedShells();
-
-            if ($output instanceof ConsoleOutputInterface) {
-                $output = $output->getErrorOutput();
+        $shell = $input->get_argument('shell') ?? self::guess_shell();
+        $completion_file = __DIR__ . '/../Resources/completion.' . $shell;
+        if (!file_exists($completion_file)) {
+            $supported_shells = $this->get_supported_shells();
+            if ($output instanceof Console_Output_Interface) {
+                $output = $output->get_error_output();
             }
             if ($shell) {
-                $output->writeln(\sprintf('<error>Detected shell "%s", which is not supported by Symfony shell completion (supported shells: "%s").</>', $shell, implode('", "', $supportedShells)));
+                $output->writeln(\sprintf('<error>Detected shell "%s", which is not supported by Symfony shell completion (supported shells: "%s").</>', $shell, implode('", "', $supported_shells)));
             } else {
-                $output->writeln(\sprintf('<error>Shell not detected, Symfony shell completion only supports "%s").</>', implode('", "', $supportedShells)));
+                $output->writeln(\sprintf('<error>Shell not detected, Symfony shell completion only supports "%s").</>', implode('", "', $supported_shells)));
             }
-
             return 2;
         }
-
-        $output->write(str_replace(['{{ COMMAND_NAME }}', '{{ VERSION }}'], [$commandName, CompleteCommand::COMPLETION_API_VERSION], file_get_contents($completionFile)));
-
+        $output->write(str_replace(['{{ COMMAND_NAME }}', '{{ VERSION }}'], [$command_name, Complete_Command::COMPLETION_API_VERSION], file_get_contents($completion_file)));
         return 0;
     }
-
-    private static function guessShell(): string
+    private static function guess_shell(): string
     {
         return basename($_SERVER['SHELL'] ?? '');
     }
-
-    private function tailDebugLog(string $commandName, OutputInterface $output): void
+    private function tail_debug_log(string $command_name, Output_Interface $output): void
     {
-        $debugFile = sys_get_temp_dir().'/sf_'.$commandName.'.log';
-        if (!file_exists($debugFile)) {
-            touch($debugFile);
+        $debug_file = sys_get_temp_dir() . '/sf_' . $command_name . '.log';
+        if (!file_exists($debug_file)) {
+            touch($debug_file);
         }
-        $process = new Process(['tail', '-f', $debugFile], null, null, null, 0);
+        $process = new Process(['tail', '-f', $debug_file], null, null, null, 0);
         $process->run(static function (string $type, string $line) use ($output): void {
             $output->write($line);
         });
     }
-
     /**
      * @return string[]
      */
-    private function getSupportedShells(): array
+    private function get_supported_shells(): array
     {
-        if (isset($this->supportedShells)) {
-            return $this->supportedShells;
+        if (isset($this->supported_shells)) {
+            return $this->supported_shells;
         }
-
         $shells = [];
-
-        foreach (new \DirectoryIterator(__DIR__.'/../Resources/') as $file) {
-            if (str_starts_with($file->getBasename(), 'completion.') && $file->isFile()) {
-                $shells[] = $file->getExtension();
+        foreach (new \Directory_Iterator(__DIR__ . '/../Resources/') as $file) {
+            if (str_starts_with($file->get_basename(), 'completion.') && $file->is_file()) {
+                $shells[] = $file->get_extension();
             }
         }
         sort($shells);
-
-        return $this->supportedShells = $shells;
+        return $this->supported_shells = $shells;
     }
 }

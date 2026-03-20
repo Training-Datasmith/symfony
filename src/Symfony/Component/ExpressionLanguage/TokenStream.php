@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,27 +9,21 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\ExpressionLanguage;
+namespace Symfony\Component\Expression_Language;
 
 /**
  * Represents a token stream.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class TokenStream implements \Stringable
+class Token_Stream implements \Stringable
 {
     public Token $current;
-
     private int $position = 0;
-
-    public function __construct(
-        private array $tokens,
-        private readonly string $expression = '',
-    ) {
+    public function __construct(private array $tokens, private readonly string $expression = '')
+    {
         $this->current = $tokens[0];
     }
-
     /**
      * Returns a string representation of the token stream.
      */
@@ -38,21 +31,17 @@ class TokenStream implements \Stringable
     {
         return implode("\n", $this->tokens);
     }
-
     /**
      * Sets the pointer to the next token and returns the old one.
      */
     public function next(): void
     {
         ++$this->position;
-
         if (!isset($this->tokens[$this->position])) {
-            throw new SyntaxError('Unexpected end of expression.', $this->current->cursor, $this->expression);
+            throw new Syntax_Error('Unexpected end of expression.', $this->current->cursor, $this->expression);
         }
-
         $this->current = $this->tokens[$this->position];
     }
-
     /**
      * @param string|null $message The syntax error message
      */
@@ -60,23 +49,21 @@ class TokenStream implements \Stringable
     {
         $token = $this->current;
         if (!$token->test($type, $value)) {
-            throw new SyntaxError(\sprintf('%sUnexpected token "%s" of value "%s" ("%s" expected%s).', $message ? $message.'. ' : '', $token->type, $token->value, $type, $value ? \sprintf(' with value "%s"', $value) : ''), $token->cursor, $this->expression);
+            throw new Syntax_Error(\sprintf('%sUnexpected token "%s" of value "%s" ("%s" expected%s).', $message ? $message . '. ' : '', $token->type, $token->value, $type, $value ? \sprintf(' with value "%s"', $value) : ''), $token->cursor, $this->expression);
         }
         $this->next();
     }
-
     /**
      * Checks if end of stream was reached.
      */
-    public function isEOF(): bool
+    public function is_eof(): bool
     {
         return Token::EOF_TYPE === $this->current->type;
     }
-
     /**
      * @internal
      */
-    public function getExpression(): string
+    public function get_expression(): string
     {
         return $this->expression;
     }

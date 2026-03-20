@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event;
 
-namespace Symfony\Component\HttpKernel\Event;
-
-use Symfony\Component\HttpFoundation\Response;
-
+use Symfony\Component\Http_Foundation\Response;
 /**
  * Allows to create a response for a request.
  *
@@ -24,34 +21,30 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class RequestEvent extends KernelEvent
+class Request_Event extends Kernel_Event
 {
     private ?Response $response = null;
-
     /**
      * Returns the response object.
      */
-    public function getResponse(): ?Response
+    public function get_response(): ?Response
     {
         return $this->response;
     }
-
     /**
      * Sets a response and stops event propagation.
      */
-    public function setResponse(Response $response): void
+    public function set_response(Response $response): void
     {
         $this->response = $response;
-
-        $this->stopPropagation();
+        $this->stop_propagation();
     }
-
     /**
      * Returns whether a response was set.
      *
      * @psalm-assert-if-true !null $this->getResponse()
      */
-    public function hasResponse(): bool
+    public function has_response(): bool
     {
         return null !== $this->response;
     }

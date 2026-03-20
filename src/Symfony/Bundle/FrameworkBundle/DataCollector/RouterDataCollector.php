@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,30 +9,26 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Data_Collector;
 
-namespace Symfony\Bundle\FrameworkBundle\DataCollector;
-
-use Symfony\Bundle\FrameworkBundle\Controller\RedirectController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\DataCollector\RouterDataCollector as BaseRouterDataCollector;
-
+use Symfony\Bundle\Framework_Bundle\Controller\Redirect_Controller;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Kernel\Data_Collector\Router_Data_Collector as BaseRouterDataCollector;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @final
  */
-class RouterDataCollector extends BaseRouterDataCollector
+class Router_Data_Collector extends Base_Router_Data_Collector
 {
-    public function guessRoute(Request $request, mixed $controller): string
+    public function guess_route(Request $request, mixed $controller): string
     {
         if (\is_array($controller)) {
             $controller = $controller[0];
         }
-
-        if ($controller instanceof RedirectController && $request->attributes->has('_route')) {
+        if ($controller instanceof Redirect_Controller && $request->attributes->has('_route')) {
             return $request->attributes->get('_route');
         }
-
-        return parent::guessRoute($request, $controller);
+        return parent::guess_route($request, $controller);
     }
 }

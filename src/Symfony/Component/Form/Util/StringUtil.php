@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,13 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Util;
 
 /**
  * @author Issei Murasawa <issei.m7@gmail.com>
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class StringUtil
+class String_Util
 {
     /**
      * This class should not be instantiated.
@@ -25,7 +23,6 @@ class StringUtil
     private function __construct()
     {
     }
-
     /**
      * Returns the trimmed data.
      */
@@ -34,30 +31,26 @@ class StringUtil
         if (null !== $result = @preg_replace('/^[\pZ\p{Cc}\p{Cf}]+|[\pZ\p{Cc}\p{Cf}]+$/u', '', $string)) {
             return $result;
         }
-
         return trim($string);
     }
-
     /**
      * Converts both CRLF and CR to LF.
      */
-    public static function normalizeNewlines(string $string): string
+    public static function normalize_newlines(string $string): string
     {
         return str_replace(["\r\n", "\r"], "\n", $string);
     }
-
     /**
      * Converts a fully-qualified class name to a block prefix.
      *
      * @param string $fqcn The fully-qualified class name
      */
-    public static function fqcnToBlockPrefix(string $fqcn): ?string
+    public static function fqcn_to_block_prefix(string $fqcn): ?string
     {
         // Non-greedy ("+?") to match "type" suffix, if present
         if (preg_match('~([^\\\\]+?)(type)?$~i', $fqcn, $matches)) {
-            return strtolower((string) preg_replace(['/([A-Z]+)([A-Z][a-z])/', '/([a-z\d])([A-Z])/'], ['\\1_\\2', '\\1_\\2'], $matches[1]));
+            return strtolower((string) preg_replace(['/([A-Z]+)([A-Z][a-z])/', '/([a-z\d])([A-Z])/'], ['\1_\2', '\1_\2'], $matches[1]));
         }
-
         return null;
     }
 }

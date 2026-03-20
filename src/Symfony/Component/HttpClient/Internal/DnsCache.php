@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpClient\Internal;
+namespace Symfony\Component\Http_Client\Internal;
 
 /**
  * Cache for resolved DNS queries.
@@ -20,7 +18,7 @@ namespace Symfony\Component\HttpClient\Internal;
  *
  * @internal
  */
-final class DnsCache
+final class Dns_Cache
 {
     /**
      * Resolved hostnames (hostname => IP address).
@@ -28,12 +26,10 @@ final class DnsCache
      * @var string[]
      */
     public array $hostnames = [];
-
     /**
      * @var string[]
      */
     public array $removals = [];
-
     /**
      * @var string[]
      */

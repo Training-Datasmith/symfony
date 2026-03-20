@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\Form\ChoiceList\View;
+namespace Symfony\Component\Form\Choice_List\View;
 
 /**
  * Represents a choice list in templates.
@@ -22,7 +20,7 @@ namespace Symfony\Component\Form\ChoiceList\View;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ChoiceListView
+class Choice_List_View
 {
     /**
      * Creates a new choice list view.
@@ -30,27 +28,21 @@ class ChoiceListView
      * @param array<ChoiceGroupView|ChoiceView> $choices          The choice views
      * @param array<ChoiceGroupView|ChoiceView> $preferredChoices the preferred choice views
      */
-    public function __construct(
-        public array $choices = [],
-        public array $preferredChoices = [],
-    ) {
+    public function __construct(public array $choices = [], public array $preferred_choices = [])
+    {
     }
-
     /**
      * Returns whether a placeholder is in the choices.
      *
      * A placeholder must be the first child element, not be in a group and have an empty value.
      */
-    public function hasPlaceholder(): bool
+    public function has_placeholder(): bool
     {
-        if ($this->preferredChoices) {
-            $firstChoice = reset($this->preferredChoices);
-
-            return $firstChoice instanceof ChoiceView && '' === $firstChoice->value;
+        if ($this->preferred_choices) {
+            $first_choice = reset($this->preferred_choices);
+            return $first_choice instanceof Choice_View && '' === $first_choice->value;
         }
-
-        $firstChoice = reset($this->choices);
-
-        return $firstChoice instanceof ChoiceView && '' === $firstChoice->value;
+        $first_choice = reset($this->choices);
+        return $first_choice instanceof Choice_View && '' === $first_choice->value;
     }
 }

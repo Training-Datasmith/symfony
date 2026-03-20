@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,21 +9,17 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Twig\Extension;
 
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
-
+use Twig\Extension\Abstract_Extension;
+use Twig\Twig_Function;
 /**
  * @author Kévin Dunglas <kevin@dunglas.dev>
  */
-final class ImportMapExtension extends AbstractExtension
+final class Import_Map_Extension extends Abstract_Extension
 {
-    public function getFunctions(): array
+    public function get_functions(): array
     {
-        return [
-            new TwigFunction('importmap', [ImportMapRuntime::class, 'importmap'], ['is_safe' => ['html']]),
-        ];
+        return [new Twig_Function('importmap', [Import_Map_Runtime::class, 'importmap'], ['is_safe' => ['html']])];
     }
 }

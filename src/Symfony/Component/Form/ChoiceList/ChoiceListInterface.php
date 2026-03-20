@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\Form\ChoiceList;
+namespace Symfony\Component\Form\Choice_List;
 
 /**
  * A list of choices that can be selected in a choice field.
@@ -25,15 +23,14 @@ namespace Symfony\Component\Form\ChoiceList;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface ChoiceListInterface
+interface Choice_List_Interface
 {
     /**
      * Returns all selectable choices.
      *
      * @return array The selectable choices indexed by the corresponding values
      */
-    public function getChoices(): array;
-
+    public function get_choices(): array;
     /**
      * Returns the values for the choices.
      *
@@ -59,8 +56,7 @@ interface ChoiceListInterface
      *
      * @return string[]
      */
-    public function getValues(): array;
-
+    public function get_values(): array;
     /**
      * Returns the values in the structure originally passed to the list.
      *
@@ -90,8 +86,7 @@ interface ChoiceListInterface
      *
      * @return string[]
      */
-    public function getStructuredValues(): array;
-
+    public function get_structured_values(): array;
     /**
      * Returns the original keys of the choices.
      *
@@ -112,8 +107,7 @@ interface ChoiceListInterface
      * @return int[]|string[] The original choice keys indexed by the
      *                        corresponding choice values
      */
-    public function getOriginalKeys(): array;
-
+    public function get_original_keys(): array;
     /**
      * Returns the choices corresponding to the given values.
      *
@@ -123,8 +117,7 @@ interface ChoiceListInterface
      * @param string[] $values An array of choice values. Non-existing values in
      *                         this array are ignored
      */
-    public function getChoicesForValues(array $values): array;
-
+    public function get_choices_for_values(array $values): array;
     /**
      * Returns the values corresponding to the given choices.
      *
@@ -136,5 +129,5 @@ interface ChoiceListInterface
      *
      * @return string[]
      */
-    public function getValuesForChoices(array $choices): array;
+    public function get_values_for_choices(array $choices): array;
 }

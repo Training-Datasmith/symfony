@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,21 +9,19 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event_Listener;
 
-namespace Symfony\Component\HttpKernel\EventListener;
-
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcherInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpKernel\Event\ExceptionEvent;
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
-use Symfony\Component\HttpKernel\Event\TerminateEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\HttpKernel\Profiler\Profile;
-use Symfony\Component\HttpKernel\Profiler\Profiler;
-
+use Symfony\Component\Event_Dispatcher\Event_Subscriber_Interface;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Request_Matcher_Interface;
+use Symfony\Component\Http_Foundation\Request_Stack;
+use Symfony\Component\Http_Foundation\Session\Session;
+use Symfony\Component\Http_Kernel\Event\Exception_Event;
+use Symfony\Component\Http_Kernel\Event\Response_Event;
+use Symfony\Component\Http_Kernel\Event\Terminate_Event;
+use Symfony\Component\Http_Kernel\Kernel_Events;
+use Symfony\Component\Http_Kernel\Profiler\Profile;
+use Symfony\Component\Http_Kernel\Profiler\Profiler;
 /**
  * ProfilerListener collects data for the current request by listening to the kernel events.
  *
@@ -32,123 +29,95 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
  *
  * @final
  */
-class ProfilerListener implements EventSubscriberInterface
+class Profiler_Listener implements Event_Subscriber_Interface
 {
     private ?\Throwable $exception = null;
     /** @var \SplObjectStorage<Request, Profile> */
-    private \SplObjectStorage $profiles;
+    private \Spl_Object_Storage $profiles;
     /** @var \SplObjectStorage<Request, Request|null> */
-    private \SplObjectStorage $parents;
-
+    private \Spl_Object_Storage $parents;
     /**
      * @param bool $onlyException    True if the profiler only collects data when an exception occurs, false otherwise
      * @param bool $onlyMainRequests True if the profiler only collects data when the request is the main request, false otherwise
      */
-    public function __construct(
-        private readonly Profiler $profiler,
-        private readonly RequestStack $requestStack,
-        private readonly ?RequestMatcherInterface $matcher = null,
-        private readonly bool $onlyException = false,
-        private readonly bool $onlyMainRequests = false,
-        private readonly ?string $collectParameter = null,
-    ) {
-        $this->profiles = new \SplObjectStorage();
-        $this->parents = new \SplObjectStorage();
+    public function __construct(private readonly Profiler $profiler, private readonly Request_Stack $request_stack, private readonly ?Request_Matcher_Interface $matcher = null, private readonly bool $only_exception = false, private readonly bool $only_main_requests = false, private readonly ?string $collect_parameter = null)
+    {
+        $this->profiles = new \Spl_Object_Storage();
+        $this->parents = new \Spl_Object_Storage();
     }
-
     /**
      * Handles the onKernelException event.
      */
-    public function onKernelException(ExceptionEvent $event): void
+    public function on_kernel_exception(Exception_Event $event): void
     {
-        if ($this->onlyMainRequests && !$event->isMainRequest()) {
+        if ($this->only_main_requests && !$event->is_main_request()) {
             return;
         }
-
-        $this->exception = $event->getThrowable();
+        $this->exception = $event->get_throwable();
     }
-
     /**
      * Handles the onKernelResponse event.
      */
-    public function onKernelResponse(ResponseEvent $event): void
+    public function on_kernel_response(Response_Event $event): void
     {
-        if ($this->onlyMainRequests && !$event->isMainRequest()) {
+        if ($this->only_main_requests && !$event->is_main_request()) {
             return;
         }
-
-        if ($this->onlyException && null === $this->exception) {
+        if ($this->only_exception && null === $this->exception) {
             return;
         }
-
-        $request = $event->getRequest();
-        if (null !== $this->collectParameter && null !== $collectParameterValue = $request->attributes->get($this->collectParameter) ?? $request->query->get($this->collectParameter) ?? $request->request->get($this->collectParameter)) {
-            filter_var($collectParameterValue, \FILTER_VALIDATE_BOOL) ? $this->profiler->enable() : $this->profiler->disable();
+        $request = $event->get_request();
+        if (null !== $this->collect_parameter && null !== $collect_parameter_value = $request->attributes->get($this->collect_parameter) ?? $request->query->get($this->collect_parameter) ?? $request->request->get($this->collect_parameter)) {
+            filter_var($collect_parameter_value, \FILTER_VALIDATE_BOOL) ? $this->profiler->enable() : $this->profiler->disable();
         }
-
         $exception = $this->exception;
         $this->exception = null;
-
         if (null !== $this->matcher && !$this->matcher->matches($request)) {
             return;
         }
-
-        $session = !$request->attributes->getBoolean('_stateless') && $request->hasPreviousSession() ? $request->getSession() : null;
-
+        $session = !$request->attributes->get_boolean('_stateless') && $request->has_previous_session() ? $request->get_session() : null;
         if ($session instanceof Session) {
-            $usageIndexValue = $usageIndexReference = &$session->getUsageIndex();
-            $usageIndexReference = \PHP_INT_MIN;
+            $usage_index_value = $usage_index_reference =& $session->get_usage_index();
+            $usage_index_reference = \PHP_INT_MIN;
         }
-
         try {
-            if (!$profile = $this->profiler->collect($request, $event->getResponse(), $exception)) {
+            if (!$profile = $this->profiler->collect($request, $event->get_response(), $exception)) {
                 return;
             }
         } finally {
             if ($session instanceof Session) {
-                $usageIndexReference = $usageIndexValue;
+                $usage_index_reference = $usage_index_value;
             }
         }
-
         $this->profiles[$request] = $profile;
-
-        $this->parents[$request] = $this->requestStack->getParentRequest();
+        $this->parents[$request] = $this->request_stack->get_parent_request();
     }
-
-    public function onKernelTerminate(TerminateEvent $event): void
+    public function on_kernel_terminate(Terminate_Event $event): void
     {
         // attach children to parents
         foreach ($this->profiles as $request) {
-            if (null === $parentRequest = $this->parents[$request]) {
+            if (null === $parent_request = $this->parents[$request]) {
                 continue;
             }
-            if (!isset($this->profiles[$parentRequest])) {
+            if (!isset($this->profiles[$parent_request])) {
                 continue;
             }
-            $this->profiles[$parentRequest]->addChild($this->profiles[$request]);
+            $this->profiles[$parent_request]->add_child($this->profiles[$request]);
         }
-
         // save profiles
         foreach ($this->profiles as $request) {
-            $this->profiler->saveProfile($this->profiles[$request]);
+            $this->profiler->save_profile($this->profiles[$request]);
         }
-
         $this->reset();
     }
-
     public function reset(): void
     {
-        $this->profiles = new \SplObjectStorage();
-        $this->parents = new \SplObjectStorage();
+        $this->profiles = new \Spl_Object_Storage();
+        $this->parents = new \Spl_Object_Storage();
         $this->exception = null;
     }
-
-    public static function getSubscribedEvents(): array
+    public static function get_subscribed_events(): array
     {
-        return [
-            KernelEvents::RESPONSE => ['onKernelResponse', -100],
-            KernelEvents::EXCEPTION => ['onKernelException', 0],
-            KernelEvents::TERMINATE => ['onKernelTerminate', -1024],
-        ];
+        return [Kernel_Events::RESPONSE => ['onKernelResponse', -100], Kernel_Events::EXCEPTION => ['onKernelException', 0], Kernel_Events::TERMINATE => ['onKernelTerminate', -1024]];
     }
 }

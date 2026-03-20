@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition;
 
-use Symfony\Component\Config\Definition\Exception\InvalidTypeException;
-
+use Symfony\Component\Config\Definition\Exception\Invalid_Type_Exception;
 /**
  * This node represents a scalar value in the config tree.
  *
@@ -27,33 +24,29 @@ use Symfony\Component\Config\Definition\Exception\InvalidTypeException;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ScalarNode extends VariableNode
+class Scalar_Node extends Variable_Node
 {
-    protected function validateType(mixed $value): void
+    protected function validate_type(mixed $value): void
     {
         if (!\is_scalar($value) && null !== $value) {
-            $ex = new InvalidTypeException(\sprintf('Invalid type for path "%s". Expected "scalar", but got "%s".', $this->getPath(), get_debug_type($value)));
-            if ($hint = $this->getInfo()) {
-                $ex->addHint($hint);
+            $ex = new Invalid_Type_Exception(\sprintf('Invalid type for path "%s". Expected "scalar", but got "%s".', $this->get_path(), get_debug_type($value)));
+            if ($hint = $this->get_info()) {
+                $ex->add_hint($hint);
             }
-            $ex->setPath($this->getPath());
-
+            $ex->set_path($this->get_path());
             throw $ex;
         }
     }
-
-    protected function isValueEmpty(mixed $value): bool
+    protected function is_value_empty(mixed $value): bool
     {
         // assume environment variables are never empty (which in practice is likely to be true during runtime)
         // not doing so breaks many configs that are valid today
-        if ($this->isHandlingPlaceholder()) {
+        if ($this->is_handling_placeholder()) {
             return false;
         }
-
         return null === $value || '' === $value;
     }
-
-    protected function getValidPlaceholderTypes(): array
+    protected function get_valid_placeholder_types(): array
     {
         return ['bool', 'int', 'float', 'string'];
     }

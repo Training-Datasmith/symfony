@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,66 +9,51 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
-use Symfony\Component\DependencyInjection\Attribute\Target;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\TypedReference;
+use Symfony\Component\Dependency_Injection\Attribute\Autowire;
+use Symfony\Component\Dependency_Injection\Attribute\Autowire_Decorated;
+use Symfony\Component\Dependency_Injection\Attribute\Target;
+use Symfony\Component\Dependency_Injection\Container_Interface;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+use Symfony\Component\Dependency_Injection\Typed_Reference;
 use Symfony\Contracts\Service\Attribute\Required;
-
 /**
  * Looks for definitions with autowiring enabled and registers their corresponding "#[Required]" properties.
  *
  * @author Sebastien Morel (Plopix) <morel.seb@gmail.com>
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class AutowireRequiredPropertiesPass extends AbstractRecursivePass
+class Autowire_Required_Properties_Pass extends Abstract_Recursive_Pass
 {
-    protected bool $skipScalars = true;
-
-    protected function processValue(mixed $value, bool $isRoot = false): mixed
+    protected bool $skip_scalars = true;
+    protected function process_value(mixed $value, bool $is_root = false): mixed
     {
-        $value = parent::processValue($value, $isRoot);
-
-        if (!$value instanceof Definition || !$value->isAutowired() || $value->isAbstract() || !$value->getClass()) {
+        $value = parent::process_value($value, $is_root);
+        if (!$value instanceof Definition || !$value->is_autowired() || $value->is_abstract() || !$value->get_class()) {
             return $value;
         }
-        if (!$reflectionClass = $this->container->getReflectionClass($value->getClass(), false)) {
+        if (!$reflection_class = $this->container->get_reflection_class($value->get_class(), false)) {
             return $value;
         }
-
-        $properties = $value->getProperties();
-        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            if (!($type = $reflectionProperty->getType()) instanceof \ReflectionNamedType) {
+        $properties = $value->get_properties();
+        foreach ($reflection_class->get_properties() as $reflection_property) {
+            if (!($type = $reflection_property->get_type()) instanceof \ReflectionNamedType) {
                 continue;
             }
-            if (!$reflectionProperty->getAttributes(Required::class)) {
+            if (!$reflection_property->get_attributes(Required::class)) {
                 continue;
             }
-            if (\array_key_exists($name = $reflectionProperty->getName(), $properties)) {
+            if (\array_key_exists($name = $reflection_property->get_name(), $properties)) {
                 continue;
             }
-            if (
-                $reflectionProperty->isPrivateSet()
-                || $reflectionProperty->isProtectedSet()
-                || !$reflectionProperty->isPublic()
-            ) {
-                throw new InvalidArgumentException(\sprintf('Cannot autowire non-public(set) property "%s::$%s" with #[%s].', $reflectionClass->getName(), $reflectionProperty->getName(), Required::class));
+            if ($reflection_property->is_private_set() || $reflection_property->is_protected_set() || !$reflection_property->is_public()) {
+                throw new InvalidArgumentException(\sprintf('Cannot autowire non-public(set) property "%s::$%s" with #[%s].', $reflection_class->get_name(), $reflection_property->get_name(), Required::class));
             }
-
-            $type = $type->getName();
-            $value->setProperty($name, new TypedReference($type, $type, ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $name, array_map(static fn (\ReflectionAttribute $a): object => $a->newInstance(), array_merge(
-                $reflectionProperty->getAttributes(Autowire::class, \ReflectionAttribute::IS_INSTANCEOF),
-                $reflectionProperty->getAttributes(AutowireDecorated::class),
-                $reflectionProperty->getAttributes(Target::class),
-            ))));
+            $type = $type->get_name();
+            $value->set_property($name, new Typed_Reference($type, $type, Container_Interface::EXCEPTION_ON_INVALID_REFERENCE, $name, array_map(static fn(\Reflection_Attribute $a): object => $a->new_instance(), array_merge($reflection_property->get_attributes(Autowire::class, \Reflection_Attribute::IS_INSTANCEOF), $reflection_property->get_attributes(Autowire_Decorated::class), $reflection_property->get_attributes(Target::class)))));
         }
-
         return $value;
     }
 }

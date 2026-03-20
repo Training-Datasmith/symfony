@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Loader;
 
 /**
@@ -21,46 +19,41 @@ namespace Symfony\Component\Config\Loader;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class LoaderResolver implements LoaderResolverInterface
+class Loader_Resolver implements Loader_Resolver_Interface
 {
     /**
      * @var LoaderInterface[] An array of LoaderInterface objects
      */
     private array $loaders = [];
-
     /**
      * @param LoaderInterface[] $loaders An array of loaders
      */
     public function __construct(array $loaders = [])
     {
         foreach ($loaders as $loader) {
-            $this->addLoader($loader);
+            $this->add_loader($loader);
         }
     }
-
-    public function resolve(mixed $resource, ?string $type = null): LoaderInterface|false
+    public function resolve(mixed $resource, ?string $type = null): Loader_Interface|false
     {
         foreach ($this->loaders as $loader) {
             if ($loader->supports($resource, $type)) {
                 return $loader;
             }
         }
-
         return false;
     }
-
-    public function addLoader(LoaderInterface $loader): void
+    public function add_loader(Loader_Interface $loader): void
     {
         $this->loaders[] = $loader;
-        $loader->setResolver($this);
+        $loader->set_resolver($this);
     }
-
     /**
      * Returns the registered loaders.
      *
      * @return LoaderInterface[]
      */
-    public function getLoaders(): array
+    public function get_loaders(): array
     {
         return $this->loaders;
     }

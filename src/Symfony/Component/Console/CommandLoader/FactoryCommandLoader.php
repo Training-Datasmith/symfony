@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,44 +9,36 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\Console\CommandLoader;
+namespace Symfony\Component\Console\Command_Loader;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\CommandNotFoundException;
-
+use Symfony\Component\Console\Exception\Command_Not_Found_Exception;
 /**
  * A simple command loader using factories to instantiate commands lazily.
  *
  * @author Maxime Steinhausser <maxime.steinhausser@gmail.com>
  */
-class FactoryCommandLoader implements CommandLoaderInterface
+class Factory_Command_Loader implements Command_Loader_Interface
 {
     /**
      * @param callable[] $factories Indexed by command names
      */
-    public function __construct(
-        private array $factories,
-    ) {
+    public function __construct(private array $factories)
+    {
     }
-
     public function has(string $name): bool
     {
         return isset($this->factories[$name]);
     }
-
     public function get(string $name): Command
     {
         if (!isset($this->factories[$name])) {
-            throw new CommandNotFoundException(\sprintf('Command "%s" does not exist.', $name));
+            throw new Command_Not_Found_Exception(\sprintf('Command "%s" does not exist.', $name));
         }
-
         $factory = $this->factories[$name];
-
         return $factory();
     }
-
-    public function getNames(): array
+    public function get_names(): array
     {
         return array_keys($this->factories);
     }

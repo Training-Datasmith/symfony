@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,50 +9,42 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Bridge\PhpUnit\DeprecationErrorHandler;
+namespace Symfony\Bridge\Php_Unit\Deprecation_Error_Handler;
 
 /**
  * @internal
  */
-final class DeprecationGroup
+final class Deprecation_Group
 {
     private int $count = 0;
-
     /**
      * @var DeprecationNotice[] keys are messages
      */
-    private array $deprecationNotices = [];
-
-    public function addNoticeFromObject(string $message, string $class, string $method): void
+    private array $deprecation_notices = [];
+    public function add_notice_from_object(string $message, string $class, string $method): void
     {
-        $this->deprecationNotice($message)->addObjectOccurrence($class, $method);
-        $this->addNotice();
+        $this->deprecation_notice($message)->add_object_occurrence($class, $method);
+        $this->add_notice();
     }
-
-    public function addNoticeFromProceduralCode(string $message): void
+    public function add_notice_from_procedural_code(string $message): void
     {
-        $this->deprecationNotice($message)->addProceduralOccurrence();
-        $this->addNotice();
+        $this->deprecation_notice($message)->add_procedural_occurrence();
+        $this->add_notice();
     }
-
-    public function addNotice(): void
+    public function add_notice(): void
     {
         ++$this->count;
     }
-
-    private function deprecationNotice(string $message): DeprecationNotice
+    private function deprecation_notice(string $message): Deprecation_Notice
     {
-        return $this->deprecationNotices[$message] ?? $this->deprecationNotices[$message] = new DeprecationNotice();
+        return $this->deprecation_notices[$message] ?? $this->deprecation_notices[$message] = new Deprecation_Notice();
     }
-
     public function count(): int
     {
         return $this->count;
     }
-
     public function notices(): array
     {
-        return $this->deprecationNotices;
+        return $this->deprecation_notices;
     }
 }

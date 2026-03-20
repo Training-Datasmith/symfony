@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,19 +9,17 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Helper;
 
-use Symfony\Component\Console\Exception\InvalidFileException;
-use Symfony\Component\Console\Exception\MissingInputException;
-use Symfony\Component\Console\Input\File\InputFile;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\FileQuestion;
+use Symfony\Component\Console\Exception\Invalid_File_Exception;
+use Symfony\Component\Console\Exception\Missing_Input_Exception;
+use Symfony\Component\Console\Input\File\Input_File;
+use Symfony\Component\Console\Output\Output_Interface;
+use Symfony\Component\Console\Question\File_Question;
 use Symfony\Component\Console\Terminal;
-use Symfony\Component\Console\Terminal\Image\ImageProtocolInterface;
-use Symfony\Component\Console\Terminal\Image\ITerm2Protocol;
-use Symfony\Component\Console\Terminal\Image\KittyGraphicsProtocol;
-
+use Symfony\Component\Console\Terminal\Image\Image_Protocol_Interface;
+use Symfony\Component\Console\Terminal\Image\I_Term2protocol;
+use Symfony\Component\Console\Terminal\Image\Kitty_Graphics_Protocol;
 /**
  * Orchestrates file input handling through paste detection or path input.
  *
@@ -30,189 +27,153 @@ use Symfony\Component\Console\Terminal\Image\KittyGraphicsProtocol;
  *
  * @internal
  */
-final class FileInputHelper
+final class File_Input_Helper
 {
     private const BPM_ENABLE = "\x1b[?2004h";
     private const BPM_DISABLE = "\x1b[?2004l";
     private const PASTE_START = "\x1b[200~";
     private const PASTE_END = "\x1b[201~";
-
-    private ?ImageProtocolInterface $protocol = null;
-
+    private ?Image_Protocol_Interface $protocol = null;
     /**
      * @param resource $inputStream
      */
-    public function readFileInput($inputStream, OutputInterface $output, FileQuestion $question): InputFile
+    public function read_file_input($input_stream, Output_Interface $output, File_Question $question): Input_File
     {
-        if ($canPaste = $question->isPasteAllowed() && Terminal::supportsImageProtocol() && Terminal::hasSttyAvailable()) {
-            $this->protocol = $this->detectProtocol();
+        if ($can_paste = $question->is_paste_allowed() && Terminal::supports_image_protocol() && Terminal::has_stty_available()) {
+            $this->protocol = $this->detect_protocol();
         }
-
         $file = null;
-        $inputHelper = null;
-
+        $input_helper = null;
         try {
-            if ($canPaste) {
-                $inputHelper = new TerminalInputHelper($inputStream);
+            if ($can_paste) {
+                $input_helper = new Terminal_Input_Helper($input_stream);
                 $output->write(self::BPM_ENABLE);
                 shell_exec('stty -icanon -echo');
-
-                $file = $this->readWithPasteDetection($inputStream, $question, $inputHelper);
-            } elseif ($question->isPathAllowed()) {
-                $file = $this->readPathInput($inputStream);
+                $file = $this->read_with_paste_detection($input_stream, $question, $input_helper);
+            } elseif ($question->is_path_allowed()) {
+                $file = $this->read_path_input($input_stream);
             } else {
-                throw new MissingInputException('Terminal does not support image paste and path input is disabled.');
+                throw new Missing_Input_Exception('Terminal does not support image paste and path input is disabled.');
             }
         } finally {
-            if ($canPaste) {
+            if ($can_paste) {
                 $output->write(self::BPM_DISABLE);
-                $inputHelper?->finish();
+                $input_helper?->finish();
             }
         }
-
-        if (!$file->isValid()) {
-            throw new InvalidFileException(\sprintf('File "%s" is not valid or readable.', $file->getPathname()));
+        if (!$file->is_valid()) {
+            throw new Invalid_File_Exception(\sprintf('File "%s" is not valid or readable.', $file->get_pathname()));
         }
-
-        $this->displayFile($output, $file);
-
+        $this->display_file($output, $file);
         return $file;
     }
-
-    public function displayFile(OutputInterface $output, InputFile $file): void
+    public function display_file(Output_Interface $output, Input_File $file): void
     {
-        $link = \sprintf('<href=file://%s>%s</>', $file->getRealPath(), $file->getFilename());
-
-        if ($output->isVeryVerbose()) {
-            $output->writeln(\sprintf('<info>%s</info> %s (<comment>%s, %s</comment>)', "\u{1F4CE}", $link, $file->getMimeType() ?? 'unknown', $file->getHumanReadableSize()));
+        $link = \sprintf('<href=file://%s>%s</>', $file->get_real_path(), $file->get_filename());
+        if ($output->is_very_verbose()) {
+            $output->writeln(\sprintf('<info>%s</info> %s (<comment>%s, %s</comment>)', "📎", $link, $file->get_mime_type() ?? 'unknown', $file->get_human_readable_size()));
         } else {
-            $output->writeln(\sprintf('<info>%s</info> %s', "\u{1F4CE}", $link));
+            $output->writeln(\sprintf('<info>%s</info> %s', "📎", $link));
         }
-
-        if (Terminal::supportsImageProtocol() && $this->isDisplayableImage($file)) {
-            $this->displayThumbnail($output, $file);
+        if (Terminal::supports_image_protocol() && $this->is_displayable_image($file)) {
+            $this->display_thumbnail($output, $file);
         }
     }
-
     /**
      * @param resource $inputStream
      */
-    private function readWithPasteDetection($inputStream, FileQuestion $question, TerminalInputHelper $inputHelper): InputFile
+    private function read_with_paste_detection($input_stream, File_Question $question, Terminal_Input_Helper $input_helper): Input_File
     {
         $buffer = '';
-        $inPaste = false;
-        $pasteBuffer = '';
-
-        while (!feof($inputStream)) {
-            $inputHelper->waitForInput();
-            $char = fread($inputStream, 1);
-
+        $in_paste = false;
+        $paste_buffer = '';
+        while (!feof($input_stream)) {
+            $input_helper->wait_for_input();
+            $char = fread($input_stream, 1);
             if (false === $char || '' === $char) {
-                if ('' === $buffer && '' === $pasteBuffer) {
-                    throw new MissingInputException('Aborted.');
+                if ('' === $buffer && '' === $paste_buffer) {
+                    throw new Missing_Input_Exception('Aborted.');
                 }
                 break;
             }
-
             $buffer .= $char;
-
-            if (!$inPaste && str_ends_with($buffer, self::PASTE_START)) {
-                $inPaste = true;
+            if (!$in_paste && str_ends_with($buffer, self::PASTE_START)) {
+                $in_paste = true;
                 $buffer = substr($buffer, 0, -\strlen(self::PASTE_START));
                 continue;
             }
-
-            if ($inPaste && str_ends_with($buffer, self::PASTE_END)) {
-                $pasteBuffer = substr($buffer, 0, -\strlen(self::PASTE_END));
+            if ($in_paste && str_ends_with($buffer, self::PASTE_END)) {
+                $paste_buffer = substr($buffer, 0, -\strlen(self::PASTE_END));
                 break;
             }
-
-            if (!$inPaste && ("\n" === $char || "\r" === $char)) {
+            if (!$in_paste && ("\n" === $char || "\r" === $char)) {
                 $buffer = rtrim($buffer, "\r\n");
                 break;
             }
         }
-
-        if ('' !== $pasteBuffer) {
-            if (null !== $this->protocol && $this->protocol->detectPastedImage($pasteBuffer)) {
-                $decoded = $this->protocol->decode($pasteBuffer);
+        if ('' !== $paste_buffer) {
+            if (null !== $this->protocol && $this->protocol->detect_pasted_image($paste_buffer)) {
+                $decoded = $this->protocol->decode($paste_buffer);
                 if ('' !== $decoded['data']) {
-                    return InputFile::fromData($decoded['data'], $decoded['format']);
+                    return Input_File::from_data($decoded['data'], $decoded['format']);
                 }
             }
-
-            $path = trim($pasteBuffer);
-            if ('' !== $path && $question->isPathAllowed()) {
-                return InputFile::fromPath($path);
+            $path = trim($paste_buffer);
+            if ('' !== $path && $question->is_path_allowed()) {
+                return Input_File::from_path($path);
             }
         }
-
         $path = trim($buffer);
-        if ('' !== $path && $question->isPathAllowed()) {
-            return InputFile::fromPath($path);
+        if ('' !== $path && $question->is_path_allowed()) {
+            return Input_File::from_path($path);
         }
-
-        throw new MissingInputException('No file input provided.');
+        throw new Missing_Input_Exception('No file input provided.');
     }
-
     /**
      * @param resource $inputStream
      */
-    private function readPathInput($inputStream): InputFile
+    private function read_path_input($input_stream): Input_File
     {
-        if (!$isBlocked = stream_get_meta_data($inputStream)['blocked'] ?? true) {
-            stream_set_blocking($inputStream, true);
+        if (!$is_blocked = stream_get_meta_data($input_stream)['blocked'] ?? true) {
+            stream_set_blocking($input_stream, true);
         }
-
-        $path = fgets($inputStream);
-
-        if (!$isBlocked) {
-            stream_set_blocking($inputStream, false);
+        $path = fgets($input_stream);
+        if (!$is_blocked) {
+            stream_set_blocking($input_stream, false);
         }
-
         if (false === $path) {
-            throw new MissingInputException('Aborted.');
+            throw new Missing_Input_Exception('Aborted.');
         }
-
         if ('' === $path = trim($path)) {
-            throw new MissingInputException('No file path provided.');
+            throw new Missing_Input_Exception('No file path provided.');
         }
-
-        return InputFile::fromPath($path);
+        return Input_File::from_path($path);
     }
-
-    private function detectProtocol(): ?ImageProtocolInterface
+    private function detect_protocol(): ?Image_Protocol_Interface
     {
-        if (Terminal::supportsKittyGraphics()) {
-            return new KittyGraphicsProtocol();
+        if (Terminal::supports_kitty_graphics()) {
+            return new Kitty_Graphics_Protocol();
         }
-
-        if (Terminal::supportsITerm2Images()) {
-            return new ITerm2Protocol();
+        if (Terminal::supports_i_term2images()) {
+            return new I_Term2protocol();
         }
-
         return null;
     }
-
-    private function isDisplayableImage(InputFile $file): bool
+    private function is_displayable_image(Input_File $file): bool
     {
-        if (null === $mimeType = $file->getMimeType()) {
+        if (null === $mime_type = $file->get_mime_type()) {
             return false;
         }
-
-        return str_starts_with($mimeType, 'image/');
+        return str_starts_with($mime_type, 'image/');
     }
-
-    private function displayThumbnail(OutputInterface $output, InputFile $file): void
+    private function display_thumbnail(Output_Interface $output, Input_File $file): void
     {
         try {
-            $contents = $file->getContents();
-        } catch (InvalidFileException) {
+            $contents = $file->get_contents();
+        } catch (Invalid_File_Exception) {
             return;
         }
-
-        $protocol = Terminal::supportsKittyGraphics() ? new KittyGraphicsProtocol() : new ITerm2Protocol();
-
+        $protocol = Terminal::supports_kitty_graphics() ? new Kitty_Graphics_Protocol() : new I_Term2protocol();
         $output->write($protocol->encode($contents, 16));
         $output->writeln('');
     }

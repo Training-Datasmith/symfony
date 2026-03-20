@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,101 +9,79 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Command;
 
-namespace Symfony\Bundle\FrameworkBundle\Command;
-
-use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\As_Command;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Completion\CompletionInput;
-use Symfony\Component\Console\Completion\CompletionSuggestions;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
-use Symfony\Contracts\Service\ServiceProviderInterface;
-
+use Symfony\Component\Console\Completion\Completion_Input;
+use Symfony\Component\Console\Completion\Completion_Suggestions;
+use Symfony\Component\Console\Input\Input_Argument;
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Console\Input\Input_Option;
+use Symfony\Component\Console\Output\Output_Interface;
+use Symfony\Component\Console\Style\Symfony_Style;
+use Symfony\Component\Dependency_Injection\Exception\Service_Not_Found_Exception;
+use Symfony\Contracts\Cache\Tag_Aware_Cache_Interface;
+use Symfony\Contracts\Service\Service_Provider_Interface;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-#[AsCommand(name: 'cache:pool:invalidate-tags', description: 'Invalidate cache tags for all or a specific pool')]
-final class CachePoolInvalidateTagsCommand extends Command
+#[As_Command(name: 'cache:pool:invalidate-tags', description: 'Invalidate cache tags for all or a specific pool')]
+final class Cache_Pool_Invalidate_Tags_Command extends Command
 {
-    private readonly array $poolNames;
-
-    public function __construct(
-        private readonly ServiceProviderInterface $pools,
-    ) {
+    private readonly array $pool_names;
+    public function __construct(private readonly Service_Provider_Interface $pools)
+    {
         parent::__construct();
-
-        $this->poolNames = array_keys($pools->getProvidedServices());
+        $this->pool_names = array_keys($pools->get_provided_services());
     }
-
     protected function configure(): void
     {
-        $this
-            ->addArgument('tags', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'The tags to invalidate')
-            ->addOption('pool', 'p', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'The pools to invalidate on')
-            ->setHelp(<<<'EOF'
-                The <info>%command.name%</info> command invalidates tags from taggable pools. By default, all pools
-                have the passed tags invalidated. Pass <info>--pool=my_pool</info> to invalidate tags on a specific pool.
-
-                  php %command.full_name% tag1 tag2
-                  php %command.full_name% tag1 tag2 --pool=cache2 --pool=cache1
-                EOF)
-        ;
+        $this->add_argument('tags', Input_Argument::IS_ARRAY | Input_Argument::REQUIRED, 'The tags to invalidate')->add_option('pool', 'p', Input_Option::VALUE_REQUIRED | Input_Option::VALUE_IS_ARRAY, 'The pools to invalidate on')->set_help(<<<'EOF'
+        The <info>%command.name%</info> command invalidates tags from taggable pools. By default, all pools
+        have the passed tags invalidated. Pass <info>--pool=my_pool</info> to invalidate tags on a specific pool.
+        
+          php %command.full_name% tag1 tag2
+          php %command.full_name% tag1 tag2 --pool=cache2 --pool=cache1
+        EOF);
     }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(Input_Interface $input, Output_Interface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
-        $pools = $input->getOption('pool') ?: $this->poolNames;
-        $tags = $input->getArgument('tags');
-        $tagList = implode(', ', $tags);
+        $io = new Symfony_Style($input, $output);
+        $pools = $input->get_option('pool') ?: $this->pool_names;
+        $tags = $input->get_argument('tags');
+        $tag_list = implode(', ', $tags);
         $errors = false;
-
         foreach ($pools as $name) {
-            $io->comment(\sprintf('Invalidating tag(s): <info>%s</info> from pool <comment>%s</comment>.', $tagList, $name));
-
+            $io->comment(\sprintf('Invalidating tag(s): <info>%s</info> from pool <comment>%s</comment>.', $tag_list, $name));
             try {
                 $pool = $this->pools->get($name);
-            } catch (ServiceNotFoundException) {
+            } catch (Service_Not_Found_Exception) {
                 $io->error(\sprintf('Pool "%s" not found.', $name));
                 $errors = true;
-
                 continue;
             }
-
-            if (!$pool instanceof TagAwareCacheInterface) {
+            if (!$pool instanceof Tag_Aware_Cache_Interface) {
                 $io->error(\sprintf('Pool "%s" is not taggable.', $name));
                 $errors = true;
-
                 continue;
             }
-
-            if (!$pool->invalidateTags($tags)) {
-                $io->error(\sprintf('Cache tag(s) "%s" could not be invalidated for pool "%s".', $tagList, $name));
+            if (!$pool->invalidate_tags($tags)) {
+                $io->error(\sprintf('Cache tag(s) "%s" could not be invalidated for pool "%s".', $tag_list, $name));
                 $errors = true;
             }
         }
-
         if ($errors) {
             $io->error('Done but with errors.');
-
             return 1;
         }
-
         $io->success('Successfully invalidated cache tags.');
-
         return 0;
     }
-
-    public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void
+    public function complete(Completion_Input $input, Completion_Suggestions $suggestions): void
     {
-        if ($input->mustSuggestOptionValuesFor('pool')) {
-            $suggestions->suggestValues($this->poolNames);
+        if ($input->must_suggest_option_values_for('pool')) {
+            $suggestions->suggest_values($this->pool_names);
         }
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,60 +9,48 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpKernel\Bundle;
+namespace Symfony\Component\Http_Kernel\Bundle;
 
 use Symfony\Component\Config\Definition\Configuration;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\ConfigurableExtensionInterface;
-use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Extension\ExtensionTrait;
-use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-
+use Symfony\Component\Config\Definition\Configuration_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Extension\Configurable_Extension_Interface;
+use Symfony\Component\Dependency_Injection\Extension\Extension;
+use Symfony\Component\Dependency_Injection\Extension\Extension_Trait;
+use Symfony\Component\Dependency_Injection\Extension\Prepend_Extension_Interface;
+use Symfony\Component\Dependency_Injection\Loader\Configurator\Container_Configurator;
 /**
  * @author Yonel Ceruto <yonelceruto@gmail.com>
  *
  * @internal
  */
-class BundleExtension extends Extension implements PrependExtensionInterface
+class Bundle_Extension extends Extension implements Prepend_Extension_Interface
 {
-    use ExtensionTrait;
-
-    public function __construct(
-        private ConfigurableExtensionInterface $subject,
-        private string $alias,
-    ) {
-    }
-
-    public function getConfiguration(array $config, ContainerBuilder $container): ?ConfigurationInterface
+    use Extension_Trait;
+    public function __construct(private Configurable_Extension_Interface $subject, private string $alias)
     {
-        return new Configuration($this->subject, $container, $this->getAlias());
     }
-
-    public function getAlias(): string
+    public function get_configuration(array $config, Container_Builder $container): ?Configuration_Interface
+    {
+        return new Configuration($this->subject, $container, $this->get_alias());
+    }
+    public function get_alias(): string
     {
         return $this->alias;
     }
-
-    public function prepend(ContainerBuilder $container): void
+    public function prepend(Container_Builder $container): void
     {
-        $callback = function (ContainerConfigurator $configurator) use ($container): void {
-            $this->subject->prependExtension($configurator, $container);
+        $callback = function (Container_Configurator $configurator) use ($container): void {
+            $this->subject->prepend_extension($configurator, $container);
         };
-
-        $this->executeConfiguratorCallback($container, $callback, $this->subject, true);
+        $this->execute_configurator_callback($container, $callback, $this->subject, true);
     }
-
-    public function load(array $configs, ContainerBuilder $container): void
+    public function load(array $configs, Container_Builder $container): void
     {
-        $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
-
-        $callback = function (ContainerConfigurator $configurator) use ($config, $container): void {
-            $this->subject->loadExtension($config, $configurator, $container);
+        $config = $this->process_configuration($this->get_configuration([], $container), $configs);
+        $callback = function (Container_Configurator $configurator) use ($config, $container): void {
+            $this->subject->load_extension($config, $configurator, $container);
         };
-
-        $this->executeConfiguratorCallback($container, $callback, $this->subject);
+        $this->execute_configurator_callback($container, $callback, $this->subject);
     }
 }

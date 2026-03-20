@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Web_Profiler_Bundle\Dependency_Injection;
 
-namespace Symfony\Bundle\WebProfilerBundle\DependencyInjection;
-
-use Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Bundle\Web_Profiler_Bundle\Event_Listener\Web_Debug_Toolbar_Listener;
+use Symfony\Component\Config\File_Locator;
+use Symfony\Component\Dependency_Injection\Argument\Service_Closure_Argument;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Extension\Extension;
+use Symfony\Component\Dependency_Injection\Loader\Php_File_Loader;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * WebProfilerExtension.
  *
@@ -33,30 +30,26 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class WebProfilerExtension extends Extension
+class Web_Profiler_Extension extends Extension
 {
     /**
      * Loads the web profiler configuration.
      *
      * @param array $configs An array of configuration settings
      */
-    public function load(array $configs, ContainerBuilder $container): void
+    public function load(array $configs, Container_Builder $container): void
     {
-        $configuration = $this->getConfiguration($configs, $container);
-        $config = $this->processConfiguration($configuration, $configs);
-
-        $loader = new PhpFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $configuration = $this->get_configuration($configs, $container);
+        $config = $this->process_configuration($configuration, $configs);
+        $loader = new Php_File_Loader($container, new File_Locator(__DIR__ . '/../Resources/config'));
         $loader->load('profiler.php');
-
         if ($config['toolbar']['enabled'] || $config['intercept_redirects']) {
             $loader->load('toolbar.php');
-            $container->getDefinition('web_profiler.debug_toolbar')->replaceArgument(4, $config['excluded_ajax_paths']);
-            $container->getDefinition('web_profiler.debug_toolbar')->replaceArgument(7, $config['toolbar']['ajax_replace']);
-            $container->setParameter('web_profiler.debug_toolbar.intercept_redirects', $config['intercept_redirects']);
-            $container->setParameter('web_profiler.debug_toolbar.mode', $config['toolbar']['enabled'] ? WebDebugToolbarListener::ENABLED : WebDebugToolbarListener::DISABLED);
+            $container->get_definition('web_profiler.debug_toolbar')->replace_argument(4, $config['excluded_ajax_paths']);
+            $container->get_definition('web_profiler.debug_toolbar')->replace_argument(7, $config['toolbar']['ajax_replace']);
+            $container->set_parameter('web_profiler.debug_toolbar.intercept_redirects', $config['intercept_redirects']);
+            $container->set_parameter('web_profiler.debug_toolbar.mode', $config['toolbar']['enabled'] ? Web_Debug_Toolbar_Listener::ENABLED : Web_Debug_Toolbar_Listener::DISABLED);
         }
-
-        $container->getDefinition('debug.file_link_formatter')
-            ->replaceArgument(3, new ServiceClosureArgument(new Reference('debug.file_link_formatter.url_format')));
+        $container->get_definition('debug.file_link_formatter')->replace_argument(3, new Service_Closure_Argument(new Reference('debug.file_link_formatter.url_format')));
     }
 }

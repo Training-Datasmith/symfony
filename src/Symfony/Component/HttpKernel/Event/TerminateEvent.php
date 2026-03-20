@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event;
 
-namespace Symfony\Component\HttpKernel\Event;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Response;
+use Symfony\Component\Http_Kernel\Http_Kernel_Interface;
 /**
  * Allows to execute logic after a response was sent.
  *
@@ -25,17 +22,13 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
-final class TerminateEvent extends KernelEvent
+final class Terminate_Event extends Kernel_Event
 {
-    public function __construct(
-        HttpKernelInterface $kernel,
-        Request $request,
-        private readonly Response $response,
-    ) {
-        parent::__construct($kernel, $request, HttpKernelInterface::MAIN_REQUEST);
+    public function __construct(Http_Kernel_Interface $kernel, Request $request, private readonly Response $response)
+    {
+        parent::__construct($kernel, $request, Http_Kernel_Interface::MAIN_REQUEST);
     }
-
-    public function getResponse(): Response
+    public function get_response(): Response
     {
         return $this->response;
     }

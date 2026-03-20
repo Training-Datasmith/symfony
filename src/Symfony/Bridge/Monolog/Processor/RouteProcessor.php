@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Bridge\Monolog\Processor;
 
-use Monolog\LogRecord;
-use Monolog\ResettableInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Contracts\Service\ResetInterface;
-
+use Monolog\Log_Record;
+use Monolog\Resettable_Interface;
+use Symfony\Component\Event_Dispatcher\Event_Subscriber_Interface;
+use Symfony\Component\Http_Kernel\Event\Finish_Request_Event;
+use Symfony\Component\Http_Kernel\Event\Request_Event;
+use Symfony\Component\Http_Kernel\Kernel_Events;
+use Symfony\Contracts\Service\Reset_Interface;
 /**
  * Adds the current route information to the log entry.
  *
@@ -28,64 +25,46 @@ use Symfony\Contracts\Service\ResetInterface;
  *
  * @final
  */
-class RouteProcessor implements EventSubscriberInterface, ResetInterface, ResettableInterface
+class Route_Processor implements Event_Subscriber_Interface, Reset_Interface, Resettable_Interface
 {
-    private array $routeData = [];
-
-    public function __construct(
-        private readonly bool $includeParams = true,
-    ) {
+    private array $route_data = [];
+    public function __construct(private readonly bool $include_params = true)
+    {
         $this->reset();
     }
-
-    public function __invoke(LogRecord $record): LogRecord
+    public function __invoke(Log_Record $record): Log_Record
     {
-        if ($this->routeData && !isset($record->extra['requests'])) {
-            $record->extra['requests'] = array_values($this->routeData);
+        if ($this->route_data && !isset($record->extra['requests'])) {
+            $record->extra['requests'] = array_values($this->route_data);
         }
-
         return $record;
     }
-
     public function reset(): void
     {
-        $this->routeData = [];
+        $this->route_data = [];
     }
-
-    public function addRouteData(RequestEvent $event): void
+    public function add_route_data(Request_Event $event): void
     {
-        if ($event->isMainRequest()) {
+        if ($event->is_main_request()) {
             $this->reset();
         }
-
-        $request = $event->getRequest();
+        $request = $event->get_request();
         if (!$request->attributes->has('_controller')) {
             return;
         }
-
-        $currentRequestData = [
-            'controller' => $request->attributes->get('_controller'),
-            'route' => $request->attributes->get('_route'),
-        ];
-
-        if ($this->includeParams) {
-            $currentRequestData['route_params'] = $request->attributes->get('_route_params');
+        $current_request_data = ['controller' => $request->attributes->get('_controller'), 'route' => $request->attributes->get('_route')];
+        if ($this->include_params) {
+            $current_request_data['route_params'] = $request->attributes->get('_route_params');
         }
-
-        $this->routeData[spl_object_id($request)] = $currentRequestData;
+        $this->route_data[spl_object_id($request)] = $current_request_data;
     }
-
-    public function removeRouteData(FinishRequestEvent $event): void
+    public function remove_route_data(Finish_Request_Event $event): void
     {
-        $requestId = spl_object_id($event->getRequest());
-        unset($this->routeData[$requestId]);
+        $request_id = spl_object_id($event->get_request());
+        unset($this->route_data[$request_id]);
     }
-
-    public static function getSubscribedEvents(): array
+    public static function get_subscribed_events(): array
     {
-        return [
-            KernelEvents::REQUEST => ['addRouteData', 1],
-            KernelEvents::FINISH_REQUEST => ['removeRouteData', 1],
-        ];
+        return [Kernel_Events::REQUEST => ['addRouteData', 1], Kernel_Events::FINISH_REQUEST => ['removeRouteData', 1]];
     }
 }

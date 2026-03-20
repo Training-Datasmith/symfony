@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Event;
 
 /**
@@ -21,36 +19,32 @@ namespace Symfony\Component\Console\Event;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class ConsoleCommandEvent extends ConsoleEvent
+final class Console_Command_Event extends Console_Event
 {
     /**
      * The return code for skipped commands, this will also be passed into the terminate event.
      */
     public const RETURN_CODE_DISABLED = 113;
-
     /**
      * Indicates if the command should be run or skipped.
      */
-    private bool $commandShouldRun = true;
-
+    private bool $command_should_run = true;
     /**
      * Disables the command, so it won't be run.
      */
-    public function disableCommand(): bool
+    public function disable_command(): bool
     {
-        return $this->commandShouldRun = false;
+        return $this->command_should_run = false;
     }
-
-    public function enableCommand(): bool
+    public function enable_command(): bool
     {
-        return $this->commandShouldRun = true;
+        return $this->command_should_run = true;
     }
-
     /**
      * Returns true if the command is runnable, false otherwise.
      */
-    public function commandShouldRun(): bool
+    public function command_should_run(): bool
     {
-        return $this->commandShouldRun;
+        return $this->command_should_run;
     }
 }

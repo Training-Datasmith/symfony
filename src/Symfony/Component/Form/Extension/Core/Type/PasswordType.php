@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,38 +9,29 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Extension\Core\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-class PasswordType extends AbstractType
+use Symfony\Component\Form\Abstract_Type;
+use Symfony\Component\Form\Form_Interface;
+use Symfony\Component\Form\Form_View;
+use Symfony\Component\Options_Resolver\Options_Resolver;
+class Password_Type extends Abstract_Type
 {
-    public function buildView(FormView $view, FormInterface $form, array $options): void
+    public function build_view(Form_View $view, Form_Interface $form, array $options): void
     {
-        if ($options['always_empty'] || !$form->isSubmitted()) {
+        if ($options['always_empty'] || !$form->is_submitted()) {
             $view->vars['value'] = '';
         }
     }
-
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configure_options(Options_Resolver $resolver): void
     {
-        $resolver->setDefaults([
-            'always_empty' => true,
-            'trim' => false,
-            'invalid_message' => 'The password is invalid.',
-        ]);
+        $resolver->set_defaults(['always_empty' => true, 'trim' => false, 'invalid_message' => 'The password is invalid.']);
     }
-
-    public function getParent(): ?string
+    public function get_parent(): ?string
     {
-        return TextType::class;
+        return Text_Type::class;
     }
-
-    public function getBlockPrefix(): string
+    public function get_block_prefix(): string
     {
         return 'password';
     }

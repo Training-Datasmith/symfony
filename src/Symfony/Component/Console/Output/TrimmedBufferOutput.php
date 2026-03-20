@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,32 +9,27 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Output;
 
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Console\Formatter\OutputFormatterInterface;
-
+use Symfony\Component\Console\Formatter\Output_Formatter_Interface;
 /**
  * A BufferedOutput that keeps only the last N chars.
  *
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
-class TrimmedBufferOutput extends Output
+class Trimmed_Buffer_Output extends Output
 {
-    private readonly int $maxLength;
+    private readonly int $max_length;
     private string $buffer = '';
-
-    public function __construct(int $maxLength, ?int $verbosity = self::VERBOSITY_NORMAL, bool $decorated = false, ?OutputFormatterInterface $formatter = null)
+    public function __construct(int $max_length, ?int $verbosity = self::VERBOSITY_NORMAL, bool $decorated = false, ?Output_Formatter_Interface $formatter = null)
     {
-        if ($maxLength <= 0) {
-            throw new InvalidArgumentException(\sprintf('"%s()" expects a strictly positive maxLength. Got %d.', __METHOD__, $maxLength));
+        if ($max_length <= 0) {
+            throw new InvalidArgumentException(\sprintf('"%s()" expects a strictly positive maxLength. Got %d.', __METHOD__, $max_length));
         }
-
         parent::__construct($verbosity, $decorated, $formatter);
-        $this->maxLength = $maxLength;
+        $this->max_length = $max_length;
     }
-
     /**
      * Empties buffer and returns its content.
      */
@@ -43,18 +37,14 @@ class TrimmedBufferOutput extends Output
     {
         $content = $this->buffer;
         $this->buffer = '';
-
         return $content;
     }
-
-    protected function doWrite(string $message, bool $newline): void
+    protected function do_write(string $message, bool $newline): void
     {
         $this->buffer .= $message;
-
         if ($newline) {
             $this->buffer .= \PHP_EOL;
         }
-
-        $this->buffer = substr($this->buffer, -$this->maxLength);
+        $this->buffer = substr($this->buffer, -$this->max_length);
     }
 }

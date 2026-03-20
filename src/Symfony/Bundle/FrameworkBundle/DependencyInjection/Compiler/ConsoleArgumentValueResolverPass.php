@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,62 +9,49 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Dependency_Injection\Compiler;
 
-namespace Symfony\Bundle\FrameworkBundle\DependencyInjection\Compiler;
-
-use Symfony\Component\Console\ArgumentResolver\ValueResolver\TraceableValueResolver;
-use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
-use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
-use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Console\Argument_Resolver\Value_Resolver\Traceable_Value_Resolver;
+use Symfony\Component\Dependency_Injection\Argument\Iterator_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Service_Locator_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Tagged_Iterator_Argument;
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Compiler\Priority_Tagged_Service_Trait;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * Gathers and configures the console argument value resolvers.
  *
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-class ConsoleArgumentValueResolverPass implements CompilerPassInterface
+class Console_Argument_Value_Resolver_Pass implements Compiler_Pass_Interface
 {
-    use PriorityTaggedServiceTrait;
-
-    public function process(ContainerBuilder $container): void
+    use Priority_Tagged_Service_Trait;
+    public function process(Container_Builder $container): void
     {
-        if (!$container->hasDefinition('console.argument_resolver')) {
+        if (!$container->has_definition('console.argument_resolver')) {
             return;
         }
-
-        $definitions = $container->getDefinitions();
-        $namedResolvers = $this->findAndSortTaggedServices(new TaggedIteratorArgument('console.targeted_value_resolver', 'name', needsIndexes: true), $container);
-        $resolvers = $this->findAndSortTaggedServices(new TaggedIteratorArgument('console.argument_value_resolver', 'name', needsIndexes: true), $container);
-
+        $definitions = $container->get_definitions();
+        $named_resolvers = $this->find_and_sort_tagged_services(new Tagged_Iterator_Argument('console.targeted_value_resolver', 'name', needsIndexes: true), $container);
+        $resolvers = $this->find_and_sort_tagged_services(new Tagged_Iterator_Argument('console.argument_value_resolver', 'name', needsIndexes: true), $container);
         foreach ($resolvers as $name => $resolver) {
-            if ($definitions[(string) $resolver]->hasTag('console.targeted_value_resolver')) {
+            if ($definitions[(string) $resolver]->has_tag('console.targeted_value_resolver')) {
                 unset($resolvers[$name]);
             } else {
-                $namedResolvers[$name] ??= clone $resolver;
+                $named_resolvers[$name] ??= clone $resolver;
             }
         }
-
-        if ($container->getParameter('kernel.debug') && $container->has('debug.stopwatch')) {
+        if ($container->get_parameter('kernel.debug') && $container->has('debug.stopwatch')) {
             foreach ($resolvers as $name => $resolver) {
-                $resolvers[$name] = new Reference('.debug.console.value_resolver.'.$resolver);
-                $container->register('.debug.console.value_resolver.'.$resolver, TraceableValueResolver::class)
-                    ->setArguments([$resolver, new Reference('debug.stopwatch')]);
+                $resolvers[$name] = new Reference('.debug.console.value_resolver.' . $resolver);
+                $container->register('.debug.console.value_resolver.' . $resolver, Traceable_Value_Resolver::class)->set_arguments([$resolver, new Reference('debug.stopwatch')]);
             }
-            foreach ($namedResolvers as $name => $resolver) {
-                $namedResolvers[$name] = new Reference('.debug.console.value_resolver.'.$resolver);
-                $container->register('.debug.console.value_resolver.'.$resolver, TraceableValueResolver::class)
-                    ->setArguments([$resolver, new Reference('debug.stopwatch')]);
+            foreach ($named_resolvers as $name => $resolver) {
+                $named_resolvers[$name] = new Reference('.debug.console.value_resolver.' . $resolver);
+                $container->register('.debug.console.value_resolver.' . $resolver, Traceable_Value_Resolver::class)->set_arguments([$resolver, new Reference('debug.stopwatch')]);
             }
         }
-
-        $container
-            ->getDefinition('console.argument_resolver')
-            ->replaceArgument(0, new IteratorArgument(array_values($resolvers)))
-            ->setArgument(1, new ServiceLocatorArgument($namedResolvers))
-        ;
+        $container->get_definition('console.argument_resolver')->replace_argument(0, new Iterator_Argument(array_values($resolvers)))->set_argument(1, new Service_Locator_Argument($named_resolvers));
     }
 }

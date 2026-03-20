@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,32 +9,20 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Dependency_Injection\Security\Factory;
 
-namespace Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory;
-
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
-
+use Symfony\Component\Config\Definition\Builder\Node_Definition;
 /**
  * JsonLoginLdapFactory creates services for json login ldap authentication.
  *
  * @internal
  */
-class JsonLoginLdapFactory extends JsonLoginFactory
+class Json_Login_Ldap_Factory extends Json_Login_Factory
 {
-    use LdapFactoryTrait;
-
-    public function addConfiguration(NodeDefinition $node): void
+    use Ldap_Factory_Trait;
+    public function add_configuration(Node_Definition $node): void
     {
-        parent::addConfiguration($node);
-
-        $node
-            ->children()
-                ->scalarNode('service')->defaultValue('ldap')->end()
-                ->scalarNode('dn_string')->defaultValue('{user_identifier}')->end()
-                ->scalarNode('query_string')->end()
-                ->scalarNode('search_dn')->defaultValue('')->end()
-                ->scalarNode('search_password')->defaultValue('')->end()
-            ->end()
-        ;
+        parent::add_configuration($node);
+        $node->children()->scalar_node('service')->default_value('ldap')->end()->scalar_node('dn_string')->default_value('{user_identifier}')->end()->scalar_node('query_string')->end()->scalar_node('search_dn')->default_value('')->end()->scalar_node('search_password')->default_value('')->end()->end();
     }
 }

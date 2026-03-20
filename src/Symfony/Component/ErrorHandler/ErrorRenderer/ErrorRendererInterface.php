@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,30 +9,19 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Error_Handler\Error_Renderer;
 
-namespace Symfony\Component\ErrorHandler\ErrorRenderer;
-
-use Symfony\Component\ErrorHandler\Exception\FlattenException;
-
+use Symfony\Component\Error_Handler\Exception\Flatten_Exception;
 /**
  * Formats an exception to be used as response content.
  *
  * @author Yonel Ceruto <yonelceruto@gmail.com>
  */
-interface ErrorRendererInterface
+interface Error_Renderer_Interface
 {
-    public const IDE_LINK_FORMATS = [
-        'textmate' => 'txmt://open?url=file://%f&line=%l',
-        'macvim' => 'mvim://open?url=file://%f&line=%l',
-        'emacs' => 'emacs://open?url=file://%f&line=%l',
-        'sublime' => 'subl://open?url=file://%f&line=%l',
-        'phpstorm' => 'phpstorm://open?file=%f&line=%l',
-        'atom' => 'atom://core/open/file?filename=%f&line=%l',
-        'vscode' => 'vscode://file/%f:%l',
-    ];
-
+    public const IDE_LINK_FORMATS = ['textmate' => 'txmt://open?url=file://%f&line=%l', 'macvim' => 'mvim://open?url=file://%f&line=%l', 'emacs' => 'emacs://open?url=file://%f&line=%l', 'sublime' => 'subl://open?url=file://%f&line=%l', 'phpstorm' => 'phpstorm://open?file=%f&line=%l', 'atom' => 'atom://core/open/file?filename=%f&line=%l', 'vscode' => 'vscode://file/%f:%l'];
     /**
      * Renders a Throwable as a FlattenException.
      */
-    public function render(\Throwable $exception): FlattenException;
+    public function render(\Throwable $exception): Flatten_Exception;
 }

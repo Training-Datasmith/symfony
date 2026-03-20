@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Command;
 
 /**
@@ -18,7 +16,7 @@ namespace Symfony\Component\Console\Command;
  *
  * @author Grégoire Pineau <lyrixx@lyrix.info>
  */
-interface SignalableCommandInterface
+interface Signalable_Command_Interface
 {
     /**
      * Returns the list of signals to subscribe.
@@ -27,12 +25,11 @@ interface SignalableCommandInterface
      *
      * @see https://php.net/pcntl.constants for signals
      */
-    public function getSubscribedSignals(): array;
-
+    public function get_subscribed_signals(): array;
     /**
      * The method will be called when the application is signaled.
      *
      * @return int|false The exit code to return or false to continue the normal execution
      */
-    public function handleSignal(int $signal, int|false $previousExitCode = 0): int|false;
+    public function handle_signal(int $signal, int|false $previous_exit_code = 0): int|false;
 }

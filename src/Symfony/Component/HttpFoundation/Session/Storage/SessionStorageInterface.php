@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,18 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Foundation\Session\Storage;
 
-namespace Symfony\Component\HttpFoundation\Session\Storage;
-
-use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
-
+use Symfony\Component\Http_Foundation\Session\Session_Bag_Interface;
 /**
  * StorageInterface.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Drak <drak@zikula.org>
  */
-interface SessionStorageInterface
+interface Session_Storage_Interface
 {
     /**
      * Starts the session.
@@ -29,32 +26,26 @@ interface SessionStorageInterface
      * @throws \RuntimeException if something goes wrong starting the session
      */
     public function start(): bool;
-
     /**
      * Checks if the session is started.
      */
-    public function isStarted(): bool;
-
+    public function is_started(): bool;
     /**
      * Returns the session ID.
      */
-    public function getId(): string;
-
+    public function get_id(): string;
     /**
      * Sets the session ID.
      */
-    public function setId(string $id): void;
-
+    public function set_id(string $id): void;
     /**
      * Returns the session name.
      */
-    public function getName(): string;
-
+    public function get_name(): string;
     /**
      * Sets the session name.
      */
-    public function setName(string $name): void;
-
+    public function set_name(string $name): void;
     /**
      * Regenerates id that represents this storage.
      *
@@ -83,7 +74,6 @@ interface SessionStorageInterface
      * @throws \RuntimeException If an error occurs while regenerating this storage
      */
     public function regenerate(bool $destroy = false, ?int $lifetime = null): bool;
-
     /**
      * Force the session to be saved and closed.
      *
@@ -96,23 +86,19 @@ interface SessionStorageInterface
      *                           is already closed
      */
     public function save(): void;
-
     /**
      * Clear all session data in memory.
      */
     public function clear(): void;
-
     /**
      * Gets a SessionBagInterface by name.
      *
      * @throws \InvalidArgumentException If the bag does not exist
      */
-    public function getBag(string $name): SessionBagInterface;
-
+    public function get_bag(string $name): Session_Bag_Interface;
     /**
      * Registers a SessionBagInterface for use.
      */
-    public function registerBag(SessionBagInterface $bag): void;
-
-    public function getMetadataBag(): MetadataBag;
+    public function register_bag(Session_Bag_Interface $bag): void;
+    public function get_metadata_bag(): Metadata_Bag;
 }

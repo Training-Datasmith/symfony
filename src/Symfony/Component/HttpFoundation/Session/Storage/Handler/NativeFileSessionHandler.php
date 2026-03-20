@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,15 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpFoundation\Session\Storage\Handler;
+namespace Symfony\Component\Http_Foundation\Session\Storage\Handler;
 
 /**
  * Native session handler using PHP's built in file storage.
  *
  * @author Drak <drak@zikula.org>
  */
-class NativeFileSessionHandler extends \SessionHandler
+class Native_File_Session_Handler extends \Session_Handler
 {
     /**
      * @param string|null $savePath Path of directory to save session files
@@ -30,25 +28,21 @@ class NativeFileSessionHandler extends \SessionHandler
      * @throws \InvalidArgumentException On invalid $savePath
      * @throws \RuntimeException         When failing to create the save directory
      */
-    public function __construct(?string $savePath = null)
+    public function __construct(?string $save_path = null)
     {
-        $baseDir = $savePath ??= \ini_get('session.save_path');
-
-        if ($count = substr_count($savePath, ';')) {
+        $base_dir = $save_path ??= \ini_get('session.save_path');
+        if ($count = substr_count($save_path, ';')) {
             if ($count > 2) {
-                throw new \InvalidArgumentException(\sprintf('Invalid argument $savePath \'%s\'.', $savePath));
+                throw new \InvalidArgumentException(\sprintf('Invalid argument $savePath \'%s\'.', $save_path));
             }
-
             // characters after last ';' are the path
-            $baseDir = ltrim(strrchr($savePath, ';'), ';');
+            $base_dir = ltrim(strrchr($save_path, ';'), ';');
         }
-
-        if ($baseDir && !is_dir($baseDir) && !@mkdir($baseDir, 0o777, true) && !is_dir($baseDir)) {
-            throw new \RuntimeException(\sprintf('Session Storage was not able to create directory "%s".', $baseDir));
+        if ($base_dir && !is_dir($base_dir) && !@mkdir($base_dir, 0777, true) && !is_dir($base_dir)) {
+            throw new \RuntimeException(\sprintf('Session Storage was not able to create directory "%s".', $base_dir));
         }
-
-        if ($savePath !== \ini_get('session.save_path')) {
-            ini_set('session.save_path', $savePath);
+        if ($save_path !== \ini_get('session.save_path')) {
+            ini_set('session.save_path', $save_path);
         }
         if ('files' !== \ini_get('session.save_handler')) {
             ini_set('session.save_handler', 'files');

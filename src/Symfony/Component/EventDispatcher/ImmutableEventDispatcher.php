@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,58 +9,48 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\EventDispatcher;
+namespace Symfony\Component\Event_Dispatcher;
 
 /**
  * A read-only proxy for an event dispatcher.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ImmutableEventDispatcher implements EventDispatcherInterface
+class Immutable_Event_Dispatcher implements Event_Dispatcher_Interface
 {
-    public function __construct(
-        private readonly EventDispatcherInterface $dispatcher,
-    ) {
-    }
-
-    public function dispatch(object $event, ?string $eventName = null): object
+    public function __construct(private readonly Event_Dispatcher_Interface $dispatcher)
     {
-        return $this->dispatcher->dispatch($event, $eventName);
     }
-
-    public function addListener(string $eventName, callable|array $listener, int $priority = 0): never
+    public function dispatch(object $event, ?string $event_name = null): object
+    {
+        return $this->dispatcher->dispatch($event, $event_name);
+    }
+    public function add_listener(string $event_name, callable|array $listener, int $priority = 0): never
     {
         throw new \BadMethodCallException('Unmodifiable event dispatchers must not be modified.');
     }
-
-    public function addSubscriber(EventSubscriberInterface $subscriber): never
+    public function add_subscriber(Event_Subscriber_Interface $subscriber): never
     {
         throw new \BadMethodCallException('Unmodifiable event dispatchers must not be modified.');
     }
-
-    public function removeListener(string $eventName, callable|array $listener): never
+    public function remove_listener(string $event_name, callable|array $listener): never
     {
         throw new \BadMethodCallException('Unmodifiable event dispatchers must not be modified.');
     }
-
-    public function removeSubscriber(EventSubscriberInterface $subscriber): never
+    public function remove_subscriber(Event_Subscriber_Interface $subscriber): never
     {
         throw new \BadMethodCallException('Unmodifiable event dispatchers must not be modified.');
     }
-
-    public function getListeners(?string $eventName = null): array
+    public function get_listeners(?string $event_name = null): array
     {
-        return $this->dispatcher->getListeners($eventName);
+        return $this->dispatcher->get_listeners($event_name);
     }
-
-    public function getListenerPriority(string $eventName, callable|array $listener): ?int
+    public function get_listener_priority(string $event_name, callable|array $listener): ?int
     {
-        return $this->dispatcher->getListenerPriority($eventName, $listener);
+        return $this->dispatcher->get_listener_priority($event_name, $listener);
     }
-
-    public function hasListeners(?string $eventName = null): bool
+    public function has_listeners(?string $event_name = null): bool
     {
-        return $this->dispatcher->hasListeners($eventName);
+        return $this->dispatcher->has_listeners($event_name);
     }
 }

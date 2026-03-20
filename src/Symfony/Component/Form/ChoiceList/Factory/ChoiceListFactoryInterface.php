@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,19 +9,17 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Choice_List\Factory;
 
-namespace Symfony\Component\Form\ChoiceList\Factory;
-
-use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
-use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
-use Symfony\Component\Form\ChoiceList\View\ChoiceListView;
-
+use Symfony\Component\Form\Choice_List\Choice_List_Interface;
+use Symfony\Component\Form\Choice_List\Loader\Choice_Loader_Interface;
+use Symfony\Component\Form\Choice_List\View\Choice_List_View;
 /**
  * Creates {@link ChoiceListInterface} instances.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface ChoiceListFactoryInterface
+interface Choice_List_Factory_Interface
 {
     /**
      * Creates a choice list for the given choices.
@@ -35,8 +32,7 @@ interface ChoiceListFactoryInterface
      *
      * @param callable|null $filter The callable filtering the choices
      */
-    public function createListFromChoices(iterable $choices, ?callable $value = null, ?callable $filter = null): ChoiceListInterface;
-
+    public function create_list_from_choices(iterable $choices, ?callable $value = null, ?callable $filter = null): Choice_List_Interface;
     /**
      * Creates a choice list that is loaded with the given loader.
      *
@@ -46,8 +42,7 @@ interface ChoiceListFactoryInterface
      *
      * @param callable|null $filter The callable filtering the choices
      */
-    public function createListFromLoader(ChoiceLoaderInterface $loader, ?callable $value = null, ?callable $filter = null): ChoiceListInterface;
-
+    public function create_list_from_loader(Choice_Loader_Interface $loader, ?callable $value = null, ?callable $filter = null): Choice_List_Interface;
     /**
      * Creates a view for the given choice list.
      *
@@ -83,5 +78,5 @@ interface ChoiceListFactoryInterface
      *                                                        on top of the list and in their original position
      *                                                        or only in the top of the list
      */
-    public function createView(ChoiceListInterface $list, array|callable|null $preferredChoices = null, callable|false|null $label = null, ?callable $index = null, ?callable $groupBy = null, array|callable|null $attr = null, array|callable $labelTranslationParameters = [], bool $duplicatePreferredChoices = true): ChoiceListView;
+    public function create_view(Choice_List_Interface $list, array|callable|null $preferred_choices = null, callable|false|null $label = null, ?callable $index = null, ?callable $group_by = null, array|callable|null $attr = null, array|callable $label_translation_parameters = [], bool $duplicate_preferred_choices = true): Choice_List_View;
 }

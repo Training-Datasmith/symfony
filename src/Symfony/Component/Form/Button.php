@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
-use Symfony\Component\Form\Exception\AlreadySubmittedException;
+use Symfony\Component\Form\Exception\Already_Submitted_Exception;
 use Symfony\Component\Form\Exception\BadMethodCallException;
-use Symfony\Component\Form\Exception\TransformationFailedException;
-use Symfony\Component\PropertyAccess\PropertyPathInterface;
-
+use Symfony\Component\Form\Exception\Transformation_Failed_Exception;
+use Symfony\Component\Property_Access\Property_Path_Interface;
 /**
  * A form button.
  *
@@ -25,19 +22,16 @@ use Symfony\Component\PropertyAccess\PropertyPathInterface;
  *
  * @implements \IteratorAggregate<string, FormInterface>
  */
-class Button implements \IteratorAggregate, FormInterface
+class Button implements \IteratorAggregate, Form_Interface
 {
-    private ?FormInterface $parent = null;
+    private ?Form_Interface $parent = null;
     private bool $submitted = false;
-
     /**
      * Creates a new button from a form configuration.
      */
-    public function __construct(
-        private readonly FormConfigInterface $config,
-    ) {
+    public function __construct(private readonly Form_Config_Interface $config)
+    {
     }
-
     /**
      * Unsupported method.
      */
@@ -45,7 +39,6 @@ class Button implements \IteratorAggregate, FormInterface
     {
         return false;
     }
-
     /**
      * Unsupported method.
      *
@@ -53,11 +46,10 @@ class Button implements \IteratorAggregate, FormInterface
      *
      * @throws BadMethodCallException
      */
-    public function offsetGet(mixed $offset): FormInterface
+    public function offsetGet(mixed $offset): Form_Interface
     {
         throw new BadMethodCallException('Buttons cannot have children.');
     }
-
     /**
      * Unsupported method.
      *
@@ -69,7 +61,6 @@ class Button implements \IteratorAggregate, FormInterface
     {
         throw new BadMethodCallException('Buttons cannot have children.');
     }
-
     /**
      * Unsupported method.
      *
@@ -81,23 +72,18 @@ class Button implements \IteratorAggregate, FormInterface
     {
         throw new BadMethodCallException('Buttons cannot have children.');
     }
-
-    public function setParent(?FormInterface $parent): static
+    public function set_parent(?Form_Interface $parent): static
     {
         if ($this->submitted) {
-            throw new AlreadySubmittedException('You cannot set the parent of a submitted button.');
+            throw new Already_Submitted_Exception('You cannot set the parent of a submitted button.');
         }
-
         $this->parent = $parent;
-
         return $this;
     }
-
-    public function getParent(): ?FormInterface
+    public function get_parent(): ?Form_Interface
     {
         return $this->parent;
     }
-
     /**
      * Unsupported method.
      *
@@ -105,11 +91,10 @@ class Button implements \IteratorAggregate, FormInterface
      *
      * @throws BadMethodCallException
      */
-    public function add(string|FormInterface $child, ?string $type = null, array $options = []): static
+    public function add(string|Form_Interface $child, ?string $type = null, array $options = []): static
     {
         throw new BadMethodCallException('Buttons cannot have children.');
     }
-
     /**
      * Unsupported method.
      *
@@ -117,11 +102,10 @@ class Button implements \IteratorAggregate, FormInterface
      *
      * @throws BadMethodCallException
      */
-    public function get(string $name): FormInterface
+    public function get(string $name): Form_Interface
     {
         throw new BadMethodCallException('Buttons cannot have children.');
     }
-
     /**
      * Unsupported method.
      */
@@ -129,7 +113,6 @@ class Button implements \IteratorAggregate, FormInterface
     {
         return false;
     }
-
     /**
      * Unsupported method.
      *
@@ -141,17 +124,14 @@ class Button implements \IteratorAggregate, FormInterface
     {
         throw new BadMethodCallException('Buttons cannot have children.');
     }
-
     public function all(): array
     {
         return [];
     }
-
-    public function getErrors(bool $deep = false, bool $flatten = true): FormErrorIterator
+    public function get_errors(bool $deep = false, bool $flatten = true): Form_Error_Iterator
     {
-        return new FormErrorIterator($this, []);
+        return new Form_Error_Iterator($this, []);
     }
-
     /**
      * Unsupported method.
      *
@@ -159,135 +139,118 @@ class Button implements \IteratorAggregate, FormInterface
      *
      * @return $this
      */
-    public function setData(mixed $modelData): static
+    public function set_data(mixed $model_data): static
     {
         // no-op, called during initialization of the form tree
         return $this;
     }
-
     /**
      * Unsupported method.
      */
-    public function getData(): mixed
+    public function get_data(): mixed
     {
         return null;
     }
-
     /**
      * Unsupported method.
      */
-    public function getNormData(): mixed
+    public function get_norm_data(): mixed
     {
         return null;
     }
-
     /**
      * Unsupported method.
      */
-    public function getViewData(): mixed
+    public function get_view_data(): mixed
     {
         return null;
     }
-
     /**
      * Unsupported method.
      */
-    public function getExtraData(): array
+    public function get_extra_data(): array
     {
         return [];
     }
-
     /**
      * Returns the button's configuration.
      */
-    public function getConfig(): FormConfigInterface
+    public function get_config(): Form_Config_Interface
     {
         return $this->config;
     }
-
     /**
      * Returns whether the button is submitted.
      */
-    public function isSubmitted(): bool
+    public function is_submitted(): bool
     {
         return $this->submitted;
     }
-
     /**
      * Returns the name by which the button is identified in forms.
      */
-    public function getName(): string
+    public function get_name(): string
     {
-        return $this->config->getName();
+        return $this->config->get_name();
     }
-
     /**
      * Unsupported method.
      */
-    public function getPropertyPath(): ?PropertyPathInterface
+    public function get_property_path(): ?Property_Path_Interface
     {
         return null;
     }
-
     /**
      * Unsupported method.
      *
      * @throws BadMethodCallException
      */
-    public function addError(FormError $error): static
+    public function add_error(Form_Error $error): static
     {
         throw new BadMethodCallException('Buttons cannot have errors.');
     }
-
     /**
      * Unsupported method.
      */
-    public function isValid(): bool
+    public function is_valid(): bool
     {
         return true;
     }
-
     /**
      * Unsupported method.
      */
-    public function isRequired(): bool
+    public function is_required(): bool
     {
         return false;
     }
-
-    public function isDisabled(): bool
+    public function is_disabled(): bool
     {
-        if ($this->parent?->isDisabled()) {
+        if ($this->parent?->is_disabled()) {
             return true;
         }
-
-        return $this->config->getDisabled();
+        return $this->config->get_disabled();
     }
-
     /**
      * Unsupported method.
      */
-    public function isEmpty(): bool
+    public function is_empty(): bool
     {
         return true;
     }
-
     /**
      * Unsupported method.
      */
-    public function isSynchronized(): bool
+    public function is_synchronized(): bool
     {
         return true;
     }
-
     /**
      * Unsupported method.
      */
-    public function getTransformationFailure(): ?TransformationFailedException
+    public function get_transformation_failure(): ?Transformation_Failed_Exception
     {
         return null;
     }
-
     /**
      * Unsupported method.
      *
@@ -297,17 +260,15 @@ class Button implements \IteratorAggregate, FormInterface
     {
         throw new BadMethodCallException('Buttons cannot be initialized. Call initialize() on the root form instead.');
     }
-
     /**
      * Unsupported method.
      *
      * @throws BadMethodCallException
      */
-    public function handleRequest(mixed $request = null): static
+    public function handle_request(mixed $request = null): static
     {
         throw new BadMethodCallException('Buttons cannot handle requests. Call handleRequest() on the root form instead.');
     }
-
     /**
      * Submits data to the button.
      *
@@ -315,44 +276,34 @@ class Button implements \IteratorAggregate, FormInterface
      *
      * @throws AlreadySubmittedException if the button has already been submitted
      */
-    public function submit(array|string|null $submittedData, bool $clearMissing = true): static
+    public function submit(array|string|null $submitted_data, bool $clear_missing = true): static
     {
         if ($this->submitted) {
-            throw new AlreadySubmittedException('A form can only be submitted once.');
+            throw new Already_Submitted_Exception('A form can only be submitted once.');
         }
-
         $this->submitted = true;
-
         return $this;
     }
-
-    public function getRoot(): FormInterface
+    public function get_root(): Form_Interface
     {
-        return $this->parent ? $this->parent->getRoot() : $this;
+        return $this->parent ? $this->parent->get_root() : $this;
     }
-
-    public function isRoot(): bool
+    public function is_root(): bool
     {
         return null === $this->parent;
     }
-
-    public function createView(?FormView $parent = null): FormView
+    public function create_view(?Form_View $parent = null): Form_View
     {
         if (null === $parent && $this->parent) {
-            $parent = $this->parent->createView();
+            $parent = $this->parent->create_view();
         }
-
-        $type = $this->config->getType();
-        $options = $this->config->getOptions();
-
-        $view = $type->createView($this, $parent);
-
-        $type->buildView($view, $this, $options);
-        $type->finishView($view, $this, $options);
-
+        $type = $this->config->get_type();
+        $options = $this->config->get_options();
+        $view = $type->create_view($this, $parent);
+        $type->build_view($view, $this, $options);
+        $type->finish_view($view, $this, $options);
         return $view;
     }
-
     /**
      * Unsupported method.
      */
@@ -360,12 +311,11 @@ class Button implements \IteratorAggregate, FormInterface
     {
         return 0;
     }
-
     /**
      * Unsupported method.
      */
-    public function getIterator(): \EmptyIterator
+    public function getIterator(): \Empty_Iterator
     {
-        return new \EmptyIterator();
+        return new \Empty_Iterator();
     }
 }

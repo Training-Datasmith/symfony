@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Dependency_Injection\Security\Factory;
 
-namespace Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory;
-
-use Symfony\Component\DependencyInjection\ChildDefinition;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Dependency_Injection\Child_Definition;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * FormLoginFactory creates services for form login authentication.
  *
@@ -25,46 +22,35 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * @internal
  */
-class FormLoginFactory extends AbstractFactory
+class Form_Login_Factory extends Abstract_Factory
 {
     public const PRIORITY = -30;
-
     public function __construct()
     {
-        $this->addOption('username_parameter', '_username');
-        $this->addOption('password_parameter', '_password');
-        $this->addOption('csrf_parameter', '_csrf_token');
-        $this->addOption('csrf_token_id', 'authenticate');
-        $this->addOption('enable_csrf', false);
-        $this->addOption('post_only', true);
-        $this->addOption('form_only', false);
+        $this->add_option('username_parameter', '_username');
+        $this->add_option('password_parameter', '_password');
+        $this->add_option('csrf_parameter', '_csrf_token');
+        $this->add_option('csrf_token_id', 'authenticate');
+        $this->add_option('enable_csrf', false);
+        $this->add_option('post_only', true);
+        $this->add_option('form_only', false);
     }
-
-    public function getPriority(): int
+    public function get_priority(): int
     {
         return self::PRIORITY;
     }
-
-    public function getKey(): string
+    public function get_key(): string
     {
         return 'form-login';
     }
-
-    public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId): string
+    public function create_authenticator(Container_Builder $container, string $firewall_name, array $config, string $user_provider_id): string
     {
-        $authenticatorId = 'security.authenticator.form_login.'.$firewallName;
+        $authenticator_id = 'security.authenticator.form_login.' . $firewall_name;
         $options = array_intersect_key($config, $this->options);
-        $authenticator = $container
-            ->setDefinition($authenticatorId, new ChildDefinition('security.authenticator.form_login'))
-            ->replaceArgument(1, new Reference($userProviderId))
-            ->replaceArgument(2, new Reference($this->createAuthenticationSuccessHandler($container, $firewallName, $config)))
-            ->replaceArgument(3, new Reference($this->createAuthenticationFailureHandler($container, $firewallName, $config)))
-            ->replaceArgument(4, $options);
-
+        $authenticator = $container->set_definition($authenticator_id, new Child_Definition('security.authenticator.form_login'))->replace_argument(1, new Reference($user_provider_id))->replace_argument(2, new Reference($this->create_authentication_success_handler($container, $firewall_name, $config)))->replace_argument(3, new Reference($this->create_authentication_failure_handler($container, $firewall_name, $config)))->replace_argument(4, $options);
         if ($options['use_forward'] ?? false) {
-            $authenticator->addMethodCall('setHttpKernel', [new Reference('http_kernel')]);
+            $authenticator->add_method_call('setHttpKernel', [new Reference('http_kernel')]);
         }
-
-        return $authenticatorId;
+        return $authenticator_id;
     }
 }

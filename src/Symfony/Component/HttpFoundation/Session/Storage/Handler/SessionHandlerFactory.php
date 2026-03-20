@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,79 +9,66 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpFoundation\Session\Storage\Handler;
+namespace Symfony\Component\Http_Foundation\Session\Storage\Handler;
 
 use Doctrine\DBAL\Configuration;
-use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
-use Doctrine\DBAL\Tools\DsnParser;
+use Doctrine\DBAL\Driver_Manager;
+use Doctrine\DBAL\Schema\Default_Schema_Manager_Factory;
+use Doctrine\DBAL\Tools\Dsn_Parser;
 use Relay\Relay;
-use Symfony\Component\Cache\Adapter\AbstractAdapter;
-
+use Symfony\Component\Cache\Adapter\Abstract_Adapter;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class SessionHandlerFactory
+class Session_Handler_Factory
 {
-    public static function createHandler(object|string $connection, array $options = []): AbstractSessionHandler
+    public static function create_handler(object|string $connection, array $options = []): Abstract_Session_Handler
     {
         if ($query = \is_string($connection) ? parse_url($connection) : false) {
             parse_str($query['query'] ?? '', $query);
-
             if (($options['ttl'] ?? null) instanceof \Closure) {
                 $query['ttl'] = $options['ttl'];
             }
         }
         $options = ($query ?: []) + $options;
-
         switch (true) {
             case $connection instanceof \Redis:
             case $connection instanceof Relay:
-            case $connection instanceof \RedisArray:
-            case $connection instanceof \RedisCluster:
-            case $connection instanceof \Predis\ClientInterface:
-                return new RedisSessionHandler($connection);
-
+            case $connection instanceof \Redis_Array:
+            case $connection instanceof \Redis_Cluster:
+            case $connection instanceof \Predis\Client_Interface:
+                return new Redis_Session_Handler($connection);
             case $connection instanceof \Memcached:
-                return new MemcachedSessionHandler($connection);
-
+                return new Memcached_Session_Handler($connection);
             case $connection instanceof \PDO:
-                return new PdoSessionHandler($connection);
-
+                return new Pdo_Session_Handler($connection);
             case !\is_string($connection):
                 throw new \InvalidArgumentException(\sprintf('Unsupported Connection: "%s".', get_debug_type($connection)));
             case str_starts_with($connection, 'file://'):
-                $savePath = substr($connection, 7);
-
-                return new StrictSessionHandler(new NativeFileSessionHandler('' === $savePath ? null : $savePath));
-
+                $save_path = substr($connection, 7);
+                return new Strict_Session_Handler(new Native_File_Session_Handler('' === $save_path ? null : $save_path));
             case str_starts_with($connection, 'redis:'):
             case str_starts_with($connection, 'rediss:'):
             case str_starts_with($connection, 'valkey:'):
             case str_starts_with($connection, 'valkeys:'):
             case str_starts_with($connection, 'memcached:'):
-                if (!class_exists(AbstractAdapter::class)) {
+                if (!class_exists(Abstract_Adapter::class)) {
                     throw new \InvalidArgumentException('Unsupported Redis or Memcached DSN. Try running "composer require symfony/cache".');
                 }
-                $handlerClass = str_starts_with($connection, 'memcached:') ? MemcachedSessionHandler::class : RedisSessionHandler::class;
+                $handler_class = str_starts_with($connection, 'memcached:') ? Memcached_Session_Handler::class : Redis_Session_Handler::class;
                 $connection = preg_replace('/([?&])prefix=[^&]*+&?/', '\1', $connection);
-                $connection = AbstractAdapter::createConnection($connection, ['lazy' => true]);
-
-                return new $handlerClass($connection, array_intersect_key($options, ['prefix' => 1, 'ttl' => 1]));
-
+                $connection = Abstract_Adapter::create_connection($connection, ['lazy' => true]);
+                return new $handler_class($connection, array_intersect_key($options, ['prefix' => 1, 'ttl' => 1]));
             case str_starts_with($connection, 'pdo_oci://'):
-                if (!class_exists(DriverManager::class)) {
+                if (!class_exists(Driver_Manager::class)) {
                     throw new \InvalidArgumentException('Unsupported PDO OCI DSN. Try running "composer require doctrine/dbal".');
                 }
                 $connection[3] = '-';
-                $params = (new DsnParser())->parse($connection);
+                $params = (new Dsn_Parser())->parse($connection);
                 $config = new Configuration();
-                $config->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
-
-                $connection = DriverManager::getConnection($params, $config)->getNativeConnection();
-                // no break;
-
+                $config->set_schema_manager_factory(new Default_Schema_Manager_Factory());
+                $connection = Driver_Manager::get_connection($params, $config)->get_native_connection();
+            // no break;
             case str_starts_with($connection, 'mssql://'):
             case str_starts_with($connection, 'mysql://'):
             case str_starts_with($connection, 'mysql2://'):
@@ -92,9 +78,8 @@ class SessionHandlerFactory
             case str_starts_with($connection, 'sqlsrv://'):
             case str_starts_with($connection, 'sqlite://'):
             case str_starts_with($connection, 'sqlite3://'):
-                return new PdoSessionHandler($connection, $options);
+                return new Pdo_Session_Handler($connection, $options);
         }
-
         throw new \InvalidArgumentException(\sprintf('Unsupported Connection: "%s".', $connection));
     }
 }

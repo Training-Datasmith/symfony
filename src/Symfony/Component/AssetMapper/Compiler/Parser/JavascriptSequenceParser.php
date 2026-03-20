@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\AssetMapper\Compiler\Parser;
+namespace Symfony\Component\Asset_Mapper\Compiler\Parser;
 
 /**
  * Parses JavaScript content to identify sequences of strings, comments, etc.
@@ -20,170 +18,135 @@ namespace Symfony\Component\AssetMapper\Compiler\Parser;
  *
  * @internal
  */
-final class JavascriptSequenceParser
+final class Javascript_Sequence_Parser
 {
     private const STATE_DEFAULT = 0;
     private const STATE_COMMENT = 1;
     private const STATE_STRING = 2;
-
     private int $cursor = 0;
-
-    private readonly int $contentEnd;
-
+    private readonly int $content_end;
     private string $pattern;
-
-    private int $currentSequenceType = self::STATE_DEFAULT;
-
-    private ?int $currentSequenceEnd = null;
-
+    private int $current_sequence_type = self::STATE_DEFAULT;
+    private ?int $current_sequence_end = null;
     private const COMMENT_SEPARATORS = [
-        '/*',   // Multi-line comment
-        '//',   // Single-line comment
-        '"',    // Double quote
-        '\'',   // Single quote
-        '`',    // Backtick
+        '/*',
+        // Multi-line comment
+        '//',
+        // Single-line comment
+        '"',
+        // Double quote
+        '\'',
+        // Single quote
+        '`',
     ];
-
-    public function __construct(
-        private readonly string $content,
-    ) {
-        $this->contentEnd = \strlen($content);
-
-        $this->pattern ??= '/'.implode('|', array_map(
-            static fn (string $ch): string => preg_quote($ch, '/'),
-            self::COMMENT_SEPARATORS
-        )).'/';
-    }
-
-    public function isString(): bool
+    public function __construct(private readonly string $content)
     {
-        return self::STATE_STRING === $this->currentSequenceType;
+        $this->content_end = \strlen($content);
+        $this->pattern ??= '/' . implode('|', array_map(static fn(string $ch): string => preg_quote($ch, '/'), self::COMMENT_SEPARATORS)) . '/';
     }
-
-    public function isExecutable(): bool
+    public function is_string(): bool
     {
-        return self::STATE_DEFAULT === $this->currentSequenceType;
+        return self::STATE_STRING === $this->current_sequence_type;
     }
-
-    public function isComment(): bool
+    public function is_executable(): bool
     {
-        return self::STATE_COMMENT === $this->currentSequenceType;
+        return self::STATE_DEFAULT === $this->current_sequence_type;
     }
-
-    public function parseUntil(int $position): void
+    public function is_comment(): bool
     {
-        if ($position > $this->contentEnd) {
+        return self::STATE_COMMENT === $this->current_sequence_type;
+    }
+    public function parse_until(int $position): void
+    {
+        if ($position > $this->content_end) {
             throw new \RuntimeException('Cannot parse beyond the end of the content.');
         }
         if ($position < $this->cursor) {
             throw new \RuntimeException('Cannot parse backwards.');
         }
-
         while ($this->cursor <= $position) {
             // Current CodeSequence ?
-            if (null !== $this->currentSequenceEnd) {
-                if ($this->currentSequenceEnd > $position) {
+            if (null !== $this->current_sequence_end) {
+                if ($this->current_sequence_end > $position) {
                     $this->cursor = $position;
-
                     return;
                 }
-
-                $this->cursor = $this->currentSequenceEnd;
-                $this->setSequence(self::STATE_DEFAULT);
+                $this->cursor = $this->current_sequence_end;
+                $this->set_sequence(self::STATE_DEFAULT);
             }
-
             preg_match($this->pattern, $this->content, $matches, \PREG_OFFSET_CAPTURE, $this->cursor);
             if (!$matches) {
-                $this->endsWithSequence(self::STATE_DEFAULT, $position);
-
+                $this->ends_with_sequence(self::STATE_DEFAULT, $position);
                 return;
             }
-
-            $matchPos = $matches[0][1];
-            $matchChar = $matches[0][0];
-
-            if ($matchPos > $position) {
-                $this->setSequence(self::STATE_DEFAULT, $matchPos - 1);
+            $match_pos = $matches[0][1];
+            $match_char = $matches[0][0];
+            if ($match_pos > $position) {
+                $this->set_sequence(self::STATE_DEFAULT, $match_pos - 1);
                 $this->cursor = $position;
-
                 return;
             }
-
             // Multi-line comment
-            if ('/*' === $matchChar) {
-                if (false === $endPos = strpos($this->content, '*/', $matchPos + 2)) {
-                    $this->endsWithSequence(self::STATE_COMMENT, $position);
-
+            if ('/*' === $match_char) {
+                if (false === $end_pos = strpos($this->content, '*/', $match_pos + 2)) {
+                    $this->ends_with_sequence(self::STATE_COMMENT, $position);
                     return;
                 }
-
-                $this->cursor = min($endPos + 2, $position);
-                $this->setSequence(self::STATE_COMMENT, $endPos + 2);
+                $this->cursor = min($end_pos + 2, $position);
+                $this->set_sequence(self::STATE_COMMENT, $end_pos + 2);
                 continue;
             }
-
             // Single-line comment
-            if ('//' === $matchChar) {
-                if (false === $endPos = strpos($this->content, "\n", $matchPos + 2)) {
-                    $this->endsWithSequence(self::STATE_COMMENT, $position);
-
+            if ('//' === $match_char) {
+                if (false === $end_pos = strpos($this->content, "\n", $match_pos + 2)) {
+                    $this->ends_with_sequence(self::STATE_COMMENT, $position);
                     return;
                 }
-
-                $this->cursor = min($endPos + 1, $position);
-                $this->setSequence(self::STATE_COMMENT, $endPos + 1);
+                $this->cursor = min($end_pos + 1, $position);
+                $this->set_sequence(self::STATE_COMMENT, $end_pos + 1);
                 continue;
             }
-
-            if ('"' === $matchChar || "'" === $matchChar || '`' === $matchChar) {
-                $endPos = $matchPos + 1;
-                while (false !== $endPos = strpos($this->content, $matchChar, $endPos)) {
+            if ('"' === $match_char || "'" === $match_char || '`' === $match_char) {
+                $end_pos = $match_pos + 1;
+                while (false !== $end_pos = strpos($this->content, $match_char, $end_pos)) {
                     $backslashes = 0;
-                    $i = $endPos - 1;
+                    $i = $end_pos - 1;
                     while ($i >= 0 && '\\' === $this->content[$i]) {
                         ++$backslashes;
                         --$i;
                     }
-
                     if (0 === $backslashes % 2) {
                         break;
                     }
-
-                    ++$endPos;
+                    ++$end_pos;
                 }
-
-                if (false === $endPos) {
-                    $this->endsWithSequence(self::STATE_STRING, $position);
-
+                if (false === $end_pos) {
+                    $this->ends_with_sequence(self::STATE_STRING, $position);
                     return;
                 }
-
-                $this->cursor = min($endPos + 1, $position);
-                $this->setSequence(self::STATE_STRING, $endPos + 1);
+                $this->cursor = min($end_pos + 1, $position);
+                $this->set_sequence(self::STATE_STRING, $end_pos + 1);
                 continue;
             }
-
             // Fallback
-            $this->cursor = $matchPos + 1;
+            $this->cursor = $match_pos + 1;
         }
     }
-
     /**
      * @param int<self::STATE_*> $type
      */
-    private function endsWithSequence(int $type, int $cursor): void
+    private function ends_with_sequence(int $type, int $cursor): void
     {
         $this->cursor = $cursor;
-        $this->currentSequenceType = $type;
-        $this->currentSequenceEnd = $this->contentEnd;
+        $this->current_sequence_type = $type;
+        $this->current_sequence_end = $this->content_end;
     }
-
     /**
      * @param int<self::STATE_*> $type
      */
-    private function setSequence(int $type, ?int $end = null): void
+    private function set_sequence(int $type, ?int $end = null): void
     {
-        $this->currentSequenceType = $type;
-        $this->currentSequenceEnd = $end;
+        $this->current_sequence_type = $type;
+        $this->current_sequence_end = $end;
     }
 }

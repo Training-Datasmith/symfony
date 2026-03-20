@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,31 +9,23 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Event_Dispatcher\Dependency_Injection;
 
-namespace Symfony\Component\EventDispatcher\DependencyInjection;
-
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
 /**
  * This pass allows bundles to extend the list of event aliases.
  *
  * @author Alexander M. Turek <me@derrabus.de>
  */
-class AddEventAliasesPass implements CompilerPassInterface
+class Add_Event_Aliases_Pass implements Compiler_Pass_Interface
 {
-    public function __construct(
-        private readonly array $eventAliases,
-    ) {
-    }
-
-    public function process(ContainerBuilder $container): void
+    public function __construct(private readonly array $event_aliases)
     {
-        $eventAliases = $container->hasParameter('event_dispatcher.event_aliases') ? $container->getParameter('event_dispatcher.event_aliases') : [];
-
-        $container->setParameter(
-            'event_dispatcher.event_aliases',
-            array_merge($eventAliases, $this->eventAliases)
-        );
+    }
+    public function process(Container_Builder $container): void
+    {
+        $event_aliases = $container->has_parameter('event_dispatcher.event_aliases') ? $container->get_parameter('event_dispatcher.event_aliases') : [];
+        $container->set_parameter('event_dispatcher.event_aliases', array_merge($event_aliases, $this->event_aliases));
     }
 }

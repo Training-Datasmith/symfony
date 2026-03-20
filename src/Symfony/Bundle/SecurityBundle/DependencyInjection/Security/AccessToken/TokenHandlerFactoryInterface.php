@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,29 +9,25 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Dependency_Injection\Security\Access_Token;
 
-namespace Symfony\Bundle\SecurityBundle\DependencyInjection\Security\AccessToken;
-
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
+use Symfony\Component\Config\Definition\Builder\Node_Builder;
+use Symfony\Component\Dependency_Injection\Container_Builder;
 /**
  * Allows creating configurable token handlers.
  */
-interface TokenHandlerFactoryInterface
+interface Token_Handler_Factory_Interface
 {
     /**
      * Creates a generic token handler service.
      */
-    public function create(ContainerBuilder $container, string $id, array|string $config): void;
-
+    public function create(Container_Builder $container, string $id, array|string $config): void;
     /**
      * Gets a generic token handler configuration key.
      */
-    public function getKey(): string;
-
+    public function get_key(): string;
     /**
      * Adds a generic token handler configuration.
      */
-    public function addConfiguration(NodeBuilder $node): void;
+    public function add_configuration(Node_Builder $node): void;
 }

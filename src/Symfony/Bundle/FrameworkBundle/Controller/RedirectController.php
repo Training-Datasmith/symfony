@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,16 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Controller;
 
-namespace Symfony\Bundle\FrameworkBundle\Controller;
-
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
+use Symfony\Component\Http_Foundation\Header_Utils;
+use Symfony\Component\Http_Foundation\Redirect_Response;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Response;
+use Symfony\Component\Http_Kernel\Exception\Http_Exception;
+use Symfony\Component\Routing\Generator\Url_Generator_Interface;
 /**
  * Redirects a request to another URL.
  *
@@ -27,15 +24,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  *
  * @final
  */
-class RedirectController
+class Redirect_Controller
 {
-    public function __construct(
-        private readonly ?UrlGeneratorInterface $router = null,
-        private readonly ?int $httpPort = null,
-        private readonly ?int $httpsPort = null,
-    ) {
+    public function __construct(private readonly ?Url_Generator_Interface $router = null, private readonly ?int $http_port = null, private readonly ?int $https_port = null)
+    {
     }
-
     /**
      * Redirects to another route with the given name.
      *
@@ -52,41 +45,34 @@ class RedirectController
      *
      * @throws HttpException In case the route name is empty
      */
-    public function redirectAction(Request $request, string $route, bool $permanent = false, bool|array $ignoreAttributes = false, bool $keepRequestMethod = false, bool $keepQueryParams = false): Response
+    public function redirect_action(Request $request, string $route, bool $permanent = false, bool|array $ignore_attributes = false, bool $keep_request_method = false, bool $keep_query_params = false): Response
     {
         if ('' == $route) {
-            throw new HttpException($permanent ? 410 : 404);
+            throw new Http_Exception($permanent ? 410 : 404);
         }
-
         $attributes = [];
-        if (false === $ignoreAttributes || \is_array($ignoreAttributes)) {
+        if (false === $ignore_attributes || \is_array($ignore_attributes)) {
             $attributes = $request->attributes->get('_route_params');
-
-            if ($keepQueryParams) {
+            if ($keep_query_params) {
                 if ($query = $request->server->get('QUERY_STRING')) {
-                    $query = HeaderUtils::parseQuery($query);
+                    $query = Header_Utils::parse_query($query);
                 } else {
                     $query = $request->query->all();
                 }
-
                 $attributes = array_merge($query, $attributes);
             }
-
             unset($attributes['route'], $attributes['permanent'], $attributes['ignoreAttributes'], $attributes['keepRequestMethod'], $attributes['keepQueryParams']);
-            if ($ignoreAttributes) {
-                $attributes = array_diff_key($attributes, array_flip($ignoreAttributes));
+            if ($ignore_attributes) {
+                $attributes = array_diff_key($attributes, array_flip($ignore_attributes));
             }
         }
-
-        if ($keepRequestMethod) {
-            $statusCode = $permanent ? 308 : 307;
+        if ($keep_request_method) {
+            $status_code = $permanent ? 308 : 307;
         } else {
-            $statusCode = $permanent ? 301 : 302;
+            $status_code = $permanent ? 301 : 302;
         }
-
-        return new RedirectResponse($this->router->generate($route, $attributes, UrlGeneratorInterface::ABSOLUTE_URL), $statusCode);
+        return new Redirect_Response($this->router->generate($route, $attributes, Url_Generator_Interface::ABSOLUTE_URL), $status_code);
     }
-
     /**
      * Redirects to a URL.
      *
@@ -105,85 +91,70 @@ class RedirectController
      *
      * @throws HttpException In case the path is empty
      */
-    public function urlRedirectAction(Request $request, string $path, bool $permanent = false, ?string $scheme = null, ?int $httpPort = null, ?int $httpsPort = null, bool $keepRequestMethod = false): Response
+    public function url_redirect_action(Request $request, string $path, bool $permanent = false, ?string $scheme = null, ?int $http_port = null, ?int $https_port = null, bool $keep_request_method = false): Response
     {
         if ('' === $path) {
-            throw new HttpException($permanent ? 410 : 404);
+            throw new Http_Exception($permanent ? 410 : 404);
         }
-
-        if ($keepRequestMethod) {
-            $statusCode = $permanent ? 308 : 307;
+        if ($keep_request_method) {
+            $status_code = $permanent ? 308 : 307;
         } else {
-            $statusCode = $permanent ? 301 : 302;
+            $status_code = $permanent ? 301 : 302;
         }
-
-        $scheme ??= $request->getScheme();
-
+        $scheme ??= $request->get_scheme();
         if (str_starts_with($path, '//')) {
-            $path = $scheme.':'.$path;
+            $path = $scheme . ':' . $path;
         }
-
         // redirect if the path is a full URL
         if (parse_url($path, \PHP_URL_SCHEME)) {
-            return new RedirectResponse($path, $statusCode);
+            return new Redirect_Response($path, $status_code);
         }
-
-        if ($qs = $request->server->get('QUERY_STRING') ?: $request->getQueryString()) {
+        if ($qs = $request->server->get('QUERY_STRING') ?: $request->get_query_string()) {
             if (!str_contains($path, '?')) {
-                $qs = '?'.$qs;
+                $qs = '?' . $qs;
             } else {
-                $qs = '&'.$qs;
+                $qs = '&' . $qs;
             }
         }
-
         $port = '';
         if ('http' === $scheme) {
-            if (null === $httpPort) {
-                if ('http' === $request->getScheme()) {
-                    $httpPort = $request->getPort();
+            if (null === $http_port) {
+                if ('http' === $request->get_scheme()) {
+                    $http_port = $request->get_port();
                 } else {
-                    $httpPort = $this->httpPort;
+                    $http_port = $this->http_port;
                 }
             }
-
-            if (null !== $httpPort && 80 != $httpPort) {
-                $port = ":$httpPort";
+            if (null !== $http_port && 80 != $http_port) {
+                $port = ":{$http_port}";
             }
         } elseif ('https' === $scheme) {
-            if (null === $httpsPort) {
-                if ('https' === $request->getScheme()) {
-                    $httpsPort = $request->getPort();
+            if (null === $https_port) {
+                if ('https' === $request->get_scheme()) {
+                    $https_port = $request->get_port();
                 } else {
-                    $httpsPort = $this->httpsPort;
+                    $https_port = $this->https_port;
                 }
             }
-
-            if (null !== $httpsPort && 443 != $httpsPort) {
-                $port = ":$httpsPort";
+            if (null !== $https_port && 443 != $https_port) {
+                $port = ":{$https_port}";
             }
         }
-
-        $url = $scheme.'://'.$request->getHost().$port.$request->getBaseUrl().$path.$qs;
-
-        return new RedirectResponse($url, $statusCode);
+        $url = $scheme . '://' . $request->get_host() . $port . $request->get_base_url() . $path . $qs;
+        return new Redirect_Response($url, $status_code);
     }
-
     public function __invoke(Request $request): Response
     {
         $p = $request->attributes->get('_route_params', []);
-
         if (\array_key_exists('route', $p)) {
             if (\array_key_exists('path', $p)) {
                 throw new \RuntimeException(\sprintf('Ambiguous redirection settings, use the "path" or "route" parameter, not both: "%s" and "%s" found respectively in "%s" routing configuration.', $p['path'], $p['route'], $request->attributes->get('_route')));
             }
-
-            return $this->redirectAction($request, $p['route'], $p['permanent'] ?? false, $p['ignoreAttributes'] ?? false, $p['keepRequestMethod'] ?? false, $p['keepQueryParams'] ?? false);
+            return $this->redirect_action($request, $p['route'], $p['permanent'] ?? false, $p['ignoreAttributes'] ?? false, $p['keepRequestMethod'] ?? false, $p['keepQueryParams'] ?? false);
         }
-
         if (\array_key_exists('path', $p)) {
-            return $this->urlRedirectAction($request, $p['path'], $p['permanent'] ?? false, $p['scheme'] ?? null, $p['httpPort'] ?? null, $p['httpsPort'] ?? null, $p['keepRequestMethod'] ?? false);
+            return $this->url_redirect_action($request, $p['path'], $p['permanent'] ?? false, $p['scheme'] ?? null, $p['httpPort'] ?? null, $p['httpsPort'] ?? null, $p['keepRequestMethod'] ?? false);
         }
-
         throw new \RuntimeException(\sprintf('The parameter "path" or "route" is required to configure the redirect action in "%s" routing configuration.', $request->attributes->get('_route')));
     }
 }

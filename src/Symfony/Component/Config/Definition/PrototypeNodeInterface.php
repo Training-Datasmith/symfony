@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition;
 
 /**
@@ -18,10 +16,10 @@ namespace Symfony\Component\Config\Definition;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-interface PrototypeNodeInterface extends NodeInterface
+interface Prototype_Node_Interface extends Node_Interface
 {
     /**
      * Sets the name of the node.
      */
-    public function setName(string $name): void;
+    public function set_name(string $name): void;
 }

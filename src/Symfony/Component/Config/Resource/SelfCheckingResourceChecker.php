@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Resource;
 
-use Symfony\Component\Config\ResourceCheckerInterface;
-
+use Symfony\Component\Config\Resource_Checker_Interface;
 /**
  * Resource checker for instances of SelfCheckingResourceInterface.
  *
@@ -23,26 +20,23 @@ use Symfony\Component\Config\ResourceCheckerInterface;
  *
  * @author Matthias Pigulla <mp@webfactory.de>
  */
-class SelfCheckingResourceChecker implements ResourceCheckerInterface
+class Self_Checking_Resource_Checker implements Resource_Checker_Interface
 {
     // Common shared cache, because this checker can be used in different
     // situations. For example, when using the full stack framework, the router
     // and the container have their own cache. But they may check the very same
     // resources
     private static array $cache = [];
-
-    public function supports(ResourceInterface $metadata): bool
+    public function supports(Resource_Interface $metadata): bool
     {
-        return $metadata instanceof SelfCheckingResourceInterface;
+        return $metadata instanceof Self_Checking_Resource_Interface;
     }
-
     /**
      * @param SelfCheckingResourceInterface $resource
      */
-    public function isFresh(ResourceInterface $resource, int $timestamp): bool
+    public function is_fresh(Resource_Interface $resource, int $timestamp): bool
     {
-        $key = "$resource:$timestamp";
-
-        return self::$cache[$key] ??= $resource->isFresh($timestamp);
+        $key = "{$resource}:{$timestamp}";
+        return self::$cache[$key] ??= $resource->is_fresh($timestamp);
     }
 }

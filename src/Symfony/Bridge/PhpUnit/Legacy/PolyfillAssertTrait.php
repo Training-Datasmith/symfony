@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,126 +9,113 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Php_Unit\Legacy;
 
-namespace Symfony\Bridge\PhpUnit\Legacy;
-
-use PHPUnit\Framework\Constraint\LogicalNot;
-use PHPUnit\Framework\Constraint\TraversableContains;
-
+use Php_Unit\Framework\Constraint\Logical_Not;
+use Php_Unit\Framework\Constraint\Traversable_Contains;
 /**
  * This trait is @internal.
  */
-trait PolyfillAssertTrait
+trait Polyfill_Assert_Trait
 {
     /**
      * @param iterable $haystack
      * @param string   $message
      */
-    public static function assertContainsEquals($needle, $haystack, $message = ''): void
+    public static function assert_contains_equals($needle, $haystack, $message = ''): void
     {
-        $constraint = new TraversableContains($needle, false, false);
-        static::assertThat($haystack, $constraint, $message);
+        $constraint = new Traversable_Contains($needle, false, false);
+        static::assert_that($haystack, $constraint, $message);
     }
-
     /**
      * @param iterable $haystack
      * @param string   $message
      */
-    public static function assertNotContainsEquals($needle, $haystack, $message = ''): void
+    public static function assert_not_contains_equals($needle, $haystack, $message = ''): void
     {
-        $constraint = new LogicalNot(new TraversableContains($needle, false, false));
-        static::assertThat($haystack, $constraint, $message);
+        $constraint = new Logical_Not(new Traversable_Contains($needle, false, false));
+        static::assert_that($haystack, $constraint, $message);
     }
-
     /**
      * @param string $filename
      * @param string $message
      */
-    public static function assertIsNotReadable($filename, $message = ''): void
+    public static function assert_is_not_readable($filename, $message = ''): void
     {
-        static::assertNotIsReadable($filename, $message);
+        static::assert_not_is_readable($filename, $message);
     }
-
     /**
      * @param string $filename
      * @param string $message
      */
-    public static function assertIsNotWritable($filename, $message = ''): void
+    public static function assert_is_not_writable($filename, $message = ''): void
     {
-        static::assertNotIsWritable($filename, $message);
+        static::assert_not_is_writable($filename, $message);
     }
-
     /**
      * @param string $directory
      * @param string $message
      */
-    public static function assertDirectoryDoesNotExist($directory, $message = ''): void
+    public static function assert_directory_does_not_exist($directory, $message = ''): void
     {
-        static::assertDirectoryNotExists($directory, $message);
+        static::assert_directory_not_exists($directory, $message);
     }
-
     /**
      * @param string $directory
      * @param string $message
      */
-    public static function assertDirectoryIsNotReadable($directory, $message = ''): void
+    public static function assert_directory_is_not_readable($directory, $message = ''): void
     {
-        static::assertDirectoryNotIsReadable($directory, $message);
+        static::assert_directory_not_is_readable($directory, $message);
     }
-
     /**
      * @param string $directory
      * @param string $message
      */
-    public static function assertDirectoryIsNotWritable($directory, $message = ''): void
+    public static function assert_directory_is_not_writable($directory, $message = ''): void
     {
-        static::assertDirectoryNotIsWritable($directory, $message);
+        static::assert_directory_not_is_writable($directory, $message);
     }
-
     /**
      * @param string $filename
      * @param string $message
      */
-    public static function assertFileDoesNotExist($filename, $message = ''): void
+    public static function assert_file_does_not_exist($filename, $message = ''): void
     {
-        static::assertFileNotExists($filename, $message);
+        static::assert_file_not_exists($filename, $message);
     }
-
     /**
      * @param string $filename
      * @param string $message
      */
-    public static function assertFileIsNotReadable($filename, $message = ''): void
+    public static function assert_file_is_not_readable($filename, $message = ''): void
     {
-        static::assertFileNotIsReadable($filename, $message);
+        static::assert_file_not_is_readable($filename, $message);
     }
-
     /**
      * @param string $filename
      * @param string $message
      */
-    public static function assertFileIsNotWritable($filename, $message = ''): void
+    public static function assert_file_is_not_writable($filename, $message = ''): void
     {
-        static::assertFileNotIsWritable($filename, $message);
+        static::assert_file_not_is_writable($filename, $message);
     }
-
     /**
      * @param string $pattern
      * @param string $string
      * @param string $message
      */
-    public static function assertMatchesRegularExpression($pattern, $string, $message = ''): void
+    public static function assert_matches_regular_expression($pattern, $string, $message = ''): void
     {
-        static::assertRegExp($pattern, $string, $message);
+        static::assert_reg_exp($pattern, $string, $message);
     }
-
     /**
      * @param string $pattern
      * @param string $string
      * @param string $message
      */
-    public static function assertDoesNotMatchRegularExpression($pattern, $string, $message = ''): void
+    public static function assert_does_not_match_regular_expression($pattern, $string, $message = ''): void
     {
-        static::assertNotRegExp($pattern, $string, $message);
+        static::assert_not_reg_exp($pattern, $string, $message);
     }
 }

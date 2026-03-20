@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,32 +9,28 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Client\Response;
 
-namespace Symfony\Component\HttpClient\Response;
-
-use Symfony\Component\HttpClient\Chunk\ErrorChunk;
-use Symfony\Component\HttpClient\Chunk\FirstChunk;
-use Symfony\Component\HttpClient\Exception\InvalidArgumentException;
-use Symfony\Component\HttpClient\Exception\TransportException;
-use Symfony\Component\HttpClient\Internal\ClientState;
-use Symfony\Contracts\HttpClient\ResponseInterface;
-
+use Symfony\Component\Http_Client\Chunk\Error_Chunk;
+use Symfony\Component\Http_Client\Chunk\First_Chunk;
+use Symfony\Component\Http_Client\Exception\InvalidArgumentException;
+use Symfony\Component\Http_Client\Exception\Transport_Exception;
+use Symfony\Component\Http_Client\Internal\Client_State;
+use Symfony\Contracts\Http_Client\Response_Interface;
 /**
  * A test-friendly response.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class MockResponse implements ResponseInterface, StreamableInterface
+class Mock_Response implements Response_Interface, Streamable_Interface
 {
-    use CommonResponseTrait;
-    use TransportResponseTrait;
-    private array $requestOptions = [];
-    private string $requestUrl;
-    private string $requestMethod;
-
-    private static ClientState $mainMulti;
-    private static int $idSequence = 0;
-
+    use Common_Response_Trait;
+    use Transport_Response_Trait;
+    private array $request_options = [];
+    private string $request_url;
+    private string $request_method;
+    private static Client_State $main_multi;
+    private static int $id_sequence = 0;
     /**
      * @param string|iterable<string|\Throwable> $body The response body as a string or an iterable of strings,
      *                                                 yielding an empty string simulates an idle timeout,
@@ -46,99 +41,83 @@ class MockResponse implements ResponseInterface, StreamableInterface
     public function __construct(private string|iterable|null $body = '', array $info = [])
     {
         $this->info = $info + ['http_code' => 200] + $this->info;
-
         if (!isset($info['response_headers'])) {
             return;
         }
-
-        $responseHeaders = [];
-
+        $response_headers = [];
         foreach ($info['response_headers'] as $k => $v) {
             foreach ((array) $v as $v) {
-                $responseHeaders[] = (\is_string($k) ? $k.': ' : '').$v;
+                $response_headers[] = (\is_string($k) ? $k . ': ' : '') . $v;
             }
         }
-
         $this->info['response_headers'] = [];
-        self::addResponseHeaders($responseHeaders, $this->info, $this->headers);
+        self::add_response_headers($response_headers, $this->info, $this->headers);
     }
-
-    public static function fromFile(string $path, array $info = []): static
+    public static function from_file(string $path, array $info = []): static
     {
         if (!is_file($path)) {
             throw new \InvalidArgumentException(\sprintf('File not found: "%s".', $path));
         }
-
         return new static(file_get_contents($path), $info);
     }
-
     /**
      * Returns the options used when doing the request.
      */
-    public function getRequestOptions(): array
+    public function get_request_options(): array
     {
-        return $this->requestOptions;
+        return $this->request_options;
     }
-
     /**
      * Returns the URL used when doing the request.
      */
-    public function getRequestUrl(): string
+    public function get_request_url(): string
     {
-        return $this->requestUrl;
+        return $this->request_url;
     }
-
     /**
      * Returns the method used when doing the request.
      */
-    public function getRequestMethod(): string
+    public function get_request_method(): string
     {
-        return $this->requestMethod;
+        return $this->request_method;
     }
-
-    public function getInfo(?string $type = null): mixed
+    public function get_info(?string $type = null): mixed
     {
         return null !== $type ? $this->info[$type] ?? null : $this->info;
     }
-
     public function cancel(): void
     {
         $this->info['canceled'] = true;
         $this->info['error'] = 'Response has been canceled.';
         try {
             $this->body = null;
-        } catch (TransportException) {
+        } catch (Transport_Exception) {
             // ignore errors when canceling
         }
-
-        $onProgress = $this->requestOptions['on_progress'] ?? static function (): void {
+        $on_progress = $this->request_options['on_progress'] ?? static function (): void {
         };
-        $dlSize = isset($this->headers['content-encoding']) || 'HEAD' === ($this->info['http_method'] ?? null) || \in_array($this->info['http_code'], [204, 304], true) ? 0 : (int) ($this->headers['content-length'][0] ?? 0);
-        $onProgress($this->offset, $dlSize, $this->info);
+        $dl_size = isset($this->headers['content-encoding']) || 'HEAD' === ($this->info['http_method'] ?? null) || \in_array($this->info['http_code'], [204, 304], true) ? 0 : (int) ($this->headers['content-length'][0] ?? 0);
+        $on_progress($this->offset, $dl_size, $this->info);
     }
-
     public function __destruct()
     {
-        $this->doDestruct();
+        $this->do_destruct();
     }
-
     protected function close(): void
     {
         $this->inflate = null;
         $this->body = [];
     }
-
     /**
      * @internal
      */
-    public static function fromRequest(string $method, string $url, array $options, ResponseInterface $mock): self
+    public static function from_request(string $method, string $url, array $options, Response_Interface $mock): self
     {
         $response = new self([]);
-        $response->requestOptions = $options;
-        $response->id = ++self::$idSequence;
-        $response->shouldBuffer = $options['buffer'] ?? true;
-        $response->initializer = static fn (self $response): bool => \is_array($response->body[0] ?? null);
-
+        $response->request_options = $options;
+        $response->id = ++self::$id_sequence;
+        $response->should_buffer = $options['buffer'] ?? true;
+        $response->initializer = static fn(self $response): bool => \is_array($response->body[0] ?? null);
         $response->info['redirect_count'] = 0;
         $response->info['redirect_url'] = null;
         $response->info['start_time'] = microtime(true);
@@ -149,102 +128,87 @@ class MockResponse implements ResponseInterface, StreamableInterface
         $response->info['max_connect_duration'] = $options['max_connect_duration'] ?? null;
         $response->info['url'] = $url;
         $response->info['original_url'] = $url;
-
         if ($mock instanceof self) {
-            $mock->requestOptions = $response->requestOptions;
-            $mock->requestMethod = $method;
-            $mock->requestUrl = $url;
+            $mock->request_options = $response->request_options;
+            $mock->request_method = $method;
+            $mock->request_url = $url;
         }
-
-        self::writeRequest($response, $options, $mock);
+        self::write_request($response, $options, $mock);
         $response->body[] = [$options, $mock];
-
         return $response;
     }
-
-    protected static function schedule(self $response, array &$runningResponses): void
+    protected static function schedule(self $response, array &$running_responses): void
     {
         if (!isset($response->id)) {
             throw new InvalidArgumentException('MockResponse instances must be issued by MockHttpClient before processing.');
         }
-
-        $multi = self::$mainMulti ??= new ClientState();
-
-        if (!isset($runningResponses[0])) {
-            $runningResponses[0] = [$multi, []];
+        $multi = self::$main_multi ??= new Client_State();
+        if (!isset($running_responses[0])) {
+            $running_responses[0] = [$multi, []];
         }
-
-        $runningResponses[0][1][$response->id] = $response;
+        $running_responses[0][1][$response->id] = $response;
     }
-
-    protected static function perform(ClientState $multi, array $responses): void
+    protected static function perform(Client_State $multi, array $responses): void
     {
         foreach ($responses as $response) {
             $id = $response->id;
-
             if (null === $response->body) {
                 // Canceled response
                 $response->body = [];
             } elseif ([] === $response->body) {
                 // Error chunk
-                $multi->handlesActivity[$id][] = null;
-                $multi->handlesActivity[$id][] = null !== $response->info['error'] ? new TransportException($response->info['error']) : null;
+                $multi->handles_activity[$id][] = null;
+                $multi->handles_activity[$id][] = null !== $response->info['error'] ? new Transport_Exception($response->info['error']) : null;
             } elseif (null === $chunk = array_shift($response->body)) {
                 // Last chunk
-                $multi->handlesActivity[$id][] = null;
-                $multi->handlesActivity[$id][] = array_shift($response->body);
+                $multi->handles_activity[$id][] = null;
+                $multi->handles_activity[$id][] = array_shift($response->body);
             } elseif (\is_array($chunk)) {
                 // First chunk
                 try {
                     $offset = 0;
-                    $chunk[1]->getStatusCode();
-                    $chunk[1]->getHeaders(false);
-                    self::readResponse($response, $chunk[0], $chunk[1], $offset);
-                    $multi->handlesActivity[$id][] = new FirstChunk();
+                    $chunk[1]->get_status_code();
+                    $chunk[1]->get_headers(false);
+                    self::read_response($response, $chunk[0], $chunk[1], $offset);
+                    $multi->handles_activity[$id][] = new First_Chunk();
                 } catch (\Throwable $e) {
-                    $multi->handlesActivity[$id][] = null;
-                    $multi->handlesActivity[$id][] = $e;
+                    $multi->handles_activity[$id][] = null;
+                    $multi->handles_activity[$id][] = $e;
                 }
             } elseif ($chunk instanceof \Throwable) {
-                $multi->handlesActivity[$id][] = null;
-                $multi->handlesActivity[$id][] = $chunk;
+                $multi->handles_activity[$id][] = null;
+                $multi->handles_activity[$id][] = $chunk;
             } else {
                 // Data or timeout chunk
-                $multi->handlesActivity[$id][] = $chunk;
+                $multi->handles_activity[$id][] = $chunk;
             }
         }
     }
-
-    protected static function select(ClientState $multi, float $timeout): int
+    protected static function select(Client_State $multi, float $timeout): int
     {
         return 42;
     }
-
     /**
      * Simulates sending the request.
      */
-    private static function writeRequest(self $response, array $options, ResponseInterface $mock): void
+    private static function write_request(self $response, array $options, Response_Interface $mock): void
     {
-        $onProgress = $options['on_progress'] ?? static function (): void {
+        $on_progress = $options['on_progress'] ?? static function (): void {
         };
-        $response->info += $mock->getInfo() ?: [];
-        if (null !== $mock->getInfo('start_time')) {
-            $response->info['start_time'] = $mock->getInfo('start_time');
+        $response->info += $mock->get_info() ?: [];
+        if (null !== $mock->get_info('start_time')) {
+            $response->info['start_time'] = $mock->get_info('start_time');
         }
-
         // simulate "size_upload" if it is set
         if (isset($response->info['size_upload'])) {
             $response->info['size_upload'] = 0.0;
         }
-
         // simulate "total_time" if it is not set
         if (!isset($response->info['total_time'])) {
             $response->info['total_time'] = microtime(true) - $response->info['start_time'];
         }
-
         // "notify" DNS resolution
-        $onProgress(0, 0, $response->info);
-
+        $on_progress(0, 0, $response->info);
         // consume the request body
         if (\is_resource($body = $options['body'] ?? '')) {
             $data = stream_get_contents($body);
@@ -254,70 +218,53 @@ class MockResponse implements ResponseInterface, StreamableInterface
         } elseif ($body instanceof \Closure) {
             while ('' !== $data = $body(16372)) {
                 if (!\is_string($data)) {
-                    throw new TransportException(\sprintf('Return value of the "body" option callback must be string, "%s" returned.', get_debug_type($data)));
+                    throw new Transport_Exception(\sprintf('Return value of the "body" option callback must be string, "%s" returned.', get_debug_type($data)));
                 }
-
                 // "notify" upload progress
                 if (isset($response->info['size_upload'])) {
                     $response->info['size_upload'] += \strlen($data);
                 }
-
-                $onProgress(0, 0, $response->info);
+                $on_progress(0, 0, $response->info);
             }
         }
     }
-
     /**
      * Simulates reading the response.
      */
-    private static function readResponse(self $response, array $options, ResponseInterface $mock, int &$offset): void
+    private static function read_response(self $response, array $options, Response_Interface $mock, int &$offset): void
     {
-        $onProgress = $options['on_progress'] ?? static function (): void {
+        $on_progress = $options['on_progress'] ?? static function (): void {
         };
-
         // populate info related to headers
-        $info = $mock->getInfo() ?: [];
-        $response->info['http_code'] = ($info['http_code'] ?? 0) ?: $mock->getStatusCode() ?: 200;
-        $response->addResponseHeaders($info['response_headers'] ?? [], $response->info, $response->headers);
-        $dlSize = isset($response->headers['content-encoding']) || 'HEAD' === $response->info['http_method'] || \in_array($response->info['http_code'], [204, 304], true) ? 0 : (int) ($response->headers['content-length'][0] ?? 0);
-
-        $response->info = [
-            'start_time' => $response->info['start_time'],
-            'user_data' => $response->info['user_data'],
-            'max_duration' => $response->info['max_duration'],
-            'max_connect_duration' => $response->info['max_connect_duration'],
-            'http_code' => $response->info['http_code'],
-        ] + $info + $response->info;
-
+        $info = $mock->get_info() ?: [];
+        $response->info['http_code'] = ($info['http_code'] ?? 0 ?: $mock->get_status_code()) ?: 200;
+        $response->add_response_headers($info['response_headers'] ?? [], $response->info, $response->headers);
+        $dl_size = isset($response->headers['content-encoding']) || 'HEAD' === $response->info['http_method'] || \in_array($response->info['http_code'], [204, 304], true) ? 0 : (int) ($response->headers['content-length'][0] ?? 0);
+        $response->info = ['start_time' => $response->info['start_time'], 'user_data' => $response->info['user_data'], 'max_duration' => $response->info['max_duration'], 'max_connect_duration' => $response->info['max_connect_duration'], 'http_code' => $response->info['http_code']] + $info + $response->info;
         if (null !== $response->info['error']) {
-            throw new TransportException($response->info['error']);
+            throw new Transport_Exception($response->info['error']);
         }
-
         if (!isset($response->info['total_time'])) {
             $response->info['total_time'] = microtime(true) - $response->info['start_time'];
         }
-
         // "notify" headers arrival
-        $onProgress(0, $dlSize, $response->info);
-
+        $on_progress(0, $dl_size, $response->info);
         // cast response body to activity list
-        $body = $mock instanceof self ? $mock->body : $mock->getContent(false);
-
+        $body = $mock instanceof self ? $mock->body : $mock->get_content(false);
         if (!\is_string($body)) {
             try {
                 foreach ($body as $chunk) {
                     if ($chunk instanceof \Throwable) {
                         throw $chunk;
                     }
-
                     if ('' === $chunk = (string) $chunk) {
                         // simulate an idle timeout
-                        $response->body[] = new ErrorChunk($offset, \sprintf('Idle timeout reached for "%s".', $response->info['url']));
+                        $response->body[] = new Error_Chunk($offset, \sprintf('Idle timeout reached for "%s".', $response->info['url']));
                     } else {
                         $response->body[] = $chunk;
                         $offset += \strlen($chunk);
                         // "notify" download progress
-                        $onProgress($offset, $dlSize, $response->info);
+                        $on_progress($offset, $dl_size, $response->info);
                     }
                 }
             } catch (\Throwable $e) {
@@ -327,16 +274,13 @@ class MockResponse implements ResponseInterface, StreamableInterface
             $response->body[] = $body;
             $offset = \strlen($body);
         }
-
         if (!isset($response->info['total_time'])) {
             $response->info['total_time'] = microtime(true) - $response->info['start_time'];
         }
-
         // "notify" completion
-        $onProgress($offset, $dlSize, $response->info);
-
-        if ($dlSize && $offset !== $dlSize) {
-            throw new TransportException(\sprintf('Transfer closed with %d bytes remaining to read.', $dlSize - $offset));
+        $on_progress($offset, $dl_size, $response->info);
+        if ($dl_size && $offset !== $dl_size) {
+            throw new Transport_Exception(\sprintf('Transfer closed with %d bytes remaining to read.', $dl_size - $offset));
         }
     }
 }

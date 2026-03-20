@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpFoundation\File;
+namespace Symfony\Component\Http_Foundation\File;
 
 /**
  * A PHP stream of unknown size.
@@ -20,7 +18,7 @@ namespace Symfony\Component\HttpFoundation\File;
  */
 class Stream extends File
 {
-    public function getSize(): int|false
+    public function get_size(): int|false
     {
         return false;
     }

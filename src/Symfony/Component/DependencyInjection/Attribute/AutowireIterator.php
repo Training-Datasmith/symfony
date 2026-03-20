@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,16 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Attribute;
 
-namespace Symfony\Component\DependencyInjection\Attribute;
-
-use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
-
+use Symfony\Component\Dependency_Injection\Argument\Tagged_Iterator_Argument;
 /**
  * Autowires an iterator of services based on a tag name.
  */
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
-class AutowireIterator extends Autowire
+class Autowire_Iterator extends Autowire
 {
     /**
      * @see ServiceSubscriberInterface::getSubscribedServices()
@@ -29,26 +26,18 @@ class AutowireIterator extends Autowire
      * @param string|string[] $exclude        A service id or a list of service ids to exclude
      * @param bool            $excludeSelf    Whether to automatically exclude the referencing service from the iterator
      */
-    public function __construct(
-        string $tag,
-        ?string $indexAttribute = null,
-        string|array|null $exclude = [],
-        bool|string|null $excludeSelf = true,
-        ...$_,
-    ) {
-        if (\func_num_args() > 4 || !\is_bool($excludeSelf) || null === $exclude || (\is_string($exclude) && str_starts_with($exclude, 'get') && !\array_key_exists('defaultIndexMethod', $_))) {
-            [, , $defaultIndexMethod, $defaultPriorityMethod, $exclude, $excludeSelf] = \func_get_args() + [2 => null, null, [], true];
+    public function __construct(string $tag, ?string $index_attribute = null, string|array|null $exclude = [], bool|string|null $exclude_self = true, ...$_)
+    {
+        if (\func_num_args() > 4 || !\is_bool($exclude_self) || null === $exclude || \is_string($exclude) && str_starts_with($exclude, 'get') && !\array_key_exists('defaultIndexMethod', $_)) {
+            [, , $default_index_method, $default_priority_method, $exclude, $exclude_self] = \func_get_args() + [2 => null, null, [], true];
         } else {
-            $defaultIndexMethod = \array_key_exists('defaultIndexMethod', $_) ? $_['defaultIndexMethod'] : false;
-            $defaultPriorityMethod = \array_key_exists('defaultPriorityMethod', $_) ? $_['defaultPriorityMethod'] : false;
+            $default_index_method = \array_key_exists('defaultIndexMethod', $_) ? $_['defaultIndexMethod'] : false;
+            $default_priority_method = \array_key_exists('defaultPriorityMethod', $_) ? $_['defaultPriorityMethod'] : false;
         }
-
-        if (false !== $defaultIndexMethod || false !== $defaultPriorityMethod) {
-            parent::__construct(new TaggedIteratorArgument($tag, $indexAttribute, $defaultIndexMethod, false, $defaultPriorityMethod, (array) $exclude, $excludeSelf));
-
+        if (false !== $default_index_method || false !== $default_priority_method) {
+            parent::__construct(new Tagged_Iterator_Argument($tag, $index_attribute, $default_index_method, false, $default_priority_method, (array) $exclude, $exclude_self));
             return;
         }
-
-        parent::__construct(new TaggedIteratorArgument($tag, $indexAttribute, false, (array) $exclude, $excludeSelf));
+        parent::__construct(new Tagged_Iterator_Argument($tag, $index_attribute, false, (array) $exclude, $exclude_self));
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\CssSelector\Parser\Tokenizer;
+namespace Symfony\Component\Css_Selector\Parser\Tokenizer;
 
 /**
  * CSS selector tokenizer escaping applier.
@@ -23,42 +21,34 @@ namespace Symfony\Component\CssSelector\Parser\Tokenizer;
  *
  * @internal
  */
-class TokenizerEscaping
+class Tokenizer_Escaping
 {
-    public function __construct(
-        private readonly TokenizerPatterns $patterns,
-    ) {
-    }
-
-    public function escapeUnicode(string $value): string
+    public function __construct(private readonly Tokenizer_Patterns $patterns)
     {
-        $value = $this->replaceUnicodeSequences($value);
-
-        return preg_replace($this->patterns->getSimpleEscapePattern(), '$1', $value);
     }
-
-    public function escapeUnicodeAndNewLine(string $value): string
+    public function escape_unicode(string $value): string
     {
-        $value = preg_replace($this->patterns->getNewLineEscapePattern(), '', $value);
-
-        return $this->escapeUnicode($value);
+        $value = $this->replace_unicode_sequences($value);
+        return preg_replace($this->patterns->get_simple_escape_pattern(), '$1', $value);
     }
-
-    private function replaceUnicodeSequences(string $value): string
+    public function escape_unicode_and_new_line(string $value): string
     {
-        return preg_replace_callback($this->patterns->getUnicodeEscapePattern(), static function ($match): string {
+        $value = preg_replace($this->patterns->get_new_line_escape_pattern(), '', $value);
+        return $this->escape_unicode($value);
+    }
+    private function replace_unicode_sequences(string $value): string
+    {
+        return preg_replace_callback($this->patterns->get_unicode_escape_pattern(), static function ($match): string {
             $c = hexdec((string) $match[1]);
-
             if (0x80 > $c %= 0x200000) {
                 return \chr($c);
             }
             if (0x800 > $c) {
-                return \chr(0xC0 | $c >> 6).\chr(0x80 | $c & 0x3F);
+                return \chr(0xc0 | $c >> 6) . \chr(0x80 | $c & 0x3f);
             }
             if (0x10000 > $c) {
-                return \chr(0xE0 | $c >> 12).\chr(0x80 | $c >> 6 & 0x3F).\chr(0x80 | $c & 0x3F);
+                return \chr(0xe0 | $c >> 12) . \chr(0x80 | $c >> 6 & 0x3f) . \chr(0x80 | $c & 0x3f);
             }
-
             return '';
         }, $value);
     }

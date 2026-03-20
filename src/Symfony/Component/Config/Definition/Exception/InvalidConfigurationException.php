@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config\Definition\Exception;
 
 /**
@@ -19,31 +17,28 @@ namespace Symfony\Component\Config\Definition\Exception;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class InvalidConfigurationException extends Exception
+class Invalid_Configuration_Exception extends Exception
 {
     private ?string $path = null;
-    private bool $containsHints = false;
-
-    public function setPath(string $path): void
+    private bool $contains_hints = false;
+    public function set_path(string $path): void
     {
         $this->path = $path;
     }
-
-    public function getPath(): ?string
+    public function get_path(): ?string
     {
         return $this->path;
     }
-
     /**
      * Adds extra information that is suffixed to the original exception message.
      */
-    public function addHint(string $hint): void
+    public function add_hint(string $hint): void
     {
-        if (!$this->containsHints) {
-            $this->message .= "\nHint: ".$hint;
-            $this->containsHints = true;
+        if (!$this->contains_hints) {
+            $this->message .= "\nHint: " . $hint;
+            $this->contains_hints = true;
         } else {
-            $this->message .= ', '.$hint;
+            $this->message .= ', ' . $hint;
         }
     }
 }

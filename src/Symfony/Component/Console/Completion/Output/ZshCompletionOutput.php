@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,29 +9,27 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Completion\Output;
 
-use Symfony\Component\Console\Completion\CompletionSuggestions;
-use Symfony\Component\Console\Output\OutputInterface;
-
+use Symfony\Component\Console\Completion\Completion_Suggestions;
+use Symfony\Component\Console\Output\Output_Interface;
 /**
  * @author Jitendra A <adhocore@gmail.com>
  */
-class ZshCompletionOutput implements CompletionOutputInterface
+class Zsh_Completion_Output implements Completion_Output_Interface
 {
-    public function write(CompletionSuggestions $suggestions, OutputInterface $output): void
+    public function write(Completion_Suggestions $suggestions, Output_Interface $output): void
     {
         $values = [];
-        foreach ($suggestions->getValueSuggestions() as $value) {
-            $values[] = $value->getValue().($value->getDescription() ? "\t".$value->getDescription() : '');
+        foreach ($suggestions->get_value_suggestions() as $value) {
+            $values[] = $value->get_value() . ($value->get_description() ? "\t" . $value->get_description() : '');
         }
-        foreach ($suggestions->getOptionSuggestions() as $option) {
-            $values[] = '--'.$option->getName().($option->getDescription() ? "\t".$option->getDescription() : '');
-            if ($option->isNegatable()) {
-                $values[] = '--no-'.$option->getName().($option->getDescription() ? "\t".$option->getDescription() : '');
+        foreach ($suggestions->get_option_suggestions() as $option) {
+            $values[] = '--' . $option->get_name() . ($option->get_description() ? "\t" . $option->get_description() : '');
+            if ($option->is_negatable()) {
+                $values[] = '--no-' . $option->get_name() . ($option->get_description() ? "\t" . $option->get_description() : '');
             }
         }
-        $output->write(implode("\n", $values)."\n");
+        $output->write(implode("\n", $values) . "\n");
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,28 +9,26 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Command;
 
-namespace Symfony\Bundle\FrameworkBundle\Command;
-
-use Psr\Container\ContainerInterface;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Psr\Container\Container_Interface;
+use Symfony\Component\Config\Definition\Configuration_Interface;
 use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Completion\CompletionInput;
-use Symfony\Component\Console\Completion\CompletionSuggestions;
+use Symfony\Component\Console\Attribute\As_Command;
+use Symfony\Component\Console\Completion\Completion_Input;
+use Symfony\Component\Console\Completion\Completion_Suggestions;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Compiler\ValidateEnvPlaceholdersPass;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\ConfigurationExtensionInterface;
-use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
+use Symfony\Component\Console\Input\Input_Argument;
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Console\Input\Input_Option;
+use Symfony\Component\Console\Output\Output_Interface;
+use Symfony\Component\Console\Style\Symfony_Style;
+use Symfony\Component\Dependency_Injection\Compiler\Validate_Env_Placeholders_Pass;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Extension\Configuration_Extension_Interface;
+use Symfony\Component\Dependency_Injection\Extension\Extension_Interface;
 use Symfony\Component\Yaml\Yaml;
-
 /**
  * A console command for dumping available configuration reference.
  *
@@ -39,263 +36,192 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @final
  */
-#[AsCommand(name: 'debug:config', description: 'Dump the current configuration for an extension')]
-class ConfigDebugCommand extends AbstractConfigCommand
+#[As_Command(name: 'debug:config', description: 'Dump the current configuration for an extension')]
+class Config_Debug_Command extends Abstract_Config_Command
 {
-    public function __construct(
-        private readonly ?ContainerInterface $envVarProcessors = null,
-    ) {
+    public function __construct(private readonly ?Container_Interface $env_var_processors = null)
+    {
         parent::__construct();
     }
-
     protected function configure(): void
     {
-        $this
-            ->setDefinition([
-                new InputArgument('name', InputArgument::OPTIONAL, 'The bundle name or the extension alias'),
-                new InputArgument('path', InputArgument::OPTIONAL, 'The configuration option path'),
-                new InputOption('resolve-env', null, InputOption::VALUE_NONE, 'Display resolved environment variable values instead of placeholders'),
-                new InputOption('format', null, InputOption::VALUE_REQUIRED, \sprintf('The output format ("%s")', implode('", "', $this->getAvailableFormatOptions())), class_exists(Yaml::class) ? 'txt' : 'json'),
-            ])
-            ->setHelp(
-                <<<EOF
-                The <info>%command.name%</info> command dumps the current configuration for an
-                extension/bundle.
-
-                Either the extension alias or bundle name can be used:
-
-                  <info>php %command.full_name% framework</info>
-                  <info>php %command.full_name% FrameworkBundle</info>
-
-                The <info>--format</info> option specifies the format of the command output:
-
-                  <info>php %command.full_name% framework --format=json</info>
-
-                For dumping a specific option, add its path as second argument:
-
-                  <info>php %command.full_name% framework serializer.enabled</info>
-
-                EOF
-            )
-        ;
+        $this->set_definition([new Input_Argument('name', Input_Argument::OPTIONAL, 'The bundle name or the extension alias'), new Input_Argument('path', Input_Argument::OPTIONAL, 'The configuration option path'), new Input_Option('resolve-env', null, Input_Option::VALUE_NONE, 'Display resolved environment variable values instead of placeholders'), new Input_Option('format', null, Input_Option::VALUE_REQUIRED, \sprintf('The output format ("%s")', implode('", "', $this->get_available_format_options())), class_exists(Yaml::class) ? 'txt' : 'json')])->set_help(<<<EOF
+        The <info>%command.name%</info> command dumps the current configuration for an
+        extension/bundle.
+        
+        Either the extension alias or bundle name can be used:
+        
+          <info>php %command.full_name% framework</info>
+          <info>php %command.full_name% FrameworkBundle</info>
+        
+        The <info>--format</info> option specifies the format of the command output:
+        
+          <info>php %command.full_name% framework --format=json</info>
+        
+        For dumping a specific option, add its path as second argument:
+        
+          <info>php %command.full_name% framework serializer.enabled</info>
+        
+        EOF);
     }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(Input_Interface $input, Output_Interface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
-        $errorIo = $io->getErrorStyle();
-
-        if (null === $name = $input->getArgument('name')) {
-            $this->listBundles($errorIo);
-            $this->listNonBundleExtensions($errorIo);
-
-            $errorIo->comment('Provide the name of a bundle as the first argument of this command to dump its configuration. (e.g. <comment>debug:config FrameworkBundle</comment>)');
-            $errorIo->comment('For dumping a specific option, add its path as the second argument of this command. (e.g. <comment>debug:config FrameworkBundle serializer</comment> to dump the <comment>framework.serializer</comment> configuration)');
-
+        $io = new Symfony_Style($input, $output);
+        $error_io = $io->get_error_style();
+        if (null === $name = $input->get_argument('name')) {
+            $this->list_bundles($error_io);
+            $this->list_non_bundle_extensions($error_io);
+            $error_io->comment('Provide the name of a bundle as the first argument of this command to dump its configuration. (e.g. <comment>debug:config FrameworkBundle</comment>)');
+            $error_io->comment('For dumping a specific option, add its path as the second argument of this command. (e.g. <comment>debug:config FrameworkBundle serializer</comment> to dump the <comment>framework.serializer</comment> configuration)');
             return 0;
         }
-
-        $extension = $this->findExtension($name);
-        $extensionAlias = $extension->getAlias();
-        $container = $this->compileContainer();
-
-        $config = $this->getConfig($extension, $container, $input->getOption('resolve-env'));
-
-        $format = $input->getOption('format');
-
+        $extension = $this->find_extension($name);
+        $extension_alias = $extension->get_alias();
+        $container = $this->compile_container();
+        $config = $this->get_config($extension, $container, $input->get_option('resolve-env'));
+        $format = $input->get_option('format');
         if (\in_array($format, ['txt', 'yml'], true) && !class_exists(Yaml::class)) {
-            $errorIo->error('Setting the "format" option to "txt" or "yaml" requires the Symfony Yaml component. Try running "composer install symfony/yaml" or use "--format=json" instead.');
-
+            $error_io->error('Setting the "format" option to "txt" or "yaml" requires the Symfony Yaml component. Try running "composer install symfony/yaml" or use "--format=json" instead.');
             return 1;
         }
-
-        if (null === $path = $input->getArgument('path')) {
-            if ('txt' === $input->getOption('format')) {
-                $io->title(
-                    \sprintf('Current configuration for %s', $name === $extensionAlias ? \sprintf('extension with alias "%s"', $extensionAlias) : \sprintf('"%s"', $name))
-                );
-
-                if ($docUrl = $this->getDocUrl($extension, $container)) {
-                    $io->comment(\sprintf('Documentation at %s', $docUrl));
+        if (null === $path = $input->get_argument('path')) {
+            if ('txt' === $input->get_option('format')) {
+                $io->title(\sprintf('Current configuration for %s', $name === $extension_alias ? \sprintf('extension with alias "%s"', $extension_alias) : \sprintf('"%s"', $name)));
+                if ($doc_url = $this->get_doc_url($extension, $container)) {
+                    $io->comment(\sprintf('Documentation at %s', $doc_url));
                 }
             }
-
-            $io->writeln($this->convertToFormat([$extensionAlias => $config], $format));
-
+            $io->writeln($this->convert_to_format([$extension_alias => $config], $format));
             return 0;
         }
-
         try {
-            $config = $this->getConfigForPath($config, $path, $extensionAlias);
+            $config = $this->get_config_for_path($config, $path, $extension_alias);
         } catch (LogicException $e) {
-            $errorIo->error($e->getMessage());
-
+            $error_io->error($e->get_message());
             return 1;
         }
-
-        $io->title(\sprintf('Current configuration for "%s.%s"', $extensionAlias, $path));
-
-        $io->writeln($this->convertToFormat($config, $format));
-
+        $io->title(\sprintf('Current configuration for "%s.%s"', $extension_alias, $path));
+        $io->writeln($this->convert_to_format($config, $format));
         return 0;
     }
-
-    private function convertToFormat(mixed $config, string $format): string
+    private function convert_to_format(mixed $config, string $format): string
     {
         return match ($format) {
             'txt', 'yaml' => Yaml::dump($config, 10),
             'json' => json_encode($config, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE),
-            default => throw new InvalidArgumentException(\sprintf('Supported formats are "%s".', implode('", "', $this->getAvailableFormatOptions()))),
+            default => throw new InvalidArgumentException(\sprintf('Supported formats are "%s".', implode('", "', $this->get_available_format_options()))),
         };
     }
-
-    private function compileContainer(): ContainerBuilder
+    private function compile_container(): Container_Builder
     {
-        $kernel = clone $this->getApplication()->getKernel();
+        $kernel = clone $this->get_application()->get_kernel();
         $kernel->boot();
-
         $method = new \ReflectionMethod($kernel, 'buildContainer');
         $container = $method->invoke($kernel);
-        if ($this->envVarProcessors) {
-            $container->set('container.env_var_processors_locator', $this->envVarProcessors);
+        if ($this->env_var_processors) {
+            $container->set('container.env_var_processors_locator', $this->env_var_processors);
         }
-        $container->getCompiler()->compile($container);
-
+        $container->get_compiler()->compile($container);
         return $container;
     }
-
     /**
      * Iterate over configuration until the last step of the given path.
      *
      * @throws LogicException If the configuration does not exist
      */
-    private function getConfigForPath(array $config, string $path, string $alias): mixed
+    private function get_config_for_path(array $config, string $path, string $alias): mixed
     {
         $steps = explode('.', $path);
-
         foreach ($steps as $step) {
             if (!\is_array($config) || !\array_key_exists($step, $config)) {
                 throw new LogicException(\sprintf('Unable to find configuration for "%s.%s".', $alias, $path));
             }
-
             $config = $config[$step];
         }
-
         return $config;
     }
-
-    private function getConfigForExtension(ExtensionInterface $extension, ContainerBuilder $container): array
+    private function get_config_for_extension(Extension_Interface $extension, Container_Builder $container): array
     {
-        $extensionAlias = $extension->getAlias();
-
-        $extensionConfig = [];
-        foreach ($container->getCompilerPassConfig()->getPasses() as $pass) {
-            if ($pass instanceof ValidateEnvPlaceholdersPass) {
-                $extensionConfig = $pass->getExtensionConfig();
+        $extension_alias = $extension->get_alias();
+        $extension_config = [];
+        foreach ($container->get_compiler_pass_config()->get_passes() as $pass) {
+            if ($pass instanceof Validate_Env_Placeholders_Pass) {
+                $extension_config = $pass->get_extension_config();
                 break;
             }
         }
-
-        if (isset($extensionConfig[$extensionAlias])) {
-            return $extensionConfig[$extensionAlias];
+        if (isset($extension_config[$extension_alias])) {
+            return $extension_config[$extension_alias];
         }
-
         // Fall back to default config if the extension has one
-
-        if (!$extension instanceof ConfigurationExtensionInterface && !$extension instanceof ConfigurationInterface) {
-            throw new \LogicException(\sprintf('The extension with alias "%s" does not have configuration.', $extensionAlias));
+        if (!$extension instanceof Configuration_Extension_Interface && !$extension instanceof Configuration_Interface) {
+            throw new \LogicException(\sprintf('The extension with alias "%s" does not have configuration.', $extension_alias));
         }
-
-        $configs = $container->getExtensionConfig($extensionAlias);
-        $configuration = $extension instanceof ConfigurationInterface ? $extension : $extension->getConfiguration($configs, $container);
-        $this->validateConfiguration($extension, $configuration);
-
-        return (new Processor())->processConfiguration($configuration, $configs);
+        $configs = $container->get_extension_config($extension_alias);
+        $configuration = $extension instanceof Configuration_Interface ? $extension : $extension->get_configuration($configs, $container);
+        $this->validate_configuration($extension, $configuration);
+        return (new Processor())->process_configuration($configuration, $configs);
     }
-
-    public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void
+    public function complete(Completion_Input $input, Completion_Suggestions $suggestions): void
     {
-        if ($input->mustSuggestArgumentValuesFor('name')) {
-            $suggestions->suggestValues($this->getAvailableExtensions());
-            $suggestions->suggestValues($this->getAvailableBundles());
-
+        if ($input->must_suggest_argument_values_for('name')) {
+            $suggestions->suggest_values($this->get_available_extensions());
+            $suggestions->suggest_values($this->get_available_bundles());
             return;
         }
-
-        if ($input->mustSuggestArgumentValuesFor('path') && null !== $name = $input->getArgument('name')) {
+        if ($input->must_suggest_argument_values_for('path') && null !== $name = $input->get_argument('name')) {
             try {
-                $config = $this->getConfig($this->findExtension($name), $this->compileContainer());
-                $paths = array_keys(self::buildPathsCompletion($config));
-                $suggestions->suggestValues($paths);
+                $config = $this->get_config($this->find_extension($name), $this->compile_container());
+                $paths = array_keys(self::build_paths_completion($config));
+                $suggestions->suggest_values($paths);
             } catch (LogicException) {
             }
         }
-
-        if ($input->mustSuggestOptionValuesFor('format')) {
-            $suggestions->suggestValues($this->getAvailableFormatOptions());
+        if ($input->must_suggest_option_values_for('format')) {
+            $suggestions->suggest_values($this->get_available_format_options());
         }
     }
-
-    private function getAvailableExtensions(): array
+    private function get_available_extensions(): array
     {
-        $kernel = $this->getApplication()->getKernel();
-
+        $kernel = $this->get_application()->get_kernel();
         $extensions = [];
-        foreach ($this->getContainerBuilder($kernel)->getExtensions() as $alias => $extension) {
+        foreach ($this->get_container_builder($kernel)->get_extensions() as $alias => $extension) {
             $extensions[] = $alias;
         }
-
         return $extensions;
     }
-
-    private function getAvailableBundles(): array
+    private function get_available_bundles(): array
     {
-        $availableBundles = [];
-        foreach ($this->getApplication()->getKernel()->getBundles() as $bundle) {
-            $availableBundles[] = $bundle->getName();
+        $available_bundles = [];
+        foreach ($this->get_application()->get_kernel()->get_bundles() as $bundle) {
+            $available_bundles[] = $bundle->get_name();
         }
-
-        return $availableBundles;
+        return $available_bundles;
     }
-
-    private function getConfig(ExtensionInterface $extension, ContainerBuilder $container, bool $resolveEnvs = false): mixed
+    private function get_config(Extension_Interface $extension, Container_Builder $container, bool $resolve_envs = false): mixed
     {
-        return $container->resolveEnvPlaceholders(
-            $container->getParameterBag()->resolveValue(
-                $this->getConfigForExtension($extension, $container)
-            ),
-            $resolveEnvs ?: null
-        );
+        return $container->resolve_env_placeholders($container->get_parameter_bag()->resolve_value($this->get_config_for_extension($extension, $container)), $resolve_envs ?: null);
     }
-
-    private static function buildPathsCompletion(array $paths, string $prefix = ''): array
+    private static function build_paths_completion(array $paths, string $prefix = ''): array
     {
-        $completionPaths = [];
+        $completion_paths = [];
         foreach ($paths as $key => $values) {
             if (\is_array($values)) {
-                $completionPaths += self::buildPathsCompletion($values, $prefix.$key.'.');
+                $completion_paths += self::build_paths_completion($values, $prefix . $key . '.');
             } else {
-                $completionPaths[$prefix.$key] = null;
+                $completion_paths[$prefix . $key] = null;
             }
         }
-
-        return $completionPaths;
+        return $completion_paths;
     }
-
     /** @return string[] */
-    private function getAvailableFormatOptions(): array
+    private function get_available_format_options(): array
     {
         return ['txt', 'yaml', 'json'];
     }
-
-    private function getDocUrl(ExtensionInterface $extension, ContainerBuilder $container): ?string
+    private function get_doc_url(Extension_Interface $extension, Container_Builder $container): ?string
     {
-        $configuration = $extension instanceof ConfigurationInterface ? $extension : $extension->getConfiguration($container->getExtensionConfig($extension->getAlias()), $container);
-
-        return $configuration
-            ->getConfigTreeBuilder()
-            ->getRootNode()
-            ->getNode(true)
-            ->getAttribute('docUrl');
+        $configuration = $extension instanceof Configuration_Interface ? $extension : $extension->get_configuration($container->get_extension_config($extension->get_alias()), $container);
+        return $configuration->get_config_tree_builder()->get_root_node()->get_node(true)->get_attribute('docUrl');
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,82 +9,52 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Html_Sanitizer\Visitor\Node;
 
-namespace Symfony\Component\HtmlSanitizer\Visitor\Node;
-
-use Symfony\Component\HtmlSanitizer\TextSanitizer\StringSanitizer;
-
+use Symfony\Component\Html_Sanitizer\Text_Sanitizer\String_Sanitizer;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-final class Node implements NodeInterface
+final class Node implements Node_Interface
 {
     // HTML5 elements which are self-closing
-    private const VOID_ELEMENTS = [
-        'area' => true,
-        'base' => true,
-        'br' => true,
-        'col' => true,
-        'embed' => true,
-        'hr' => true,
-        'img' => true,
-        'input' => true,
-        'keygen' => true,
-        'link' => true,
-        'meta' => true,
-        'param' => true,
-        'source' => true,
-        'track' => true,
-        'wbr' => true,
-    ];
-
+    private const VOID_ELEMENTS = ['area' => true, 'base' => true, 'br' => true, 'col' => true, 'embed' => true, 'hr' => true, 'img' => true, 'input' => true, 'keygen' => true, 'link' => true, 'meta' => true, 'param' => true, 'source' => true, 'track' => true, 'wbr' => true];
     private array $attributes = [];
     private array $children = [];
-
-    public function __construct(
-        private readonly NodeInterface $parent,
-        private readonly string $tagName,
-    ) {
+    public function __construct(private readonly Node_Interface $parent, private readonly string $tag_name)
+    {
     }
-
-    public function getParent(): \Symfony\Component\HtmlSanitizer\Visitor\Node\NodeInterface
+    public function get_parent(): \Symfony\Component\Html_Sanitizer\Visitor\Node\Node_Interface
     {
         return $this->parent;
     }
-
-    public function getAttribute(string $name): ?string
+    public function get_attribute(string $name): ?string
     {
         return $this->attributes[$name] ?? null;
     }
-
-    public function setAttribute(string $name, ?string $value, bool $override = false): void
+    public function set_attribute(string $name, ?string $value, bool $override = false): void
     {
         // Always use only the first declaration (ease sanitization)
         if ($override || !\array_key_exists($name, $this->attributes)) {
             $this->attributes[$name] = $value;
         }
     }
-
-    public function addChild(NodeInterface $node): void
+    public function add_child(Node_Interface $node): void
     {
         $this->children[] = $node;
     }
-
     public function render(): string
     {
-        if (isset(self::VOID_ELEMENTS[$this->tagName])) {
-            return '<'.$this->tagName.$this->renderAttributes().' />';
+        if (isset(self::VOID_ELEMENTS[$this->tag_name])) {
+            return '<' . $this->tag_name . $this->render_attributes() . ' />';
         }
-
-        $rendered = '<'.$this->tagName.$this->renderAttributes().'>';
+        $rendered = '<' . $this->tag_name . $this->render_attributes() . '>';
         foreach ($this->children as $child) {
             $rendered .= $child->render();
         }
-
-        return $rendered.'</'.$this->tagName.'>';
+        return $rendered . '</' . $this->tag_name . '>';
     }
-
-    private function renderAttributes(): string
+    private function render_attributes(): string
     {
         $rendered = [];
         foreach ($this->attributes as $name => $value) {
@@ -93,9 +62,7 @@ final class Node implements NodeInterface
                 // Tag should be removed as a sanitizer found suspect data inside
                 continue;
             }
-
-            $attr = StringSanitizer::encodeHtmlEntities($name);
-
+            $attr = String_Sanitizer::encode_html_entities($name);
             if ('' !== $value) {
                 // In quirks mode, IE8 does a poor job producing innerHTML values.
                 // If JavaScript does:
@@ -111,13 +78,10 @@ final class Node implements NodeInterface
                 if (str_contains((string) $value, '`')) {
                     $value .= ' ';
                 }
-
-                $attr .= '="'.StringSanitizer::encodeHtmlEntities($value).'"';
+                $attr .= '="' . String_Sanitizer::encode_html_entities($value) . '"';
             }
-
             $rendered[] = $attr;
         }
-
-        return $rendered ? ' '.implode(' ', $rendered) : '';
+        return $rendered ? ' ' . implode(' ', $rendered) : '';
     }
 }

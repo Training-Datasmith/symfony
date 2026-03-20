@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,44 +9,40 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Client;
 
-namespace Symfony\Component\HttpClient;
-
-use GuzzleHttp\Promise\Promise as GuzzlePromise;
-use GuzzleHttp\Promise\RejectedPromise;
-use GuzzleHttp\Promise\Utils;
-use Http\Client\Exception\NetworkException;
-use Http\Client\Exception\RequestException;
-use Http\Client\HttpAsyncClient;
+use Guzzle_Http\Promise\Promise as GuzzlePromise;
+use Guzzle_Http\Promise\Rejected_Promise;
+use Guzzle_Http\Promise\Utils;
+use Http\Client\Exception\Network_Exception;
+use Http\Client\Exception\Request_Exception;
+use Http\Client\Http_Async_Client;
 use Http\Discovery\Psr17Factory;
-use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr17factory_Discovery;
 use Nyholm\Psr7\Factory\Psr17Factory as NyholmPsr17Factory;
 use Nyholm\Psr7\Request;
 use Nyholm\Psr7\Uri;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ResponseInterface as Psr7ResponseInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\StreamInterface;
-use Psr\Http\Message\UriFactoryInterface;
-use Psr\Http\Message\UriInterface;
-use Symfony\Component\HttpClient\Internal\HttplugWaitLoop;
-use Symfony\Component\HttpClient\Response\HttplugPromise;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface;
-use Symfony\Contracts\Service\ResetInterface;
-
-if (!interface_exists(HttpAsyncClient::class)) {
+use Psr\Http\Client\Client_Interface;
+use Psr\Http\Message\Request_Factory_Interface;
+use Psr\Http\Message\Request_Interface;
+use Psr\Http\Message\Response_Factory_Interface;
+use Psr\Http\Message\Response_Interface as Psr7ResponseInterface;
+use Psr\Http\Message\Stream_Factory_Interface;
+use Psr\Http\Message\Stream_Interface;
+use Psr\Http\Message\Uri_Factory_Interface;
+use Psr\Http\Message\Uri_Interface;
+use Symfony\Component\Http_Client\Internal\Httplug_Wait_Loop;
+use Symfony\Component\Http_Client\Response\Httplug_Promise;
+use Symfony\Contracts\Http_Client\Exception\Transport_Exception_Interface;
+use Symfony\Contracts\Http_Client\Http_Client_Interface;
+use Symfony\Contracts\Http_Client\Response_Interface;
+use Symfony\Contracts\Service\Reset_Interface;
+if (!interface_exists(Http_Async_Client::class)) {
     throw new \LogicException('You cannot use "Symfony\Component\HttpClient\HttplugClient" as the "php-http/httplug" package is not installed. Try running "composer require php-http/discovery php-http/async-client-implementation:*".');
 }
-
-if (!interface_exists(RequestFactoryInterface::class)) {
+if (!interface_exists(Request_Factory_Interface::class)) {
     throw new \LogicException('You cannot use the "Symfony\Component\HttpClient\HttplugClient" as the "psr/http-factory" package is not installed. Try running "composer require php-http/discovery psr/http-factory-implementation:*".');
 }
-
 /**
  * An adapter to turn a Symfony HttpClientInterface into an Httplug client.
  *
@@ -58,91 +53,75 @@ if (!interface_exists(RequestFactoryInterface::class)) {
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class HttplugClient implements ClientInterface, HttpAsyncClient, RequestFactoryInterface, StreamFactoryInterface, UriFactoryInterface, ResetInterface
+final class Httplug_Client implements Client_Interface, Http_Async_Client, Request_Factory_Interface, Stream_Factory_Interface, Uri_Factory_Interface, Reset_Interface
 {
-    private HttpClientInterface $client;
-    private ResponseFactoryInterface $responseFactory;
-    private StreamFactoryInterface $streamFactory;
-    private bool $autoUpgradeHttpVersion = true;
-
+    private Http_Client_Interface $client;
+    private Response_Factory_Interface $response_factory;
+    private Stream_Factory_Interface $stream_factory;
+    private bool $auto_upgrade_http_version = true;
     /**
      * @var \SplObjectStorage<ResponseInterface, array{RequestInterface, Promise}>|null
      */
-    private ?\SplObjectStorage $promisePool;
-
-    private HttplugWaitLoop $waitLoop;
-
-    public function __construct(?HttpClientInterface $client = null, ?ResponseFactoryInterface $responseFactory = null, ?StreamFactoryInterface $streamFactory = null)
+    private ?\Spl_Object_Storage $promise_pool;
+    private Httplug_Wait_Loop $wait_loop;
+    public function __construct(?Http_Client_Interface $client = null, ?Response_Factory_Interface $response_factory = null, ?Stream_Factory_Interface $stream_factory = null)
     {
-        $this->client = $client ?? HttpClient::create();
-        $streamFactory ??= $responseFactory instanceof StreamFactoryInterface ? $responseFactory : null;
-        $this->promisePool = class_exists(Utils::class) ? new \SplObjectStorage() : null;
-
-        if (null === $responseFactory || null === $streamFactory) {
+        $this->client = $client ?? Http_Client::create();
+        $stream_factory ??= $response_factory instanceof Stream_Factory_Interface ? $response_factory : null;
+        $this->promise_pool = class_exists(Utils::class) ? new \Spl_Object_Storage() : null;
+        if (null === $response_factory || null === $stream_factory) {
             if (class_exists(Psr17Factory::class)) {
                 $psr17Factory = new Psr17Factory();
-            } elseif (class_exists(NyholmPsr17Factory::class)) {
-                $psr17Factory = new NyholmPsr17Factory();
+            } elseif (class_exists(Nyholm_Psr17factory::class)) {
+                $psr17Factory = new Nyholm_Psr17factory();
             } else {
                 throw new \LogicException('You cannot use the "Symfony\Component\HttpClient\HttplugClient" as no PSR-17 factories have been provided. Try running "composer require php-http/discovery psr/http-factory-implementation:*".');
             }
-
-            $responseFactory ??= $psr17Factory;
-            $streamFactory ??= $psr17Factory;
+            $response_factory ??= $psr17Factory;
+            $stream_factory ??= $psr17Factory;
         }
-
-        $this->responseFactory = $responseFactory;
-        $this->streamFactory = $streamFactory;
-        $this->waitLoop = new HttplugWaitLoop($this->client, $this->promisePool, $this->responseFactory, $this->streamFactory);
+        $this->response_factory = $response_factory;
+        $this->stream_factory = $stream_factory;
+        $this->wait_loop = new Httplug_Wait_Loop($this->client, $this->promise_pool, $this->response_factory, $this->stream_factory);
     }
-
-    public function withOptions(array $options): static
+    public function with_options(array $options): static
     {
         $clone = clone $this;
         if (\array_key_exists('auto_upgrade_http_version', $options)) {
-            $clone->autoUpgradeHttpVersion = $options['auto_upgrade_http_version'];
+            $clone->auto_upgrade_http_version = $options['auto_upgrade_http_version'];
             unset($options['auto_upgrade_http_version']);
         }
-        $clone->client = $clone->client->withOptions($options);
-
+        $clone->client = $clone->client->with_options($options);
         return $clone;
     }
-
-    public function sendRequest(RequestInterface $request): Psr7ResponseInterface
+    public function send_request(Request_Interface $request): Psr7response_Interface
     {
         try {
-            return HttplugWaitLoop::createPsr7Response($this->responseFactory, $this->streamFactory, $this->client, $this->sendPsr7Request($request), true);
-        } catch (TransportExceptionInterface $e) {
-            throw new NetworkException($e->getMessage(), $request, $e);
+            return Httplug_Wait_Loop::create_psr7response($this->response_factory, $this->stream_factory, $this->client, $this->send_psr7request($request), true);
+        } catch (Transport_Exception_Interface $e) {
+            throw new Network_Exception($e->get_message(), $request, $e);
         }
     }
-
-    public function sendAsyncRequest(RequestInterface $request): HttplugPromise
+    public function send_async_request(Request_Interface $request): Httplug_Promise
     {
-        if (!$promisePool = $this->promisePool) {
+        if (!$promise_pool = $this->promise_pool) {
             throw new \LogicException(\sprintf('You cannot use "%s()" as the "guzzlehttp/promises" package is not installed. Try running "composer require guzzlehttp/promises".', __METHOD__));
         }
-
         try {
-            $response = $this->sendPsr7Request($request, true);
-        } catch (NetworkException $e) {
-            return new HttplugPromise(new RejectedPromise($e));
+            $response = $this->send_psr7request($request, true);
+        } catch (Network_Exception $e) {
+            return new Httplug_Promise(new Rejected_Promise($e));
         }
-
-        $waitLoop = $this->waitLoop;
-
-        $promise = new GuzzlePromise(static function () use ($response, $waitLoop): void {
-            $waitLoop->wait($response);
-        }, static function () use ($response, $promisePool): void {
+        $wait_loop = $this->wait_loop;
+        $promise = new Guzzle_Promise(static function () use ($response, $wait_loop): void {
+            $wait_loop->wait($response);
+        }, static function () use ($response, $promise_pool): void {
             $response->cancel();
-            unset($promisePool[$response]);
+            unset($promise_pool[$response]);
         });
-
-        $promisePool[$response] = [$request, $promise];
-
-        return new HttplugPromise($promise);
+        $promise_pool[$response] = [$request, $promise];
+        return new Httplug_Promise($promise);
     }
-
     /**
      * Resolves pending promises that complete before the timeouts are reached.
      *
@@ -150,137 +129,112 @@ final class HttplugClient implements ClientInterface, HttpAsyncClient, RequestFa
      *
      * @return int The number of remaining pending promises
      */
-    public function wait(?float $maxDuration = null, ?float $idleTimeout = null): int
+    public function wait(?float $max_duration = null, ?float $idle_timeout = null): int
     {
-        return $this->waitLoop->wait(null, $maxDuration, $idleTimeout);
+        return $this->wait_loop->wait(null, $max_duration, $idle_timeout);
     }
-
     /**
      * @param UriInterface|string $uri
      */
-    public function createRequest(string $method, $uri = ''): RequestInterface
+    public function create_request(string $method, $uri = ''): Request_Interface
     {
-        if ($this->responseFactory instanceof RequestFactoryInterface) {
-            $request = $this->responseFactory->createRequest($method, $uri);
-        } elseif (class_exists(Psr17FactoryDiscovery::class)) {
-            $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest($method, $uri);
+        if ($this->response_factory instanceof Request_Factory_Interface) {
+            $request = $this->response_factory->create_request($method, $uri);
+        } elseif (class_exists(Psr17factory_Discovery::class)) {
+            $request = Psr17factory_Discovery::find_request_factory()->create_request($method, $uri);
         } elseif (class_exists(Request::class)) {
             $request = new Request($method, $uri);
         } else {
             throw new \LogicException(\sprintf('You cannot use "%s()" as no PSR-17 factories have been found. Try running "composer require php-http/discovery psr/http-factory-implementation:*".', __METHOD__));
         }
-
         return $request;
     }
-
-    public function createStream(string $content = ''): StreamInterface
+    public function create_stream(string $content = ''): Stream_Interface
     {
-        return $this->streamFactory->createStream($content);
+        return $this->stream_factory->create_stream($content);
     }
-
-    public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
+    public function create_stream_from_file(string $filename, string $mode = 'r'): Stream_Interface
     {
-        return $this->streamFactory->createStreamFromFile($filename, $mode);
+        return $this->stream_factory->create_stream_from_file($filename, $mode);
     }
-
-    public function createStreamFromResource($resource): StreamInterface
+    public function create_stream_from_resource($resource): Stream_Interface
     {
-        return $this->streamFactory->createStreamFromResource($resource);
+        return $this->stream_factory->create_stream_from_resource($resource);
     }
-
-    public function createUri(string $uri = ''): UriInterface
+    public function create_uri(string $uri = ''): Uri_Interface
     {
-        if ($this->responseFactory instanceof UriFactoryInterface) {
-            return $this->responseFactory->createUri($uri);
+        if ($this->response_factory instanceof Uri_Factory_Interface) {
+            return $this->response_factory->create_uri($uri);
         }
-
-        if (class_exists(Psr17FactoryDiscovery::class)) {
-            return Psr17FactoryDiscovery::findUriFactory()->createUri($uri);
+        if (class_exists(Psr17factory_Discovery::class)) {
+            return Psr17factory_Discovery::find_uri_factory()->create_uri($uri);
         }
-
         if (class_exists(Uri::class)) {
             return new Uri($uri);
         }
-
         throw new \LogicException(\sprintf('You cannot use "%s()" as no PSR-17 factories have been found. Try running "composer require php-http/discovery psr/http-factory-implementation:*".', __METHOD__));
     }
-
     public function __serialize(): array
     {
-        throw new \BadMethodCallException('Cannot serialize '.self::class);
+        throw new \BadMethodCallException('Cannot serialize ' . self::class);
     }
-
     public function __unserialize(array $data): void
     {
-        throw new \BadMethodCallException('Cannot unserialize '.self::class);
+        throw new \BadMethodCallException('Cannot unserialize ' . self::class);
     }
-
     public function __destruct()
     {
         $this->wait();
     }
-
     public function reset(): void
     {
-        if ($this->client instanceof ResetInterface) {
+        if ($this->client instanceof Reset_Interface) {
             $this->client->reset();
         }
     }
-
-    private function sendPsr7Request(RequestInterface $request, ?bool $buffer = null): ResponseInterface
+    private function send_psr7request(Request_Interface $request, ?bool $buffer = null): Response_Interface
     {
         try {
-            $body = $request->getBody();
-            $headers = $request->getHeaders();
-
-            $size = $request->getHeader('content-length')[0] ?? -1;
-            if (0 > $size && 0 < $size = $body->getSize() ?? -1) {
+            $body = $request->get_body();
+            $headers = $request->get_headers();
+            $size = $request->get_header('content-length')[0] ?? -1;
+            if (0 > $size && 0 < $size = $body->get_size() ?? -1) {
                 $headers['Content-Length'] = [$size];
             }
-
             if (0 === $size) {
                 $body = '';
             } elseif (0 < $size && $size < 1 << 21) {
-                if ($body->isSeekable()) {
+                if ($body->is_seekable()) {
                     try {
                         $body->seek(0);
                     } catch (\RuntimeException) {
                         // ignore
                     }
                 }
-
-                $body = $body->getContents();
+                $body = $body->get_contents();
             } else {
                 $body = static function (int $size) use ($body) {
-                    if ($body->isSeekable()) {
+                    if ($body->is_seekable()) {
                         try {
                             $body->seek(0);
                         } catch (\RuntimeException) {
                             // ignore
                         }
                     }
-
                     while (!$body->eof()) {
                         yield $body->read($size);
                     }
                 };
             }
-
-            $options = [
-                'headers' => $headers,
-                'body' => $body,
-                'buffer' => $buffer,
-            ];
-
-            if (!$this->autoUpgradeHttpVersion || '1.0' === $request->getProtocolVersion()) {
-                $options['http_version'] = $request->getProtocolVersion();
+            $options = ['headers' => $headers, 'body' => $body, 'buffer' => $buffer];
+            if (!$this->auto_upgrade_http_version || '1.0' === $request->get_protocol_version()) {
+                $options['http_version'] = $request->get_protocol_version();
             }
-
-            return $this->client->request($request->getMethod(), (string) $request->getUri(), $options);
+            return $this->client->request($request->get_method(), (string) $request->get_uri(), $options);
         } catch (\InvalidArgumentException $e) {
-            throw new RequestException($e->getMessage(), $request, $e);
-        } catch (TransportExceptionInterface $e) {
-            throw new NetworkException($e->getMessage(), $request, $e);
+            throw new Request_Exception($e->get_message(), $request, $e);
+        } catch (Transport_Exception_Interface $e) {
+            throw new Network_Exception($e->get_message(), $request, $e);
         }
     }
 }

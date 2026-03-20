@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\CssSelector\Node;
+namespace Symfony\Component\Css_Selector\Node;
 
 /**
  * Interface for nodes.
@@ -23,9 +21,8 @@ namespace Symfony\Component\CssSelector\Node;
  *
  * @internal
  */
-interface NodeInterface extends \Stringable
+interface Node_Interface extends \Stringable
 {
-    public function getNodeName(): string;
-
-    public function getSpecificity(): Specificity;
+    public function get_node_name(): string;
+    public function get_specificity(): Specificity;
 }

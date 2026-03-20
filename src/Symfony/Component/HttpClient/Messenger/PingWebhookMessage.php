@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,22 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpClient\Messenger;
+namespace Symfony\Component\Http_Client\Messenger;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final readonly class PingWebhookMessage implements \Stringable
+final readonly class Ping_Webhook_Message implements \Stringable
 {
-    public function __construct(
-        public string $method,
-        public string $url,
-        public array $options = [],
-        public bool $throw = true,
-    ) {
+    public function __construct(public string $method, public string $url, public array $options = [], public bool $throw = true)
+    {
     }
-
     public function __toString(): string
     {
         return "[{$this->method}] {$this->url}";

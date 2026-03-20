@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator\Traits;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
-
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-
-trait DecorateTrait
+use Symfony\Component\Dependency_Injection\Container_Interface;
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+trait Decorate_Trait
 {
     /**
      * Sets the service that this service is decorating.
@@ -27,13 +24,11 @@ trait DecorateTrait
      *
      * @throws InvalidArgumentException in case the decorated service id and the new decorated service id are equals
      */
-    final public function decorate(?string $id, ?string $renamedId = null, int $priority = 0, int $invalidBehavior = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE): static
+    final public function decorate(?string $id, ?string $renamed_id = null, int $priority = 0, int $invalid_behavior = Container_Interface::EXCEPTION_ON_INVALID_REFERENCE): static
     {
-        $this->definition->setDecoratedService($id, $renamedId, $priority, $invalidBehavior);
-
+        $this->definition->set_decorated_service($id, $renamed_id, $priority, $invalid_behavior);
         return $this;
     }
-
     /**
      * Sets the tag that this definition is decorating.
      *
@@ -42,19 +37,13 @@ trait DecorateTrait
      *
      * @return $this
      */
-    final public function decorateTag(string $tag, int $priority = 0, int $invalidBehavior = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE): static
+    final public function decorate_tag(string $tag, int $priority = 0, int $invalid_behavior = Container_Interface::EXCEPTION_ON_INVALID_REFERENCE): static
     {
-        $tagAttributes = [
-            'decorates_tag' => $tag,
-            'priority' => $priority,
-        ];
-
-        if (ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE !== $invalidBehavior) {
-            $tagAttributes['on_invalid'] = $invalidBehavior;
+        $tag_attributes = ['decorates_tag' => $tag, 'priority' => $priority];
+        if (Container_Interface::EXCEPTION_ON_INVALID_REFERENCE !== $invalid_behavior) {
+            $tag_attributes['on_invalid'] = $invalid_behavior;
         }
-
-        $this->definition->addResourceTag('container.tag_decorator', $tagAttributes);
-
+        $this->definition->add_resource_tag('container.tag_decorator', $tag_attributes);
         return $this;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,58 +9,48 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Extension\Core\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\DataTransformerInterface;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\Util\StringUtil;
-
-class TextareaType extends AbstractType implements DataTransformerInterface
+use Symfony\Component\Form\Abstract_Type;
+use Symfony\Component\Form\Data_Transformer_Interface;
+use Symfony\Component\Form\Form_Builder_Interface;
+use Symfony\Component\Form\Form_Interface;
+use Symfony\Component\Form\Form_View;
+use Symfony\Component\Form\Util\String_Util;
+class Textarea_Type extends Abstract_Type implements Data_Transformer_Interface
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function build_form(Form_Builder_Interface $builder, array $options): void
     {
-        $builder->addViewTransformer($this);
+        $builder->add_view_transformer($this);
     }
-
-    public function buildView(FormView $view, FormInterface $form, array $options): void
+    public function build_view(Form_View $view, Form_Interface $form, array $options): void
     {
         $view->vars['pattern'] = null;
         unset($view->vars['attr']['pattern']);
     }
-
-    public function getParent(): ?string
+    public function get_parent(): ?string
     {
-        return TextType::class;
+        return Text_Type::class;
     }
-
-    public function getBlockPrefix(): string
+    public function get_block_prefix(): string
     {
         return 'textarea';
     }
-
     public function transform(mixed $value): mixed
     {
         if (null === $value) {
             return '';
         }
-
         return $value;
     }
-
-    public function reverseTransform(mixed $value): mixed
+    public function reverse_transform(mixed $value): mixed
     {
         if (!\is_string($value)) {
             return $value;
         }
-
         if ('' === $value) {
             return null;
         }
-
-        return StringUtil::normalizeNewlines($value);
+        return String_Util::normalize_newlines($value);
     }
 }

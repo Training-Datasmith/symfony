@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Exception;
 
 /**
@@ -18,19 +16,17 @@ namespace Symfony\Component\Console\Exception;
  *
  * @author Jérôme Tamarelle <jerome@tamarelle.net>
  */
-class InvalidOptionException extends \InvalidArgumentException implements ExceptionInterface
+class Invalid_Option_Exception extends \InvalidArgumentException implements Exception_Interface
 {
     /**
      * @internal
      */
-    public static function fromEnumValue(string $name, string $value, array|\Closure $suggestedValues): self
+    public static function from_enum_value(string $name, string $value, array|\Closure $suggested_values): self
     {
         $error = \sprintf('The value "%s" is not valid for the "%s" option.', $value, $name);
-
-        if (\is_array($suggestedValues)) {
-            $error .= \sprintf(' Supported values are "%s".', implode('", "', $suggestedValues));
+        if (\is_array($suggested_values)) {
+            $error .= \sprintf(' Supported values are "%s".', implode('", "', $suggested_values));
         }
-
         return new self($error);
     }
 }

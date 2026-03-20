@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Css_Selector\Parser\Handler;
 
-namespace Symfony\Component\CssSelector\Parser\Handler;
-
-use Symfony\Component\CssSelector\Parser\Reader;
-use Symfony\Component\CssSelector\Parser\Token;
-use Symfony\Component\CssSelector\Parser\TokenStream;
-
+use Symfony\Component\Css_Selector\Parser\Reader;
+use Symfony\Component\Css_Selector\Parser\Token;
+use Symfony\Component\Css_Selector\Parser\Token_Stream;
 /**
  * CSS selector whitespace handler.
  *
@@ -27,19 +24,16 @@ use Symfony\Component\CssSelector\Parser\TokenStream;
  *
  * @internal
  */
-class WhitespaceHandler implements HandlerInterface
+class Whitespace_Handler implements Handler_Interface
 {
-    public function handle(Reader $reader, TokenStream $stream): bool
+    public function handle(Reader $reader, Token_Stream $stream): bool
     {
-        $match = $reader->findPattern('~^[ \t\r\n\f]+~');
-
+        $match = $reader->find_pattern('~^[ \t\r\n\f]+~');
         if (false === $match) {
             return false;
         }
-
-        $stream->push(new Token(Token::TYPE_WHITESPACE, $match[0], $reader->getPosition()));
-        $reader->moveForward(\strlen((string) $match[0]));
-
+        $stream->push(new Token(Token::TYPE_WHITESPACE, $match[0], $reader->get_position()));
+        $reader->move_forward(\strlen((string) $match[0]));
         return true;
     }
 }

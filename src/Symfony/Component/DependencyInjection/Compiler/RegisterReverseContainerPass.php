@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,53 +9,46 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Dependency_Injection\Argument\Service_Closure_Argument;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Container_Interface;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class RegisterReverseContainerPass implements CompilerPassInterface
+class Register_Reverse_Container_Pass implements Compiler_Pass_Interface
 {
-    public function __construct(
-        private readonly bool $beforeRemoving,
-    ) {
-    }
-
-    public function process(ContainerBuilder $container): void
+    public function __construct(private readonly bool $before_removing)
     {
-        if (!$container->hasDefinition('reverse_container')) {
+    }
+    public function process(Container_Builder $container): void
+    {
+        if (!$container->has_definition('reverse_container')) {
             return;
         }
-
-        $refType = $this->beforeRemoving ? ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE : ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE;
+        $ref_type = $this->before_removing ? Container_Interface::IGNORE_ON_UNINITIALIZED_REFERENCE : Container_Interface::EXCEPTION_ON_INVALID_REFERENCE;
         $services = [];
-        foreach ($container->findTaggedServiceIds('container.reversible') as $id => $tags) {
-            $services[$id] = new Reference($id, $refType);
+        foreach ($container->find_tagged_service_ids('container.reversible') as $id => $tags) {
+            $services[$id] = new Reference($id, $ref_type);
         }
-
-        if ($this->beforeRemoving) {
+        if ($this->before_removing) {
             // prevent inlining of the reverse container
-            $services['reverse_container'] = new Reference('reverse_container', $refType);
+            $services['reverse_container'] = new Reference('reverse_container', $ref_type);
         }
-        $locator = $container->getDefinition('reverse_container')->getArgument(1);
-
+        $locator = $container->get_definition('reverse_container')->get_argument(1);
         if ($locator instanceof Reference) {
-            $locator = $container->getDefinition((string) $locator);
+            $locator = $container->get_definition((string) $locator);
         }
         if ($locator instanceof Definition) {
             foreach ($services as $id => $ref) {
-                $services[$id] = new ServiceClosureArgument($ref);
+                $services[$id] = new Service_Closure_Argument($ref);
             }
-            $locator->replaceArgument(0, $services);
+            $locator->replace_argument(0, $services);
         } else {
-            $locator->setValues($services);
+            $locator->set_values($services);
         }
     }
 }

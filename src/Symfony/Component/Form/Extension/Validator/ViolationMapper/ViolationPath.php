@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,74 +9,65 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\Form\Extension\Validator\ViolationMapper;
+namespace Symfony\Component\Form\Extension\Validator\Violation_Mapper;
 
 use Symfony\Component\Form\Exception\OutOfBoundsException;
-use Symfony\Component\PropertyAccess\PropertyPath;
-use Symfony\Component\PropertyAccess\PropertyPathInterface;
-
+use Symfony\Component\Property_Access\Property_Path;
+use Symfony\Component\Property_Access\Property_Path_Interface;
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  *
  * @implements \IteratorAggregate<int, string>
  */
-class ViolationPath implements \IteratorAggregate, PropertyPathInterface
+class Violation_Path implements \IteratorAggregate, Property_Path_Interface
 {
     /** @var list<string> */
     private array $elements = [];
-    private array $isIndex = [];
-    private array $mapsForm = [];
-    private string $pathAsString = '';
+    private array $is_index = [];
+    private array $maps_form = [];
+    private string $path_as_string = '';
     private int $length = 0;
-
     /**
      * Creates a new violation path from a string.
      *
      * @param string $violationPath The property path of a {@link \Symfony\Component\Validator\ConstraintViolation} object
      */
-    public function __construct(string $violationPath)
+    public function __construct(string $violation_path)
     {
-        $path = new PropertyPath($violationPath);
-        $elements = $path->getElements();
+        $path = new Property_Path($violation_path);
+        $elements = $path->get_elements();
         $data = false;
-
         for ($i = 0, $l = \count($elements); $i < $l; ++$i) {
             if (!$data) {
                 // The element "data" has not yet been passed
-                if ('children' === $elements[$i] && $path->isProperty($i)) {
+                if ('children' === $elements[$i] && $path->is_property($i)) {
                     // Skip element "children"
                     ++$i;
-
                     // Next element must exist and must be an index
                     // Otherwise consider this the end of the path
-                    if ($i >= $l || !$path->isIndex($i)) {
+                    if ($i >= $l || !$path->is_index($i)) {
                         break;
                     }
-
                     // All the following index items (regardless if .children is
                     // explicitly used) are children and grand-children
-                    for (; $i < $l && $path->isIndex($i); ++$i) {
+                    for (; $i < $l && $path->is_index($i); ++$i) {
                         $this->elements[] = $elements[$i];
-                        $this->isIndex[] = true;
-                        $this->mapsForm[] = true;
+                        $this->is_index[] = true;
+                        $this->maps_form[] = true;
                     }
-
                     // Rewind the pointer as the last element above didn't match
                     // (even if the pointer was moved forward)
                     --$i;
-                } elseif ('data' === $elements[$i] && $path->isProperty($i)) {
+                } elseif ('data' === $elements[$i] && $path->is_property($i)) {
                     // Skip element "data"
                     ++$i;
-
                     // End of path
                     if ($i >= $l) {
                         break;
                     }
-
                     $this->elements[] = $elements[$i];
-                    $this->isIndex[] = $path->isIndex($i);
-                    $this->mapsForm[] = false;
+                    $this->is_index[] = $path->is_index($i);
+                    $this->maps_form[] = false;
                     $data = true;
                 } else {
                     // Neither "children" nor "data" property found
@@ -88,81 +78,63 @@ class ViolationPath implements \IteratorAggregate, PropertyPathInterface
                 // Already after the "data" element
                 // Pick everything as is
                 $this->elements[] = $elements[$i];
-                $this->isIndex[] = $path->isIndex($i);
-                $this->mapsForm[] = false;
+                $this->is_index[] = $path->is_index($i);
+                $this->maps_form[] = false;
             }
         }
-
         $this->length = \count($this->elements);
-
-        $this->buildString();
+        $this->build_string();
     }
-
     public function __toString(): string
     {
-        return $this->pathAsString;
+        return $this->path_as_string;
     }
-
-    public function getLength(): int
+    public function get_length(): int
     {
         return $this->length;
     }
-
-    public function getParent(): ?PropertyPathInterface
+    public function get_parent(): ?Property_Path_Interface
     {
         if ($this->length <= 1) {
             return null;
         }
-
         $parent = clone $this;
-
         --$parent->length;
         array_pop($parent->elements);
-        array_pop($parent->isIndex);
-        array_pop($parent->mapsForm);
-
-        $parent->buildString();
-
+        array_pop($parent->is_index);
+        array_pop($parent->maps_form);
+        $parent->build_string();
         return $parent;
     }
-
-    public function getElements(): array
+    public function get_elements(): array
     {
         return $this->elements;
     }
-
-    public function getElement(int $index): string
+    public function get_element(int $index): string
     {
         if (!isset($this->elements[$index])) {
             throw new OutOfBoundsException(\sprintf('The index "%s" is not within the violation path.', $index));
         }
-
         return $this->elements[$index];
     }
-
-    public function isProperty(int $index): bool
+    public function is_property(int $index): bool
     {
-        if (!isset($this->isIndex[$index])) {
+        if (!isset($this->is_index[$index])) {
             throw new OutOfBoundsException(\sprintf('The index "%s" is not within the violation path.', $index));
         }
-
-        return !$this->isIndex[$index];
+        return !$this->is_index[$index];
     }
-
-    public function isIndex(int $index): bool
+    public function is_index(int $index): bool
     {
-        if (!isset($this->isIndex[$index])) {
+        if (!isset($this->is_index[$index])) {
             throw new OutOfBoundsException(\sprintf('The index "%s" is not within the violation path.', $index));
         }
-
-        return $this->isIndex[$index];
+        return $this->is_index[$index];
     }
-
-    public function isNullSafe(int $index): bool
+    public function is_null_safe(int $index): bool
     {
         return false;
     }
-
     /**
      * Returns whether an element maps directly to a form.
      *
@@ -175,45 +147,40 @@ class ViolationPath implements \IteratorAggregate, PropertyPathInterface
      *
      * @throws OutOfBoundsException if the offset is invalid
      */
-    public function mapsForm(int $index): bool
+    public function maps_form(int $index): bool
     {
-        if (!isset($this->mapsForm[$index])) {
+        if (!isset($this->maps_form[$index])) {
             throw new OutOfBoundsException(\sprintf('The index "%s" is not within the violation path.', $index));
         }
-
-        return $this->mapsForm[$index];
+        return $this->maps_form[$index];
     }
-
     /**
      * Returns a new iterator for this path.
      */
-    public function getIterator(): ViolationPathIterator
+    public function getIterator(): Violation_Path_Iterator
     {
-        return new ViolationPathIterator($this);
+        return new Violation_Path_Iterator($this);
     }
-
     /**
      * Builds the string representation from the elements.
      */
-    private function buildString(): void
+    private function build_string(): void
     {
-        $this->pathAsString = '';
+        $this->path_as_string = '';
         $data = false;
-
         foreach ($this->elements as $index => $element) {
-            if ($this->mapsForm[$index]) {
-                $this->pathAsString .= ".children[$element]";
+            if ($this->maps_form[$index]) {
+                $this->path_as_string .= ".children[{$element}]";
             } elseif (!$data) {
-                $this->pathAsString .= '.data'.($this->isIndex[$index] ? "[$element]" : ".$element");
+                $this->path_as_string .= '.data' . ($this->is_index[$index] ? "[{$element}]" : ".{$element}");
                 $data = true;
             } else {
-                $this->pathAsString .= $this->isIndex[$index] ? "[$element]" : ".$element";
+                $this->path_as_string .= $this->is_index[$index] ? "[{$element}]" : ".{$element}";
             }
         }
-
-        if ('' !== $this->pathAsString) {
+        if ('' !== $this->path_as_string) {
             // remove leading dot
-            $this->pathAsString = substr($this->pathAsString, 1);
+            $this->path_as_string = substr($this->path_as_string, 1);
         }
     }
 }

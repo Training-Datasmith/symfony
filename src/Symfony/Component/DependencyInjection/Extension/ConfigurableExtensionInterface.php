@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,25 +9,22 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Extension;
 
-namespace Symfony\Component\DependencyInjection\Extension;
-
-use Symfony\Component\Config\Definition\ConfigurableInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-
+use Symfony\Component\Config\Definition\Configurable_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Loader\Configurator\Container_Configurator;
 /**
  * @author Yonel Ceruto <yonelceruto@gmail.com>
  */
-interface ConfigurableExtensionInterface extends ConfigurableInterface
+interface Configurable_Extension_Interface extends Configurable_Interface
 {
     /**
      * Allows an extension to prepend the extension configurations.
      */
-    public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void;
-
+    public function prepend_extension(Container_Configurator $container, Container_Builder $builder): void;
     /**
      * Loads a specific configuration.
      */
-    public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void;
+    public function load_extension(array $config, Container_Configurator $container, Container_Builder $builder): void;
 }

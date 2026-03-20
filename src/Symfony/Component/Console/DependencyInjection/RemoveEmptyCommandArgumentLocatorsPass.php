@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,54 +9,43 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Console\Dependency_Injection;
 
-namespace Symfony\Component\Console\DependencyInjection;
-
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Container_Builder;
 /**
  * Removes empty service-locators registered for ServiceValueResolver for commands.
  *
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-final class RemoveEmptyCommandArgumentLocatorsPass implements CompilerPassInterface
+final class Remove_Empty_Command_Argument_Locators_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (!$container->hasDefinition('console.argument_resolver.service')) {
+        if (!$container->has_definition('console.argument_resolver.service')) {
             return;
         }
-
-        $serviceResolverDef = $container->getDefinition('console.argument_resolver.service');
-        $commandLocatorRef = $serviceResolverDef->getArgument(0);
-
-        if (!$commandLocatorRef) {
+        $service_resolver_def = $container->get_definition('console.argument_resolver.service');
+        $command_locator_ref = $service_resolver_def->get_argument(0);
+        if (!$command_locator_ref) {
             return;
         }
-
-        $commandLocator = $container->getDefinition((string) $commandLocatorRef);
-
-        if ($commandLocator->getFactory()) {
-            $commandLocator = $container->getDefinition($commandLocator->getFactory()[0]);
+        $command_locator = $container->get_definition((string) $command_locator_ref);
+        if ($command_locator->get_factory()) {
+            $command_locator = $container->get_definition($command_locator->get_factory()[0]);
         }
-
-        $commands = $commandLocator->getArgument(0);
-
-        foreach ($commands as $commandName => $argumentRef) {
-            $argumentLocator = $container->getDefinition((string) $argumentRef->getValues()[0]);
-
-            if ($argumentLocator->getFactory()) {
-                $argumentLocator = $container->getDefinition($argumentLocator->getFactory()[0]);
+        $commands = $command_locator->get_argument(0);
+        foreach ($commands as $command_name => $argument_ref) {
+            $argument_locator = $container->get_definition((string) $argument_ref->get_values()[0]);
+            if ($argument_locator->get_factory()) {
+                $argument_locator = $container->get_definition($argument_locator->get_factory()[0]);
             }
-
-            if (!$argumentLocator->getArgument(0)) {
-                $reason = \sprintf('Removing service-argument resolver for command "%s": no corresponding services exist for the referenced types.', $commandName);
-                unset($commands[$commandName]);
+            if (!$argument_locator->get_argument(0)) {
+                $reason = \sprintf('Removing service-argument resolver for command "%s": no corresponding services exist for the referenced types.', $command_name);
+                unset($commands[$command_name]);
                 $container->log($this, $reason);
             }
         }
-
-        $commandLocator->replaceArgument(0, $commands);
+        $command_locator->replace_argument(0, $commands);
     }
 }

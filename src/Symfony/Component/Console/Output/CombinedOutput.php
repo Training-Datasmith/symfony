@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,100 +9,84 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Output;
 
 use Symfony\Component\Console\Exception\LogicException;
-use Symfony\Component\Console\Formatter\OutputFormatterInterface;
-
+use Symfony\Component\Console\Formatter\Output_Formatter_Interface;
 /**
  * @internal
  */
-final readonly class CombinedOutput implements OutputInterface
+final readonly class Combined_Output implements Output_Interface
 {
     /**
      * @param OutputInterface[] $outputs
      */
-    public function __construct(
-        private array $outputs,
-    ) {
+    public function __construct(private array $outputs)
+    {
         if (!$outputs) {
             throw new LogicException('Expected at least one output.');
         }
     }
-
     public function write(iterable|string $messages, bool $newline = false, int $options = 0): void
     {
         foreach ($this->outputs as $output) {
             $output->write(...\func_get_args());
         }
     }
-
     public function writeln(iterable|string $messages, int $options = 0): void
     {
         foreach ($this->outputs as $output) {
             $output->writeln(...\func_get_args());
         }
     }
-
-    public function setVerbosity(int $level): void
+    public function set_verbosity(int $level): void
     {
         foreach ($this->outputs as $output) {
-            $output->setVerbosity($level);
+            $output->set_verbosity($level);
         }
     }
-
-    public function getVerbosity(): int
+    public function get_verbosity(): int
     {
-        return array_first($this->outputs)->getVerbosity();
+        return array_first($this->outputs)->get_verbosity();
     }
-
-    public function isSilent(): bool
+    public function is_silent(): bool
     {
-        return array_first($this->outputs)->isSilent();
+        return array_first($this->outputs)->is_silent();
     }
-
-    public function isQuiet(): bool
+    public function is_quiet(): bool
     {
-        return array_first($this->outputs)->isQuiet();
+        return array_first($this->outputs)->is_quiet();
     }
-
-    public function isVerbose(): bool
+    public function is_verbose(): bool
     {
-        return array_first($this->outputs)->isVerbose();
+        return array_first($this->outputs)->is_verbose();
     }
-
-    public function isVeryVerbose(): bool
+    public function is_very_verbose(): bool
     {
-        return array_first($this->outputs)->isVeryVerbose();
+        return array_first($this->outputs)->is_very_verbose();
     }
-
-    public function isDebug(): bool
+    public function is_debug(): bool
     {
-        return array_first($this->outputs)->isDebug();
+        return array_first($this->outputs)->is_debug();
     }
-
-    public function setDecorated(bool $decorated): void
+    public function set_decorated(bool $decorated): void
     {
         foreach ($this->outputs as $output) {
-            $output->setDecorated($decorated);
+            $output->set_decorated($decorated);
         }
     }
-
-    public function isDecorated(): bool
+    public function is_decorated(): bool
     {
-        return array_first($this->outputs)->isDecorated();
+        return array_first($this->outputs)->is_decorated();
     }
-
-    public function setFormatter(OutputFormatterInterface $formatter): void
+    public function set_formatter(Output_Formatter_Interface $formatter): void
     {
         foreach ($this->outputs as $output) {
-            $output->setFormatter($formatter);
+            $output->set_formatter($formatter);
         }
     }
-
-    public function getFormatter(): OutputFormatterInterface
+    public function get_formatter(): Output_Formatter_Interface
     {
-        return array_first($this->outputs)->getFormatter();
+        return array_first($this->outputs)->get_formatter();
     }
 }

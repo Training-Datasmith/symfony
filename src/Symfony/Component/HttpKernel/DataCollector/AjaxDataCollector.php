@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,30 +9,26 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Data_Collector;
 
-namespace Symfony\Component\HttpKernel\DataCollector;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Response;
 /**
  * @author Bart van den Burg <bart@burgov.nl>
  *
  * @final
  */
-class AjaxDataCollector extends DataCollector
+class Ajax_Data_Collector extends Data_Collector
 {
     public function collect(Request $request, Response $response, ?\Throwable $exception = null): void
     {
         // all collecting is done client side
     }
-
     public function reset(): void
     {
         // all collecting is done client side
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return 'ajax';
     }

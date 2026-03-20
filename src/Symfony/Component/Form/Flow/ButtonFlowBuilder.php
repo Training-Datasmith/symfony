@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,20 +9,18 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Flow;
 
-use Symfony\Component\Form\ButtonBuilder;
-
+use Symfony\Component\Form\Button_Builder;
 /**
  * A builder for {@link ButtonFlow} instances.
  *
  * @author Yonel Ceruto <open@yceruto.dev>
  */
-class ButtonFlowBuilder extends ButtonBuilder
+class Button_Flow_Builder extends Button_Builder
 {
-    public function getForm(): ButtonFlow
+    public function get_form(): Button_Flow
     {
-        return new ButtonFlow($this->getFormConfig());
+        return new Button_Flow($this->get_form_config());
     }
 }

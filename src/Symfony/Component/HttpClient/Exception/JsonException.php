@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,16 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Client\Exception;
 
-namespace Symfony\Component\HttpClient\Exception;
-
-use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
-
+use Symfony\Contracts\Http_Client\Exception\Decoding_Exception_Interface;
 /**
  * Thrown by responses' toArray() method when their content cannot be JSON-decoded.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class JsonException extends \JsonException implements DecodingExceptionInterface
+final class Json_Exception extends \Json_Exception implements Decoding_Exception_Interface
 {
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,36 +9,31 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Extension\Data_Collector;
 
-namespace Symfony\Component\Form\Extension\DataCollector;
-
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-
+use Symfony\Component\Form\Form_Interface;
+use Symfony\Component\Form\Form_View;
 /**
  * Extracts arrays of information out of forms.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface FormDataExtractorInterface
+interface Form_Data_Extractor_Interface
 {
     /**
      * Extracts the configuration data of a form.
      */
-    public function extractConfiguration(FormInterface $form): array;
-
+    public function extract_configuration(Form_Interface $form): array;
     /**
      * Extracts the default data of a form.
      */
-    public function extractDefaultData(FormInterface $form): array;
-
+    public function extract_default_data(Form_Interface $form): array;
     /**
      * Extracts the submitted data of a form.
      */
-    public function extractSubmittedData(FormInterface $form): array;
-
+    public function extract_submitted_data(Form_Interface $form): array;
     /**
      * Extracts the view variables of a form.
      */
-    public function extractViewVariables(FormView $view): array;
+    public function extract_view_variables(Form_View $view): array;
 }

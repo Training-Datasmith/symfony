@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Filesystem;
 
 use Symfony\Component\Filesystem\Exception\InvalidArgumentException;
 use Symfony\Component\Filesystem\Exception\RuntimeException;
-
 /**
  * Contains utility methods for handling path strings.
  *
@@ -33,21 +30,17 @@ final class Path
      * The number of buffer entries that triggers a cleanup operation.
      */
     private const CLEANUP_THRESHOLD = 1250;
-
     /**
      * The buffer size after the cleanup operation.
      */
     private const CLEANUP_SIZE = 1000;
-
     /**
      * Buffers input/output of {@link canonicalize()}.
      *
      * @var array<string, string>
      */
     private static array $buffer = [];
-
-    private static int $bufferSize = 0;
-
+    private static int $buffer_size = 0;
     /**
      * Canonicalizes the given path.
      *
@@ -70,38 +63,29 @@ final class Path
         if ('' === $path) {
             return '';
         }
-
         // This method is called by many other methods in this class. Buffer
         // the canonicalized paths to make up for the severe performance
         // decrease.
         if (isset(self::$buffer[$path])) {
             return self::$buffer[$path];
         }
-
         // Replace "~" with user's home directory.
         if ('~' === $path[0]) {
-            $path = self::getHomeDirectory().substr($path, 1);
+            $path = self::get_home_directory() . substr($path, 1);
         }
-
         $path = self::normalize($path);
-
-        [$root, $pathWithoutRoot] = self::split($path);
-
-        $canonicalParts = self::findCanonicalParts($root, $pathWithoutRoot);
-
+        [$root, $path_without_root] = self::split($path);
+        $canonical_parts = self::find_canonical_parts($root, $path_without_root);
         // Add the root directory again
-        self::$buffer[$path] = $canonicalPath = $root.implode('/', $canonicalParts);
-        ++self::$bufferSize;
-
+        self::$buffer[$path] = $canonical_path = $root . implode('/', $canonical_parts);
+        ++self::$buffer_size;
         // Clean up regularly to prevent memory leaks
-        if (self::$bufferSize > self::CLEANUP_THRESHOLD) {
+        if (self::$buffer_size > self::CLEANUP_THRESHOLD) {
             self::$buffer = \array_slice(self::$buffer, -self::CLEANUP_SIZE, null, true);
-            self::$bufferSize = self::CLEANUP_SIZE;
+            self::$buffer_size = self::CLEANUP_SIZE;
         }
-
-        return $canonicalPath;
+        return $canonical_path;
     }
-
     /**
      * Normalizes the given path.
      *
@@ -117,7 +101,6 @@ final class Path
     {
         return str_replace('\\', '/', $path);
     }
-
     /**
      * Returns the directory part of the path.
      *
@@ -141,39 +124,32 @@ final class Path
      *                if a relative path is passed that contains no slashes.
      *                Returns an empty string if an empty string is passed.
      */
-    public static function getDirectory(string $path): string
+    public static function get_directory(string $path): string
     {
         if ('' === $path) {
             return '';
         }
-
         $path = self::canonicalize($path);
-
         // Maintain scheme
-        if (false !== $schemeSeparatorPosition = strpos($path, '://')) {
-            $scheme = substr($path, 0, $schemeSeparatorPosition + 3);
-            $path = substr($path, $schemeSeparatorPosition + 3);
+        if (false !== $scheme_separator_position = strpos($path, '://')) {
+            $scheme = substr($path, 0, $scheme_separator_position + 3);
+            $path = substr($path, $scheme_separator_position + 3);
         } else {
             $scheme = '';
         }
-
-        if (false === $dirSeparatorPosition = strrpos($path, '/')) {
+        if (false === $dir_separator_position = strrpos($path, '/')) {
             return '';
         }
-
         // Directory equals root directory "/"
-        if (0 === $dirSeparatorPosition) {
-            return $scheme.'/';
+        if (0 === $dir_separator_position) {
+            return $scheme . '/';
         }
-
         // Directory equals Windows root "C:/"
-        if (2 === $dirSeparatorPosition && ctype_alpha($path[0]) && ':' === $path[1]) {
-            return $scheme.substr($path, 0, 3);
+        if (2 === $dir_separator_position && ctype_alpha($path[0]) && ':' === $path[1]) {
+            return $scheme . substr($path, 0, 3);
         }
-
-        return $scheme.substr($path, 0, $dirSeparatorPosition);
+        return $scheme . substr($path, 0, $dir_separator_position);
     }
-
     /**
      * Returns canonical path of the user's home directory.
      *
@@ -188,21 +164,18 @@ final class Path
      *
      * @throws RuntimeException If your operating system or environment isn't supported
      */
-    public static function getHomeDirectory(): string
+    public static function get_home_directory(): string
     {
         // For UNIX support
         if (getenv('HOME')) {
             return self::canonicalize(getenv('HOME'));
         }
-
         // For >= Windows8 support
         if (getenv('HOMEDRIVE') && getenv('HOMEPATH')) {
-            return self::canonicalize(getenv('HOMEDRIVE').getenv('HOMEPATH'));
+            return self::canonicalize(getenv('HOMEDRIVE') . getenv('HOMEPATH'));
         }
-
         throw new RuntimeException("Cannot find the home directory path: Your environment or operating system isn't supported.");
     }
-
     /**
      * Returns the root directory of a path.
      *
@@ -211,85 +184,70 @@ final class Path
      * @return string The canonical root directory. Returns an empty string if
      *                the given path is relative or empty.
      */
-    public static function getRoot(string $path): string
+    public static function get_root(string $path): string
     {
         if ('' === $path) {
             return '';
         }
-
         // Maintain scheme
-        if (false !== $schemeSeparatorPosition = strpos($path, '://')) {
-            $scheme = substr($path, 0, $schemeSeparatorPosition + 3);
-            $path = substr($path, $schemeSeparatorPosition + 3);
+        if (false !== $scheme_separator_position = strpos($path, '://')) {
+            $scheme = substr($path, 0, $scheme_separator_position + 3);
+            $path = substr($path, $scheme_separator_position + 3);
         } else {
             $scheme = '';
         }
-
-        $firstCharacter = $path[0];
-
+        $first_character = $path[0];
         // UNIX root "/" or "\" (Windows style)
-        if ('/' === $firstCharacter || '\\' === $firstCharacter) {
-            return $scheme.'/';
+        if ('/' === $first_character || '\\' === $first_character) {
+            return $scheme . '/';
         }
-
         $length = \strlen($path);
-
         // Windows root
-        if ($length > 1 && ':' === $path[1] && ctype_alpha($firstCharacter)) {
+        if ($length > 1 && ':' === $path[1] && ctype_alpha($first_character)) {
             // Special case: "C:"
             if (2 === $length) {
-                return $scheme.$path.'/';
+                return $scheme . $path . '/';
             }
-
             // Normal case: "C:/ or "C:\"
             if ('/' === $path[2] || '\\' === $path[2]) {
-                return $scheme.$firstCharacter.$path[1].'/';
+                return $scheme . $first_character . $path[1] . '/';
             }
         }
-
         return '';
     }
-
     /**
      * Returns the file name without the extension from a file path.
      *
      * @param string|null $extension if specified, only that extension is cut
      *                               off (may contain leading dot)
      */
-    public static function getFilenameWithoutExtension(string $path, ?string $extension = null): string
+    public static function get_filename_without_extension(string $path, ?string $extension = null): string
     {
         if ('' === $path) {
             return '';
         }
-
         if (null !== $extension) {
             // remove extension and trailing dot
             return rtrim(basename($path, $extension), '.');
         }
-
         return pathinfo($path, \PATHINFO_FILENAME);
     }
-
     /**
      * Returns the extension from a file path (without leading dot).
      *
      * @param bool $forceLowerCase forces the extension to be lower-case
      */
-    public static function getExtension(string $path, bool $forceLowerCase = false): string
+    public static function get_extension(string $path, bool $force_lower_case = false): string
     {
         if ('' === $path) {
             return '';
         }
-
         $extension = pathinfo($path, \PATHINFO_EXTENSION);
-
-        if ($forceLowerCase) {
-            return self::toLower($extension);
+        if ($force_lower_case) {
+            return self::to_lower($extension);
         }
-
         return $extension;
     }
-
     /**
      * Returns whether the path has an (or the specified) extension.
      *
@@ -301,35 +259,28 @@ final class Path
      *                                         without leading dot)
      * @param bool                 $ignoreCase whether to ignore case-sensitivity
      */
-    public static function hasExtension(string $path, $extensions = null, bool $ignoreCase = false): bool
+    public static function has_extension(string $path, $extensions = null, bool $ignore_case = false): bool
     {
         if ('' === $path) {
             return false;
         }
-
-        $actualExtension = self::getExtension($path, $ignoreCase);
-
+        $actual_extension = self::get_extension($path, $ignore_case);
         // Only check if path has any extension
         if ([] === $extensions || null === $extensions) {
-            return '' !== $actualExtension;
+            return '' !== $actual_extension;
         }
-
         if (\is_string($extensions)) {
             $extensions = [$extensions];
         }
-
         foreach ($extensions as $key => $extension) {
-            if ($ignoreCase) {
-                $extension = self::toLower($extension);
+            if ($ignore_case) {
+                $extension = self::to_lower($extension);
             }
-
             // remove leading '.' in extensions array
             $extensions[$key] = ltrim($extension, '.');
         }
-
-        return \in_array($actualExtension, $extensions, true);
+        return \in_array($actual_extension, $extensions, true);
     }
-
     /**
      * Changes the extension of a path string.
      *
@@ -338,49 +289,34 @@ final class Path
      *
      * @return string the path string with new file extension
      */
-    public static function changeExtension(string $path, string $extension): string
+    public static function change_extension(string $path, string $extension): string
     {
         if ('' === $path) {
             return '';
         }
-
-        $actualExtension = self::getExtension($path);
+        $actual_extension = self::get_extension($path);
         $extension = ltrim($extension, '.');
-
         // No extension for paths
         if (str_ends_with($path, '/')) {
             return $path;
         }
-
         // No actual extension in path
-        if (!$actualExtension) {
-            return $path.(str_ends_with($path, '.') ? '' : '.').$extension;
+        if (!$actual_extension) {
+            return $path . (str_ends_with($path, '.') ? '' : '.') . $extension;
         }
-
-        return substr($path, 0, -\strlen($actualExtension)).$extension;
+        return substr($path, 0, -\strlen($actual_extension)) . $extension;
     }
-
     /**
      * Returns whether the given path is absolute.
      */
-    public static function isAbsolute(string $path): bool
+    public static function is_absolute(string $path): bool
     {
-        return '' !== $path && (
-            strspn($path, '/\\', 0, 1)
-            || (
-                \strlen($path) > 3 && ctype_alpha($path[0])
-                && ':' === $path[1]
-                && strspn($path, '/\\', 2, 1)
-            )
-            || null !== parse_url($path, \PHP_URL_SCHEME)
-        );
+        return '' !== $path && (strspn($path, '/\\', 0, 1) || \strlen($path) > 3 && ctype_alpha($path[0]) && ':' === $path[1] && strspn($path, '/\\', 2, 1) || null !== parse_url($path, \PHP_URL_SCHEME));
     }
-
-    public static function isRelative(string $path): bool
+    public static function is_relative(string $path): bool
     {
-        return !self::isAbsolute($path);
+        return !self::is_absolute($path);
     }
-
     /**
      * Turns a relative path into an absolute path in canonical form.
      *
@@ -418,30 +354,25 @@ final class Path
      *                                  the given path is an absolute path with
      *                                  a different root than the base path
      */
-    public static function makeAbsolute(string $path, string $basePath): string
+    public static function make_absolute(string $path, string $base_path): string
     {
-        if ('' === $basePath) {
-            throw new InvalidArgumentException(\sprintf('The base path must be a non-empty string. Got: "%s".', $basePath));
+        if ('' === $base_path) {
+            throw new InvalidArgumentException(\sprintf('The base path must be a non-empty string. Got: "%s".', $base_path));
         }
-
-        if (!self::isAbsolute($basePath)) {
-            throw new InvalidArgumentException(\sprintf('The base path "%s" is not an absolute path.', $basePath));
+        if (!self::is_absolute($base_path)) {
+            throw new InvalidArgumentException(\sprintf('The base path "%s" is not an absolute path.', $base_path));
         }
-
-        if (self::isAbsolute($path)) {
+        if (self::is_absolute($path)) {
             return self::canonicalize($path);
         }
-
-        if (false !== $schemeSeparatorPosition = strpos($basePath, '://')) {
-            $scheme = substr($basePath, 0, $schemeSeparatorPosition + 3);
-            $basePath = substr($basePath, $schemeSeparatorPosition + 3);
+        if (false !== $scheme_separator_position = strpos($base_path, '://')) {
+            $scheme = substr($base_path, 0, $scheme_separator_position + 3);
+            $base_path = substr($base_path, $scheme_separator_position + 3);
         } else {
             $scheme = '';
         }
-
-        return $scheme.self::canonicalize(rtrim($basePath, '/\\').'/'.$path);
+        return $scheme . self::canonicalize(rtrim($base_path, '/\\') . '/' . $path);
     }
-
     /**
      * Turns a path into a relative path.
      *
@@ -492,72 +423,58 @@ final class Path
      *                                  the given path has a different root
      *                                  than the base path
      */
-    public static function makeRelative(string $path, string $basePath): string
+    public static function make_relative(string $path, string $base_path): string
     {
         $path = self::canonicalize($path);
-        $basePath = self::canonicalize($basePath);
-
-        [$root, $relativePath] = self::split($path);
-        [$baseRoot, $relativeBasePath] = self::split($basePath);
-
+        $base_path = self::canonicalize($base_path);
+        [$root, $relative_path] = self::split($path);
+        [$base_root, $relative_base_path] = self::split($base_path);
         // If the base path is given as absolute path and the path is already
         // relative, consider it to be relative to the given absolute path
         // already
-        if ('' === $root && '' !== $baseRoot) {
+        if ('' === $root && '' !== $base_root) {
             // If base path is already in its root
-            if ('' === $relativeBasePath) {
-                return ltrim($relativePath, './\\');
+            if ('' === $relative_base_path) {
+                return ltrim($relative_path, './\\');
             }
-
-            return $relativePath;
+            return $relative_path;
         }
-
         // If the passed path is absolute, but the base path is not, we
         // cannot generate a relative path
-        if ('' !== $root && '' === $baseRoot) {
-            throw new InvalidArgumentException(\sprintf('The absolute path "%s" cannot be made relative to the relative path "%s". You should provide an absolute base path instead.', $path, $basePath));
+        if ('' !== $root && '' === $base_root) {
+            throw new InvalidArgumentException(\sprintf('The absolute path "%s" cannot be made relative to the relative path "%s". You should provide an absolute base path instead.', $path, $base_path));
         }
-
         // Fail if the roots of the two paths are different
-        if ($baseRoot && $root !== $baseRoot) {
-            throw new InvalidArgumentException(\sprintf('The path "%s" cannot be made relative to "%s", because they have different roots ("%s" and "%s").', $path, $basePath, $root, $baseRoot));
+        if ($base_root && $root !== $base_root) {
+            throw new InvalidArgumentException(\sprintf('The path "%s" cannot be made relative to "%s", because they have different roots ("%s" and "%s").', $path, $base_path, $root, $base_root));
         }
-
-        if ('' === $relativeBasePath) {
-            return $relativePath;
+        if ('' === $relative_base_path) {
+            return $relative_path;
         }
-
         // Build a "../../" prefix with as many "../" parts as necessary
-        $parts = explode('/', $relativePath);
-        $baseParts = explode('/', $relativeBasePath);
-        $dotDotPrefix = '';
-
+        $parts = explode('/', $relative_path);
+        $base_parts = explode('/', $relative_base_path);
+        $dot_dot_prefix = '';
         // Once we found a non-matching part in the prefix, we need to add
         // "../" parts for all remaining parts
         $match = true;
-
-        foreach ($baseParts as $index => $basePart) {
-            if ($match && isset($parts[$index]) && $basePart === $parts[$index]) {
+        foreach ($base_parts as $index => $base_part) {
+            if ($match && isset($parts[$index]) && $base_part === $parts[$index]) {
                 unset($parts[$index]);
-
                 continue;
             }
-
             $match = false;
-            $dotDotPrefix .= '../';
+            $dot_dot_prefix .= '../';
         }
-
-        return rtrim($dotDotPrefix.implode('/', $parts), '/');
+        return rtrim($dot_dot_prefix . implode('/', $parts), '/');
     }
-
     /**
      * Returns whether the given path is on the local filesystem.
      */
-    public static function isLocal(string $path): bool
+    public static function is_local(string $path): bool
     {
         return '' !== $path && !str_contains($path, '://');
     }
-
     /**
      * Returns the longest common base path in canonical form of a set of paths or
      * `null` if the paths are on different Windows partitions.
@@ -594,80 +511,65 @@ final class Path
      * // => null
      * ```
      */
-    public static function getLongestCommonBasePath(string ...$paths): ?string
+    public static function get_longest_common_base_path(string ...$paths): ?string
     {
-        [$bpRoot, $basePath] = self::split(self::canonicalize(reset($paths)));
-
-        for (next($paths); null !== key($paths) && '' !== $basePath; next($paths)) {
+        [$bp_root, $base_path] = self::split(self::canonicalize(reset($paths)));
+        for (next($paths); null !== key($paths) && '' !== $base_path; next($paths)) {
             [$root, $path] = self::split(self::canonicalize(current($paths)));
-
             // If we deal with different roots (e.g. C:/ vs. D:/), it's time
             // to quit
-            if ($root !== $bpRoot) {
+            if ($root !== $bp_root) {
                 return null;
             }
-
             // Make the base path shorter until it fits into path
             while (true) {
-                if ('.' === $basePath) {
+                if ('.' === $base_path) {
                     // No more base paths
-                    $basePath = '';
-
+                    $base_path = '';
                     // next path
                     continue 2;
                 }
-
                 // Prevent false positives for common prefixes
                 // see isBasePath()
-                if (str_starts_with($path.'/', $basePath.'/')) {
+                if (str_starts_with($path . '/', $base_path . '/')) {
                     // next path
                     continue 2;
                 }
-
-                $basePath = \dirname($basePath);
+                $base_path = \dirname($base_path);
             }
         }
-
-        return $bpRoot.$basePath;
+        return $bp_root . $base_path;
     }
-
     /**
      * Joins two or more path strings into a canonical path.
      */
     public static function join(string ...$paths): string
     {
-        $finalPath = null;
-        $wasScheme = false;
-
+        $final_path = null;
+        $was_scheme = false;
         foreach ($paths as $path) {
             if ('' === $path) {
                 continue;
             }
-
-            if (null === $finalPath) {
+            if (null === $final_path) {
                 // For first part we keep slashes, like '/top', 'C:\' or 'phar://'
-                $finalPath = $path;
-                $wasScheme = str_contains($path, '://');
+                $final_path = $path;
+                $was_scheme = str_contains($path, '://');
                 continue;
             }
-
             // Only add slash if previous part didn't end with '/' or '\'
-            if (!\in_array(substr($finalPath, -1), ['/', '\\'], true)) {
-                $finalPath .= '/';
+            if (!\in_array(substr($final_path, -1), ['/', '\\'], true)) {
+                $final_path .= '/';
             }
-
             // If first part included a scheme like 'phar://' we allow \current part to start with '/', otherwise trim
-            $finalPath .= $wasScheme ? $path : ltrim($path, '/');
-            $wasScheme = false;
+            $final_path .= $was_scheme ? $path : ltrim($path, '/');
+            $was_scheme = false;
         }
-
-        if (null === $finalPath) {
+        if (null === $final_path) {
             return '';
         }
-
-        return self::canonicalize($finalPath);
+        return self::canonicalize($final_path);
     }
-
     /**
      * Returns whether a path is a base path of another path.
      *
@@ -688,28 +590,24 @@ final class Path
      * // => false
      * ```
      */
-    public static function isBasePath(string $basePath, string $ofPath): bool
+    public static function is_base_path(string $base_path, string $of_path): bool
     {
-        $basePath = self::canonicalize($basePath);
-        $ofPath = self::canonicalize($ofPath);
-
+        $base_path = self::canonicalize($base_path);
+        $of_path = self::canonicalize($of_path);
         // Append slashes to prevent false positives when two paths have
         // a common prefix, for example /base/foo and /base/foobar.
         // Don't append a slash for the root "/", because then that root
         // won't be discovered as common prefix ("//" is not a prefix of
         // "/foobar/").
-        return str_starts_with($ofPath.'/', rtrim($basePath, '/').'/');
+        return str_starts_with($of_path . '/', rtrim($base_path, '/') . '/');
     }
-
     /**
      * @return string[]
      */
-    private static function findCanonicalParts(string $root, string $pathWithoutRoot): array
+    private static function find_canonical_parts(string $root, string $path_without_root): array
     {
-        $parts = explode('/', $pathWithoutRoot);
-
-        $canonicalParts = [];
-
+        $parts = explode('/', $path_without_root);
+        $canonical_parts = [];
         // Collapse "." and "..", if possible
         foreach ($parts as $part) {
             if ('.' === $part) {
@@ -720,21 +618,17 @@ final class Path
             }
             // Collapse ".." with the previous part, if one exists
             // Don't collapse ".." if the previous part is also ".."
-            if ('..' === $part && \count($canonicalParts) > 0 && '..' !== $canonicalParts[\count($canonicalParts) - 1]) {
-                array_pop($canonicalParts);
-
+            if ('..' === $part && \count($canonical_parts) > 0 && '..' !== $canonical_parts[\count($canonical_parts) - 1]) {
+                array_pop($canonical_parts);
                 continue;
             }
-
             // Only add ".." prefixes for relative paths
             if ('..' !== $part || '' === $root) {
-                $canonicalParts[] = $part;
+                $canonical_parts[] = $part;
             }
         }
-
-        return $canonicalParts;
+        return $canonical_parts;
     }
-
     /**
      * Splits a canonical path into its root directory and the remainder.
      *
@@ -757,17 +651,14 @@ final class Path
         if ('' === $path) {
             return ['', ''];
         }
-
         // Remember scheme as part of the root, if any
-        if (false !== $schemeSeparatorPosition = strpos($path, '://')) {
-            $root = substr($path, 0, $schemeSeparatorPosition + 3);
-            $path = substr($path, $schemeSeparatorPosition + 3);
+        if (false !== $scheme_separator_position = strpos($path, '://')) {
+            $root = substr($path, 0, $scheme_separator_position + 3);
+            $path = substr($path, $scheme_separator_position + 3);
         } else {
             $root = '';
         }
-
         $length = \strlen($path);
-
         // Remove and remember root directory
         if (str_starts_with($path, '/')) {
             $root .= '/';
@@ -775,7 +666,7 @@ final class Path
         } elseif ($length > 1 && ctype_alpha($path[0]) && ':' === $path[1]) {
             if (2 === $length) {
                 // Windows special case: "C:"
-                $root .= $path.'/';
+                $root .= $path . '/';
                 $path = '';
             } elseif ('/' === $path[2]) {
                 // Windows normal case: "C:/"..
@@ -783,19 +674,15 @@ final class Path
                 $path = $length > 3 ? substr($path, 3) : '';
             }
         }
-
         return [$root, $path];
     }
-
-    private static function toLower(string $string): string
+    private static function to_lower(string $string): string
     {
         if (false !== $encoding = mb_detect_encoding($string, null, true)) {
             return mb_strtolower($string, $encoding);
         }
-
         return strtolower($string);
     }
-
     private function __construct()
     {
     }

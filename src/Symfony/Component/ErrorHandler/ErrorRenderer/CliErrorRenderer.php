@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,39 +9,34 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Error_Handler\Error_Renderer;
 
-namespace Symfony\Component\ErrorHandler\ErrorRenderer;
-
-use Symfony\Component\ErrorHandler\Exception\FlattenException;
-use Symfony\Component\VarDumper\Cloner\VarCloner;
-use Symfony\Component\VarDumper\Dumper\CliDumper;
-
+use Symfony\Component\Error_Handler\Exception\Flatten_Exception;
+use Symfony\Component\Var_Dumper\Cloner\Var_Cloner;
+use Symfony\Component\Var_Dumper\Dumper\Cli_Dumper;
 // Help opcache.preload discover always-needed symbols
-class_exists(CliDumper::class);
-
+class_exists(Cli_Dumper::class);
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class CliErrorRenderer implements ErrorRendererInterface
+class Cli_Error_Renderer implements Error_Renderer_Interface
 {
-    public function render(\Throwable $exception): FlattenException
+    public function render(\Throwable $exception): Flatten_Exception
     {
-        $cloner = new VarCloner();
-        $dumper = new class () extends CliDumper {
-            protected function supportsColors(): bool
+        $cloner = new Var_Cloner();
+        $dumper = new class extends Cli_Dumper
+        {
+            protected function supports_colors(): bool
             {
-                $outputStream = $this->outputStream;
-                $this->outputStream = fopen('php://stdout', 'w');
-
+                $output_stream = $this->output_stream;
+                $this->output_stream = fopen('php://stdout', 'w');
                 try {
-                    return parent::supportsColors();
+                    return parent::supports_colors();
                 } finally {
-                    $this->outputStream = $outputStream;
+                    $this->output_stream = $output_stream;
                 }
             }
         };
-
-        return FlattenException::createFromThrowable($exception)
-            ->setAsString($dumper->dump($cloner->cloneVar($exception), true));
+        return Flatten_Exception::create_from_throwable($exception)->set_as_string($dumper->dump($cloner->clone_var($exception), true));
     }
 }

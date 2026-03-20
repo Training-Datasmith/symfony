@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,10 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator\Traits;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
-
-trait ClassTrait
+trait Class_Trait
 {
     /**
      * Sets the service class.
@@ -22,8 +20,7 @@ trait ClassTrait
      */
     final public function class(?string $class): static
     {
-        $this->definition->setClass($class);
-
+        $this->definition->set_class($class);
         return $this;
     }
 }

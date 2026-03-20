@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpClient\Internal;
+namespace Symfony\Component\Http_Client\Internal;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
@@ -20,11 +18,9 @@ namespace Symfony\Component\HttpClient\Internal;
  */
 final class Canary
 {
-    public function __construct(
-        private \Closure $canceller,
-    ) {
+    public function __construct(private \Closure $canceller)
+    {
     }
-
     public function cancel(): void
     {
         if (isset($this->canceller)) {
@@ -33,7 +29,6 @@ final class Canary
             $canceller();
         }
     }
-
     public function __destruct()
     {
         $this->cancel();

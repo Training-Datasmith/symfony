@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,72 +9,56 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event_Listener;
 
-namespace Symfony\Component\HttpKernel\EventListener;
-
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\UriSigner;
-use Symfony\Component\HttpKernel\Attribute\IsSignatureValid;
-use Symfony\Component\HttpKernel\Event\ControllerArgumentsEvent;
-use Symfony\Component\HttpKernel\Event\ControllerAttributeEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
-
+use Symfony\Component\Event_Dispatcher\Event_Subscriber_Interface;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Uri_Signer;
+use Symfony\Component\Http_Kernel\Attribute\Is_Signature_Valid;
+use Symfony\Component\Http_Kernel\Event\Controller_Arguments_Event;
+use Symfony\Component\Http_Kernel\Event\Controller_Attribute_Event;
+use Symfony\Component\Http_Kernel\Kernel_Events;
 /**
  * Handles the IsSignatureValid attribute.
  *
  * @author Santiago San Martin <sanmartindev@gmail.com>
  */
-class IsSignatureValidAttributeListener implements EventSubscriberInterface
+class Is_Signature_Valid_Attribute_Listener implements Event_Subscriber_Interface
 {
-    public function __construct(
-        private readonly UriSigner $uriSigner,
-    ) {
-    }
-
-    public function onKernelControllerAttribute(ControllerAttributeEvent $event): void
+    public function __construct(private readonly Uri_Signer $uri_signer)
     {
-        $kernelEvent = $event->kernelEvent;
-
-        if (!$kernelEvent instanceof ControllerArgumentsEvent) {
+    }
+    public function on_kernel_controller_attribute(Controller_Attribute_Event $event): void
+    {
+        $kernel_event = $event->kernel_event;
+        if (!$kernel_event instanceof Controller_Arguments_Event) {
             return;
         }
-
-        $this->processAttribute($event->attribute, $kernelEvent->getRequest());
+        $this->process_attribute($event->attribute, $kernel_event->get_request());
     }
-
     /**
      * @internal since Symfony 8.1, use onKernelControllerAttribute() instead
      */
-    public function onKernelControllerArguments(ControllerArgumentsEvent $event): void
+    public function on_kernel_controller_arguments(Controller_Arguments_Event $event): void
     {
-        $request = $event->getRequest();
-
-        foreach ($event->getAttributes(IsSignatureValid::class) as $attribute) {
-            $this->processAttribute($attribute, $request);
+        $request = $event->get_request();
+        foreach ($event->get_attributes(Is_Signature_Valid::class) as $attribute) {
+            $this->process_attribute($attribute, $request);
         }
     }
-
-    private function processAttribute(IsSignatureValid $attribute, Request $request): void
+    private function process_attribute(Is_Signature_Valid $attribute, Request $request): void
     {
         $methods = array_map(strtoupper(...), $attribute->methods);
-        if ($methods && !\in_array($request->getMethod(), $methods, true)) {
+        if ($methods && !\in_array($request->get_method(), $methods, true)) {
             return;
         }
-
-        $this->uriSigner->verify($request);
+        $this->uri_signer->verify($request);
     }
-
-    public static function getSubscribedEvents(): array
+    public static function get_subscribed_events(): array
     {
-        if (!class_exists(ControllerAttributesListener::class, false)) {
-            return [
-                KernelEvents::CONTROLLER_ARGUMENTS => ['onKernelControllerArguments', 30],
-            ];
+        if (!class_exists(Controller_Attributes_Listener::class, false)) {
+            return [Kernel_Events::CONTROLLER_ARGUMENTS => ['onKernelControllerArguments', 30]];
         }
-
-        return [
-            KernelEvents::CONTROLLER_ARGUMENTS.'.'.IsSignatureValid::class => 'onKernelControllerAttribute',
-        ];
+        return [Kernel_Events::CONTROLLER_ARGUMENTS . '.' . Is_Signature_Valid::class => 'onKernelControllerAttribute'];
     }
 }

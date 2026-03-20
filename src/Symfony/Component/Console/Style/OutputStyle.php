@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,107 +9,87 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Style;
 
-use Symfony\Component\Console\Formatter\OutputFormatterInterface;
-use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-
+use Symfony\Component\Console\Formatter\Output_Formatter_Interface;
+use Symfony\Component\Console\Helper\Progress_Bar;
+use Symfony\Component\Console\Output\Console_Output_Interface;
+use Symfony\Component\Console\Output\Output_Interface;
 /**
  * Decorates output to add console style guide helpers.
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-abstract class OutputStyle implements OutputInterface, StyleInterface
+abstract class Output_Style implements Output_Interface, Style_Interface
 {
-    public function __construct(
-        private readonly OutputInterface $output,
-    ) {
+    public function __construct(private readonly Output_Interface $output)
+    {
     }
-
-    public function newLine(int $count = 1): void
+    public function new_line(int $count = 1): void
     {
         $this->output->write(str_repeat(\PHP_EOL, $count));
     }
-
-    public function createProgressBar(int $max = 0): ProgressBar
+    public function create_progress_bar(int $max = 0): Progress_Bar
     {
-        return new ProgressBar($this->output, $max);
+        return new Progress_Bar($this->output, $max);
     }
-
     public function write(string|iterable $messages, bool $newline = false, int $type = self::OUTPUT_NORMAL): void
     {
         $this->output->write($messages, $newline, $type);
     }
-
     public function writeln(string|iterable $messages, int $type = self::OUTPUT_NORMAL): void
     {
         $this->output->writeln($messages, $type);
     }
-
-    public function setVerbosity(int $level): void
+    public function set_verbosity(int $level): void
     {
-        $this->output->setVerbosity($level);
+        $this->output->set_verbosity($level);
     }
-
-    public function getVerbosity(): int
+    public function get_verbosity(): int
     {
-        return $this->output->getVerbosity();
+        return $this->output->get_verbosity();
     }
-
-    public function setDecorated(bool $decorated): void
+    public function set_decorated(bool $decorated): void
     {
-        $this->output->setDecorated($decorated);
+        $this->output->set_decorated($decorated);
     }
-
-    public function isDecorated(): bool
+    public function is_decorated(): bool
     {
-        return $this->output->isDecorated();
+        return $this->output->is_decorated();
     }
-
-    public function setFormatter(OutputFormatterInterface $formatter): void
+    public function set_formatter(Output_Formatter_Interface $formatter): void
     {
-        $this->output->setFormatter($formatter);
+        $this->output->set_formatter($formatter);
     }
-
-    public function getFormatter(): OutputFormatterInterface
+    public function get_formatter(): Output_Formatter_Interface
     {
-        return $this->output->getFormatter();
+        return $this->output->get_formatter();
     }
-
-    public function isSilent(): bool
+    public function is_silent(): bool
     {
-        return $this->output->isSilent();
+        return $this->output->is_silent();
     }
-
-    public function isQuiet(): bool
+    public function is_quiet(): bool
     {
-        return $this->output->isQuiet();
+        return $this->output->is_quiet();
     }
-
-    public function isVerbose(): bool
+    public function is_verbose(): bool
     {
-        return $this->output->isVerbose();
+        return $this->output->is_verbose();
     }
-
-    public function isVeryVerbose(): bool
+    public function is_very_verbose(): bool
     {
-        return $this->output->isVeryVerbose();
+        return $this->output->is_very_verbose();
     }
-
-    public function isDebug(): bool
+    public function is_debug(): bool
     {
-        return $this->output->isDebug();
+        return $this->output->is_debug();
     }
-
-    protected function getErrorOutput(): OutputInterface
+    protected function get_error_output(): Output_Interface
     {
-        if (!$this->output instanceof ConsoleOutputInterface) {
+        if (!$this->output instanceof Console_Output_Interface) {
             return $this->output;
         }
-
-        return $this->output->getErrorOutput();
+        return $this->output->get_error_output();
     }
 }

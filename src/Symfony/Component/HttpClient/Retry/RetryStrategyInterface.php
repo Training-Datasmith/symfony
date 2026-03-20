@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Client\Retry;
 
-namespace Symfony\Component\HttpClient\Retry;
-
-use Symfony\Component\HttpClient\Response\AsyncContext;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-
+use Symfony\Component\Http_Client\Response\Async_Context;
+use Symfony\Contracts\Http_Client\Exception\Transport_Exception_Interface;
 /**
  * @author Jérémy Derussé <jeremy@derusse.com>
  * @author Nicolas Grekas <p@tchwork.com>
  */
-interface RetryStrategyInterface
+interface Retry_Strategy_Interface
 {
     /**
      * Returns whether the request should be retried.
@@ -29,10 +26,9 @@ interface RetryStrategyInterface
      *
      * @return bool|null Returns null to signal that the body is required to take a decision
      */
-    public function shouldRetry(AsyncContext $context, ?string $responseContent, ?TransportExceptionInterface $exception): ?bool;
-
+    public function should_retry(Async_Context $context, ?string $response_content, ?Transport_Exception_Interface $exception): ?bool;
     /**
      * Returns the time to wait in milliseconds.
      */
-    public function getDelay(AsyncContext $context, ?string $responseContent, ?TransportExceptionInterface $exception): int;
+    public function get_delay(Async_Context $context, ?string $response_content, ?Transport_Exception_Interface $exception): int;
 }

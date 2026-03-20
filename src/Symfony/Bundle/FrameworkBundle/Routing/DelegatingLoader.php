@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Routing;
 
-namespace Symfony\Bundle\FrameworkBundle\Routing;
-
-use Symfony\Component\Config\Exception\LoaderLoadException;
-use Symfony\Component\Config\Loader\DelegatingLoader as BaseDelegatingLoader;
-use Symfony\Component\Config\Loader\LoaderResolverInterface;
-use Symfony\Component\Routing\RouteCollection;
-
+use Symfony\Component\Config\Exception\Loader_Load_Exception;
+use Symfony\Component\Config\Loader\Delegating_Loader as BaseDelegatingLoader;
+use Symfony\Component\Config\Loader\Loader_Resolver_Interface;
+use Symfony\Component\Routing\Route_Collection;
 /**
  * DelegatingLoader delegates route loading to other loaders using a loader resolver.
  *
@@ -28,19 +25,14 @@ use Symfony\Component\Routing\RouteCollection;
  *
  * @final
  */
-class DelegatingLoader extends BaseDelegatingLoader
+class Delegating_Loader extends Base_Delegating_Loader
 {
     private bool $loading = false;
-
-    public function __construct(
-        LoaderResolverInterface $resolver,
-        private readonly array $defaultOptions = [],
-        private readonly array $defaultRequirements = [],
-    ) {
+    public function __construct(Loader_Resolver_Interface $resolver, private readonly array $default_options = [], private readonly array $default_requirements = [])
+    {
         parent::__construct($resolver);
     }
-
-    public function load(mixed $resource, ?string $type = null): RouteCollection
+    public function load(mixed $resource, ?string $type = null): Route_Collection
     {
         if ($this->loading) {
             // This can happen if a fatal error occurs in parent::load().
@@ -58,35 +50,29 @@ class DelegatingLoader extends BaseDelegatingLoader
             //   (by e.g. the web profiler that needs to generate a URL);
             // - this handles the case and prevents the second fatal error
             //   by triggering an exception beforehand.
-
-            throw new LoaderLoadException($resource, null, 0, null, $type);
+            throw new Loader_Load_Exception($resource, null, 0, null, $type);
         }
         $this->loading = true;
-
         try {
             $collection = parent::load($resource, $type);
         } finally {
             $this->loading = false;
         }
-
         foreach ($collection->all() as $route) {
-            if ($this->defaultOptions) {
-                $route->setOptions($route->getOptions() + $this->defaultOptions);
+            if ($this->default_options) {
+                $route->set_options($route->get_options() + $this->default_options);
             }
-            if ($this->defaultRequirements) {
-                $route->setRequirements($route->getRequirements() + $this->defaultRequirements);
+            if ($this->default_requirements) {
+                $route->set_requirements($route->get_requirements() + $this->default_requirements);
             }
-            if (!\is_string($controller = $route->getDefault('_controller'))) {
+            if (!\is_string($controller = $route->get_default('_controller'))) {
                 continue;
             }
-
             if (str_contains($controller, '::')) {
                 continue;
             }
-
-            $route->setDefault('_controller', $controller);
+            $route->set_default('_controller', $controller);
         }
-
         return $collection;
     }
 }

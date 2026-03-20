@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\HttpFoundation;
+namespace Symfony\Component\Http_Foundation;
 
 /**
  * StreamedResponse represents a streamed HTTP response.
@@ -26,34 +24,30 @@ namespace Symfony\Component\HttpFoundation;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class StreamedResponse extends Response
+class Streamed_Response extends Response
 {
     protected ?\Closure $callback = null;
     protected bool $streamed = false;
-
-    private bool $headersSent = false;
-
+    private bool $headers_sent = false;
     /**
      * @param callable|iterable<string>|null $callbackOrChunks
      * @param int                            $status           The HTTP status code (200 "OK" by default)
      */
-    public function __construct(callable|iterable|null $callbackOrChunks = null, int $status = 200, array $headers = [])
+    public function __construct(callable|iterable|null $callback_or_chunks = null, int $status = 200, array $headers = [])
     {
         parent::__construct(null, $status, $headers);
-
-        if (\is_callable($callbackOrChunks)) {
-            $this->setCallback($callbackOrChunks);
-        } elseif ($callbackOrChunks) {
-            $this->setChunks($callbackOrChunks);
+        if (\is_callable($callback_or_chunks)) {
+            $this->set_callback($callback_or_chunks);
+        } elseif ($callback_or_chunks) {
+            $this->set_chunks($callback_or_chunks);
         }
         $this->streamed = false;
-        $this->headersSent = false;
+        $this->headers_sent = false;
     }
-
     /**
      * @param iterable<string> $chunks
      */
-    public function setChunks(iterable $chunks): static
+    public function set_chunks(iterable $chunks): static
     {
         $this->callback = static function () use ($chunks): void {
             foreach ($chunks as $chunk) {
@@ -62,31 +56,25 @@ class StreamedResponse extends Response
                 flush();
             }
         };
-
         return $this;
     }
-
     /**
      * Sets the PHP callback associated with this Response.
      *
      * @return $this
      */
-    public function setCallback(callable $callback): static
+    public function set_callback(callable $callback): static
     {
         $this->callback = $callback(...);
-
         return $this;
     }
-
-    public function getCallback(): ?\Closure
+    public function get_callback(): ?\Closure
     {
         if (!isset($this->callback)) {
             return null;
         }
-
         return ($this->callback)(...);
     }
-
     /**
      * This method only sends the headers once.
      *
@@ -94,58 +82,47 @@ class StreamedResponse extends Response
      *
      * @return $this
      */
-    public function sendHeaders(?int $statusCode = null): static
+    public function send_headers(?int $status_code = null): static
     {
-        if ($this->headersSent) {
+        if ($this->headers_sent) {
             return $this;
         }
-
-        if ($statusCode < 100 || $statusCode >= 200) {
-            $this->headersSent = true;
+        if ($status_code < 100 || $status_code >= 200) {
+            $this->headers_sent = true;
         }
-
-        return parent::sendHeaders($statusCode);
+        return parent::send_headers($status_code);
     }
-
     /**
      * This method only sends the content once.
      *
      * @return $this
      */
-    public function sendContent(): static
+    public function send_content(): static
     {
         if ($this->streamed) {
             return $this;
         }
-
         $this->streamed = true;
-
         if (!isset($this->callback)) {
             throw new \LogicException('The Response callback must be set.');
         }
-
         ($this->callback)();
-
         return $this;
     }
-
     /**
      * @return $this
      *
      * @throws \LogicException when the content is not null
      */
-    public function setContent(?string $content): static
+    public function set_content(?string $content): static
     {
         if (null !== $content) {
             throw new \LogicException('The content cannot be set on a StreamedResponse instance.');
         }
-
         $this->streamed = true;
-
         return $this;
     }
-
-    public function getContent(): string|false
+    public function get_content(): string|false
     {
         return false;
     }

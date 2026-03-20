@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,189 +9,144 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Console\Descriptor;
 
-use Symfony\Component\Console\Descriptor\DescriptorInterface;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\OutputStyle;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Form\ResolvedFormTypeInterface;
-use Symfony\Component\Form\Util\OptionsResolverWrapper;
-use Symfony\Component\OptionsResolver\Debug\OptionsResolverIntrospector;
-use Symfony\Component\OptionsResolver\Exception\NoConfigurationException;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Console\Descriptor\Descriptor_Interface;
+use Symfony\Component\Console\Input\Array_Input;
+use Symfony\Component\Console\Output\Output_Interface;
+use Symfony\Component\Console\Style\Output_Style;
+use Symfony\Component\Console\Style\Symfony_Style;
+use Symfony\Component\Form\Resolved_Form_Type_Interface;
+use Symfony\Component\Form\Util\Options_Resolver_Wrapper;
+use Symfony\Component\Options_Resolver\Debug\Options_Resolver_Introspector;
+use Symfony\Component\Options_Resolver\Exception\No_Configuration_Exception;
+use Symfony\Component\Options_Resolver\Options_Resolver;
 /**
  * @author Yonel Ceruto <yonelceruto@gmail.com>
  *
  * @internal
  */
-abstract class Descriptor implements DescriptorInterface
+abstract class Descriptor implements Descriptor_Interface
 {
-    protected OutputStyle $output;
-    protected array $ownOptions = [];
-    protected array $overriddenOptions = [];
-    protected array $parentOptions = [];
-    protected array $extensionOptions = [];
-    protected array $requiredOptions = [];
+    protected Output_Style $output;
+    protected array $own_options = [];
+    protected array $overridden_options = [];
+    protected array $parent_options = [];
+    protected array $extension_options = [];
+    protected array $required_options = [];
     protected array $parents = [];
     protected array $extensions = [];
-
-    public function describe(OutputInterface $output, ?object $object, array $options = []): void
+    public function describe(Output_Interface $output, ?object $object, array $options = []): void
     {
-        $this->output = $output instanceof OutputStyle ? $output : new SymfonyStyle(new ArrayInput([]), $output);
-
+        $this->output = $output instanceof Output_Style ? $output : new Symfony_Style(new Array_Input([]), $output);
         match (true) {
-            null === $object => $this->describeDefaults($options),
-            $object instanceof ResolvedFormTypeInterface => $this->describeResolvedFormType($object, $options),
-            $object instanceof OptionsResolver => $this->describeOption($object, $options),
+            null === $object => $this->describe_defaults($options),
+            $object instanceof Resolved_Form_Type_Interface => $this->describe_resolved_form_type($object, $options),
+            $object instanceof Options_Resolver => $this->describe_option($object, $options),
             default => throw new \InvalidArgumentException(\sprintf('Object of type "%s" is not describable.', get_debug_type($object))),
         };
     }
-
-    abstract protected function describeDefaults(array $options): void;
-
-    abstract protected function describeResolvedFormType(ResolvedFormTypeInterface $resolvedFormType, array $options = []): void;
-
-    abstract protected function describeOption(OptionsResolver $optionsResolver, array $options): void;
-
-    protected function collectOptions(ResolvedFormTypeInterface $type): void
+    abstract protected function describe_defaults(array $options): void;
+    abstract protected function describe_resolved_form_type(Resolved_Form_Type_Interface $resolved_form_type, array $options = []): void;
+    abstract protected function describe_option(Options_Resolver $options_resolver, array $options): void;
+    protected function collect_options(Resolved_Form_Type_Interface $type): void
     {
         $this->parents = [];
         $this->extensions = [];
-
-        if (null !== $type->getParent()) {
-            $optionsResolver = clone $this->getParentOptionsResolver($type->getParent());
+        if (null !== $type->get_parent()) {
+            $options_resolver = clone $this->get_parent_options_resolver($type->get_parent());
         } else {
-            $optionsResolver = new OptionsResolver();
+            $options_resolver = new Options_Resolver();
         }
-
-        $type->getInnerType()->configureOptions($ownOptionsResolver = new OptionsResolverWrapper());
-        $this->ownOptions = array_diff($ownOptionsResolver->getDefinedOptions(), $optionsResolver->getDefinedOptions());
-        $overriddenOptions = array_intersect(array_merge($ownOptionsResolver->getDefinedOptions(), $ownOptionsResolver->getUndefinedOptions()), $optionsResolver->getDefinedOptions());
-
-        $this->parentOptions = [];
-        foreach ($this->parents as $class => $parentOptions) {
-            $this->overriddenOptions[$class] = array_intersect($overriddenOptions, $parentOptions);
-            $this->parentOptions[$class] = array_diff($parentOptions, $overriddenOptions);
+        $type->get_inner_type()->configure_options($own_options_resolver = new Options_Resolver_Wrapper());
+        $this->own_options = array_diff($own_options_resolver->get_defined_options(), $options_resolver->get_defined_options());
+        $overridden_options = array_intersect(array_merge($own_options_resolver->get_defined_options(), $own_options_resolver->get_undefined_options()), $options_resolver->get_defined_options());
+        $this->parent_options = [];
+        foreach ($this->parents as $class => $parent_options) {
+            $this->overridden_options[$class] = array_intersect($overridden_options, $parent_options);
+            $this->parent_options[$class] = array_diff($parent_options, $overridden_options);
         }
-
-        $type->getInnerType()->configureOptions($optionsResolver);
-        $this->collectTypeExtensionsOptions($type, $optionsResolver);
-        $this->extensionOptions = [];
-        foreach ($this->extensions as $class => $extensionOptions) {
-            $this->overriddenOptions[$class] = array_intersect($overriddenOptions, $extensionOptions);
-            $this->extensionOptions[$class] = array_diff($extensionOptions, $overriddenOptions);
+        $type->get_inner_type()->configure_options($options_resolver);
+        $this->collect_type_extensions_options($type, $options_resolver);
+        $this->extension_options = [];
+        foreach ($this->extensions as $class => $extension_options) {
+            $this->overridden_options[$class] = array_intersect($overridden_options, $extension_options);
+            $this->extension_options[$class] = array_diff($extension_options, $overridden_options);
         }
-
-        $this->overriddenOptions = array_filter($this->overriddenOptions);
-        $this->parentOptions = array_filter($this->parentOptions);
-        $this->extensionOptions = array_filter($this->extensionOptions);
-        $this->requiredOptions = $optionsResolver->getRequiredOptions();
-
+        $this->overridden_options = array_filter($this->overridden_options);
+        $this->parent_options = array_filter($this->parent_options);
+        $this->extension_options = array_filter($this->extension_options);
+        $this->required_options = $options_resolver->get_required_options();
         $this->parents = array_keys($this->parents);
         $this->extensions = array_keys($this->extensions);
     }
-
-    protected function getOptionDefinition(OptionsResolver $optionsResolver, string $option): array
+    protected function get_option_definition(Options_Resolver $options_resolver, string $option): array
     {
         $definition = [];
-
-        if ($info = $optionsResolver->getInfo($option)) {
-            $definition = [
-                'info' => $info,
-            ];
+        if ($info = $options_resolver->get_info($option)) {
+            $definition = ['info' => $info];
         }
-
-        $definition += [
-            'required' => $optionsResolver->isRequired($option),
-            'deprecated' => $optionsResolver->isDeprecated($option),
-        ];
-
-        $introspector = new OptionsResolverIntrospector($optionsResolver);
-
-        $map = [
-            'default' => 'getDefault',
-            'lazy' => 'getLazyClosures',
-            'allowedTypes' => 'getAllowedTypes',
-            'allowedValues' => 'getAllowedValues',
-            'normalizers' => 'getNormalizers',
-            'deprecation' => 'getDeprecation',
-            'nestedOptions' => 'getNestedOptions',
-        ];
-
+        $definition += ['required' => $options_resolver->is_required($option), 'deprecated' => $options_resolver->is_deprecated($option)];
+        $introspector = new Options_Resolver_Introspector($options_resolver);
+        $map = ['default' => 'getDefault', 'lazy' => 'getLazyClosures', 'allowedTypes' => 'getAllowedTypes', 'allowedValues' => 'getAllowedValues', 'normalizers' => 'getNormalizers', 'deprecation' => 'getDeprecation', 'nestedOptions' => 'getNestedOptions'];
         foreach ($map as $key => $method) {
             try {
                 $definition[$key] = $introspector->{$method}($option);
-            } catch (NoConfigurationException) {
+            } catch (No_Configuration_Exception) {
                 // noop
             }
         }
-
         if (isset($definition['deprecation']['message']) && \is_string($definition['deprecation']['message'])) {
             $definition['deprecationMessage'] = strtr($definition['deprecation']['message'], ['%name%' => $option]);
             $definition['deprecationPackage'] = $definition['deprecation']['package'];
             $definition['deprecationVersion'] = $definition['deprecation']['version'];
         }
-
         return $definition;
     }
-
-    protected function filterOptionsByDeprecated(ResolvedFormTypeInterface $type): void
+    protected function filter_options_by_deprecated(Resolved_Form_Type_Interface $type): void
     {
-        $deprecatedOptions = [];
-        $resolver = $type->getOptionsResolver();
-        foreach ($resolver->getDefinedOptions() as $option) {
-            if ($resolver->isDeprecated($option)) {
-                $deprecatedOptions[] = $option;
+        $deprecated_options = [];
+        $resolver = $type->get_options_resolver();
+        foreach ($resolver->get_defined_options() as $option) {
+            if ($resolver->is_deprecated($option)) {
+                $deprecated_options[] = $option;
             }
         }
-
-        $filterByDeprecated = static function (array $options) use ($deprecatedOptions): array {
+        $filter_by_deprecated = static function (array $options) use ($deprecated_options): array {
             foreach ($options as $class => $opts) {
-                if ($deprecated = array_intersect($deprecatedOptions, $opts)) {
+                if ($deprecated = array_intersect($deprecated_options, $opts)) {
                     $options[$class] = $deprecated;
                 } else {
                     unset($options[$class]);
                 }
             }
-
             return $options;
         };
-
-        $this->ownOptions = array_intersect($deprecatedOptions, $this->ownOptions);
-        $this->overriddenOptions = $filterByDeprecated($this->overriddenOptions);
-        $this->parentOptions = $filterByDeprecated($this->parentOptions);
-        $this->extensionOptions = $filterByDeprecated($this->extensionOptions);
+        $this->own_options = array_intersect($deprecated_options, $this->own_options);
+        $this->overridden_options = $filter_by_deprecated($this->overridden_options);
+        $this->parent_options = $filter_by_deprecated($this->parent_options);
+        $this->extension_options = $filter_by_deprecated($this->extension_options);
     }
-
-    private function getParentOptionsResolver(ResolvedFormTypeInterface $type): OptionsResolver
+    private function get_parent_options_resolver(Resolved_Form_Type_Interface $type): Options_Resolver
     {
-        $this->parents[$class = $type->getInnerType()::class] = [];
-
-        if (null !== $type->getParent()) {
-            $optionsResolver = clone $this->getParentOptionsResolver($type->getParent());
+        $this->parents[$class = $type->get_inner_type()::class] = [];
+        if (null !== $type->get_parent()) {
+            $options_resolver = clone $this->get_parent_options_resolver($type->get_parent());
         } else {
-            $optionsResolver = new OptionsResolver();
+            $options_resolver = new Options_Resolver();
         }
-
-        $inheritedOptions = $optionsResolver->getDefinedOptions();
-        $type->getInnerType()->configureOptions($optionsResolver);
-        $this->parents[$class] = array_diff($optionsResolver->getDefinedOptions(), $inheritedOptions);
-
-        $this->collectTypeExtensionsOptions($type, $optionsResolver);
-
-        return $optionsResolver;
+        $inherited_options = $options_resolver->get_defined_options();
+        $type->get_inner_type()->configure_options($options_resolver);
+        $this->parents[$class] = array_diff($options_resolver->get_defined_options(), $inherited_options);
+        $this->collect_type_extensions_options($type, $options_resolver);
+        return $options_resolver;
     }
-
-    private function collectTypeExtensionsOptions(ResolvedFormTypeInterface $type, OptionsResolver $optionsResolver): void
+    private function collect_type_extensions_options(Resolved_Form_Type_Interface $type, Options_Resolver $options_resolver): void
     {
-        foreach ($type->getTypeExtensions() as $extension) {
-            $inheritedOptions = $optionsResolver->getDefinedOptions();
-            $extension->configureOptions($optionsResolver);
-            $this->extensions[$extension::class] = array_diff($optionsResolver->getDefinedOptions(), $inheritedOptions);
+        foreach ($type->get_type_extensions() as $extension) {
+            $inherited_options = $options_resolver->get_defined_options();
+            $extension->configure_options($options_resolver);
+            $this->extensions[$extension::class] = array_diff($options_resolver->get_defined_options(), $inherited_options);
         }
     }
 }

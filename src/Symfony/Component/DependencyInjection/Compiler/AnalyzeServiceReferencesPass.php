@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,18 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Argument\ArgumentInterface;
-use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\LogicException;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\ExpressionLanguage\Expression;
-
+use Symfony\Component\Dependency_Injection\Argument\Argument_Interface;
+use Symfony\Component\Dependency_Injection\Argument\Iterator_Argument;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Container_Interface;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Exception\LogicException;
+use Symfony\Component\Dependency_Injection\Reference;
+use Symfony\Component\Expression_Language\Expression;
 /**
  * Run this pass before passes that need to know more about the relation of
  * your services.
@@ -32,182 +29,134 @@ use Symfony\Component\ExpressionLanguage\Expression;
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class AnalyzeServiceReferencesPass extends AbstractRecursivePass
+class Analyze_Service_References_Pass extends Abstract_Recursive_Pass
 {
-    protected bool $skipScalars = true;
-
-    private ServiceReferenceGraph $graph;
-    private ?Definition $currentDefinition = null;
+    protected bool $skip_scalars = true;
+    private Service_Reference_Graph $graph;
+    private ?Definition $current_definition = null;
     private bool $lazy;
-    private bool $byConstructor;
-    private bool $byFactory;
-    private bool $byMultiUseArgument;
+    private bool $by_constructor;
+    private bool $by_factory;
+    private bool $by_multi_use_argument;
     private array $definitions;
     private array $aliases;
-
     /**
      * @param bool $onlyConstructorArguments Sets this Service Reference pass to ignore method calls
      */
-    public function __construct(
-        private readonly bool $onlyConstructorArguments = false,
-        private readonly bool $hasProxyDumper = true,
-    ) {
-        $this->enableExpressionProcessing();
+    public function __construct(private readonly bool $only_constructor_arguments = false, private readonly bool $has_proxy_dumper = true)
+    {
+        $this->enable_expression_processing();
     }
-
     /**
      * Processes a ContainerBuilder object to populate the service reference graph.
      */
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
         $this->container = $container;
-        $this->graph = $container->getCompiler()->getServiceReferenceGraph();
+        $this->graph = $container->get_compiler()->get_service_reference_graph();
         $this->graph->clear();
         $this->lazy = false;
-        $this->byConstructor = false;
-        $this->byFactory = false;
-        $this->byMultiUseArgument = false;
-        $this->definitions = $container->getDefinitions();
-        $this->aliases = $container->getAliases();
-
+        $this->by_constructor = false;
+        $this->by_factory = false;
+        $this->by_multi_use_argument = false;
+        $this->definitions = $container->get_definitions();
+        $this->aliases = $container->get_aliases();
         foreach ($this->aliases as $id => $alias) {
-            $targetId = $this->getDefinitionId((string) $alias);
-            $this->graph->connect($id, $alias, $targetId, null !== $targetId ? $this->container->getDefinition($targetId) : null);
+            $target_id = $this->get_definition_id((string) $alias);
+            $this->graph->connect($id, $alias, $target_id, null !== $target_id ? $this->container->get_definition($target_id) : null);
         }
-
         try {
             parent::process($container);
         } finally {
             $this->aliases = $this->definitions = [];
         }
     }
-
-    protected function processValue(mixed $value, bool $isRoot = false): mixed
+    protected function process_value(mixed $value, bool $is_root = false): mixed
     {
         $lazy = $this->lazy;
-        $inExpression = $this->inExpression();
-
-        if ($value instanceof ArgumentInterface) {
-            $this->lazy = !$this->byFactory || !$value instanceof IteratorArgument;
-            $byMultiUseArgument = $this->byMultiUseArgument;
-            if ($value instanceof IteratorArgument) {
-                $this->byMultiUseArgument = true;
+        $in_expression = $this->in_expression();
+        if ($value instanceof Argument_Interface) {
+            $this->lazy = !$this->by_factory || !$value instanceof Iterator_Argument;
+            $by_multi_use_argument = $this->by_multi_use_argument;
+            if ($value instanceof Iterator_Argument) {
+                $this->by_multi_use_argument = true;
             }
-            parent::processValue($value->getValues());
-            $this->byMultiUseArgument = $byMultiUseArgument;
+            parent::process_value($value->get_values());
+            $this->by_multi_use_argument = $by_multi_use_argument;
             $this->lazy = $lazy;
-
             return $value;
         }
         if ($value instanceof Reference) {
-            $targetId = $this->getDefinitionId((string) $value);
-            $targetDefinition = null !== $targetId ? $this->container->getDefinition($targetId) : null;
-
-            $this->graph->connect(
-                $this->currentId,
-                $this->currentDefinition,
-                $targetId,
-                $targetDefinition,
-                $value,
-                $this->lazy || ($this->hasProxyDumper && $targetDefinition?->isLazy()),
-                ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE === $value->getInvalidBehavior(),
-                $this->byConstructor,
-                $this->byMultiUseArgument
-            );
-
-            if ($inExpression) {
-                $this->graph->connect(
-                    '.internal.reference_in_expression',
-                    null,
-                    $targetId,
-                    $targetDefinition,
-                    $value,
-                    $this->lazy || $targetDefinition?->isLazy(),
-                    true,
-                    $this->byConstructor,
-                    $this->byMultiUseArgument
-                );
+            $target_id = $this->get_definition_id((string) $value);
+            $target_definition = null !== $target_id ? $this->container->get_definition($target_id) : null;
+            $this->graph->connect($this->current_id, $this->current_definition, $target_id, $target_definition, $value, $this->lazy || $this->has_proxy_dumper && $target_definition?->is_lazy(), Container_Interface::IGNORE_ON_UNINITIALIZED_REFERENCE === $value->get_invalid_behavior(), $this->by_constructor, $this->by_multi_use_argument);
+            if ($in_expression) {
+                $this->graph->connect('.internal.reference_in_expression', null, $target_id, $target_definition, $value, $this->lazy || $target_definition?->is_lazy(), true, $this->by_constructor, $this->by_multi_use_argument);
             }
-
             return $value;
         }
         if (!$value instanceof Definition) {
-            return parent::processValue($value, $isRoot);
+            return parent::process_value($value, $is_root);
         }
-        if ($isRoot) {
-            if ($value->isSynthetic() || $value->isAbstract()) {
+        if ($is_root) {
+            if ($value->is_synthetic() || $value->is_abstract()) {
                 return $value;
             }
-            $this->currentDefinition = $value;
-        } elseif ($this->currentDefinition === $value) {
+            $this->current_definition = $value;
+        } elseif ($this->current_definition === $value) {
             return $value;
         }
         $this->lazy = false;
-
-        $byConstructor = $this->byConstructor;
-        $this->byConstructor = $isRoot || $byConstructor;
-
-        $byFactory = $this->byFactory;
-        $this->byFactory = true;
-        if (\is_string($factory = $value->getFactory()) && str_starts_with($factory, '@=')) {
+        $by_constructor = $this->by_constructor;
+        $this->by_constructor = $is_root || $by_constructor;
+        $by_factory = $this->by_factory;
+        $this->by_factory = true;
+        if (\is_string($factory = $value->get_factory()) && str_starts_with($factory, '@=')) {
             if (!class_exists(Expression::class)) {
                 throw new LogicException('Expressions cannot be used in service factories without the ExpressionLanguage component. Try running "composer require symfony/expression-language".');
             }
-
             $factory = new Expression(substr($factory, 2));
         }
-        $this->processValue($factory);
-        $this->byFactory = $byFactory;
-
-        $this->processValue($value->getArguments());
-
-        $properties = $value->getProperties();
-        $setters = $value->getMethodCalls();
-
+        $this->process_value($factory);
+        $this->by_factory = $by_factory;
+        $this->process_value($value->get_arguments());
+        $properties = $value->get_properties();
+        $setters = $value->get_method_calls();
         // Any references before a "wither" are part of the constructor-instantiation graph
-        $lastWitherIndex = null;
+        $last_wither_index = null;
         foreach ($setters as $k => $call) {
             if ($call[2] ?? false) {
-                $lastWitherIndex = $k;
+                $last_wither_index = $k;
             }
         }
-
-        if (null !== $lastWitherIndex) {
-            $this->processValue($properties);
+        if (null !== $last_wither_index) {
+            $this->process_value($properties);
             $setters = $properties = [];
-
-            foreach ($value->getMethodCalls() as $k => $call) {
-                if (null === $lastWitherIndex) {
+            foreach ($value->get_method_calls() as $k => $call) {
+                if (null === $last_wither_index) {
                     $setters[] = $call;
                     continue;
                 }
-
-                if ($lastWitherIndex === $k) {
-                    $lastWitherIndex = null;
+                if ($last_wither_index === $k) {
+                    $last_wither_index = null;
                 }
-
-                $this->processValue($call);
+                $this->process_value($call);
             }
         }
-
-        $this->byConstructor = $byConstructor;
-
-        if (!$this->onlyConstructorArguments) {
-            $this->processValue($properties);
-            $this->processValue($setters);
-            $this->processValue($value->getConfigurator());
+        $this->by_constructor = $by_constructor;
+        if (!$this->only_constructor_arguments) {
+            $this->process_value($properties);
+            $this->process_value($setters);
+            $this->process_value($value->get_configurator());
         }
         $this->lazy = $lazy;
-
         return $value;
     }
-
-    private function getDefinitionId(string $id): ?string
+    private function get_definition_id(string $id): ?string
     {
         while (isset($this->aliases[$id])) {
             $id = (string) $this->aliases[$id];
         }
-
         return isset($this->definitions[$id]) ? $id : null;
     }
 }

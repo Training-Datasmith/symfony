@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Exception;
 
 /**
@@ -18,6 +16,6 @@ namespace Symfony\Component\Console\Exception;
  *
  * @author Gabriel Ostrolucký <gabriel.ostrolucky@gmail.com>
  */
-class MissingInputException extends RuntimeException implements ExceptionInterface
+class Missing_Input_Exception extends RuntimeException implements Exception_Interface
 {
 }

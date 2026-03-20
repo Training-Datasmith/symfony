@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Extension\Core\Data_Transformer;
 
-namespace Symfony\Component\Form\Extension\Core\DataTransformer;
-
-use Symfony\Component\Form\Exception\TransformationFailedException;
-
+use Symfony\Component\Form\Exception\Transformation_Failed_Exception;
 /**
  * @author Franz Wilding <franz.wilding@me.com>
  * @author Bernhard Schussek <bschussek@gmail.com>
@@ -22,16 +19,14 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
  *
  * @extends BaseDateTimeTransformer<string>
  */
-class DateTimeToHtml5LocalDateTimeTransformer extends BaseDateTimeTransformer
+class Date_Time_To_Html5local_Date_Time_Transformer extends Base_Date_Time_Transformer
 {
-    public const HTML5_FORMAT = 'Y-m-d\\TH:i:s';
-    public const HTML5_FORMAT_NO_SECONDS = 'Y-m-d\\TH:i';
-
-    public function __construct(?string $inputTimezone = null, ?string $outputTimezone = null, private readonly bool $withSeconds = false)
+    public const HTML5_FORMAT = 'Y-m-d\TH:i:s';
+    public const HTML5_FORMAT_NO_SECONDS = 'Y-m-d\TH:i';
+    public function __construct(?string $input_timezone = null, ?string $output_timezone = null, private readonly bool $with_seconds = false)
     {
-        parent::__construct($inputTimezone, $outputTimezone);
+        parent::__construct($input_timezone, $output_timezone);
     }
-
     /**
      * According to the HTML standard, the input string of a datetime-local
      * input is an RFC3339 date followed by 'T', followed by an RFC3339 time.
@@ -39,24 +34,20 @@ class DateTimeToHtml5LocalDateTimeTransformer extends BaseDateTimeTransformer
      *
      * @throws \DateInvalidTimeZoneException
      */
-    public function transform(mixed $dateTime): string
+    public function transform(mixed $date_time): string
     {
-        if (null === $dateTime) {
+        if (null === $date_time) {
             return '';
         }
-
-        if (!$dateTime instanceof \DateTimeInterface) {
-            throw new TransformationFailedException('Expected a \DateTimeInterface.');
+        if (!$date_time instanceof \DateTimeInterface) {
+            throw new Transformation_Failed_Exception('Expected a \DateTimeInterface.');
         }
-
-        if ($this->inputTimezone !== $this->outputTimezone) {
-            $dateTime = \DateTimeImmutable::createFromInterface($dateTime);
-            $dateTime = $dateTime->setTimezone(new \DateTimeZone($this->outputTimezone));
+        if ($this->input_timezone !== $this->output_timezone) {
+            $date_time = \DateTimeImmutable::create_from_interface($date_time);
+            $date_time = $date_time->set_timezone(new \DateTimeZone($this->output_timezone));
         }
-
-        return $dateTime->format($this->withSeconds ? self::HTML5_FORMAT : self::HTML5_FORMAT_NO_SECONDS);
+        return $date_time->format($this->with_seconds ? self::HTML5_FORMAT : self::HTML5_FORMAT_NO_SECONDS);
     }
-
     /**
      * When transforming back to DateTime the regex is slightly laxer, taking into
      * account rules for parsing a local date and time string
@@ -64,36 +55,30 @@ class DateTimeToHtml5LocalDateTimeTransformer extends BaseDateTimeTransformer
      *
      * @throws \DateInvalidTimeZoneException
      */
-    public function reverseTransform(mixed $dateTimeLocal): ?\DateTime
+    public function reverse_transform(mixed $date_time_local): ?\DateTime
     {
-        if (!\is_string($dateTimeLocal)) {
-            throw new TransformationFailedException('Expected a string.');
+        if (!\is_string($date_time_local)) {
+            throw new Transformation_Failed_Exception('Expected a string.');
         }
-
-        if ('' === $dateTimeLocal) {
+        if ('' === $date_time_local) {
             return null;
         }
-
         // to maintain backwards compatibility we do not strictly validate the submitted date
         // see https://github.com/symfony/symfony/issues/28699
-        if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})[T ]\d{2}:\d{2}(?::\d{2})?/', $dateTimeLocal, $matches)) {
-            throw new TransformationFailedException(\sprintf('The date "%s" is not a valid date.', $dateTimeLocal));
+        if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})[T ]\d{2}:\d{2}(?::\d{2})?/', $date_time_local, $matches)) {
+            throw new Transformation_Failed_Exception(\sprintf('The date "%s" is not a valid date.', $date_time_local));
         }
-
         try {
-            $dateTime = new \DateTime($dateTimeLocal, new \DateTimeZone($this->outputTimezone));
+            $date_time = new \DateTime($date_time_local, new \DateTimeZone($this->output_timezone));
         } catch (\Exception $e) {
-            throw new TransformationFailedException($e->getMessage(), $e->getCode(), $e);
+            throw new Transformation_Failed_Exception($e->get_message(), $e->get_code(), $e);
         }
-
-        if ($this->inputTimezone !== $dateTime->getTimezone()->getName()) {
-            $dateTime->setTimezone(new \DateTimeZone($this->inputTimezone));
+        if ($this->input_timezone !== $date_time->get_timezone()->get_name()) {
+            $date_time->set_timezone(new \DateTimeZone($this->input_timezone));
         }
-
         if (!checkdate($matches[2], $matches[3], $matches[1])) {
-            throw new TransformationFailedException(\sprintf('The date "%s-%s-%s" is not a valid date.', $matches[1], $matches[2], $matches[3]));
+            throw new Transformation_Failed_Exception(\sprintf('The date "%s-%s-%s" is not a valid date.', $matches[1], $matches[2], $matches[3]));
         }
-
-        return $dateTime;
+        return $date_time;
     }
 }

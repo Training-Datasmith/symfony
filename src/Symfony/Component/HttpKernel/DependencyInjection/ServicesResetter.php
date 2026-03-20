@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,51 +9,42 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Dependency_Injection;
 
-namespace Symfony\Component\HttpKernel\DependencyInjection;
-
-use ProxyManager\Proxy\LazyLoadingInterface;
-use Symfony\Component\VarExporter\LazyObjectInterface;
-
+use Proxy_Manager\Proxy\Lazy_Loading_Interface;
+use Symfony\Component\Var_Exporter\Lazy_Object_Interface;
 /**
  * Resets provided services.
  *
  * @author Alexander M. Turek <me@derrabus.de>
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class ServicesResetter implements ServicesResetterInterface
+final class Services_Resetter implements Services_Resetter_Interface
 {
     /**
      * @param \Traversable<string, object>   $resettableServices
      * @param array<string, string|string[]> $resetMethods
      */
-    public function __construct(
-        private readonly \Traversable $resettableServices,
-        private array $resetMethods,
-    ) {
+    public function __construct(private readonly \Traversable $resettable_services, private array $reset_methods)
+    {
     }
-
     public function reset(): void
     {
-        foreach ($this->resettableServices as $id => $service) {
-            if ($service instanceof LazyObjectInterface && !$service->isLazyObjectInitialized(true)) {
+        foreach ($this->resettable_services as $id => $service) {
+            if ($service instanceof Lazy_Object_Interface && !$service->is_lazy_object_initialized(true)) {
                 continue;
             }
-
-            if ($service instanceof LazyLoadingInterface && !$service->isProxyInitialized()) {
+            if ($service instanceof Lazy_Loading_Interface && !$service->is_proxy_initialized()) {
                 continue;
             }
-
-            if (new \ReflectionClass($service)->isUninitializedLazyObject($service)) {
+            if ((new \ReflectionClass($service))->is_uninitialized_lazy_object($service)) {
                 continue;
             }
-
-            foreach ((array) $this->resetMethods[$id] as $resetMethod) {
-                if ('?' === $resetMethod[0] && !method_exists($service, $resetMethod = substr($resetMethod, 1))) {
+            foreach ((array) $this->reset_methods[$id] as $reset_method) {
+                if ('?' === $reset_method[0] && !method_exists($service, $reset_method = substr($reset_method, 1))) {
                     continue;
                 }
-
-                $service->$resetMethod();
+                $service->{$reset_method}();
             }
         }
     }

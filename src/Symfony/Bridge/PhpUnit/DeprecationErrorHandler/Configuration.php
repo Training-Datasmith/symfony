@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,8 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Bridge\PhpUnit\DeprecationErrorHandler;
+namespace Symfony\Bridge\Php_Unit\Deprecation_Error_Handler;
 
 /**
  * @internal
@@ -22,25 +20,18 @@ class Configuration
      * @var int[]
      */
     private ?array $thresholds = null;
-
     private bool $enabled = true;
-
     /**
      * @var bool[]
      */
-    private array $verboseOutput;
-
+    private array $verbose_output;
     /**
      * @var string[]
      */
-    private array $ignoreDeprecationPatterns = [];
-
-    private readonly bool $generateBaseline;
-
-    private readonly string $baselineFile;
-
-    private array $baselineDeprecations = [];
-
+    private array $ignore_deprecation_patterns = [];
+    private readonly bool $generate_baseline;
+    private readonly string $baseline_file;
+    private array $baseline_deprecations = [];
     /**
      * @param int[]       $thresholds       A hash associating groups to thresholds
      * @param string      $regex            Will be matched against messages, to decide whether to display a stack trace
@@ -50,10 +41,9 @@ class Configuration
      * @param string      $baselineFile     The path to the baseline file
      * @param string|null $logFile          The path to the log file
      */
-    private function __construct(array $thresholds = [], private readonly string $regex = '', array $verboseOutput = [], string $ignoreFile = '', bool $generateBaseline = false, string $baselineFile = '', private readonly ?string $logFile = null)
+    private function __construct(array $thresholds = [], private readonly string $regex = '', array $verbose_output = [], string $ignore_file = '', bool $generate_baseline = false, string $baseline_file = '', private readonly ?string $log_file = null)
     {
         $groups = ['total', 'indirect', 'direct', 'self'];
-
         foreach ($thresholds as $group => $threshold) {
             if (!\in_array($group, $groups, true)) {
                 throw new \InvalidArgumentException(\sprintf('Unrecognized threshold "%s", expected one of "%s".', $group, implode('", "', $groups)));
@@ -64,301 +54,227 @@ class Configuration
             $this->thresholds[$group] = (int) $threshold;
         }
         if (isset($this->thresholds['direct'])) {
-            $this->thresholds += [
-                'self' => $this->thresholds['direct'],
-            ];
+            $this->thresholds += ['self' => $this->thresholds['direct']];
         }
         if (isset($this->thresholds['indirect'])) {
-            $this->thresholds += [
-                'direct' => $this->thresholds['indirect'],
-                'self' => $this->thresholds['indirect'],
-            ];
+            $this->thresholds += ['direct' => $this->thresholds['indirect'], 'self' => $this->thresholds['indirect']];
         }
         foreach ($groups as $group) {
             if (!isset($this->thresholds[$group])) {
                 $this->thresholds[$group] = $this->thresholds['total'] ?? 999999;
             }
         }
-
-        $this->verboseOutput = [
-            'unsilenced' => true,
-            'direct' => true,
-            'indirect' => true,
-            'self' => true,
-            'other' => true,
-        ];
-
-        foreach ($verboseOutput as $group => $status) {
-            if (!isset($this->verboseOutput[$group])) {
-                throw new \InvalidArgumentException(\sprintf('Unsupported verbosity group "%s", expected one of "%s".', $group, implode('", "', array_keys($this->verboseOutput))));
+        $this->verbose_output = ['unsilenced' => true, 'direct' => true, 'indirect' => true, 'self' => true, 'other' => true];
+        foreach ($verbose_output as $group => $status) {
+            if (!isset($this->verbose_output[$group])) {
+                throw new \InvalidArgumentException(\sprintf('Unsupported verbosity group "%s", expected one of "%s".', $group, implode('", "', array_keys($this->verbose_output))));
             }
-            $this->verboseOutput[$group] = $status;
+            $this->verbose_output[$group] = $status;
         }
-
-        if ($ignoreFile) {
-            if (!is_file($ignoreFile)) {
-                throw new \InvalidArgumentException(\sprintf('The ignoreFile "%s" does not exist.', $ignoreFile));
+        if ($ignore_file) {
+            if (!is_file($ignore_file)) {
+                throw new \InvalidArgumentException(\sprintf('The ignoreFile "%s" does not exist.', $ignore_file));
             }
-            set_error_handler(static function ($t, $m) use ($ignoreFile, &$line): void {
-                throw new \RuntimeException(\sprintf('Invalid pattern found in "%s" on line "%d"', $ignoreFile, 1 + $line).substr($m, 12));
+            set_error_handler(static function ($t, $m) use ($ignore_file, &$line): void {
+                throw new \RuntimeException(\sprintf('Invalid pattern found in "%s" on line "%d"', $ignore_file, 1 + $line) . substr($m, 12));
             });
             try {
-                foreach (file($ignoreFile) as $pattern) {
+                foreach (file($ignore_file) as $pattern) {
                     if ('#' !== (trim($pattern)[0] ?? '#')) {
                         preg_match($pattern, '');
-                        $this->ignoreDeprecationPatterns[] = $pattern;
+                        $this->ignore_deprecation_patterns[] = $pattern;
                     }
                 }
             } finally {
                 restore_error_handler();
             }
         }
-
-        if ($generateBaseline && !$baselineFile) {
+        if ($generate_baseline && !$baseline_file) {
             throw new \InvalidArgumentException('You cannot use the "generateBaseline" configuration option without providing a "baselineFile" configuration option.');
         }
-        $this->generateBaseline = $generateBaseline;
-        $this->baselineFile = $baselineFile;
-        if ($this->baselineFile && !$this->generateBaseline) {
-            if (is_file($this->baselineFile)) {
-                $map = json_decode(file_get_contents($this->baselineFile));
+        $this->generate_baseline = $generate_baseline;
+        $this->baseline_file = $baseline_file;
+        if ($this->baseline_file && !$this->generate_baseline) {
+            if (is_file($this->baseline_file)) {
+                $map = json_decode(file_get_contents($this->baseline_file));
                 foreach ($map as $baseline_deprecation) {
-                    $this->baselineDeprecations[$baseline_deprecation->location][$baseline_deprecation->message] = $baseline_deprecation->count;
+                    $this->baseline_deprecations[$baseline_deprecation->location][$baseline_deprecation->message] = $baseline_deprecation->count;
                 }
             } else {
-                throw new \InvalidArgumentException(\sprintf('The baselineFile "%s" does not exist.', $this->baselineFile));
+                throw new \InvalidArgumentException(\sprintf('The baselineFile "%s" does not exist.', $this->baseline_file));
             }
         }
     }
-
-    public function isEnabled(): bool
+    public function is_enabled(): bool
     {
         return $this->enabled;
     }
-
     /**
      * @param DeprecationGroup[] $deprecationGroups
      */
-    public function tolerates(array $deprecationGroups): bool
+    public function tolerates(array $deprecation_groups): bool
     {
-        $grandTotal = 0;
-
-        foreach ($deprecationGroups as $name => $group) {
+        $grand_total = 0;
+        foreach ($deprecation_groups as $name => $group) {
             if ('legacy' !== $name) {
-                $grandTotal += $group->count();
+                $grand_total += $group->count();
             }
         }
-
-        if ($grandTotal > $this->thresholds['total']) {
+        if ($grand_total > $this->thresholds['total']) {
             return false;
         }
-
-        foreach (['self', 'direct', 'indirect'] as $deprecationType) {
-            if ($deprecationGroups[$deprecationType]->count() > $this->thresholds[$deprecationType]) {
+        foreach (['self', 'direct', 'indirect'] as $deprecation_type) {
+            if ($deprecation_groups[$deprecation_type]->count() > $this->thresholds[$deprecation_type]) {
                 return false;
             }
         }
-
         return true;
     }
-
-    public function isIgnoredDeprecation(Deprecation $deprecation): bool
+    public function is_ignored_deprecation(Deprecation $deprecation): bool
     {
-        if (!$this->ignoreDeprecationPatterns) {
+        if (!$this->ignore_deprecation_patterns) {
             return false;
         }
-        $result = @preg_filter($this->ignoreDeprecationPatterns, '$0', $deprecation->getMessage());
+        $result = @preg_filter($this->ignore_deprecation_patterns, '$0', $deprecation->get_message());
         if (\PREG_NO_ERROR !== preg_last_error()) {
             throw new \RuntimeException(preg_last_error_msg());
         }
-
         return (bool) $result;
     }
-
     /**
      * @param array<string,DeprecationGroup> $deprecationGroups
      *
      * @return bool true if the threshold is not reached for the deprecation type nor for the total
      */
-    public function toleratesForGroup(string $groupName, array $deprecationGroups): bool
+    public function tolerates_for_group(string $group_name, array $deprecation_groups): bool
     {
-        $grandTotal = 0;
-
-        foreach ($deprecationGroups as $type => $group) {
+        $grand_total = 0;
+        foreach ($deprecation_groups as $type => $group) {
             if ('legacy' !== $type) {
-                $grandTotal += $group->count();
+                $grand_total += $group->count();
             }
         }
-
-        if ($grandTotal > $this->thresholds['total']) {
+        if ($grand_total > $this->thresholds['total']) {
             return false;
         }
-
-        if (\in_array($groupName, ['self', 'direct', 'indirect'], true) && $deprecationGroups[$groupName]->count() > $this->thresholds[$groupName]) {
+        if (\in_array($group_name, ['self', 'direct', 'indirect'], true) && $deprecation_groups[$group_name]->count() > $this->thresholds[$group_name]) {
             return false;
         }
-
         return true;
     }
-
-    public function isBaselineDeprecation(Deprecation $deprecation): bool
+    public function is_baseline_deprecation(Deprecation $deprecation): bool
     {
-        if ($deprecation->isLegacy()) {
+        if ($deprecation->is_legacy()) {
             return false;
         }
-
-        if ($deprecation->originatesFromDebugClassLoader()) {
-            $location = $deprecation->triggeringClass();
-        } elseif ($deprecation->originatesFromAnObject()) {
-            $location = $deprecation->originatingClass().'::'.$deprecation->originatingMethod();
+        if ($deprecation->originates_from_debug_class_loader()) {
+            $location = $deprecation->triggering_class();
+        } elseif ($deprecation->originates_from_an_object()) {
+            $location = $deprecation->originating_class() . '::' . $deprecation->originating_method();
         } else {
             $location = 'procedural code';
         }
-
-        $message = $deprecation->getMessage();
-        $result = isset($this->baselineDeprecations[$location][$message]) && $this->baselineDeprecations[$location][$message] > 0;
-        if ($this->generateBaseline) {
+        $message = $deprecation->get_message();
+        $result = isset($this->baseline_deprecations[$location][$message]) && $this->baseline_deprecations[$location][$message] > 0;
+        if ($this->generate_baseline) {
             if ($result) {
-                ++$this->baselineDeprecations[$location][$message];
+                ++$this->baseline_deprecations[$location][$message];
             } else {
-                $this->baselineDeprecations[$location][$message] = 1;
+                $this->baseline_deprecations[$location][$message] = 1;
                 $result = true;
             }
         } elseif ($result) {
-            --$this->baselineDeprecations[$location][$message];
+            --$this->baseline_deprecations[$location][$message];
         }
-
         return $result;
     }
-
-    public function isGeneratingBaseline(): bool
+    public function is_generating_baseline(): bool
     {
-        return $this->generateBaseline;
+        return $this->generate_baseline;
     }
-
-    public function getBaselineFile(): string
+    public function get_baseline_file(): string
     {
-        return $this->baselineFile;
+        return $this->baseline_file;
     }
-
-    public function writeBaseline(): void
+    public function write_baseline(): void
     {
         $map = [];
-        foreach ($this->baselineDeprecations as $location => $messages) {
+        foreach ($this->baseline_deprecations as $location => $messages) {
             foreach ($messages as $message => $count) {
-                $map[] = [
-                    'location' => $location,
-                    'message' => $message,
-                    'count' => $count,
-                ];
+                $map[] = ['location' => $location, 'message' => $message, 'count' => $count];
             }
         }
-        file_put_contents($this->baselineFile, json_encode($map, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES));
+        file_put_contents($this->baseline_file, json_encode($map, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES));
     }
-
-    public function shouldDisplayStackTrace(string $message): bool
+    public function should_display_stack_trace(string $message): bool
     {
         return '' !== $this->regex && preg_match($this->regex, $message);
     }
-
-    public function isInRegexMode(): bool
+    public function is_in_regex_mode(): bool
     {
         return '' !== $this->regex;
     }
-
-    public function verboseOutput($group): bool
+    public function verbose_output($group): bool
     {
-        return $this->verboseOutput[$group];
+        return $this->verbose_output[$group];
     }
-
-    public function shouldWriteToLogFile(): bool
+    public function should_write_to_log_file(): bool
     {
-        return null !== $this->logFile;
+        return null !== $this->log_file;
     }
-
-    public function getLogFile(): ?string
+    public function get_log_file(): ?string
     {
-        return $this->logFile;
+        return $this->log_file;
     }
-
     /**
      * @param string $serializedConfiguration An encoded string, for instance max[total]=1234&max[indirect]=42
      */
-    public static function fromUrlEncodedString(string $serializedConfiguration): self
+    public static function from_url_encoded_string(string $serialized_configuration): self
     {
-        parse_str($serializedConfiguration, $normalizedConfiguration);
-        foreach (array_keys($normalizedConfiguration) as $key) {
+        parse_str($serialized_configuration, $normalized_configuration);
+        foreach (array_keys($normalized_configuration) as $key) {
             if (!\in_array($key, ['max', 'disabled', 'verbose', 'quiet', 'ignoreFile', 'generateBaseline', 'baselineFile', 'logFile'], true)) {
                 throw new \InvalidArgumentException(\sprintf('Unknown configuration option "%s".', $key));
             }
         }
-
-        $normalizedConfiguration += [
-            'max' => ['total' => 0],
-            'disabled' => false,
-            'verbose' => true,
-            'quiet' => [],
-            'ignoreFile' => '',
-            'generateBaseline' => false,
-            'baselineFile' => '',
-            'logFile' => null,
-        ];
-
-        if ('' === $normalizedConfiguration['disabled'] || filter_var($normalizedConfiguration['disabled'], \FILTER_VALIDATE_BOOLEAN)) {
-            return self::inDisabledMode();
+        $normalized_configuration += ['max' => ['total' => 0], 'disabled' => false, 'verbose' => true, 'quiet' => [], 'ignoreFile' => '', 'generateBaseline' => false, 'baselineFile' => '', 'logFile' => null];
+        if ('' === $normalized_configuration['disabled'] || filter_var($normalized_configuration['disabled'], \FILTER_VALIDATE_BOOLEAN)) {
+            return self::in_disabled_mode();
         }
-
-        $verboseOutput = [];
+        $verbose_output = [];
         foreach (['unsilenced', 'direct', 'indirect', 'self', 'other'] as $group) {
-            $verboseOutput[$group] = filter_var($normalizedConfiguration['verbose'], \FILTER_VALIDATE_BOOLEAN);
+            $verbose_output[$group] = filter_var($normalized_configuration['verbose'], \FILTER_VALIDATE_BOOLEAN);
         }
-
-        if (\is_array($normalizedConfiguration['quiet'])) {
-            foreach ($normalizedConfiguration['quiet'] as $shushedGroup) {
-                $verboseOutput[$shushedGroup] = false;
+        if (\is_array($normalized_configuration['quiet'])) {
+            foreach ($normalized_configuration['quiet'] as $shushed_group) {
+                $verbose_output[$shushed_group] = false;
             }
         }
-
-        return new self(
-            $normalizedConfiguration['max'],
-            '',
-            $verboseOutput,
-            $normalizedConfiguration['ignoreFile'],
-            filter_var($normalizedConfiguration['generateBaseline'], \FILTER_VALIDATE_BOOLEAN),
-            $normalizedConfiguration['baselineFile'],
-            $normalizedConfiguration['logFile']
-        );
+        return new self($normalized_configuration['max'], '', $verbose_output, $normalized_configuration['ignoreFile'], filter_var($normalized_configuration['generateBaseline'], \FILTER_VALIDATE_BOOLEAN), $normalized_configuration['baselineFile'], $normalized_configuration['logFile']);
     }
-
-    public static function inDisabledMode(): self
+    public static function in_disabled_mode(): self
     {
         $configuration = new self();
         $configuration->enabled = false;
-
         return $configuration;
     }
-
-    public static function inStrictMode(): self
+    public static function in_strict_mode(): self
     {
         return new self(['total' => 0]);
     }
-
-    public static function inWeakMode(): self
+    public static function in_weak_mode(): self
     {
-        $verboseOutput = [];
+        $verbose_output = [];
         foreach (['unsilenced', 'direct', 'indirect', 'self', 'other'] as $group) {
-            $verboseOutput[$group] = false;
+            $verbose_output[$group] = false;
         }
-
-        return new self([], '', $verboseOutput);
+        return new self([], '', $verbose_output);
     }
-
-    public static function fromNumber($upperBound): self
+    public static function from_number($upper_bound): self
     {
-        return new self(['total' => $upperBound]);
+        return new self(['total' => $upper_bound]);
     }
-
-    public static function fromRegex($regex): self
+    public static function from_regex($regex): self
     {
         return new self([], $regex);
     }

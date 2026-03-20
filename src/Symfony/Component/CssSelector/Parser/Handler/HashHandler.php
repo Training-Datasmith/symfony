@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,15 +9,13 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Css_Selector\Parser\Handler;
 
-namespace Symfony\Component\CssSelector\Parser\Handler;
-
-use Symfony\Component\CssSelector\Parser\Reader;
-use Symfony\Component\CssSelector\Parser\Token;
-use Symfony\Component\CssSelector\Parser\Tokenizer\TokenizerEscaping;
-use Symfony\Component\CssSelector\Parser\Tokenizer\TokenizerPatterns;
-use Symfony\Component\CssSelector\Parser\TokenStream;
-
+use Symfony\Component\Css_Selector\Parser\Reader;
+use Symfony\Component\Css_Selector\Parser\Token;
+use Symfony\Component\Css_Selector\Parser\Tokenizer\Tokenizer_Escaping;
+use Symfony\Component\Css_Selector\Parser\Tokenizer\Tokenizer_Patterns;
+use Symfony\Component\Css_Selector\Parser\Token_Stream;
 /**
  * CSS selector comment handler.
  *
@@ -29,26 +26,20 @@ use Symfony\Component\CssSelector\Parser\TokenStream;
  *
  * @internal
  */
-class HashHandler implements HandlerInterface
+class Hash_Handler implements Handler_Interface
 {
-    public function __construct(
-        private readonly TokenizerPatterns $patterns,
-        private readonly TokenizerEscaping $escaping,
-    ) {
-    }
-
-    public function handle(Reader $reader, TokenStream $stream): bool
+    public function __construct(private readonly Tokenizer_Patterns $patterns, private readonly Tokenizer_Escaping $escaping)
     {
-        $match = $reader->findPattern($this->patterns->getHashPattern());
-
+    }
+    public function handle(Reader $reader, Token_Stream $stream): bool
+    {
+        $match = $reader->find_pattern($this->patterns->get_hash_pattern());
         if (!$match) {
             return false;
         }
-
-        $value = $this->escaping->escapeUnicode($match[1]);
-        $stream->push(new Token(Token::TYPE_HASH, $value, $reader->getPosition()));
-        $reader->moveForward(\strlen((string) $match[0]));
-
+        $value = $this->escaping->escape_unicode($match[1]);
+        $stream->push(new Token(Token::TYPE_HASH, $value, $reader->get_position()));
+        $reader->move_forward(\strlen((string) $match[0]));
         return true;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
 /**
@@ -18,15 +16,14 @@ namespace Symfony\Component\Form;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface RequestHandlerInterface
+interface Request_Handler_Interface
 {
     /**
      * Submits a form if it was submitted.
      */
-    public function handleRequest(FormInterface $form, mixed $request = null): void;
-
+    public function handle_request(Form_Interface $form, mixed $request = null): void;
     /**
      * Returns true if the given data is a file upload.
      */
-    public function isFileUpload(mixed $data): bool;
+    public function is_file_upload(mixed $data): bool;
 }

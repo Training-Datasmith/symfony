@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,228 +9,174 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\Argument\AbstractArgument;
-use Symfony\Component\DependencyInjection\Argument\BoundArgument;
-use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
-use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\DependencyInjection\Attribute\Target;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\DependencyInjection\TypedReference;
-use Symfony\Component\VarExporter\ProxyHelper;
-
+use Symfony\Component\Dependency_Injection\Argument\Abstract_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Bound_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Service_Locator_Argument;
+use Symfony\Component\Dependency_Injection\Argument\Tagged_Iterator_Argument;
+use Symfony\Component\Dependency_Injection\Attribute\Autowire;
+use Symfony\Component\Dependency_Injection\Attribute\Target;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+use Symfony\Component\Dependency_Injection\Exception\RuntimeException;
+use Symfony\Component\Dependency_Injection\Reference;
+use Symfony\Component\Dependency_Injection\Typed_Reference;
+use Symfony\Component\Var_Exporter\Proxy_Helper;
 /**
  * @author Guilhem Niot <guilhem.niot@gmail.com>
  */
-class ResolveBindingsPass extends AbstractRecursivePass
+class Resolve_Bindings_Pass extends Abstract_Recursive_Pass
 {
-    protected bool $skipScalars = true;
-
-    private array $usedBindings = [];
-    private array $unusedBindings = [];
-    private array $errorMessages = [];
-
-    public function process(ContainerBuilder $container): void
+    protected bool $skip_scalars = true;
+    private array $used_bindings = [];
+    private array $unused_bindings = [];
+    private array $error_messages = [];
+    public function process(Container_Builder $container): void
     {
-        $this->usedBindings = $container->getRemovedBindingIds();
-
+        $this->used_bindings = $container->get_removed_binding_ids();
         try {
             parent::process($container);
-
-            foreach ($this->unusedBindings as [$key, $serviceId, $bindingType, $file]) {
-                $argumentType = $argumentName = $message = null;
-
+            foreach ($this->unused_bindings as [$key, $service_id, $binding_type, $file]) {
+                $argument_type = $argument_name = $message = null;
                 if (str_contains((string) $key, ' ')) {
-                    [$argumentType, $argumentName] = explode(' ', (string) $key, 2);
+                    [$argument_type, $argument_name] = explode(' ', (string) $key, 2);
                 } elseif ('$' === $key[0]) {
-                    $argumentName = $key;
+                    $argument_name = $key;
                 } else {
-                    $argumentType = $key;
+                    $argument_type = $key;
                 }
-
-                if ($argumentType) {
-                    $message .= \sprintf('of type "%s" ', $argumentType);
+                if ($argument_type) {
+                    $message .= \sprintf('of type "%s" ', $argument_type);
                 }
-
-                if ($argumentName) {
-                    $message .= \sprintf('named "%s" ', $argumentName);
+                if ($argument_name) {
+                    $message .= \sprintf('named "%s" ', $argument_name);
                 }
-
-                if (BoundArgument::DEFAULTS_BINDING === $bindingType) {
+                if (Bound_Argument::DEFAULTS_BINDING === $binding_type) {
                     $message .= 'under "_defaults"';
-                } elseif (BoundArgument::INSTANCEOF_BINDING === $bindingType) {
+                } elseif (Bound_Argument::INSTANCEOF_BINDING === $binding_type) {
                     $message .= 'under "_instanceof"';
                 } else {
-                    $message .= \sprintf('for service "%s"', $serviceId);
+                    $message .= \sprintf('for service "%s"', $service_id);
                 }
-
                 if ($file) {
                     $message .= \sprintf(' in file "%s"', $file);
                 }
-
                 $message = \sprintf('A binding is configured for an argument %s, but no corresponding argument has been found. It may be unused and should be removed, or it may have a typo.', $message);
-
-                if ($this->errorMessages) {
-                    $message .= \sprintf("\nCould be related to%s:", 1 < \count($this->errorMessages) ? ' one of' : '');
+                if ($this->error_messages) {
+                    $message .= \sprintf("\nCould be related to%s:", 1 < \count($this->error_messages) ? ' one of' : '');
                 }
-                foreach ($this->errorMessages as $m) {
-                    $message .= "\n - ".$m;
+                foreach ($this->error_messages as $m) {
+                    $message .= "\n - " . $m;
                 }
                 throw new InvalidArgumentException($message);
             }
         } finally {
-            $this->usedBindings = [];
-            $this->unusedBindings = [];
-            $this->errorMessages = [];
+            $this->used_bindings = [];
+            $this->unused_bindings = [];
+            $this->error_messages = [];
         }
     }
-
-    protected function processValue(mixed $value, bool $isRoot = false): mixed
+    protected function process_value(mixed $value, bool $is_root = false): mixed
     {
-        if ($value instanceof TypedReference && $value->getType() === (string) $value) {
+        if ($value instanceof Typed_Reference && $value->get_type() === (string) $value) {
             // Already checked
-            $bindings = $this->container->getDefinition($this->currentId)->getBindings();
-            $name = $value->getName();
-
-            if (isset($name, $bindings[$name = $value.' $'.$name])) {
-                return $this->getBindingValue($bindings[$name]);
+            $bindings = $this->container->get_definition($this->current_id)->get_bindings();
+            $name = $value->get_name();
+            if (isset($name, $bindings[$name = $value . ' $' . $name])) {
+                return $this->get_binding_value($bindings[$name]);
             }
-
-            if (isset($bindings[$value->getType()])) {
-                return $this->getBindingValue($bindings[$value->getType()]);
+            if (isset($bindings[$value->get_type()])) {
+                return $this->get_binding_value($bindings[$value->get_type()]);
             }
-
-            return parent::processValue($value, $isRoot);
+            return parent::process_value($value, $is_root);
         }
-
-        if (!$value instanceof Definition || !$bindings = $value->getBindings()) {
-            return parent::processValue($value, $isRoot);
+        if (!$value instanceof Definition || !$bindings = $value->get_bindings()) {
+            return parent::process_value($value, $is_root);
         }
-
-        $bindingNames = [];
-
+        $binding_names = [];
         foreach ($bindings as $key => $binding) {
-            [$bindingValue, $bindingId, $used, $bindingType, $file] = $binding->getValues();
+            [$binding_value, $binding_id, $used, $binding_type, $file] = $binding->get_values();
             if ($used) {
-                $this->usedBindings[$bindingId ?? ''] = true;
-                unset($this->unusedBindings[$bindingId ?? '']);
-            } elseif (!isset($this->usedBindings[$bindingId ?? ''])) {
-                $this->unusedBindings[$bindingId ?? ''] = [$key, $this->currentId, $bindingType, $file];
+                $this->used_bindings[$binding_id ?? ''] = true;
+                unset($this->unused_bindings[$binding_id ?? '']);
+            } elseif (!isset($this->used_bindings[$binding_id ?? ''])) {
+                $this->unused_bindings[$binding_id ?? ''] = [$key, $this->current_id, $binding_type, $file];
             }
-
             if (preg_match('/^(?:(?:array|bool|float|int|string|iterable|([^ $]++)) )\$/', (string) $key, $m)) {
-                $bindingNames[substr((string) $key, \strlen($m[0]))] = $binding;
+                $binding_names[substr((string) $key, \strlen($m[0]))] = $binding;
             }
-
             if (!isset($m[1])) {
                 continue;
             }
-
-            if (is_subclass_of($m[1], \UnitEnum::class)) {
-                $bindingNames[substr((string) $key, \strlen($m[0]))] = $binding;
+            if (is_subclass_of($m[1], \Unit_Enum::class)) {
+                $binding_names[substr((string) $key, \strlen($m[0]))] = $binding;
                 continue;
             }
-
-            if (null !== $bindingValue && !$bindingValue instanceof Reference && !$bindingValue instanceof Definition && !$bindingValue instanceof TaggedIteratorArgument && !$bindingValue instanceof ServiceLocatorArgument) {
-                throw new InvalidArgumentException(\sprintf('Invalid value for binding key "%s" for service "%s": expected "%s", "%s", "%s", "%s" or null, "%s" given.', $key, $this->currentId, Reference::class, Definition::class, TaggedIteratorArgument::class, ServiceLocatorArgument::class, get_debug_type($bindingValue)));
+            if (null !== $binding_value && !$binding_value instanceof Reference && !$binding_value instanceof Definition && !$binding_value instanceof Tagged_Iterator_Argument && !$binding_value instanceof Service_Locator_Argument) {
+                throw new InvalidArgumentException(\sprintf('Invalid value for binding key "%s" for service "%s": expected "%s", "%s", "%s", "%s" or null, "%s" given.', $key, $this->current_id, Reference::class, Definition::class, Tagged_Iterator_Argument::class, Service_Locator_Argument::class, get_debug_type($binding_value)));
             }
         }
-
-        if ($value->isAbstract()) {
-            return parent::processValue($value, $isRoot);
+        if ($value->is_abstract()) {
+            return parent::process_value($value, $is_root);
         }
-
-        $calls = $value->getMethodCalls();
-
+        $calls = $value->get_method_calls();
         try {
-            if ($constructor = $this->getConstructor($value, false)) {
-                $calls[] = [$constructor, $value->getArguments()];
+            if ($constructor = $this->get_constructor($value, false)) {
+                $calls[] = [$constructor, $value->get_arguments()];
             }
         } catch (RuntimeException $e) {
-            $this->errorMessages[] = $e->getMessage();
-            $this->container->getDefinition($this->currentId)->addError($e->getMessage());
-
-            return parent::processValue($value, $isRoot);
+            $this->error_messages[] = $e->get_message();
+            $this->container->get_definition($this->current_id)->add_error($e->get_message());
+            return parent::process_value($value, $is_root);
         }
-
         foreach ($calls as $i => $call) {
             [$method, $arguments] = $call;
-
-            if ($method instanceof \ReflectionFunctionAbstract) {
-                $reflectionMethod = $method;
+            if ($method instanceof \Reflection_Function_Abstract) {
+                $reflection_method = $method;
             } else {
                 try {
-                    $reflectionMethod = $this->getReflectionMethod($value, $method);
+                    $reflection_method = $this->get_reflection_method($value, $method);
                 } catch (RuntimeException $e) {
-                    if ($value->getFactory()) {
+                    if ($value->get_factory()) {
                         continue;
                     }
                     throw $e;
                 }
             }
-
             $names = [];
-
-            foreach ($reflectionMethod->getParameters() as $key => $parameter) {
+            foreach ($reflection_method->get_parameters() as $key => $parameter) {
                 $names[$key] = $parameter->name;
-
-                if (\array_key_exists($key, $arguments) && '' !== $arguments[$key] && !$arguments[$key] instanceof AbstractArgument) {
+                if (\array_key_exists($key, $arguments) && '' !== $arguments[$key] && !$arguments[$key] instanceof Abstract_Argument) {
                     continue;
                 }
-                if (\array_key_exists($parameter->name, $arguments) && '' !== $arguments[$parameter->name] && !$arguments[$parameter->name] instanceof AbstractArgument) {
+                if (\array_key_exists($parameter->name, $arguments) && '' !== $arguments[$parameter->name] && !$arguments[$parameter->name] instanceof Abstract_Argument) {
                     continue;
                 }
-                if (
-                    $value->isAutowired()
-                    && !$value->hasTag('container.ignore_attributes')
-                    && $parameter->getAttributes(Autowire::class, \ReflectionAttribute::IS_INSTANCEOF)
-                ) {
+                if ($value->is_autowired() && !$value->has_tag('container.ignore_attributes') && $parameter->get_attributes(Autowire::class, \Reflection_Attribute::IS_INSTANCEOF)) {
                     continue;
                 }
-
-                $typeHint = ltrim(ProxyHelper::exportType($parameter) ?? '', '?');
-
-                $name = Target::parseName($parameter, parsedName: $parsedName);
-
-                if ($typeHint && (
-                    \array_key_exists($k = preg_replace('/(^|[(|&])\\\\/', '\1', $typeHint).' $'.$name, $bindings)
-                    || \array_key_exists($k = preg_replace('/(^|[(|&])\\\\/', '\1', $typeHint).' $'.$parsedName, $bindings)
-                    || ($name !== $parameter->name && \array_key_exists($k = preg_replace('/(^|[(|&])\\\\/', '\1', $typeHint).' $'.$parameter->name, $bindings))
-                )) {
-                    $arguments[$key] = $this->getBindingValue($bindings[$k]);
-
+                $type_hint = ltrim(Proxy_Helper::export_type($parameter) ?? '', '?');
+                $name = Target::parse_name($parameter, parsedName: $parsed_name);
+                if ($type_hint && (\array_key_exists($k = preg_replace('/(^|[(|&])\\\\/', '\1', $type_hint) . ' $' . $name, $bindings) || \array_key_exists($k = preg_replace('/(^|[(|&])\\\\/', '\1', $type_hint) . ' $' . $parsed_name, $bindings) || $name !== $parameter->name && \array_key_exists($k = preg_replace('/(^|[(|&])\\\\/', '\1', $type_hint) . ' $' . $parameter->name, $bindings))) {
+                    $arguments[$key] = $this->get_binding_value($bindings[$k]);
                     continue;
                 }
-
-                if (\array_key_exists($k = '$'.$name, $bindings)
-                    || \array_key_exists($k = '$'.$parsedName, $bindings)
-                    || ($name !== $parameter->name && \array_key_exists($k = '$'.$parameter->name, $bindings))
-                ) {
-                    $arguments[$key] = $this->getBindingValue($bindings[$k]);
-
+                if (\array_key_exists($k = '$' . $name, $bindings) || \array_key_exists($k = '$' . $parsed_name, $bindings) || $name !== $parameter->name && \array_key_exists($k = '$' . $parameter->name, $bindings)) {
+                    $arguments[$key] = $this->get_binding_value($bindings[$k]);
                     continue;
                 }
-
-                if ($typeHint && '\\' === $typeHint[0] && isset($bindings[$typeHint = substr($typeHint, 1)])) {
-                    $arguments[$key] = $this->getBindingValue($bindings[$typeHint]);
-
+                if ($type_hint && '\\' === $type_hint[0] && isset($bindings[$type_hint = substr($type_hint, 1)])) {
+                    $arguments[$key] = $this->get_binding_value($bindings[$type_hint]);
                     continue;
                 }
-
-                if (null !== $binding = $bindingNames[$name] ?? $bindingNames[$parsedName] ?? $bindingNames[$parameter->name] ?? null) {
-                    $bindingKey = array_search($binding, $bindings, true);
-                    $argumentType = substr($bindingKey, 0, strpos($bindingKey, ' '));
-                    $this->errorMessages[] = \sprintf('Did you forget to add the type "%s" to argument "$%s" of method "%s::%s()"?', $argumentType, $parameter->name, $reflectionMethod->class, $reflectionMethod->name);
+                if (null !== $binding = $binding_names[$name] ?? $binding_names[$parsed_name] ?? $binding_names[$parameter->name] ?? null) {
+                    $binding_key = array_search($binding, $bindings, true);
+                    $argument_type = substr($binding_key, 0, strpos($binding_key, ' '));
+                    $this->error_messages[] = \sprintf('Did you forget to add the type "%s" to argument "$%s" of method "%s::%s()"?', $argument_type, $parameter->name, $reflection_method->class, $reflection_method->name);
                 }
             }
-
             foreach ($names as $key => $name) {
                 if (\array_key_exists($name, $arguments) && (0 === $key || \array_key_exists($key - 1, $arguments))) {
                     if (!\array_key_exists($key, $arguments)) {
@@ -240,35 +185,27 @@ class ResolveBindingsPass extends AbstractRecursivePass
                     unset($arguments[$name]);
                 }
             }
-
             if ($arguments !== $call[1]) {
                 ksort($arguments, \SORT_NATURAL);
                 $calls[$i][1] = $arguments;
             }
         }
-
         if ($constructor) {
             [, $arguments] = array_pop($calls);
-
-            if ($arguments !== $value->getArguments()) {
-                $value->setArguments($arguments);
+            if ($arguments !== $value->get_arguments()) {
+                $value->set_arguments($arguments);
             }
         }
-
-        if ($calls !== $value->getMethodCalls()) {
-            $value->setMethodCalls($calls);
+        if ($calls !== $value->get_method_calls()) {
+            $value->set_method_calls($calls);
         }
-
-        return parent::processValue($value, $isRoot);
+        return parent::process_value($value, $is_root);
     }
-
-    private function getBindingValue(BoundArgument $binding): mixed
+    private function get_binding_value(Bound_Argument $binding): mixed
     {
-        [$bindingValue, $bindingId] = $binding->getValues();
-
-        $this->usedBindings[$bindingId ?? ''] = true;
-        unset($this->unusedBindings[$bindingId ?? '']);
-
-        return $bindingValue;
+        [$binding_value, $binding_id] = $binding->get_values();
+        $this->used_bindings[$binding_id ?? ''] = true;
+        unset($this->unused_bindings[$binding_id ?? '']);
+        return $binding_value;
     }
 }

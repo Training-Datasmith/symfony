@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,10 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator\Traits;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
-
-trait ArgumentTrait
+trait Argument_Trait
 {
     /**
      * Sets the arguments to pass to the service constructor/factory method.
@@ -22,11 +20,9 @@ trait ArgumentTrait
      */
     final public function args(array $arguments): static
     {
-        $this->definition->setArguments(static::processValue($arguments, true));
-
+        $this->definition->set_arguments(static::process_value($arguments, true));
         return $this;
     }
-
     /**
      * Sets one argument to pass to the service constructor/factory method.
      *
@@ -34,8 +30,7 @@ trait ArgumentTrait
      */
     final public function arg(string|int $key, mixed $value): static
     {
-        $this->definition->setArgument($key, static::processValue($value, true));
-
+        $this->definition->set_argument($key, static::process_value($value, true));
         return $this;
     }
 }

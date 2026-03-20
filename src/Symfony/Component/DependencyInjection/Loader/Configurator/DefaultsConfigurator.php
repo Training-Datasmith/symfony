@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,32 +9,24 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator;
-
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-
+use Symfony\Component\Dependency_Injection\Definition;
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class DefaultsConfigurator extends AbstractServiceConfigurator
+class Defaults_Configurator extends Abstract_Service_Configurator
 {
-    use Traits\AutoconfigureTrait;
-    use Traits\AutowireTrait;
-    use Traits\BindTrait;
-    use Traits\PublicTrait;
-
+    use Traits\Autoconfigure_Trait;
+    use Traits\Autowire_Trait;
+    use Traits\Bind_Trait;
+    use Traits\Public_Trait;
     public const FACTORY = 'defaults';
-
-    public function __construct(
-        ServicesConfigurator $parent,
-        Definition $definition,
-        private ?string $path = null,
-    ) {
+    public function __construct(Services_Configurator $parent, Definition $definition, private ?string $path = null)
+    {
         parent::__construct($parent, $definition);
     }
-
     /**
      * Adds a tag for this definition.
      *
@@ -48,14 +39,10 @@ class DefaultsConfigurator extends AbstractServiceConfigurator
         if ('' === $name) {
             throw new InvalidArgumentException('The tag name in "_defaults" must be a non-empty string.');
         }
-
-        $this->validateAttributes($name, $attributes);
-
-        $this->definition->addTag($name, $attributes);
-
+        $this->validate_attributes($name, $attributes);
+        $this->definition->add_tag($name, $attributes);
         return $this;
     }
-
     /**
      * Adds a resource tag for this definition.
      *
@@ -63,32 +50,27 @@ class DefaultsConfigurator extends AbstractServiceConfigurator
      *
      * @throws InvalidArgumentException when an invalid tag name or attribute is provided
      */
-    final public function resourceTag(string $name, array $attributes = []): static
+    final public function resource_tag(string $name, array $attributes = []): static
     {
         if ('' === $name) {
             throw new InvalidArgumentException('The resource tag name in "_defaults" must be a non-empty string.');
         }
-
-        $this->validateAttributes($name, $attributes);
-
-        $this->definition->addResourceTag($name, $attributes);
-
+        $this->validate_attributes($name, $attributes);
+        $this->definition->add_resource_tag($name, $attributes);
         return $this;
     }
-
     /**
      * Defines an instanceof-conditional to be applied to following service definitions.
      */
-    final public function instanceof(string $fqcn): InstanceofConfigurator
+    final public function instanceof(string $fqcn): Instanceof_Configurator
     {
         return $this->parent->instanceof($fqcn);
     }
-
-    private function validateAttributes(string $tag, array $attributes, array $path = []): void
+    private function validate_attributes(string $tag, array $attributes, array $path = []): void
     {
         foreach ($attributes as $name => $value) {
             if (\is_array($value)) {
-                $this->validateAttributes($tag, $value, [...$path, $name]);
+                $this->validate_attributes($tag, $value, [...$path, $name]);
             } elseif (!\is_scalar($value ?? '')) {
                 $name = implode('.', [...$path, $name]);
                 throw new InvalidArgumentException(\sprintf('Tag "%s", attribute "%s" in "_defaults" must be of a scalar-type or an array of scalar-type.', $tag, $name));

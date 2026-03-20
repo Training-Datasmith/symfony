@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Asset_Mapper\Import_Map\Resolver;
 
-namespace Symfony\Component\AssetMapper\ImportMap\Resolver;
-
-use Symfony\Component\AssetMapper\ImportMap\ImportMapEntry;
-use Symfony\Component\AssetMapper\ImportMap\PackageRequireOptions;
-
-interface PackageResolverInterface
+use Symfony\Component\Asset_Mapper\Import_Map\Import_Map_Entry;
+use Symfony\Component\Asset_Mapper\Import_Map\Package_Require_Options;
+interface Package_Resolver_Interface
 {
     /**
      * Grabs the URLs for the given packages and converts them to ImportMapEntry objects.
@@ -28,8 +25,7 @@ interface PackageResolverInterface
      *
      * @return ResolvedImportMapPackage[] The import map entries that should be added
      */
-    public function resolvePackages(array $packagesToRequire): array;
-
+    public function resolve_packages(array $packages_to_require): array;
     /**
      * Downloads the contents of the given packages.
      *
@@ -41,5 +37,5 @@ interface PackageResolverInterface
      *
      * @return array<string, array{content: string, dependencies: string[], extraFiles: array<string, string>}>
      */
-    public function downloadPackages(array $importMapEntries, ?callable $progressCallback = null): array;
+    public function download_packages(array $import_map_entries, ?callable $progress_callback = null): array;
 }

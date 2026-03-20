@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Css_Selector\Parser\Tokenizer;
 
-namespace Symfony\Component\CssSelector\Parser\Tokenizer;
-
-use Symfony\Component\CssSelector\Parser\Handler;
-use Symfony\Component\CssSelector\Parser\Reader;
-use Symfony\Component\CssSelector\Parser\Token;
-use Symfony\Component\CssSelector\Parser\TokenStream;
-
+use Symfony\Component\Css_Selector\Parser\Handler;
+use Symfony\Component\Css_Selector\Parser\Reader;
+use Symfony\Component\Css_Selector\Parser\Token;
+use Symfony\Component\Css_Selector\Parser\Token_Stream;
 /**
  * CSS selector tokenizer.
  *
@@ -34,42 +31,27 @@ class Tokenizer
      * @var Handler\HandlerInterface[]
      */
     private readonly array $handlers;
-
     public function __construct()
     {
-        $patterns = new TokenizerPatterns();
-        $escaping = new TokenizerEscaping($patterns);
-
-        $this->handlers = [
-            new Handler\WhitespaceHandler(),
-            new Handler\IdentifierHandler($patterns, $escaping),
-            new Handler\HashHandler($patterns, $escaping),
-            new Handler\StringHandler($patterns, $escaping),
-            new Handler\NumberHandler($patterns),
-            new Handler\CommentHandler(),
-        ];
+        $patterns = new Tokenizer_Patterns();
+        $escaping = new Tokenizer_Escaping($patterns);
+        $this->handlers = [new Handler\Whitespace_Handler(), new Handler\Identifier_Handler($patterns, $escaping), new Handler\Hash_Handler($patterns, $escaping), new Handler\String_Handler($patterns, $escaping), new Handler\Number_Handler($patterns), new Handler\Comment_Handler()];
     }
-
     /**
      * Tokenize selector source code.
      */
-    public function tokenize(Reader $reader): TokenStream
+    public function tokenize(Reader $reader): Token_Stream
     {
-        $stream = new TokenStream();
-
-        while (!$reader->isEOF()) {
+        $stream = new Token_Stream();
+        while (!$reader->is_eof()) {
             foreach ($this->handlers as $handler) {
                 if ($handler->handle($reader, $stream)) {
                     continue 2;
                 }
             }
-
-            $stream->push(new Token(Token::TYPE_DELIMITER, $reader->getSubstring(1), $reader->getPosition()));
-            $reader->moveForward(1);
+            $stream->push(new Token(Token::TYPE_DELIMITER, $reader->get_substring(1), $reader->get_position()));
+            $reader->move_forward(1);
         }
-
-        return $stream
-            ->push(new Token(Token::TYPE_FILE_END, null, $reader->getPosition()))
-            ->freeze();
+        return $stream->push(new Token(Token::TYPE_FILE_END, null, $reader->get_position()))->freeze();
     }
 }

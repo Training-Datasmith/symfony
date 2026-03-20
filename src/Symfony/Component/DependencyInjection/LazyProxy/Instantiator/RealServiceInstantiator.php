@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,24 +9,22 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Lazy_Proxy\Instantiator;
 
-namespace Symfony\Component\DependencyInjection\LazyProxy\Instantiator;
-
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Definition;
-
+use Symfony\Component\Dependency_Injection\Container_Interface;
+use Symfony\Component\Dependency_Injection\Definition;
 /**
  * Noop proxy instantiator - produces the real service instead of a proxy instance.
  *
  * @author Marco Pivetta <ocramius@gmail.com>
  */
-class RealServiceInstantiator implements InstantiatorInterface
+class Real_Service_Instantiator implements Instantiator_Interface
 {
     /**
      * @return object The real service instance
      */
-    public function instantiateProxy(ContainerInterface $container, Definition $definition, string $id, callable $realInstantiator): object
+    public function instantiate_proxy(Container_Interface $container, Definition $definition, string $id, callable $real_instantiator): object
     {
-        return $realInstantiator();
+        return $real_instantiator();
     }
 }

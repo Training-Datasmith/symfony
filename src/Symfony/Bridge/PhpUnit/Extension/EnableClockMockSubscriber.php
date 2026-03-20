@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,44 +9,37 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Php_Unit\Extension;
 
-namespace Symfony\Bridge\PhpUnit\Extension;
-
-use PHPUnit\Event\Code\TestMethod;
-use PHPUnit\Event\Test\PreparationStarted;
-use PHPUnit\Event\Test\PreparationStartedSubscriber;
-use PHPUnit\Metadata\Group;
-use Symfony\Bridge\PhpUnit\Attribute\TimeSensitive;
-use Symfony\Bridge\PhpUnit\ClockMock;
-use Symfony\Bridge\PhpUnit\Metadata\AttributeReader;
-
+use Php_Unit\Event\Code\Test_Method;
+use Php_Unit\Event\Test\Preparation_Started;
+use Php_Unit\Event\Test\Preparation_Started_Subscriber;
+use Php_Unit\Metadata\Group;
+use Symfony\Bridge\Php_Unit\Attribute\Time_Sensitive;
+use Symfony\Bridge\Php_Unit\Clock_Mock;
+use Symfony\Bridge\Php_Unit\Metadata\Attribute_Reader;
 /**
  * @internal
  */
-class EnableClockMockSubscriber implements PreparationStartedSubscriber
+class Enable_Clock_Mock_Subscriber implements Preparation_Started_Subscriber
 {
-    public function __construct(
-        private readonly AttributeReader $reader,
-    ) {
+    public function __construct(private readonly Attribute_Reader $reader)
+    {
     }
-
-    public function notify(PreparationStarted $event): void
+    public function notify(Preparation_Started $event): void
     {
         $test = $event->test();
-
-        if (!$test instanceof TestMethod) {
+        if (!$test instanceof Test_Method) {
             return;
         }
-
         foreach ($test->metadata() as $metadata) {
-            if ($metadata instanceof Group && 'time-sensitive' === $metadata->groupName()) {
-                ClockMock::withClockMock(true);
+            if ($metadata instanceof Group && 'time-sensitive' === $metadata->group_name()) {
+                Clock_Mock::with_clock_mock(true);
                 break;
             }
         }
-
-        if ($this->reader->forClassAndMethod($test->className(), $test->methodName(), TimeSensitive::class)) {
-            ClockMock::withClockMock(true);
+        if ($this->reader->for_class_and_method($test->class_name(), $test->method_name(), Time_Sensitive::class)) {
+            Clock_Mock::with_clock_mock(true);
         }
     }
 }

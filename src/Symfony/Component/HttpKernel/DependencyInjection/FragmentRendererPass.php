@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,47 +9,41 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Dependency_Injection;
 
-namespace Symfony\Component\HttpKernel\DependencyInjection;
-
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
-
+use Symfony\Component\Dependency_Injection\Compiler\Compiler_Pass_Interface;
+use Symfony\Component\Dependency_Injection\Compiler\Service_Locator_Tag_Pass;
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
+use Symfony\Component\Dependency_Injection\Reference;
+use Symfony\Component\Http_Kernel\Fragment\Fragment_Renderer_Interface;
 /**
  * Adds services tagged kernel.fragment_renderer as HTTP content rendering strategies.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class FragmentRendererPass implements CompilerPassInterface
+class Fragment_Renderer_Pass implements Compiler_Pass_Interface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(Container_Builder $container): void
     {
-        if (!$container->hasDefinition('fragment.handler')) {
+        if (!$container->has_definition('fragment.handler')) {
             return;
         }
-
-        $definition = $container->getDefinition('fragment.handler');
+        $definition = $container->get_definition('fragment.handler');
         $renderers = [];
-        foreach ($container->findTaggedServiceIds('kernel.fragment_renderer', true) as $id => $tags) {
-            $def = $container->getDefinition($id);
-            $class = $container->getParameterBag()->resolveValue($def->getClass());
-
-            if (!$r = $container->getReflectionClass($class)) {
+        foreach ($container->find_tagged_service_ids('kernel.fragment_renderer', true) as $id => $tags) {
+            $def = $container->get_definition($id);
+            $class = $container->get_parameter_bag()->resolve_value($def->get_class());
+            if (!$r = $container->get_reflection_class($class)) {
                 throw new InvalidArgumentException(\sprintf('Class "%s" used for service "%s" cannot be found.', $class, $id));
             }
-            if (!$r->isSubclassOf(FragmentRendererInterface::class)) {
-                throw new InvalidArgumentException(\sprintf('Service "%s" must implement interface "%s".', $id, FragmentRendererInterface::class));
+            if (!$r->is_subclass_of(Fragment_Renderer_Interface::class)) {
+                throw new InvalidArgumentException(\sprintf('Service "%s" must implement interface "%s".', $id, Fragment_Renderer_Interface::class));
             }
-
             foreach ($tags as $tag) {
                 $renderers[$tag['alias']] = new Reference($id);
             }
         }
-
-        $definition->replaceArgument(0, ServiceLocatorTagPass::register($container, $renderers));
+        $definition->replace_argument(0, Service_Locator_Tag_Pass::register($container, $renderers));
     }
 }

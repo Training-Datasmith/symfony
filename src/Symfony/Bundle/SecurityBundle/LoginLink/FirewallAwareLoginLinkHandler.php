@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,43 +9,37 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Login_Link;
 
-namespace Symfony\Bundle\SecurityBundle\LoginLink;
-
-use Psr\Container\ContainerInterface;
-use Symfony\Bundle\SecurityBundle\Security\FirewallAwareTrait;
-use Symfony\Bundle\SecurityBundle\Security\FirewallMap;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Http\LoginLink\LoginLinkDetails;
-use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
-
+use Psr\Container\Container_Interface;
+use Symfony\Bundle\Security_Bundle\Security\Firewall_Aware_Trait;
+use Symfony\Bundle\Security_Bundle\Security\Firewall_Map;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Foundation\Request_Stack;
+use Symfony\Component\Security\Core\User\User_Interface;
+use Symfony\Component\Security\Http\Login_Link\Login_Link_Details;
+use Symfony\Component\Security\Http\Login_Link\Login_Link_Handler_Interface;
 /**
  * Decorates the login link handler for the current firewall.
  *
  * @author Ryan Weaver <ryan@symfonycasts.com>
  */
-class FirewallAwareLoginLinkHandler implements LoginLinkHandlerInterface
+class Firewall_Aware_Login_Link_Handler implements Login_Link_Handler_Interface
 {
-    use FirewallAwareTrait;
-
+    use Firewall_Aware_Trait;
     private const FIREWALL_OPTION = 'login_link';
-
-    public function __construct(FirewallMap $firewallMap, ContainerInterface $loginLinkHandlerLocator, RequestStack $requestStack)
+    public function __construct(Firewall_Map $firewall_map, Container_Interface $login_link_handler_locator, Request_Stack $request_stack)
     {
-        $this->firewallMap = $firewallMap;
-        $this->locator = $loginLinkHandlerLocator;
-        $this->requestStack = $requestStack;
+        $this->firewall_map = $firewall_map;
+        $this->locator = $login_link_handler_locator;
+        $this->request_stack = $request_stack;
     }
-
-    public function createLoginLink(UserInterface $user, ?Request $request = null, ?int $lifetime = null): LoginLinkDetails
+    public function create_login_link(User_Interface $user, ?Request $request = null, ?int $lifetime = null): Login_Link_Details
     {
-        return $this->getForFirewall()->createLoginLink($user, $request, $lifetime);
+        return $this->get_for_firewall()->create_login_link($user, $request, $lifetime);
     }
-
-    public function consumeLoginLink(Request $request): UserInterface
+    public function consume_login_link(Request $request): User_Interface
     {
-        return $this->getForFirewall()->consumeLoginLink($request);
+        return $this->get_for_firewall()->consume_login_link($request);
     }
 }

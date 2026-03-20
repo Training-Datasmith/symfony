@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,38 +9,31 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Argument;
 
-namespace Symfony\Component\DependencyInjection\Argument;
-
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-
+use Symfony\Component\Dependency_Injection\Exception\InvalidArgumentException;
 /**
  * Represents a service wrapped in a memoizing closure.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ServiceClosureArgument implements ArgumentInterface
+class Service_Closure_Argument implements Argument_Interface
 {
-    use ArgumentTrait;
-
+    use Argument_Trait;
     private array $values;
-
     public function __construct(mixed $value)
     {
         $this->values = [$value];
     }
-
-    public function getValues(): array
+    public function get_values(): array
     {
         return $this->values;
     }
-
-    public function setValues(array $values): void
+    public function set_values(array $values): void
     {
         if ([0] !== array_keys($values)) {
             throw new InvalidArgumentException('A ServiceClosureArgument must hold one and only one value.');
         }
-
         $this->values = $values;
     }
 }

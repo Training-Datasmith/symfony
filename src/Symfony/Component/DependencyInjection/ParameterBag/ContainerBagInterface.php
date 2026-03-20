@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,24 +9,21 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Parameter_Bag;
 
-namespace Symfony\Component\DependencyInjection\ParameterBag;
-
-use Psr\Container\ContainerInterface;
-use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
-
+use Psr\Container\Container_Interface;
+use Symfony\Component\Dependency_Injection\Exception\Parameter_Not_Found_Exception;
 /**
  * ContainerBagInterface is the interface implemented by objects that manage service container parameters.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-interface ContainerBagInterface extends ContainerInterface
+interface Container_Bag_Interface extends Container_Interface
 {
     /**
      * Gets the service container parameters.
      */
     public function all(): array;
-
     /**
      * Replaces parameter placeholders (%name%) by their values.
      *
@@ -39,15 +35,13 @@ interface ContainerBagInterface extends ContainerInterface
      *
      * @throws ParameterNotFoundException if a placeholder references a parameter that does not exist
      */
-    public function resolveValue(mixed $value): mixed;
-
+    public function resolve_value(mixed $value): mixed;
     /**
      * Escape parameter placeholders %.
      */
-    public function escapeValue(mixed $value): mixed;
-
+    public function escape_value(mixed $value): mixed;
     /**
      * Unescape parameter placeholders %.
      */
-    public function unescapeValue(mixed $value): mixed;
+    public function unescape_value(mixed $value): mixed;
 }

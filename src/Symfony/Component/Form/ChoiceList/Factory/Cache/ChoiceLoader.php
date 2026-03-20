@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Form\Choice_List\Factory\Cache;
 
-namespace Symfony\Component\Form\ChoiceList\Factory\Cache;
-
-use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
-use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
-use Symfony\Component\Form\FormTypeExtensionInterface;
-use Symfony\Component\Form\FormTypeInterface;
-
+use Symfony\Component\Form\Choice_List\Choice_List_Interface;
+use Symfony\Component\Form\Choice_List\Loader\Choice_Loader_Interface;
+use Symfony\Component\Form\Form_Type_Extension_Interface;
+use Symfony\Component\Form\Form_Type_Interface;
 /**
  * A cacheable wrapper for {@see FormTypeInterface} or {@see FormTypeExtensionInterface}
  * which configures a "choice_loader" option.
@@ -26,20 +23,18 @@ use Symfony\Component\Form\FormTypeInterface;
  *
  * @author Jules Pietri <jules@heahprod.com>
  */
-final class ChoiceLoader extends AbstractStaticOption implements ChoiceLoaderInterface
+final class Choice_Loader extends Abstract_Static_Option implements Choice_Loader_Interface
 {
-    public function loadChoiceList(?callable $value = null): ChoiceListInterface
+    public function load_choice_list(?callable $value = null): Choice_List_Interface
     {
-        return $this->getOption()->loadChoiceList($value);
+        return $this->get_option()->load_choice_list($value);
     }
-
-    public function loadChoicesForValues(array $values, ?callable $value = null): array
+    public function load_choices_for_values(array $values, ?callable $value = null): array
     {
-        return $this->getOption()->loadChoicesForValues($values, $value);
+        return $this->get_option()->load_choices_for_values($values, $value);
     }
-
-    public function loadValuesForChoices(array $choices, ?callable $value = null): array
+    public function load_values_for_choices(array $choices, ?callable $value = null): array
     {
-        return $this->getOption()->loadValuesForChoices($choices, $value);
+        return $this->get_option()->load_values_for_choices($choices, $value);
     }
 }

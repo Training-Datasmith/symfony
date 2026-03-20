@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,74 +9,63 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Cache\Traits;
 
-use Psr\Cache\CacheItemInterface;
-use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\Cache\CacheItem;
+use Psr\Cache\Cache_Item_Interface;
+use Psr\Log\Logger_Aware_Trait;
+use Symfony\Component\Cache\Cache_Item;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
-
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
  * @internal
  */
-trait AbstractAdapterTrait
+trait Abstract_Adapter_Trait
 {
-    use LoggerAwareTrait;
-
+    use Logger_Aware_Trait;
     /**
      * needs to be set by class, signature is function(string <key>, mixed <value>, bool <isHit>).
      */
-    private static \Closure $createCacheItem;
-
+    private static \Closure $create_cache_item;
     /**
      * needs to be set by class, signature is function(array <deferred>, string <namespace>, array <&expiredIds>).
      */
-    private static \Closure $mergeByLifetime;
-
-    private readonly string $rootNamespace;
+    private static \Closure $merge_by_lifetime;
+    private readonly string $root_namespace;
     private string $namespace = '';
-    private int $defaultLifetime;
-    private string $namespaceVersion = '';
-    private bool $versioningIsEnabled = false;
+    private int $default_lifetime;
+    private string $namespace_version = '';
+    private bool $versioning_is_enabled = false;
     private array $deferred = [];
     private array $ids = [];
-
     /**
      * The maximum length to enforce for identifiers or null when no limit applies.
      */
-    protected ?int $maxIdLength = null;
-
+    protected ?int $max_id_length = null;
     /**
      * Fetches several cache items.
      *
      * @param array $ids The cache identifiers to fetch
      */
-    abstract protected function doFetch(array $ids): iterable;
-
+    abstract protected function do_fetch(array $ids): iterable;
     /**
      * Confirms if the cache contains specified cache item.
      *
      * @param string $id The identifier for which to check existence
      */
-    abstract protected function doHave(string $id): bool;
-
+    abstract protected function do_have(string $id): bool;
     /**
      * Deletes all items in the pool.
      *
      * @param string $namespace The prefix used for all identifiers managed by this pool
      */
-    abstract protected function doClear(string $namespace): bool;
-
+    abstract protected function do_clear(string $namespace): bool;
     /**
      * Removes multiple items from the pool.
      *
      * @param array $ids An array of identifiers that should be removed from the pool
      */
-    abstract protected function doDelete(array $ids): bool;
-
+    abstract protected function do_delete(array $ids): bool;
     /**
      * Persists several cache items immediately.
      *
@@ -86,184 +74,151 @@ trait AbstractAdapterTrait
      *
      * @return array|bool The identifiers that failed to be cached or a boolean stating if caching succeeded or not
      */
-    abstract protected function doSave(array $values, int $lifetime): array|bool;
-
-    public function hasItem(mixed $key): bool
+    abstract protected function do_save(array $values, int $lifetime): array|bool;
+    public function has_item(mixed $key): bool
     {
-        $id = $this->getId($key);
-
+        $id = $this->get_id($key);
         if (isset($this->deferred[$key])) {
             $this->commit();
         }
-
         try {
-            return $this->doHave($id);
+            return $this->do_have($id);
         } catch (\Exception $e) {
-            CacheItem::log($this->logger, 'Failed to check if key "{key}" is cached: '.$e->getMessage(), ['key' => $key, 'exception' => $e, 'cache-adapter' => get_debug_type($this)]);
-
+            Cache_Item::log($this->logger, 'Failed to check if key "{key}" is cached: ' . $e->get_message(), ['key' => $key, 'exception' => $e, 'cache-adapter' => get_debug_type($this)]);
             return false;
         }
     }
-
     public function clear(string $prefix = ''): bool
     {
         $this->deferred = [];
-        if ($cleared = $this->versioningIsEnabled) {
-            $rootNamespace = $this->rootNamespace ??= $this->namespace;
-            if ('' === $namespaceVersionToClear = $this->namespaceVersion) {
-                foreach ($this->doFetch([static::NS_SEPARATOR.$rootNamespace]) as $v) {
-                    $namespaceVersionToClear = $v;
+        if ($cleared = $this->versioning_is_enabled) {
+            $root_namespace = $this->root_namespace ??= $this->namespace;
+            if ('' === $namespace_version_to_clear = $this->namespace_version) {
+                foreach ($this->do_fetch([static::NS_SEPARATOR . $root_namespace]) as $v) {
+                    $namespace_version_to_clear = $v;
                 }
             }
-            $namespaceToClear = $rootNamespace.$namespaceVersionToClear;
-            $namespaceVersion = self::formatNamespaceVersion(mt_rand());
+            $namespace_to_clear = $root_namespace . $namespace_version_to_clear;
+            $namespace_version = self::format_namespace_version(mt_rand());
             try {
-                $e = $this->doSave([static::NS_SEPARATOR.$rootNamespace => $namespaceVersion], 0);
+                $e = $this->do_save([static::NS_SEPARATOR . $root_namespace => $namespace_version], 0);
             } catch (\Exception $e) {
             }
             if (true !== $e && [] !== $e) {
                 $cleared = false;
-                $message = 'Failed to save the new namespace'.($e instanceof \Exception ? ': '.$e->getMessage() : '.');
-                CacheItem::log($this->logger, $message, ['exception' => $e instanceof \Exception ? $e : null, 'cache-adapter' => get_debug_type($this)]);
+                $message = 'Failed to save the new namespace' . ($e instanceof \Exception ? ': ' . $e->get_message() : '.');
+                Cache_Item::log($this->logger, $message, ['exception' => $e instanceof \Exception ? $e : null, 'cache-adapter' => get_debug_type($this)]);
             } else {
-                $this->namespaceVersion = $namespaceVersion;
+                $this->namespace_version = $namespace_version;
                 $this->ids = [];
             }
         } else {
-            $namespaceToClear = $this->namespace.$prefix;
+            $namespace_to_clear = $this->namespace . $prefix;
         }
-
         try {
-            if ($this->doClear($namespaceToClear)) {
+            if ($this->do_clear($namespace_to_clear)) {
                 return true;
             }
             return (bool) $cleared;
         } catch (\Exception $e) {
-            CacheItem::log($this->logger, 'Failed to clear the cache: '.$e->getMessage(), ['exception' => $e, 'cache-adapter' => get_debug_type($this)]);
-
+            Cache_Item::log($this->logger, 'Failed to clear the cache: ' . $e->get_message(), ['exception' => $e, 'cache-adapter' => get_debug_type($this)]);
             return false;
         }
     }
-
-    public function deleteItem(mixed $key): bool
+    public function delete_item(mixed $key): bool
     {
-        return $this->deleteItems([$key]);
+        return $this->delete_items([$key]);
     }
-
-    public function deleteItems(array $keys): bool
+    public function delete_items(array $keys): bool
     {
         $ids = [];
-
         foreach ($keys as $key) {
-            $ids[$key] = $this->getId($key);
+            $ids[$key] = $this->get_id($key);
             unset($this->deferred[$key]);
         }
-
         try {
-            if ($this->doDelete($ids)) {
+            if ($this->do_delete($ids)) {
                 return true;
             }
         } catch (\Exception) {
         }
-
         $ok = true;
-
         // When bulk-delete failed, retry each item individually
         foreach ($ids as $key => $id) {
             try {
                 $e = null;
-                if ($this->doDelete([$id])) {
+                if ($this->do_delete([$id])) {
                     continue;
                 }
             } catch (\Exception $e) {
             }
-            $message = 'Failed to delete key "{key}"'.($e instanceof \Exception ? ': '.$e->getMessage() : '.');
-            CacheItem::log($this->logger, $message, ['key' => $key, 'exception' => $e, 'cache-adapter' => get_debug_type($this)]);
+            $message = 'Failed to delete key "{key}"' . ($e instanceof \Exception ? ': ' . $e->get_message() : '.');
+            Cache_Item::log($this->logger, $message, ['key' => $key, 'exception' => $e, 'cache-adapter' => get_debug_type($this)]);
             $ok = false;
         }
-
         return $ok;
     }
-
-    public function getItem(mixed $key): CacheItem
+    public function get_item(mixed $key): Cache_Item
     {
-        $id = $this->getId($key);
-
+        $id = $this->get_id($key);
         if (isset($this->deferred[$key])) {
             $this->commit();
         }
-
-        $isHit = false;
+        $is_hit = false;
         $value = null;
-
         try {
-            foreach ($this->doFetch([$id]) as $value) {
-                $isHit = true;
+            foreach ($this->do_fetch([$id]) as $value) {
+                $is_hit = true;
             }
-
-            return (self::$createCacheItem)($key, $value, $isHit);
+            return (self::$create_cache_item)($key, $value, $is_hit);
         } catch (\Exception $e) {
-            CacheItem::log($this->logger, 'Failed to fetch key "{key}": '.$e->getMessage(), ['key' => $key, 'exception' => $e, 'cache-adapter' => get_debug_type($this)]);
+            Cache_Item::log($this->logger, 'Failed to fetch key "{key}": ' . $e->get_message(), ['key' => $key, 'exception' => $e, 'cache-adapter' => get_debug_type($this)]);
         }
-
-        return (self::$createCacheItem)($key, null, false);
+        return (self::$create_cache_item)($key, null, false);
     }
-
-    public function getItems(array $keys = []): iterable
+    public function get_items(array $keys = []): iterable
     {
         $ids = [];
         $commit = false;
-
         foreach ($keys as $key) {
-            $ids[] = $this->getId($key);
+            $ids[] = $this->get_id($key);
             $commit = $commit || isset($this->deferred[$key]);
         }
-
         if ($commit) {
             $this->commit();
         }
-
         try {
-            $items = $this->doFetch($ids);
+            $items = $this->do_fetch($ids);
         } catch (\Exception $e) {
-            CacheItem::log($this->logger, 'Failed to fetch items: '.$e->getMessage(), ['keys' => $keys, 'exception' => $e, 'cache-adapter' => get_debug_type($this)]);
+            Cache_Item::log($this->logger, 'Failed to fetch items: ' . $e->get_message(), ['keys' => $keys, 'exception' => $e, 'cache-adapter' => get_debug_type($this)]);
             $items = [];
         }
         $ids = array_combine($ids, $keys);
-
-        return $this->generateItems($items, $ids);
+        return $this->generate_items($items, $ids);
     }
-
-    public function save(CacheItemInterface $item): bool
+    public function save(Cache_Item_Interface $item): bool
     {
-        if (!$item instanceof CacheItem) {
+        if (!$item instanceof Cache_Item) {
             return false;
         }
-        $this->deferred[$item->getKey()] = $item;
-
+        $this->deferred[$item->get_key()] = $item;
         return $this->commit();
     }
-
-    public function saveDeferred(CacheItemInterface $item): bool
+    public function save_deferred(Cache_Item_Interface $item): bool
     {
-        if (!$item instanceof CacheItem) {
+        if (!$item instanceof Cache_Item) {
             return false;
         }
-        $this->deferred[$item->getKey()] = $item;
-
+        $this->deferred[$item->get_key()] = $item;
         return true;
     }
-
-    public function withSubNamespace(string $namespace): static
+    public function with_sub_namespace(string $namespace): static
     {
-        $this->rootNamespace ??= $this->namespace;
-
+        $this->root_namespace ??= $this->namespace;
         $clone = clone $this;
-        $clone->namespace .= CacheItem::validateKey($namespace).static::NS_SEPARATOR;
-
+        $clone->namespace .= Cache_Item::validate_key($namespace) . static::NS_SEPARATOR;
         return $clone;
     }
-
     /**
      * Enables/disables versioning of items.
      *
@@ -274,46 +229,39 @@ trait AbstractAdapterTrait
      *
      * @return bool the previous state of versioning
      */
-    public function enableVersioning(bool $enable = true): bool
+    public function enable_versioning(bool $enable = true): bool
     {
-        $wasEnabled = $this->versioningIsEnabled;
-        $this->versioningIsEnabled = $enable;
-        $this->namespaceVersion = '';
+        $was_enabled = $this->versioning_is_enabled;
+        $this->versioning_is_enabled = $enable;
+        $this->namespace_version = '';
         $this->ids = [];
-
-        return $wasEnabled;
+        return $was_enabled;
     }
-
     public function reset(): void
     {
         if ($this->deferred) {
             $this->commit();
         }
-        $this->namespaceVersion = '';
+        $this->namespace_version = '';
         $this->ids = [];
     }
-
     public function __serialize(): array
     {
-        throw new \BadMethodCallException('Cannot serialize '.self::class);
+        throw new \BadMethodCallException('Cannot serialize ' . self::class);
     }
-
     public function __unserialize(array $data): void
     {
-        throw new \BadMethodCallException('Cannot unserialize '.self::class);
+        throw new \BadMethodCallException('Cannot unserialize ' . self::class);
     }
-
     public function __destruct()
     {
         if ($this->deferred) {
             $this->commit();
         }
     }
-
-    private function generateItems(iterable $items, array &$keys): \Generator
+    private function generate_items(iterable $items, array &$keys): \Generator
     {
-        $f = self::$createCacheItem;
-
+        $f = self::$create_cache_item;
         try {
             foreach ($items as $id => $value) {
                 if (!isset($keys[$id])) {
@@ -324,84 +272,73 @@ trait AbstractAdapterTrait
                 yield $key => $f($key, $value, true);
             }
         } catch (\Exception $e) {
-            CacheItem::log($this->logger, 'Failed to fetch items: '.$e->getMessage(), ['keys' => array_values($keys), 'exception' => $e, 'cache-adapter' => get_debug_type($this)]);
+            Cache_Item::log($this->logger, 'Failed to fetch items: ' . $e->get_message(), ['keys' => array_values($keys), 'exception' => $e, 'cache-adapter' => get_debug_type($this)]);
         }
-
         foreach ($keys as $key) {
             yield $key => $f($key, null, false);
         }
     }
-
     /**
      * @internal
      */
-    protected function getId(mixed $key, ?string $namespace = null): string
+    protected function get_id(mixed $key, ?string $namespace = null): string
     {
         $namespace ??= $this->namespace;
-
-        if ('' !== $this->namespaceVersion) {
-            $namespace .= $this->namespaceVersion;
-        } elseif ($this->versioningIsEnabled) {
-            $rootNamespace = $this->rootNamespace ??= $this->namespace;
+        if ('' !== $this->namespace_version) {
+            $namespace .= $this->namespace_version;
+        } elseif ($this->versioning_is_enabled) {
+            $root_namespace = $this->root_namespace ??= $this->namespace;
             $this->ids = [];
-            $this->namespaceVersion = '1'.static::NS_SEPARATOR;
+            $this->namespace_version = '1' . static::NS_SEPARATOR;
             try {
-                foreach ($this->doFetch([static::NS_SEPARATOR.$rootNamespace]) as $v) {
-                    $this->namespaceVersion = $v;
+                foreach ($this->do_fetch([static::NS_SEPARATOR . $root_namespace]) as $v) {
+                    $this->namespace_version = $v;
                 }
                 $e = true;
-                if ('1'.static::NS_SEPARATOR === $this->namespaceVersion) {
-                    $this->namespaceVersion = self::formatNamespaceVersion(time());
-                    $e = $this->doSave([static::NS_SEPARATOR.$rootNamespace => $this->namespaceVersion], 0);
+                if ('1' . static::NS_SEPARATOR === $this->namespace_version) {
+                    $this->namespace_version = self::format_namespace_version(time());
+                    $e = $this->do_save([static::NS_SEPARATOR . $root_namespace => $this->namespace_version], 0);
                 }
             } catch (\Exception $e) {
             }
             if (true !== $e && [] !== $e) {
-                $message = 'Failed to save the new namespace'.($e instanceof \Exception ? ': '.$e->getMessage() : '.');
-                CacheItem::log($this->logger, $message, ['exception' => $e instanceof \Exception ? $e : null, 'cache-adapter' => get_debug_type($this)]);
+                $message = 'Failed to save the new namespace' . ($e instanceof \Exception ? ': ' . $e->get_message() : '.');
+                Cache_Item::log($this->logger, $message, ['exception' => $e instanceof \Exception ? $e : null, 'cache-adapter' => get_debug_type($this)]);
             }
-
-            $namespace .= $this->namespaceVersion;
+            $namespace .= $this->namespace_version;
         }
-
         if (\is_string($key) && isset($this->ids[$key])) {
             $id = $this->ids[$key];
         } else {
-            \assert('' !== CacheItem::validateKey($key));
+            \assert('' !== Cache_Item::validate_key($key));
             $this->ids[$key] = $key;
-
             if (\count($this->ids) > 1000) {
-                $this->ids = \array_slice($this->ids, 500, null, true); // stop memory leak if there are many keys
+                $this->ids = \array_slice($this->ids, 500, null, true);
+                // stop memory leak if there are many keys
             }
-
-            if (null === $this->maxIdLength) {
-                return $namespace.$key;
+            if (null === $this->max_id_length) {
+                return $namespace . $key;
             }
-            if (\strlen($id = $namespace.$key) <= $this->maxIdLength) {
+            if (\strlen($id = $namespace . $key) <= $this->max_id_length) {
                 return $id;
             }
-
             // Use xxh128 to favor speed over security, which is not an issue here
-            $this->ids[$key] = $id = substr_replace(base64_encode(hash('xxh128', (string) $key, true)), static::NS_SEPARATOR, -(\strlen($this->namespaceVersion) + 2));
+            $this->ids[$key] = $id = substr_replace(base64_encode(hash('xxh128', (string) $key, true)), static::NS_SEPARATOR, -(\strlen($this->namespace_version) + 2));
         }
-        $id = $namespace.$id;
-
-        if (null !== $this->maxIdLength && \strlen($id) > $this->maxIdLength) {
+        $id = $namespace . $id;
+        if (null !== $this->max_id_length && \strlen($id) > $this->max_id_length) {
             return base64_encode(hash('xxh128', $id, true));
         }
-
         return $id;
     }
-
     /**
      * @internal
      */
-    public static function handleUnserializeCallback(string $class): never
+    public static function handle_unserialize_callback(string $class): never
     {
-        throw new \DomainException('Class not found: '.$class);
+        throw new \DomainException('Class not found: ' . $class);
     }
-
-    private static function formatNamespaceVersion(int $value): string
+    private static function format_namespace_version(int $value): string
     {
         return strtr(substr_replace(base64_encode(pack('V', $value)), static::NS_SEPARATOR, 5), '/', '_');
     }

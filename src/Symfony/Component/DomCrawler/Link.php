@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,27 +9,24 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DomCrawler;
+namespace Symfony\Component\Dom_Crawler;
 
 /**
  * Link represents an HTML link (an HTML a, area or link tag).
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class Link extends AbstractUriElement
+class Link extends Abstract_Uri_Element
 {
-    protected function getRawUri(): string
+    protected function get_raw_uri(): string
     {
-        return $this->node->getAttribute('href');
+        return $this->node->get_attribute('href');
     }
-
-    protected function setNode(\DOMElement $node): void
+    protected function set_node(\Dom_Element $node): void
     {
-        if ('a' !== $node->nodeName && 'area' !== $node->nodeName && 'link' !== $node->nodeName) {
-            throw new \LogicException(\sprintf('Unable to navigate from a "%s" tag.', $node->nodeName));
+        if ('a' !== $node->node_name && 'area' !== $node->node_name && 'link' !== $node->node_name) {
+            throw new \LogicException(\sprintf('Unable to navigate from a "%s" tag.', $node->node_name));
         }
-
         $this->node = $node;
     }
 }

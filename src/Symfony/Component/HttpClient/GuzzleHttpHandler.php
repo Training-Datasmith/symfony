@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,23 +9,21 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Client;
 
-namespace Symfony\Component\HttpClient;
-
-use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Promise\Promise;
-use GuzzleHttp\Promise\PromiseInterface;
-use GuzzleHttp\Promise\Utils as PromiseUtils;
-use GuzzleHttp\Psr7\Response as GuzzleResponse;
-use GuzzleHttp\Psr7\Utils as Psr7Utils;
-use GuzzleHttp\TransferStats;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface as SymfonyResponseInterface;
-
+use Guzzle_Http\Exception\Connect_Exception;
+use Guzzle_Http\Exception\Request_Exception;
+use Guzzle_Http\Promise\Promise;
+use Guzzle_Http\Promise\Promise_Interface;
+use Guzzle_Http\Promise\Utils as PromiseUtils;
+use Guzzle_Http\Psr7\Response as GuzzleResponse;
+use Guzzle_Http\Psr7\Utils as Psr7Utils;
+use Guzzle_Http\Transfer_Stats;
+use Psr\Http\Message\Request_Interface;
+use Psr\Http\Message\Response_Interface;
+use Symfony\Contracts\Http_Client\Exception\Transport_Exception_Interface;
+use Symfony\Contracts\Http_Client\Http_Client_Interface;
+use Symfony\Contracts\Http_Client\Response_Interface as SymfonyResponseInterface;
 /**
  * A Guzzle handler that uses Symfony's HttpClientInterface as its transport.
  *
@@ -50,77 +47,63 @@ use Symfony\Contracts\HttpClient\ResponseInterface as SymfonyResponseInterface;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final readonly class GuzzleHttpHandler
+final readonly class Guzzle_Http_Handler
 {
-    private HttpClientInterface $client;
-
+    private Http_Client_Interface $client;
     /**
      * Maps each Symfony response (key) to a 3-tuple:
      *   [Psr7 RequestInterface, Guzzle options array, Guzzle Promise]
      *
      * @var \SplObjectStorage<SymfonyResponseInterface, array{0: RequestInterface, 1: array, 2: Promise}>
      */
-    private \SplObjectStorage $pending;
-
+    private \Spl_Object_Storage $pending;
     /**
      * PSR-7 response created eagerly on the first chunk so that the same
      * instance is passed to on_headers and later resolved by the promise.
      *
      * @var \SplObjectStorage<SymfonyResponseInterface, ResponseInterface>
      */
-    private \SplObjectStorage $psr7Responses;
-
-    public function __construct(?HttpClientInterface $client = null, private bool $autoUpgradeHttpVersion = true)
+    private \Spl_Object_Storage $psr7Responses;
+    public function __construct(?Http_Client_Interface $client = null, private bool $auto_upgrade_http_version = true)
     {
-        $this->client = $client ?? HttpClient::create();
-        $this->pending = new \SplObjectStorage();
-        $this->psr7Responses = new \SplObjectStorage();
+        $this->client = $client ?? Http_Client::create();
+        $this->pending = new \Spl_Object_Storage();
+        $this->psr7Responses = new \Spl_Object_Storage();
     }
-
     /**
      * Returns a *pending* Promise - no I/O is performed here.
      *
      * The wait function passed to the Promise drives Symfony's stream() loop,
      * which resolves all currently queued requests concurrently.
      */
-    public function __invoke(RequestInterface $request, array $options): PromiseInterface
+    public function __invoke(Request_Interface $request, array $options): Promise_Interface
     {
-        $symfonyOptions = $this->buildSymfonyOptions($request, $options);
-
+        $symfony_options = $this->build_symfony_options($request, $options);
         try {
-            $symfonyResponse = $this->client->request($request->getMethod(), (string) $request->getUri(), $symfonyOptions);
+            $symfony_response = $this->client->request($request->get_method(), (string) $request->get_uri(), $symfony_options);
         } catch (\Exception $e) {
             // Option validation errors surface here synchronously.
             $p = new Promise();
             $p->reject($e);
-
             return $p;
         }
-
-        $promise = new Promise(
-            function () use ($symfonyResponse): void {
-                $this->streamPending(null, $symfonyResponse);
-            },
-            function () use ($symfonyResponse): void {
-                unset($this->pending[$symfonyResponse], $this->psr7Responses[$symfonyResponse]);
-                $symfonyResponse->cancel();
-            },
-        );
-
-        $this->pending[$symfonyResponse] = [$request, $options, $promise];
-
+        $promise = new Promise(function () use ($symfony_response): void {
+            $this->stream_pending(null, $symfony_response);
+        }, function () use ($symfony_response): void {
+            unset($this->pending[$symfony_response], $this->psr7Responses[$symfony_response]);
+            $symfony_response->cancel();
+        });
+        $this->pending[$symfony_response] = [$request, $options, $promise];
         if (isset($options['delay'])) {
-            $pause = $symfonyResponse->getInfo('pause_handler');
+            $pause = $symfony_response->get_info('pause_handler');
             if (\is_callable($pause)) {
                 $pause($options['delay'] / 1000.0);
             } else {
                 usleep((int) ($options['delay'] * 1000));
             }
         }
-
         return $promise;
     }
-
     /**
      * Ticks the event loop: processes available I/O and runs queued tasks.
      *
@@ -128,87 +111,73 @@ final readonly class GuzzleHttpHandler
      */
     public function tick(float $timeout = 1.0): void
     {
-        $queue = PromiseUtils::queue();
-
+        $queue = Promise_Utils::queue();
         // Push streaming work onto the Guzzle task queue so that .then()
         // callbacks and other queued tasks get cooperative scheduling.
-        $queue->add(fn () => $this->streamPending($timeout, true));
-
+        $queue->add(fn() => $this->stream_pending($timeout, true));
         $queue->run();
     }
-
     /**
      * Runs until all outstanding connections have completed.
      */
     public function execute(): void
     {
         while ($this->pending->count()) {
-            $this->streamPending(null, false);
+            $this->stream_pending(null, false);
         }
     }
-
     /**
      * Performs one pass of streaming I/O over all pending responses.
      *
      * @param float|null $timeout Idle timeout passed to stream(); 0 for non-blocking, null for default
      */
-    private function streamPending(?float $timeout, bool|SymfonyResponseInterface $breakAfter): void
+    private function stream_pending(?float $timeout, bool|Symfony_Response_Interface $break_after): void
     {
         if (!$this->pending->count()) {
             return;
         }
-
-        $queue = PromiseUtils::queue();
-
+        $queue = Promise_Utils::queue();
         $responses = [];
         foreach ($this->pending as $r) {
             $responses[] = $r;
         }
-
         foreach ($this->client->stream($responses, $timeout) as $response => $chunk) {
             try {
-                if ($chunk->isTimeout()) {
+                if ($chunk->is_timeout()) {
                     continue;
                 }
-
-                if ($chunk->isFirst()) {
+                if ($chunk->is_first()) {
                     // Deactivate 4xx/5xx exception throwing for this response;
                     // Guzzle's http_errors middleware handles that layer.
-                    $response->getStatusCode();
-
-                    [, $guzzleOpts] = $this->pending[$response] ?? [null, []];
-                    $sink = $guzzleOpts['sink'] ?? null;
-                    $body = Psr7Utils::streamFor(\is_string($sink) ? fopen($sink, 'w+') : ($sink ?? fopen('php://temp', 'r+')));
-
-                    if (600 <= $response->getStatusCode()) {
-                        $psrResponse = new GuzzleResponse(567, $response->getHeaders(false), $body);
-                        (new \ReflectionProperty($psrResponse, 'statusCode'))->setValue($psrResponse, $response->getStatusCode());
+                    $response->get_status_code();
+                    [, $guzzle_opts] = $this->pending[$response] ?? [null, []];
+                    $sink = $guzzle_opts['sink'] ?? null;
+                    $body = Psr7Utils::stream_for(\is_string($sink) ? fopen($sink, 'w+') : $sink ?? fopen('php://temp', 'r+'));
+                    if (600 <= $response->get_status_code()) {
+                        $psr_response = new Guzzle_Response(567, $response->get_headers(false), $body);
+                        (new \ReflectionProperty($psr_response, 'statusCode'))->set_value($psr_response, $response->get_status_code());
                     } else {
-                        $psrResponse = new GuzzleResponse($response->getStatusCode(), $response->getHeaders(false), $body);
+                        $psr_response = new Guzzle_Response($response->get_status_code(), $response->get_headers(false), $body);
                     }
-                    $this->psr7Responses[$response] = $psrResponse;
-
-                    if (isset($guzzleOpts['on_headers'])) {
+                    $this->psr7Responses[$response] = $psr_response;
+                    if (isset($guzzle_opts['on_headers'])) {
                         try {
-                            ($guzzleOpts['on_headers'])($psrResponse);
+                            $guzzle_opts['on_headers']($psr_response);
                         } catch (\Throwable $e) {
-                            [$guzzleRequest, , $promise] = $this->pending[$response];
+                            [$guzzle_request, , $promise] = $this->pending[$response];
                             unset($this->pending[$response], $this->psr7Responses[$response]);
-                            $this->fireOnStats($guzzleOpts, $guzzleRequest, $psrResponse, $e, $response);
-                            $promise->reject(new RequestException($e->getMessage(), $guzzleRequest, $psrResponse, $e));
-
+                            $this->fire_on_stats($guzzle_opts, $guzzle_request, $psr_response, $e, $response);
+                            $promise->reject(new Request_Exception($e->get_message(), $guzzle_request, $psr_response, $e));
                             $response->cancel();
                         }
                     }
                 }
-
-                $content = $chunk->getContent();
+                $content = $chunk->get_content();
                 if ('' !== $content && isset($this->psr7Responses[$response])) {
-                    $this->psr7Responses[$response]->getBody()->write($content);
+                    $this->psr7Responses[$response]->get_body()->write($content);
                 }
-
-                if (!$chunk->isLast()) {
-                    if (true === $breakAfter) {
+                if (!$chunk->is_last()) {
+                    if (true === $break_after) {
                         break;
                     }
                     continue;
@@ -216,18 +185,18 @@ final readonly class GuzzleHttpHandler
                 if (!isset($this->pending[$response])) {
                     unset($this->psr7Responses[$response]);
                 } else {
-                    $this->resolveResponse($response);
+                    $this->resolve_response($response);
                 }
-                if (\in_array($breakAfter, [true, $response], true)) {
+                if (\in_array($break_after, [true, $response], true)) {
                     break;
                 }
-            } catch (TransportExceptionInterface $e) {
+            } catch (Transport_Exception_Interface $e) {
                 if (isset($this->pending[$response])) {
-                    $this->rejectResponse($response, $e);
+                    $this->reject_response($response, $e);
                 } else {
                     unset($this->psr7Responses[$response]);
                 }
-                if (\in_array($breakAfter, [true, $response], true)) {
+                if (\in_array($break_after, [true, $response], true)) {
                     break;
                 }
             } finally {
@@ -236,138 +205,118 @@ final readonly class GuzzleHttpHandler
             }
         }
     }
-
-    private function resolveResponse(SymfonyResponseInterface $response): void
+    private function resolve_response(Symfony_Response_Interface $response): void
     {
-        [$guzzleRequest, $options, $promise] = $this->pending[$response];
-        $psrResponse = $this->psr7Responses[$response];
+        [$guzzle_request, $options, $promise] = $this->pending[$response];
+        $psr_response = $this->psr7Responses[$response];
         unset($this->pending[$response], $this->psr7Responses[$response]);
-
-        $body = $psrResponse->getBody();
-        if ($body->isSeekable()) {
+        $body = $psr_response->get_body();
+        if ($body->is_seekable()) {
             try {
                 $body->seek(0);
             } catch (\RuntimeException) {
                 // ignore
             }
         }
-
-        $this->fireOnStats($options, $guzzleRequest, $psrResponse, null, $response);
-        $promise->resolve($psrResponse);
+        $this->fire_on_stats($options, $guzzle_request, $psr_response, null, $response);
+        $promise->resolve($psr_response);
     }
-
-    private function rejectResponse(SymfonyResponseInterface $response, TransportExceptionInterface $e): void
+    private function reject_response(Symfony_Response_Interface $response, Transport_Exception_Interface $e): void
     {
-        [$guzzleRequest, $options, $promise] = $this->pending[$response];
-        $psrResponse = $this->psr7Responses[$response] ?? null;
+        [$guzzle_request, $options, $promise] = $this->pending[$response];
+        $psr_response = $this->psr7Responses[$response] ?? null;
         unset($this->pending[$response], $this->psr7Responses[$response]);
-
-        if ($body = $psrResponse?->getBody()) {
+        if ($body = $psr_response?->get_body()) {
             // Headers were already received: use RequestException so Guzzle middleware (e.g. retry)
             // can distinguish a mid-stream failure from a connection-level one.
-            if ($body->isSeekable()) {
+            if ($body->is_seekable()) {
                 try {
                     $body->seek(0);
                 } catch (\RuntimeException) {
                     // ignore
                 }
             }
-
-            $this->fireOnStats($options, $guzzleRequest, $psrResponse, $e, $response);
-            $promise->reject(new RequestException($e->getMessage(), $guzzleRequest, $psrResponse, $e));
+            $this->fire_on_stats($options, $guzzle_request, $psr_response, $e, $response);
+            $promise->reject(new Request_Exception($e->get_message(), $guzzle_request, $psr_response, $e));
         } else {
             // No headers received: connection-level failure.
-            $this->fireOnStats($options, $guzzleRequest, null, $e, $response);
-            $promise->reject(new ConnectException($e->getMessage(), $guzzleRequest, null, [], $e));
+            $this->fire_on_stats($options, $guzzle_request, null, $e, $response);
+            $promise->reject(new Connect_Exception($e->get_message(), $guzzle_request, null, [], $e));
         }
     }
-
-    private function fireOnStats(array $options, RequestInterface $request, ?ResponseInterface $psrResponse, ?\Throwable $error, SymfonyResponseInterface $symfonyResponse): void
+    private function fire_on_stats(array $options, Request_Interface $request, ?Response_Interface $psr_response, ?\Throwable $error, Symfony_Response_Interface $symfony_response): void
     {
         if (!isset($options['on_stats'])) {
             return;
         }
-
-        $handlerStats = $symfonyResponse->getInfo();
-        ($options['on_stats'])(new TransferStats($request, $psrResponse, $handlerStats['total_time'] ?? 0.0, $error, $handlerStats));
+        $handler_stats = $symfony_response->get_info();
+        $options['on_stats'](new Transfer_Stats($request, $psr_response, $handler_stats['total_time'] ?? 0.0, $error, $handler_stats));
     }
-
-    private function buildSymfonyOptions(RequestInterface $request, array $guzzleOptions): array
+    private function build_symfony_options(Request_Interface $request, array $guzzle_options): array
     {
         $options = [];
-
-        $options['headers'] = $this->extractHeaders($request, $guzzleOptions);
-
-        $this->applyBody($request, $options);
-        $this->applyAuth($guzzleOptions, $options);
-        $this->applyTimeouts($guzzleOptions, $options);
-        $this->applySsl($guzzleOptions, $options);
-        $this->applyProxy($request, $guzzleOptions, $options);
-        $this->applyRedirects($guzzleOptions, $options);
-        $this->applyMisc($request, $guzzleOptions, $options);
-        $this->applyDecodeContent($guzzleOptions, $options);
-        if (\extension_loaded('curl') && isset($guzzleOptions['curl'])) {
-            $this->applyCurlOptions($guzzleOptions['curl'], $options);
+        $options['headers'] = $this->extract_headers($request, $guzzle_options);
+        $this->apply_body($request, $options);
+        $this->apply_auth($guzzle_options, $options);
+        $this->apply_timeouts($guzzle_options, $options);
+        $this->apply_ssl($guzzle_options, $options);
+        $this->apply_proxy($request, $guzzle_options, $options);
+        $this->apply_redirects($guzzle_options, $options);
+        $this->apply_misc($request, $guzzle_options, $options);
+        $this->apply_decode_content($guzzle_options, $options);
+        if (\extension_loaded('curl') && isset($guzzle_options['curl'])) {
+            $this->apply_curl_options($guzzle_options['curl'], $options);
         }
-
         return $options;
     }
-
     /**
      * Merges headers from the PSR-7 request with any headers supplied via the
      * Guzzle 'headers' option (Guzzle option takes precedence).
      *
      * @return array<string, string[]>
      */
-    private function extractHeaders(RequestInterface $request, array $guzzleOptions): array
+    private function extract_headers(Request_Interface $request, array $guzzle_options): array
     {
-        $headers = $request->getHeaders();
-
-        foreach ($guzzleOptions['headers'] ?? [] as $name => $value) {
+        $headers = $request->get_headers();
+        foreach ($guzzle_options['headers'] ?? [] as $name => $value) {
             $headers[$name] = (array) $value;
         }
-
         return $headers;
     }
-
-    private function applyBody(RequestInterface $request, array &$options): void
+    private function apply_body(Request_Interface $request, array &$options): void
     {
         $key = 'content-length';
-        $body = $request->getBody();
-        if (!$size = $options['headers'][$key][0] ?? $options['headers'][$key = 'Content-Length'][0] ?? $body->getSize() ?? -1) {
+        $body = $request->get_body();
+        if (!$size = $options['headers'][$key][0] ?? $options['headers'][$key = 'Content-Length'][0] ?? $body->get_size() ?? -1) {
             return;
         }
-
         if ($size < 0 || 1 << 21 < $size) {
             $options['body'] = static function (int $size) use ($body) {
-                if ($body->isSeekable()) {
+                if ($body->is_seekable()) {
                     try {
                         $body->seek(0);
                     } catch (\RuntimeException) {
                         // ignore
                     }
                 }
-
                 while (!$body->eof()) {
                     yield $body->read($size);
                 }
             };
         } else {
-            if ($body->isSeekable()) {
+            if ($body->is_seekable()) {
                 try {
                     $body->seek(0);
                 } catch (\RuntimeException) {
                     // ignore
                 }
             }
-            $options['body'] = $body->getContents();
+            $options['body'] = $body->get_contents();
         }
-
         if (0 < $size) {
             $options['headers'][$key] = [$size];
         }
     }
-
     /**
      * Maps Guzzle's 'auth' option.
      *
@@ -377,15 +326,13 @@ final readonly class GuzzleHttpHandler
      *   ['token', '', 'bearer']   -> auth_bearer
      *   ['token', '', 'token']    -> auth_bearer (alias)
      */
-    private function applyAuth(array $guzzleOptions, array &$options): void
+    private function apply_auth(array $guzzle_options, array &$options): void
     {
-        if (!isset($guzzleOptions['auth'])) {
+        if (!isset($guzzle_options['auth'])) {
             return;
         }
-
-        $auth = $guzzleOptions['auth'];
+        $auth = $guzzle_options['auth'];
         $type = strtolower($auth[2] ?? 'basic');
-
         if ('bearer' === $type || 'token' === $type) {
             $options['auth_bearer'] = $auth[0];
         } elseif ('ntlm' === $type) {
@@ -395,22 +342,18 @@ final readonly class GuzzleHttpHandler
             $options['auth_basic'] = [$auth[0], $auth[1] ?? ''];
         }
     }
-
-    private function applyTimeouts(array $guzzleOptions, array &$options): void
+    private function apply_timeouts(array $guzzle_options, array &$options): void
     {
-        if (0 < ($guzzleOptions['timeout'] ?? 0)) {
-            $options['max_duration'] = (float) $guzzleOptions['timeout'];
+        if (0 < ($guzzle_options['timeout'] ?? 0)) {
+            $options['max_duration'] = (float) $guzzle_options['timeout'];
         }
-
-        if (0 < ($guzzleOptions['read_timeout'] ?? 0)) {
-            $options['timeout'] = (float) $guzzleOptions['read_timeout'];
+        if (0 < ($guzzle_options['read_timeout'] ?? 0)) {
+            $options['timeout'] = (float) $guzzle_options['read_timeout'];
         }
-
-        if (0 < ($guzzleOptions['connect_timeout'] ?? 0)) {
-            $options['max_connect_duration'] = (float) $guzzleOptions['connect_timeout'];
+        if (0 < ($guzzle_options['connect_timeout'] ?? 0)) {
+            $options['max_connect_duration'] = (float) $guzzle_options['connect_timeout'];
         }
     }
-
     /**
      * Maps SSL/TLS related options.
      *
@@ -419,77 +362,68 @@ final readonly class GuzzleHttpHandler
      * Guzzle 'ssl_key'(string|array) -> Symfony local_pk   [+ passphrase]
      * Guzzle 'crypto_method'         -> Symfony crypto_method (same PHP stream constants)
      */
-    private function applySsl(array $guzzleOptions, array &$options): void
+    private function apply_ssl(array $guzzle_options, array &$options): void
     {
-        if (isset($guzzleOptions['verify'])) {
-            if (false === $guzzleOptions['verify']) {
+        if (isset($guzzle_options['verify'])) {
+            if (false === $guzzle_options['verify']) {
                 $options['verify_peer'] = false;
                 $options['verify_host'] = false;
-            } elseif (\is_string($guzzleOptions['verify'])) {
-                if (is_dir($guzzleOptions['verify'])) {
-                    $options['capath'] = $guzzleOptions['verify'];
+            } elseif (\is_string($guzzle_options['verify'])) {
+                if (is_dir($guzzle_options['verify'])) {
+                    $options['capath'] = $guzzle_options['verify'];
                 } else {
-                    $options['cafile'] = $guzzleOptions['verify'];
+                    $options['cafile'] = $guzzle_options['verify'];
                 }
             }
         }
-
-        if (isset($guzzleOptions['cert'])) {
-            $cert = $guzzleOptions['cert'];
+        if (isset($guzzle_options['cert'])) {
+            $cert = $guzzle_options['cert'];
             if (\is_array($cert)) {
-                [$certPath, $certPass] = $cert;
-                $options['local_cert'] = $certPath;
-                $options['passphrase'] = $certPass;
+                [$cert_path, $cert_pass] = $cert;
+                $options['local_cert'] = $cert_path;
+                $options['passphrase'] = $cert_pass;
             } else {
                 $options['local_cert'] = $cert;
             }
         }
-
-        if (isset($guzzleOptions['ssl_key'])) {
-            $key = $guzzleOptions['ssl_key'];
+        if (isset($guzzle_options['ssl_key'])) {
+            $key = $guzzle_options['ssl_key'];
             if (\is_array($key)) {
-                [$keyPath, $keyPass] = $key;
-                $options['local_pk'] = $keyPath;
+                [$key_path, $key_pass] = $key;
+                $options['local_pk'] = $key_path;
                 // Do not clobber a passphrase already set by 'cert'.
-                $options['passphrase'] ??= $keyPass;
+                $options['passphrase'] ??= $key_pass;
             } else {
                 $options['local_pk'] = $key;
             }
         }
-
-        if (isset($guzzleOptions['crypto_method'])) {
-            $options['crypto_method'] = $guzzleOptions['crypto_method'];
+        if (isset($guzzle_options['crypto_method'])) {
+            $options['crypto_method'] = $guzzle_options['crypto_method'];
         }
     }
-
     /**
      * Maps Guzzle's 'proxy' option.
      *
      * String form -> proxy
      * Array form  -> selects proxy by URI scheme; 'no' key maps to no_proxy
      */
-    private function applyProxy(RequestInterface $request, array $guzzleOptions, array &$options): void
+    private function apply_proxy(Request_Interface $request, array $guzzle_options, array &$options): void
     {
-        if (!isset($guzzleOptions['proxy'])) {
+        if (!isset($guzzle_options['proxy'])) {
             return;
         }
-
-        if (\is_string($proxy = $guzzleOptions['proxy'])) {
+        if (\is_string($proxy = $guzzle_options['proxy'])) {
             $options['proxy'] = $proxy;
-
             return;
         }
-
-        $scheme = $request->getUri()->getScheme();
+        $scheme = $request->get_uri()->get_scheme();
         if (isset($proxy[$scheme])) {
             $options['proxy'] = $proxy[$scheme];
         }
-
         if (isset($proxy['no'])) {
             $options['no_proxy'] = implode(',', (array) $proxy['no']);
         }
     }
-
     /**
      * Maps Guzzle's 'allow_redirects' to Symfony's 'max_redirects'.
      *
@@ -497,43 +431,38 @@ final readonly class GuzzleHttpHandler
      * true              -> (no override; Symfony defaults apply)
      * ['max' => N, ...] -> N
      */
-    private function applyRedirects(array $guzzleOptions, array &$options): void
+    private function apply_redirects(array $guzzle_options, array &$options): void
     {
-        if (!isset($guzzleOptions['allow_redirects'])) {
+        if (!isset($guzzle_options['allow_redirects'])) {
             return;
         }
-
-        if (!$ar = $guzzleOptions['allow_redirects']) {
+        if (!$ar = $guzzle_options['allow_redirects']) {
             $options['max_redirects'] = 0;
         } elseif (\is_array($ar)) {
             // 5 matches Guzzle's own default for the 'max' sub-key.
             $options['max_redirects'] = $ar['max'] ?? 5;
         }
     }
-
     /**
      * Miscellaneous options that do not fit a dedicated category.
      */
-    private function applyMisc(RequestInterface $request, array $guzzleOptions, array &$options): void
+    private function apply_misc(Request_Interface $request, array $guzzle_options, array &$options): void
     {
         // We always drive I/O via stream(), so tell Symfony not to build its
         // own internal buffer - chunks are written directly to the PSR-7 response body stream.
         $options['buffer'] = false;
-
-        if (!$this->autoUpgradeHttpVersion || '1.0' === $request->getProtocolVersion()) {
-            $options['http_version'] = $request->getProtocolVersion();
+        if (!$this->auto_upgrade_http_version || '1.0' === $request->get_protocol_version()) {
+            $options['http_version'] = $request->get_protocol_version();
         }
-
         // progress callback: (dlTotal, dlNow, ulTotal, ulNow) in Guzzle
         // on_progress:       (dlNow, dlTotal, info)           in Symfony
-        if (isset($guzzleOptions['progress'])) {
-            $guzzleProgress = $guzzleOptions['progress'];
-            $options['on_progress'] = static function (int $dlNow, int $dlSize, array $info) use ($guzzleProgress): void {
-                $guzzleProgress($dlSize, $dlNow, max(0, (int) ($info['upload_content_length'] ?? 0)), (int) ($info['size_upload'] ?? 0));
+        if (isset($guzzle_options['progress'])) {
+            $guzzle_progress = $guzzle_options['progress'];
+            $options['on_progress'] = static function (int $dl_now, int $dl_size, array $info) use ($guzzle_progress): void {
+                $guzzle_progress($dl_size, $dl_now, max(0, (int) ($info['upload_content_length'] ?? 0)), (int) ($info['size_upload'] ?? 0));
             };
         }
     }
-
     /**
      * Maps Guzzle's 'decode_content' option.
      *
@@ -542,15 +471,14 @@ final readonly class GuzzleHttpHandler
      * false       -> ensure an Accept-Encoding header is sent to disable
      *                Symfony's auto-decode behavior
      */
-    private function applyDecodeContent(array $guzzleOptions, array &$options): void
+    private function apply_decode_content(array $guzzle_options, array &$options): void
     {
-        if ($guzzleOptions['decode_content'] ?? true) {
+        if ($guzzle_options['decode_content'] ?? true) {
             unset($options['headers']['Accept-Encoding'], $options['headers']['accept-encoding']);
         } elseif (!isset($options['headers']['Accept-Encoding']) && !isset($options['headers']['accept-encoding'])) {
             $options['headers']['Accept-Encoding'] = ['identity'];
         }
     }
-
     /**
      * Maps raw cURL options from Guzzle's 'curl' option bag to Symfony options.
      *
@@ -564,7 +492,7 @@ final readonly class GuzzleHttpHandler
      * extra.curl" exception that CurlHttpClient::validateExtraCurlOptions()
      * throws for those constants.
      */
-    private function applyCurlOptions(array $curlOptions, array &$options): void
+    private function apply_curl_options(array $curl_options, array &$options): void
     {
         // Build a set of constants that CurlHttpClient rejects in extra.curl
         // together with options whose Symfony equivalents are already applied
@@ -572,25 +500,44 @@ final readonly class GuzzleHttpHandler
         static $blocked;
         $blocked ??= array_flip(array_filter([
             // Auth - handled by applyAuth() / requires NTLM-specific logic.
-            \CURLOPT_HTTPAUTH, \CURLOPT_USERPWD,
+            \CURLOPT_HTTPAUTH,
+            \CURLOPT_USERPWD,
             // Body - set from the PSR-7 request body by applyBody().
-            \CURLOPT_READDATA, \CURLOPT_READFUNCTION, \CURLOPT_INFILESIZE,
-            \CURLOPT_POSTFIELDS, \CURLOPT_UPLOAD,
+            \CURLOPT_READDATA,
+            \CURLOPT_READFUNCTION,
+            \CURLOPT_INFILESIZE,
+            \CURLOPT_POSTFIELDS,
+            \CURLOPT_UPLOAD,
             // HTTP method - taken from the PSR-7 request.
-            \CURLOPT_POST, \CURLOPT_PUT, \CURLOPT_CUSTOMREQUEST,
-            \CURLOPT_HTTPGET, \CURLOPT_NOBODY,
+            \CURLOPT_POST,
+            \CURLOPT_PUT,
+            \CURLOPT_CUSTOMREQUEST,
+            \CURLOPT_HTTPGET,
+            \CURLOPT_NOBODY,
             // Headers - merged by extractHeaders().
             \CURLOPT_HTTPHEADER,
             // Internal curl signal / redirect-type flags with no Symfony equiv.
-            \CURLOPT_NOSIGNAL, \CURLOPT_POSTREDIR,
+            \CURLOPT_NOSIGNAL,
+            \CURLOPT_POSTREDIR,
             // Progress - handled by applyMisc() via Guzzle's 'progress' option.
-            \CURLOPT_NOPROGRESS, \CURLOPT_PROGRESSFUNCTION,
+            \CURLOPT_NOPROGRESS,
+            \CURLOPT_PROGRESSFUNCTION,
             // Blocked by CurlHttpClient::validateExtraCurlOptions().
-            \CURLOPT_PRIVATE, \CURLOPT_HEADERFUNCTION, \CURLOPT_WRITEFUNCTION,
-            \CURLOPT_VERBOSE, \CURLOPT_STDERR, \CURLOPT_RETURNTRANSFER,
-            \CURLOPT_URL, \CURLOPT_FOLLOWLOCATION, \CURLOPT_HEADER,
-            \CURLOPT_HTTP_VERSION, \CURLOPT_PORT, \CURLOPT_DNS_USE_GLOBAL_CACHE,
-            \CURLOPT_PROTOCOLS, \CURLOPT_REDIR_PROTOCOLS, \CURLOPT_COOKIEFILE,
+            \CURLOPT_PRIVATE,
+            \CURLOPT_HEADERFUNCTION,
+            \CURLOPT_WRITEFUNCTION,
+            \CURLOPT_VERBOSE,
+            \CURLOPT_STDERR,
+            \CURLOPT_RETURNTRANSFER,
+            \CURLOPT_URL,
+            \CURLOPT_FOLLOWLOCATION,
+            \CURLOPT_HEADER,
+            \CURLOPT_HTTP_VERSION,
+            \CURLOPT_PORT,
+            \CURLOPT_DNS_USE_GLOBAL_CACHE,
+            \CURLOPT_PROTOCOLS,
+            \CURLOPT_REDIR_PROTOCOLS,
+            \CURLOPT_COOKIEFILE,
             \CURLINFO_REDIRECT_COUNT,
             \defined('CURLOPT_HTTP09_ALLOWED') ? \CURLOPT_HTTP09_ALLOWED : null,
             \defined('CURLOPT_HEADEROPT') ? \CURLOPT_HEADEROPT : null,
@@ -598,25 +545,21 @@ final readonly class GuzzleHttpHandler
             // incompatible with Symfony's peer_fingerprint array format.
             \defined('CURLOPT_PINNEDPUBLICKEY') ? \CURLOPT_PINNEDPUBLICKEY : null,
         ]));
-
-        foreach ($curlOptions as $opt => $value) {
+        foreach ($curl_options as $opt => $value) {
             if (isset($blocked[$opt])) {
                 continue;
             }
-
             // CURLOPT_UNIX_SOCKET_PATH is conditionally defined; maps to bindto.
             if (\defined('CURLOPT_UNIX_SOCKET_PATH') && \CURLOPT_UNIX_SOCKET_PATH === $opt) {
                 $options['bindto'] = $value;
                 continue;
             }
-
             match ($opt) {
                 \CURLOPT_CAINFO => $options['cafile'] = $value,
                 \CURLOPT_CAPATH => $options['capath'] = $value,
                 \CURLOPT_SSLCERT => $options['local_cert'] = $value,
                 \CURLOPT_SSLKEY => $options['local_pk'] = $value,
-                \CURLOPT_SSLCERTPASSWD,
-                \CURLOPT_SSLKEYPASSWD => $options['passphrase'] = $value,
+                \CURLOPT_SSLCERTPASSWD, \CURLOPT_SSLKEYPASSWD => $options['passphrase'] = $value,
                 \CURLOPT_SSL_CIPHER_LIST => $options['ciphers'] = $value,
                 \CURLOPT_CERTINFO => $options['capture_peer_cert_chain'] = (bool) $value,
                 \CURLOPT_PROXY => $options['proxy'] = $value,

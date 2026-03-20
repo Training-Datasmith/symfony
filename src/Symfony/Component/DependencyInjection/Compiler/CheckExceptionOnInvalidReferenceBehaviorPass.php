@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,126 +9,110 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Compiler;
 
-namespace Symfony\Component\DependencyInjection\Compiler;
-
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use Symfony\Component\DependencyInjection\Reference;
-
+use Symfony\Component\Dependency_Injection\Container_Builder;
+use Symfony\Component\Dependency_Injection\Container_Interface;
+use Symfony\Component\Dependency_Injection\Exception\Service_Not_Found_Exception;
+use Symfony\Component\Dependency_Injection\Reference;
 /**
  * Checks that all references are pointing to a valid service.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class CheckExceptionOnInvalidReferenceBehaviorPass extends AbstractRecursivePass
+class Check_Exception_On_Invalid_Reference_Behavior_Pass extends Abstract_Recursive_Pass
 {
-    protected bool $skipScalars = true;
-
-    private array $serviceLocatorContextIds = [];
-
-    public function process(ContainerBuilder $container): void
+    protected bool $skip_scalars = true;
+    private array $service_locator_context_ids = [];
+    public function process(Container_Builder $container): void
     {
-        $this->serviceLocatorContextIds = [];
-        foreach ($container->findTaggedServiceIds('container.service_locator_context') as $id => $tags) {
-            $this->serviceLocatorContextIds[$id] = $tags[0]['id'];
-            $container->getDefinition($id)->clearTag('container.service_locator_context');
+        $this->service_locator_context_ids = [];
+        foreach ($container->find_tagged_service_ids('container.service_locator_context') as $id => $tags) {
+            $this->service_locator_context_ids[$id] = $tags[0]['id'];
+            $container->get_definition($id)->clear_tag('container.service_locator_context');
         }
-
         try {
             parent::process($container);
         } finally {
-            $this->serviceLocatorContextIds = [];
+            $this->service_locator_context_ids = [];
         }
     }
-
-    protected function processValue(mixed $value, bool $isRoot = false): mixed
+    protected function process_value(mixed $value, bool $is_root = false): mixed
     {
         if (!$value instanceof Reference) {
-            return parent::processValue($value, $isRoot);
+            return parent::process_value($value, $is_root);
         }
-        if (ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE < $value->getInvalidBehavior() || $this->container->has((string) $value)) {
+        if (Container_Interface::EXCEPTION_ON_INVALID_REFERENCE < $value->get_invalid_behavior() || $this->container->has((string) $value)) {
             return $value;
         }
-
-        $currentId = $this->currentId;
-        $graph = $this->container->getCompiler()->getServiceReferenceGraph();
-
-        if (isset($this->serviceLocatorContextIds[$currentId])) {
-            $currentId = $this->serviceLocatorContextIds[$currentId];
-            $locator = $this->container->getDefinition($this->currentId)->getFactory()[0];
-            $this->throwServiceNotFoundException($value, $currentId, $locator->getArgument(0));
+        $current_id = $this->current_id;
+        $graph = $this->container->get_compiler()->get_service_reference_graph();
+        if (isset($this->service_locator_context_ids[$current_id])) {
+            $current_id = $this->service_locator_context_ids[$current_id];
+            $locator = $this->container->get_definition($this->current_id)->get_factory()[0];
+            $this->throw_service_not_found_exception($value, $current_id, $locator->get_argument(0));
         }
-
-        if ('.' === $currentId[0] && $graph->hasNode($currentId)) {
-            foreach ($graph->getNode($currentId)->getInEdges() as $edge) {
-                if (!$edge->getValue() instanceof Reference) {
+        if ('.' === $current_id[0] && $graph->has_node($current_id)) {
+            foreach ($graph->get_node($current_id)->get_in_edges() as $edge) {
+                if (!$edge->get_value() instanceof Reference) {
                     continue;
                 }
-                if (ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE < $edge->getValue()->getInvalidBehavior()) {
+                if (Container_Interface::EXCEPTION_ON_INVALID_REFERENCE < $edge->get_value()->get_invalid_behavior()) {
                     continue;
                 }
-                $sourceId = $edge->getSourceNode()->getId();
-
-                if ('.' !== $sourceId[0]) {
-                    $currentId = $sourceId;
+                $source_id = $edge->get_source_node()->get_id();
+                if ('.' !== $source_id[0]) {
+                    $current_id = $source_id;
                     break;
                 }
-
-                if (isset($this->serviceLocatorContextIds[$sourceId])) {
-                    $currentId = $this->serviceLocatorContextIds[$sourceId];
-                    $locator = $this->container->getDefinition($this->currentId);
-                    $this->throwServiceNotFoundException($value, $currentId, $locator->getArgument(0));
+                if (isset($this->service_locator_context_ids[$source_id])) {
+                    $current_id = $this->service_locator_context_ids[$source_id];
+                    $locator = $this->container->get_definition($this->current_id);
+                    $this->throw_service_not_found_exception($value, $current_id, $locator->get_argument(0));
                 }
             }
         }
-
-        $this->throwServiceNotFoundException($value, $currentId, $value);
+        $this->throw_service_not_found_exception($value, $current_id, $value);
     }
-
-    private function throwServiceNotFoundException(Reference $ref, string $sourceId, mixed $value): void
+    private function throw_service_not_found_exception(Reference $ref, string $source_id, mixed $value): void
     {
         $id = (string) $ref;
         $alternatives = [];
-        foreach ($this->container->getServiceIds() as $knownId) {
-            if ('' === $knownId) {
+        foreach ($this->container->get_service_ids() as $known_id) {
+            if ('' === $known_id) {
                 continue;
             }
-            if ('.' === $knownId[0]) {
+            if ('.' === $known_id[0]) {
                 continue;
             }
-            if ($knownId === $this->currentId) {
+            if ($known_id === $this->current_id) {
                 continue;
             }
-            $lev = levenshtein($id, $knownId);
-            if ($lev <= \strlen($id) / 3 || str_contains($knownId, $id)) {
-                $alternatives[] = $knownId;
+            $lev = levenshtein($id, $known_id);
+            if ($lev <= \strlen($id) / 3 || str_contains($known_id, $id)) {
+                $alternatives[] = $known_id;
             }
         }
-
-        $pass = new class () extends AbstractRecursivePass {
+        $pass = new class extends Abstract_Recursive_Pass
+        {
             public Reference $ref;
-            public string $sourceId;
+            public string $source_id;
             public array $alternatives;
-
-            public function processValue(mixed $value, bool $isRoot = false): mixed
+            public function process_value(mixed $value, bool $is_root = false): mixed
             {
                 if ($this->ref !== $value) {
-                    return parent::processValue($value, $isRoot);
+                    return parent::process_value($value, $is_root);
                 }
-                $sourceId = $this->sourceId;
-                if (null !== $this->currentId && $this->currentId !== (string) $value) {
-                    $sourceId = $this->currentId.'" in the container provided to "'.$sourceId;
+                $source_id = $this->source_id;
+                if (null !== $this->current_id && $this->current_id !== (string) $value) {
+                    $source_id = $this->current_id . '" in the container provided to "' . $source_id;
                 }
-
-                throw new ServiceNotFoundException((string) $value, $sourceId, null, $this->alternatives);
+                throw new Service_Not_Found_Exception((string) $value, $source_id, null, $this->alternatives);
             }
         };
         $pass->ref = $ref;
-        $pass->sourceId = $sourceId;
+        $pass->source_id = $source_id;
         $pass->alternatives = $alternatives;
-
-        $pass->processValue($value, true);
+        $pass->process_value($value, true);
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Controller;
 
-namespace Symfony\Component\HttpKernel\Controller;
-
-use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\Http_Foundation\Request;
 /**
  * A ControllerResolverInterface implementation knows how to determine the
  * controller to execute based on a Request object.
@@ -23,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-interface ControllerResolverInterface
+interface Controller_Resolver_Interface
 {
     /**
      * Returns the Controller instance associated with a Request.
@@ -39,5 +36,5 @@ interface ControllerResolverInterface
      *
      * @throws \LogicException If a controller was found based on the request but it is not callable
      */
-    public function getController(Request $request): callable|false;
+    public function get_controller(Request $request): callable|false;
 }

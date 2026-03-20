@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Http_Kernel\Event;
 
-namespace Symfony\Component\HttpKernel\Event;
-
-use Symfony\Component\ExpressionLanguage\Expression;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-
+use Symfony\Component\Expression_Language\Expression;
+use Symfony\Component\Expression_Language\Expression_Language;
+use Symfony\Component\Http_Foundation\Request;
+use Symfony\Component\Http_Kernel\Http_Kernel_Interface;
 /**
  * Allows filtering of a controller callable.
  *
@@ -27,65 +24,54 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-final class ControllerEvent extends KernelEvent
+final class Controller_Event extends Kernel_Event
 {
     private string|array|object $controller;
-    private \ReflectionFunctionAbstract $controllerReflector;
-
-    public function __construct(HttpKernelInterface $kernel, callable $controller, Request $request, ?int $requestType)
+    private \Reflection_Function_Abstract $controller_reflector;
+    public function __construct(Http_Kernel_Interface $kernel, callable $controller, Request $request, ?int $request_type)
     {
-        parent::__construct($kernel, $request, $requestType);
-
-        $this->setController($controller);
+        parent::__construct($kernel, $request, $request_type);
+        $this->set_controller($controller);
     }
-
-    public function getController(): callable
+    public function get_controller(): callable
     {
         return $this->controller;
     }
-
-    public function getControllerReflector(): \ReflectionFunctionAbstract
+    public function get_controller_reflector(): \Reflection_Function_Abstract
     {
-        return $this->controllerReflector;
+        return $this->controller_reflector;
     }
-
     /**
      * @param list<object>|null $attributes
      */
-    public function setController(callable $controller, ?array $attributes = null): void
+    public function set_controller(callable $controller, ?array $attributes = null): void
     {
         if (null !== $attributes) {
-            if (!array_is_list($flattenAttributes = $attributes)) {
+            if (!array_is_list($flatten_attributes = $attributes)) {
                 trigger_deprecation('symfony/http-kernel', '8.1', 'Passing an array of attributes grouped by class name to "%s()" is deprecated. Pass a flat list of attributes instead.', __METHOD__);
-                $flattenAttributes = [];
+                $flatten_attributes = [];
                 foreach ($attributes as $attributes) {
                     foreach (\is_array($attributes) ? $attributes : [$attributes] as $attribute) {
-                        $flattenAttributes[] = $attribute;
+                        $flatten_attributes[] = $attribute;
                     }
                 }
             }
-            $this->getRequest()->attributes->set('_controller_attributes', $flattenAttributes);
+            $this->get_request()->attributes->set('_controller_attributes', $flatten_attributes);
         }
-
         if (isset($this->controller) && ($controller instanceof \Closure ? $controller == $this->controller : $controller === $this->controller)) {
             $this->controller = $controller;
-
             return;
         }
-
         if (null === $attributes) {
-            $this->getRequest()->attributes->remove('_controller_attributes');
+            $this->get_request()->attributes->remove('_controller_attributes');
         }
-
-        $this->controllerReflector = match (true) {
+        $this->controller_reflector = match (true) {
             \is_array($controller) && method_exists(...$controller) => new \ReflectionMethod(...$controller),
             \is_string($controller) && str_contains($controller, '::') => new \ReflectionMethod(...explode('::', $controller, 2)),
             default => new \ReflectionFunction($controller(...)),
         };
-
         $this->controller = $controller;
     }
-
     /**
      * @template T of object
      *
@@ -93,66 +79,51 @@ final class ControllerEvent extends KernelEvent
      *
      * @return ($className is null ? array<class-string, list<object>> : ($className is '*' ? list<object> : list<T>))
      */
-    public function getAttributes(?string $className = null): array
+    public function get_attributes(?string $class_name = null): array
     {
-        if (null === $attributes = $this->getRequest()->attributes->get('_controller_attributes')) {
+        if (null === $attributes = $this->get_request()->attributes->get('_controller_attributes')) {
             $class = match (true) {
                 \is_array($this->controller) && method_exists(...$this->controller) => new \ReflectionClass($this->controller[0]),
                 \is_string($this->controller) && false !== $i = strpos($this->controller, '::') => new \ReflectionClass(substr($this->controller, 0, $i)),
-                $this->controllerReflector instanceof \ReflectionFunction => $this->controllerReflector->isAnonymous() ? null : $this->controllerReflector->getClosureCalledClass(),
+                $this->controller_reflector instanceof \ReflectionFunction => $this->controller_reflector->is_anonymous() ? null : $this->controller_reflector->get_closure_called_class(),
             };
             $attributes = [];
-
-            foreach (array_merge($class?->getAttributes() ?? [], $this->controllerReflector->getAttributes()) as $attribute) {
-                if (class_exists($attribute->getName())) {
-                    $attributes[] = $attribute->newInstance();
+            foreach (array_merge($class?->get_attributes() ?? [], $this->controller_reflector->get_attributes()) as $attribute) {
+                if (class_exists($attribute->get_name())) {
+                    $attributes[] = $attribute->new_instance();
                 }
             }
-
-            $this->getRequest()->attributes->set('_controller_attributes', $attributes);
+            $this->get_request()->attributes->set('_controller_attributes', $attributes);
         }
-
-        if ('*' === $className) {
+        if ('*' === $class_name) {
             return $attributes;
         }
-
-        if (null !== $className) {
-            return array_values(array_filter($attributes, static fn ($attr): bool => $attr instanceof $className));
+        if (null !== $class_name) {
+            return array_values(array_filter($attributes, static fn($attr): bool => $attr instanceof $class_name));
         }
-
         $grouped = [];
         foreach ($attributes as $attribute) {
             $grouped[$attribute::class][] = $attribute;
         }
-
         return $grouped;
     }
-
-    public function evaluate(mixed $value, ?ExpressionLanguage $expressionLanguage, array $args = []): mixed
+    public function evaluate(mixed $value, ?Expression_Language $expression_language, array $args = []): mixed
     {
         if (!$value instanceof \Closure && !$value instanceof Expression) {
             return $value;
         }
-
-        $controller = $this->getController();
+        $controller = $this->get_controller();
         $controller = match (true) {
             \is_object($controller) && !$controller instanceof \Closure => $controller,
             \is_array($controller) && \is_object($controller[0]) => $controller[0],
             default => null,
         };
-
         if ($value instanceof \Closure) {
-            return $value($args, $this->getRequest(), $controller);
+            return $value($args, $this->get_request(), $controller);
         }
-
-        if (!$expressionLanguage) {
+        if (!$expression_language) {
             throw new \LogicException('Cannot evaluate Expression for controllers since no ExpressionLanguage service was configured.');
         }
-
-        return $expressionLanguage->evaluate($value, [
-            'request' => $this->getRequest(),
-            'args' => $args,
-            'this' => $controller,
-        ]);
+        return $expression_language->evaluate($value, ['request' => $this->get_request(), 'args' => $args, 'this' => $controller]);
     }
 }

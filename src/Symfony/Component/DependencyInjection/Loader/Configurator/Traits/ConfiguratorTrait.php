@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,22 +9,19 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Dependency_Injection\Loader\Configurator\Traits;
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
-
-use Symfony\Component\DependencyInjection\Loader\Configurator\ReferenceConfigurator;
-
-trait ConfiguratorTrait
+use Symfony\Component\Dependency_Injection\Loader\Configurator\Reference_Configurator;
+trait Configurator_Trait
 {
     /**
      * Sets a configurator to call after the service is fully initialized.
      *
      * @return $this
      */
-    final public function configurator(string|array|\Closure|ReferenceConfigurator $configurator): static
+    final public function configurator(string|array|\Closure|Reference_Configurator $configurator): static
     {
-        $this->definition->setConfigurator(static::processValue($configurator, true));
-
+        $this->definition->set_configurator(static::process_value($configurator, true));
         return $this;
     }
 }

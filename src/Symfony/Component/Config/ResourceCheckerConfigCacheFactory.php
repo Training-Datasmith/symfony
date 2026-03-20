@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Config;
 
 /**
@@ -19,23 +17,20 @@ namespace Symfony\Component\Config;
  *
  * @author Matthias Pigulla <mp@webfactory.de>
  */
-class ResourceCheckerConfigCacheFactory implements ConfigCacheFactoryInterface
+class Resource_Checker_Config_Cache_Factory implements Config_Cache_Factory_Interface
 {
     /**
      * @param iterable<int, ResourceCheckerInterface> $resourceCheckers
      */
-    public function __construct(
-        private readonly iterable $resourceCheckers = [],
-    ) {
-    }
-
-    public function cache(string $file, callable $callable): ConfigCacheInterface
+    public function __construct(private readonly iterable $resource_checkers = [])
     {
-        $cache = new ResourceCheckerConfigCache($file, $this->resourceCheckers);
-        if (!$cache->isFresh()) {
+    }
+    public function cache(string $file, callable $callable): Config_Cache_Interface
+    {
+        $cache = new Resource_Checker_Config_Cache($file, $this->resource_checkers);
+        if (!$cache->is_fresh()) {
             $callable($cache);
         }
-
         return $cache;
     }
 }

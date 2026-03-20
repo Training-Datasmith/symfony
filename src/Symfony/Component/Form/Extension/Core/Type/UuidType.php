@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,31 +9,23 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form\Extension\Core\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\DataTransformer\UuidToStringTransformer;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Form\Abstract_Type;
+use Symfony\Component\Form\Extension\Core\Data_Transformer\Uuid_To_String_Transformer;
+use Symfony\Component\Form\Form_Builder_Interface;
+use Symfony\Component\Options_Resolver\Options_Resolver;
 /**
  * @author Pavel Dyakonov <wapinet@mail.ru>
  */
-class UuidType extends AbstractType
+class Uuid_Type extends Abstract_Type
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function build_form(Form_Builder_Interface $builder, array $options): void
     {
-        $builder
-            ->addViewTransformer(new UuidToStringTransformer())
-        ;
+        $builder->add_view_transformer(new Uuid_To_String_Transformer());
     }
-
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configure_options(Options_Resolver $resolver): void
     {
-        $resolver->setDefaults([
-            'compound' => false,
-            'invalid_message' => 'Please enter a valid UUID.',
-        ]);
+        $resolver->set_defaults(['compound' => false, 'invalid_message' => 'Please enter a valid UUID.']);
     }
 }

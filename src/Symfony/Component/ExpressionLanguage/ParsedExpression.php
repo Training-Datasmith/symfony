@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,26 +9,21 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Component\Expression_Language;
 
-namespace Symfony\Component\ExpressionLanguage;
-
-use Symfony\Component\ExpressionLanguage\Node\Node;
-
+use Symfony\Component\Expression_Language\Node\Node;
 /**
  * Represents an already parsed expression.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ParsedExpression extends Expression
+class Parsed_Expression extends Expression
 {
-    public function __construct(
-        string $expression,
-        private readonly Node $nodes,
-    ) {
+    public function __construct(string $expression, private readonly Node $nodes)
+    {
         parent::__construct($expression);
     }
-
-    public function getNodes(): Node
+    public function get_nodes(): Node
     {
         return $this->nodes;
     }

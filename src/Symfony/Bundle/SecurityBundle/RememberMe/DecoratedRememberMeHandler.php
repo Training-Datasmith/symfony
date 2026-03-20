@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Security_Bundle\Remember_Me;
 
-namespace Symfony\Bundle\SecurityBundle\RememberMe;
-
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Http\RememberMe\RememberMeDetails;
-use Symfony\Component\Security\Http\RememberMe\RememberMeHandlerInterface;
-
+use Symfony\Component\Security\Core\User\User_Interface;
+use Symfony\Component\Security\Http\Remember_Me\Remember_Me_Details;
+use Symfony\Component\Security\Http\Remember_Me\Remember_Me_Handler_Interface;
 /**
  * Used as a "workaround" for tagging aliases in the RememberMeFactory.
  *
@@ -24,25 +21,21 @@ use Symfony\Component\Security\Http\RememberMe\RememberMeHandlerInterface;
  *
  * @internal
  */
-final readonly class DecoratedRememberMeHandler implements RememberMeHandlerInterface
+final readonly class Decorated_Remember_Me_Handler implements Remember_Me_Handler_Interface
 {
-    public function __construct(
-        private RememberMeHandlerInterface $handler,
-    ) {
-    }
-
-    public function createRememberMeCookie(UserInterface $user): void
+    public function __construct(private Remember_Me_Handler_Interface $handler)
     {
-        $this->handler->createRememberMeCookie($user);
     }
-
-    public function consumeRememberMeCookie(RememberMeDetails $rememberMeDetails): UserInterface
+    public function create_remember_me_cookie(User_Interface $user): void
     {
-        return $this->handler->consumeRememberMeCookie($rememberMeDetails);
+        $this->handler->create_remember_me_cookie($user);
     }
-
-    public function clearRememberMeCookie(): void
+    public function consume_remember_me_cookie(Remember_Me_Details $remember_me_details): User_Interface
     {
-        $this->handler->clearRememberMeCookie();
+        return $this->handler->consume_remember_me_cookie($remember_me_details);
+    }
+    public function clear_remember_me_cookie(): void
+    {
+        $this->handler->clear_remember_me_cookie();
     }
 }

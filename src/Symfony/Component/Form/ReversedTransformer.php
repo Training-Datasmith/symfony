@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
 /**
@@ -21,20 +19,17 @@ namespace Symfony\Component\Form;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ReversedTransformer implements DataTransformerInterface
+class Reversed_Transformer implements Data_Transformer_Interface
 {
-    public function __construct(
-        protected DataTransformerInterface $reversedTransformer,
-    ) {
+    public function __construct(protected Data_Transformer_Interface $reversed_transformer)
+    {
     }
-
     public function transform(mixed $value): mixed
     {
-        return $this->reversedTransformer->reverseTransform($value);
+        return $this->reversed_transformer->reverse_transform($value);
     }
-
-    public function reverseTransform(mixed $value): mixed
+    public function reverse_transform(mixed $value): mixed
     {
-        return $this->reversedTransformer->transform($value);
+        return $this->reversed_transformer->transform($value);
     }
 }

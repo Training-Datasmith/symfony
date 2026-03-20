@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,16 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Form;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\PropertyAccess\PropertyPathInterface;
-
+use Symfony\Component\Event_Dispatcher\Event_Subscriber_Interface;
+use Symfony\Component\Property_Access\Property_Path_Interface;
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface FormConfigBuilderInterface extends FormConfigInterface
+interface Form_Config_Builder_Interface extends Form_Config_Interface
 {
     /**
      * Adds an event listener to an event on this form.
@@ -30,15 +27,13 @@ interface FormConfigBuilderInterface extends FormConfigInterface
      *
      * @return $this
      */
-    public function addEventListener(string $eventName, callable $listener, int $priority = 0): static;
-
+    public function add_event_listener(string $event_name, callable $listener, int $priority = 0): static;
     /**
      * Adds an event subscriber for events on this form.
      *
      * @return $this
      */
-    public function addEventSubscriber(EventSubscriberInterface $subscriber): static;
-
+    public function add_event_subscriber(Event_Subscriber_Interface $subscriber): static;
     /**
      * Appends / prepends a transformer to the view transformer chain.
      *
@@ -51,15 +46,13 @@ interface FormConfigBuilderInterface extends FormConfigInterface
      *
      * @return $this
      */
-    public function addViewTransformer(DataTransformerInterface $viewTransformer, bool $forcePrepend = false): static;
-
+    public function add_view_transformer(Data_Transformer_Interface $view_transformer, bool $force_prepend = false): static;
     /**
      * Clears the view transformers.
      *
      * @return $this
      */
-    public function resetViewTransformers(): static;
-
+    public function reset_view_transformers(): static;
     /**
      * Prepends / appends a transformer to the normalization transformer chain.
      *
@@ -72,15 +65,13 @@ interface FormConfigBuilderInterface extends FormConfigInterface
      *
      * @return $this
      */
-    public function addModelTransformer(DataTransformerInterface $modelTransformer, bool $forceAppend = false): static;
-
+    public function add_model_transformer(Data_Transformer_Interface $model_transformer, bool $force_append = false): static;
     /**
      * Clears the normalization transformers.
      *
      * @return $this
      */
-    public function resetModelTransformers(): static;
-
+    public function reset_model_transformers(): static;
     /**
      * Sets the value for an attribute.
      *
@@ -88,29 +79,25 @@ interface FormConfigBuilderInterface extends FormConfigInterface
      *
      * @return $this
      */
-    public function setAttribute(string $name, mixed $value): static;
-
+    public function set_attribute(string $name, mixed $value): static;
     /**
      * Sets the attributes.
      *
      * @return $this
      */
-    public function setAttributes(array $attributes): static;
-
+    public function set_attributes(array $attributes): static;
     /**
      * Sets the data mapper used by the form.
      *
      * @return $this
      */
-    public function setDataMapper(?DataMapperInterface $dataMapper): static;
-
+    public function set_data_mapper(?Data_Mapper_Interface $data_mapper): static;
     /**
      * Sets whether the form is disabled.
      *
      * @return $this
      */
-    public function setDisabled(bool $disabled): static;
-
+    public function set_disabled(bool $disabled): static;
     /**
      * Sets the data used for the client data when no value is submitted.
      *
@@ -118,22 +105,19 @@ interface FormConfigBuilderInterface extends FormConfigInterface
      *
      * @return $this
      */
-    public function setEmptyData(mixed $emptyData): static;
-
+    public function set_empty_data(mixed $empty_data): static;
     /**
      * Sets whether errors bubble up to the parent.
      *
      * @return $this
      */
-    public function setErrorBubbling(bool $errorBubbling): static;
-
+    public function set_error_bubbling(bool $error_bubbling): static;
     /**
      * Sets whether this field is required to be filled out when submitted.
      *
      * @return $this
      */
-    public function setRequired(bool $required): static;
-
+    public function set_required(bool $required): static;
     /**
      * Sets the property path that the form should be mapped to.
      *
@@ -142,30 +126,26 @@ interface FormConfigBuilderInterface extends FormConfigInterface
      *
      * @return $this
      */
-    public function setPropertyPath(string|PropertyPathInterface|null $propertyPath): static;
-
+    public function set_property_path(string|Property_Path_Interface|null $property_path): static;
     /**
      * Sets whether the form should be mapped to an element of its
      * parent's data.
      *
      * @return $this
      */
-    public function setMapped(bool $mapped): static;
-
+    public function set_mapped(bool $mapped): static;
     /**
      * Sets whether the form's data should be modified by reference.
      *
      * @return $this
      */
-    public function setByReference(bool $byReference): static;
-
+    public function set_by_reference(bool $by_reference): static;
     /**
      * Sets whether the form should read and write the data of its parent.
      *
      * @return $this
      */
-    public function setInheritData(bool $inheritData): static;
-
+    public function set_inherit_data(bool $inherit_data): static;
     /**
      * Sets whether the form should be compound.
      *
@@ -173,15 +153,13 @@ interface FormConfigBuilderInterface extends FormConfigInterface
      *
      * @see FormConfigInterface::getCompound()
      */
-    public function setCompound(bool $compound): static;
-
+    public function set_compound(bool $compound): static;
     /**
      * Sets the resolved type.
      *
      * @return $this
      */
-    public function setType(ResolvedFormTypeInterface $type): static;
-
+    public function set_type(Resolved_Form_Type_Interface $type): static;
     /**
      * Sets the initial data of the form.
      *
@@ -189,8 +167,7 @@ interface FormConfigBuilderInterface extends FormConfigInterface
      *
      * @return $this
      */
-    public function setData(mixed $data): static;
-
+    public function set_data(mixed $data): static;
     /**
      * Locks the form's data to the data passed in the configuration.
      *
@@ -203,36 +180,31 @@ interface FormConfigBuilderInterface extends FormConfigInterface
      *
      * @return $this
      */
-    public function setDataLocked(bool $locked): static;
-
+    public function set_data_locked(bool $locked): static;
     /**
      * Sets the form factory used for creating new forms.
      *
      * @return $this
      */
-    public function setFormFactory(FormFactoryInterface $formFactory): static;
-
+    public function set_form_factory(Form_Factory_Interface $form_factory): static;
     /**
      * Sets the target URL of the form.
      *
      * @return $this
      */
-    public function setAction(string $action): static;
-
+    public function set_action(string $action): static;
     /**
      * Sets the HTTP method used by the form.
      *
      * @return $this
      */
-    public function setMethod(string $method): static;
-
+    public function set_method(string $method): static;
     /**
      * Sets the request handler used by the form.
      *
      * @return $this
      */
-    public function setRequestHandler(RequestHandlerInterface $requestHandler): static;
-
+    public function set_request_handler(Request_Handler_Interface $request_handler): static;
     /**
      * Sets whether the form should be initialized automatically.
      *
@@ -245,18 +217,16 @@ interface FormConfigBuilderInterface extends FormConfigInterface
      *
      * @return $this
      */
-    public function setAutoInitialize(bool $initialize): static;
-
+    public function set_auto_initialize(bool $initialize): static;
     /**
      * Builds and returns the form configuration.
      */
-    public function getFormConfig(): FormConfigInterface;
-
+    public function get_form_config(): Form_Config_Interface;
     /**
      * Sets the callback that will be called to determine if the model
      * data of the form is empty or not.
      *
      * @return $this
      */
-    public function setIsEmptyCallback(?callable $isEmptyCallback): static;
+    public function set_is_empty_callback(?callable $is_empty_callback): static;
 }

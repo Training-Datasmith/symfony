@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,18 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\DependencyInjection;
+namespace Symfony\Component\Dependency_Injection;
 
 /**
  * Represents a PHP type-hinted service reference.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class TypedReference extends Reference
+class Typed_Reference extends Reference
 {
     private readonly ?string $name;
-
     /**
      * @param string      $id              The service identifier
      * @param string      $type            The PHP type of the identified service
@@ -29,28 +26,20 @@ class TypedReference extends Reference
      * @param string|null $name            The name of the argument targeting the service
      * @param array       $attributes      The attributes to be used
      */
-    public function __construct(
-        string $id,
-        private readonly string $type,
-        int $invalidBehavior = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
-        ?string $name = null,
-        private readonly array $attributes = [],
-    ) {
+    public function __construct(string $id, private readonly string $type, int $invalid_behavior = Container_Interface::EXCEPTION_ON_INVALID_REFERENCE, ?string $name = null, private readonly array $attributes = [])
+    {
         $this->name = $type === $id ? $name : null;
-        parent::__construct($id, $invalidBehavior);
+        parent::__construct($id, $invalid_behavior);
     }
-
-    public function getType(): string
+    public function get_type(): string
     {
         return $this->type;
     }
-
-    public function getName(): ?string
+    public function get_name(): ?string
     {
         return $this->name;
     }
-
-    public function getAttributes(): array
+    public function get_attributes(): array
     {
         return $this->attributes;
     }

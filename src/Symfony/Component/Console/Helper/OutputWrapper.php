@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Symfony\Component\Console\Helper;
 
 /**
@@ -44,35 +42,30 @@ namespace Symfony\Component\Console\Helper;
  *
  * @see https://stackoverflow.com/a/20434776/1476819
  */
-final readonly class OutputWrapper
+final readonly class Output_Wrapper
 {
     private const TAG_OPEN_REGEX_SEGMENT = '[a-z](?:[^\\\\<>]*+ | \\\\.)*';
     private const TAG_CLOSE_REGEX_SEGMENT = '[a-z][^<>]*+';
     private const URL_PATTERN = 'https?://\S+';
-
-    public function __construct(
-        private bool $allowCutUrls = false,
-    ) {
+    public function __construct(private bool $allow_cut_urls = false)
+    {
     }
-
     public function wrap(string $text, int $width, string $break = "\n"): string
     {
         if (!$width) {
             return $text;
         }
-
-        $tagPattern = \sprintf('<(?:(?:%s)|/(?:%s)?)>', self::TAG_OPEN_REGEX_SEGMENT, self::TAG_CLOSE_REGEX_SEGMENT);
-        $limitPattern = "{1,$width}";
-        $patternBlocks = [$tagPattern];
-        if (!$this->allowCutUrls) {
-            $patternBlocks[] = self::URL_PATTERN;
+        $tag_pattern = \sprintf('<(?:(?:%s)|/(?:%s)?)>', self::TAG_OPEN_REGEX_SEGMENT, self::TAG_CLOSE_REGEX_SEGMENT);
+        $limit_pattern = "{1,{$width}}";
+        $pattern_blocks = [$tag_pattern];
+        if (!$this->allow_cut_urls) {
+            $pattern_blocks[] = self::URL_PATTERN;
         }
-        $patternBlocks[] = '.';
-        $blocks = implode('|', $patternBlocks);
-        $rowPattern = "(?:$blocks)$limitPattern";
-        $pattern = \sprintf('#(?:((?>(%1$s)((?<=[^\S\r\n])[^\S\r\n]?|(?=\r?\n)|$|[^\S\r\n]))|(%1$s))(?:\r?\n)?|(?:\r?\n|$))#imux', $rowPattern);
-        $output = rtrim((string) preg_replace($pattern, '\\1'.$break, $text), $break);
-
-        return str_replace(' '.$break, $break, $output);
+        $pattern_blocks[] = '.';
+        $blocks = implode('|', $pattern_blocks);
+        $row_pattern = "(?:{$blocks}){$limit_pattern}";
+        $pattern = \sprintf('#(?:((?>(%1$s)((?<=[^\S\r\n])[^\S\r\n]?|(?=\r?\n)|$|[^\S\r\n]))|(%1$s))(?:\r?\n)?|(?:\r?\n|$))#imux', $row_pattern);
+        $output = rtrim((string) preg_replace($pattern, '\1' . $break, $text), $break);
+        return str_replace(' ' . $break, $break, $output);
     }
 }

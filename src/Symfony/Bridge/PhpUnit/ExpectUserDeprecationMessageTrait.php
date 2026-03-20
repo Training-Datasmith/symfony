@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,23 +9,20 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bridge\Php_Unit;
 
-namespace Symfony\Bridge\PhpUnit;
-
-use PHPUnit\Runner\Version;
-
+use Php_Unit\Runner\Version;
 if (version_compare(Version::id(), '11.0.0', '<')) {
-    trait ExpectUserDeprecationMessageTrait
+    trait Expect_User_Deprecation_Message_Trait
     {
-        use ExpectDeprecationTrait;
-
-        final protected function expectUserDeprecationMessage(string $expectedUserDeprecationMessage): void
+        use Expect_Deprecation_Trait;
+        final protected function expect_user_deprecation_message(string $expected_user_deprecation_message): void
         {
-            $this->expectDeprecation(str_replace('%', '%%', $expectedUserDeprecationMessage));
+            $this->expect_deprecation(str_replace('%', '%%', $expected_user_deprecation_message));
         }
     }
 } else {
-    trait ExpectUserDeprecationMessageTrait
+    trait Expect_User_Deprecation_Message_Trait
     {
     }
 }

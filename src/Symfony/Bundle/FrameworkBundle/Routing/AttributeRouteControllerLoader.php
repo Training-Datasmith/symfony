@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Symfony package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Symfony\Bundle\Framework_Bundle\Routing;
 
-namespace Symfony\Bundle\FrameworkBundle\Routing;
-
-use Symfony\Component\Routing\Loader\AttributeClassLoader;
+use Symfony\Component\Routing\Loader\Attribute_Class_Loader;
 use Symfony\Component\Routing\Route;
-
 /**
  * AttributeRouteControllerLoader is an implementation of AttributeClassLoader
  * that sets the '_controller' default based on the class and method names.
@@ -23,31 +20,28 @@ use Symfony\Component\Routing\Route;
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Alexandre Daubois <alex.daubois@gmail.com>
  */
-class AttributeRouteControllerLoader extends AttributeClassLoader
+class Attribute_Route_Controller_Loader extends Attribute_Class_Loader
 {
     /**
      * Configures the _controller default parameter of a given Route instance.
      */
-    protected function configureRoute(Route $route, \ReflectionClass $class, \ReflectionMethod $method, object $attr): void
+    protected function configure_route(Route $route, \ReflectionClass $class, \ReflectionMethod $method, object $attr): void
     {
-        if ('__invoke' === $method->getName()) {
-            $route->setDefault('_controller', $class->getName());
+        if ('__invoke' === $method->get_name()) {
+            $route->set_default('_controller', $class->get_name());
         } else {
-            $route->setDefault('_controller', $class->getName().'::'.$method->getName());
+            $route->set_default('_controller', $class->get_name() . '::' . $method->get_name());
         }
     }
-
     /**
      * Makes the default route name more sane by removing common keywords.
      */
-    protected function getDefaultRouteName(\ReflectionClass $class, \ReflectionMethod $method): string
+    protected function get_default_route_name(\ReflectionClass $class, \ReflectionMethod $method): string
     {
-        $name = preg_replace('/(bundle|controller)_/', '_', parent::getDefaultRouteName($class, $method));
-
+        $name = preg_replace('/(bundle|controller)_/', '_', parent::get_default_route_name($class, $method));
         if (str_ends_with($method->name, 'Action') || str_ends_with($method->name, '_action')) {
-            $name = preg_replace('/action(_\d+)?$/', '\\1', (string) $name);
+            $name = preg_replace('/action(_\d+)?$/', '\1', (string) $name);
         }
-
         return str_replace('__', '_', $name);
     }
 }
