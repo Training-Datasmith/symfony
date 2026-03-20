@@ -4,5 +4,5 @@ imports:
 services:
     _defaults: { public: true }
     test.autowiring_types.autowired_services:
-        class: Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\AutowiringTypes\AutowiredServices
+        class: Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Autowiring_Types\Autowired_Services
         autowire: true

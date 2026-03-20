@@ -4,10 +4,10 @@ framework:
         serializer:
             default_serializer: messenger.transport.symfony_serializer
         routing:
-            'Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Messenger\DummyMessage': [amqp, messenger.transport.audit]
-            'Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Messenger\SecondMessage':
+            'Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Messenger\Dummy_Message': [amqp, messenger.transport.audit]
+            'Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Messenger\Second_Message':
                 senders: [amqp, audit]
-            'Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Messenger\*': [amqp]
+            'Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Messenger\*': [amqp]
             'Symfony\*': [amqp]
             '*': amqp
         transports:

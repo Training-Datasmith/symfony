@@ -2,7 +2,7 @@ security:
     firewalls:
         main:
             required_badges:
-                - 'Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge'
+                - 'Symfony\Component\Security\Http\Authenticator\Passport\Badge\Csrf_Token_Badge'
                 - RememberMeBadge
             login_link:
                 check_route: login_check

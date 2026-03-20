@@ -1,9 +1,9 @@
 namespaces:
 	custom: Symfony\Component\Validator\Tests\Fixtures\
 
-Symfony\Component\Validator\Tests\Fixtures\NestedAttribute\Entity:
+Symfony\Component\Validator\Tests\Fixtures\Nested_Attribute\Entity:
 	constraints:
 		# Custom constraint
-		- Symfony\Component\Validator\Tests\Fixtures\ConstraintA: ~
+		- Symfony\Component\Validator\Tests\Fixtures\Constraint_A: ~
 		# Custom constraint with namespaces prefix
 		- "custom:ConstraintB": ~

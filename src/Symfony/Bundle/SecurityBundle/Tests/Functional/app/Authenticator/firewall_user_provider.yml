@@ -7,4 +7,4 @@ security:
         api:
             pattern: /
             provider: in_memory
-            custom_authenticator: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\ApiAuthenticator
+            custom_authenticator: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Api_Authenticator

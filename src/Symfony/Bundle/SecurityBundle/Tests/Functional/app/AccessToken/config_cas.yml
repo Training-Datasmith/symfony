@@ -6,7 +6,7 @@ framework:
 
 security:
   password_hashers:
-    Symfony\Component\Security\Core\User\InMemoryUser: plaintext
+    Symfony\Component\Security\Core\User\In_Memory_User: plaintext
 
   providers:
     in_memory:
@@ -21,7 +21,7 @@ security:
         token_handler:
           cas:
             validation_url: 'https://www.example.com/cas/serviceValidate'
-            http_client: 'Symfony\Contracts\HttpClient\HttpClientInterface'
+            http_client: 'Symfony\Contracts\Http_Client\Http_Client_Interface'
         token_extractors:
           - security.access_token_extractor.cas
 
@@ -33,8 +33,8 @@ services:
     public: true
 
   security.access_token_extractor.cas:
-    class: Symfony\Component\Security\Http\AccessToken\QueryAccessTokenExtractor
+    class: Symfony\Component\Security\Http\Access_Token\Query_Access_Token_Extractor
     arguments:
       - 'ticket'
 
-  Symfony\Contracts\HttpClient\HttpClientInterface: ~
+  Symfony\Contracts\Http_Client\Http_Client_Interface: ~

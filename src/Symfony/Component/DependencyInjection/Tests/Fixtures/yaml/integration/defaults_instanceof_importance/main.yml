@@ -6,7 +6,7 @@ services:
         tags: [from_defaults]
 
     _instanceof:
-        Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStubParent:
+        Symfony\Component\Dependency_Injection\Tests\Compiler\Integration_Test_Stub_Parent:
             autowire: false
             shared: false
             tags:
@@ -14,12 +14,12 @@ services:
             calls:
                 - [setSunshine, [bright]]
 
-        Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub:
+        Symfony\Component\Dependency_Injection\Tests\Compiler\Integration_Test_Stub:
             tags:
                 - { name: bar_tag }
 
     main_service:
-        class: Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
+        class: Symfony\Component\Dependency_Injection\Tests\Compiler\Integration_Test_Stub
         public: true
         tags:
             - { name: foo_tag, tag_option: from_service }

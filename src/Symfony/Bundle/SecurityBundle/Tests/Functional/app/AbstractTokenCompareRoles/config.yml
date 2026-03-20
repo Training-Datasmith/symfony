@@ -5,11 +5,11 @@ services:
   _defaults: { public: true }
 
   security.user.provider.array:
-    class: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\SecuredPageBundle\Security\Core\User\ArrayUserProvider
+    class: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Secured_Page_Bundle\Security\Core\User\Array_User_Provider
 
 security:
   password_hashers:
-    \Symfony\Component\Security\Core\User\UserInterface: plaintext
+    \Symfony\Component\Security\Core\User\User_Interface: plaintext
 
   providers:
     array:

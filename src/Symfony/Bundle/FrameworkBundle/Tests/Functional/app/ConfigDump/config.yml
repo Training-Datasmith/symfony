@@ -20,11 +20,11 @@ parameters:
     default_config_test_foo: bar
 
 services:
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\EnvVarLoader\StatefulEnvVarLoader:
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Env_Var_Loader\Stateful_Env_Var_Loader:
         tags:
             - container.env_var_loader
 
     test.vault_env_var_primer:
-        class: Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\EnvVarLoader\VaultEnvVarPrimer
+        class: Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Env_Var_Loader\Vault_Env_Var_Primer
         arguments: ['%env(TEST_VAULT_SECRET)%']
         public: true

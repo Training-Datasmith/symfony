@@ -1,15 +1,15 @@
 parameters:
     baz_class: BazClass
-    foo_class: Bar\FooClass
+    foo_class: Bar\Foo_Class
     foo: bar
 
 services:
     service_container:
-        class: Symfony\Component\DependencyInjection\ContainerInterface
+        class: Symfony\Component\Dependency_Injection\Container_Interface
         public: true
         synthetic: true
     foo:
-        class: Bar\FooClass
+        class: Bar\Foo_Class
         tags:
             - foo: { foo: foo }
             - foo: { bar: bar, baz: baz }
@@ -30,7 +30,7 @@ services:
         configurator: ['%baz_class%', configureStatic1]
         public: true
     bar:
-        class: Bar\FooClass
+        class: Bar\Foo_Class
         arguments: [foo, '@foo.baz', '%foo_bar%']
         configurator: ['@foo.baz', configure]
         public: true
@@ -40,7 +40,7 @@ services:
         arguments: ['@deprecated_service']
         public: true
     method_call1:
-        class: Bar\FooClass
+        class: Bar\Foo_Class
         file: '%path%foo.php'
         calls:
             - [setBar, ['@foo']]
@@ -120,7 +120,7 @@ services:
         factory: ['@new_factory', getInstance]
         public: true
     service_from_static_method:
-        class: Bar\FooClass
+        class: Bar\Foo_Class
         constructor: getInstance
         public: true
     factory_simple:

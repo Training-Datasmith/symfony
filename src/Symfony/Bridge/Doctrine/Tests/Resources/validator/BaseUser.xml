@@ -4,7 +4,7 @@
                     xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping
         http://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
 
-    <class name="Symfony\Bridge\Doctrine\Tests\Fixtures\BaseUser">
+    <class name="Symfony\Bridge\Doctrine\Tests\Fixtures\Base_User">
         <property name="username">
             <constraint name="NotBlank">
                 <option name="groups">Registration</option>

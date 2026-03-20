@@ -4,4 +4,4 @@ services:
         autowire: true
         autoconfigure: true
 
-    Symfony\Component\DependencyInjection\Tests\Fixtures\ConstructNotExists: ~
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Construct_Not_Exists: ~

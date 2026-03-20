@@ -4,13 +4,13 @@ parameters:
 
 services:
     service_container:
-        class: Symfony\Component\DependencyInjection\ContainerInterface
+        class: Symfony\Component\Dependency_Injection\Container_Interface
         public: true
         synthetic: true
-    Symfony\Component\DependencyInjection\Tests\Fixtures\Bar:
-        class: Symfony\Component\DependencyInjection\Tests\Fixtures\Bar
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar:
+        class: Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar
         public: true
     my_service:
-        class: Symfony\Component\DependencyInjection\Tests\Fixtures\Bar
+        class: Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar
         public: true
         arguments: [bar_value]

@@ -1,13 +1,13 @@
 services:
     _instanceof:
-        Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface:
+        Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar_Interface:
             autowire: true
             lazy: true
             tags:
                 - { name: foo }
                 - { name: bar }
 
-    Symfony\Component\DependencyInjection\Tests\Fixtures\Bar:
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar:
         public: true
 
-    Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface: '@Symfony\Component\DependencyInjection\Tests\Fixtures\Bar'
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar_Interface: '@Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar'

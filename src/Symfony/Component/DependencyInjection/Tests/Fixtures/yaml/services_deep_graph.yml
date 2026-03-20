@@ -1,7 +1,7 @@
 
 services:
     foo:
-        class: Symfony\Component\DependencyInjection\Tests\Dumper\FooForDeepGraph
+        class: Symfony\Component\Dependency_Injection\Tests\Dumper\Foo_For_Deep_Graph
         public: true
         arguments:
             - '@bar'

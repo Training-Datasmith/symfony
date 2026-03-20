@@ -28,7 +28,7 @@
         <UndefinedClass>
             <errorLevel type="suppress">
                 <!-- These classes have been added in PHP 8.4 -->
-                <referencedClass name="BcMath\Number"/>
+                <referencedClass name="Bc_Math\Number"/>
                 <!-- These classes have been added in PHP 8.5 -->
                 <referencedClass name="CurlSharePersistentHandle"/>
             </errorLevel>

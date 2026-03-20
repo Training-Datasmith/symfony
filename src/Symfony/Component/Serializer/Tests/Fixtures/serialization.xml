@@ -4,7 +4,7 @@
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                     xsi:schemaLocation="http://symfony.com/schema/dic/serializer-mapping https://symfony.com/schema/dic/serializer-mapping/serializer-mapping-1.0.xsd">
 
-    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\GroupDummy">
+    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\Group_Dummy">
         <attribute name="foo">
             <group>group1</group>
             <group>group2</group>
@@ -15,41 +15,41 @@
         </attribute>
     </class>
 
-    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\MaxDepthDummy">
+    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\Max_Depth_Dummy">
         <attribute name="foo" max-depth="2" />
         <attribute name="bar" max-depth="3" />
     </class>
 
-    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\SerializedNameDummy">
+    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\Serialized_Name_Dummy">
         <attribute name="foo" serialized-name="baz" />
         <attribute name="bar" serialized-name="qux" />
     </class>
 
-    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\SerializedPathDummy">
+    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\Serialized_Path_Dummy">
         <attribute name="three" serialized-path="[one][two]" />
         <attribute name="seven" serialized-path="[three][four]" />
     </class>
 
-    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\SerializedPathInConstructorDummy">
+    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\Serialized_Path_In_Constructor_Dummy">
         <attribute name="three" serialized-path="[one][two]" />
     </class>
 
-    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\AbstractDummy">
+    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\Abstract_Dummy">
         <discriminator-map type-property="type" default-type="second">
-            <mapping type="first" class="Symfony\Component\Serializer\Tests\Fixtures\Attributes\AbstractDummyFirstChild" />
-            <mapping type="second" class="Symfony\Component\Serializer\Tests\Fixtures\Attributes\AbstractDummySecondChild" />
+            <mapping type="first" class="Symfony\Component\Serializer\Tests\Fixtures\Attributes\Abstract_Dummy_First_Child" />
+            <mapping type="second" class="Symfony\Component\Serializer\Tests\Fixtures\Attributes\Abstract_Dummy_Second_Child" />
         </discriminator-map>
 
         <attribute name="foo" />
     </class>
 
-    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\IgnoreDummy">
+    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\Ignore_Dummy">
         <attribute name="ignored1" ignore="true" />
         <attribute name="ignored2" ignore="true" />
         <attribute name="notIgnored" ignore="false" />
     </class>
 
-    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\ContextDummyParent">
+    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\Context_Dummy_Parent">
         <attribute name="parentProperty">
             <normalization_context>
                 <entry name="prop">dummy_parent_value</entry>
@@ -62,7 +62,7 @@
         </attribute>
     </class>
 
-    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\ContextDummy">
+    <class name="Symfony\Component\Serializer\Tests\Fixtures\Attributes\Context_Dummy">
         <attribute name="foo">
             <context>
                 <entry name="foo">value</entry>

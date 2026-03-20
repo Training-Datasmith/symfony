@@ -1,26 +1,26 @@
 security:
     password_hashers:
-        JMS\FooBundle\Entity\User1: plaintext
-        JMS\FooBundle\Entity\User2:
+        JMS\Foo_Bundle\Entity\User1: plaintext
+        JMS\Foo_Bundle\Entity\User2:
             algorithm: sha1
             encode_as_base64: false
             iterations: 5
-        JMS\FooBundle\Entity\User3:
+        JMS\Foo_Bundle\Entity\User3:
             algorithm: md5
-        JMS\FooBundle\Entity\User4:
+        JMS\Foo_Bundle\Entity\User4:
             id: security.hasher.foo
-        JMS\FooBundle\Entity\User5:
+        JMS\Foo_Bundle\Entity\User5:
             algorithm: pbkdf2
             hash_algorithm: sha1
             encode_as_base64: false
             iterations: 5
             key_length: 30
-        JMS\FooBundle\Entity\User6:
+        JMS\Foo_Bundle\Entity\User6:
             algorithm: native
             time_cost: 8
             memory_cost: 100
             cost: 15
-        JMS\FooBundle\Entity\User7:
+        JMS\Foo_Bundle\Entity\User7:
             algorithm: auto
 
     providers:

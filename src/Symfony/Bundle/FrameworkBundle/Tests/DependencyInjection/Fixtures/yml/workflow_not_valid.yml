@@ -3,7 +3,7 @@ framework:
         my_workflow:
             type: state_machine
             supports:
-                - Symfony\Bundle\FrameworkBundle\Tests\DependencyInjection\FrameworkExtensionTestCase
+                - Symfony\Bundle\Framework_Bundle\Tests\Dependency_Injection\Framework_Extension_Test_Case
             places: [first, middle, last]
             transitions:
                 go:

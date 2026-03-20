@@ -2,20 +2,20 @@ services:
     _defaults:
         public: true
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\Controller\TransController:
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Controller\Trans_Controller:
         tags: ['controller.service_arguments']
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TransDebug\TransConstructArgService:
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Trans_Debug\Trans_Construct_Arg_Service:
         arguments: ['@translator']
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TransDebug\TransSubscriberService:
-        arguments: ['@Psr\Container\ContainerInterface']
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Trans_Debug\Trans_Subscriber_Service:
+        arguments: ['@Psr\Container\Container_Interface']
         tags: ['container.service_subscriber']
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TransDebug\TransPropertyService:
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Trans_Debug\Trans_Property_Service:
         properties:
             $translator: '@translator'
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TransDebug\TransMethodCallsService:
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Trans_Debug\Trans_Method_Calls_Service:
         calls:
             - [ setTranslator, ['@translator'] ]

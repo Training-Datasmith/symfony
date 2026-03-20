@@ -3,7 +3,7 @@ imports:
 
 security:
     password_hashers:
-        Symfony\Component\Security\Core\User\InMemoryUser: plaintext
+        Symfony\Component\Security\Core\User\In_Memory_User: plaintext
 
     providers:
         in_memory:
@@ -26,6 +26,6 @@ security:
 
 services:
     json_login.success_handler:
-        class: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\JsonLoginBundle\Security\Http\JsonAuthenticationSuccessHandler
+        class: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Json_Login_Bundle\Security\Http\Json_Authentication_Success_Handler
     json_login.failure_handler:
-        class: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\JsonLoginBundle\Security\Http\JsonAuthenticationFailureHandler
+        class: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Json_Login_Bundle\Security\Http\Json_Authentication_Failure_Handler

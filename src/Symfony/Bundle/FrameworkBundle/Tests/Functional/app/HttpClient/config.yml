@@ -5,7 +5,7 @@ imports:
 framework:
     profiler: ~
     http_client:
-        mock_response_factory: Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\Tests\MockClientCallback
+        mock_response_factory: Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Tests\Mock_Client_Callback
         scoped_clients:
             symfony.http_client:
                 base_uri: 'https://symfony.com'

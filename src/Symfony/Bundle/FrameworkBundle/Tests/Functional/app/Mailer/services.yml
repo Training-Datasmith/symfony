@@ -2,5 +2,5 @@ services:
     _defaults:
         public: true
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\Controller\EmailController:
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Controller\Email_Controller:
         tags: ['controller.service_arguments']

@@ -24,6 +24,6 @@ services:
         alias: .json_streamer.cache_warmer.streamer
         public: true
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\app\JsonStreamer\Dto\Dummy: ~
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\app\JsonStreamer\StringToRangeValueTransformer: ~
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\app\JsonStreamer\RangeToStringValueTransformer: ~
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\app\Json_Streamer\Dto\Dummy: ~
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\app\Json_Streamer\String_To_Range_Value_Transformer: ~
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\app\Json_Streamer\Range_To_String_Value_Transformer: ~

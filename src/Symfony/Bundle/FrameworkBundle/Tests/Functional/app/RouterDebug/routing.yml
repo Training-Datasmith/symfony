@@ -1,18 +1,18 @@
 routerdebug_session_welcome:
     path:     /session
-    defaults: { _controller: Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\Controller\SessionController::welcomeAction }
+    defaults: { _controller: Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Controller\Session_Controller::welcomeAction }
 
 routerdebug_session_welcome_name:
     path:     /session/{name}
-    defaults: { _controller: Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\Controller\SessionController::welcomeAction }
+    defaults: { _controller: Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Controller\Session_Controller::welcomeAction }
 
 routerdebug_session_logout:
     path:     /session_logout
-    defaults: { _controller: Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\Controller\SessionController::logoutAction }
+    defaults: { _controller: Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Controller\Session_Controller::logoutAction }
 
 routerdebug_test:
     path:     /test
-    defaults: { _controller: Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\Controller\SessionController::welcomeAction }
+    defaults: { _controller: Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Controller\Session_Controller::welcomeAction }
 
 my_custom_alias:
     alias: routerdebug_test

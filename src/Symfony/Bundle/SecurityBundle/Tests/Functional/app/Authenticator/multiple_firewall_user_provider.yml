@@ -7,8 +7,8 @@ security:
         main:
             pattern: ^/main
             provider: in_memory
-            custom_authenticator: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\LoginFormAuthenticator
+            custom_authenticator: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Login_Form_Authenticator
         custom:
             pattern: ^/custom
             provider: in_memory2
-            custom_authenticator: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\LoginFormAuthenticator
+            custom_authenticator: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Login_Form_Authenticator

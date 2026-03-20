@@ -1,3 +1,3 @@
 with_attributes_controller:
     path: /
-    controller: Symfony\Bundle\FrameworkBundle\Tests\Functional\WithAttributesController
+    controller: Symfony\Bundle\Framework_Bundle\Tests\Functional\With_Attributes_Controller

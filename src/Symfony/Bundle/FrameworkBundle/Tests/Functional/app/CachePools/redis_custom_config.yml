@@ -8,7 +8,7 @@ services:
     cache.test_redis_connection:
         public: false
         class: Redis
-        factory: ['Symfony\Component\Cache\Adapter\RedisAdapter', 'createConnection']
+        factory: ['Symfony\Component\Cache\Adapter\Redis_Adapter', 'createConnection']
         arguments: ['redis://%env(REDIS_HOST)%']
 
     cache.app:

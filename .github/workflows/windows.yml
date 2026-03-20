@@ -70,7 +70,7 @@ jobs:
           $env:SYMFONY_VERSION=(Select-String -CaseSensitive -Pattern " VERSION =" -SimpleMatch -Path src/Symfony/Component/HttpKernel/Kernel.php | Select Line | Select-String -Pattern "([0-9][0-9]*\.[0-9])").Matches.Value
           $env:COMPOSER_ROOT_VERSION=$env:SYMFONY_VERSION + ".x-dev"
 
-          php .github/build-packages.php HEAD^ $env:SYMFONY_VERSION src\Symfony\Bridge\PhpUnit
+          php .github/build-packages.php HEAD^ $env:SYMFONY_VERSION src\Symfony\Bridge\Php_Unit
           php composer.phar update --no-progress --ansi
 
       - name: Install PHPUnit
@@ -88,12 +88,12 @@ jobs:
           $x = 0
           $workingDir = $PWD.Path
 
-          Remove-Item -Path src\Symfony\Bridge\PhpUnit -Recurse
-          mv src\Symfony\Component\HttpClient\phpunit.xml.dist src\Symfony\Component\HttpClient\phpunit.xml
+          Remove-Item -Path src\Symfony\Bridge\Php_Unit -Recurse
+          mv src\Symfony\Component\Http_Client\phpunit.xml.dist src\Symfony\Component\Http_Client\phpunit.xml
           # HttpClient tests need to run separately, they timeout otherwise
           $hcJob = Start-Job -ScriptBlock {
             Set-Location $using:workingDir
-            & php phpunit src\Symfony\Component\HttpClient 2>&1 | Out-File -FilePath "hc.log" -Encoding utf8
+            & php phpunit src\Symfony\Component\Http_Client 2>&1 | Out-File -FilePath "hc.log" -Encoding utf8
             return $LASTEXITCODE
           }
           sleep 10
@@ -189,7 +189,7 @@ jobs:
           $env:SYMFONY_VERSION=(Select-String -CaseSensitive -Pattern " VERSION =" -SimpleMatch -Path src/Symfony/Component/HttpKernel/Kernel.php | Select Line | Select-String -Pattern "([0-9][0-9]*\.[0-9])").Matches.Value
           $env:COMPOSER_ROOT_VERSION=$env:SYMFONY_VERSION + ".x-dev"
 
-          php .github/build-packages.php HEAD^ $env:SYMFONY_VERSION src\Symfony\Bridge\PhpUnit
+          php .github/build-packages.php HEAD^ $env:SYMFONY_VERSION src\Symfony\Bridge\Php_Unit
           php composer.phar update --no-progress --ansi
 
       - name: Install PHPUnit

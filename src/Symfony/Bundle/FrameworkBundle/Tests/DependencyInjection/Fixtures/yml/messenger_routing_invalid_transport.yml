@@ -4,6 +4,6 @@ framework:
         serializer:
             default_serializer: messenger.transport.symfony_serializer
         routing:
-            'Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Messenger\DummyMessage': invalid
+            'Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Messenger\Dummy_Message': invalid
         transports:
             amqp: 'amqp://localhost/%2f/messages'

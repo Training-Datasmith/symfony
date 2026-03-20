@@ -6,7 +6,7 @@
 
   <namespace prefix="custom">Symfony\Component\Validator\Tests\Fixtures\</namespace>
 
-  <class name="Symfony\Component\Validator\Tests\Fixtures\NestedAttribute\Entity">
+  <class name="Symfony\Component\Validator\Tests\Fixtures\Nested_Attribute\Entity">
     <property name="firstName">
       <!-- Constraint with a Boolean -->
       <constraint name="Regex">

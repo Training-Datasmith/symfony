@@ -2,12 +2,12 @@ framework:
     workflows:
         enum:
             supports:
-                - Symfony\Bundle\FrameworkBundle\Tests\DependencyInjection\FrameworkExtensionTestCase
-            places: 'Symfony\Bundle\FrameworkBundle\Tests\DependencyInjection\Fixtures\Workflow\Places::*'
+                - Symfony\Bundle\Framework_Bundle\Tests\Dependency_Injection\Framework_Extension_Test_Case
+            places: 'Symfony\Bundle\Framework_Bundle\Tests\Dependency_Injection\Fixtures\Workflow\Places::*'
             transitions:
                 one:
-                    from: !php/enum Symfony\Bundle\FrameworkBundle\Tests\DependencyInjection\Fixtures\Workflow\Places::A
-                    to: !php/enum Symfony\Bundle\FrameworkBundle\Tests\DependencyInjection\Fixtures\Workflow\Places::B
+                    from: !php/enum Symfony\Bundle\Framework_Bundle\Tests\Dependency_Injection\Fixtures\Workflow\Places::A
+                    to: !php/enum Symfony\Bundle\Framework_Bundle\Tests\Dependency_Injection\Fixtures\Workflow\Places::B
                 two:
-                    from: !php/enum Symfony\Bundle\FrameworkBundle\Tests\DependencyInjection\Fixtures\Workflow\Places::B
-                    to: !php/enum Symfony\Bundle\FrameworkBundle\Tests\DependencyInjection\Fixtures\Workflow\Places::C
+                    from: !php/enum Symfony\Bundle\Framework_Bundle\Tests\Dependency_Injection\Fixtures\Workflow\Places::B
+                    to: !php/enum Symfony\Bundle\Framework_Bundle\Tests\Dependency_Injection\Fixtures\Workflow\Places::C

@@ -23,11 +23,11 @@ security:
 
 services:
   success_handler:
-    class: Symfony\Component\Security\Http\Authentication\DefaultAuthenticationSuccessHandler
+    class: Symfony\Component\Security\Http\Authentication\Default_Authentication_Success_Handler
     arguments:
       - '@security.http_utils'
   failure_handler:
-    class: Symfony\Component\Security\Http\Authentication\DefaultAuthenticationFailureHandler
+    class: Symfony\Component\Security\Http\Authentication\Default_Authentication_Failure_Handler
     arguments:
       - '@http_kernel'
       - '@security.http_utils'

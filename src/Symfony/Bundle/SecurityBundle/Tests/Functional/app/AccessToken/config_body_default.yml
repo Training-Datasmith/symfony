@@ -6,7 +6,7 @@ framework:
 
 security:
     password_hashers:
-        Symfony\Component\Security\Core\User\InMemoryUser: plaintext
+        Symfony\Component\Security\Core\User\In_Memory_User: plaintext
 
     providers:
         in_memory:
@@ -27,4 +27,4 @@ security:
 
 services:
     access_token.access_token_handler:
-        class: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AccessTokenBundle\Security\Handler\AccessTokenHandler
+        class: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Access_Token_Bundle\Security\Handler\Access_Token_Handler

@@ -1,14 +1,14 @@
 framework:
     exceptions:
-        Symfony\Component\HttpKernel\Exception\BadRequestHttpException:
+        Symfony\Component\Http_Kernel\Exception\Bad_Request_Http_Exception:
             log_level: info
             status_code: 422
-        Symfony\Component\HttpKernel\Exception\NotFoundHttpException:
+        Symfony\Component\Http_Kernel\Exception\Not_Found_Http_Exception:
             log_level: info
             status_code: null
-        Symfony\Component\HttpKernel\Exception\ConflictHttpException:
+        Symfony\Component\Http_Kernel\Exception\Conflict_Http_Exception:
             log_level: info
             status_code: 0
-        Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException:
+        Symfony\Component\Http_Kernel\Exception\Service_Unavailable_Http_Exception:
             log_level: null
             status_code: 500

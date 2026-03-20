@@ -2,11 +2,11 @@ imports:
     - { resource: ../config/default.yml }
 
 services:
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\TestEntityValueResolver:
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Test_Entity_Value_Resolver:
         tags:
             - { name: controller.argument_value_resolver, priority: 110 }
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\WithAttributesController:
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\With_Attributes_Controller:
         public: true
 
 security:

@@ -7,12 +7,12 @@ services:
         public: true
 
     bar:
-        class: Symfony\Component\DependencyInjection\Tests\Fixtures\Bar
+        class: Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar
         autowire: true
         bind:
-            Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface: '@Symfony\Component\DependencyInjection\Tests\Fixtures\Bar'
+            Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar_Interface: '@Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar'
             $foo: [ ~ ]
             iterable $baz: !tagged_iterator { tag: bar }
 
-    Symfony\Component\DependencyInjection\Tests\Fixtures\Bar:
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar:
         factory: [ ~, 'create' ]

@@ -1,4 +1,4 @@
-Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\ModernBundle\src\Entity\ModernPerson:
+Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Modern_Bundle\src\Entity\Modern_Person:
     properties:
         age:
             - GreaterThan:

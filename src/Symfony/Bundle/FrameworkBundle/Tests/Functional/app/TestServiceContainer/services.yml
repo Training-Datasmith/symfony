@@ -1,40 +1,40 @@
 services:
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\NonPublicService:
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Test_Service_Container\Non_Public_Service:
         public: false
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\PrivateService: ~
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Test_Service_Container\Private_Service: ~
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\UnusedPrivateService: ~
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Test_Service_Container\Unused_Private_Service: ~
 
-    private_service: '@Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\PrivateService'
+    private_service: '@Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Test_Service_Container\Private_Service'
 
     decorated:
-        class: Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\PrivateService
+        class: Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Test_Service_Container\Private_Service
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\PublicService:
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Test_Service_Container\Public_Service:
         public: true
         arguments:
-            - '@Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\NonPublicService'
-            - '@Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\PrivateService'
+            - '@Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Test_Service_Container\Non_Public_Service'
+            - '@Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Test_Service_Container\Private_Service'
             - '@decorated'
             - '@non_shared_service'
             - '@non_shared_alias'
 
     decorator:
-        class: Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\PrivateService
+        class: Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Test_Service_Container\Private_Service
         decorates: decorated
         properties:
             inner: '@.inner'
 
     non_shared_service:
-        class: Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\PrivateService
+        class: Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Test_Service_Container\Private_Service
         shared: false
         properties:
-            inner: '@Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\PrivateService'
+            inner: '@Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Test_Service_Container\Private_Service'
 
     non_shared_alias: '@non_shared_service'
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\ResettableService:
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Test_Service_Container\Resettable_Service:
         public: true
         tags:
             - kernel.reset: { method: 'myCustomName' }

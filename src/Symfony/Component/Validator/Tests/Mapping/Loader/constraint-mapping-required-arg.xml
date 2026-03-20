@@ -7,7 +7,7 @@
     <class name="Symfony\Component\Validator\Tests\Fixtures\Entity_81">
 
         <property name="title">
-            <constraint name="Symfony\Component\Validator\Tests\Fixtures\ConstraintWithRequiredArgument">
+            <constraint name="Symfony\Component\Validator\Tests\Fixtures\Constraint_With_Required_Argument">
                 <option name="requiredArg">X</option>
             </constraint>
         </property>

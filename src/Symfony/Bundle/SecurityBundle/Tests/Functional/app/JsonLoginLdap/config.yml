@@ -2,12 +2,12 @@ imports:
     - { resource: ./../config/framework.yml }
 services:
     Symfony\Component\Ldap\Ldap:
-        arguments: ['@Symfony\Component\Ldap\Adapter\ExtLdap\Adapter']
+        arguments: ['@Symfony\Component\Ldap\Adapter\Ext_Ldap\Adapter']
         tags: [ 'ldap' ]
     dummy_role_fetcher:
-        class: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\JsonLdapLoginBundle\Security\Ldap\DummyRoleFetcher
+        class: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Json_Ldap_Login_Bundle\Security\Ldap\Dummy_Role_Fetcher
 
-    Symfony\Component\Ldap\Adapter\ExtLdap\Adapter:
+    Symfony\Component\Ldap\Adapter\Ext_Ldap\Adapter:
         arguments:
             -   host: 'localhost'
                 port: 389

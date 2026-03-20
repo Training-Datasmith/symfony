@@ -6,7 +6,7 @@
 
   <namespace prefix="custom">Symfony\Component\Validator\Tests\Fixtures\</namespace>
 
-  <class name="Symfony\Component\Validator\Tests\Fixtures\NestedAttribute\Entity">
+  <class name="Symfony\Component\Validator\Tests\Fixtures\Nested_Attribute\Entity">
 
     <group-sequence>
        <value>Foo</value>
@@ -16,7 +16,7 @@
     <!-- CLASS CONSTRAINTS -->
 
     <!-- Custom constraint -->
-    <constraint name="Symfony\Component\Validator\Tests\Fixtures\ConstraintA" />
+    <constraint name="Symfony\Component\Validator\Tests\Fixtures\Constraint_A" />
 
     <!-- Custom constraint with namespace abbreviation-->
     <constraint name="custom:ConstraintB" />
@@ -28,7 +28,7 @@
 
     <constraint name="Callback">
         <option name="callback">
-            <value>Symfony\Component\Validator\Tests\Fixtures\CallbackClass</value>
+            <value>Symfony\Component\Validator\Tests\Fixtures\Callback_Class</value>
             <value>callback</value>
         </option>
     </constraint>
@@ -39,12 +39,12 @@
     </constraint>
 
     <!-- Constraint with named arguments support with scalar value -->
-    <constraint name="Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\ConstraintWithNamedArguments">
+    <constraint name="Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\Constraint_With_Named_Arguments">
       foo
     </constraint>
 
     <!-- Constraint with named arguments support with array value -->
-    <constraint name="Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\ConstraintWithNamedArguments">
+    <constraint name="Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\Constraint_With_Named_Arguments">
       <option name="choices">
         <value>foo</value>
         <value>bar</value>
@@ -52,7 +52,7 @@
     </constraint>
 
     <!-- Constraint with named arguments support with exactly one group -->
-    <constraint name="Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\ConstraintWithoutValueWithNamedArguments">
+    <constraint name="Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\Constraint_Without_Value_With_Named_Arguments">
       <option name="groups">foo</option>
     </constraint>
 
@@ -139,16 +139,16 @@
     </getter>
   </class>
 
-  <class name="Symfony\Component\Validator\Tests\Fixtures\NestedAttribute\GroupSequenceProviderEntity">
+  <class name="Symfony\Component\Validator\Tests\Fixtures\Nested_Attribute\Group_Sequence_Provider_Entity">
 
     <!-- GROUP SEQUENCE PROVIDER -->
     <group-sequence-provider />
 
   </class>
 
-  <class name="Symfony\Component\Validator\Tests\Fixtures\Attribute\GroupProviderDto">
+  <class name="Symfony\Component\Validator\Tests\Fixtures\Attribute\Group_Provider_Dto">
     <group-sequence-provider>
-      <value>Symfony\Component\Validator\Tests\Dummy\DummyGroupProvider</value>
+      <value>Symfony\Component\Validator\Tests\Dummy\Dummy_Group_Provider</value>
     </group-sequence-provider>
   </class>
 </constraint-mapping>

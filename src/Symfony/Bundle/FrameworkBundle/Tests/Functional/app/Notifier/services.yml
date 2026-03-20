@@ -2,6 +2,6 @@ services:
     _defaults:
         public: true
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\Controller\NotificationController:
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Controller\Notification_Controller:
         tags: ['controller.service_arguments']
 

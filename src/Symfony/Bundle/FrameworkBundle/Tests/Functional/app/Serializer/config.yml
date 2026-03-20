@@ -5,8 +5,8 @@ framework:
     translator: true
     serializer:
         enabled: true
-        circular_reference_handler: Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Serializer\CircularReferenceHandler
-        max_depth_handler: Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Serializer\MaxDepthHandler
+        circular_reference_handler: Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Serializer\Circular_Reference_Handler
+        max_depth_handler: Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Serializer\Max_Depth_Handler
         default_context:
             enable_max_depth: true
     property_info: { enabled: true }
@@ -16,6 +16,6 @@ services:
         alias: serializer
         public: true
 
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Serializer\CircularReferenceHandler: ~
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Serializer\Circular_Reference_Handler: ~
 
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Serializer\MaxDepthHandler: ~
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Serializer\Max_Depth_Handler: ~

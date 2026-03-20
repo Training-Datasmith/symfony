@@ -15,12 +15,12 @@ security:
                 check_route:    login_link_check
                 signature_properties: ['password']
                 max_uses: 2
-                success_handler: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\LoginLink\TestCustomLoginLinkSuccessHandler
+                success_handler: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Login_Link\Test_Custom_Login_Link_Success_Handler
 
 services:
-    Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\LoginLink\TestCustomLoginLinkSuccessHandler: null
+    Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Login_Link\Test_Custom_Login_Link_Success_Handler: null
     # needed so LoginLinkHandlerInterface has *some* reference, and so isn't
     # entirely removed from the container (so we can fetch it in the test container)
     login_link_handler:
-        alias: 'Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface'
+        alias: 'Symfony\Component\Security\Http\Login_Link\Login_Link_Handler_Interface'
         public: true

@@ -1,7 +1,7 @@
 services:
     # main_service should look like this in the end
     main_service_expected:
-        class: Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
+        class: Symfony\Component\Dependency_Injection\Tests\Compiler\Integration_Test_Stub
         public: true
         autoconfigure: true
         calls:

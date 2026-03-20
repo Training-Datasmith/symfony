@@ -7,12 +7,12 @@ parameters:
 services:
     _defaults: { public: true }
     public:
-        class: Symfony\Bundle\FrameworkBundle\Tests\Fixtures\DeclaredClass
+        class: Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Declared_Class
     private_alias:
         alias: public
         public: false
     deprecated:
-        class: Symfony\Bundle\FrameworkBundle\Tests\Fixtures\DeprecatedClass
+        class: Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Deprecated_Class
         deprecated:
             package: 'foo/bar'
             version: '1.9'
@@ -23,9 +23,9 @@ services:
             package: 'foo/bar'
             version: '1.9'
             message: The "%alias_id%" alias is deprecated since foo/bar 1.9 and will be removed in 2.0
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\BackslashClass:
-        class: Symfony\Bundle\FrameworkBundle\Tests\Fixtures\BackslashClass
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\ClassAliasExampleClass: '@public'
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Backslash_Class:
+        class: Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Backslash_Class
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Class_Alias_Example_Class: '@public'
     env:
         class: stdClass
         arguments:
@@ -33,18 +33,18 @@ services:
             - '%env(REAL)%'
             - '%env(int:key:2:json:JSON)%'
             - '%env(float:key:2:json:JSON)%'
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\ContainerExcluded:
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Container_Excluded:
         tags: ['container.excluded']
 
     original_service:
-        class: Symfony\Bundle\FrameworkBundle\Tests\Fixtures\DeclaredClass
+        class: Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Declared_Class
 
     decorator_1:
-        class: Symfony\Bundle\FrameworkBundle\Tests\Fixtures\WarmedClass
+        class: Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Warmed_Class
         decorates: original_service
         arguments: ['@.inner']
 
     decorator_2:
-        class: Symfony\Bundle\FrameworkBundle\Tests\Fixtures\BackslashClass
+        class: Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Backslash_Class
         decorates: decorator_1
         arguments: ['@.inner']

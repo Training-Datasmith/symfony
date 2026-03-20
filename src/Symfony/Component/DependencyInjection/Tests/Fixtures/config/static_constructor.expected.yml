@@ -1,10 +1,10 @@
 
 services:
     service_container:
-        class: Symfony\Component\DependencyInjection\ContainerInterface
+        class: Symfony\Component\Dependency_Injection\Container_Interface
         public: true
         synthetic: true
     foo:
-        class: Bar\FooClass
+        class: Bar\Foo_Class
         public: true
         constructor: getInstance

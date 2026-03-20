@@ -4,4 +4,4 @@ services:
             $quz: overridden
 
     bar:
-        class: Symfony\Component\DependencyInjection\Tests\Fixtures\Bar
+        class: Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar

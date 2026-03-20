@@ -3,7 +3,7 @@ imports:
     - { resource: ./config_session.yml }
 
 services:
-    Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\RememberMeBundle\Security\UserChangingUserProvider:
+    Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Remember_Me_Bundle\Security\User_Changing_User_Provider:
         public: true
         decorates: security.user.provider.concrete.in_memory
         arguments: ['@.inner']

@@ -6,4 +6,4 @@ logout:
 
 profile:
     path: /profile
-    controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\RememberMeBundle\Controller\ProfileController
+    controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Remember_Me_Bundle\Controller\Profile_Controller

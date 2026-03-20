@@ -1,26 +1,26 @@
 form_login:
     path:     /login
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\Controller\LoginController::loginAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Form_Login_Bundle\Controller\Login_Controller::loginAction }
 
 form_login_check:
     path:     /login_check
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\Controller\LoginController::loginCheckAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Form_Login_Bundle\Controller\Login_Controller::loginCheckAction }
 
 form_login_homepage:
     path:     /
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\Controller\LoginController::afterLoginAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Form_Login_Bundle\Controller\Login_Controller::afterLoginAction }
 
 form_login_custom_target_path:
     path:     /foo
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\Controller\LoginController::afterLoginAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Form_Login_Bundle\Controller\Login_Controller::afterLoginAction }
 
 form_login_default_target_path:
     path:     /profile
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\Controller\LoginController::afterLoginAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Form_Login_Bundle\Controller\Login_Controller::afterLoginAction }
 
 form_login_redirect_to_protected_resource_after_login:
     path:     /protected_resource
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\Controller\LoginController::afterLoginAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Form_Login_Bundle\Controller\Login_Controller::afterLoginAction }
 
 highly_protected_resource:
     path:     /highly_protected_resource
@@ -51,7 +51,7 @@ form_logout:
 
 form_secure_action:
     path:     /secure-but-not-covered-by-access-control
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\Controller\LoginController::secureAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Form_Login_Bundle\Controller\Login_Controller::secureAction }
 
 protected-via-expression:
     path:     /protected-via-expression

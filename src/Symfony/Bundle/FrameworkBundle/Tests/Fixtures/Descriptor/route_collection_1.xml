@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <routes>
-  <route name="route_1" class="Symfony\Bundle\FrameworkBundle\Tests\Console\Descriptor\RouteStub">
+  <route name="route_1" class="Symfony\Bundle\Framework_Bundle\Tests\Console\Descriptor\Route_Stub">
     <path regex="#PATH_REGEX#">/hello/{name}</path>
     <host regex="#HOST_REGEX#">localhost</host>
     <scheme>http</scheme>
@@ -14,12 +14,12 @@
       <requirement key="name">[a-z]+</requirement>
     </requirements>
     <options>
-      <option key="compiler_class">Symfony\Component\Routing\RouteCompiler</option>
+      <option key="compiler_class">Symfony\Component\Routing\Route_Compiler</option>
       <option key="opt1">val1</option>
       <option key="opt2">val2</option>
     </options>
   </route>
-  <route name="route_2" class="Symfony\Bundle\FrameworkBundle\Tests\Console\Descriptor\RouteStub">
+  <route name="route_2" class="Symfony\Bundle\Framework_Bundle\Tests\Console\Descriptor\Route_Stub">
     <path regex="#PATH_REGEX#">/name/add</path>
     <host regex="#HOST_REGEX#">localhost</host>
     <scheme>http</scheme>
@@ -27,7 +27,7 @@
     <method>PUT</method>
     <method>POST</method>
     <options>
-      <option key="compiler_class">Symfony\Component\Routing\RouteCompiler</option>
+      <option key="compiler_class">Symfony\Component\Routing\Route_Compiler</option>
       <option key="opt1">val1</option>
       <option key="opt2">val2</option>
     </options>

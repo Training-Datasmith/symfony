@@ -1,7 +1,7 @@
 framework:
     messenger:
         routing:
-            'Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Messenger\DummyMessage': [amqp]
+            'Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Messenger\Dummy_Message': [amqp]
 
         transports:
             amqp: 'amqp://localhost/%2f/messages'

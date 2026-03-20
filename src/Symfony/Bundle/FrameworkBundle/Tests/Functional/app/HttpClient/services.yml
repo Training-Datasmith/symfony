@@ -2,11 +2,11 @@ services:
     _defaults:
         public: true
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\Controller\HttpClientController:
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Controller\Http_Client_Controller:
         tags: ['controller.service_arguments']
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\Controller\HttpClientMockingController:
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Controller\Http_Client_Mocking_Controller:
         tags: ['controller.service_arguments']
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\Tests\MockClientCallback:
-        class: Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\Tests\MockClientCallback
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Tests\Mock_Client_Callback:
+        class: Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Tests\Mock_Client_Callback

@@ -1,6 +1,6 @@
 foo_route:
     path: /foo
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AccessTokenBundle\Controller\FooController::__invoke }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Access_Token_Bundle\Controller\Foo_Controller::__invoke }
 bar_route:
     path: /bar
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AccessTokenBundle\Controller\BarController::__invoke }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Access_Token_Bundle\Controller\Bar_Controller::__invoke }

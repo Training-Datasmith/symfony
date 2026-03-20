@@ -1,13 +1,13 @@
 parameters:
-    unit_enum: !php/const Symfony\Component\DependencyInjection\Tests\Fixtures\FooUnitEnum::BAR
-    enum_array: [!php/const Symfony\Component\DependencyInjection\Tests\Fixtures\FooUnitEnum::BAR, !php/const Symfony\Component\DependencyInjection\Tests\Fixtures\FooUnitEnum::FOO]
+    unit_enum: !php/const Symfony\Component\Dependency_Injection\Tests\Fixtures\Foo_Unit_Enum::BAR
+    enum_array: [!php/const Symfony\Component\Dependency_Injection\Tests\Fixtures\Foo_Unit_Enum::BAR, !php/const Symfony\Component\Dependency_Injection\Tests\Fixtures\Foo_Unit_Enum::FOO]
 
 services:
     service_container:
-        class: Symfony\Component\DependencyInjection\ContainerInterface
+        class: Symfony\Component\Dependency_Injection\Container_Interface
         public: true
         synthetic: true
-    Symfony\Component\DependencyInjection\Tests\Fixtures\FooClassWithEnumAttribute:
-        class: Symfony\Component\DependencyInjection\Tests\Fixtures\FooClassWithEnumAttribute
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Foo_Class_With_Enum_Attribute:
+        class: Symfony\Component\Dependency_Injection\Tests\Fixtures\Foo_Class_With_Enum_Attribute
         public: true
-        arguments: [!php/enum 'Symfony\Component\DependencyInjection\Tests\Fixtures\FooUnitEnum::BAR']
+        arguments: [!php/enum 'Symfony\Component\Dependency_Injection\Tests\Fixtures\Foo_Unit_Enum::BAR']

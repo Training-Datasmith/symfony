@@ -1,11 +1,11 @@
 
 services:
     service_container:
-        class: Symfony\Component\DependencyInjection\ContainerInterface
+        class: Symfony\Component\Dependency_Injection\Container_Interface
         public: true
         synthetic: true
     foo:
-        class: Symfony\Component\DependencyInjection\Tests\Fixtures\FooClassWithDefaultObjectAttribute
+        class: Symfony\Component\Dependency_Injection\Tests\Fixtures\Foo_Class_With_Default_Object_Attribute
         public: true
         autowire: true
         arguments: { secondOptional: true }

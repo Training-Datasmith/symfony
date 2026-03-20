@@ -35,6 +35,6 @@
     <parameter key="negative float string" type="string">-10100.1</parameter>
   </parameters>
   <services>
-    <service id="service_container" class="Symfony\Component\DependencyInjection\ContainerInterface" public="true" synthetic="true"/>
+    <service id="service_container" class="Symfony\Component\Dependency_Injection\Container_Interface" public="true" synthetic="true"/>
   </services>
 </container>

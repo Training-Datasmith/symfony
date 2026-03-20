@@ -7,7 +7,7 @@ framework:
             marking_store:
                 property: state
             supports:
-                - Symfony\Bundle\FrameworkBundle\Tests\DependencyInjection\FrameworkExtensionTestCase
+                - Symfony\Bundle\Framework_Bundle\Tests\Dependency_Injection\Framework_Extension_Test_Case
             places:
                 - one
                 - two

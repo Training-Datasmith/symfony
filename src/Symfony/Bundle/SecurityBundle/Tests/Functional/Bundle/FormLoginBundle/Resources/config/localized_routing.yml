@@ -1,29 +1,29 @@
 localized_login_path:
     path:     /{_locale}/login
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\Controller\LocalizedController::loginAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Form_Login_Bundle\Controller\Localized_Controller::loginAction }
     requirements: { _locale: "^[a-z]{2}$" }
 
 localized_check_path:
     path:     /{_locale}/login_check
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\Controller\LocalizedController::loginCheckAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Form_Login_Bundle\Controller\Localized_Controller::loginCheckAction }
     requirements: { _locale: "^[a-z]{2}$" }
 
 localized_default_target_path:
     path:     /{_locale}/profile
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\Controller\LocalizedController::profileAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Form_Login_Bundle\Controller\Localized_Controller::profileAction }
     requirements: { _locale: "^[a-z]{2}$" }
 
 localized_logout_path:
     path:     /{_locale}/logout
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\Controller\LocalizedController::logoutAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Form_Login_Bundle\Controller\Localized_Controller::logoutAction }
     requirements: { _locale: "^[a-z]{2}$" }
 
 localized_logout_target_path:
     path:     /{_locale}/
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\Controller\LocalizedController::homepageAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Form_Login_Bundle\Controller\Localized_Controller::homepageAction }
     requirements: { _locale: "^[a-z]{2}$" }
 
 localized_secure_path:
     path:     /{_locale}/secure/
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\Controller\LocalizedController::secureAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Form_Login_Bundle\Controller\Localized_Controller::secureAction }
     requirements: { _locale: "^[a-z]{2}$" }

@@ -2,12 +2,12 @@
 <container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
   <parameters>
     <parameter key="baz_class">BazClass</parameter>
-    <parameter key="foo_class">Bar\FooClass</parameter>
+    <parameter key="foo_class">Bar\Foo_Class</parameter>
     <parameter key="foo">bar</parameter>
   </parameters>
   <services>
-    <service id="service_container" class="Symfony\Component\DependencyInjection\ContainerInterface" public="true" synthetic="true"/>
-    <service id="foo" class="Bar\FooClass" public="true" constructor="getInstance">
+    <service id="service_container" class="Symfony\Component\Dependency_Injection\Container_Interface" public="true" synthetic="true"/>
+    <service id="foo" class="Bar\Foo_Class" public="true" constructor="getInstance">
       <tag name="foo" foo="foo"/>
       <tag name="foo" bar="bar" baz="baz"/>
       <tag name="bar" baz="baz">foo</tag>
@@ -35,7 +35,7 @@
     <service id="foo.baz" class="%baz_class%" public="true" constructor="getInstance">
       <configurator class="%baz_class%" method="configureStatic1"/>
     </service>
-    <service id="bar" class="Bar\FooClass" public="true">
+    <service id="bar" class="Bar\Foo_Class" public="true">
       <argument>foo</argument>
       <argument type="service" id="foo.baz"/>
       <argument>%foo_bar%</argument>
@@ -44,7 +44,7 @@
     <service id="foo_bar" class="%foo_class%" shared="false" public="true">
       <argument type="service" id="deprecated_service"/>
     </service>
-    <service id="method_call1" class="Bar\FooClass" public="true">
+    <service id="method_call1" class="Bar\Foo_Class" public="true">
       <file>%path%foo.php</file>
       <call method="setBar">
         <argument type="service" id="foo"/>
@@ -109,7 +109,7 @@
       <property name="foo">bar</property>
       <factory service="new_factory" method="getInstance"/>
     </service>
-    <service id="service_from_static_method" class="Bar\FooClass" public="true" constructor="getInstance"/>
+    <service id="service_from_static_method" class="Bar\Foo_Class" public="true" constructor="getInstance"/>
     <service id="factory_simple" class="SimpleFactoryClass">
       <argument>foo</argument>
       <deprecated package="vendor/package" version="1.1">The "%service_id%" service is deprecated. You should stop using it, as it will be removed in the future.</deprecated>

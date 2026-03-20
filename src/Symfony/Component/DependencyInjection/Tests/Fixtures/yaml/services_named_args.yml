@@ -1,12 +1,12 @@
 services:
     _defaults: {public: true}
 
-    Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy: { 0: ~, $apiKey: ABCD }
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Named_Arguments_Dummy: { 0: ~, $apiKey: ABCD }
 
     another_one:
-        class: Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy
+        class: Symfony\Component\Dependency_Injection\Tests\Fixtures\Named_Arguments_Dummy
         arguments:
             $apiKey: ABCD
-            Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass: ~
+            Symfony\Component\Dependency_Injection\Tests\Fixtures\Case_Sensitive_Class: ~
         calls:
             - ['setApiKey', { $apiKey: '123' }]

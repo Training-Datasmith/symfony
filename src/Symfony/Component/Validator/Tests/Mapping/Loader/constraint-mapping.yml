@@ -1,14 +1,14 @@
 namespaces:
   custom: Symfony\Component\Validator\Tests\Fixtures\
 
-Symfony\Component\Validator\Tests\Fixtures\NestedAttribute\Entity:
+Symfony\Component\Validator\Tests\Fixtures\Nested_Attribute\Entity:
   group_sequence:
     - Foo
     - Entity
 
   constraints:
     # Custom constraint
-    - Symfony\Component\Validator\Tests\Fixtures\ConstraintA: ~
+    - Symfony\Component\Validator\Tests\Fixtures\Constraint_A: ~
     # Custom constraint with namespaces prefix
     - "custom:ConstraintB": ~
     # Callbacks
@@ -17,14 +17,14 @@ Symfony\Component\Validator\Tests\Fixtures\NestedAttribute\Entity:
     - Callback:
         callback: validateMeStatic
     - Callback:
-        callback: [Symfony\Component\Validator\Tests\Fixtures\CallbackClass, callback]
+        callback: [Symfony\Component\Validator\Tests\Fixtures\Callback_Class, callback]
     # Constraint with named arguments support without value
-    - Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\ConstraintWithoutValueWithNamedArguments: ~
+    - Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\Constraint_Without_Value_With_Named_Arguments: ~
     # Constraint with named arguments support with scalar value
-    - Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\ConstraintWithNamedArguments:
+    - Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\Constraint_With_Named_Arguments:
         choices: foo
     # Constraint with named arguments support with array value
-    - Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\ConstraintWithNamedArguments:
+    - Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\Constraint_With_Named_Arguments:
         choices: [foo, bar]
 
   properties:
@@ -73,8 +73,8 @@ Symfony\Component\Validator\Tests\Fixtures\NestedAttribute\Entity:
     permissions:
       - "IsTrue": ~
 
-Symfony\Component\Validator\Tests\Fixtures\NestedAttribute\GroupSequenceProviderEntity:
+Symfony\Component\Validator\Tests\Fixtures\Nested_Attribute\Group_Sequence_Provider_Entity:
   group_sequence_provider: true
 
-Symfony\Component\Validator\Tests\Fixtures\Attribute\GroupProviderDto:
-  group_sequence_provider: Symfony\Component\Validator\Tests\Dummy\DummyGroupProvider
+Symfony\Component\Validator\Tests\Fixtures\Attribute\Group_Provider_Dto:
+  group_sequence_provider: Symfony\Component\Validator\Tests\Dummy\Dummy_Group_Provider

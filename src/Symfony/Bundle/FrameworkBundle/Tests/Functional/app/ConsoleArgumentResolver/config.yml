@@ -5,33 +5,33 @@ framework:
     translator: { fallbacks: [en] }
 
 services:
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Console\CustomTypeValueResolver:
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Console\Custom_Type_Value_Resolver:
         tags:
             - { name: console.argument_value_resolver, priority: 150 }
 
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Console\CustomOptionValueResolver:
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Console\Custom_Option_Value_Resolver:
         tags:
             - { name: console.argument_value_resolver, priority: 150 }
 
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Console\TestService: ~
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Console\Test_Service: ~
 
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Console\CustomTypeCommand:
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Console\Custom_Type_Command:
         autowire: true
         autoconfigure: true
 
     test_service:
-        class: Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Console\TestService
+        class: Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Console\Test_Service
 
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Console\AdvancedCommand:
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Console\Advanced_Command:
         autowire: true
         autoconfigure: true
 
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Console\AutoTaggedValueResolver:
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Console\Auto_Tagged_Value_Resolver:
         autoconfigure: true
 
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Console\TargetedCustomValueResolver:
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Console\Targeted_Custom_Value_Resolver:
         autoconfigure: true
 
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Console\ResolverTestCommand:
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Console\Resolver_Test_Command:
         autowire: true
         autoconfigure: true

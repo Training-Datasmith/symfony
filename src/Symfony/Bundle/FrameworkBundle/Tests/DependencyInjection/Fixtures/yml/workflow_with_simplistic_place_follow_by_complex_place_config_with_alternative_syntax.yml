@@ -3,7 +3,7 @@ framework:
         article:
             type: workflow
             supports:
-                - Symfony\Bundle\FrameworkBundle\Tests\DependencyInjection\FrameworkExtensionTestCase
+                - Symfony\Bundle\Framework_Bundle\Tests\Dependency_Injection\Framework_Extension_Test_Case
             initial_marking: [ draft ]
             metadata:
                 title: article workflow

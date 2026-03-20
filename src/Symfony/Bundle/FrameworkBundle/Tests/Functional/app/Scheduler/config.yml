@@ -7,16 +7,16 @@ framework:
     messenger: ~
 
 services:
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Messenger\DummySchedule:
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Messenger\Dummy_Schedule:
         autoconfigure: true
 
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Messenger\DummyTask:
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Messenger\Dummy_Task:
         autoconfigure: true
 
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Messenger\DummyTaskWithCustomReceiver:
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Messenger\Dummy_Task_With_Custom_Receiver:
         autoconfigure: true
 
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Messenger\DummyCommand:
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Messenger\Dummy_Command:
         autoconfigure: true
 
     clock:
@@ -28,7 +28,7 @@ services:
 
     scheduler_custom_receiver:
         public: true
-        class: Symfony\Component\Messenger\Transport\TransportInterface
+        class: Symfony\Component\Messenger\Transport\Transport_Interface
         factory: [ '@messenger.transport_factory', 'createTransport' ]
         arguments:
             - 'schedule://custom_receiver'

@@ -1,11 +1,11 @@
 
 services:
     service_container:
-        class: Symfony\Component\DependencyInjection\ContainerInterface
+        class: Symfony\Component\Dependency_Injection\Container_Interface
         public: true
         synthetic: true
-    Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo:
-        class: Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Prototype\Foo:
+        class: Symfony\Component\Dependency_Injection\Tests\Fixtures\Prototype\Foo
         public: true
         tags:
             - foo
@@ -16,8 +16,8 @@ services:
             message: '%service_id%'
         arguments: [1]
         factory: f
-    Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\NotFoo:
-        class: Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\NotFoo
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Prototype\Not_Foo:
+        class: Symfony\Component\Dependency_Injection\Tests\Fixtures\Prototype\Not_Foo
         public: true
         tags:
             - foo
@@ -29,8 +29,8 @@ services:
         lazy: true
         arguments: [1]
         factory: f
-    Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\Bar:
-        class: Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\Bar
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Prototype\Sub\Bar:
+        class: Symfony\Component\Dependency_Injection\Tests\Fixtures\Prototype\Sub\Bar
         public: true
         tags:
             - foo

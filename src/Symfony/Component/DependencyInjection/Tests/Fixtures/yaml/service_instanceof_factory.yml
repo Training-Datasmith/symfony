@@ -1,14 +1,14 @@
 services:
     _instanceof:
-        Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface:
+        Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar_Interface:
             tags:
                 - { name: bar }
 
-    Symfony\Component\DependencyInjection\Tests\Fixtures\Bar:
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar:
         public: true
 
-    Symfony\Component\DependencyInjection\Tests\Fixtures\BarFactory:
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar_Factory:
         arguments: [!tagged_iterator 'bar']
 
-    Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface:
-        factory: ['@Symfony\Component\DependencyInjection\Tests\Fixtures\BarFactory', 'getDefaultBar']
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar_Interface:
+        factory: ['@Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar_Factory', 'getDefaultBar']

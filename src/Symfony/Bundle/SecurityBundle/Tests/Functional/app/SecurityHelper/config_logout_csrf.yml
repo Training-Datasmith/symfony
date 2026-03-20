@@ -10,19 +10,19 @@ services:
         alias: security.token_storage
         public: true
 
-    Symfony\Bundle\SecurityBundle\Tests\Functional\ForceLoginController:
+    Symfony\Bundle\Security_Bundle\Tests\Functional\Force_Login_Controller:
         arguments: ['@security.helper']
         public: true
 
-    Symfony\Bundle\SecurityBundle\Tests\Functional\LogoutController:
+    Symfony\Bundle\Security_Bundle\Tests\Functional\Logout_Controller:
         arguments: ['@security.helper']
         public: true
 
-    Symfony\Bundle\SecurityBundle\Tests\Functional\LoggedInController:
+    Symfony\Bundle\Security_Bundle\Tests\Functional\Logged_In_Controller:
         arguments: ['@security.helper']
         public: true
 
-    Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\ApiAuthenticator: ~
+    Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Api_Authenticator: ~
 
 security:
     providers:
@@ -38,7 +38,7 @@ security:
             form_login:
                 check_path: /main/login/check
             custom_authenticators:
-                - 'Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\ApiAuthenticator'
+                - 'Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Api_Authenticator'
             provider: main
 
     access_control:

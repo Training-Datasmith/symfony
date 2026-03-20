@@ -3,6 +3,6 @@ imports:
 
 security:
     password_hashers:
-        JMS\FooBundle\Entity\User7:
+        JMS\Foo_Bundle\Entity\User7:
             algorithm: bcrypt
             cost: 15

@@ -1,3 +1,3 @@
 login_check:
     path: /chk
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\JsonLoginBundle\Controller\TestController::loginCheckAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Json_Login_Bundle\Controller\Test_Controller::loginCheckAction }

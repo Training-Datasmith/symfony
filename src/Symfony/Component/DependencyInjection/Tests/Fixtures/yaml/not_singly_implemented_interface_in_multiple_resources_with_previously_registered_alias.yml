@@ -2,14 +2,14 @@ services:
     _defaults:
         autowire: true
 
-    Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\SinglyImplementedInterface\Port\PortInterface:
-        alias: Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\SinglyImplementedInterface\Adapter\Adapter
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Prototype\Singly_Implemented_Interface\Port\Port_Interface:
+        alias: Symfony\Component\Dependency_Injection\Tests\Fixtures\Prototype\Singly_Implemented_Interface\Adapter\Adapter
 
-    Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\SinglyImplementedInterface\Port\:
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Prototype\Singly_Implemented_Interface\Port\:
         resource: ../Prototype/SinglyImplementedInterface/Port/*
 
-    Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\SinglyImplementedInterface\Adapter\:
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Prototype\Singly_Implemented_Interface\Adapter\:
         resource: ../Prototype/SinglyImplementedInterface/Adapter/*
 
-    Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\SinglyImplementedInterface\AnotherAdapter\:
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Prototype\Singly_Implemented_Interface\Another_Adapter\:
         resource: ../Prototype/SinglyImplementedInterface/AnotherAdapter/*

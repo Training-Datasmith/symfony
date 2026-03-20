@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
   <parameters>
-    <parameter key="unit_enum" type="constant">Symfony\Component\DependencyInjection\Tests\Fixtures\FooUnitEnum::BAR</parameter>
+    <parameter key="unit_enum" type="constant">Symfony\Component\Dependency_Injection\Tests\Fixtures\Foo_Unit_Enum::BAR</parameter>
     <parameter key="enum_array" type="collection">
-      <parameter type="constant">Symfony\Component\DependencyInjection\Tests\Fixtures\FooUnitEnum::BAR</parameter>
-      <parameter type="constant">Symfony\Component\DependencyInjection\Tests\Fixtures\FooUnitEnum::FOO</parameter>
+      <parameter type="constant">Symfony\Component\Dependency_Injection\Tests\Fixtures\Foo_Unit_Enum::BAR</parameter>
+      <parameter type="constant">Symfony\Component\Dependency_Injection\Tests\Fixtures\Foo_Unit_Enum::FOO</parameter>
     </parameter>
   </parameters>
   <services>
-    <service id="service_container" class="Symfony\Component\DependencyInjection\ContainerInterface" public="true" synthetic="true"/>
-    <service id="Symfony\Component\DependencyInjection\Tests\Fixtures\FooClassWithEnumAttribute" class="Symfony\Component\DependencyInjection\Tests\Fixtures\FooClassWithEnumAttribute" public="true">
-      <argument type="constant">Symfony\Component\DependencyInjection\Tests\Fixtures\FooUnitEnum::BAR</argument>
+    <service id="service_container" class="Symfony\Component\Dependency_Injection\Container_Interface" public="true" synthetic="true"/>
+    <service id="Symfony\Component\Dependency_Injection\Tests\Fixtures\Foo_Class_With_Enum_Attribute" class="Symfony\Component\Dependency_Injection\Tests\Fixtures\Foo_Class_With_Enum_Attribute" public="true">
+      <argument type="constant">Symfony\Component\Dependency_Injection\Tests\Fixtures\Foo_Unit_Enum::BAR</argument>
     </service>
   </services>
 </container>

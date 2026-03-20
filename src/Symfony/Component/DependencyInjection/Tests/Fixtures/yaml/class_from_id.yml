@@ -1,4 +1,4 @@
 services:
-    Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass:
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Case_Sensitive_Class:
       autowire: true
       public: true

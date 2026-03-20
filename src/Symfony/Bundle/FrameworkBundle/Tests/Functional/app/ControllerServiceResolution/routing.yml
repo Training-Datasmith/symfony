@@ -1,4 +1,4 @@
 sub_request_page:
     path:   /subrequest
     defaults:
-        _controller: 'Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\Controller\SubRequestServiceResolutionController::indexAction'
+        _controller: 'Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Controller\Sub_Request_Service_Resolution_Controller::indexAction'

@@ -2,11 +2,11 @@ imports:
 - { resource: ./config.yml }
 
 services:
-    Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\ApiAuthenticator:
+    Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Api_Authenticator:
         - true
 
 security:
     firewalls:
         api:
             pattern: /
-            custom_authenticator: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\ApiAuthenticator
+            custom_authenticator: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Api_Authenticator

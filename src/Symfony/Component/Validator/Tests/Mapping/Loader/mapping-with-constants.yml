@@ -1,7 +1,7 @@
 namespaces:
   custom: Symfony\Component\Validator\Tests\Fixtures\
 
-Symfony\Component\Validator\Tests\Fixtures\NestedAttribute\Entity:
+Symfony\Component\Validator\Tests\Fixtures\Nested_Attribute\Entity:
   properties:
     firstName:
       - Range:

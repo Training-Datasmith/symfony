@@ -2,8 +2,8 @@ framework:
     messenger:
         reset_on_message: true
         routing:
-            'Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Messenger\FooMessage': ['sender.bar', 'sender.biz']
-            'Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Messenger\BarMessage': 'sender.foo'
+            'Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Messenger\Foo_Message': ['sender.bar', 'sender.biz']
+            'Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Messenger\Bar_Message': 'sender.foo'
         transports:
             sender.biz: 'null://'
             sender.bar: 'null://'

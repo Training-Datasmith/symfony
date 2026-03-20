@@ -1,31 +1,31 @@
 map_query_string_to_nullable_attribute:
     path: /map-query-string-to-nullable-attribute.{_format}
-    controller: Symfony\Bundle\FrameworkBundle\Tests\Functional\WithMapQueryStringToNullableAttributeController
+    controller: Symfony\Bundle\Framework_Bundle\Tests\Functional\With_Map_Query_String_To_Nullable_Attribute_Controller
 
 map_query_string_to_attribute_with_default_value:
     path: /map-query-string-to-attribute-with-default-value.{_format}
-    controller: Symfony\Bundle\FrameworkBundle\Tests\Functional\WithMapQueryStringToAttributeWithDefaultValueController
+    controller: Symfony\Bundle\Framework_Bundle\Tests\Functional\With_Map_Query_String_To_Attribute_With_Default_Value_Controller
 
 map_query_string_to_non_nullable_attribute_without_default_value:
     path: /map-query-string-to-non-nullable-attribute-without-default-value.{_format}
-    controller: Symfony\Bundle\FrameworkBundle\Tests\Functional\WithMapQueryStringToNonNullableAttributeWithoutDefaultValueController
+    controller: Symfony\Bundle\Framework_Bundle\Tests\Functional\With_Map_Query_String_To_Non_Nullable_Attribute_Without_Default_Value_Controller
 
 map_request_to_nullable_attribute:
     path: /map-request-to-nullable-attribute.{_format}
-    controller: Symfony\Bundle\FrameworkBundle\Tests\Functional\WithMapRequestToNullableAttributeController
+    controller: Symfony\Bundle\Framework_Bundle\Tests\Functional\With_Map_Request_To_Nullable_Attribute_Controller
 
 map_request_to_attribute_with_default_value:
     path: /map-request-to-attribute-with-default-value.{_format}
-    controller: Symfony\Bundle\FrameworkBundle\Tests\Functional\WithMapRequestToAttributeWithDefaultValueController
+    controller: Symfony\Bundle\Framework_Bundle\Tests\Functional\With_Map_Request_To_Attribute_With_Default_Value_Controller
 
 map_request_to_non_nullable_attribute_without_default_value:
     path: /map-request-to-non-nullable-attribute-without-default-value.{_format}
-    controller: Symfony\Bundle\FrameworkBundle\Tests\Functional\WithMapRequestToNonNullableAttributeWithoutDefaultValueController
+    controller: Symfony\Bundle\Framework_Bundle\Tests\Functional\With_Map_Request_To_Non_Nullable_Attribute_Without_Default_Value_Controller
 
 serialize_controller_result:
     path: /serialize-controller-result
-    controller: Symfony\Bundle\FrameworkBundle\Tests\Functional\WithSerializeAttributeController
+    controller: Symfony\Bundle\Framework_Bundle\Tests\Functional\With_Serialize_Attribute_Controller
 
 serialize_controller_result_with_format:
     path: /serialize-controller-result.{_format}
-    controller: Symfony\Bundle\FrameworkBundle\Tests\Functional\WithSerializeAttributeController
+    controller: Symfony\Bundle\Framework_Bundle\Tests\Functional\With_Serialize_Attribute_Controller

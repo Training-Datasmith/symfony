@@ -4,12 +4,12 @@ imports:
 services:
     _defaults:
         bind:
-            Symfony\Component\DependencyInjection\ContainerInterface $container: '@service_container'
+            Symfony\Component\Dependency_Injection\Container_Interface $container: '@service_container'
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\Controller\SessionController:
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Controller\Session_Controller:
         tags:
             - { name: controller.service_arguments }
 
-    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\Controller\SubRequestController:
+    Symfony\Bundle\Framework_Bundle\Tests\Functional\Bundle\Test_Bundle\Controller\Sub_Request_Controller:
         tags:
             - { name: controller.service_arguments, action: indexAction, argument: handler, id: fragment.handler }

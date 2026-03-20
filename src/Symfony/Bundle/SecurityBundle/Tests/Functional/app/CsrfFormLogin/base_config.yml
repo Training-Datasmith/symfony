@@ -3,20 +3,20 @@ imports:
 
 services:
     csrf_form_login.form.type:
-        class: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\CsrfFormLoginBundle\Form\UserLoginType
+        class: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Csrf_Form_Login_Bundle\Form\User_Login_Type
         arguments:
             - '@request_stack'
         tags:
             - { name: form.type }
 
-    Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\CsrfFormLoginBundle\Controller\LoginController:
+    Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Csrf_Form_Login_Bundle\Controller\Login_Controller:
         public: true
         tags:
             - { name: container.service_subscriber }
 
 security:
     password_hashers:
-        Symfony\Component\Security\Core\User\InMemoryUser: plaintext
+        Symfony\Component\Security\Core\User\In_Memory_User: plaintext
 
     providers:
         in_memory:

@@ -1,5 +1,5 @@
 controllers:
-  resource: Symfony\Component\Routing\Tests\Fixtures\AttributeFixtures\RouteWithPriorityController
+  resource: Symfony\Component\Routing\Tests\Fixtures\Attribute_Fixtures\Route_With_Priority_Controller
   type: attribute
   host:
     cs: www.domain.cs

@@ -3,6 +3,6 @@ imports:
 
 services:
     parent_service:
-        class: Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
+        class: Symfony\Component\Dependency_Injection\Tests\Compiler\Integration_Test_Stub
         autoconfigure: true
         public: true

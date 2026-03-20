@@ -43,7 +43,7 @@ services:
     factory_expression:
         class: FooClass
         factory: "@=service('foo').getInstance()"
-    Acme\WithShortCutArgs: [foo, '@baz']
+    Acme\With_Short_Cut_Args: [foo, '@baz']
     alias_for_foo: '@foo'
     another_alias_for_foo:
         alias: foo

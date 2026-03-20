@@ -1,9 +1,9 @@
 
 services:
     service_container:
-        class: Symfony\Component\DependencyInjection\ContainerInterface
+        class: Symfony\Component\Dependency_Injection\Container_Interface
         public: true
         synthetic: true
-    Symfony\Component\DependencyInjection\Tests\Fixtures\FooWithAbstractArgument:
-        class: Symfony\Component\DependencyInjection\Tests\Fixtures\FooWithAbstractArgument
+    Symfony\Component\Dependency_Injection\Tests\Fixtures\Foo_With_Abstract_Argument:
+        class: Symfony\Component\Dependency_Injection\Tests\Fixtures\Foo_With_Abstract_Argument
         arguments: { $baz: !abstract 'should be defined by Pass', $bar: test }

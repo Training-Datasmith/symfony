@@ -5,5 +5,5 @@ services:
     object_mapper.alias:
         alias: object_mapper
         public: true
-    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\ObjectMapper\TransformCallable:
+    Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Object_Mapper\Transform_Callable:
         autoconfigure: true

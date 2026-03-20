@@ -5,7 +5,7 @@ services:
             $foo: [value]
 
     bar:
-        class: Symfony\Component\DependencyInjection\Tests\Fixtures\Bar
+        class: Symfony\Component\Dependency_Injection\Tests\Fixtures\Bar
 
     foo:
         class: stdClass

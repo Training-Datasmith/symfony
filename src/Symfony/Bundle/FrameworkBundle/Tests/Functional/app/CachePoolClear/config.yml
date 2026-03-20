@@ -3,7 +3,7 @@ imports:
 
 services:
     dummy:
-        class: Symfony\Bundle\FrameworkBundle\Tests\Fixtures\DeclaredClass
+        class: Symfony\Bundle\Framework_Bundle\Tests\Fixtures\Declared_Class
         arguments: ['@cache.private_pool']
         public: true
     custom_clearer:

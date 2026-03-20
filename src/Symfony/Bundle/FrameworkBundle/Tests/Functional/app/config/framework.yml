@@ -15,4 +15,4 @@ framework:
         cookie_samesite: lax
 
 services:
-    logger: { class: Psr\Log\NullLogger }
+    logger: { class: Psr\Log\Null_Logger }

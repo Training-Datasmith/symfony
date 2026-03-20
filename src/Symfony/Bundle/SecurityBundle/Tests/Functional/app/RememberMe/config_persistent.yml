@@ -1,6 +1,6 @@
 services:
     app.static_token_provider:
-        class: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\RememberMeBundle\Security\StaticTokenProvider
+        class: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Remember_Me_Bundle\Security\Static_Token_Provider
         arguments: ['@kernel']
 
 security:

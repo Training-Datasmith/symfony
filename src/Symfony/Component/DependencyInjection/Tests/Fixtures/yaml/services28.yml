@@ -25,7 +25,7 @@ services:
 
     with_defaults_aliased_short: '@with_defaults'
 
-    Acme\WithShortCutArgs: [foo]
+    Acme\With_Short_Cut_Args: [foo]
 
     child_def:
         parent: with_defaults

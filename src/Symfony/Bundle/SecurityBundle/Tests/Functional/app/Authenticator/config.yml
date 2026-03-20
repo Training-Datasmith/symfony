@@ -11,18 +11,18 @@ framework:
         cookie_samesite: lax
 
 services:
-    logger: { class: Psr\Log\NullLogger }
-    Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\ProfileController:
+    logger: { class: Psr\Log\Null_Logger }
+    Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Profile_Controller:
         public: true
         calls:
-            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+            - ['setContainer', ['@Psr\Container\Container_Interface']]
         tags: [container.service_subscriber]
-    Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\SecurityController:
+    Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Security_Controller:
         public: true
         calls:
-            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+            - ['setContainer', ['@Psr\Container\Container_Interface']]
         tags: [container.service_subscriber]
-    Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\ApiAuthenticator: ~
-    Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\LoginFormAuthenticator:
+    Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Api_Authenticator: ~
+    Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Login_Form_Authenticator:
         public: true
         arguments: ['@router']

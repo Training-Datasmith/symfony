@@ -1,23 +1,23 @@
 profile:
     path: /profile
     defaults:
-        _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\ProfileController
+        _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Profile_Controller
 
 security_main_login:
     path:     /main/login/check
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\SecurityController::checkAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Security_Controller::checkAction }
 
 security_custom_login:
     path:     /custom/login/check
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\SecurityController::checkAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Security_Controller::checkAction }
 
 security_main_profile:
     path:     /main/user_profile
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\SecurityController::profileAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Security_Controller::profileAction }
 
 security_custom_profile:
     path:     /custom/user_profile
-    defaults: { _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\SecurityController::profileAction }
+    defaults: { _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Security_Controller::profileAction }
 
 firewall1_login:
     path: /firewall1/login
@@ -28,4 +28,4 @@ firewall_dummy_login:
 firewall2_profile:
     path: /firewall2/profile
     defaults:
-        _controller: Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AuthenticatorBundle\ProfileController
+        _controller: Symfony\Bundle\Security_Bundle\Tests\Functional\Bundle\Authenticator_Bundle\Profile_Controller
