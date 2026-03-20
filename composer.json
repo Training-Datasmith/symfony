@@ -2,7 +2,10 @@
     "name": "symfony/symfony",
     "type": "library",
     "description": "The Symfony PHP framework",
-    "keywords": ["framework", "dev"],
+    "keywords": [
+        "framework",
+        "dev"
+    ],
     "homepage": "https://symfony.com",
     "license": "MIT",
     "authors": [
@@ -193,7 +196,7 @@
         "psr-4": {
             "Symfony\\Bridge\\Doctrine\\": "src/Symfony/Bridge/Doctrine/",
             "Symfony\\Bridge\\Monolog\\": "src/Symfony/Bridge/Monolog/",
-            "Symfony\\Bridge\\PsrHttpMessage\\": "src/Symfony/Bridge/PsrHttpMessage/",
+            "Symfony\\Bridge\\Psr_Http_Message\\": "src/Symfony/Bridge/PsrHttpMessage/",
             "Symfony\\Bridge\\Twig\\": "src/Symfony/Bridge/Twig/",
             "Symfony\\Bundle\\": "src/Symfony/Bundle/",
             "Symfony\\Component\\": "src/Symfony/Component/",
@@ -212,7 +215,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Symfony\\Bridge\\PhpUnit\\": "src/Symfony/Bridge/PhpUnit/"
+            "Symfony\\Bridge\\Php_Unit\\": "src/Symfony/Bridge/PhpUnit/"
         },
         "files": [
             "src/Symfony/Component/Clock/Resources/now.php",
