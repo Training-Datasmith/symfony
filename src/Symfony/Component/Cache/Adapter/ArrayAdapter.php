@@ -85,7 +85,9 @@ class ArrayAdapter implements AdapterInterface, CacheInterface, NamespacedPoolIn
         if (\INF === $beta || !$item->isHit()) {
             $save = true;
             $item->set($callback($item, $save));
-            $this->save($item);
+            if ($save) {
+                $this->save($item);
+            }
         }
 
         return $item->get();
@@ -146,6 +148,10 @@ class ArrayAdapter implements AdapterInterface, CacheInterface, NamespacedPoolIn
 
     public function deleteItems(array $keys): bool
     {
+        foreach ($keys as $key) {
+            CacheItem::validateKey($key);
+        }
+
         foreach ($keys as $key) {
             $this->deleteItem($key);
         }
@@ -319,11 +325,13 @@ class ArrayAdapter implements AdapterInterface, CacheInterface, NamespacedPoolIn
             }
             unset($keys[$i]);
 
-            yield $key => $f($key, $value, $isHit, $this->tags[$key] ?? null);
+            $item = $f($key, $value, $isHit, $this->tags[$key] ?? null);
+            yield $item->getKey() => $item;
         }
 
         foreach ($keys as $key) {
-            yield $key => $f($key, null, false);
+            $item = $f($key, null, false);
+            yield $item->getKey() => $item;
         }
     }
 

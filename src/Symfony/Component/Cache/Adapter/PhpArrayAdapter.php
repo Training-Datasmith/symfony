@@ -179,6 +179,13 @@ class PhpArrayAdapter implements AdapterInterface, CacheInterface, PruneableInte
 
     public function deleteItems(array $keys): bool
     {
+        foreach ($keys as $key) {
+            if (!\is_string($key)) {
+                throw new InvalidArgumentException(\sprintf('Cache key must be string, "%s" given.', get_debug_type($key)));
+            }
+            CacheItem::validateKey($key);
+        }
+
         $deleted = true;
         $fallbackKeys = [];
 

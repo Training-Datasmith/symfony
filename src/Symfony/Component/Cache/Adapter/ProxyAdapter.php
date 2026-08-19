@@ -140,6 +140,10 @@ class ProxyAdapter implements AdapterInterface, NamespacedPoolInterface, CacheIn
 
     public function deleteItems(array $keys): bool
     {
+        foreach ($keys as $key) {
+            CacheItem::validateKey($key);
+        }
+
         if ($this->namespaceLen) {
             foreach ($keys as $i => $key) {
                 $keys[$i] = $this->getId($key);

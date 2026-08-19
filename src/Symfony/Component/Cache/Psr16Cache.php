@@ -138,21 +138,33 @@ class Psr16Cache implements CacheInterface, PruneableInterface, ResettableInterf
         } catch (Psr6CacheException $e) {
             throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
-        $values = [];
+
+        $itemsByKey = [];
+        foreach ($items as $item) {
+            $itemsByKey[$item->getKey()] = $item;
+        }
 
         if (!$this->pool instanceof AdapterInterface) {
-            foreach ($items as $key => $item) {
-                $values[$key] = $item->isHit() ? $item->get() : $default;
+            return (static function () use ($keys, $itemsByKey, $default): \Generator {
+                foreach ($keys as $key) {
+                    $item = $itemsByKey[$key] ?? $itemsByKey[(string) $key] ?? null;
+                    if (!$item) {
+                        continue;
+                    }
+                    yield $key => $item->isHit() ? $item->get() : $default;
+                }
+            })();
+        }
+
+        return (static function () use ($keys, $itemsByKey, $default): \Generator {
+            foreach ($keys as $key) {
+                $item = $itemsByKey[$key] ?? $itemsByKey[(string) $key] ?? null;
+                if (!$item) {
+                    continue;
+                }
+                yield $key => $item->isHit() ? (self::$packCacheItem)($item) : $default;
             }
-
-            return $values;
-        }
-
-        foreach ($items as $key => $item) {
-            $values[$key] = $item->isHit() ? (self::$packCacheItem)($item) : $default;
-        }
-
-        return $values;
+        })();
     }
 
     public function setMultiple($values, $ttl = null): bool

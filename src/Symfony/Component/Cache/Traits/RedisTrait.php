@@ -343,7 +343,7 @@ trait RedisTrait
                         $redis->setOption($isRedisExt ? \Redis::OPT_TCP_KEEPALIVE : Relay::OPT_TCP_KEEPALIVE, $params['tcp_keepalive']);
                     }
 
-                    if (!$redis->select($params['dbindex'])) {
+                    if (!$redis->select((int) $params['dbindex'])) {
                         $e = preg_replace('/^ERR /', '', $redis->getLastError());
                         throw new InvalidArgumentException('Redis connection failed: '.$e.'.');
                     }
@@ -476,7 +476,7 @@ trait RedisTrait
                 'tcp_nodelay' => true,
             ];
             if ($params['dbindex']) {
-                $params['parameters']['database'] = $params['dbindex'];
+                $params['parameters']['database'] = (string) $params['dbindex'];
             }
             if (\is_array($params['auth'])) {
                 // ACL

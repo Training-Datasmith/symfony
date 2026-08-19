@@ -31,7 +31,7 @@ class RedisTagAwareArrayAdapterTest extends RedisArrayAdapterTest
     public function createCachePool(int $defaultLifetime = 0, ?string $testMethod = null): CacheItemPoolInterface
     {
         if ('testClearWithPrefix' === $testMethod && \defined('Redis::SCAN_PREFIX')) {
-            self::$redis->setOption(\Redis::OPT_SCAN, \Redis::SCAN_PREFIX);
+            self::$redis->setOption(\Redis::OPT_SCAN, (string) \Redis::SCAN_PREFIX);
         }
 
         $this->assertInstanceOf(\RedisArray::class, self::$redis);

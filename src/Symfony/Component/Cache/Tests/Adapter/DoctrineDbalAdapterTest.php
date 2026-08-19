@@ -151,14 +151,16 @@ class DoctrineDbalAdapterTest extends AdapterTestCase
             $this->markTestSkipped('Missing POSTGRES_HOST env variable');
         }
 
+        $password = getenv('POSTGRES_PASSWORD') ?: 'password';
+
         try {
-            $pool = new DoctrineDbalAdapter('pgsql://postgres:password@'.$host);
+            $pool = new DoctrineDbalAdapter('pgsql://postgres:'.$password.'@'.$host);
 
             $item = $pool->getItem('key');
             $item->set('value');
             $this->assertTrue($pool->save($item));
         } finally {
-            $pdo = new \PDO('pgsql:host='.$host.';user=postgres;password=password');
+            $pdo = new \PDO('pgsql:host='.$host.';user=postgres;password='.$password);
             $pdo->exec('DROP TABLE IF EXISTS cache_items');
         }
     }

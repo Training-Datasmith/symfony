@@ -167,6 +167,7 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
         $bufferedItems = $itemTags = [];
 
         foreach ($items as $key => $item) {
+            $key = $item->getKey();
             if (null !== $tags = $item->getMetadata()[CacheItem::METADATA_TAGS] ?? null) {
                 $itemTags[$key] = $tags;
             }
@@ -197,7 +198,17 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
             }
         }
 
-        return (self::$setCacheItemTags)($bufferedItems, $itemTags);
+        return self::iterateItemsByKey((self::$setCacheItemTags)($bufferedItems, $itemTags));
+    }
+
+    /**
+     * @param CacheItem[] $items
+     */
+    private static function iterateItemsByKey(array $items): \Generator
+    {
+        foreach ($items as $item) {
+            yield $item->getKey() => $item;
+        }
     }
 
     public function clear(string $prefix = ''): bool

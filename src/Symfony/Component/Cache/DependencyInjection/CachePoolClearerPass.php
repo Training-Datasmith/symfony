@@ -29,11 +29,12 @@ class CachePoolClearerPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds('cache.pool.clearer') as $id => $attr) {
             $clearer = $container->getDefinition($id);
             $pools = [];
-            foreach ($clearer->getArgument(0) as $name => $ref) {
-                if ($container->hasDefinition($ref)) {
-                    $pools[$name] = new Reference($ref);
-                }
+        foreach ($clearer->getArgument(0) as $name => $ref) {
+            $id = \is_string($ref) ? $ref : $ref->__toString();
+            if ($container->hasDefinition($id)) {
+                $pools[$name] = new Reference($id);
             }
+        }
             $clearer->replaceArgument(0, $pools);
         }
     }

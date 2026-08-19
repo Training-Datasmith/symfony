@@ -152,6 +152,10 @@ trait AbstractAdapterTrait
 
     public function deleteItems(array $keys): bool
     {
+        foreach ($keys as $key) {
+            CacheItem::validateKey($key);
+        }
+
         $ids = [];
 
         foreach ($keys as $key) {
@@ -321,14 +325,16 @@ trait AbstractAdapterTrait
                 }
                 $key = $keys[$id];
                 unset($keys[$id]);
-                yield $key => $f($key, $value, true);
+                $item = $f($key, $value, true);
+                yield $item->getKey() => $item;
             }
         } catch (\Exception $e) {
             CacheItem::log($this->logger, 'Failed to fetch items: '.$e->getMessage(), ['keys' => array_values($keys), 'exception' => $e, 'cache-adapter' => get_debug_type($this)]);
         }
 
         foreach ($keys as $key) {
-            yield $key => $f($key, null, false);
+            $item = $f($key, null, false);
+            yield $item->getKey() => $item;
         }
     }
 
