@@ -67,6 +67,8 @@ class PropertyAccessor implements PropertyAccessorInterface
     private array $propertyPathCache = [];
     private array $readPropertyCache = [];
     private array $writePropertyCache = [];
+    private PropertyReadInfoExtractorInterface $readInfoExtractor;
+    private PropertyWriteInfoExtractorInterface $writeInfoExtractor;
 
     /**
      * Should not be used by application code. Use
@@ -82,12 +84,14 @@ class PropertyAccessor implements PropertyAccessorInterface
         private readonly int $magicMethodsFlags = self::MAGIC_GET | self::MAGIC_SET,
         int $throw = self::THROW_ON_INVALID_PROPERTY_PATH,
         ?CacheItemPoolInterface $cacheItemPool = null,
-        private readonly ?PropertyReadInfoExtractorInterface $readInfoExtractor = new ReflectionExtractor([], null, null, false),
-        private readonly ?PropertyWriteInfoExtractorInterface $writeInfoExtractor = new ReflectionExtractor(['set'], null, null, false),
+        ?PropertyReadInfoExtractorInterface $readInfoExtractor = null,
+        ?PropertyWriteInfoExtractorInterface $writeInfoExtractor = null,
     ) {
         $this->ignoreInvalidIndices = 0 === ($throw & self::THROW_ON_INVALID_INDEX);
         $this->cacheItemPool = $cacheItemPool instanceof NullAdapter ? null : $cacheItemPool; // Replace the NullAdapter by the null value
         $this->ignoreInvalidProperty = 0 === ($throw & self::THROW_ON_INVALID_PROPERTY_PATH);
+        $this->readInfoExtractor = $readInfoExtractor ?? new ReflectionExtractor([], null, null, false);
+        $this->writeInfoExtractor = $writeInfoExtractor ?? new ReflectionExtractor(['set'], null, null, false);
     }
 
     public function getValue(object|array $objectOrArray, string|PropertyPathInterface $propertyPath): mixed
@@ -96,7 +100,7 @@ class PropertyAccessor implements PropertyAccessorInterface
             self::VALUE => $objectOrArray,
         ];
 
-        if (\is_object($objectOrArray) && (false === strpbrk((string) $propertyPath, '.[?') || $objectOrArray instanceof \stdClass && property_exists($objectOrArray, $propertyPath))) {
+        if (\is_object($objectOrArray) && (false === strpbrk((string) $propertyPath, '.[?') || $objectOrArray instanceof \stdClass && property_exists($objectOrArray, (string) $propertyPath))) {
             return $this->readProperty($zval, $propertyPath, $this->ignoreInvalidProperty)[self::VALUE];
         }
 
@@ -109,7 +113,7 @@ class PropertyAccessor implements PropertyAccessorInterface
 
     public function setValue(object|array &$objectOrArray, string|PropertyPathInterface $propertyPath, mixed $value): void
     {
-        if (\is_object($objectOrArray) && (false === strpbrk((string) $propertyPath, '.[') || $objectOrArray instanceof \stdClass && property_exists($objectOrArray, $propertyPath))) {
+        if (\is_object($objectOrArray) && (false === strpbrk((string) $propertyPath, '.[') || $objectOrArray instanceof \stdClass && property_exists($objectOrArray, (string) $propertyPath))) {
             $zval = [
                 self::VALUE => $objectOrArray,
             ];
@@ -214,8 +218,8 @@ class PropertyAccessor implements PropertyAccessorInterface
             ];
 
             // handle stdClass with properties with a dot in the name
-            if ($objectOrArray instanceof \stdClass && str_contains($propertyPath, '.') && property_exists($objectOrArray, $propertyPath)) {
-                $this->readProperty($zval, $propertyPath, $this->ignoreInvalidProperty);
+            if ($objectOrArray instanceof \stdClass && str_contains((string) $propertyPath, '.') && property_exists($objectOrArray, (string) $propertyPath)) {
+                $this->readProperty($zval, (string) $propertyPath, $this->ignoreInvalidProperty);
             } else {
                 $this->readPropertiesUntil($zval, $propertyPath, $propertyPath->getLength(), $this->ignoreInvalidIndices);
             }
@@ -236,8 +240,8 @@ class PropertyAccessor implements PropertyAccessorInterface
             ];
 
             // handle stdClass with properties with a dot in the name
-            if ($objectOrArray instanceof \stdClass && str_contains($propertyPath, '.') && property_exists($objectOrArray, $propertyPath)) {
-                $this->readProperty($zval, $propertyPath, $this->ignoreInvalidProperty);
+            if ($objectOrArray instanceof \stdClass && str_contains((string) $propertyPath, '.') && property_exists($objectOrArray, (string) $propertyPath)) {
+                $this->readProperty($zval, (string) $propertyPath, $this->ignoreInvalidProperty);
 
                 return true;
             }
