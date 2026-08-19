@@ -120,7 +120,7 @@ class CardSchemeValidator extends ConstraintValidator
 
         foreach ($schemeRegexes as $regexes) {
             foreach ($regexes as $regex) {
-                if (preg_match($regex, $value)) {
+                if (preg_match($regex, (string) $value)) {
                     return;
                 }
             }

@@ -61,9 +61,9 @@ class DateValidator extends ConstraintValidator
         }
 
         if (!self::checkDate(
-            $matches['year'] ?? $matches[1],
-            $matches['month'] ?? $matches[2],
-            $matches['day'] ?? $matches[3]
+            (int) ($matches['year'] ?? $matches[1]),
+            (int) ($matches['month'] ?? $matches[2]),
+            (int) ($matches['day'] ?? $matches[3])
         )) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ value }}', $this->formatValue($value))

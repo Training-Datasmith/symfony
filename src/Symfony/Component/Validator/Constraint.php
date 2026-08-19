@@ -63,8 +63,10 @@ abstract class Constraint
      *
      * @throws InvalidArgumentException If the error code does not exist
      */
-    public static function getErrorName(string $errorCode): string
+    public static function getErrorName(string|int $errorCode): string
     {
+        $errorCode = (string) $errorCode;
+
         if (isset(static::ERROR_NAMES[$errorCode])) {
             return static::ERROR_NAMES[$errorCode];
         }
@@ -177,14 +179,31 @@ abstract class Constraint
         $data = [];
         $class = static::class;
         foreach ((array) $this as $k => $v) {
-            $data[match (true) {
+            $name = match (true) {
                 '' === $k || "\0" !== $k[0] => $k,
                 str_starts_with((string) $k, "\0*\0") => substr((string) $k, 3),
                 str_starts_with((string) $k, "\0{$class}\0") => substr((string) $k, 2 + \strlen($class)),
                 default => $k,
-            }] = $v;
+            };
+            if ('groups' === $name && null === $v) {
+                continue;
+            }
+            $data[$name] = $v;
         }
 
         return $data;
+    }
+
+    public function __unserialize(array $data): void
+    {
+        foreach ($data as $property => $value) {
+            $this->$property = $value;
+        }
+
+        if (!\array_key_exists('groups', $data)) {
+            unset($this->groups);
+        } elseif (null === $this->groups) {
+            unset($this->groups);
+        }
     }
 }

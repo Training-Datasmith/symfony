@@ -1041,8 +1041,12 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      *
      * @throws ServiceNotFoundException if the service definition does not exist
      */
-    public function getDefinition(string $id): Definition
+    public function getDefinition(string|Reference|Alias $id): Definition
     {
+        if ($id instanceof Reference || $id instanceof Alias) {
+            $id = (string) $id;
+        }
+
         if (!isset($this->definitions[$id])) {
             throw new ServiceNotFoundException($id);
         }
@@ -1057,8 +1061,12 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      *
      * @throws ServiceNotFoundException if the service definition does not exist
      */
-    public function findDefinition(string $id): Definition
+    public function findDefinition(string|Reference|Alias $id): Definition
     {
+        if ($id instanceof Reference || $id instanceof Alias) {
+            $id = (string) $id;
+        }
+
         $seen = [];
         while (isset($this->aliasDefinitions[$id])) {
             $id = (string) $this->aliasDefinitions[$id];

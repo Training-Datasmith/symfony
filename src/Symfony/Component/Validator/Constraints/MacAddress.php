@@ -64,17 +64,27 @@ class MacAddress extends Constraint
 
     public ?\Closure $normalizer;
 
+    public string $message = 'This value is not a valid MAC address.';
+    public string $type = self::ALL;
+
     /**
      * @param self::ALL*|self::LOCAL_*|self::UNIVERSAL_*|self::UNICAST_*|self::MULTICAST_*|self::BROADCAST $type A mac address type to validate (defaults to {@see self::ALL})
      */
     public function __construct(
-        public string $message = 'This value is not a valid MAC address.',
-        public string $type = self::ALL,
+        string $message = 'This value is not a valid MAC address.',
+        mixed $type = self::ALL,
         ?callable $normalizer = null,
         ?array $groups = null,
         mixed $payload = null,
     ) {
         parent::__construct(null, $groups, $payload);
+
+        $this->message = $message;
+
+        if (!\is_string($type)) {
+            throw new ConstraintDefinitionException(\sprintf('The option "type" must be one of "%s".', implode('", "', self::TYPES)));
+        }
+        $this->type = $type;
 
         if (!\in_array($this->type, self::TYPES, true)) {
             throw new ConstraintDefinitionException(\sprintf('The option "type" must be one of "%s".', implode('", "', self::TYPES)));

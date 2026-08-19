@@ -341,9 +341,9 @@ final class ConstraintViolationAssertion
     /**
      * @return $this
      */
-    public function setParameter(string $key, string $value): static
+    public function setParameter(string $key, string|int|float|bool|\Stringable $value): static
     {
-        $this->parameters[$key] = $value;
+        $this->parameters[$key] = (string) $value;
 
         return $this;
     }
@@ -575,7 +575,7 @@ class AssertingContextualValidator implements ContextualValidatorInterface
         $this->expectNoValidate = true;
     }
 
-    public function expectValidation(string $call, ?string $propertyPath, mixed $value, string|GroupSequence|array|null $group, callable $constraints, ?ConstraintViolationInterface $violation = null): void
+    public function expectValidation(string|int $call, ?string $propertyPath, mixed $value, string|GroupSequence|array|null $group, callable $constraints, ?ConstraintViolationInterface $violation = null): void
     {
         if (null !== $propertyPath) {
             $this->expectedAtPath[$call] = $propertyPath;

@@ -30,13 +30,14 @@ class TypedReference extends Reference
      * @param array       $attributes      The attributes to be used
      */
     public function __construct(
-        string $id,
+        string|Reference $id,
         private readonly string $type,
         int $invalidBehavior = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
-        ?string $name = null,
+        string|int|null $name = null,
         private readonly array $attributes = [],
     ) {
-        $this->name = $type === $id ? $name : null;
+        $id = (string) $id;
+        $this->name = $type === $id ? (null !== $name ? (string) $name : null) : null;
         parent::__construct($id, $invalidBehavior);
     }
 

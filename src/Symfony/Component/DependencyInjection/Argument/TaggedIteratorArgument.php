@@ -38,10 +38,14 @@ class TaggedIteratorArgument extends IteratorArgument
         private readonly string $tag,
         ?string $indexAttribute = null,
         bool|string|null $needsIndexes = false,
-        array|bool $exclude = [],
+        array|bool|string $exclude = [],
         bool|string|null $excludeSelf = true,
     ) {
         parent::__construct([]);
+
+        if (\is_string($exclude)) {
+            $exclude = [$exclude];
+        }
 
         if (\func_num_args() > 5 || !\is_bool($needsIndexes) || !\is_array($exclude) || !\is_bool($excludeSelf)) {
             [, , $defaultIndexMethod, $needsIndexes, $defaultPriorityMethod, $exclude, $excludeSelf] = \func_get_args() + [2 => null, false, null, [], true];

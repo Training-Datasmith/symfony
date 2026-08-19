@@ -114,7 +114,7 @@ class Ip extends Constraint
      */
     public function __construct(
         ?array $options = null,
-        ?string $version = null,
+        mixed $version = null,
         ?string $message = null,
         ?callable $normalizer = null,
         ?array $groups = null,
@@ -126,7 +126,12 @@ class Ip extends Constraint
 
         parent::__construct(null, $groups, $payload);
 
-        $this->version = $version ?? $this->version;
+        if (null !== $version) {
+            if (!\is_string($version)) {
+                throw new ConstraintDefinitionException(\sprintf('The option "version" must be one of "%s".', implode('", "', static::VERSIONS)));
+            }
+            $this->version = $version;
+        }
         $this->message = $message ?? $this->message;
         $this->normalizer = $normalizer;
 

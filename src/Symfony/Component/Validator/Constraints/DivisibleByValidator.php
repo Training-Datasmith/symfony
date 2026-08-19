@@ -32,6 +32,9 @@ class DivisibleByValidator extends AbstractComparisonValidator
             throw new UnexpectedValueException($value2, 'numeric');
         }
 
+        $value1 = +$value1;
+        $value2 = +$value2;
+
         if (!$value2 = abs($value2)) {
             return false;
         }

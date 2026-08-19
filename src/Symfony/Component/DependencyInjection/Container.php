@@ -62,14 +62,17 @@ class Container implements ContainerInterface, ResetInterface
     protected array $resolving = [];
     protected array $syntheticIds = [];
 
+    protected ?ParameterBagInterface $parameterBag = null;
+
     private array $envCache = [];
     private bool $compiled = false;
     private \Closure $getEnv;
 
     private static \Closure $make;
 
-    public function __construct(protected ?ParameterBagInterface $parameterBag = new EnvPlaceholderParameterBag())
+    public function __construct(?ParameterBagInterface $parameterBag = null)
     {
+        $this->parameterBag = $parameterBag ?? new EnvPlaceholderParameterBag();
     }
 
     /**

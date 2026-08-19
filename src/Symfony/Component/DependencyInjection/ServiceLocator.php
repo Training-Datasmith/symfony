@@ -39,8 +39,10 @@ class ServiceLocator implements ServiceCollectionInterface
     private ?string $externalId = null;
     private ?Container $container = null;
 
-    public function get(string $id): mixed
+    public function get(string|int $id): mixed
     {
+        $id = (string) $id;
+
         if (!$this->externalId) {
             return $this->doGet($id);
         }
@@ -62,8 +64,10 @@ class ServiceLocator implements ServiceCollectionInterface
         }
     }
 
-    public function __invoke(string $id): mixed
+    public function __invoke(string|int $id): mixed
     {
+        $id = (string) $id;
+
         return isset($this->factories[$id]) ? $this->get($id) : null;
     }
 

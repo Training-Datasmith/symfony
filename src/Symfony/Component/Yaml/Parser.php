@@ -528,7 +528,7 @@ class Parser
         $parser->totalNumberOfLines = $this->totalNumberOfLines;
         $parser->skippedLineNumbers = $skippedLineNumbers;
         $parser->refs = &$this->refs;
-        $parser->refsBeingParsed = $this->refsBeingParsed;
+        $parser->refsBeingParsed = &$this->refsBeingParsed;
 
         return $parser->doParse($yaml, $flags);
     }

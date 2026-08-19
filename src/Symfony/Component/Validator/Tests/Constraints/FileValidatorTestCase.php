@@ -165,7 +165,7 @@ abstract class FileValidatorTestCase extends ConstraintValidatorTestCase
     #[DataProvider('provideMaxSizeExceededTests')]
     public function testMaxSizeExceeded($bytesWritten, $limit, $sizeAsString, $limitAsString, $suffix)
     {
-        fseek($this->file, $bytesWritten - 1, \SEEK_SET);
+        fseek($this->file, (int) ($bytesWritten - 1), \SEEK_SET);
         fwrite($this->file, '0');
         fclose($this->file);
 
@@ -215,7 +215,7 @@ abstract class FileValidatorTestCase extends ConstraintValidatorTestCase
     #[DataProvider('provideMaxSizeNotExceededTests')]
     public function testMaxSizeNotExceeded($bytesWritten, $limit)
     {
-        fseek($this->file, $bytesWritten - 1, \SEEK_SET);
+        fseek($this->file, (int) ($bytesWritten - 1), \SEEK_SET);
         fwrite($this->file, '0');
         fclose($this->file);
 
@@ -260,7 +260,7 @@ abstract class FileValidatorTestCase extends ConstraintValidatorTestCase
     #[DataProvider('provideBinaryFormatTests')]
     public function testBinaryFormat($bytesWritten, $limit, $binaryFormat, $sizeAsString, $limitAsString, $suffix)
     {
-        fseek($this->file, $bytesWritten - 1, \SEEK_SET);
+        fseek($this->file, (int) ($bytesWritten - 1), \SEEK_SET);
         fwrite($this->file, '0');
         fclose($this->file);
 

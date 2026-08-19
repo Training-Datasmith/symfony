@@ -755,8 +755,12 @@ class AutowirePass extends AbstractRecursivePass
      * @param string $originalType The original parameter type-hint (e.g., the interface)
      * @param string $serviceId    The service ID the type-hint resolved to (e.g., the alias)
      */
-    private function resolveProxyType(string $originalType, string $serviceId): string
+    private function resolveProxyType(string $originalType, string|Reference|TypedReference $serviceId): string
     {
+        if ($serviceId instanceof Reference) {
+            $serviceId = (string) $serviceId;
+        }
+
         if (!$this->container->has($serviceId)) {
             return $originalType;
         }

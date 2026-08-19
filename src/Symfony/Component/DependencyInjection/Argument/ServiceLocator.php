@@ -30,8 +30,10 @@ class ServiceLocator extends BaseServiceLocator
         parent::__construct($serviceMap);
     }
 
-    public function get(string $id): mixed
+    public function get(string|int $id): mixed
     {
+        $id = (string) $id;
+
         return match (\count($this->serviceMap[$id] ?? [])) {
             0 => parent::get($id),
             1 => $this->serviceMap[$id][0],

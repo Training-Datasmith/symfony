@@ -47,7 +47,7 @@ interface ConstraintViolationBuilderInterface
      *
      * @return $this
      */
-    public function setParameter(string $key, string $value): static;
+    public function setParameter(string $key, string|int|float|bool|\Stringable $value): static;
 
     /**
      * Sets all parameters to be inserted into the violation message.
