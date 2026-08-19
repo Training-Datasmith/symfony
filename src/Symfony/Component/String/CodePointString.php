@@ -95,10 +95,10 @@ class CodePointString extends AbstractUnicodeString
         }
 
         if ($this->ignoreCase) {
-            return preg_match('{'.preg_quote($suffix).'$}iuD', $this->string);
+            return 1 === preg_match('{'.preg_quote($suffix).'$}iuD', $this->string);
         }
 
-        return \strlen($this->string) >= \strlen($suffix) && str_ends_with($this->string, $suffix);
+        return \strlen($this->string) >= \strlen($suffix) && 0 === substr_compare($this->string, $suffix, -\strlen($suffix));
     }
 
     public function equalsTo(string|iterable|AbstractString $string): bool

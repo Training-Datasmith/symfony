@@ -41,6 +41,11 @@ class LazyString implements \Stringable, \JsonSerializable
                     $callback[1] ??= '__invoke';
                 }
                 $value = $callback(...$arguments);
+                if (\is_scalar($value)) {
+                    $value = (string) $value;
+                } elseif ($value instanceof \Stringable) {
+                    $value = (string) $value;
+                }
                 $callback = !\is_scalar($value) && !$value instanceof \Stringable ? self::getPrettyName($callback) : 'callable';
                 $arguments = null;
             }
@@ -78,7 +83,7 @@ class LazyString implements \Stringable, \JsonSerializable
      */
     final public static function resolve(\Stringable|string|int|float|bool $value): string
     {
-        return $value;
+        return \is_string($value) ? $value : (string) $value;
     }
 
     public function __toString(): string
@@ -88,7 +93,7 @@ class LazyString implements \Stringable, \JsonSerializable
         }
 
         try {
-            return (string) $this->value = ($this->value)();
+            return $this->value = ($this->value)();
         } catch (\Throwable $e) {
             if (\TypeError::class === $e::class && __FILE__ === $e->getFile()) {
                 $type = explode(', ', $e->getMessage());

@@ -294,7 +294,7 @@ abstract class AbstractString implements \Stringable, \JsonSerializable
         $prefix = new static($prefix);
 
         if (!$this->startsWith($prefix)) {
-            return $this->prepend($prefix);
+            return $this->prepend($prefix->string);
         }
 
         $str = clone $this;
@@ -610,7 +610,7 @@ abstract class AbstractString implements \Stringable, \JsonSerializable
             $suffix = (string) $suffix;
         }
 
-        if ('' !== $suffix && \strlen($this->string) >= \strlen($suffix) && str_ends_with($this->string, $suffix)) {
+        if ('' !== $suffix && \strlen($this->string) >= \strlen($suffix) && 0 === substr_compare($this->string, $suffix, -\strlen($suffix), null, $this->ignoreCase)) {
             $str->string = substr($this->string, 0, -\strlen($suffix));
         }
 

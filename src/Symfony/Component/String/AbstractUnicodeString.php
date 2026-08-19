@@ -557,11 +557,11 @@ abstract class AbstractUnicodeString extends AbstractString
             case \STR_PAD_BOTH:
                 $freeLen /= 2;
 
-                $rightLen = ceil($freeLen);
+                $rightLen = (int) ceil($freeLen);
                 $len = $rightLen % $padLen;
                 $str = $this->append(str_repeat($pad->string, intdiv($rightLen, $padLen)).($len ? $pad->slice(0, $len) : ''));
 
-                $leftLen = floor($freeLen);
+                $leftLen = (int) floor($freeLen);
                 $len = $leftLen % $padLen;
 
                 return $str->prepend(str_repeat($pad->string, intdiv($leftLen, $padLen)).($len ? $pad->slice(0, $len) : ''));

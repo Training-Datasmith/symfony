@@ -116,7 +116,7 @@ class ByteString extends AbstractString
             return parent::endsWith($suffix);
         }
 
-        return '' !== $suffix && \strlen($this->string) >= \strlen($suffix) && str_ends_with($this->string, $suffix);
+        return '' !== $suffix && \strlen($this->string) >= \strlen($suffix) && 0 === substr_compare($this->string, $suffix, -\strlen($suffix), null, $this->ignoreCase);
     }
 
     public function equalsTo(string|iterable|AbstractString $string): bool
