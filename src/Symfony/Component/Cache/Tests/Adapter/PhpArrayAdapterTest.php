@@ -24,7 +24,7 @@ use Symfony\Component\Filesystem\Filesystem;
 #[Group('time-sensitive')]
 class PhpArrayAdapterTest extends AdapterTestCase
 {
-    protected $skippedTests = [
+    protected array $skippedTests = [
         'testGet' => 'PhpArrayAdapter is read-only.',
         'testDontSaveWhenAskedNotTo' => 'PhpArrayAdapter is read-only.',
         'testRecursiveGet' => 'PhpArrayAdapter is read-only.',

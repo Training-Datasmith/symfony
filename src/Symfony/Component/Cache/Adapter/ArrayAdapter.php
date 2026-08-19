@@ -397,6 +397,6 @@ class ArrayAdapter implements AdapterInterface, CacheInterface, NamespacedPoolIn
 
     private function getCurrentTime(): float
     {
-        return $this->clock?->now()->format('U.u') ?? microtime(true);
+        return (float) ($this->clock?->now()->format('U.u') ?? microtime(true));
     }
 }

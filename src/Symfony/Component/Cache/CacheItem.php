@@ -80,7 +80,7 @@ final class CacheItem implements ItemInterface
         if (null === $time) {
             $this->expiry = null;
         } elseif ($time instanceof \DateInterval) {
-            $this->expiry = microtime(true) + \DateTimeImmutable::createFromFormat('U', 0)->add($time)->format('U.u');
+            $this->expiry = microtime(true) + \DateTimeImmutable::createFromFormat('U', '0')->add($time)->format('U.u');
         } elseif (\is_int($time)) {
             $this->expiry = $time + microtime(true);
         } else {
@@ -164,4 +164,44 @@ final class CacheItem implements ItemInterface
             @trigger_error(strtr($message, $replace), \E_USER_WARNING);
         }
     }
+
+    private function pack(): mixed
+    {
+        if (!$m = $this->newMetadata) {
+            return $this->value;
+        }
+        $valueWrapper = self::VALUE_WRAPPER;
+
+        if ($this->value instanceof $valueWrapper) {
+            return new $valueWrapper($this->value->value, $m + ['expiry' => $this->expiry] + $this->value->metadata);
+        }
+
+        return new $valueWrapper($this->value, $m + ['expiry' => $this->expiry]);
+    }
+
+    private function unpack(): bool
+    {
+        $v = $this->value;
+        $valueWrapper = self::VALUE_WRAPPER;
+
+        if ($v instanceof $valueWrapper) {
+            $this->value = $v->value;
+            $this->metadata = $v->metadata;
+
+            return true;
+        }
+
+        if (!\is_array($v) || 1 !== \count($v) || 10 !== \strlen($k = (string) array_key_first($v)) || "\x9D" !== $k[0] || "\0" !== $k[5] || "\x5F" !== $k[9]) {
+            return false;
+        }
+
+        // BC with pools populated before v6.1
+        $this->value = $v[$k];
+        $this->metadata = unpack('Vexpiry/Nctime', substr($k, 1, -1));
+        $this->metadata['expiry'] += self::METADATA_EXPIRY_OFFSET;
+
+        return true;
+    }
 }
+
+// @php-cs-fixer-ignore protected_to_private Friend-level scope access relies on protected properties

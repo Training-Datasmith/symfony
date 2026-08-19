@@ -20,8 +20,11 @@ namespace Symfony\Component\Cache\Marshaller;
  */
 class TagAwareMarshaller implements MarshallerInterface
 {
-    public function __construct(private readonly ?MarshallerInterface $marshaller = new DefaultMarshaller())
+    private MarshallerInterface $marshaller;
+
+    public function __construct(?MarshallerInterface $marshaller = null)
     {
+        $this->marshaller = $marshaller ?? new DefaultMarshaller();
     }
 
     public function marshall(array $values, ?array &$failed): array

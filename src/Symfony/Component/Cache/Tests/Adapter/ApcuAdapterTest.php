@@ -20,7 +20,7 @@ use Symfony\Component\Cache\Marshaller\MarshallerInterface;
 
 class ApcuAdapterTest extends AdapterTestCase
 {
-    protected $skippedTests = [
+    protected array $skippedTests = [
         'testExpiration' => 'Testing expiration slows down the test suite',
         'testHasItemReturnsFalseWhenDeferredItemIsExpired' => 'Testing expiration slows down the test suite',
         'testDefaultLifeTime' => 'Testing expiration slows down the test suite',
