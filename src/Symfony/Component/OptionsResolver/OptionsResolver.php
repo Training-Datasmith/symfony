@@ -245,6 +245,14 @@ class OptionsResolver implements Options
      */
     public function setDefaults(array $defaults): static
     {
+        if (array_is_list($defaults)) {
+            foreach ($defaults as $option) {
+                $this->setDefault($option, null);
+            }
+
+            return $this;
+        }
+
         foreach ($defaults as $option => $value) {
             $this->setDefault($option, $value);
         }
