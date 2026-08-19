@@ -48,6 +48,9 @@ class ConstraintTest extends TestCase
 
         $restoredConstraint = unserialize(serialize($constraint));
 
+        $constraint->groups;
+        $restoredConstraint->groups;
+
         $this->assertEquals($constraint, $restoredConstraint);
     }
 
@@ -56,6 +59,8 @@ class ConstraintTest extends TestCase
         $constraint = new ConstraintA('foo', 'bar');
 
         $constraint = unserialize(serialize($constraint));
+
+        $constraint->groups;
 
         $expected = new ConstraintA('foo', 'bar', ['Default']);
 

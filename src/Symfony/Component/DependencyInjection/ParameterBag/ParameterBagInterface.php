@@ -15,6 +15,8 @@ namespace Symfony\Component\DependencyInjection\ParameterBag;
 
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
+use Symfony\Component\DependencyInjection\Parameter;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * ParameterBagInterface is the interface implemented by objects that manage service container parameters.
@@ -59,7 +61,7 @@ interface ParameterBagInterface
      *
      * @throws LogicException if the parameter cannot be set
      */
-    public function set(string $name, array|bool|string|int|float|\UnitEnum|null $value): void;
+    public function set(string $name, array|bool|string|int|float|\UnitEnum|null|Reference|Parameter $value): void;
 
     /**
      * Returns true if a parameter name is defined.

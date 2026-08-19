@@ -83,6 +83,11 @@ class Parser
         }
 
         $this->refs = [];
+        $this->refsBeingParsed = [];
+        $this->skippedLineNumbers = [];
+        $this->locallySkippedLineNumbers = [];
+        $this->offset = 0;
+        $this->totalNumberOfLines = null;
 
         try {
             $data = $this->doParse($value, $flags);
@@ -91,6 +96,7 @@ class Parser
             $this->offset = 0;
             $this->lines = [];
             $this->currentLine = '';
+            $this->currentLineNb = -1;
             $this->numberOfParsedLines = 0;
             $this->refs = [];
             $this->skippedLineNumbers = [];
@@ -589,7 +595,9 @@ class Parser
                 if ($this->isCurrentLineEmpty() || $this->isCurrentLineComment()) {
                     $EOF = !$this->moveToNextLine();
 
-                    ++$movements;
+                    if (!$EOF) {
+                        ++$movements;
+                    }
                 } else {
                     $newIndent = $this->getCurrentLineIndentation();
                 }

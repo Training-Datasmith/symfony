@@ -18,13 +18,16 @@ use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 abstract class AbstractServiceConfigurator extends AbstractConfigurator
 {
+    private array $defaultTags = [];
+
     public function __construct(
         protected ServicesConfigurator $parent,
         Definition $definition,
         protected ?string $id = null,
-        private array $defaultTags = [],
+        array $defaultTags = [],
     ) {
         $this->definition = $definition;
+        $this->defaultTags = $defaultTags;
     }
 
     public function __destruct()

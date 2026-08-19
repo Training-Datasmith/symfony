@@ -64,8 +64,10 @@ class Alias implements \Stringable
      *
      * @throws InvalidArgumentException when the message template is invalid
      */
-    public function setDeprecated(string $package, string $version, string $message): static
+    public function setDeprecated(string $package, string|int|float $version, string $message): static
     {
+        $version = (string) $version;
+
         if ('' !== $message) {
             if (preg_match('#[\r\n]|\*/#', $message)) {
                 throw new InvalidArgumentException('Invalid characters found in deprecation template.');

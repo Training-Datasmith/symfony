@@ -419,7 +419,7 @@ abstract class FileValidatorTestCase extends ConstraintValidatorTestCase
     #[DataProvider('uploadedFileErrorProvider')]
     public function testUploadedFileError($error, $message, array $params = [], $maxSize = null)
     {
-        $file = new UploadedFile(tempnam(sys_get_temp_dir(), 'file-validator-test-'), 'originalName', 'mime', $error);
+        $file = new UploadedFile(tempnam(sys_get_temp_dir(), 'file-validator-test-'), 'originalName', 'mime', (int) $error);
 
         $constraint = new File(...[
             $message => 'myMessage',

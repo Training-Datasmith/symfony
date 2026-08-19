@@ -528,8 +528,12 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      *
      * @throws BadMethodCallException When this ContainerBuilder is compiled
      */
-    public function set(string $id, ?object $service): void
+    public function set(string|Reference|Alias $id, ?object $service): void
     {
+        if ($id instanceof Reference || $id instanceof Alias) {
+            $id = (string) $id;
+        }
+
         if ($this->isCompiled() && (isset($this->definitions[$id]) && !$this->definitions[$id]->isSynthetic())) {
             // setting a synthetic service on a compiled container is alright
             throw new BadMethodCallException(\sprintf('Setting service "%s" for an unknown or non-synthetic service definition on a compiled container is not allowed.', $id));
@@ -890,8 +894,12 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      * @throws InvalidArgumentException if the id is not a string or an Alias
      * @throws InvalidArgumentException if the alias is for itself
      */
-    public function setAlias(string $alias, string|Alias $id): Alias
+    public function setAlias(string|Reference|Alias $alias, string|Alias $id): Alias
     {
+        if ($alias instanceof Reference) {
+            $alias = (string) $alias;
+        }
+
         if ('' === $alias || '\\' === $alias[-1] || \strlen($alias) !== strcspn($alias, "\0\r\n'")) {
             throw new InvalidArgumentException(\sprintf('Invalid alias id: "%s".', $alias));
         }

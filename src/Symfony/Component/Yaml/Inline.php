@@ -146,26 +146,31 @@ class Inline
             case false === $value:
                 return 'false';
             case \is_int($value):
-            default:
-                return $value;
-            case is_numeric($value) && false === strpbrk($value, "\f\n\r\t\v"):
+                return (string) $value;
+            case \is_float($value):
                 $locale = setlocale(\LC_NUMERIC, 0);
                 if (false !== $locale) {
                     setlocale(\LC_NUMERIC, 'C');
                 }
-                if (\is_float($value)) {
-                    $repr = (string) $value;
-                    if (is_infinite($value)) {
-                        $repr = str_ireplace('INF', '.Inf', $repr);
-                    } elseif (floor($value) == $value && $repr == $value) {
-                        // Preserve float data type since storing a whole number will result in integer value.
-                        if (!str_contains($repr, 'E')) {
-                            $repr .= '.0';
-                        }
+                $repr = (string) $value;
+                if (is_infinite($value)) {
+                    $repr = str_ireplace('INF', '.Inf', $repr);
+                } elseif (floor($value) == $value && $repr == $value) {
+                    if (!str_contains($repr, 'E')) {
+                        $repr .= '.0';
                     }
-                } else {
-                    $repr = \is_string($value) ? "'$value'" : (string) $value;
                 }
+                if (false !== $locale) {
+                    setlocale(\LC_NUMERIC, $locale);
+                }
+
+                return $repr;
+            case \is_string($value) && is_numeric($value) && false === strpbrk($value, "\f\n\r\t\v"):
+                $locale = setlocale(\LC_NUMERIC, 0);
+                if (false !== $locale) {
+                    setlocale(\LC_NUMERIC, 'C');
+                }
+                $repr = "'$value'";
                 if (false !== $locale) {
                     setlocale(\LC_NUMERIC, $locale);
                 }
@@ -191,6 +196,8 @@ class Inline
             case Parser::preg_match(self::getHexRegex(), $value):
             case Parser::preg_match(self::getTimestampRegex(), $value):
                 return Escaper::escapeWithSingleQuotes($value);
+            default:
+                return $value;
         }
     }
 
@@ -483,7 +490,7 @@ class Inline
 
             if ('!php/const' === $key || '!php/enum' === $key) {
                 $key .= ' '.self::parseScalar($mapping, $flags, ['(?<!:):(?!:)'], $i, false);
-                $key = self::evaluateScalar($key, $flags);
+                $key = self::evaluateScalar((string) $key, $flags);
             }
 
             if (false === $i = strpos($mapping, ':', $i)) {
@@ -491,7 +498,7 @@ class Inline
             }
 
             if (!$isKeyQuoted) {
-                $evaluatedKey = self::evaluateScalar($key, $flags, $references);
+                $evaluatedKey = self::evaluateScalar((string) $key, $flags, $references);
 
                 if ('' !== $key && $evaluatedKey !== $key && !\is_string($evaluatedKey) && !\is_int($evaluatedKey)) {
                     throw new ParseException('Implicit casting of incompatible mapping keys to strings is not supported. Quote your evaluable mapping keys instead.', self::$parsedLineNumber + 1, $mapping);

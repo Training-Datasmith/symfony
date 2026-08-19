@@ -176,7 +176,7 @@ final class CheckTypeDeclarationsPass extends AbstractRecursivePass
                     $this->checkType($checkedDefinition, $value, $parameter, $envPlaceholderUniquePrefix, $t);
 
                     return;
-                } catch (InvalidParameterTypeException) {
+                } catch (InvalidParameterTypeException $e) {
                 }
             }
 

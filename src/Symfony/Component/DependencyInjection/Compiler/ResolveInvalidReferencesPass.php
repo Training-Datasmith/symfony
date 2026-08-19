@@ -33,7 +33,7 @@ class ResolveInvalidReferencesPass implements CompilerPassInterface
 {
     private ContainerBuilder $container;
     private RuntimeException $signalingException;
-    private readonly string $currentId;
+    private string $currentId;
 
     /**
      * Process the ContainerBuilder to resolve invalid references.

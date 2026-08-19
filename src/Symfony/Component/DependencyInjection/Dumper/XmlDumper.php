@@ -191,7 +191,7 @@ class XmlDumper extends Dumper
                     $xml[] = '  </factory>';
                 } elseif (\is_array($callable)) {
                     if (null !== $callable[0]) {
-                        $xml[] = \sprintf('  <factory %s="%s" method="%s"/>', $callable[0] instanceof Reference ? 'service' : 'class', $this->encode($callable[0]), $this->encode($callable[1]));
+                        $xml[] = \sprintf('  <factory %s="%s" method="%s"/>', $callable[0] instanceof Reference ? 'service' : 'class', $this->encode((string) $callable[0]), $this->encode((string) $callable[1]));
                     } else {
                         $xml[] = \sprintf('  <factory method="%s"/>', $this->encode($callable[1]));
                     }
@@ -226,7 +226,7 @@ class XmlDumper extends Dumper
                 }
                 $xml[] = '  </configurator>';
             } elseif (\is_array($callable)) {
-                $xml[] = \sprintf('  <configurator %s="%s" method="%s"/>', $callable[0] instanceof Reference ? 'service' : 'class', $this->encode($callable[0]), $this->encode($callable[1]));
+                $xml[] = \sprintf('  <configurator %s="%s" method="%s"/>', $callable[0] instanceof Reference ? 'service' : 'class', $this->encode((string) $callable[0]), $this->encode((string) $callable[1]));
             } else {
                 $xml[] = \sprintf('  <configurator function="%s"/>', $this->encode($callable));
             }
@@ -243,7 +243,7 @@ class XmlDumper extends Dumper
 
     private function addServiceAlias(string $alias, Alias $id): iterable
     {
-        $xmlAttr = \sprintf(' id="%s" alias="%s"%s', $this->encode($alias), $this->encode($id), $id->isPublic() ? ' public="true"' : '');
+        $xmlAttr = \sprintf(' id="%s" alias="%s"%s', $this->encode((string) $alias), $this->encode((string) $id), $id->isPublic() ? ' public="true"' : '');
 
         if ($id->isDeprecated()) {
             $deprecation = $id->getDeprecation('%alias_id%');

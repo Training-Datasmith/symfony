@@ -18,6 +18,8 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Exception\ParameterCircularReferenceException;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use Symfony\Component\DependencyInjection\Parameter;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Holds parameters.
@@ -112,8 +114,12 @@ class ParameterBag implements ParameterBagInterface
         return $this->parameters[$name];
     }
 
-    public function set(string $name, array|bool|string|int|float|\UnitEnum|null $value): void
+    public function set(string|int|float $name, array|bool|string|int|float|\UnitEnum|null|Reference|Parameter $value): void
     {
+        if (!\is_string($name)) {
+            $name = (string) $name;
+        }
+
         if (is_numeric($name)) {
             throw new InvalidArgumentException(\sprintf('The parameter name "%s" cannot be numeric.', $name));
         }

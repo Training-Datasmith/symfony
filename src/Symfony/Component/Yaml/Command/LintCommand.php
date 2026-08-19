@@ -122,7 +122,7 @@ class LintCommand extends Command
 
             foreach ($this->getFiles($filename) as $file) {
                 if (!\in_array($file->getPathname(), $excludes, true)) {
-                    $filesInfo[] = $this->validate(file_get_contents($file), $flags, $file);
+                    $filesInfo[] = $this->validate(file_get_contents($file->getPathname()), $flags, $file->getPathname());
                 }
             }
         }

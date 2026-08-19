@@ -56,7 +56,9 @@ class PhpFileLoader extends FileLoader
         }
 
         // the closure forbids access to the private scope in the included file
-        $load = \Closure::bind(static fn ($path, $env) => include $path, null, null);
+        $load = \Closure::bind(function ($path, $env) use ($container, $loader) {
+            return include $path;
+        }, $this, ProtectedPhpFileLoader::class);
 
         $instanceof = $this->instanceof;
         $this->instanceof = [];
@@ -206,4 +208,11 @@ class PhpFileLoader extends FileLoader
             --$this->importing;
         }
     }
+}
+
+/**
+ * @internal
+ */
+final class ProtectedPhpFileLoader extends PhpFileLoader
+{
 }

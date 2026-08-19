@@ -47,6 +47,8 @@ class Definition
     private array $bindings = [];
     private array $errors = [];
 
+    protected array $arguments = [];
+
     /**
      * @internal
      *
@@ -68,11 +70,12 @@ class Definition
      */
     public ?int $decorationPriority = null;
 
-    public function __construct(?string $class = null, protected array $arguments = [])
+    public function __construct(?string $class = null, array $arguments = [])
     {
         if (null !== $class) {
             $this->setClass($class);
         }
+        $this->arguments = $arguments;
     }
 
     /**
@@ -555,11 +558,11 @@ class Definition
      *
      * @return $this
      */
-    public function setPublic(bool $boolean): static
+    public function setPublic(bool|string|int $boolean): static
     {
         $this->changes['public'] = true;
 
-        $this->public = $boolean;
+        $this->public = (bool) $boolean;
 
         return $this;
     }
@@ -662,8 +665,10 @@ class Definition
      *
      * @throws InvalidArgumentException when the message template is invalid
      */
-    public function setDeprecated(string $package, string $version, string $message): static
+    public function setDeprecated(string $package, string|int|float $version, string $message): static
     {
+        $version = (string) $version;
+
         if ('' !== $message) {
             if (preg_match('#[\r\n]|\*/#', $message)) {
                 throw new InvalidArgumentException('Invalid characters found in deprecation template.');

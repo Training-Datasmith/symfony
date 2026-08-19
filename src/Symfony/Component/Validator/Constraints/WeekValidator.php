@@ -37,6 +37,8 @@ final class WeekValidator extends ConstraintValidator
             throw new UnexpectedValueException($value, 'string');
         }
 
+        $value = (string) $value;
+
         if (!preg_match('/^\d{4}-W(0[1-9]|[1-4][0-9]|5[0-3])$/D', $value)) {
             $this->context->buildViolation($constraint->invalidFormatMessage)
                 ->setCode(Week::INVALID_FORMAT_ERROR)
@@ -46,9 +48,9 @@ final class WeekValidator extends ConstraintValidator
         }
 
         [$year, $weekNumber] = explode('-W', $value, 2);
-        $weeksInYear = (int) date('W', mktime(0, 0, 0, 12, 28, $year));
+        $weeksInYear = (int) date('W', mktime(0, 0, 0, 12, 28, (int) $year));
 
-        if ($weekNumber > $weeksInYear) {
+        if ((int) $weekNumber > $weeksInYear) {
             $this->context->buildViolation($constraint->invalidWeekNumberMessage)
                 ->setCode(Week::INVALID_WEEK_NUMBER_ERROR)
                 ->setParameter('{{ value }}', $value)

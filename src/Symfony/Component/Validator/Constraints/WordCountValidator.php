@@ -41,6 +41,8 @@ final class WordCountValidator extends ConstraintValidator
             throw new UnexpectedValueException($value, 'string');
         }
 
+        $value = (string) $value;
+
         $iterator = \IntlBreakIterator::createWordInstance($constraint->locale);
         $iterator->setText($value);
         $words = iterator_to_array($iterator->getPartsIterator());

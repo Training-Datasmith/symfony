@@ -116,7 +116,7 @@ class GraphvizDumper extends Dumper
         $edges = [];
         foreach ($arguments as $argument) {
             if ($argument instanceof Parameter) {
-                $argument = $this->container->hasParameter($argument) ? $this->container->getParameter($argument) : null;
+                $argument = $this->container->hasParameter((string) $argument) ? $this->container->getParameter((string) $argument) : null;
             } elseif (\is_string($argument) && preg_match('/^%([^%]+)%$/', $argument, $match)) {
                 $argument = $this->container->hasParameter($match[1]) ? $this->container->getParameter($match[1]) : null;
             }
@@ -233,8 +233,10 @@ class GraphvizDumper extends Dumper
         return implode(' ', $code);
     }
 
-    private function dotize(string $id): string
+    private function dotize(string|Reference|Alias $id): string
     {
+        $id = (string) $id;
+
         return preg_replace('/\W/i', '_', $id);
     }
 

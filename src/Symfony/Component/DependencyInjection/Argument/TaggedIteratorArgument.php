@@ -54,6 +54,14 @@ class TaggedIteratorArgument extends IteratorArgument
             $defaultIndexMethod = $defaultPriorityMethod = false;
         }
 
+        if (!\is_bool($needsIndexes)) {
+            $needsIndexes = (bool) $needsIndexes;
+        }
+
+        if (!\is_bool($excludeSelf)) {
+            $excludeSelf = (bool) $excludeSelf;
+        }
+
         if (null === $indexAttribute && $needsIndexes) {
             $indexAttribute = preg_match('/[^.]++$/', $tag, $m) ? $m[0] : $tag;
         }

@@ -179,7 +179,7 @@ class ContainerBuilderTest extends TestCase
             {
             }
 
-            public function set(string $name, \UnitEnum|float|int|bool|array|string|null $value): void
+            public function set(string $name, \UnitEnum|float|int|bool|array|string|null|\Symfony\Component\DependencyInjection\Reference|\Symfony\Component\DependencyInjection\Parameter $value): void
             {
             }
 
@@ -1266,7 +1266,7 @@ class ContainerBuilderTest extends TestCase
         $container->addResource($b = new FileResource(__DIR__.'/Fixtures/xml/services2.xml'));
         $resources = [];
         foreach ($container->getResources() as $resource) {
-            if (!str_contains($resource, '.php')) {
+            if (!str_contains((string) $resource, '.php')) {
                 $resources[] = $resource;
             }
         }
@@ -1280,13 +1280,13 @@ class ContainerBuilderTest extends TestCase
         $container = new ContainerBuilder();
         $a = new FileResource(__DIR__.'/Fixtures/xml/services1.xml');
         $b = new FileResource(__DIR__.'/Fixtures/xml/services2.xml');
-        $c = new DirectoryResource($dir = \dirname($b));
+        $c = new DirectoryResource($dir = \dirname((string) $b));
 
         $this->assertTrue($container->fileExists((string) $a) && $container->fileExists((string) $b) && $container->fileExists($dir));
 
         $resources = [];
         foreach ($container->getResources() as $resource) {
-            if (!str_contains($resource, '.php')) {
+            if (!str_contains((string) $resource, '.php')) {
                 $resources[] = $resource;
             }
         }

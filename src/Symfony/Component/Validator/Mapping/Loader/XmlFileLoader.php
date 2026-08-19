@@ -89,7 +89,7 @@ class XmlFileLoader extends FileLoader
                     $options = [];
                 }
             } elseif ('' !== (string) $node) {
-                $options = XmlUtils::phpize(trim($node));
+                $options = XmlUtils::phpize(trim((string) $node));
             } else {
                 $options = null;
             }
@@ -123,7 +123,7 @@ class XmlFileLoader extends FileLoader
                     $value = [];
                 }
             } else {
-                $value = trim($node);
+                $value = trim((string) $node);
             }
 
             if (isset($node['key'])) {
@@ -205,7 +205,7 @@ class XmlFileLoader extends FileLoader
     private function loadClassMetadataFromXml(ClassMetadata $metadata, \SimpleXMLElement $classDescription): void
     {
         if (\count($classDescription->{'group-sequence-provider'}) > 0) {
-            $metadata->setGroupProvider($classDescription->{'group-sequence-provider'}[0]->value ?: null);
+            $metadata->setGroupProvider((string) $classDescription->{'group-sequence-provider'}[0]->value ?: null);
             $metadata->setGroupSequenceProvider(true);
         }
 

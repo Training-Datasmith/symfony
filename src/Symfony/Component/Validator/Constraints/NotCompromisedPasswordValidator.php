@@ -37,7 +37,7 @@ class NotCompromisedPasswordValidator extends ConstraintValidator
     private readonly HttpClientInterface $httpClient;
     private readonly string $endpoint;
 
-    public function __construct(?HttpClientInterface $httpClient = null, private readonly string $charset = 'UTF-8', private readonly bool $enabled = true, ?string $endpoint = null)
+    public function __construct(?HttpClientInterface $httpClient = null, private readonly string $charset = 'UTF-8', private bool $enabled = true, ?string $endpoint = null)
     {
         if (null === $httpClient && !class_exists(HttpClient::class)) {
             throw new LogicException(\sprintf('The "%s" class requires the "HttpClient" component. Try running "composer require symfony/http-client".', self::class));

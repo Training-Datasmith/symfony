@@ -994,7 +994,7 @@ class PhpDumper extends Dumper
             if (\is_array($argument)) {
                 $code .= $this->addInlineVariables($id, $definition, $argument, $forConstructor);
             } elseif ($argument instanceof Reference) {
-                $code .= $this->addInlineReference($id, $definition, $argument, $forConstructor);
+                $code .= $this->addInlineReference($id, $definition, (string) $argument, $forConstructor);
             } elseif ($argument instanceof Definition) {
                 $code .= $this->addInlineService($id, $definition, $argument, $forConstructor);
             }
@@ -1910,7 +1910,7 @@ class PhpDumper extends Dumper
                     if ($value instanceof Reference) {
                         $attribute = 'name: '.$this->dumpValue((string) $value, $interpolate);
 
-                        if ($this->container->hasDefinition($value) && ($class = $this->container->findDefinition($value)->getClass()) && $class !== (string) $value) {
+                        if ($this->container->hasDefinition((string) $value) && ($class = $this->container->findDefinition((string) $value)->getClass()) && $class !== (string) $value) {
                             $attribute .= ', class: '.$this->dumpValue($class, $interpolate);
                         }
 
@@ -2012,7 +2012,7 @@ class PhpDumper extends Dumper
         } elseif ($value instanceof Expression) {
             return $this->getExpressionLanguage()->compile((string) $value, ['container' => 'container']);
         } elseif ($value instanceof Parameter) {
-            return $this->dumpParameter($value);
+            return $this->dumpParameter((string) $value);
         } elseif (true === $interpolate && \is_string($value)) {
             if (preg_match('/^%([^%]+)%$/', $value, $match)) {
                 // we do this to deal with non string values (Boolean, integer, ...)

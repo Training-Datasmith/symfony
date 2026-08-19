@@ -31,6 +31,7 @@ final class Validation
         $validator = self::createIsValidCallable($constraintOrValidator, ...$constraints);
 
         return static function ($value) use ($validator) {
+            $violations = null;
             if (!$validator($value, $violations)) {
                 throw new ValidationFailedException($value, $violations);
             }

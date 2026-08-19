@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\ParameterBag;
 
 use Symfony\Component\DependencyInjection\Exception\LogicException;
+use Symfony\Component\DependencyInjection\Parameter;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Holds read-only parameters.
@@ -47,7 +49,7 @@ class FrozenParameterBag extends ParameterBag
         throw new LogicException('Impossible to call add() on a frozen ParameterBag.');
     }
 
-    public function set(string $name, array|bool|string|int|float|\UnitEnum|null $value): never
+    public function set(string|int|float $name, array|bool|string|int|float|\UnitEnum|null|Reference|Parameter $value): never
     {
         throw new LogicException('Impossible to call set() on a frozen ParameterBag.');
     }

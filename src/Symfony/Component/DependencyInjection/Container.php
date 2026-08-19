@@ -127,7 +127,7 @@ class Container implements ContainerInterface, ResetInterface
         return $this->parameterBag->has($name);
     }
 
-    public function setParameter(string $name, array|bool|string|int|float|\UnitEnum|null $value): void
+    public function setParameter(string $name, array|bool|string|int|float|\UnitEnum|null|Reference|Parameter $value): void
     {
         $this->parameterBag->set($name, $value);
     }

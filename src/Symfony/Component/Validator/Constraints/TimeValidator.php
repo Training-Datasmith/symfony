@@ -61,7 +61,7 @@ class TimeValidator extends ConstraintValidator
             return;
         }
 
-        if (!self::checkTime($matches[1], $matches[2], $constraint->withSeconds ? $matches[3] : 0)) {
+        if (!self::checkTime((int) $matches[1], (int) $matches[2], $constraint->withSeconds ? (int) $matches[3] : 0)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ value }}', $this->formatValue($value))
                 ->setCode(Time::INVALID_TIME_ERROR)
