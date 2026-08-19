@@ -326,7 +326,7 @@ class PdoAdapter extends AbstractAdapter implements PruneableInterface
         if ('sqlsrv' === $driver) {
             $dataStream = fopen('php://memory', 'r+');
         }
-        foreach ($values as $data) {
+        foreach ($values as $id => $data) {
             if ('sqlsrv' === $driver) {
                 rewind($dataStream);
                 fwrite($dataStream, (string) $data);
