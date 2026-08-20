@@ -150,7 +150,7 @@ class QuestionHelper extends Helper
                 }
 
                 if (false === $ret) {
-                    throw new MissingInputException('Aborted.');
+                    throw new MissingInputException($question instanceof ChoiceQuestion ? 'Aborted while asking: '.$question->getQuestion() : 'Aborted.');
                 }
                 if ($question->isTrimmable()) {
                     $ret = trim($ret);
@@ -500,7 +500,8 @@ class QuestionHelper extends Helper
                 throw $error ?? $e;
             } catch (RuntimeException $e) {
                 throw $e;
-            } catch (\Exception) {
+            } catch (\Exception $e) {
+                $error = $e;
             }
         }
 
@@ -528,13 +529,22 @@ class QuestionHelper extends Helper
         }
     }
 
+    private function isStdinStream($inputStream): bool
+    {
+        return 'php://stdin' === (stream_get_meta_data($inputStream)['uri'] ?? null);
+    }
+
     private function isInteractiveInput($inputStream): bool
     {
-        if ('php://stdin' !== (stream_get_meta_data($inputStream)['uri'] ?? null)) {
+        if (!$this->isStdinStream($inputStream)) {
             return false;
         }
 
-        return self::$stdinIsInteractive ?? self::$stdinIsInteractive = @stream_isatty(fopen('php://stdin', 'r'));
+        if (isset(self::$stdinIsInteractive)) {
+            return self::$stdinIsInteractive;
+        }
+
+        return self::$stdinIsInteractive = @stream_isatty($inputStream);
     }
 
     /**
@@ -545,21 +555,38 @@ class QuestionHelper extends Helper
      */
     private function readInput($inputStream, Question $question): string|false
     {
-        if (null !== $question->getTimeout() && $this->isInteractiveInput($inputStream)) {
+        if (null !== $question->getTimeout() && $this->isStdinStream($inputStream)) {
             $read = [$inputStream];
             $write = null;
             $except = null;
             $timeoutSeconds = $question->getTimeout();
+            $start = microtime(true);
             $changedStreams = stream_select($read, $write, $except, $timeoutSeconds);
+            $firstChar = null;
 
             if (0 === $changedStreams) {
                 throw new MissingInputException(\sprintf('Timed out after waiting for input for %d second%s.', $timeoutSeconds, 1 === $timeoutSeconds ? '' : 's'));
             }
+
+            // On Windows, stream_select() may return immediately on STDIN even when it is not a TTY.
+            if (!$this->isInteractiveInput($inputStream)) {
+                $firstChar = fread($inputStream, 1);
+                if (false === $firstChar || '' === $firstChar) {
+                    $remaining = $timeoutSeconds - (microtime(true) - $start);
+                    if ($remaining > 0) {
+                        usleep((int) round($remaining * 1e6));
+                    }
+
+                    throw new MissingInputException(\sprintf('Timed out after waiting for input for %d second%s.', $timeoutSeconds, 1 === $timeoutSeconds ? '' : 's'));
+                }
+            }
+        } else {
+            $firstChar = null;
         }
 
         if (!$question->isMultiline()) {
             $cp = $this->setIOCodepage();
-            $ret = $this->doReadInput($inputStream);
+            $ret = $this->doReadInput($inputStream, firstChar: $firstChar, question: $question);
 
             return $this->resetIOCodepage($cp, $ret);
         }
@@ -644,9 +671,17 @@ class QuestionHelper extends Helper
     /**
      * @param resource $inputStream
      */
-    private function doReadInput($inputStream, ?string $exitChar = null, ?TerminalInputHelper $helper = null): string
+    private function doReadInput($inputStream, ?string $exitChar = null, ?TerminalInputHelper $helper = null, ?Question $question = null, ?string $firstChar = null): string
     {
         $ret = '';
+        if (null !== $firstChar && '' !== $firstChar) {
+            if (\PHP_EOL === $firstChar || $exitChar === $firstChar || (null === $exitChar && "\n" === $firstChar)) {
+                return $firstChar;
+            }
+
+            $ret = $firstChar;
+        }
+
         $helper ??= new TerminalInputHelper($inputStream, false);
 
         while (!feof($inputStream)) {
@@ -655,7 +690,12 @@ class QuestionHelper extends Helper
 
             // as opposed to fgets(), fread() returns an empty string when the stream content is empty, not false.
             if (false === $char || ('' === $ret && '' === $char)) {
-                throw new MissingInputException('Aborted.');
+                if (null !== $question?->getTimeout() && $this->isStdinStream($inputStream)) {
+                    $timeoutSeconds = $question->getTimeout();
+                    throw new MissingInputException(\sprintf('Timed out after waiting for input for %d second%s.', $timeoutSeconds, 1 === $timeoutSeconds ? '' : 's'));
+                }
+
+                throw new MissingInputException($question instanceof ChoiceQuestion ? 'Aborted while asking: '.$question->getQuestion() : 'Aborted.');
             }
 
             if (\PHP_EOL === "{$ret}{$char}" || $exitChar === $char) {

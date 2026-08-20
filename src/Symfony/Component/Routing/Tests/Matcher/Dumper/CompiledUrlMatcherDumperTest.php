@@ -405,7 +405,7 @@ class CompiledUrlMatcherDumperTest extends TestCase
         /* test case 10 */
         $chunkedCollection = new RouteCollection();
         for ($i = 0; $i < 1000; ++$i) {
-            $h = substr(md5($i), 0, 6);
+            $h = substr(md5((string) $i), 0, 6);
             $chunkedCollection->add('_'.$i, new Route('/'.$h.'/{a}/{b}/{c}/'.$h));
         }
 

@@ -121,7 +121,7 @@ final class LazyCommand extends Command
     /**
      * @param array|\Closure(CompletionInput,CompletionSuggestions):list<string|Suggestion> $suggestedValues The values used for input completion
      */
-    public function addOption(string $name, string|array|null $shortcut = null, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = []): static
+    public function addOption(string $name, string|array|null $shortcut = null, ?int $mode = null, string|int|float $description = '', mixed $default = null, array|\Closure $suggestedValues = []): static
     {
         $this->getCommand()->addOption($name, $shortcut, $mode, $description, $default, $suggestedValues);
 

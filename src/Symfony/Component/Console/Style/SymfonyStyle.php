@@ -261,9 +261,9 @@ class SymfonyStyle extends OutputStyle
     /**
      * @param string|null $format
      */
-    public function progressStart(int $max = 0 /* , ?string $format = null */): void
+    public function progressStart(int $max = 0, ?string $format = null): void
     {
-        $this->progressBar = $this->createProgressBar($max);
+        $this->progressBar = $this->createProgressBar($max, $format);
         $this->progressBar->start();
     }
 
@@ -282,9 +282,8 @@ class SymfonyStyle extends OutputStyle
     /**
      * @param string|null $format
      */
-    public function createProgressBar(int $max = 0 /* , ?string $format = null */): ProgressBar
+    public function createProgressBar(int $max = 0, ?string $format = null): ProgressBar
     {
-        $format = 2 <= \func_num_args() ? func_get_arg(1) : null;
         $progressBar = parent::createProgressBar($max);
 
         if ('\\' !== \DIRECTORY_SEPARATOR || 'Hyper' === getenv('TERM_PROGRAM')) {
@@ -312,9 +311,9 @@ class SymfonyStyle extends OutputStyle
      *
      * @return iterable<TKey, TValue>
      */
-    public function progressIterate(iterable $iterable, ?int $max = null /* , ?string $format = null */): iterable
+    public function progressIterate(iterable $iterable, ?int $max = null, ?string $format = null): iterable
     {
-        yield from $this->createProgressBar(0)->iterate($iterable, $max);
+        yield from $this->createProgressBar(0, $format)->iterate($iterable, $max);
 
         $this->newLine(2);
     }
@@ -489,7 +488,7 @@ class SymfonyStyle extends OutputStyle
             }
 
             $line = $prefix.$line;
-            $line .= str_repeat(' ', max($this->lineLength - Helper::width(Helper::removeDecoration($this->getFormatter(), $line)), 0));
+            $line .= str_repeat(' ', (int) max($this->lineLength - Helper::width(Helper::removeDecoration($this->getFormatter(), $line)), 0));
 
             if ($style) {
                 $line = \sprintf('<%s>%s</>', $style, $line);

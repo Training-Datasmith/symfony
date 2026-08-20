@@ -208,9 +208,9 @@ class RequestContext
      *
      * @return $this
      */
-    public function setHttpPort(int $httpPort): static
+    public function setHttpPort(int|string $httpPort): static
     {
-        $this->httpPort = $httpPort;
+        $this->httpPort = (int) $httpPort;
 
         return $this;
     }
@@ -228,9 +228,9 @@ class RequestContext
      *
      * @return $this
      */
-    public function setHttpsPort(int $httpsPort): static
+    public function setHttpsPort(int|string $httpsPort): static
     {
-        $this->httpsPort = $httpsPort;
+        $this->httpsPort = (int) $httpsPort;
 
         return $this;
     }

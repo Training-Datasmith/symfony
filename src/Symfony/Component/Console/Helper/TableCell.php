@@ -26,10 +26,13 @@ class TableCell implements \Stringable
         'style' => null,
     ];
 
+    private readonly string $value;
+
     public function __construct(
-        private readonly string $value = '',
+        string|int|float $value = '',
         array $options = [],
     ) {
+        $this->value = (string) $value;
         // check option names
         if ($diff = array_diff(array_keys($options), array_keys($this->options))) {
             throw new InvalidArgumentException(\sprintf('The TableCell does not support the following options: \'%s\'.', implode('\', \'', $diff)));

@@ -47,7 +47,7 @@ class InputArgument
 
     /**
      * @param string                                                                        $name            The argument name
-     * @param int-mask-of<InputArgument::*>|null                                            $mode            The argument mode: a bit mask of self::REQUIRED, self::OPTIONAL and self::IS_ARRAY
+     * @param int-mask-of<InputArgument::*>|int|string|null                                    $mode            The argument mode: a bit mask of self::REQUIRED, self::OPTIONAL and self::IS_ARRAY
      * @param string                                                                        $description     A description text
      * @param mixed                                                                         $default         The default value (for self::OPTIONAL mode only)
      * @param array|\Closure(CompletionInput,CompletionSuggestions):list<string|Suggestion> $suggestedValues The values used for input completion
@@ -56,11 +56,18 @@ class InputArgument
      */
     public function __construct(
         private readonly string $name,
-        ?int $mode = null,
+        int|string|null $mode = null,
         private readonly string $description = '',
         mixed $default = null,
         private readonly \Closure|array $suggestedValues = [],
     ) {
+        if (\is_string($mode)) {
+            if (!is_numeric($mode)) {
+                throw new InvalidArgumentException(\sprintf('Argument mode "%s" is not valid.', $mode));
+            }
+            $mode = (int) $mode;
+        }
+
         // If not explicitly marked as required, we assume the value to be optional
         $mode = self::REQUIRED === (self::REQUIRED & $mode) ? $mode : (self::OPTIONAL | $mode);
         if ($mode >= (self::IS_ARRAY << 1) || $mode < 1) {

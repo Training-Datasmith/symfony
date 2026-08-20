@@ -71,7 +71,7 @@ class Argument
         $self->typeName = $type->getName();
 
         if (!$self->name) {
-            $self->name = (new UnicodeString($name))->kebab();
+            $self->name = (string) (new UnicodeString($name))->kebab();
         }
 
         $self->default = $reflection->hasDefaultValue() ? $reflection->getDefaultValue() : null;

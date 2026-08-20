@@ -93,7 +93,7 @@ class AddConsoleCommandPass implements CompilerPassInterface
             $class = Command::class;
 
             $closureDefinition = new Definition(\Closure::class)
-                ->setFactory(\Closure::fromCallable(...))
+                ->setFactory([\Closure::class, 'fromCallable'])
                 ->setArguments([$callableRef]);
 
             $definition = $container->register($id, $class)

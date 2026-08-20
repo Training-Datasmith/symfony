@@ -39,9 +39,9 @@ abstract class Helper implements HelperInterface
      * Returns the width of a string, using mb_strwidth if it is available.
      * The width is how many characters positions the string will use.
      */
-    public static function width(?string $string): int
+    public static function width(string|\Stringable|int|float|null $string): int
     {
-        $string ??= '';
+        $string = $string === null ? '' : (string) $string;
 
         if (preg_match('//u', $string)) {
             $string = preg_replace('/[\p{Cc}\x7F]++/u', '', $string, -1, $count);
@@ -60,9 +60,9 @@ abstract class Helper implements HelperInterface
      * Returns the length of a string, using mb_strlen if it is available.
      * The length is related to how many bytes the string will use.
      */
-    public static function length(?string $string): int
+    public static function length(string|\Stringable|int|float|null $string): int
     {
-        $string ??= '';
+        $string = $string === null ? '' : (string) $string;
 
         if (preg_match('//u', $string)) {
             return (new UnicodeString($string))->length();
@@ -83,7 +83,7 @@ abstract class Helper implements HelperInterface
         $string ??= '';
 
         if (preg_match('//u', $string)) {
-            return (new UnicodeString($string))->slice($from, $length);
+            return (new UnicodeString($string))->slice($from, $length)->toString();
         }
 
         if (false === $encoding = mb_detect_encoding($string, null, true)) {
@@ -151,16 +151,17 @@ abstract class Helper implements HelperInterface
         return \sprintf('%d B', $memory);
     }
 
-    public static function removeDecoration(OutputFormatterInterface $formatter, ?string $string): string
+    public static function removeDecoration(OutputFormatterInterface $formatter, string|\Stringable|int|float|null $string): string
     {
+        $string = $string === null ? '' : (string) $string;
         $isDecorated = $formatter->isDecorated();
         $formatter->setDecorated(false);
         // remove <...> formatting
-        $string = $formatter->format($string ?? '');
+        $string = $formatter->format($string);
         // remove already formatted characters
-        $string = preg_replace("/\033\[[^m]*m/", '', $string ?? '');
+        $string = preg_replace("/\033\[[^m]*m/", '', $string);
         // remove terminal hyperlinks
-        $string = preg_replace('/\\033]8;[^;]*;[^\\033]*\\033\\\\/', '', $string ?? '');
+        $string = preg_replace('/\\033]8;[^;]*;[^\\033]*\\033\\\\/', '', $string);
         $formatter->setDecorated($isDecorated);
 
         return $string;

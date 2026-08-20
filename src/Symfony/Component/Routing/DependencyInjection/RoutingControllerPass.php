@@ -33,7 +33,7 @@ final class RoutingControllerPass implements CompilerPassInterface
         $resolve = $container->getParameterBag()->resolveValue(...);
         $taggedClasses = [];
         foreach ($this->findAndSortTaggedServices('routing.controller', $container) as $id) {
-            $taggedClasses[$resolve($container->getDefinition($id)->getClass())] = true;
+            $taggedClasses[$resolve($container->getDefinition((string) $id)->getClass())] = true;
         }
 
         $container->getDefinition('routing.loader.attribute.services')

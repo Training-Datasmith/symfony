@@ -39,32 +39,31 @@ class PhpFileLoader extends FileLoader
      */
     public function load(mixed $file, ?string $type = null): RouteCollection
     {
-        $path = $this->locator->locate($file);
-        $this->setCurrentDir(\dirname($path));
+        $resourcePath = $this->locator->locate($file);
+        $this->setCurrentDir(\dirname($resourcePath));
 
         // Expose RoutesReference::config() as Routes::config()
         if (!class_exists(Routes::class)) {
             class_alias(RoutesReference::class, Routes::class);
         }
 
-        // the closure forbids access to the private scope in the included file
         $loader = $this;
-        $load = \Closure::bind(static fn ($file) => include $file, null, null);
+        $result = include $resourcePath;
 
-        if (1 === $result = $load($path)) {
+        if (1 === $result) {
             $result = null;
         }
 
         if (\is_object($result) && \is_callable($result)) {
-            $collection = $this->callConfigurator($result, $path, $file);
+            $collection = $this->callConfigurator($result, $resourcePath, $file);
         } elseif (\is_array($result)) {
             $collection = new RouteCollection();
-            $this->loadContent($collection, $result, $path, $file);
+            $this->loadContent($collection, $result, $resourcePath, $file);
         } elseif (!($collection = $result) instanceof RouteCollection) {
-            throw new InvalidArgumentException(\sprintf('The return value in config file "%s" is expected to be a RouteCollection, an array or a configurator callable, but got "%s".', $path, get_debug_type($result)));
+            throw new InvalidArgumentException(\sprintf('The return value in config file "%s" is expected to be a RouteCollection, an array or a configurator callable, but got "%s".', $resourcePath, get_debug_type($result)));
         }
 
-        $collection->addResource(new FileResource($path));
+        $collection->addResource(new FileResource($resourcePath));
 
         return $collection;
     }

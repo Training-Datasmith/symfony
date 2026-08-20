@@ -114,16 +114,18 @@ class OutputFormatter implements WrappableOutputFormatterInterface
         return $this->styles[strtolower($name)];
     }
 
-    public function format(?string $message): ?string
+    public function format(string|\Stringable|null $message): ?string
     {
         return $this->formatAndWrap($message, 0);
     }
 
-    public function formatAndWrap(?string $message, int $width): string
+    public function formatAndWrap(string|\Stringable|null $message, int $width): string
     {
         if (null === $message) {
             return '';
         }
+
+        $message = (string) $message;
 
         $offset = 0;
         $output = '';
@@ -277,6 +279,6 @@ class OutputFormatter implements WrappableOutputFormatterInterface
     {
         $encoding = mb_detect_encoding($text, null, true) ?: 'UTF-8';
 
-        return b($text)->toUnicodeString($encoding)->wordwrap($width, "\n", true)->toByteString($encoding);
+        return b($text)->toUnicodeString($encoding)->wordwrap($width, "\n", true)->toByteString($encoding)->toString();
     }
 }

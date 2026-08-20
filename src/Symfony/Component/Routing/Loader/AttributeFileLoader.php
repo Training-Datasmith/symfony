@@ -71,8 +71,9 @@ class AttributeFileLoader extends FileLoader
     /**
      * Returns the full class name for the first class in the file.
      */
-    protected function findClass(string $file): string|false
+    protected function findClass(string|\SplFileInfo $file): string|false
     {
+        $file = (string) $file;
         $class = false;
         $namespace = false;
         $tokens = token_get_all(file_get_contents($file));

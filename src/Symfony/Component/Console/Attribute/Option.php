@@ -79,7 +79,7 @@ class Option
         }
 
         if (!$self->name) {
-            $self->name = (new UnicodeString($name))->kebab();
+            $self->name = (string) (new UnicodeString($name))->kebab();
         }
 
         $self->default = $reflection->isVariadic() ? [] : $reflection->getDefaultValue();

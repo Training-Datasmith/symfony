@@ -530,7 +530,7 @@ final class ProgressBar
                         }
                     }
 
-                    $this->output->clear($lineCount);
+                    $this->output->clear((int) $lineCount);
                 } else {
                     $lineCount = substr_count($this->previousMessage, "\n");
                     for ($i = 0; $i < $lineCount; ++$i) {
@@ -569,10 +569,10 @@ final class ProgressBar
     {
         return [
             'bar' => static function (self $bar, OutputInterface $output): string {
-                $completeBars = $bar->getBarOffset();
+                $completeBars = (int) floor($bar->getBarOffset());
                 $display = str_repeat($bar->getBarCharacter(), $completeBars);
                 if ($completeBars < $bar->getBarWidth()) {
-                    $emptyBars = $bar->getBarWidth() - $completeBars - Helper::length(Helper::removeDecoration($output->getFormatter(), $bar->getProgressCharacter()));
+                    $emptyBars = (int) max(0, $bar->getBarWidth() - $completeBars - Helper::length(Helper::removeDecoration($output->getFormatter(), $bar->getProgressCharacter())));
                     $display .= $bar->getProgressCharacter().str_repeat($bar->getEmptyBarCharacter(), $emptyBars);
                 }
 
@@ -594,7 +594,7 @@ final class ProgressBar
                 return Helper::formatTime($bar->getEstimated(), 2);
             },
             'memory' => static fn (self $bar): string => Helper::formatMemory(memory_get_usage(true)),
-            'current' => static fn (self $bar): string => str_pad($bar->getProgress(), $bar->getStepWidth(), ' ', \STR_PAD_LEFT),
+            'current' => static fn (self $bar): string => str_pad((string) $bar->getProgress(), $bar->getStepWidth(), ' ', \STR_PAD_LEFT),
             'max' => static fn (self $bar): int => $bar->getMaxSteps(),
             'percent' => static fn (self $bar): float => floor($bar->getProgressPercent() * 100),
         ];

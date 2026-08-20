@@ -954,7 +954,7 @@ class Application implements ResetInterface
                 $messages[] = \sprintf('<error>%s%s</error>', $title, str_repeat(' ', max(0, $len - Helper::width($title))));
             }
             foreach ($lines as $line) {
-                $messages[] = \sprintf('<error>  %s  %s</error>', OutputFormatter::escape($line[0]), str_repeat(' ', $len - $line[1]));
+                $messages[] = \sprintf('<error>  %s  %s</error>', OutputFormatter::escape($line[0]), str_repeat(' ', (int) ($len - $line[1])));
             }
             $messages[] = $emptyLine;
             $messages[] = '';
@@ -1221,9 +1221,9 @@ class Application implements ResetInterface
      *
      * This method is not part of public API and should not be used directly.
      */
-    public function extractNamespace(string $name, ?int $limit = null): string
+    public function extractNamespace(string|int $name, ?int $limit = null): string
     {
-        $parts = explode(':', $name, -1);
+        $parts = explode(':', (string) $name, -1);
 
         return implode(':', null === $limit ? $parts : \array_slice($parts, 0, $limit));
     }

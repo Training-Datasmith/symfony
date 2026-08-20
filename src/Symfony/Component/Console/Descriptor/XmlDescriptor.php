@@ -53,7 +53,7 @@ class XmlDescriptor extends Descriptor
 
         $commandXML->setAttribute('id', $command->getName());
         $commandXML->setAttribute('name', $command->getName());
-        $commandXML->setAttribute('hidden', $command->isHidden() ? 1 : 0);
+        $commandXML->setAttribute('hidden', $command->isHidden() ? '1' : '0');
 
         $commandXML->appendChild($usagesXML = $dom->createElement('usages'));
 
@@ -172,8 +172,8 @@ class XmlDescriptor extends Descriptor
 
         $dom->appendChild($objectXML = $dom->createElement('argument'));
         $objectXML->setAttribute('name', $argument->getName());
-        $objectXML->setAttribute('is_required', $argument->isRequired() ? 1 : 0);
-        $objectXML->setAttribute('is_array', $argument->isArray() ? 1 : 0);
+        $objectXML->setAttribute('is_required', $argument->isRequired() ? '1' : '0');
+        $objectXML->setAttribute('is_array', $argument->isArray() ? '1' : '0');
         $objectXML->appendChild($descriptionXML = $dom->createElement('description'));
         $descriptionXML->appendChild($dom->createTextNode($argument->getDescription()));
 
@@ -181,7 +181,7 @@ class XmlDescriptor extends Descriptor
         $defaults = \is_array($argument->getDefault()) ? $argument->getDefault() : (\is_bool($argument->getDefault()) ? [var_export($argument->getDefault(), true)] : ($argument->getDefault() ? [$argument->getDefault()] : []));
         foreach ($defaults as $default) {
             $defaultsXML->appendChild($defaultXML = $dom->createElement('default'));
-            $defaultXML->appendChild($dom->createTextNode($default));
+            $defaultXML->appendChild($dom->createTextNode((string) $default));
         }
 
         return $dom;
@@ -200,9 +200,9 @@ class XmlDescriptor extends Descriptor
         } else {
             $objectXML->setAttribute('shortcut', $option->getShortcut() ? '-'.$option->getShortcut() : '');
         }
-        $objectXML->setAttribute('accept_value', $option->acceptValue() ? 1 : 0);
-        $objectXML->setAttribute('is_value_required', $option->isValueRequired() ? 1 : 0);
-        $objectXML->setAttribute('is_multiple', $option->isArray() ? 1 : 0);
+        $objectXML->setAttribute('accept_value', $option->acceptValue() ? '1' : '0');
+        $objectXML->setAttribute('is_value_required', $option->isValueRequired() ? '1' : '0');
+        $objectXML->setAttribute('is_multiple', $option->isArray() ? '1' : '0');
         $objectXML->appendChild($descriptionXML = $dom->createElement('description'));
         $descriptionXML->appendChild($dom->createTextNode($option->getDescription()));
 
@@ -212,7 +212,7 @@ class XmlDescriptor extends Descriptor
 
             foreach ($defaults as $default) {
                 $defaultsXML->appendChild($defaultXML = $dom->createElement('default'));
-                $defaultXML->appendChild($dom->createTextNode($default));
+                $defaultXML->appendChild($dom->createTextNode((string) $default));
             }
         }
 
@@ -220,9 +220,9 @@ class XmlDescriptor extends Descriptor
             $dom->appendChild($objectXML = $dom->createElement('option'));
             $objectXML->setAttribute('name', '--no-'.$option->getName());
             $objectXML->setAttribute('shortcut', '');
-            $objectXML->setAttribute('accept_value', 0);
-            $objectXML->setAttribute('is_value_required', 0);
-            $objectXML->setAttribute('is_multiple', 0);
+            $objectXML->setAttribute('accept_value', '0');
+            $objectXML->setAttribute('is_value_required', '0');
+            $objectXML->setAttribute('is_multiple', '0');
             $objectXML->appendChild($descriptionXML = $dom->createElement('description'));
             $descriptionXML->appendChild($dom->createTextNode('Negate the "--'.$option->getName().'" option'));
         }

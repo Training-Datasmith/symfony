@@ -25,7 +25,7 @@ class ConsoleSectionOutput extends StreamOutput
 {
     private array $content = [];
     private int $lines = 0;
-    private readonly array $sections;
+    private array $sections;
     private readonly Terminal $terminal;
     private int $maxHeight = 0;
 

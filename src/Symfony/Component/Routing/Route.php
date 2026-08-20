@@ -345,6 +345,9 @@ class Route implements \Serializable
         }
 
         foreach ($requirements as $key => $regex) {
+            if (!\is_string($regex)) {
+                $regex = (string) $regex;
+            }
             $this->requirements[$key] = $this->sanitizeRequirement($key, $regex);
         }
         $this->compiled = null;
@@ -365,13 +368,13 @@ class Route implements \Serializable
     /**
      * @return $this
      */
-    public function setRequirement(string $key, string $regex): static
+    public function setRequirement(string $key, string|\Stringable $regex): static
     {
         if ('_locale' === $key && $this->isLocalized()) {
             return $this;
         }
 
-        $this->requirements[$key] = $this->sanitizeRequirement($key, $regex);
+        $this->requirements[$key] = $this->sanitizeRequirement($key, (string) $regex);
         $this->compiled = null;
 
         return $this;

@@ -114,8 +114,9 @@ class RouteCollection implements \IteratorAggregate, \Countable
     /**
      * Gets a route by name.
      */
-    public function get(string $name): ?Route
+    public function get(string|int $name): ?Route
     {
+        $name = (string) $name;
         $visited = [];
         while (null !== $alias = $this->aliases[$name] ?? null) {
             if (false !== $searchKey = array_search($name, $visited)) {

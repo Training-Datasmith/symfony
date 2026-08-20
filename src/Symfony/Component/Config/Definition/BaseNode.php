@@ -49,7 +49,7 @@ abstract class BaseNode implements NodeInterface
      * @throws \InvalidArgumentException if the name contains a period
      */
     public function __construct(
-        ?string $name,
+        string|int|null $name,
         protected ?NodeInterface $parent = null,
         protected string $pathSeparator = self::DEFAULT_PATH_SEPARATOR,
     ) {

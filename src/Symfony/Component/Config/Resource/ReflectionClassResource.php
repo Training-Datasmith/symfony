@@ -195,7 +195,7 @@ class ReflectionClassResource implements SelfCheckingResourceInterface
                 $defaults[$p->name] = (string) $p;
             }
 
-            yield preg_replace('/^  @@.*/m', '', $m);
+            yield preg_replace('/^  @@.*/m', '', (string) $m);
             yield print_r($defaults, true);
         }
 

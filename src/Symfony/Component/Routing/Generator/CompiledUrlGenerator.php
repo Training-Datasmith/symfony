@@ -24,11 +24,11 @@ class CompiledUrlGenerator extends UrlGenerator
 {
     public function __construct(
         private array $compiledRoutes,
-        RequestContext $context,
+        RequestContext|null $context,
         ?LoggerInterface $logger = null,
         private readonly ?string $defaultLocale = null,
     ) {
-        $this->context = $context;
+        $this->context = $context ?? new RequestContext();
         $this->logger = $logger;
     }
 

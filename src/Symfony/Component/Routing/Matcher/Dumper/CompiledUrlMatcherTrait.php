@@ -174,8 +174,8 @@ trait CompiledUrlMatcherTrait
                     return $ret;
                 }
 
-                $regex = substr_replace($regex, 'F', $m - $offset, 1 + \strlen($m));
-                $offset += \strlen($m);
+                $regex = substr_replace($regex, 'F', $m - $offset, 1 + \strlen((string) $m));
+                $offset += \strlen((string) $m);
             }
         }
 

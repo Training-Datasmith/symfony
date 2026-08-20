@@ -368,8 +368,8 @@ class Table
                             if (0 === $idx) {
                                 $rows[] = [\sprintf(
                                     '<comment>%s%s</>: %s',
-                                    str_repeat(' ', $maxHeaderLength - Helper::width(Helper::removeDecoration($formatter, $headers[$i] ?? ''))),
-                                    $headers[$i] ?? '',
+                                    str_repeat(' ', $maxHeaderLength - Helper::width(Helper::removeDecoration($formatter, (string) ($headers[$i] ?? '')))),
+                                    (string) ($headers[$i] ?? ''),
                                     $part
                                 )];
                             } else {
@@ -563,7 +563,7 @@ class Table
         }
 
         // str_pad won't work properly with multi-byte strings, we need to fix the padding
-        $width += \strlen($cell) - Helper::width($cell) - substr_count($cell, "\0");
+        $width += \strlen((string) $cell) - Helper::width($cell) - substr_count((string) $cell, "\0");
         $style = $this->getColumnStyle($column);
 
         if ($cell instanceof TableSeparator) {
@@ -571,11 +571,11 @@ class Table
         }
 
         $width += Helper::length($cell) - Helper::length(Helper::removeDecoration($this->output->getFormatter(), $cell));
-        $content = \sprintf($style->getCellRowContentFormat(), $cell);
+        $content = \sprintf($style->getCellRowContentFormat(), (string) $cell);
 
         $padType = $style->getPadType();
         if ($cell instanceof TableCell && $cell->getStyle() instanceof TableCellStyle) {
-            $isNotStyledByTag = !preg_match('/^<(\w+|(\w+=[\w,]+;?)*)>.+<\/(\w+|(\w+=\w+;?)*)?>$/', $cell);
+            $isNotStyledByTag = !preg_match('/^<(\w+|(\w+=[\w,]+;?)*)>.+<\/(\w+|(\w+=\w+;?)*)?>$/', (string) $cell);
             if ($isNotStyledByTag) {
                 $cellFormat = $cell->getStyle()->getCellFormat();
                 if (!\is_string($cellFormat)) {
@@ -583,12 +583,12 @@ class Table
                     $cellFormat = '<'.$tag.'>%s</>';
                 }
 
-                if (str_contains($content, '</>')) {
-                    $content = str_replace('</>', '', $content);
+                if (str_contains((string) $content, '</>')) {
+                    $content = str_replace('</>', '', (string) $content);
                     $width -= 3;
                 }
-                if (str_contains($content, '<fg=default;bg=default>')) {
-                    $content = str_replace('<fg=default;bg=default>', '', $content);
+                if (str_contains((string) $content, '<fg=default;bg=default>')) {
+                    $content = str_replace('<fg=default;bg=default>', '', (string) $content);
                     $width -= \strlen('<fg=default;bg=default>');
                 }
             }
@@ -596,7 +596,7 @@ class Table
             $padType = $cell->getStyle()->getPadByAlign();
         }
 
-        return \sprintf($cellFormat, str_pad($content, $width, $style->getPaddingChar(), $padType));
+        return \sprintf($cellFormat, str_pad((string) $content, $width, $style->getPaddingChar(), $padType));
     }
 
     /**
@@ -671,13 +671,13 @@ class Table
                         $this->columnWidths[$i] = $cellWidth + $lengthColumnBorder;
                     }
                 }
-                if (!str_contains($cell ?? '', "\n")) {
+                if (!str_contains((string) ($cell ?? ''), "\n")) {
                     continue;
                 }
-                $eol = str_contains($cell ?? '', "\r\n") ? "\r\n" : "\n";
+                $eol = str_contains((string) ($cell ?? ''), "\r\n") ? "\r\n" : "\n";
                 $escaped = implode($eol, array_map(OutputFormatter::escapeTrailingBackslash(...), explode($eol, (string) $cell)));
                 $cell = $cell instanceof TableCell ? new TableCell($escaped, ['colspan' => $cell->getColspan()]) : $escaped;
-                $lines = explode($eol, str_replace($eol, '<fg=default;bg=default></>'.$eol, $cell));
+                $lines = explode($eol, str_replace($eol, '<fg=default;bg=default></>'.$eol, (string) $cell));
                 foreach ($lines as $lineKey => $line) {
                     if ($colspan > 1) {
                         $line = new TableCell($line, ['colspan' => $colspan]);
@@ -738,10 +738,10 @@ class Table
             if ($cell instanceof TableCell && $cell->getRowspan() > 1) {
                 $nbLines = $cell->getRowspan() - 1;
                 $lines = [$cell];
-                if (str_contains($cell, "\n")) {
-                    $eol = str_contains($cell, "\r\n") ? "\r\n" : "\n";
-                    $lines = explode($eol, str_replace($eol, '<fg=default;bg=default>'.$eol.'</>', $cell));
-                    $nbLines = \count($lines) > $nbLines ? substr_count($cell, $eol) : $nbLines;
+                if (str_contains((string) $cell, "\n")) {
+                    $eol = str_contains((string) $cell, "\r\n") ? "\r\n" : "\n";
+                    $lines = explode($eol, str_replace($eol, '<fg=default;bg=default>'.$eol.'</>', (string) $cell));
+                    $nbLines = \count($lines) > $nbLines ? substr_count((string) $cell, $eol) : $nbLines;
 
                     $rows[$line][$column] = new TableCell($lines[0], ['colspan' => $cell->getColspan(), 'style' => $cell->getStyle()]);
                     unset($lines[0]);
@@ -860,7 +860,7 @@ class Table
                             $textContent = Helper::removeDecoration($this->output->getFormatter(), $cell);
                             $textLength = Helper::width($textContent);
                             if ($textLength > 0) {
-                                $contentColumns = mb_str_split($textContent, ceil($textLength / $cell->getColspan()));
+                                $contentColumns = mb_str_split($textContent, (int) ceil($textLength / $cell->getColspan()));
                                 foreach ($contentColumns as $position => $content) {
                                     $row[$i + $position] = $content;
                                 }

@@ -59,7 +59,7 @@ class InputOption
 
     /**
      * @param string|array|null                                                             $shortcut        The shortcuts, can be null, a string of shortcuts delimited by | or an array of shortcuts
-     * @param int-mask-of<InputOption::*>|null                                              $mode            The option mode: One of the VALUE_* constants
+     * @param int-mask-of<InputOption::*>|int|string|null                                      $mode            The option mode: One of the VALUE_* constants
      * @param mixed                                                                         $default         The default value (must be null for self::VALUE_NONE)
      * @param array|\Closure(CompletionInput,CompletionSuggestions):list<string|Suggestion> $suggestedValues The values used for input completion
      *
@@ -68,7 +68,7 @@ class InputOption
     public function __construct(
         string $name,
         string|array|null $shortcut = null,
-        ?int $mode = null,
+        int|string|null $mode = null,
         private readonly string $description = '',
         mixed $default = null,
         private readonly array|\Closure $suggestedValues = [],
@@ -98,11 +98,21 @@ class InputOption
             }
         }
 
-        // If not explicitly marked as required or optional, we assume the value accepts no input
-        $mode = self::VALUE_REQUIRED === (self::VALUE_REQUIRED & $mode) || self::VALUE_OPTIONAL === (self::VALUE_OPTIONAL & $mode) ? $mode : (self::VALUE_NONE | $mode);
-        if ($mode >= (self::VALUE_NEGATABLE << 1) || $mode < 1) {
+        if (\is_string($mode)) {
+            if (!is_numeric($mode)) {
+                throw new InvalidArgumentException(\sprintf('Option mode "%s" is not valid.', $mode));
+            }
+            $mode = (int) $mode;
+        }
+
+        if (null === $mode) {
+            $mode = self::VALUE_NONE;
+        } elseif ($mode >= (self::VALUE_NEGATABLE << 1) || $mode < 1) {
             throw new InvalidArgumentException(\sprintf('Option mode "%s" is not valid.', $mode));
         }
+
+        // If not explicitly marked as required or optional, we assume the value accepts no input
+        $mode = self::VALUE_REQUIRED === (self::VALUE_REQUIRED & $mode) || self::VALUE_OPTIONAL === (self::VALUE_OPTIONAL & $mode) ? $mode : (self::VALUE_NONE | $mode);
 
         if (!\in_array($mode & (self::VALUE_NONE | self::VALUE_REQUIRED | self::VALUE_OPTIONAL), [self::VALUE_NONE, self::VALUE_REQUIRED, self::VALUE_OPTIONAL], true)) {
             trigger_deprecation('symfony/console', '8.1', 'Option "%s" mode should be either none, required or optional.', $name);
@@ -112,7 +122,7 @@ class InputOption
         $this->shortcut = $shortcut;
         $this->mode = $mode;
 
-        if ($suggestedValues && !$this->acceptValue()) {
+        if ($this->suggestedValues && !$this->acceptValue()) {
             throw new LogicException('Cannot set suggested values if the option does not accept a value.');
         }
         if ($this->isArray() && !$this->acceptValue()) {
