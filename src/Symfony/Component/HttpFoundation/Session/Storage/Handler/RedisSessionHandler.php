@@ -104,6 +104,6 @@ class RedisSessionHandler extends AbstractSessionHandler
     {
         $ttl = ($this->ttl instanceof \Closure ? ($this->ttl)() : $this->ttl) ?? \ini_get('session.gc_maxlifetime');
 
-        return $this->redis->expire($this->prefix.$sessionId, (int) $ttl);
+        return (bool) $this->redis->expire($this->prefix.$sessionId, (int) $ttl);
     }
 }

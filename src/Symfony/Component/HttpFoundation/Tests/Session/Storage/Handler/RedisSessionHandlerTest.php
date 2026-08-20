@@ -21,7 +21,8 @@ class RedisSessionHandlerTest extends AbstractRedisSessionHandlerTestCase
     protected function createRedisClient(string $host): \Redis
     {
         $client = new \Redis();
-        $client->connect(...explode(':', $host));
+        $parts = explode(':', $host, 2);
+        $client->connect($parts[0], isset($parts[1]) ? (int) $parts[1] : 6379);
 
         return $client;
     }

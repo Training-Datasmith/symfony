@@ -41,7 +41,8 @@ abstract class AbstractRedisSessionHandlerTestCase extends TestCase
         }
 
         try {
-            (new \Redis())->connect(...explode(':', $host));
+            $parts = explode(':', $host, 2);
+            (new \Redis())->connect($parts[0], isset($parts[1]) ? (int) $parts[1] : 6379);
         } catch (\Exception $e) {
             self::markTestSkipped($e->getMessage());
         }
