@@ -14,9 +14,10 @@ declare(strict_types=1);
 namespace Symfony\Bridge\Doctrine\SchemaListener;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception\ConnectionException;
+use Doctrine\DBAL\Driver\Exception as DBALDriverException;
 use Doctrine\DBAL\Exception\DatabaseObjectExistsException;
 use Doctrine\DBAL\Exception\DatabaseObjectNotFoundException;
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Name\Identifier;
 use Doctrine\DBAL\Schema\Name\UnqualifiedName;
 use Doctrine\DBAL\Schema\NamedObject;
@@ -30,33 +31,78 @@ abstract class AbstractSchemaListener
 {
     abstract public function postGenerateSchema(GenerateSchemaEventArgs $event): void;
 
-    protected function filterSchemaChanges(Schema $schema, Connection $connection, callable $configurator): void
+    /**
+     * @param callable(): Schema $configurator returns the (possibly new) schema with the table added
+     *
+     * @return Schema The (possibly new) schema after filtering
+     */
+    protected function filterSchemaChanges(Schema $schema, Connection $connection, callable $configurator): Schema
     {
         $filter = $connection->getConfiguration()->getSchemaAssetsFilter();
+        $getName = static fn ($object) => $object instanceof NamedObject ? $object->getObjectName()->toString() : $object->getName();
 
-        if (null === $filter) {
-            $configurator();
-
-            return;
+        if (null !== $filter) {
+            $previousTableNames = array_map($getName, $schema->getTables());
+            $previousSequenceNames = array_map($getName, $schema->getSequences());
         }
 
-        $getNames = static fn ($array): array => array_map(static fn ($object) => $object instanceof NamedObject ? $object->getObjectName()->toString() : $object->getName(), $array);
-        $previousTableNames = $getNames($schema->getTables());
-        $previousSequenceNames = $getNames($schema->getSequences());
+        $newSchema = $configurator() ?? $schema;
 
-        $configurator();
+        if (null !== $filter) {
+            $tablesToFilter = [];
+            foreach ($newSchema->getTables() as $table) {
+                $name = $getName($table);
+                if (!\in_array($name, $previousTableNames, true) && !$filter($name)) {
+                    $tablesToFilter[] = $table;
+                }
+            }
 
-        foreach (array_diff($getNames($schema->getTables()), $previousTableNames) as $addedTable) {
-            if (!$filter($addedTable)) {
-                $schema->dropTable($addedTable);
+            $sequencesToFilter = [];
+            foreach ($newSchema->getSequences() as $sequence) {
+                $name = $getName($sequence);
+                if (!\in_array($name, $previousSequenceNames, true) && !$filter($name)) {
+                    $sequencesToFilter[] = $sequence;
+                }
+            }
+
+            if ($tablesToFilter || $sequencesToFilter) {
+                if (method_exists($newSchema, 'edit')) {
+                    $editor = $newSchema->edit();
+                    foreach ($tablesToFilter as $table) {
+                        $editor->dropTable($table->getObjectName());
+                    }
+                    foreach ($sequencesToFilter as $sequence) {
+                        $editor->dropSequence($sequence->getObjectName());
+                    }
+
+                    $newSchema = $editor->create();
+                } else {
+                    foreach ($tablesToFilter as $table) {
+                        $newSchema->dropTable($getName($table));
+                    }
+                    foreach ($sequencesToFilter as $sequence) {
+                        $newSchema->dropSequence($getName($sequence));
+                    }
+                }
             }
         }
 
-        foreach (array_diff($getNames($schema->getSequences()), $previousSequenceNames) as $addedSequence) {
-            if (!$filter($addedSequence)) {
-                $schema->dropSequence($addedSequence);
-            }
+        if ($newSchema !== $schema) {
+            \Closure::bind(static function (Schema $schema) use ($newSchema, $getName): void {
+                foreach ($newSchema->getTables() as $table) {
+                    if (!$schema->hasTable($getName($table))) {
+                        $schema->_addTable($table);
+                    }
+                }
+                foreach ($newSchema->getSequences() as $sequence) {
+                    if (!$schema->hasSequence($getName($sequence))) {
+                        $schema->_addSequence($sequence);
+                    }
+                }
+            }, null, Schema::class)($schema);
         }
+
+        return $newSchema;
     }
 
     /**
@@ -65,37 +111,46 @@ abstract class AbstractSchemaListener
     protected function getIsSameDatabaseChecker(Connection $connection): \Closure
     {
         return static function (\Closure $exec) use ($connection): bool {
-            $schemaManager = $connection->createSchemaManager();
+            $schemaManager = method_exists($connection, 'createSchemaManager') ? $connection->createSchemaManager() : $connection->getSchemaManager();
             $key = bin2hex(random_bytes(7));
-            $table = new Table('_schema_subscriber_check');
-            $table->addColumn('id', Types::INTEGER)
-                ->setAutoincrement(true)
-                ->setNotnull(true);
-            $table->addColumn('random_key', Types::STRING)
-                ->setLength(14)
-                ->setNotNull(true)
-            ;
 
-            $table->addPrimaryKeyConstraint(new PrimaryKeyConstraint(null, [new UnqualifiedName(Identifier::unquoted('id'))], true));
+            if (method_exists(Table::class, 'editor')) {
+                $table = Table::editor()
+                    ->setUnquotedName('schema_subscriber_check_')
+                    ->addColumn(Column::editor()->setUnquotedName('id')->setTypeName(Types::INTEGER)->setAutoincrement(true)->setNotNull(true)->create())
+                    ->addColumn(Column::editor()->setUnquotedName('random_key')->setTypeName(Types::STRING)->setLength(14)->setNotNull(true)->create())
+                    ->addPrimaryKeyConstraint(new PrimaryKeyConstraint(null, [new UnqualifiedName(Identifier::unquoted('id'))], true))
+                    ->create();
+            } else {
+                $table = new Table('schema_subscriber_check_');
+                $table->addColumn('id', Types::INTEGER)
+                    ->setAutoincrement(true)
+                    ->setNotnull(true);
+                $table->addColumn('random_key', Types::STRING)
+                    ->setLength(14)
+                    ->setNotNull(true);
+
+                $table->addPrimaryKeyConstraint(new PrimaryKeyConstraint(null, [new UnqualifiedName(Identifier::unquoted('id'))], true));
+            }
 
             try {
                 $schemaManager->createTable($table);
             } catch (DatabaseObjectExistsException) {
             }
 
-            $connection->executeStatement('INSERT INTO _schema_subscriber_check (random_key) VALUES (:key)', ['key' => $key], ['key' => Types::STRING]);
+            $connection->executeStatement('INSERT INTO schema_subscriber_check_ (random_key) VALUES (:key)', ['key' => $key], ['key' => Types::STRING]);
 
             try {
-                $exec(\sprintf('DELETE FROM _schema_subscriber_check WHERE random_key = %s', $connection->getDatabasePlatform()->quoteStringLiteral($key)));
-            } catch (DatabaseObjectNotFoundException|ConnectionException|\PDOException) {
+                $exec(\sprintf('DELETE FROM schema_subscriber_check_ WHERE random_key = %s', $connection->getDatabasePlatform()->quoteStringLiteral($key)));
+            } catch (DBALDriverException|\PDOException) {
             }
 
             try {
-                return !$connection->executeStatement('DELETE FROM _schema_subscriber_check WHERE random_key = :key', ['key' => $key], ['key' => Types::STRING]);
+                return !$connection->executeStatement('DELETE FROM schema_subscriber_check_ WHERE random_key = :key', ['key' => $key], ['key' => Types::STRING]);
             } finally {
-                if (!$connection->executeQuery('SELECT count(id) FROM _schema_subscriber_check')->fetchOne()) {
+                if (!$connection->executeQuery('SELECT count(id) FROM schema_subscriber_check_')->fetchOne()) {
                     try {
-                        $schemaManager->dropTable('_schema_subscriber_check');
+                        $schemaManager->dropTable('schema_subscriber_check_');
                     } catch (DatabaseObjectNotFoundException) {
                     }
                 }

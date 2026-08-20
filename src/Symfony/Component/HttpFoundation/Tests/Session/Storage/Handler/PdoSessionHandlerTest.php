@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Symfony\Component\HttpFoundation\Tests\Session\Storage\Handler;
 
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\Table;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
@@ -327,29 +328,29 @@ class PdoSessionHandlerTest extends TestCase
 
     public function testConfigureSchemaDifferentDatabase()
     {
-        $schema = new Schema();
-
         $pdoSessionHandler = new PdoSessionHandler($this->getMemorySqlitePdo());
-        $pdoSessionHandler->configureSchema($schema, static fn () => false);
+        $schema = $pdoSessionHandler->configureSchema(new Schema(), static fn () => false);
         $this->assertFalse($schema->hasTable('sessions'));
     }
 
     public function testConfigureSchemaSameDatabase()
     {
-        $schema = new Schema();
-
         $pdoSessionHandler = new PdoSessionHandler($this->getMemorySqlitePdo());
-        $pdoSessionHandler->configureSchema($schema, static fn () => true);
+        $schema = $pdoSessionHandler->configureSchema(new Schema(), static fn () => true);
         $this->assertTrue($schema->hasTable('sessions'));
     }
 
     public function testConfigureSchemaTableExistsPdo()
     {
-        $schema = new Schema();
-        $schema->createTable('sessions');
+        if (method_exists(Schema::class, 'edit')) {
+            $schema = (new Schema())->edit()->addTable(new Table('sessions'))->create();
+        } else {
+            $schema = new Schema();
+            $schema->createTable('sessions');
+        }
 
         $pdoSessionHandler = new PdoSessionHandler($this->getMemorySqlitePdo());
-        $pdoSessionHandler->configureSchema($schema, static fn () => true);
+        $schema = $pdoSessionHandler->configureSchema($schema, static fn () => true);
         $table = $schema->getTable('sessions');
         $this->assertSame([], $table->getColumns(), 'The table was not overwritten');
     }
