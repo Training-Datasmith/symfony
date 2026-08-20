@@ -54,7 +54,7 @@ abstract class AbstractServiceConfigurator extends AbstractConfigurator
     /**
      * Creates an alias.
      */
-    final public function alias(string $id, string $referencedId): AliasConfigurator
+    final public function alias(string $id, string|ReferenceConfigurator $referencedId): AliasConfigurator
     {
         $this->__destruct();
 

@@ -25,7 +25,7 @@ class EnvPlaceholderParameterBagTest extends TestCase
     public function testEnumEnvVarProcessorPassesRegex()
     {
         $bag = new EnvPlaceholderParameterBag();
-        $name = trim((new EnvConfigurator('FOO'))->enum(StringBackedEnum::class), '%');
+        $name = trim((string) (new EnvConfigurator('FOO'))->enum(StringBackedEnum::class), '%');
         $this->assertIsString($bag->get($name));
     }
 

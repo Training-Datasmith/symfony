@@ -547,8 +547,10 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     /**
      * Removes a service definition.
      */
-    public function removeDefinition(string $id): void
+    public function removeDefinition(string|Reference|Alias $id): void
     {
+        $id = (string) $id;
+
         if (isset($this->definitions[$id])) {
             unset($this->definitions[$id]);
             if ('.' !== ($id[0] ?? '-')) {
@@ -557,8 +559,10 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         }
     }
 
-    public function has(string $id): bool
+    public function has(string|Reference|Alias $id): bool
     {
+        $id = (string) $id;
+
         return isset($this->definitions[$id]) || isset($this->aliasDefinitions[$id]) || parent::has($id);
     }
 
@@ -917,8 +921,10 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         return $this->aliasDefinitions[$alias] = $id;
     }
 
-    public function removeAlias(string $alias): void
+    public function removeAlias(string|Reference|Alias $alias): void
     {
+        $alias = (string) $alias;
+
         if (isset($this->aliasDefinitions[$alias])) {
             unset($this->aliasDefinitions[$alias]);
             if ('.' !== ($alias[0] ?? '-')) {
@@ -927,9 +933,9 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         }
     }
 
-    public function hasAlias(string $id): bool
+    public function hasAlias(string|Reference|Alias $id): bool
     {
-        return isset($this->aliasDefinitions[$id]);
+        return isset($this->aliasDefinitions[(string) $id]);
     }
 
     /**
@@ -1781,9 +1787,54 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
             }
         }
 
-        $result = $service->{$call[0]}(...$this->doResolveServices($this->getParameterBag()->unescapeValue($this->getParameterBag()->resolveValue($call[1])), $inlineServices));
+        $arguments = $this->doResolveServices($this->getParameterBag()->unescapeValue($this->getParameterBag()->resolveValue($call[1])), $inlineServices);
+        $arguments = $this->coerceMethodCallArguments($service, $call[0], $arguments);
+
+        $result = $service->{$call[0]}(...$arguments);
 
         return empty($call[2]) ? $service : $result;
+    }
+
+    /**
+     * Coerces scalar arguments to match method parameter types when strict_types would reject weak values.
+     */
+    private function coerceMethodCallArguments(object $service, string $method, array $arguments): array
+    {
+        if (!$arguments) {
+            return $arguments;
+        }
+
+        try {
+            $reflection = new \ReflectionMethod($service, $method);
+        } catch (\ReflectionException) {
+            return $arguments;
+        }
+
+        foreach ($reflection->getParameters() as $i => $parameter) {
+            if (!\array_key_exists($i, $arguments)) {
+                break;
+            }
+
+            $type = $parameter->getType();
+            if (!$type instanceof \ReflectionNamedType || !$type->isBuiltin()) {
+                continue;
+            }
+
+            $value = $arguments[$i];
+            if (\is_object($value)) {
+                continue;
+            }
+
+            $arguments[$i] = match ($type->getName()) {
+                'int' => (int) $value,
+                'float' => (float) $value,
+                'bool' => (bool) $value,
+                'string' => \is_bool($value) ? ($value ? '1' : '') : (string) $value,
+                default => $value,
+            };
+        }
+
+        return $arguments;
     }
 
     private function shareService(Definition $definition, mixed $service, ?string $id, array &$inlineServices): void

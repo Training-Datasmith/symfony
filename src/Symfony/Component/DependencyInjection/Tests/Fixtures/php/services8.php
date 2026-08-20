@@ -1,10 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
+use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
@@ -88,7 +89,7 @@ class ProjectServiceContainer extends Container
             'values' => [
                 0 => true,
                 1 => false,
-                2 => null,
+                2 => NULL,
                 3 => 0,
                 4 => 1000.3,
                 5 => 'true',

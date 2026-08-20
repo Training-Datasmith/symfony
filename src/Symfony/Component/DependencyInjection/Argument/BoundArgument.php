@@ -18,8 +18,6 @@ namespace Symfony\Component\DependencyInjection\Argument;
  */
 final class BoundArgument implements ArgumentInterface
 {
-    use ArgumentTrait;
-
     public const SERVICE_BINDING = 0;
     public const DEFAULTS_BINDING = 1;
     public const INSTANCEOF_BINDING = 2;
@@ -28,17 +26,20 @@ final class BoundArgument implements ArgumentInterface
     private ?int $identifier = null;
     private ?bool $used = null;
 
-    public function __construct(
-        private mixed $value,
-        bool $trackUsage = true,
-        private int $type = 0,
-        private ?string $file = null,
-    ) {
+    private mixed $value;
+    private int $type;
+    private ?string $file;
+
+    public function __construct(mixed $value, bool $trackUsage = true, int $type = 0, ?string $file = null)
+    {
+        $this->value = $value;
         if ($trackUsage) {
             $this->identifier = ++self::$sequence;
         } else {
             $this->used = true;
         }
+        $this->type = $type;
+        $this->file = $file;
     }
 
     public function getValues(): array

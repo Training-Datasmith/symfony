@@ -113,7 +113,7 @@ class ServicesConfigurator extends AbstractConfigurator
     /**
      * Creates an alias.
      */
-    final public function alias(string $id, string $referencedId): AliasConfigurator
+    final public function alias(string $id, string|ReferenceConfigurator $referencedId): AliasConfigurator
     {
         $ref = static::processValue($referencedId, true);
         $alias = new Alias((string) $ref);
