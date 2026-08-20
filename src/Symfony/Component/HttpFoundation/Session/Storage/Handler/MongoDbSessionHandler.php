@@ -120,7 +120,7 @@ class MongoDbSessionHandler extends AbstractSessionHandler
     protected function doWrite(#[\SensitiveParameter] string $sessionId, string $data): bool
     {
         $ttl = ($this->ttl instanceof \Closure ? ($this->ttl)() : $this->ttl) ?? \ini_get('session.gc_maxlifetime');
-        $expiry = $this->getUTCDateTime($ttl);
+        $expiry = $this->getUTCDateTime((int) $ttl);
 
         $fields = [
             $this->options['time_field'] => $this->getUTCDateTime(),
@@ -143,7 +143,7 @@ class MongoDbSessionHandler extends AbstractSessionHandler
     public function updateTimestamp(#[\SensitiveParameter] string $sessionId, string $data): bool
     {
         $ttl = ($this->ttl instanceof \Closure ? ($this->ttl)() : $this->ttl) ?? \ini_get('session.gc_maxlifetime');
-        $expiry = $this->getUTCDateTime($ttl);
+        $expiry = $this->getUTCDateTime((int) $ttl);
 
         $write = new BulkWrite();
         $write->update(
