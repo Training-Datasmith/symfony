@@ -193,15 +193,15 @@ class UploadedFile extends File
                 $error = $msg;
             });
             try {
-                $moved = move_uploaded_file($this->getPathname(), $target);
+                $moved = move_uploaded_file($this->getPathname(), $target->getPathname());
             } finally {
                 restore_error_handler();
             }
             if (!$moved) {
-                throw new FileException(\sprintf('Could not move the file "%s" to "%s" (%s).', $this->getPathname(), $target, strip_tags((string) $error)));
+                throw new FileException(\sprintf('Could not move the file "%s" to "%s" (%s).', $this->getPathname(), $target->getPathname(), strip_tags((string) $error)));
             }
 
-            @chmod($target, 0o666 & ~umask());
+            @chmod($target->getPathname(), 0o666 & ~umask());
 
             return $target;
         }

@@ -48,7 +48,7 @@ final class InputBag extends ParameterBag
             throw new BadRequestException(\sprintf('Input value "%s" contains a non-scalar value.', $key));
         }
 
-        return $this === $value ? $default : $value;
+        return $this === $value ? $default : ($value instanceof \Stringable && !\is_string($value) ? (string) $value : $value);
     }
 
     /**

@@ -430,9 +430,9 @@ class Response implements \Stringable
      *
      * @return $this
      */
-    public function setContent(?string $content): static
+    public function setContent(string|\Stringable|int|float|bool|null $content): static
     {
-        $this->content = $content ?? '';
+        $this->content = null === $content ? '' : (string) $content;
 
         return $this;
     }
@@ -481,9 +481,9 @@ class Response implements \Stringable
      *
      * @final
      */
-    public function setStatusCode(int $code, ?string $text = null): static
+    public function setStatusCode(int|string $code, ?string $text = null): static
     {
-        $this->statusCode = $code;
+        $this->statusCode = (int) $code;
         if ($this->isInvalid()) {
             throw new \InvalidArgumentException(\sprintf('The HTTP status code "%s" is not valid.', $code));
         }
@@ -735,7 +735,7 @@ class Response implements \Stringable
             return $this->headers->getDate('Expires');
         } catch (\RuntimeException) {
             // according to RFC 2616 invalid date formats (e.g. "0" and "-1") must be treated as in the past
-            return \DateTimeImmutable::createFromFormat('U', time() - 172800);
+            return \DateTimeImmutable::createFromTimestamp(time() - 172800);
         }
     }
 

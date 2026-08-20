@@ -128,7 +128,7 @@ class BinaryFileResponse extends Response
      */
     public function setAutoLastModified(): static
     {
-        $this->setLastModified(\DateTimeImmutable::createFromFormat('U', $this->tempFileObject ? time() : $this->file->getMTime()));
+        $this->setLastModified(\DateTimeImmutable::createFromTimestamp($this->tempFileObject ? time() : $this->file->getMTime()));
 
         return $this;
     }
@@ -361,7 +361,7 @@ class BinaryFileResponse extends Response
     /**
      * @throws \LogicException when the content is not null
      */
-    public function setContent(?string $content): static
+    public function setContent(string|\Stringable|int|float|bool|null $content): static
     {
         if (null !== $content) {
             throw new \LogicException('The content cannot be set on a BinaryFileResponse instance.');

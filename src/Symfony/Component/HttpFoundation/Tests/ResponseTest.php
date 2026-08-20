@@ -25,7 +25,7 @@ class ResponseTest extends ResponseTestCase
     public function testToString()
     {
         $response = new Response();
-        $response = explode("\r\n", $response);
+        $response = explode("\r\n", (string) $response);
         $this->assertEquals('HTTP/1.0 200 OK', $response[0]);
         $this->assertEquals('Cache-Control: no-cache, private', $response[1]);
     }

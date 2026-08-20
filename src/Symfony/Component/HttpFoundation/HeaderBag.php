@@ -129,12 +129,12 @@ class HeaderBag implements \IteratorAggregate, \Countable, \Stringable
      * @param string|string[]|null $values  The value or an array of values
      * @param bool                 $replace Whether to replace the actual value or not (true by default)
      */
-    public function set(string $key, string|array|null $values, bool $replace = true): void
+    public function set(string|int $key, string|array|int|float|bool|null $values, bool $replace = true): void
     {
-        $key = strtr($key, self::UPPER, self::LOWER);
+        $key = strtr((string) $key, self::UPPER, self::LOWER);
 
         if (\is_array($values)) {
-            $values = array_values($values);
+            $values = array_map(static fn ($value) => null === $value || \is_string($value) ? $value : (string) $value, array_values($values));
 
             if (true === $replace || !isset($this->headers[$key])) {
                 $this->headers[$key] = $values;
@@ -142,6 +142,10 @@ class HeaderBag implements \IteratorAggregate, \Countable, \Stringable
                 $this->headers[$key] = array_merge($this->headers[$key], $values);
             }
         } else {
+            if (null !== $values && !\is_string($values)) {
+                $values = (string) $values;
+            }
+
             if (true === $replace || !isset($this->headers[$key])) {
                 $this->headers[$key] = [$values];
             } else {
@@ -205,7 +209,7 @@ class HeaderBag implements \IteratorAggregate, \Countable, \Stringable
     /**
      * Adds a custom Cache-Control directive.
      */
-    public function addCacheControlDirective(string $key, bool|string $value = true): void
+    public function addCacheControlDirective(string $key, bool|string|int $value = true): void
     {
         $this->cacheControl[$key] = $value;
 

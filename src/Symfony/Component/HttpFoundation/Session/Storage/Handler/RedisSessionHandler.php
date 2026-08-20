@@ -50,7 +50,11 @@ class RedisSessionHandler extends AbstractSessionHandler
         }
 
         $this->prefix = $options['prefix'] ?? 'sf_s';
-        $this->ttl = $options['ttl'] ?? null;
+        $ttl = $options['ttl'] ?? null;
+        if (\is_string($ttl) && is_numeric($ttl)) {
+            $ttl = (int) $ttl;
+        }
+        $this->ttl = $ttl;
     }
 
     protected function doRead(#[\SensitiveParameter] string $sessionId): string

@@ -134,7 +134,7 @@ class StreamedResponse extends Response
      *
      * @throws \LogicException when the content is not null
      */
-    public function setContent(?string $content): static
+    public function setContent(string|\Stringable|int|float|bool|null $content): static
     {
         if (null !== $content) {
             throw new \LogicException('The content cannot be set on a StreamedResponse instance.');

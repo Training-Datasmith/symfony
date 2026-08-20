@@ -95,6 +95,7 @@ class IpUtils
             if ($netmask < 0 || $netmask > 32) {
                 return self::setCacheResult($cacheKey, false);
             }
+            $netmask = (int) $netmask;
         } else {
             $address = $ip;
             $netmask = 32;
@@ -187,11 +188,11 @@ class IpUtils
      */
     public static function anonymize(string $ip, int $v4Bytes = 1, int $v6Bytes = 8): string
     {
-        if ($v6Bytes < 0) {
+        if ($v4Bytes < 0 || $v6Bytes < 0) {
             throw new \InvalidArgumentException('Cannot anonymize less than 0 bytes.');
         }
 
-        if ($v6Bytes > 16) {
+        if ($v4Bytes > 4 || $v6Bytes > 16) {
             throw new \InvalidArgumentException('Cannot anonymize more than 4 bytes for IPv4 and 16 bytes for IPv6.');
         }
 
@@ -219,6 +220,10 @@ class IpUtils
         };
 
         $packedAddress = inet_pton($ip);
+        if (false === $packedAddress) {
+            throw new \InvalidArgumentException(\sprintf('The "%s" address is not valid.', $ip));
+        }
+
         if (4 === \strlen($packedAddress)) {
             $mask = rtrim(str_repeat('255.', 4 - $v4Bytes).str_repeat('0.', $v4Bytes), '.');
         } elseif ($ip === inet_ntop($packedAddress & inet_pton('::ffff:ffff:ffff'))) {

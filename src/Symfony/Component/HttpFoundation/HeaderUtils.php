@@ -131,8 +131,9 @@ class HeaderUtils
      * the HTTP specification, it is backslash-escaped and enclosed in quotes
      * to match the "quoted-string" construct.
      */
-    public static function quote(string $s): string
+    public static function quote(string|int|float|bool $s): string
     {
+        $s = (string) $s;
         if (preg_match('/^[a-z0-9!#$%&\'*.^_`|~-]+$/i', $s)) {
             return $s;
         }

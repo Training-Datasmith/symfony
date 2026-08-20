@@ -108,9 +108,9 @@ class JsonResponse extends Response
      *
      * @return $this
      */
-    public function setJson(string $json): static
+    public function setJson(string|\Stringable $json): static
     {
-        $this->data = $json;
+        $this->data = (string) $json;
 
         return $this->update();
     }

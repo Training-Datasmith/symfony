@@ -92,15 +92,15 @@ class File extends \SplFileInfo
             $error = $msg;
         });
         try {
-            $renamed = rename($this->getPathname(), $target);
+            $renamed = rename($this->getPathname(), $target->getPathname());
         } finally {
             restore_error_handler();
         }
         if (!$renamed) {
-            throw new FileException(\sprintf('Could not move the file "%s" to "%s" (%s).', $this->getPathname(), $target, strip_tags((string) $error)));
+            throw new FileException(\sprintf('Could not move the file "%s" to "%s" (%s).', $this->getPathname(), $target->getPathname(), strip_tags((string) $error)));
         }
 
-        @chmod($target, 0o666 & ~umask());
+        @chmod($target->getPathname(), 0o666 & ~umask());
 
         return $target;
     }

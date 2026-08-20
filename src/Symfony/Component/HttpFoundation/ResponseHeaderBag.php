@@ -99,7 +99,7 @@ class ResponseHeaderBag extends HeaderBag
         return $headers;
     }
 
-    public function set(string $key, string|array|null $values, bool $replace = true): void
+    public function set(string|int $key, string|array|int|float|bool|null $values, bool $replace = true): void
     {
         $uniqueKey = strtr($key, self::UPPER, self::LOWER);
 

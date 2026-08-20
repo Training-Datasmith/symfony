@@ -34,13 +34,17 @@ abstract class AbstractRedisSessionHandlerTestCase extends TestCase
         if (!\extension_loaded('redis')) {
             self::markTestSkipped('Extension redis required.');
         }
+
+        $host = getenv('REDIS_HOST');
+        if (false === $host || '' === $host) {
+            self::markTestSkipped('REDIS_HOST env var is not defined.');
+        }
+
         try {
-            (new \Redis())->connect(...explode(':', getenv('REDIS_HOST')));
+            (new \Redis())->connect(...explode(':', $host));
         } catch (\Exception $e) {
             self::markTestSkipped($e->getMessage());
         }
-
-        $host = getenv('REDIS_HOST') ?: 'localhost';
 
         $this->redisClient = $this->createRedisClient($host);
         $this->storage = new RedisSessionHandler(

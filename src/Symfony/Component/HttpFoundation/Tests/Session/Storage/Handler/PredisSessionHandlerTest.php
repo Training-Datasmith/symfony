@@ -23,7 +23,7 @@ class PredisSessionHandlerTest extends AbstractRedisSessionHandlerTestCase
 {
     protected function createRedisClient(string $host): Client
     {
-        return new Client(array_combine(['host', 'port'], explode(':', getenv('REDIS_HOST')) + [1 => 6379]));
+        return new Client(array_combine(['host', 'port'], explode(':', $host) + [1 => 6379]));
     }
 
     public function testNoDuplicatePrefixWhenUsingDsn()

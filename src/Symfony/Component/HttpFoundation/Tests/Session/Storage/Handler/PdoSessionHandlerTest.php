@@ -172,7 +172,7 @@ class PdoSessionHandlerTest extends TestCase
 
         $insertStmt->expects($this->once())->method('execute')
             ->willReturnCallback(static function () use (&$exception) {
-                throw $exception = new \PDOException('', '23');
+                throw $exception = new \PDOException('', 23);
             });
 
         $storage = new PdoSessionHandler($pdo);

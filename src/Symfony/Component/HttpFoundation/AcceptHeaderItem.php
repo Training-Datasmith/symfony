@@ -64,9 +64,9 @@ class AcceptHeaderItem implements \Stringable
      *
      * @return $this
      */
-    public function setValue(string $value): static
+    public function setValue(string|int|float|bool $value): static
     {
-        $this->value = $value;
+        $this->value = (string) $value;
 
         return $this;
     }
@@ -148,12 +148,12 @@ class AcceptHeaderItem implements \Stringable
      *
      * @return $this
      */
-    public function setAttribute(string $name, string $value): static
+    public function setAttribute(string $name, mixed $value): static
     {
         if ('q' === $name) {
             $this->quality = (float) $value;
         } else {
-            $this->attributes[$name] = $value;
+            $this->attributes[$name] = (string) $value;
         }
 
         return $this;

@@ -29,6 +29,6 @@ class PathRequestMatcher implements RequestMatcherInterface
 
     public function matches(Request $request): bool
     {
-        return preg_match('{'.$this->regexp.'}', rawurldecode($request->getPathInfo()));
+        return (bool) preg_match('{'.$this->regexp.'}', rawurldecode($request->getPathInfo()));
     }
 }
