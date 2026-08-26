@@ -40,7 +40,8 @@ abstract class AbstractRedisAdapterTestCase extends AdapterTestCase
             self::markTestSkipped('Extension redis required.');
         }
         try {
-            (new \Redis())->connect(...explode(':', getenv('REDIS_HOST')));
+            [$host, $port] = array_pad(explode(':', getenv('REDIS_HOST'), 2), 2, 6379);
+            (new \Redis())->connect($host, (int) $port);
         } catch (\Exception $e) {
             self::markTestSkipped(getenv('REDIS_HOST').': '.$e->getMessage());
         }
