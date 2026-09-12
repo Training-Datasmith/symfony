@@ -70,7 +70,7 @@ class ResizeFormListener implements EventSubscriberInterface
 
         // Then add all rows again in the correct order
         foreach ($data as $name => $value) {
-            $form->add($name, $this->type, array_replace([
+            $form->add((string) $name, $this->type, array_replace([
                 'property_path' => '['.$name.']',
             ], $this->options));
         }
@@ -89,7 +89,7 @@ class ResizeFormListener implements EventSubscriberInterface
         if ($this->allowDelete) {
             foreach ($form as $name => $child) {
                 if (!isset($data[$name])) {
-                    $form->remove($name);
+                    $form->remove((string) $name);
                 }
             }
         }
@@ -97,8 +97,8 @@ class ResizeFormListener implements EventSubscriberInterface
         // Add all additional rows
         if ($this->allowAdd) {
             foreach ($data as $name => $value) {
-                if (!$form->has($name)) {
-                    $form->add($name, $this->type, array_replace([
+                if (!$form->has((string) $name)) {
+                    $form->add((string) $name, $this->type, array_replace([
                         'property_path' => '['.$name.']',
                     ], $this->prototypeOptions));
                 }
@@ -136,7 +136,7 @@ class ResizeFormListener implements EventSubscriberInterface
                 // need to check allowAdd again
                 if ($isEmpty && ($isNew || $this->allowDelete)) {
                     unset($data[$name]);
-                    $form->remove($name);
+                    $form->remove((string) $name);
                 }
             }
         }
@@ -147,7 +147,7 @@ class ResizeFormListener implements EventSubscriberInterface
             $toDelete = [];
 
             foreach ($data as $name => $child) {
-                if (!$form->has($name)) {
+                if (!$form->has((string) $name)) {
                     $toDelete[] = $name;
                 }
             }
@@ -170,7 +170,7 @@ class ResizeFormListener implements EventSubscriberInterface
                 $form->remove($name);
             }
             foreach ($formReindex as $index => $child) {
-                $form->add($index, $this->type, array_replace([
+                $form->add((string) $index, $this->type, array_replace([
                     'property_path' => '['.$index.']',
                 ], $this->options, ['data' => $child->getData()]));
                 $data[$index] = $child->getData();

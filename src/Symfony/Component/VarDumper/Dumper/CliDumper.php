@@ -150,6 +150,8 @@ class CliDumper extends AbstractDumper
                     $style = 'integer';
                 }
 
+                $value = (string) $value;
+
                 break;
 
             case 'double':
@@ -288,7 +290,7 @@ class CliDumper extends AbstractDumper
             $this->collapseNextHash = $hasChild = false;
         }
 
-        $class = $this->utf8Encode($class);
+        $class = \is_string($class) ? $this->utf8Encode($class) : (null !== $class ? (string) $class : null);
         if (Cursor::HASH_OBJECT === $type) {
             $prefix = $class && 'stdClass' !== $class ? $this->style('note', $class, $attr).(empty($attr['cut_hash']) ? ' {' : '') : '{';
         } elseif (Cursor::HASH_RESOURCE === $type) {

@@ -28,7 +28,7 @@ class Definition
 
     private ?string $class = null;
     private ?string $file = null;
-    private string|array|null $factory = null;
+    private string|array|\Closure|null $factory = null;
     private bool $shared = true;
     private array $deprecation = [];
     private array $properties = [];
@@ -107,7 +107,7 @@ class Definition
      *
      * @return $this
      */
-    public function setFactory(string|array|Reference|null $factory): static
+    public function setFactory(string|array|Reference|\Closure|null $factory): static
     {
         $this->changes['factory'] = true;
 
@@ -127,7 +127,7 @@ class Definition
      *
      * @return string|array|null The PHP function or an array containing a class/Reference and a method to call
      */
-    public function getFactory(): string|array|null
+    public function getFactory(): string|array|\Closure|null
     {
         return $this->factory;
     }

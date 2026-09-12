@@ -439,7 +439,7 @@ final class ProxyHelper
                 default => self::exportSymbol($m[2], '(' !== $m[3], $namespace),
             }.$m[3];
 
-        return implode('', array_map(static fn (array $part): string|array|null => match ($part[0]) {
+        return implode('', array_map(static fn (string $part): string => match ($part[0]) {
             '"' => $part, // for internal classes only
             "'" => false !== strpbrk((string) $part, "\\\0\r\n") ? '"'.substr(str_replace(['$', "\0", "\r", "\n"], ['\$', '\0', '\r', '\n'], $part), 1, -1).'"' : $part,
             default => preg_replace_callback($regexp, $callback, (string) $part),

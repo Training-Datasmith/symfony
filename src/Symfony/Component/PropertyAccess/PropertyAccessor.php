@@ -101,7 +101,7 @@ class PropertyAccessor implements PropertyAccessorInterface
         ];
 
         if (\is_object($objectOrArray) && (false === strpbrk((string) $propertyPath, '.[?') || $objectOrArray instanceof \stdClass && property_exists($objectOrArray, (string) $propertyPath))) {
-            return $this->readProperty($zval, $propertyPath, $this->ignoreInvalidProperty)[self::VALUE];
+            return $this->readProperty($zval, (string) $propertyPath, $this->ignoreInvalidProperty)[self::VALUE];
         }
 
         $propertyPath = $this->getPropertyPath($propertyPath);
@@ -123,7 +123,7 @@ class PropertyAccessor implements PropertyAccessorInterface
 
                 return;
             } catch (\TypeError $e) {
-                self::throwInvalidArgumentException($e->getMessage(), $e->getTrace(), 0, $propertyPath, $e);
+                self::throwInvalidArgumentException($e->getMessage(), $e->getTrace(), 0, (string) $propertyPath, $e);
                 // It wasn't thrown in this class so rethrow it
                 throw $e;
             }
@@ -182,7 +182,7 @@ class PropertyAccessor implements PropertyAccessorInterface
                 $value = $zval[self::VALUE];
             }
         } catch (\TypeError $e) {
-            self::throwInvalidArgumentException($e->getMessage(), $e->getTrace(), 0, $propertyPath, $e);
+            self::throwInvalidArgumentException($e->getMessage(), $e->getTrace(), 0, (string) $propertyPath, $e);
 
             // It wasn't thrown in this class so rethrow it
             throw $e;

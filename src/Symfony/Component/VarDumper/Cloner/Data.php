@@ -121,7 +121,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate, \Stringable
         yield from $value;
     }
 
-    public function __get(string $key): mixed
+    public function __get(string|int $key): mixed
     {
         if (null !== $data = $this->seek($key)) {
             $item = $this->getStub($data->data[$data->position][$data->key]);
@@ -132,7 +132,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate, \Stringable
         return null;
     }
 
-    public function __isset(string $key): bool
+    public function __isset(string|int $key): bool
     {
         return null !== $this->seek($key);
     }
@@ -417,6 +417,8 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate, \Stringable
 
         $stub = new Stub();
         $stub->type = Stub::TYPE_ARRAY;
+        foreach ($item as $stub->class => $stub->position) {
+        }
         if (isset($item[0])) {
             $stub->cut = $item[0];
         }

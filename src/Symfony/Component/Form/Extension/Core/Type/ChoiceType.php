@@ -425,7 +425,7 @@ class ChoiceType extends AbstractType
                 continue;
             }
 
-            $this->addSubForm($builder, $name, $choiceView, $options);
+            $this->addSubForm($builder, (string) $name, $choiceView, $options);
         }
     }
 

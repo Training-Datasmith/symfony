@@ -79,15 +79,15 @@ final class TranslationDefaultDomainNodeVisitor implements NodeVisitorInterface
             }
 
             if ($this->isNamedArguments($arguments)) {
-                if (!$arguments->hasNode('domain') && !$arguments->hasNode(1)) {
+                if (!$arguments->hasNode('domain') && !$arguments->hasNode('1')) {
                     $arguments->setNode('domain', $this->scope->get('domain'));
                 }
-            } elseif (!$arguments->hasNode(1)) {
-                if (!$arguments->hasNode(0)) {
-                    $arguments->setNode(0, new ArrayExpression([], $node->getTemplateLine()));
+            } elseif (!$arguments->hasNode('1')) {
+                if (!$arguments->hasNode('0')) {
+                    $arguments->setNode('0', new ArrayExpression([], $node->getTemplateLine()));
                 }
 
-                $arguments->setNode(1, $this->scope->get('domain'));
+                $arguments->setNode('1', $this->scope->get('domain'));
             }
         } elseif ($node instanceof TransNode) {
             if (!$node->hasNode('domain')) {

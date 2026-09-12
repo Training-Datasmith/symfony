@@ -194,7 +194,7 @@ class LintCommand extends Command
         $deprecations = array_merge(...array_column($filesInfo, 'deprecations'));
 
         foreach ($deprecations as $deprecation) {
-            $this->renderDeprecation($io, $deprecation['line'], $deprecation['message'], $deprecation['file'], $githubReporter);
+            $this->renderDeprecation($io, (int) $deprecation['line'], $deprecation['message'], $deprecation['file'], $githubReporter);
         }
 
         foreach ($filesInfo as $info) {

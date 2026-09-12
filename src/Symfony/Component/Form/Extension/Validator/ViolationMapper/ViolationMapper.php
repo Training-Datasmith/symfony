@@ -328,7 +328,7 @@ class ViolationMapper implements ViolationMapperInterface
 
         $finalPath = $propertyPathBuilder->getPropertyPath();
 
-        return null !== $finalPath ? new RelativePath($origin, $finalPath) : null;
+        return null !== $finalPath ? new RelativePath($origin, (string) $finalPath) : null;
     }
 
     private function acceptsErrors(FormInterface $form): bool

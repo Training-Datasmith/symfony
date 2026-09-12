@@ -114,8 +114,8 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
     {
         if ($arguments->hasNode('message')) {
             $argument = $arguments->getNode('message');
-        } elseif ($arguments->hasNode($index)) {
-            $argument = $arguments->getNode($index);
+        } elseif ($arguments->hasNode((string) $index)) {
+            $argument = $arguments->getNode((string) $index);
         } else {
             return null;
         }
@@ -136,8 +136,8 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
     {
         if ($arguments->hasNode('domain')) {
             $argument = $arguments->getNode('domain');
-        } elseif ($arguments->hasNode($index)) {
-            $argument = $arguments->getNode($index);
+        } elseif ($arguments->hasNode((string) $index)) {
+            $argument = $arguments->getNode((string) $index);
         } else {
             return null;
         }
