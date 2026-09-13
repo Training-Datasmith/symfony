@@ -24,11 +24,19 @@ class_exists(IntlFormatter::class);
  */
 class MessageFormatter implements MessageFormatterInterface, IntlFormatterInterface
 {
+    private readonly TranslatorInterface $translator;
+
+    private readonly IntlFormatterInterface $intlFormatter;
+
     /**
      * @param TranslatorInterface|null $translator An identity translator to use as selector for pluralization
      */
-    public function __construct(private readonly ?TranslatorInterface $translator = new IdentityTranslator(), private readonly ?IntlFormatterInterface $intlFormatter = new IntlFormatter())
-    {
+    public function __construct(
+        ?TranslatorInterface $translator = null,
+        ?IntlFormatterInterface $intlFormatter = null,
+    ) {
+        $this->translator = $translator ?? new IdentityTranslator();
+        $this->intlFormatter = $intlFormatter ?? new IntlFormatter();
     }
 
     public function format(string $message, string $locale, array $parameters = []): string

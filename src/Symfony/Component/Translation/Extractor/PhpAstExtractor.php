@@ -58,7 +58,7 @@ final class PhpAstExtractor extends AbstractFileExtractor implements ExtractorIn
                 $traverser->addVisitor($visitor);
             }
 
-            $nodes = $this->parser->parse(file_get_contents($file));
+            $nodes = $this->parser->parse(file_get_contents($file->getPathname()));
             $traverser->traverse($nodes);
         }
     }

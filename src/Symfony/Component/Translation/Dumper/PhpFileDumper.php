@@ -24,7 +24,11 @@ class PhpFileDumper extends FileDumper
 {
     public function formatCatalogue(MessageCatalogue $messages, string $domain, array $options = []): string
     {
-        return "<?php\n\nreturn ".var_export($messages->all($domain), true).";\n";
+        $exported = var_export($messages->all($domain), true);
+        $exported = preg_replace('/^array \(/', '[', $exported);
+        $exported = preg_replace('/\)$/', ']', (string) $exported);
+
+        return "<?php\n\ndeclare(strict_types=1);\n\nreturn  ".$exported.";\n";
     }
 
     protected function getExtension(): string

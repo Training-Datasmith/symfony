@@ -107,7 +107,7 @@ class XliffLintCommand extends Command
             }
 
             foreach ($this->getFiles($filename) as $file) {
-                $filesInfo[] = $this->validate(file_get_contents($file), $file);
+                $filesInfo[] = $this->validate(file_get_contents($file->getPathname()), $file->getPathname());
             }
         }
 

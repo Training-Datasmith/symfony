@@ -176,11 +176,13 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         return $this->globalParameters;
     }
 
-    public function trans(?string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
+    public function trans(string|\Stringable|null $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
     {
         if (null === $id || '' === $id) {
             return '';
         }
+
+        $id = (string) $id;
 
         $domain ??= 'messages';
 

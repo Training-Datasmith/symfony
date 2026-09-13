@@ -79,7 +79,7 @@ class XliffFileDumper extends FileDumper
         $xliffHead = $xliffFile->appendChild($dom->createElement('header'));
         $xliffTool = $xliffHead->appendChild($dom->createElement('tool'));
         foreach ($toolInfo as $id => $value) {
-            $xliffTool->setAttribute($id, $value);
+            $xliffTool->setAttribute($id, (string) $value);
         }
 
         if ($catalogueMetadata = $messages->getCatalogueMetadata('', $domain) ?? []) {
@@ -108,7 +108,7 @@ class XliffFileDumper extends FileDumper
             $metadata = $messages->getMetadata($source, $domain);
             if ($this->hasMetadataArrayInfo('target-attributes', $metadata)) {
                 foreach ($metadata['target-attributes'] as $name => $value) {
-                    $targetElement->setAttribute($name, $value);
+                    $targetElement->setAttribute($name, (string) $value);
                 }
             }
             $t = $translation->appendChild($targetElement);
@@ -124,11 +124,11 @@ class XliffFileDumper extends FileDumper
                     $n->appendChild($dom->createTextNode($note['content']));
 
                     if (isset($note['priority'])) {
-                        $n->setAttribute('priority', $note['priority']);
+                        $n->setAttribute('priority', (string) $note['priority']);
                     }
 
                     if (isset($note['from'])) {
-                        $n->setAttribute('from', $note['from']);
+                        $n->setAttribute('from', (string) $note['from']);
                     }
                 }
             }
@@ -186,7 +186,7 @@ class XliffFileDumper extends FileDumper
                     unset($note['content']);
 
                     foreach ($note as $name => $value) {
-                        $n->setAttribute($name, $value);
+                        $n->setAttribute($name, (string) $value);
                     }
                     $notesElement->appendChild($n);
                 }
@@ -197,7 +197,7 @@ class XliffFileDumper extends FileDumper
 
             if ($this->hasMetadataArrayInfo('segment-attributes', $metadata)) {
                 foreach ($metadata['segment-attributes'] as $name => $value) {
-                    $segment->setAttribute($name, $value);
+                    $segment->setAttribute($name, (string) $value);
                 }
             }
 
@@ -210,7 +210,7 @@ class XliffFileDumper extends FileDumper
             $targetElement = $dom->createElement('target');
             if ($this->hasMetadataArrayInfo('target-attributes', $metadata)) {
                 foreach ($metadata['target-attributes'] as $name => $value) {
-                    $targetElement->setAttribute($name, $value);
+                    $targetElement->setAttribute($name, (string) $value);
                 }
             }
             $t = $segment->appendChild($targetElement);
