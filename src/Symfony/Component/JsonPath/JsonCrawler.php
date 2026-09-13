@@ -74,7 +74,7 @@ final readonly class JsonCrawler implements JsonCrawlerInterface
     {
         try {
             if ($this->isComplexBracketExpression($query)) {
-                preg_match('/^\$\[([^\[\]]+)]$/', $query, $matches);
+                preg_match('/^\$\[([^\[\]]+)]$/', (string) $query, $matches);
 
                 if (\is_resource($json = $this->raw)) {
                     if (0 !== ftell($this->raw)) {
@@ -132,7 +132,7 @@ final readonly class JsonCrawler implements JsonCrawlerInterface
 
             return $this->normalizeStorage($this->evaluateTokensOnDecodedData($tokens, $data));
         } catch (InvalidJsonPathException $e) {
-            throw new JsonCrawlerException($query, $e->getMessage(), previous: $e);
+            throw new JsonCrawlerException((string) $query, $e->getMessage(), previous: $e);
         }
     }
 
@@ -977,7 +977,7 @@ final readonly class JsonCrawler implements JsonCrawlerInterface
 
     private function isNonSingularRelativeQuery(string $expr): bool
     {
-        return preg_match('/@\[.*,.*]/', $expr) || '@.*' === $expr || preg_match('/@\[.*:.*]/', $expr);
+        return (bool) preg_match('/@\[.*,.*]/', $expr) || '@.*' === $expr || (bool) preg_match('/@\[.*:.*]/', $expr);
     }
 
     private function findOperatorPosition(string $expr, string $op): int|false
