@@ -194,7 +194,7 @@ final class NoPrivateNetworkHttpClient implements HttpClientInterface, ResetInte
         if ($ip = dns_get_record($host, \DNS_AAAA)) {
             $ip = $ip[0]['ipv6'];
         } elseif (\extension_loaded('sockets')) {
-            if (!$info = socket_addrinfo_lookup($host, 0, ['ai_socktype' => \SOCK_STREAM, 'ai_family' => \AF_INET6])) {
+            if (!$info = socket_addrinfo_lookup($host, '0', ['ai_socktype' => \SOCK_STREAM, 'ai_family' => \AF_INET6])) {
                 return $host;
             }
 

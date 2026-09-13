@@ -167,7 +167,7 @@ class CachingHttpClient implements HttpClientInterface, ResetInterface
         }
 
         // consistent expiration time for all items
-        $expiresAt = null === $this->maxTtl ? null : \DateTimeImmutable::createFromFormat('U', time() + $this->maxTtl);
+        $expiresAt = null === $this->maxTtl ? null : \DateTimeImmutable::createFromFormat('U', (string) (time() + $this->maxTtl));
 
         return new AsyncResponse(
             $this->client,

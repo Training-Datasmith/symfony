@@ -32,7 +32,7 @@ class StreamWrapper
     private ResponseInterface $response;
 
     /** @var resource|string|null */
-    private ?string $content = null;
+    private $content;
 
     /** @var resource|callable|null */
     private $handle;

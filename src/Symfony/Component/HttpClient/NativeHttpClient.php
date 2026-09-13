@@ -348,7 +348,7 @@ final class NativeHttpClient implements HttpClientInterface, LoggerAwareInterfac
             } elseif ($ip = dns_get_record($host, \DNS_AAAA)) {
                 $ip = $ip[0]['ipv6'];
             } elseif (\extension_loaded('sockets')) {
-                if (!$addrInfo = socket_addrinfo_lookup($host, 0, ['ai_socktype' => \SOCK_STREAM, 'ai_family' => \AF_INET6])) {
+                if (!$addrInfo = socket_addrinfo_lookup($host, '0', ['ai_socktype' => \SOCK_STREAM, 'ai_family' => \AF_INET6])) {
                     throw new TransportException(\sprintf('Could not resolve host "%s".', $host));
                 }
 

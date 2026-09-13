@@ -189,9 +189,9 @@ class AsyncResponse implements ResponseInterface, StreamableInterface
 
         if ($this->initializer && null === $this->getInfo('error') && !$this->hasThrown) {
             try {
-                self::initialize($this);
+                self::initialize($this, -0.0);
                 $this->getHeaders(true);
-            } catch (HttpExceptionInterface) {
+            } catch (HttpExceptionInterface $httpException) {
                 // no-op
             }
         }

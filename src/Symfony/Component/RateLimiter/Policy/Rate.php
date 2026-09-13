@@ -65,7 +65,7 @@ final readonly class Rate implements \Stringable
     {
         [$interval, $rate] = explode('-', $string, 2);
 
-        return new static(new \DateInterval($interval), $rate);
+        return new static(new \DateInterval($interval), (int) $rate);
     }
 
     /**
@@ -75,7 +75,7 @@ final readonly class Rate implements \Stringable
     {
         $cyclesRequired = ceil($tokens / $this->refillAmount);
 
-        return TimeUtil::dateIntervalToSeconds($this->refillTime) * $cyclesRequired;
+        return (int) (TimeUtil::dateIntervalToSeconds($this->refillTime) * $cyclesRequired);
     }
 
     /**
@@ -95,7 +95,7 @@ final readonly class Rate implements \Stringable
     {
         $cycles = floor($duration / TimeUtil::dateIntervalToSeconds($this->refillTime));
 
-        return $cycles * $this->refillAmount;
+        return (int) ($cycles * $this->refillAmount);
     }
 
     /**
@@ -107,7 +107,7 @@ final readonly class Rate implements \Stringable
     {
         $cycleTime = TimeUtil::dateIntervalToSeconds($this->refillTime);
 
-        return floor($duration / $cycleTime) * $cycleTime;
+        return (int) (floor($duration / $cycleTime) * $cycleTime);
     }
 
     public function __toString(): string
