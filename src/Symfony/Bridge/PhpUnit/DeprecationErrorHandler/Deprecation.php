@@ -378,7 +378,7 @@ class Deprecation
     private function getPathType(string $path): string
     {
         $realPath = realpath($path);
-        if (false === $realPath && '-' !== $path && 'Standard input code' !== $path) {
+        if (false === $realPath) {
             return self::PATH_TYPE_UNDETERMINED;
         }
         foreach (self::getVendors() as $vendor) {

@@ -45,9 +45,12 @@ class DeprecationErrorHandler
     private static bool $isRegistered = false;
     private static ?string $errorHandler = null;
 
+    private \Closure $callableErrorHandler;
+
     public function __construct()
     {
         $this->resetDeprecationGroups();
+        $this->callableErrorHandler = $this->handleError(...);
     }
 
     /**
@@ -74,7 +77,7 @@ class DeprecationErrorHandler
         }
 
         $handler = new self();
-        $oldErrorHandler = set_error_handler($handler->handleError(...));
+        $oldErrorHandler = set_error_handler($handler->callableErrorHandler);
 
         if (null !== $oldErrorHandler) {
             restore_error_handler();
@@ -212,7 +215,7 @@ class DeprecationErrorHandler
         $currErrorHandler = set_error_handler(is_int(...));
         restore_error_handler();
 
-        if ($currErrorHandler !== $this->handleError(...)) {
+        if ($currErrorHandler !== $this->callableErrorHandler) {
             echo "\n", self::colorize('THE ERROR HANDLER HAS CHANGED!', true), "\n";
         }
 
@@ -371,12 +374,14 @@ class DeprecationErrorHandler
             } elseif (method_exists(ErrorHandler::class, '__invoke')) {
                 $eh = self::$errorHandler = ErrorHandler::class;
             } else {
-                return self::$errorHandler = 'PHPUnit\Util\ErrorHandler::handleError';
+                self::$errorHandler = 'fallback';
+
+                return self::forwardToPhpUnitErrorHandler(...);
             }
         }
 
-        if ('PHPUnit\Util\ErrorHandler::handleError' === $eh) {
-            return $eh;
+        if ('fallback' === $eh) {
+            return self::forwardToPhpUnitErrorHandler(...);
         }
 
         foreach (debug_backtrace(\DEBUG_BACKTRACE_PROVIDE_OBJECT | \DEBUG_BACKTRACE_IGNORE_ARGS) as $frame) {
@@ -402,6 +407,15 @@ class DeprecationErrorHandler
         }
 
         return static fn (): false => false;
+    }
+
+    private static function forwardToPhpUnitErrorHandler(int $type, string $msg, string $file, int $line, array $context = []): bool
+    {
+        if (class_exists(UtilErrorHandler::class) && is_callable([UtilErrorHandler::class, 'handleError'])) {
+            return UtilErrorHandler::handleError($type, $msg, $file, $line, $context);
+        }
+
+        return false;
     }
 
     /**
