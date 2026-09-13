@@ -23,6 +23,7 @@ use Jose\Component\Signature\Algorithm\ES256;
 use Jose\Component\Signature\JWSBuilder;
 use Jose\Component\Signature\Serializer\CompactSerializer as JwsCompactSerializer;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -341,6 +342,7 @@ class AccessTokenTest extends AbstractWebTestCase
 
     #[DataProvider('validAccessTokens')]
     #[RequiresPhpExtension('openssl')]
+    #[IgnoreDeprecations]
     public function testOidcSuccess(callable $tokenFactory)
     {
         try {
@@ -360,6 +362,7 @@ class AccessTokenTest extends AbstractWebTestCase
 
     #[DataProvider('invalidAccessTokens')]
     #[RequiresPhpExtension('openssl')]
+    #[IgnoreDeprecations]
     public function testOidcFailure(callable $tokenFactory)
     {
         try {
@@ -378,6 +381,7 @@ class AccessTokenTest extends AbstractWebTestCase
     }
 
     #[RequiresPhpExtension('openssl')]
+    #[IgnoreDeprecations]
     public function testOidcFailureWithJweEnforced()
     {
         $client = $this->createClient(['test_case' => 'AccessToken', 'root_config' => 'config_oidc_jwe.yml']);

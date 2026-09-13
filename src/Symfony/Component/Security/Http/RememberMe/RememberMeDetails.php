@@ -48,7 +48,7 @@ class RememberMeDetails
 
         unset($cookieParts[0]);
 
-        return new static(...$cookieParts);
+        return new static($cookieParts[1], (int) $cookieParts[2], $cookieParts[3]);
     }
 
     public static function fromPersistentToken(PersistentToken $token, int $expires): self

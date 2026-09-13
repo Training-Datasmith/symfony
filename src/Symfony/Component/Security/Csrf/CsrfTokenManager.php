@@ -130,7 +130,7 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
     private function xor(string $value, string $key): string
     {
         if (\strlen($value) > \strlen($key)) {
-            $key = str_repeat($key, ceil(\strlen($value) / \strlen($key)));
+            $key = str_repeat($key, (int) ceil(\strlen($value) / \strlen($key)));
         }
 
         return $value ^ $key;

@@ -36,6 +36,13 @@ class OAuth2TokenHandlerFactory implements TokenHandlerFactoryInterface
 
     public function addConfiguration(NodeBuilder $node): void
     {
-        $node->scalarNode($this->getKey())->end();
+        $node
+            ->scalarNode($this->getKey())
+                ->beforeNormalization()
+                    ->ifTrue(static fn ($v) => true === $v)
+                    ->then(static fn () => '')
+                ->end()
+            ->end()
+        ;
     }
 }

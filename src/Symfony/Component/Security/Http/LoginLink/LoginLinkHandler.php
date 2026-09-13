@@ -94,9 +94,11 @@ final class LoginLinkHandler implements LoginLinkHandlerInterface
         if (!$expires = ParameterBagUtils::getRequestParameterValue($request, 'expires')) {
             throw new InvalidLoginLinkException('Missing "expires" parameter.');
         }
-        if (!preg_match('/^\d+$/', $expires)) {
+        if (!preg_match('/^\d+$/', (string) $expires)) {
             throw new InvalidLoginLinkException('Invalid "expires" parameter.');
         }
+
+        $expires = (int) $expires;
 
         try {
             $this->signatureHasher->acceptSignatureHash($userIdentifier, $expires, $hash);

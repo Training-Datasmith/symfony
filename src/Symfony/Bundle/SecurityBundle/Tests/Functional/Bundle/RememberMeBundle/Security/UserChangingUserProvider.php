@@ -51,11 +51,8 @@ class UserChangingUserProvider implements UserProviderInterface
 
     private function changeUser(UserInterface $user): UserInterface
     {
-        if (self::$changePassword) {
-            $alterUser = \Closure::bind(static function (InMemoryUser $user) {
-                $user->password = 'changed!';
-            }, null, InMemoryUser::class);
-            $alterUser($user);
+        if (self::$changePassword && $user instanceof InMemoryUser) {
+            return new InMemoryUser($user->getUserIdentifier(), 'changed!', $user->getRoles());
         }
 
         return $user;

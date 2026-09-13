@@ -253,7 +253,7 @@ class SecurityExtensionTest extends TestCase
         $this->assertSame('add', $call[0]);
         $args = $call[1];
         $this->assertCount(3, $args);
-        $expressionId = $args[1][0];
+        $expressionId = (string) $args[1][0];
         $this->assertTrue($container->hasDefinition($expressionId));
         $expressionDef = $container->getDefinition($expressionId);
         $this->assertSame(Expression::class, $expressionDef->getClass());

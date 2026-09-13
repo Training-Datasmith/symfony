@@ -143,10 +143,10 @@ class TraceableFirewallListenerTest extends TestCase
         $this->assertCount(2, $authenticatorsInfo = $firewall->getAuthenticatorsInfo());
 
         $this->assertFalse($authenticatorsInfo[0]['supports']);
-        $this->assertStringContainsString('DummyAuthenticator', $authenticatorsInfo[0]['stub']);
+        $this->assertStringContainsString('DummyAuthenticator', (string) $authenticatorsInfo[0]['stub']);
 
         $this->assertTrue($authenticatorsInfo[1]['supports']);
-        $this->assertStringContainsString('DummyAuthenticator', $authenticatorsInfo[1]['stub']);
+        $this->assertStringContainsString('DummyAuthenticator', (string) $authenticatorsInfo[1]['stub']);
     }
 }
 

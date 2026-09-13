@@ -26,6 +26,7 @@ class ArrayNode extends Node
 
     public function __construct()
     {
+        parent::__construct();
         $this->index = -1;
     }
 
