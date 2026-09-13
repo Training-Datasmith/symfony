@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Cloud-friendly Symfony unit grind (bounded memory). See grind-phpunit-components.php.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+if [[ ! -f vendor/autoload.php ]]; then
+  composer install --no-interaction
+fi
+if [[ ! -d .phpunit ]]; then
+  ./phpunit install
+fi
+
+exec php .github/grind-phpunit-components.php "$@"
