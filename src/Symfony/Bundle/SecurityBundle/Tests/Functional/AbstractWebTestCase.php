@@ -22,7 +22,8 @@ abstract class AbstractWebTestCase extends BaseWebTestCase
 {
     public static function assertRedirect($response, $location)
     {
-        self::assertTrue($response->isRedirect(), "Response is not a redirect, got:\n".(($p = strpos($response, '-->')) ? substr($response, 0, $p + 3) : $response));
+        $content = (string) $response;
+        self::assertTrue($response->isRedirect(), "Response is not a redirect, got:\n".(($p = strpos($content, '-->')) ? substr($content, 0, $p + 3) : $content));
         self::assertEquals('http://localhost'.$location, $response->headers->get('Location'));
     }
 

@@ -72,7 +72,7 @@ final class SlidingWindowLimiter implements LimiterInterface
             $availableTokens = $this->getAvailableTokens($hitCount);
             if (0 === $tokens) {
                 $resetDuration = $window->calculateTimeForTokens($this->limit, $window->getHitCount());
-                $resetTime = \DateTimeImmutable::createFromFormat('U', $availableTokens ? floor($now) : floor($now + $resetDuration));
+                $resetTime = \DateTimeImmutable::createFromFormat('U', (string) ($availableTokens ? floor($now) : floor($now + $resetDuration)));
 
                 return new Reservation($now, new RateLimit($availableTokens, $resetTime, true, $this->limit));
             }
@@ -84,18 +84,18 @@ final class SlidingWindowLimiter implements LimiterInterface
                     $retryAfter += $window->calculateTimeForTokens($this->limit, $window->getHitCount());
                 }
 
-                $reservation = new Reservation($now, new RateLimit($this->getAvailableTokens($window->getHitCount()), \DateTimeImmutable::createFromFormat('U', floor($retryAfter)), true, $this->limit));
+                $reservation = new Reservation($now, new RateLimit($this->getAvailableTokens($window->getHitCount()), \DateTimeImmutable::createFromFormat('U', (string) floor($retryAfter)), true, $this->limit));
             } else {
                 $waitDuration = $window->calculateTimeForTokens($this->limit, $tokens);
 
                 if (null !== $maxTime && $waitDuration > $maxTime) {
                     // process needs to wait longer than set interval
-                    throw new MaxWaitDurationExceededException(\sprintf('The rate limiter wait time ("%d" seconds) is longer than the provided maximum time ("%d" seconds).', $waitDuration, $maxTime), new RateLimit($this->getAvailableTokens($window->getHitCount()), \DateTimeImmutable::createFromFormat('U', floor($now + $waitDuration)), false, $this->limit));
+                    throw new MaxWaitDurationExceededException(\sprintf('The rate limiter wait time ("%d" seconds) is longer than the provided maximum time ("%d" seconds).', $waitDuration, $maxTime), new RateLimit($this->getAvailableTokens($window->getHitCount()), \DateTimeImmutable::createFromFormat('U', (string) floor($now + $waitDuration)), false, $this->limit));
                 }
 
                 $window->add($tokens);
 
-                $reservation = new Reservation($now + $waitDuration, new RateLimit($this->getAvailableTokens($window->getHitCount()), \DateTimeImmutable::createFromFormat('U', floor($now + $waitDuration)), false, $this->limit));
+                $reservation = new Reservation($now + $waitDuration, new RateLimit($this->getAvailableTokens($window->getHitCount()), \DateTimeImmutable::createFromFormat('U', (string) floor($now + $waitDuration)), false, $this->limit));
             }
 
             $this->storage->save($window);

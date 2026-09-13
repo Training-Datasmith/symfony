@@ -76,7 +76,7 @@ class Cookie implements \Stringable
         $this->path = $path ?: '/';
 
         if (null !== $expires) {
-            $timestampAsDateTime = \DateTimeImmutable::createFromFormat('U', $expires);
+            $timestampAsDateTime = \DateTimeImmutable::createFromFormat('U', (string) $expires);
             if (false === $timestampAsDateTime) {
                 throw new UnexpectedValueException(\sprintf('The cookie expiration time "%s" is not valid.', $expires));
             }

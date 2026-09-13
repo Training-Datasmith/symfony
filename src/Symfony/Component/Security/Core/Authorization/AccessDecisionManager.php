@@ -65,7 +65,7 @@ final class AccessDecisionManager implements AccessDecisionManagerInterface
         $accessDecision ??= end($this->accessDecisionStack) ?: new AccessDecision();
         $this->accessDecisionStack[] = $accessDecision;
 
-        $accessDecision->strategy = $this->strategy instanceof \Stringable ? $this->strategy : get_debug_type($this->strategy);
+        $accessDecision->strategy = $this->strategy instanceof \Stringable ? (string) $this->strategy : get_debug_type($this->strategy);
 
         try {
             return $accessDecision->isGranted = $this->strategy->decide(

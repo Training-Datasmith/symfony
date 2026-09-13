@@ -51,12 +51,12 @@ final readonly class LoginThrottlingListener implements EventSubscriberInterface
             // be accepted even if there are 0 tokens remaining to be consumed. We check both
             // anyway for safety in case third party implementations behave unexpectedly.
             if (!$limit->isAccepted() || 0 === $limit->getRemainingTokens()) {
-                throw new TooManyLoginAttemptsAuthenticationException(ceil(($limit->getRetryAfter()->getTimestamp() - time()) / 60));
+                throw new TooManyLoginAttemptsAuthenticationException((int) ceil(($limit->getRetryAfter()->getTimestamp() - time()) / 60));
             }
         } else {
             $limit = $this->limiter->consume($request);
             if (!$limit->isAccepted()) {
-                throw new TooManyLoginAttemptsAuthenticationException(ceil(($limit->getRetryAfter()->getTimestamp() - time()) / 60));
+                throw new TooManyLoginAttemptsAuthenticationException((int) ceil(($limit->getRetryAfter()->getTimestamp() - time()) / 60));
             }
         }
     }

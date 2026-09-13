@@ -35,18 +35,19 @@ class LoginLinkAuthenticationTest extends AbstractWebTestCase
         $loginLinkHandler = self::getContainer()->get(LoginLinkHandlerInterface::class);
         $user = new InMemoryUser('weaverryan', 'foo');
         $loginLink = $loginLinkHandler->createLoginLink($user);
-        $this->assertStringContainsString('user=weaverryan', $loginLink);
-        $this->assertStringContainsString('hash=', $loginLink);
-        $this->assertStringContainsString('expires=', $loginLink);
+        $loginLinkUrl = $loginLink->getUrl();
+        $this->assertStringContainsString('user=weaverryan', $loginLinkUrl);
+        $this->assertStringContainsString('hash=', $loginLinkUrl);
+        $this->assertStringContainsString('expires=', $loginLinkUrl);
         $client->request('GET', $loginLink->getUrl());
         $response = $client->getResponse();
 
-        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode(), $response->getContent());
         $this->assertSame(['message' => 'Welcome weaverryan!'], json_decode($response->getContent(), true));
 
         $client->request('GET', $loginLink->getUrl());
         $response = $client->getResponse();
-        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode(), $response->getContent());
 
         $client->request('GET', $loginLink->getUrl());
         $response = $client->getResponse();

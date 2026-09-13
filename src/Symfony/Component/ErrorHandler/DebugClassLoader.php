@@ -898,7 +898,7 @@ class DebugClassLoader
         $glue = str_contains($types, '&') ? '&' : '|';
         foreach (explode($glue, $types) as $t) {
             $t = self::SPECIAL_RETURN_TYPES[strtolower($t)] ?? $t;
-            $typesMap[$this->normalizeType($t, $class, $parent, $returnType)][$t] = $t;
+            $typesMap[(string) $this->normalizeType($t, $class, $parent, $returnType)][$t] = $t;
         }
 
         if (isset($typesMap['array'])) {
@@ -920,8 +920,8 @@ class DebugClassLoader
         $iterable = $object = true;
         foreach ($typesMap as $n => $t) {
             if ('null' !== $n) {
-                $iterable = $iterable && (\in_array($n, ['array', 'iterable'], true) || str_contains($n, 'Iterator'));
-                $object = $object && (\in_array($n, ['callable', 'object', '$this', 'static'], true) || !isset(self::SPECIAL_RETURN_TYPES[$n]));
+                $iterable = $iterable && (\in_array($n, ['array', 'iterable'], true) || str_contains((string) $n, 'Iterator'));
+                $object = $object && (\in_array($n, ['callable', 'object', '$this', 'static'], true) || !isset(self::SPECIAL_RETURN_TYPES[(string) $n]));
             }
         }
 
@@ -929,7 +929,7 @@ class DebugClassLoader
         $docTypes = [];
 
         foreach ($typesMap as $n => $t) {
-            if (str_contains($n, '::')) {
+            if (str_contains((string) $n, '::')) {
                 [$definingClass, $constantName] = explode('::', $n, 2);
                 $definingClass = match ($definingClass) {
                     'self', 'static', 'parent' => $class,
@@ -971,7 +971,7 @@ class DebugClassLoader
                 return;
             }
 
-            if (!preg_match('/^(?:\\\\?[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*)+$/', $n)) {
+            if (!preg_match('/^(?:\\\\?[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*)+$/', (string) $n)) {
                 // exclude any invalid PHP class name (e.g. `Cookie::SAMESITE_*`)
                 continue;
             }

@@ -43,7 +43,6 @@ return static function (ContainerConfigurator $container): void {
                 service('event_dispatcher'),
                 abstract_arg('provider key'),
                 service('logger')->nullOnInvalid(),
-                param('security.authentication.manager.erase_credentials'),
                 param('.security.authentication.expose_security_errors'),
                 abstract_arg('required badges'),
             ])
