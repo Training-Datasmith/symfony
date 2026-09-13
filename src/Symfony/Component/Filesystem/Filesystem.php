@@ -159,6 +159,9 @@ class Filesystem
     {
         $files = array_reverse($files);
         foreach ($files as $file) {
+            if ($file instanceof \SplFileInfo) {
+                $file = $file->getPathname();
+            }
             if (is_link($file)) {
                 // See https://bugs.php.net/52176
                 if (!(self::box('unlink', $file) || '\\' !== \DIRECTORY_SEPARATOR || self::box('rmdir', $file)) && file_exists($file)) {
@@ -213,6 +216,7 @@ class Filesystem
     public function chmod(string|iterable $files, int $mode, int $umask = 0o000, bool $recursive = false): void
     {
         foreach ($this->toIterable($files) as $file) {
+            $file = $this->toPath($file);
             if (!self::box('chmod', $file, $mode & ~$umask)) {
                 throw new IOException(\sprintf('Failed to chmod file "%s": ', $file).self::$lastError, 0, null, $file);
             }
@@ -237,6 +241,7 @@ class Filesystem
     public function chown(string|iterable $files, string|int $user, bool $recursive = false): void
     {
         foreach ($this->toIterable($files) as $file) {
+            $file = $this->toPath($file);
             if ($recursive && is_dir($file) && !is_link($file)) {
                 $this->chown(new \FilesystemIterator($file), $user, true);
             }
@@ -267,6 +272,7 @@ class Filesystem
     public function chgrp(string|iterable $files, string|int $group, bool $recursive = false): void
     {
         foreach ($this->toIterable($files) as $file) {
+            $file = $this->toPath($file);
             if ($recursive && is_dir($file) && !is_link($file)) {
                 $this->chgrp(new \FilesystemIterator($file), $group, true);
             }
@@ -553,7 +559,7 @@ class Filesystem
             foreach ($deleteIterator as $file) {
                 $origin = $originDir.substr((string) $file->getPathname(), $targetDirLen);
                 if (!$this->exists($origin)) {
-                    $this->remove($file);
+                    $this->remove($this->toPath($file));
                 }
             }
         }
@@ -743,6 +749,11 @@ class Filesystem
     private function toIterable(string|iterable $files): iterable
     {
         return is_iterable($files) ? $files : [$files];
+    }
+
+    private function toPath(mixed $file): string
+    {
+        return $file instanceof \SplFileInfo ? $file->getPathname() : (string) $file;
     }
 
     /**

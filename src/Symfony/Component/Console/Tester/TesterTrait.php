@@ -188,6 +188,7 @@ trait TesterTrait
         $stream = fopen('php://memory', 'r+', false);
 
         foreach ($inputs as $input) {
+            $input = (string) $input;
             fwrite($stream, $input);
 
             if (!str_ends_with($input, "\x4")) {
