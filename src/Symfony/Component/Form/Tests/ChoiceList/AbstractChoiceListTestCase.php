@@ -34,10 +34,10 @@ abstract class AbstractChoiceListTestCase extends TestCase
     protected string $value2;
     protected string $value3;
     protected string $value4;
-    protected string $key1;
-    protected string $key2;
-    protected string $key3;
-    protected string $key4;
+    protected string|int $key1;
+    protected string|int $key2;
+    protected string|int $key3;
+    protected string|int $key4;
 
     protected function setUp(): void
     {

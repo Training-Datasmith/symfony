@@ -30,7 +30,7 @@ interface FormBuilderInterface extends \Traversable, \Countable, FormConfigBuild
      * @param class-string<FormTypeInterface>|null $type
      * @param array<string, mixed>                 $options
      */
-    public function add(string|self $child, ?string $type = null, array $options = []): static;
+    public function add(string|int|self $child, ?string $type = null, array $options = []): static;
 
     /**
      * Creates a form builder.
@@ -46,7 +46,7 @@ interface FormBuilderInterface extends \Traversable, \Countable, FormConfigBuild
      *
      * @throws Exception\InvalidArgumentException if the given child does not exist
      */
-    public function get(string $name): self;
+    public function get(string|int $name): self;
 
     /**
      * Removes the field with the given name.
@@ -56,7 +56,7 @@ interface FormBuilderInterface extends \Traversable, \Countable, FormConfigBuild
     /**
      * Returns whether a field with the given name exists.
      */
-    public function has(string $name): bool;
+    public function has(string|int $name): bool;
 
     /**
      * Returns the children.

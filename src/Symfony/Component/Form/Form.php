@@ -720,7 +720,7 @@ class Form implements \IteratorAggregate, FormInterface, ClearableErrorsInterfac
         return iterator_to_array($this->children);
     }
 
-    public function add(FormInterface|string $child, ?string $type = null, array $options = []): static
+    public function add(FormInterface|string|int $child, ?string $type = null, array $options = []): static
     {
         if ($this->submitted) {
             throw new AlreadySubmittedException('You cannot add children to a submitted form.');
@@ -737,6 +737,8 @@ class Form implements \IteratorAggregate, FormInterface, ClearableErrorsInterfac
             if (null === $type && null === $this->config->getDataClass()) {
                 $type = TextType::class;
             }
+
+            $child = (string) $child;
 
             if (null === $type) {
                 $child = $this->config->getFormFactory()->createForProperty($this->config->getDataClass(), $child, null, $options);
@@ -778,8 +780,9 @@ class Form implements \IteratorAggregate, FormInterface, ClearableErrorsInterfac
         return $this;
     }
 
-    public function remove(string $name): static
+    public function remove(string|int $name): static
     {
+        $name = (string) $name;
         if ($this->submitted) {
             throw new AlreadySubmittedException('You cannot remove children from a submitted form.');
         }
@@ -795,13 +798,14 @@ class Form implements \IteratorAggregate, FormInterface, ClearableErrorsInterfac
         return $this;
     }
 
-    public function has(string $name): bool
+    public function has(string|int $name): bool
     {
-        return isset($this->children[$name]);
+        return isset($this->children[(string) $name]);
     }
 
-    public function get(string $name): FormInterface
+    public function get(string|int $name): FormInterface
     {
+        $name = (string) $name;
         if (isset($this->children[$name])) {
             return $this->children[$name];
         }
@@ -816,7 +820,7 @@ class Form implements \IteratorAggregate, FormInterface, ClearableErrorsInterfac
      */
     public function offsetExists(mixed $name): bool
     {
-        return $this->has($name);
+        return $this->has((string) $name);
     }
 
     /**
@@ -828,7 +832,7 @@ class Form implements \IteratorAggregate, FormInterface, ClearableErrorsInterfac
      */
     public function offsetGet(mixed $name): FormInterface
     {
-        return $this->get($name);
+        return $this->get((string) $name);
     }
 
     /**
@@ -856,7 +860,7 @@ class Form implements \IteratorAggregate, FormInterface, ClearableErrorsInterfac
      */
     public function offsetUnset(mixed $name): void
     {
-        $this->remove($name);
+        $this->remove((string) $name);
     }
 
     /**

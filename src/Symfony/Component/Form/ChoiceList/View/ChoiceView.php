@@ -33,10 +33,15 @@ class ChoiceView
      */
     public function __construct(
         public mixed $data,
-        public string $value,
-        public string|TranslatableInterface|false $label,
+        string|int $value,
+        string|int|TranslatableInterface|false $label,
         public array $attr = [],
         public array $labelTranslationParameters = [],
     ) {
+        $this->value = (string) $value;
+        $this->label = \is_int($label) ? (string) $label : $label;
     }
+
+    public string $value;
+    public string|TranslatableInterface|false $label;
 }

@@ -119,7 +119,7 @@ class PropertyAccessor implements PropertyAccessorInterface
             ];
 
             try {
-                $this->writeProperty($zval, $propertyPath, $value);
+                $this->writeProperty($zval, (string) $propertyPath, $value);
 
                 return;
             } catch (\TypeError $e) {

@@ -90,7 +90,7 @@ class DateTimeToHtml5LocalDateTimeTransformer extends BaseDateTimeTransformer
             $dateTime->setTimezone(new \DateTimeZone($this->inputTimezone));
         }
 
-        if (!checkdate($matches[2], $matches[3], $matches[1])) {
+        if (!checkdate((int) $matches[2], (int) $matches[3], (int) $matches[1])) {
             throw new TransformationFailedException(\sprintf('The date "%s-%s-%s" is not a valid date.', $matches[1], $matches[2], $matches[3]));
         }
 

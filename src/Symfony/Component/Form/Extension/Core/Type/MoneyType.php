@@ -49,7 +49,7 @@ class MoneyType extends AbstractType
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        $view->vars['money_pattern'] = self::getPattern($options['currency']);
+        $view->vars['money_pattern'] = self::getPattern(false === $options['currency'] ? null : $options['currency']);
 
         if ($options['html5']) {
             $view->vars['type'] = 'number';
@@ -126,7 +126,7 @@ class MoneyType extends AbstractType
 
         if (!isset(self::$patterns[$locale][$currency])) {
             $format = new \NumberFormatter($locale, \NumberFormatter::CURRENCY);
-            $pattern = $format->formatCurrency('123', $currency);
+            $pattern = $format->formatCurrency(123.0, $currency);
 
             // the spacings between currency symbol and number are ignored, because
             // a single space leads to better readability in combination with input

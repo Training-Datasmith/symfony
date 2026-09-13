@@ -46,7 +46,7 @@ class FormBuilder extends FormConfigBuilder implements \IteratorAggregate, FormB
         $this->setFormFactory($factory);
     }
 
-    public function add(FormBuilderInterface|string $child, ?string $type = null, array $options = []): static
+    public function add(FormBuilderInterface|string|int $child, ?string $type = null, array $options = []): static
     {
         if ($this->locked) {
             throw new BadMethodCallException('FormBuilder methods cannot be accessed anymore once the builder is turned into a FormConfigInterface instance.');
@@ -89,8 +89,9 @@ class FormBuilder extends FormConfigBuilder implements \IteratorAggregate, FormB
         return $this->getFormFactory()->createBuilderForProperty($this->getDataClass(), $name, null, $options);
     }
 
-    public function get(string $name): FormBuilderInterface
+    public function get(string|int $name): FormBuilderInterface
     {
+        $name = (string) $name;
         if ($this->locked) {
             throw new BadMethodCallException('FormBuilder methods cannot be accessed anymore once the builder is turned into a FormConfigInterface instance.');
         }
@@ -106,8 +107,9 @@ class FormBuilder extends FormConfigBuilder implements \IteratorAggregate, FormB
         throw new InvalidArgumentException(\sprintf('The child with the name "%s" does not exist.', $name));
     }
 
-    public function remove(string $name): static
+    public function remove(string|int $name): static
     {
+        $name = (string) $name;
         if ($this->locked) {
             throw new BadMethodCallException('FormBuilder methods cannot be accessed anymore once the builder is turned into a FormConfigInterface instance.');
         }
@@ -117,8 +119,9 @@ class FormBuilder extends FormConfigBuilder implements \IteratorAggregate, FormB
         return $this;
     }
 
-    public function has(string $name): bool
+    public function has(string|int $name): bool
     {
+        $name = (string) $name;
         if ($this->locked) {
             throw new BadMethodCallException('FormBuilder methods cannot be accessed anymore once the builder is turned into a FormConfigInterface instance.');
         }

@@ -368,7 +368,7 @@ class CliDumper extends AbstractDumper
                     // no break
                 case Cursor::HASH_ASSOC:
                     if (\is_int($key)) {
-                        $this->line .= $this->style($style, $key).' => ';
+                        $this->line .= $this->style($style, (string) $key).' => ';
                     } else {
                         $this->line .= $bin.'"'.$this->style($style, $key).'" => ';
                     }

@@ -121,8 +121,6 @@ foreach ($suites as $i => $suiteDir) {
         '-d',
         'memory_limit=' . $memoryLimit,
         $phpunit,
-        '-c',
-        'phpunit.xml.dist',
     ];
     foreach (GRIND_EXCLUDE_GROUPS as $group) {
         $cmd[] = '--exclude-group';
@@ -130,9 +128,10 @@ foreach ($suites as $i => $suiteDir) {
     }
     $cmd[] = '--log-junit';
     $cmd[] = $partJUnit;
+    $cmd[] = $rel;
 
     $desc = [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
-    $proc = proc_open($cmd, $desc, $pipes, $suiteDir);
+    $proc = proc_open($cmd, $desc, $pipes, $repoRoot);
     if (!is_resource($proc)) {
         fwrite(STDERR, sprintf("[%d/%d] failed to start: %s\n", $i + 1, $total, $rel));
         $worstExit = max($worstExit, 1);

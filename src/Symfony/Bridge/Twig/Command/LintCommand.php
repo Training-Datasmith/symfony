@@ -118,7 +118,8 @@ class LintCommand extends Command
         $filesInfo = [];
         foreach ($filenames as $filename) {
             foreach ($this->findFiles($filename) as $file) {
-                $filesInfo[] = $this->validate(file_get_contents($file), $file, $showDeprecations);
+                $path = $file instanceof \SplFileInfo ? $file->getPathname() : (string) $file;
+                $filesInfo[] = $this->validate(file_get_contents($path), $path, $showDeprecations);
             }
         }
 

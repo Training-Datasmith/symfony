@@ -22,13 +22,18 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException;
  */
 abstract class AbstractFileExtractor
 {
-    protected function extractFiles(string|iterable $resource): iterable
+    protected function extractFiles(string|iterable|\SplFileInfo $resource): iterable
     {
+        if ($resource instanceof \SplFileInfo) {
+            $resource = $resource->getPathname();
+        }
+
         if (is_iterable($resource)) {
             $files = [];
             foreach ($resource as $file) {
-                if ($this->canBeExtracted($file)) {
-                    $files[] = $this->toSplFileInfo($file);
+                $path = $file instanceof \SplFileInfo ? $file->getPathname() : $file;
+                if ($this->canBeExtracted($path)) {
+                    $files[] = $file instanceof \SplFileInfo ? $file : $this->toSplFileInfo($file);
                 }
             }
         } elseif (is_file($resource)) {

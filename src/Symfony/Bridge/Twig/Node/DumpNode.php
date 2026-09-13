@@ -68,7 +68,7 @@ final class DumpNode extends Node
             $compiler
                 ->addDebugInfo($this)
                 ->write('\Symfony\Component\VarDumper\VarDumper::dump(')
-                ->subcompile($values->getNode(0))
+                ->subcompile($values->getNode('0'))
                 ->raw(");\n");
         } else {
             $compiler

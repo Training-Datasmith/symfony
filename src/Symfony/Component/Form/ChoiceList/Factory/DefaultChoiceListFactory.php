@@ -85,7 +85,7 @@ class DefaultChoiceListFactory implements ChoiceListFactoryInterface
                 self::addChoiceViewsGroupedByCallable(
                     $groupBy,
                     $choice,
-                    $value,
+                    (string) $value,
                     $label,
                     $keys,
                     $index,
@@ -234,7 +234,7 @@ class DefaultChoiceListFactory implements ChoiceListFactoryInterface
             // Add ungrouped items directly
             self::addChoiceView(
                 $choices[$value],
-                $value,
+                (string) $value,
                 $label,
                 $keys,
                 $index,

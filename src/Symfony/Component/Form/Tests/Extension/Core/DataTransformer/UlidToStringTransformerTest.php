@@ -33,8 +33,6 @@ class UlidToStringTransformerTest extends TestCase
     {
         $transformer = new UlidToStringTransformer();
 
-        $input = new Ulid($input);
-
         $this->assertEquals($output, $transformer->transform($input));
     }
 
@@ -58,8 +56,6 @@ class UlidToStringTransformerTest extends TestCase
     public function testReverseTransform($input, $output)
     {
         $reverseTransformer = new UlidToStringTransformer();
-
-        $output = new Ulid($output);
 
         $this->assertEquals($output, $reverseTransformer->reverseTransform($input));
     }

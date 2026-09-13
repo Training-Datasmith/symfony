@@ -70,12 +70,12 @@ class FormConfigBuilder implements FormConfigBuilderInterface
      *                                  the name contains invalid characters
      */
     public function __construct(
-        ?string $name,
+        string|int|null $name,
         ?string $dataClass,
         private EventDispatcherInterface $dispatcher,
         private array $options = [],
     ) {
-        self::validateName($name);
+        self::validateName(null !== $name ? (string) $name : null);
 
         if (null !== $dataClass && !class_exists($dataClass) && !interface_exists($dataClass, false)) {
             throw new InvalidArgumentException(\sprintf('Class "%s" not found. Is the "data_class" form option set correctly?', $dataClass));

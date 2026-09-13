@@ -121,7 +121,7 @@ class ValidatorTypeGuesserTest extends TestCase
 
     public function testGuessMaxLengthForConstraintWithMaxValue()
     {
-        $constraint = new Length(max: '2');
+        $constraint = new Length(max: 2);
 
         $result = $this->guesser->guessMaxLengthForConstraint($constraint);
         $this->assertInstanceOf(ValueGuess::class, $result);
@@ -131,7 +131,7 @@ class ValidatorTypeGuesserTest extends TestCase
 
     public function testGuessMaxLengthForConstraintWithMinValue()
     {
-        $constraint = new Length(min: '2');
+        $constraint = new Length(min: 2);
 
         $result = $this->guesser->guessMaxLengthForConstraint($constraint);
         $this->assertNull($result);

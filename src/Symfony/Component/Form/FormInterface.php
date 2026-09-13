@@ -56,19 +56,19 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      * @throws Exception\LogicException            when trying to add a child to a non-compound form
      * @throws Exception\UnexpectedTypeException   if $child or $type has an unexpected type
      */
-    public function add(self|string $child, ?string $type = null, array $options = []): static;
+    public function add(self|string|int $child, ?string $type = null, array $options = []): static;
 
     /**
      * Returns the child with the given name.
      *
      * @throws Exception\OutOfBoundsException if the named child does not exist
      */
-    public function get(string $name): self;
+    public function get(string|int $name): self;
 
     /**
      * Returns whether a child with the given name exists.
      */
-    public function has(string $name): bool;
+    public function has(string|int $name): bool;
 
     /**
      * Removes a child from the form.

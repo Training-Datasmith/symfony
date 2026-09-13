@@ -32,7 +32,7 @@ class RoutingExtensionTest extends TestCase
 
         $nodes = $twig->parse($twig->tokenize(new Source($template, '')));
 
-        $this->assertSame($mustBeEscaped, $nodes->getNode('body')->getNode(0)->getNode('expr') instanceof FilterExpression);
+        $this->assertSame($mustBeEscaped, $nodes->getNode('body')->getNode('0')->getNode('expr') instanceof FilterExpression);
     }
 
     public static function getEscapingTemplates()

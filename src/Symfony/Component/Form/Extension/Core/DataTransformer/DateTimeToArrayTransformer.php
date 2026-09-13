@@ -126,7 +126,7 @@ class DateTimeToArrayTransformer extends BaseDateTimeTransformer
             throw new TransformationFailedException('This year is invalid.');
         }
 
-        if (!empty($value['month']) && !empty($value['day']) && !empty($value['year']) && false === checkdate($value['month'], $value['day'], $value['year'])) {
+        if (!empty($value['month']) && !empty($value['day']) && !empty($value['year']) && false === checkdate((int) $value['month'], (int) $value['day'], (int) $value['year'])) {
             throw new TransformationFailedException('This is an invalid date.');
         }
 
@@ -142,16 +142,18 @@ class DateTimeToArrayTransformer extends BaseDateTimeTransformer
             throw new TransformationFailedException('This second is invalid.');
         }
 
+        $referenceDate = $this->referenceDate ?? new \DateTimeImmutable('1970-01-01 00:00:00');
+
         try {
             $dateTime = new \DateTime(
                 \sprintf(
                     '%s-%s-%s %s:%s:%s',
-                    empty($value['year']) ? $this->referenceDate->format('Y') : $value['year'],
-                    empty($value['month']) ? $this->referenceDate->format('m') : $value['month'],
-                    empty($value['day']) ? $this->referenceDate->format('d') : $value['day'],
-                    $value['hour'] ?? $this->referenceDate->format('H'),
-                    $value['minute'] ?? $this->referenceDate->format('i'),
-                    $value['second'] ?? $this->referenceDate->format('s')
+                    empty($value['year']) ? $referenceDate->format('Y') : $value['year'],
+                    empty($value['month']) ? $referenceDate->format('m') : $value['month'],
+                    empty($value['day']) ? $referenceDate->format('d') : $value['day'],
+                    $value['hour'] ?? $referenceDate->format('H'),
+                    $value['minute'] ?? $referenceDate->format('i'),
+                    $value['second'] ?? $referenceDate->format('s')
                 ),
                 new \DateTimeZone($this->outputTimezone)
             );

@@ -182,13 +182,13 @@ class NumberToLocalizedStringTransformer implements DataTransformerInterface
             $number = (string) ($number * $roundingCoef);
 
             $number = match ($this->roundingMode) {
-                \NumberFormatter::ROUND_CEILING => ceil($number),
-                \NumberFormatter::ROUND_FLOOR => floor($number),
-                \NumberFormatter::ROUND_UP => $number > 0 ? ceil($number) : floor($number),
-                \NumberFormatter::ROUND_DOWN => $number > 0 ? floor($number) : ceil($number),
-                \NumberFormatter::ROUND_HALFEVEN => round($number, 0, \PHP_ROUND_HALF_EVEN),
-                \NumberFormatter::ROUND_HALFUP => round($number, 0, \PHP_ROUND_HALF_UP),
-                \NumberFormatter::ROUND_HALFDOWN => round($number, 0, \PHP_ROUND_HALF_DOWN),
+                \NumberFormatter::ROUND_CEILING => ceil((float) $number),
+                \NumberFormatter::ROUND_FLOOR => floor((float) $number),
+                \NumberFormatter::ROUND_UP => (float) $number > 0 ? ceil((float) $number) : floor((float) $number),
+                \NumberFormatter::ROUND_DOWN => (float) $number > 0 ? floor((float) $number) : ceil((float) $number),
+                \NumberFormatter::ROUND_HALFEVEN => round((float) $number, 0, \PHP_ROUND_HALF_EVEN),
+                \NumberFormatter::ROUND_HALFUP => round((float) $number, 0, \PHP_ROUND_HALF_UP),
+                \NumberFormatter::ROUND_HALFDOWN => round((float) $number, 0, \PHP_ROUND_HALF_DOWN),
             };
 
             $number = 1 === $roundingCoef ? (int) $number : $number / $roundingCoef;

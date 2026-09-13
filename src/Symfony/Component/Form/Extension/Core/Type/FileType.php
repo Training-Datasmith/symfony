@@ -226,6 +226,6 @@ class FileType extends AbstractType
      */
     private static function moreDecimalsThan(string $double, int $numberOfDecimals): bool
     {
-        return \strlen($double) > \strlen(round($double, $numberOfDecimals));
+        return \strlen($double) > \strlen((string) round((float) $double, $numberOfDecimals));
     }
 }

@@ -105,7 +105,7 @@ class Button implements \IteratorAggregate, FormInterface
      *
      * @throws BadMethodCallException
      */
-    public function add(string|FormInterface $child, ?string $type = null, array $options = []): static
+    public function add(string|int|FormInterface $child, ?string $type = null, array $options = []): static
     {
         throw new BadMethodCallException('Buttons cannot have children.');
     }
@@ -117,7 +117,7 @@ class Button implements \IteratorAggregate, FormInterface
      *
      * @throws BadMethodCallException
      */
-    public function get(string $name): FormInterface
+    public function get(string|int $name): FormInterface
     {
         throw new BadMethodCallException('Buttons cannot have children.');
     }
@@ -125,7 +125,7 @@ class Button implements \IteratorAggregate, FormInterface
     /**
      * Unsupported method.
      */
-    public function has(string $name): bool
+    public function has(string|int $name): bool
     {
         return false;
     }
@@ -137,7 +137,7 @@ class Button implements \IteratorAggregate, FormInterface
      *
      * @throws BadMethodCallException
      */
-    public function remove(string $name): static
+    public function remove(string|int $name): static
     {
         throw new BadMethodCallException('Buttons cannot have children.');
     }
