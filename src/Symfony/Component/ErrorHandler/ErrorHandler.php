@@ -120,10 +120,10 @@ class ErrorHandler
 
         if (null === $prev = get_error_handler()) {
             // Specifying the error types earlier would expose us to https://bugs.php.net/63206
-            set_error_handler($handler->handleError(...), $handler->thrownErrors | $handler->loggedErrors);
+            set_error_handler([$handler, 'handleError'], $handler->thrownErrors | $handler->loggedErrors);
             $handler->isRoot = true;
         } else {
-            set_error_handler($handler->handleError(...));
+            set_error_handler([$handler, 'handleError']);
         }
 
         if ($handlerIsNew && \is_array($prev) && $prev[0] instanceof self) {
@@ -136,12 +136,12 @@ class ErrorHandler
         } else {
             $handlerIsRegistered = true;
         }
-        if (\is_array($prev = set_exception_handler($handler->handleException(...))) && $prev[0] instanceof self) {
+        if (\is_array($prev = set_exception_handler([$handler, 'handleException'])) && $prev[0] instanceof self) {
             restore_exception_handler();
             if (!$handlerIsRegistered) {
                 $handler = $prev[0];
             } elseif ($handler !== $prev[0] && $replace) {
-                set_exception_handler($handler->handleException(...));
+                set_exception_handler([$handler, 'handleException']);
                 $p = $prev[0]->setExceptionHandler(null);
                 $handler->setExceptionHandler($p);
                 $prev[0]->setExceptionHandler($p);
@@ -365,9 +365,9 @@ class ErrorHandler
             if ($handler === $this) {
                 restore_error_handler();
                 if ($this->isRoot) {
-                    set_error_handler($this->handleError(...), $this->thrownErrors | $this->loggedErrors);
+                    set_error_handler([$this, 'handleError'], $this->thrownErrors | $this->loggedErrors);
                 } else {
-                    set_error_handler($this->handleError(...));
+                    set_error_handler([$this, 'handleError']);
                 }
             }
         }
@@ -410,7 +410,7 @@ class ErrorHandler
 
         if (!$throw && !($type & $level)) {
             if (!isset(self::$silencedErrorCache[$id = $file.':'.$line])) {
-                $lightTrace = $this->tracedErrors & $type ? $this->cleanTrace(debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 5), $type, $file, $line, false) : [];
+                $lightTrace = $this->tracedErrors & $type ? $this->cleanTrace(debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 5), $type, $file, $line, 0) : [];
                 $errorAsException = new SilencedErrorContext($type, $file, $line, isset($lightTrace[1]) ? [$lightTrace[0]] : $lightTrace);
             } elseif (isset(self::$silencedErrorCache[$id][$message])) {
                 $lightTrace = null;
@@ -508,7 +508,7 @@ class ErrorHandler
         $exception = $this->enhanceError($exception);
 
         $exceptionHandler = $this->exceptionHandler;
-        $this->exceptionHandler = $this->renderException(...);
+        $this->exceptionHandler = [$this, 'renderException'];
 
         if (null === $exceptionHandler || $exceptionHandler === $this->exceptionHandler) {
             $this->exceptionHandler = null;
@@ -559,7 +559,7 @@ class ErrorHandler
         $sameHandlerLimit = 10;
 
         while (!\is_array($handler) || !$handler[0] instanceof self) {
-            $handler = set_exception_handler(is_int(...));
+            $handler = set_exception_handler('is_int');
             restore_exception_handler();
 
             if (!$handler) {
@@ -580,7 +580,7 @@ class ErrorHandler
         }
         if (!$handler) {
             if (null === $error && $exitCode = self::$exitCode) {
-                register_shutdown_function(register_shutdown_function(...), static function () use ($exitCode): void {
+                register_shutdown_function('register_shutdown_function', static function () use ($exitCode): void {
                     exit($exitCode);
                 });
             }
@@ -620,7 +620,7 @@ class ErrorHandler
         }
 
         if ($exit && $exitCode = self::$exitCode) {
-            register_shutdown_function(register_shutdown_function(...), static function () use ($exitCode): void {
+            register_shutdown_function('register_shutdown_function', static function () use ($exitCode): void {
                 exit($exitCode);
             });
         }
@@ -681,7 +681,7 @@ class ErrorHandler
     /**
      * Cleans the trace by removing function arguments and the frames added by the error handler and DebugClassLoader.
      */
-    private function cleanTrace(array $backtrace, int $type, string &$file, int &$line, bool $throw): array
+    private function cleanTrace(array $backtrace, int $type, string &$file, int &$line, int $throw): array
     {
         $lightTrace = $backtrace;
 

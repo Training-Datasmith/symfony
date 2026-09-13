@@ -18,6 +18,8 @@ use Symfony\Component\ErrorHandler\Exception\FlattenException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Log\DebugLoggerConfigurator;
+use Symfony\Component\VarDumper\Cloner\Data;
+use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 
 /**
  * @author Yonel Ceruto <yonelceruto@gmail.com>
@@ -147,6 +149,14 @@ class HtmlErrorRenderer implements ErrorRendererInterface
         ]);
     }
 
+    private function dumpValue(Data $value): string
+    {
+        $dumper = new HtmlDumper();
+        $dumper->setTheme('light');
+
+        return $dumper->dump($value, true);
+    }
+
     private function formatArgs(array $args): string
     {
         $result = [];
@@ -171,6 +181,11 @@ class HtmlErrorRenderer implements ErrorRendererInterface
         }
 
         return implode(', ', $result);
+    }
+
+    private function formatArgsAsText(array $args): string
+    {
+        return strip_tags($this->formatArgs($args));
     }
 
     private function escape(string $string): string
@@ -227,6 +242,91 @@ class HtmlErrorRenderer implements ErrorRendererInterface
         $link = $this->fileLinkFormat->format($file, $line);
 
         return \sprintf('<a href="%s" title="Click to open this file" class="file_link">%s</a>', $this->escape($link), $text);
+    }
+
+    /**
+     * Returns an excerpt of a code file around the given line number.
+     *
+     * @param string $file       A file path
+     * @param int    $line       The selected line number
+     * @param int    $srcContext The number of displayed lines around or -1 for the whole file
+     */
+    private function fileExcerpt(string $file, int $line, int $srcContext = 3): string
+    {
+        if (is_file($file) && is_readable($file)) {
+            // highlight_file could throw warnings
+            // see https://bugs.php.net/25725
+            $code = @highlight_file($file, true);
+            // remove main pre/code tags
+            $code = preg_replace('#^<pre.*?>\s*<code.*?>(.*)</code>\s*</pre>#s', '\\1', $code);
+            // split multiline span tags
+            $code = preg_replace_callback('#<span ([^>]++)>((?:[^<\\n]*+\\n)++[^<]*+)</span>#', static fn ($m) => "<span $m[1]>".str_replace("\n", "</span>\n<span $m[1]>", $m[2]).'</span>', $code);
+            $content = explode("\n", $code);
+
+            $lines = [];
+            if (0 > $srcContext) {
+                $srcContext = \count($content);
+            }
+
+            for ($i = max($line - $srcContext, 1), $max = min($line + $srcContext, \count($content)); $i <= $max; ++$i) {
+                $lines[] = '<li'.($i == $line ? ' class="selected"' : '').'><code>'.$this->fixCodeMarkup($content[$i - 1]).'</code></li>';
+            }
+
+            return '<ol start="'.max($line - $srcContext, 1).'">'.implode("\n", $lines).'</ol>';
+        }
+
+        return '';
+    }
+
+    private function fixCodeMarkup(string $line): string
+    {
+        // </span> ending tag from previous line
+        $opening = strpos($line, '<span');
+        $closing = strpos($line, '</span>');
+        if (false !== $closing && (false === $opening || $closing < $opening)) {
+            $line = substr_replace($line, '', $closing, 7);
+        }
+
+        // missing </span> tag at the end of line
+        $opening = strrpos($line, '<span');
+        $closing = strrpos($line, '</span>');
+        if (false !== $opening && (false === $closing || $closing < $opening)) {
+            $line .= '</span>';
+        }
+
+        return trim($line);
+    }
+
+    private function formatFileFromText(string $text): string
+    {
+        return preg_replace_callback('/in ("|&quot;)?(.+?)\1(?: +(?:on|at))? +line (\d+)/s', fn ($match) => 'in '.$this->formatFile($match[2], (int) $match[3]), $text) ?? $text;
+    }
+
+    private function formatLogMessage(string $message, array $context): string
+    {
+        if ($context && str_contains($message, '{')) {
+            $replacements = [];
+            foreach ($context as $key => $val) {
+                if (\is_scalar($val)) {
+                    $replacements['{'.$key.'}'] = (string) $val;
+                }
+            }
+
+            if ($replacements) {
+                $message = strtr($message, $replacements);
+            }
+        }
+
+        return $this->escape($message);
+    }
+
+    private function addElementToGhost(): string
+    {
+        if (!isset(self::GHOST_ADDONS[date('m-d')])) {
+            return '';
+        }
+
+        return '<path d="'.self::GHOST_ADDONS[date('m-d')].'" fill="#fff" fill-opacity="0.6"></path>';
     }
 
     private function include(string $name, array $context = []): string
