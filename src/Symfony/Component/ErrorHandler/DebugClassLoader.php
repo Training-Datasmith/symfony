@@ -898,7 +898,7 @@ class DebugClassLoader
         $glue = str_contains($types, '&') ? '&' : '|';
         foreach (explode($glue, $types) as $t) {
             $t = self::SPECIAL_RETURN_TYPES[strtolower($t)] ?? $t;
-            $typesMap[$this->normalizeType($t, $class, $parent, $returnType)][$t] = $t;
+            $typesMap[(string) $this->normalizeType($t, $class, $parent, $returnType)][$t] = $t;
         }
 
         if (isset($typesMap['array'])) {
@@ -921,7 +921,7 @@ class DebugClassLoader
         foreach ($typesMap as $n => $t) {
             if ('null' !== $n) {
                 $iterable = $iterable && (\in_array($n, ['array', 'iterable'], true) || str_contains((string) $n, 'Iterator'));
-                $object = $object && (\in_array($n, ['callable', 'object', '$this', 'static'], true) || !isset(self::SPECIAL_RETURN_TYPES[$n]));
+                $object = $object && (\in_array($n, ['callable', 'object', '$this', 'static'], true) || !isset(self::SPECIAL_RETURN_TYPES[(string) $n]));
             }
         }
 

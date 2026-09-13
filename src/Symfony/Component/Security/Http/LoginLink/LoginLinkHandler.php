@@ -97,6 +97,7 @@ final class LoginLinkHandler implements LoginLinkHandlerInterface
         if (!preg_match('/^\d+$/', (string) $expires)) {
             throw new InvalidLoginLinkException('Invalid "expires" parameter.');
         }
+        $expires = (int) $expires;
 
         $expires = (int) $expires;
 

@@ -42,12 +42,12 @@ class LoginLinkAuthenticationTest extends AbstractWebTestCase
         $client->request('GET', $loginLink->getUrl());
         $response = $client->getResponse();
 
-        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode(), $response->getContent());
         $this->assertSame(['message' => 'Welcome weaverryan!'], json_decode($response->getContent(), true));
 
         $client->request('GET', $loginLink->getUrl());
         $response = $client->getResponse();
-        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode(), $response->getContent());
 
         $client->request('GET', $loginLink->getUrl());
         $response = $client->getResponse();

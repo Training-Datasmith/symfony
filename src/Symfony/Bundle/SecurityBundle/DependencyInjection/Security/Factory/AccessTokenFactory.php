@@ -148,7 +148,12 @@ final class AccessTokenFactory extends AbstractFactory implements StatelessAuthe
                 continue;
             }
 
-            $factory->create($container, $id, $config[$key], $userProviderId);
+            $handlerConfig = $config[$key];
+            if (!\is_array($handlerConfig) && !\is_string($handlerConfig)) {
+                $handlerConfig = [];
+            }
+
+            $factory->create($container, $id, $handlerConfig, $userProviderId);
         }
 
         return $id;

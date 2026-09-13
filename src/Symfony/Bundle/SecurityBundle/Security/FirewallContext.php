@@ -29,7 +29,7 @@ class FirewallContext
      * @param iterable<mixed, FirewallListenerInterface> $listeners
      */
     public function __construct(
-        private readonly iterable $listeners,
+        private iterable $listeners,
         private readonly ?ExceptionListener $exceptionListener = null,
         private readonly ?LogoutListener $logoutListener = null,
         private readonly ?FirewallConfig $config = null,

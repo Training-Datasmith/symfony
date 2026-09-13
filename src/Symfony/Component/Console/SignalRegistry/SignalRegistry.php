@@ -30,11 +30,15 @@ final class SignalRegistry
      */
     private array $originalHandlers = [];
 
+    private \Closure $signalDispatcher;
+
     public function __construct()
     {
         if (\function_exists('pcntl_async_signals')) {
             pcntl_async_signals(true);
         }
+
+        $this->signalDispatcher = $this->handle(...);
     }
 
     public function register(int $signal, callable $signalHandler): void
@@ -46,14 +50,14 @@ final class SignalRegistry
         }
 
         if (!isset($this->signalHandlers[$signal])) {
-            if (\is_callable($previous) && $this->handle(...) !== $previous) {
+            if (\is_callable($previous) && $this->signalDispatcher !== $previous) {
                 $this->signalHandlers[$signal][] = $previous;
             }
         }
 
         $this->signalHandlers[$signal][] = $signalHandler;
 
-        pcntl_signal($signal, $this->handle(...));
+        pcntl_signal($signal, $this->signalDispatcher);
     }
 
     public static function isSupported(): bool
