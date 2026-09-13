@@ -990,7 +990,7 @@ class FinderTest extends Iterator\RealIteratorTestCase
     public function testFilter()
     {
         $finder = $this->buildFinder();
-        $this->assertSame($finder, $finder->filter(static fn (\SplFileInfo $f) => str_contains($f, 'test')));
+        $this->assertSame($finder, $finder->filter(static fn (\SplFileInfo $f) => str_contains($f->getPathname(), 'test')));
         $this->assertIterator($this->toAbsolute(['test.php', 'test.py']), $finder->in(self::$tmpDir)->getIterator());
     }
 
@@ -1533,7 +1533,7 @@ class FinderTest extends Iterator\RealIteratorTestCase
 
         $finder1 = Finder::create()->append($finder);
 
-        $this->assertIterator(iterator_to_array($finder->getIterator()), $finder1->getIterator());
+        $this->assertIterator(array_map(static fn (\SplFileInfo $file): string => $file->getPathname(), iterator_to_array($finder->getIterator())), $finder1->getIterator());
     }
 
     public function testMultipleAppendCallsWithSorting()

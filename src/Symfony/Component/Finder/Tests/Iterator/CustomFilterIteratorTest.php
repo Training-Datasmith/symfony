@@ -38,8 +38,8 @@ class CustomFilterIteratorTest extends IteratorTestCase
     {
         return [
             [[static fn (\SplFileInfo $fileinfo) => false], []],
-            [[static fn (\SplFileInfo $fileinfo) => str_starts_with($fileinfo, 'test')], ['test.php', 'test.py']],
-            [['is_dir'], []],
+            [[static fn (\SplFileInfo $fileinfo) => str_starts_with($fileinfo->getPathname(), 'test')], ['test.php', 'test.py']],
+            [[static fn (\SplFileInfo $fileinfo) => is_dir($fileinfo->getPathname())], []],
         ];
     }
 }

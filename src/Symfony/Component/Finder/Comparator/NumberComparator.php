@@ -75,6 +75,6 @@ class NumberComparator extends Comparator
             }
         }
 
-        parent::__construct($target, $matches[1] ?: '==');
+        parent::__construct((string) $target, $matches[1] ?: '==');
     }
 }

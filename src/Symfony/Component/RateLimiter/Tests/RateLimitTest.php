@@ -50,7 +50,7 @@ class RateLimitTest extends TestCase
     {
         ClockMock::register(RateLimit::class);
         $retryAfter = time() + 2.5; // get timestamp in the middle of a second (xxx.5)
-        $rateLimit = new RateLimit(10, \DateTimeImmutable::createFromFormat('U.u', $retryAfter), true, 10);
+        $rateLimit = new RateLimit(10, \DateTimeImmutable::createFromFormat('U.u', sprintf('%.6F', $retryAfter)), true, 10);
 
         $rateLimit->wait(); // wait until $retryAfter (~2.5 seconds)
         $this->assertEqualsWithDelta($retryAfter, microtime(true), 0.49);

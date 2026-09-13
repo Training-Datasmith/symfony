@@ -55,7 +55,7 @@ class FixedWindowLimiterTest extends TestCase
         $this->assertFalse($rateLimit->isAccepted());
         $this->assertSame(10, $rateLimit->getLimit());
         // Window ends after 1 minute
-        $retryAfter = \DateTimeImmutable::createFromFormat('U', $now + 60);
+        $retryAfter = \DateTimeImmutable::createFromFormat('U', (string) ($now + 60));
         $this->assertEquals($retryAfter, $rateLimit->getRetryAfter());
     }
 
@@ -69,7 +69,7 @@ class FixedWindowLimiterTest extends TestCase
         $this->assertSame(0, $rateLimit->getRemainingTokens());
         $this->assertTrue($rateLimit->isAccepted());
         $this->assertEquals(
-            \DateTimeImmutable::createFromFormat('U', $now + 60),
+            \DateTimeImmutable::createFromFormat('U', (string) ($now + 60)),
             $rateLimit->getRetryAfter()
         );
     }
