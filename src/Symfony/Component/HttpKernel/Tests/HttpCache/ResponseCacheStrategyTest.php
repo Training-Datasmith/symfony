@@ -365,11 +365,11 @@ class ResponseCacheStrategyTest extends TestCase
                         break;
 
                     case 'max-age':
-                        $response->setMaxAge($value);
+                        $response->setMaxAge((int) $value);
                         break;
 
                     case 's-maxage':
-                        $response->setSharedMaxAge($value);
+                        $response->setSharedMaxAge((int) $value);
                         break;
 
                     case 'private':

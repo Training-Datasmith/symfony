@@ -181,13 +181,13 @@ class HttpKernelBrowserTest extends TestCase
             ->willReturn(\PHP_INT_MAX)
         ;
 
-        $client->request('POST', '/', [], [$file]);
+        $client->request('POST', '/', [], ['file' => $file]);
 
         $files = $client->getRequest()->files->all();
 
         $this->assertCount(1, $files);
 
-        $file = $files[0];
+        $file = $files['file'];
 
         $this->assertFalse($file->isValid());
         $this->assertEquals(\UPLOAD_ERR_INI_SIZE, $file->getError());

@@ -227,7 +227,7 @@ class RegisterControllerArgumentLocatorsPassTest extends TestCase
         $error = $container->getDefinition($error)->getArgument(0)['foo::fooAction']->getValues()[0];
         $error = $container->getDefinition($error)->getArgument(0)['nonExistent']->getValues()[0];
 
-        $container->get($error);
+        $container->get((string) $error);
     }
 
     public function testExceptionOnNonExistentTypeHintDifferentNamespace()
@@ -247,7 +247,7 @@ class RegisterControllerArgumentLocatorsPassTest extends TestCase
         $error = $container->getDefinition($error)->getArgument(0)['foo::fooAction']->getValues()[0];
         $error = $container->getDefinition($error)->getArgument(0)['nonExistent']->getValues()[0];
 
-        $container->get($error);
+        $container->get((string) $error);
     }
 
     public function testNoExceptionOnNonExistentTypeHintOptionalArg()

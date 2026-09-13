@@ -60,6 +60,8 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
 
     public function __construct(protected EventDispatcherInterface $dispatcher, protected ControllerResolverInterface $resolver, protected ?RequestStack $requestStack = new RequestStack(), private readonly ?ArgumentResolverInterface $argumentResolver = new ArgumentResolver(), private readonly bool $handleAllThrowables = false)
     {
+        $this->requestStack ??= new RequestStack();
+        $this->argumentResolver ??= new ArgumentResolver();
     }
 
     public function handle(Request $request, int $type = HttpKernelInterface::MAIN_REQUEST, bool $catch = true): Response

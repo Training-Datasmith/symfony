@@ -139,7 +139,7 @@ abstract class HttpCacheTestCase extends TestCase
     {
         $values = [];
         foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(sys_get_temp_dir().'/http_cache/md', \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
-            $values[] = file_get_contents($file);
+            $values[] = file_get_contents($file instanceof \SplFileInfo ? $file->getPathname() : (string) $file);
         }
 
         return $values;

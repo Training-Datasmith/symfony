@@ -124,7 +124,7 @@ class HttpKernelBrowser extends AbstractBrowser
 
     protected function filterRequest(DomRequest $request): Request
     {
-        $httpRequest = Request::create($request->getUri(), $request->getMethod(), $request->getParameters(), $request->getCookies(), $request->getFiles(), $server = $request->getServer(), $request->getContent());
+        $httpRequest = Request::create($request->getUri(), $request->getMethod(), $request->getParameters(), $request->getCookies(), $this->normalizeFileKeys($request->getFiles()), $server = $request->getServer(), $request->getContent());
         if (!isset($server['HTTP_ACCEPT'])) {
             $httpRequest->headers->remove('Accept');
         }
@@ -147,10 +147,21 @@ class HttpKernelBrowser extends AbstractBrowser
      *
      * @see UploadedFile
      */
+    private function normalizeFileKeys(array $files): array
+    {
+        $normalized = [];
+        foreach ($files as $key => $value) {
+            $normalized[(string) $key] = \is_array($value) ? $this->normalizeFileKeys($value) : $value;
+        }
+
+        return $normalized;
+    }
+
     protected function filterFiles(array $files): array
     {
         $filtered = [];
         foreach ($files as $key => $value) {
+            $key = (string) $key;
             if (\is_array($value)) {
                 $filtered[$key] = $this->filterFiles($value);
             } elseif ($value instanceof UploadedFile) {

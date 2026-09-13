@@ -291,6 +291,6 @@ class CacheAttributeListener implements EventSubscriberInterface
             $time = strtotime($time, $now) - $now;
         }
 
-        return $time;
+        return (int) $time;
     }
 }

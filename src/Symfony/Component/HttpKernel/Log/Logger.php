@@ -94,6 +94,10 @@ class Logger extends AbstractLogger implements DebugLoggerInterface
             return;
         }
 
+        if (!\is_string($message)) {
+            $message = (string) $message;
+        }
+
         $formatter = $this->formatter;
         if ($this->handle) {
             @fwrite($this->handle, $formatter($level, $message, $context).\PHP_EOL);

@@ -134,7 +134,7 @@ class RequestPayloadValueResolver implements ValueResolverInterface, EventSubscr
                 try {
                     $payload = $payloadMapper($request, $argument->metadata, $argument);
                 } catch (PartialDenormalizationException $e) {
-                    $trans = $this->translator ? $this->translator->trans(...) : strtr(...);
+                    $trans = $this->translator ? $this->translator->trans(...) : static fn (string $id, array $parameters = []): string => strtr($id, $parameters);
                     foreach ($e->getErrors() as $error) {
                         $parameters = [];
                         $template = 'This value was of an unexpected type.';

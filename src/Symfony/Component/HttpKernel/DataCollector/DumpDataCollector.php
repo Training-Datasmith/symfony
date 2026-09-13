@@ -256,9 +256,9 @@ class DumpDataCollector extends DataCollector implements DataDumperInterface
                     } else {
                         $name = $this->style('meta', $name);
                     }
-                    $this->line .= $name.' on line '.$this->style('meta', $line).':';
+                    $this->line .= $name.' on line '.$this->style('meta', (string) $line).':';
                 } else {
-                    $this->line .= $this->style('meta', $name).' on line '.$this->style('meta', $line).':';
+                    $this->line .= $this->style('meta', $name).' on line '.$this->style('meta', (string) $line).':';
                 }
                 $this->dumpLine(0);
             };

@@ -488,8 +488,9 @@ class FileProfilerStorageTest extends TestCase
         $iterator = new \RecursiveIteratorIterator($iterator, \RecursiveIteratorIterator::SELF_FIRST);
 
         foreach ($iterator as $file) {
-            if (is_file($file)) {
-                unlink($file);
+            $pathname = $file instanceof \SplFileInfo ? $file->getPathname() : (string) $file;
+            if (is_file($pathname)) {
+                unlink($pathname);
             }
         }
     }
