@@ -16,6 +16,7 @@ declare(strict_types=1);
  *   php .github/grind-phpunit-components.php
  *   php .github/grind-phpunit-components.php --junit phpunit-remote-YYYYMMDD.xml
  *   php .github/grind-phpunit-components.php --offset 0 --limit 45
+ *   php .github/grind-phpunit-components.php --filter=Component/Form
  *   php .github/grind-phpunit-components.php --filter Component/Form
  *   php .github/grind-phpunit-components.php --list
  *
@@ -56,6 +57,9 @@ $limit = isset($options['limit']) ? max(0, (int) $options['limit']) : null;
 $memoryLimit = $options['memory'] ?? '512M';
 $partsDir = grind_abs_path($repoRoot, $options['parts-dir'] ?? 'build/junit-parts');
 $pathFilter = isset($options['filter']) ? (string) $options['filter'] : '';
+if ($pathFilter === '' && isset($argv)) {
+    $pathFilter = grind_argv_option_value($argv, 'filter') ?? '';
+}
 $noMerge = isset($options['no-merge']);
 $keepParts = isset($options['keep-parts']);
 
@@ -180,6 +184,26 @@ if ($writer instanceof XMLWriter) {
 }
 
 exit($worstExit);
+
+/**
+ * @param array<int, string> $argv
+ */
+function grind_argv_option_value(array $argv, string $name): ?string
+{
+    $flag = '--' . $name;
+    $prefix = $flag . '=';
+    for ($i = 1, $n = count($argv); $i < $n; ++$i) {
+        $arg = $argv[$i];
+        if (str_starts_with($arg, $prefix)) {
+            return substr($arg, strlen($prefix));
+        }
+        if ($arg === $flag && isset($argv[$i + 1]) && !str_starts_with($argv[$i + 1], '-')) {
+            return $argv[$i + 1];
+        }
+    }
+
+    return null;
+}
 
 /**
  * @return list<string> absolute suite directories
