@@ -43,12 +43,16 @@ class AttributePropertyMetadataLoaderTest extends TestCase
             StringToBooleanValueTransformer::class => new StringToBooleanValueTransformer(),
         ]), TypeResolver::create());
 
-        $this->assertEquals([
-            'id' => new PropertyMetadata('id', Type::string(), [DivideStringAndCastToIntValueTransformer::class]),
-            'active' => new PropertyMetadata('active', Type::string(), [StringToBooleanValueTransformer::class]),
-            'name' => new PropertyMetadata('name', Type::string(), [\Closure::fromCallable('strtoupper')]),
-            'range' => new PropertyMetadata('range', Type::string(), [\Closure::fromCallable(DummyWithValueTransformerAttributes::explodeRange(...))]),
-        ], $loader->load(DummyWithValueTransformerAttributes::class));
+        $loaded = $loader->load(DummyWithValueTransformerAttributes::class);
+
+        $this->assertEquals(new PropertyMetadata('id', Type::string(), [DivideStringAndCastToIntValueTransformer::class]), $loaded['id']);
+        $this->assertEquals(new PropertyMetadata('active', Type::string(), [StringToBooleanValueTransformer::class]), $loaded['active']);
+
+        $this->assertEquals(new PropertyMetadata('name', Type::string()), $loaded['name']->withValueTransformers([]));
+        $this->assertSame('DUMMY', ($loaded['name']->getValueTransformers()[0])('dummy'));
+
+        $this->assertEquals(new PropertyMetadata('range', Type::string()), $loaded['range']->withValueTransformers([]));
+        $this->assertSame([10, 20], ($loaded['range']->getValueTransformers()[0])('10..20'));
     }
 
     public function testThrowWhenCannotRetrieveValueTransformer()

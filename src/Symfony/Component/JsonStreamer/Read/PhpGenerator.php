@@ -54,6 +54,8 @@ final class PhpGenerator
         if ($decodeFromStream) {
             return $this->line('<?php', $context)
                 .$this->line('', $context)
+                .$this->line('declare(strict_types=1);', $context)
+                .$this->line('', $context)
                 .$this->line('/**', $context)
                 .$this->line(' * @return '.$dataModel->getType(), $context)
                 .$this->line(' */', $context)
@@ -66,6 +68,8 @@ final class PhpGenerator
         }
 
         return $this->line('<?php', $context)
+            .$this->line('', $context)
+            .$this->line('declare(strict_types=1);', $context)
             .$this->line('', $context)
             .$this->line('/**', $context)
             .$this->line(' * @return '.$dataModel->getType(), $context)

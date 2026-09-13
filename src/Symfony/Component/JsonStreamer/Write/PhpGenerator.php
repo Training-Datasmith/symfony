@@ -65,6 +65,8 @@ final class PhpGenerator
 
         return $this->line('<?php', $context)
             .$this->line('', $context)
+            .$this->line('declare(strict_types=1);', $context)
+            .$this->line('', $context)
             .$this->line('/**', $context)
             .$this->line(' * @param '.$dataModel->getType().' $data', $context)
             .$this->line(' */', $context)
@@ -369,7 +371,11 @@ final class PhpGenerator
         $yieldBuffer = $this->yieldBuffer;
         $this->yieldBuffer = '';
 
-        return $this->yield('"'.$yieldBuffer.'"', $context);
+        if (str_contains($yieldBuffer, '$')) {
+            return $this->yield('"'.$yieldBuffer.'"', $context);
+        }
+
+        return $this->yield("'".addcslashes($yieldBuffer, "'\\")."'", $context);
     }
 
     private function generateCompositeNodeItemCondition(DataModelNodeInterface $node): string
