@@ -128,7 +128,7 @@ class DoctrineReceiver implements ListableReceiverInterface, MessageCountAwareIn
     private function createEnvelopeFromData(array $data): Envelope
     {
         $stamps = [
-            new DoctrineReceivedStamp($data['id']),
+            new DoctrineReceivedStamp((string) $data['id']),
             new TransportMessageIdStamp($data['id']),
         ];
 
@@ -147,16 +147,21 @@ class DoctrineReceiver implements ListableReceiverInterface, MessageCountAwareIn
         $delay = 100;
         $multiplier = 2;
         $jitter = 0.1;
+        $retries = 0;
 
         retry:
         try {
             $callable();
-        } catch (RetryableException) {
-            $delay *= $multiplier;
-            $randomness = (int) ($delay * $jitter);
-            $delay += random_int(-$randomness, +$randomness);
-            usleep($delay * 1000);
-            goto retry;
+        } catch (RetryableException $exception) {
+            if (++$retries <= self::MAX_RETRIES) {
+                $delay *= $multiplier;
+                $randomness = (int) ($delay * $jitter);
+                $delay += random_int(-$randomness, +$randomness);
+                usleep($delay * 1000);
+                goto retry;
+            }
+
+            throw new TransportException($exception->getMessage(), 0, $exception);
         } catch (DBALException $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }

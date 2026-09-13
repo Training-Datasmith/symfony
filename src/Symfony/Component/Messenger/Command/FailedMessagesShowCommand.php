@@ -81,7 +81,7 @@ class FailedMessagesShowCommand extends AbstractFailedMessagesCommand
         } elseif (null === $id = $input->getArgument('id')) {
             $this->listMessages($receiver, $failureTransportName, $io, $errorIo, $input->getOption('max'), $input->getOption('class-filter'));
         } else {
-            $this->showMessage($receiver, $failureTransportName, $id, $io, $errorIo);
+            $this->showMessage($receiver, $failureTransportName, (string) $id, $io, $errorIo);
         }
 
         return 0;

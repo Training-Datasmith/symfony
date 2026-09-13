@@ -39,7 +39,7 @@ class BeanstalkdReceiver implements KeepaliveReceiverInterface, MessageCountAwar
         }
 
         $stamps = [
-            new BeanstalkdReceivedStamp($beanstalkdEnvelope['id'], $this->connection->getTube()),
+            new BeanstalkdReceivedStamp((string) $beanstalkdEnvelope['id'], $this->connection->getTube()),
             new TransportMessageIdStamp($beanstalkdEnvelope['id']),
             new BeanstalkdPriorityStamp($this->connection->getMessagePriority($beanstalkdEnvelope['id'])),
         ];

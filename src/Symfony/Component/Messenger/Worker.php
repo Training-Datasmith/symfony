@@ -88,7 +88,11 @@ class Worker
 
         $this->metadata->set(['queueNames' => $queueNames]);
 
-        $this->eventDispatcher?->dispatch(new WorkerStartedEvent($this, isset($options['time_limit']) ? $this->clock->now()->format('U.u') + (int) $options['time_limit'] : null, $options['sleep']));
+        $this->eventDispatcher?->dispatch(new WorkerStartedEvent(
+            $this,
+            isset($options['time_limit']) ? microtime(true) + (int) $options['time_limit'] : null,
+            (int) $options['sleep'],
+        ));
 
         if ($queueNames) {
             // if queue names are specified, all receivers must implement the QueueReceiverInterface
@@ -116,6 +120,7 @@ class Worker
                         $this->keepalives[$envelope->getMessage()] = [$transportName, $envelope];
                     }
 
+                    $transportName = (string) $transportName;
                     $this->rateLimit($transportName);
                     $this->handleMessage($envelope, $transportName);
                     $this->eventDispatcher?->dispatch(new WorkerRunningEvent($this, false));

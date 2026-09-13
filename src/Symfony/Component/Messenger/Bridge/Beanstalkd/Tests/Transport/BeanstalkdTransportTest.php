@@ -62,7 +62,7 @@ final class BeanstalkdTransportTest extends TestCase
 
         $connection->expects($this->once())->method('keepalive')->with(1);
 
-        $transport->keepalive(new Envelope(new DummyMessage('foo'), [new BeanstalkdReceivedStamp(1, 'bar')]));
+        $transport->keepalive(new Envelope(new DummyMessage('foo'), [new BeanstalkdReceivedStamp('1', 'bar')]));
     }
 
     private function getTransport(?SerializerInterface $serializer = null, ?Connection $connection = null): BeanstalkdTransport

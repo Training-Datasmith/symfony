@@ -128,7 +128,7 @@ final class BeanstalkdReceiverTest extends TestCase
         $connection->expects($this->once())->method('keepalive')->with(1);
 
         $receiver = new BeanstalkdReceiver($connection, $serializer);
-        $receiver->keepalive(new Envelope(new DummyMessage('foo'), [new BeanstalkdReceivedStamp(1, 'bar')]));
+        $receiver->keepalive(new Envelope(new DummyMessage('foo'), [new BeanstalkdReceivedStamp('1', 'bar')]));
     }
 
     private function createBeanstalkdEnvelope(): array

@@ -57,7 +57,7 @@ class RedisReceiver implements KeepaliveReceiverInterface, MessageCountAwareInte
         }
 
         $stamps = [
-            new RedisReceivedStamp($message['id']),
+            new RedisReceivedStamp((string) $message['id']),
             new TransportMessageIdStamp($message['id']),
         ];
 
@@ -147,7 +147,7 @@ class RedisReceiver implements KeepaliveReceiverInterface, MessageCountAwareInte
         return $envelope
             ->withoutAll(TransportMessageIdStamp::class)
             ->with(
-                new RedisReceivedStamp($id),
+                new RedisReceivedStamp((string) $id),
                 new TransportMessageIdStamp($id)
             );
     }

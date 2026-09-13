@@ -234,7 +234,7 @@ class Connection
             throw new InvalidArgumentException('No CA certificate has been provided. Set "amqp.cacert" in your php.ini or pass the "cacert" parameter in the DSN to use SSL. Alternatively, you can use amqp:// to use without SSL.');
         }
 
-        return new self($amqpOptions, $exchangeOptions, $queuesOptions, $amqpFactory);
+        return new self($amqpOptions, $exchangeOptions, $queuesOptions, $amqpFactory ?? new AmqpFactory());
     }
 
     private static function validateOptions(array $options): void
@@ -616,13 +616,20 @@ class Connection
 
     private function withConnectionExceptionRetry(callable $callable): void
     {
+        $maxRetries = 3;
+        $retries = 0;
+
         retry:
         try {
             $callable();
-        } catch (\AMQPConnectionException) {
-            $this->clear();
+        } catch (\AMQPConnectionException $e) {
+            if (++$retries <= $maxRetries) {
+                $this->clear();
 
-            goto retry;
+                goto retry;
+            }
+
+            throw $e;
         }
     }
 }

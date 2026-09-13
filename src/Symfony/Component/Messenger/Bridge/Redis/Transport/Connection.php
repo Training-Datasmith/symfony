@@ -100,7 +100,7 @@ class Connection
             $hosts = \is_string($host) ? [$host.':'.$port] : $host; // Always ensure we have an array
             $this->redisInitializer = static fn (): \RedisCluster => self::initializeRedisCluster($redis, $hosts, $auth, $options);
         } else {
-            $this->redisInitializer = static function () use ($redis, $sentinelMaster, $host, $port, $options, $sentinelAuth): \Redis|\Relay\Relay {
+            $this->redisInitializer = static function () use ($redis, $sentinelMaster, $host, $port, $options, $auth, $sentinelAuth): \Redis|\Relay\Relay {
                 if (null !== $sentinelMaster) {
                     $sentinelClass = \extension_loaded('redis') ? \RedisSentinel::class : Sentinel::class;
                     $hostIndex = 0;
@@ -153,7 +153,7 @@ class Connection
                     }
                 }
 
-                return self::initializeRedis($redis ?? (\extension_loaded('redis') ? new \Redis() : new Relay()), $host, $port, $options);
+                return self::initializeRedis($redis ?? (\extension_loaded('redis') ? new \Redis() : new Relay()), $host, $port, $auth, $options);
             };
         }
 
@@ -179,7 +179,7 @@ class Connection
         $this->claimInterval = $options['claim_interval'] / 1000;
     }
 
-    private static function initializeRedis(\Redis|Relay $redis, string $host, int $port, array $params): \Redis|Relay
+    private static function initializeRedis(\Redis|Relay $redis, string $host, int $port, string|array|null $auth, array $params): \Redis|Relay
     {
         if ($redis->isConnected()) {
             return $redis;
@@ -199,7 +199,22 @@ class Connection
         } finally {
             restore_error_handler();
         }
-        throw new InvalidArgumentException('Redis connection failed: '.(preg_match('/^Redis::p?connect\(\): (.*)/', $error ?? $redis->getLastError() ?? '', $matches) ? \sprintf(' (%s)', $matches[1]) : ''));
+
+        if (!$isConnected) {
+            throw new InvalidArgumentException('Redis connection failed: '.(preg_match('/^Redis::p?connect\(\): (.*)/', $error ?? $redis->getLastError() ?? '', $matches) ? \sprintf(' (%s)', $matches[1]) : ''));
+        }
+
+        $redis->setOption($redis instanceof \Redis ? \Redis::OPT_SERIALIZER : Relay::OPT_SERIALIZER, $params['serializer']);
+
+        if (null !== $auth && !$redis->auth($auth)) {
+            throw new InvalidArgumentException('Redis connection failed: '.$redis->getLastError());
+        }
+
+        if (($params['dbindex'] ?? false) && !$redis->select($params['dbindex'])) {
+            throw new InvalidArgumentException('Redis connection failed: '.$redis->getLastError());
+        }
+
+        return $redis;
     }
 
     /**
@@ -556,7 +571,7 @@ class Connection
                 }
 
                 $now = explode(' ', microtime(), 2);
-                $now[0] = str_pad($delayInMs + substr($now[0], 2, 3), 3, '0', \STR_PAD_LEFT);
+                $now[0] = str_pad((string) ($delayInMs + (int) substr($now[0], 2, 3)), 3, '0', \STR_PAD_LEFT);
                 if (3 < \strlen($now[0])) {
                     $now[1] += substr($now[0], 0, -3);
                     $now[0] = substr($now[0], -3);
@@ -607,7 +622,7 @@ class Connection
         $redis = $this->getRedis();
 
         try {
-            $redis->xgroup('CREATE', $this->stream, $this->group, 0, true);
+            $redis->xgroup('CREATE', $this->stream, $this->group, '0', true);
         } catch (\RedisException|\Relay\Exception $e) {
             throw new TransportException($e->getMessage(), 0, $e);
         }

@@ -415,7 +415,7 @@ class RedisExtIntegrationTest extends TestCase
         $this->connection->add('{"message": "Hi2"}', ['type' => DummyMessage::class]);
 
         $redisReceiver->get();
-        $this->redis->xtrim('messages', 1);
+        $this->redis->xtrim('messages', '1');
 
         // The consumer died during handling a message while performing xtrim in parallel process
         $this->redis = new \Redis();

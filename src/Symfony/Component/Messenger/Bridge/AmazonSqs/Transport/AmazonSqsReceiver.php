@@ -44,7 +44,7 @@ class AmazonSqsReceiver implements KeepaliveReceiverInterface, MessageCountAware
         }
 
         $stamps = [
-            new AmazonSqsReceivedStamp($sqsEnvelope['id']),
+            new AmazonSqsReceivedStamp((string) $sqsEnvelope['id']),
             new TransportMessageIdStamp($sqsEnvelope['id']),
         ];
 

@@ -228,7 +228,7 @@ class Connection implements ResetInterface
         }
     }
 
-    public function ack(string $id): bool
+    public function ack(string|int $id): bool
     {
         try {
             return $this->driverConnection->delete($this->configuration['table_name'], ['id' => $id]) > 0;
@@ -237,7 +237,7 @@ class Connection implements ResetInterface
         }
     }
 
-    public function reject(string $id): bool
+    public function reject(string|int $id): bool
     {
         try {
             return $this->driverConnection->delete($this->configuration['table_name'], ['id' => $id]) > 0;
@@ -471,7 +471,7 @@ class Connection implements ResetInterface
             throw $e;
         }
 
-        return $id;
+        return (string) $id;
     }
 
     private function getSchema(): Schema

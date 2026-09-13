@@ -854,7 +854,7 @@ class WorkerTest extends TestCase
 
         // Allocate and deallocate 4 MB. The use of random_int() is to
         // prevent compile-time optimization.
-        $memory = str_repeat(random_int(0, 1), 4 * 1024 * 1024);
+        $memory = str_repeat((string) random_int(0, 1), 4 * 1024 * 1024);
         unset($memory);
 
         $before = memory_get_peak_usage();
