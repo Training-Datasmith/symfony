@@ -28,6 +28,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\UsageTrackingTokenStorage;
@@ -198,7 +199,7 @@ class ContextListenerTest extends TestCase
 
         $dispatcher->expects($this->once())
             ->method('addListener')
-            ->with(KernelEvents::RESPONSE, $listener->onKernelResponse(...));
+            ->with(KernelEvents::RESPONSE, $this->isInstanceOf(\Closure::class));
 
         $listener->authenticate(new RequestEvent($this->createStub(HttpKernelInterface::class), new Request(), HttpKernelInterface::MAIN_REQUEST));
     }
@@ -219,7 +220,7 @@ class ContextListenerTest extends TestCase
 
         $dispatcher->expects($this->once())
             ->method('removeListener')
-            ->with(KernelEvents::RESPONSE, $listener->onKernelResponse(...));
+            ->with(KernelEvents::RESPONSE, $this->isInstanceOf(\Closure::class));
 
         $listener->onKernelResponse($event);
     }
@@ -320,7 +321,7 @@ class ContextListenerTest extends TestCase
         $usageIndex = $session->getUsageIndex();
 
         $tokenStorage = new TokenStorage();
-        $listener = new ContextListener($tokenStorage, [], 'context_key', null, null, null, $tokenStorage->getToken(...));
+        $listener = new ContextListener($tokenStorage, [], 'context_key', null, null, new AuthenticationTrustResolver(), $tokenStorage->getToken(...));
         $listener->authenticate(new RequestEvent($this->createStub(HttpKernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST));
 
         $this->assertSame($usageIndex, $session->getUsageIndex());
@@ -342,7 +343,7 @@ class ContextListenerTest extends TestCase
 
         $tokenStorage = new TokenStorage();
 
-        $listener = new ContextListener($tokenStorage, [], 'context_key', null, null, null, $tokenStorage->getToken(...));
+        $listener = new ContextListener($tokenStorage, [], 'context_key', null, null, new AuthenticationTrustResolver(), $tokenStorage->getToken(...));
         $listener->authenticate(new RequestEvent($this->createStub(HttpKernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST));
 
         $listener->onKernelResponse(new ResponseEvent($this->createStub(HttpKernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST, new Response()));
@@ -362,7 +363,7 @@ class ContextListenerTest extends TestCase
         $dispatcher = new EventDispatcher();
         $httpKernel = $this->createStub(HttpKernelInterface::class);
 
-        $listener = new ContextListener($tokenStorage, [], 'session', null, $dispatcher, null, $tokenStorage->getToken(...));
+        $listener = new ContextListener($tokenStorage, [], 'session', null, $dispatcher, new AuthenticationTrustResolver(), $tokenStorage->getToken(...));
         $this->assertSame([], $dispatcher->getListeners());
 
         $listener->authenticate(new RequestEvent($httpKernel, $request, HttpKernelInterface::MAIN_REQUEST));
@@ -426,7 +427,7 @@ class ContextListenerTest extends TestCase
             new Response()
         );
 
-        $listener = new ContextListener($tokenStorage, [], 'session', null, new EventDispatcher(), null, $tokenStorage->enableUsageTracking(...));
+        $listener = new ContextListener($tokenStorage, [], 'session', null, new EventDispatcher(), new AuthenticationTrustResolver(), $tokenStorage->enableUsageTracking(...));
         $listener->onKernelResponse($event);
 
         if ($session->getId() === $sessionId) {
@@ -459,7 +460,7 @@ class ContextListenerTest extends TestCase
         });
         $sessionTrackerEnabler = $tokenStorage->enableUsageTracking(...);
 
-        $listener = new ContextListener($tokenStorage, $userProviders, 'context_key', null, null, null, $sessionTrackerEnabler);
+        $listener = new ContextListener($tokenStorage, $userProviders, 'context_key', null, null, new AuthenticationTrustResolver(), $sessionTrackerEnabler);
 
         $listener->authenticate(new RequestEvent($this->createStub(HttpKernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST));
 

@@ -54,7 +54,7 @@ class UserBadgeTest extends TestCase
         yield 'Greek characters' => ['ΝιΚόΛΑος', 'νικόλαος', $lowerAndNFKC];
 
         $slugger = new AsciiSlugger('en');
-        $asciiWithPrefix = static fn (string $identifier) => u($slugger->slug($identifier))->ascii()->lower()->prepend('USERID--')->toString();
+        $asciiWithPrefix = static fn (string $identifier) => $slugger->slug($identifier)->ascii()->lower()->prepend('USERID--')->toString();
         yield 'Username with prefix' => ['John Doe 1', 'USERID--john-doe-1', $asciiWithPrefix];
 
         if (!\extension_loaded('intl')) {

@@ -82,7 +82,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
         $credentials = $this->getCredentials($request);
 
         $userBadge = new UserBadge($credentials['username'], $this->userProvider->loadUserByIdentifier(...));
-        $passport = new Passport($userBadge, new PasswordCredentials($credentials['password']), [new RememberMeBadge()]);
+        $passport = new Passport($userBadge, new PasswordCredentials((string) $credentials['password']), [new RememberMeBadge()]);
 
         if ($this->options['enable_csrf']) {
             $passport->addBadge(new CsrfTokenBadge($this->options['csrf_token_id'], $credentials['csrf_token']));
@@ -127,7 +127,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
             throw new BadRequestHttpException(\sprintf('The key "%s" must be a string, "%s" given.', $this->options['username_parameter'], \gettype($credentials['username'])));
         }
 
-        $credentials['username'] = trim($credentials['username']);
+        $credentials['username'] = trim((string) $credentials['username']);
 
         if ('' === $credentials['username']) {
             throw new BadCredentialsException(\sprintf('The key "%s" must be a non-empty string.', $this->options['username_parameter']));

@@ -32,12 +32,22 @@ abstract class Voter implements VoterInterface, CacheableVoterInterface
         $voteResult = self::ACCESS_ABSTAIN;
 
         foreach ($attributes as $attribute) {
+            if (!\is_string($attribute)) {
+                if (\is_int($attribute)) {
+                    // keep integer attributes as-is for voters supporting them
+                } elseif ($attribute instanceof \Stringable) {
+                    $attribute = (string) $attribute;
+                } else {
+                    continue;
+                }
+            }
+
             try {
                 if (!$this->supports($attribute, $subject)) {
                     continue;
                 }
             } catch (\TypeError $e) {
-                if (str_contains($e->getMessage(), 'supports(): Argument #1')) {
+                if (str_contains($e->getMessage(), 'supports(): Argument #1') || str_contains($e->getMessage(), 'Argument #1 ($attribute)')) {
                     continue;
                 }
 

@@ -116,7 +116,7 @@ class SignatureHasher
                 } elseif (!\is_scalar($value) && !$value instanceof \Stringable) {
                     throw new \InvalidArgumentException(\sprintf('The property path "%s" on the user object "%s" must return a value that can be cast to a string, but "%s" was returned.', $property, $user::class, get_debug_type($value)));
                 }
-                $value = base64_encode($value);
+                $value = base64_encode((string) $value);
             }
             hash_update($fieldsHash, ':'.$value);
         }

@@ -81,7 +81,7 @@ class SecurityTokenValueResolverTest extends TestCase
         $tokenStorage = new TokenStorage();
         $tokenStorage->setToken($token);
 
-        $argumentResolver = new ArgumentResolver(null, [new SecurityTokenValueResolver($tokenStorage)]);
+        $argumentResolver = new ArgumentResolver(argumentValueResolvers: [new SecurityTokenValueResolver($tokenStorage)]);
         $this->assertSame([$token], $argumentResolver->getArguments(Request::create('/'), static function (TokenInterface $token) {
         }));
     }
@@ -90,7 +90,7 @@ class SecurityTokenValueResolverTest extends TestCase
     {
         $tokenStorage = new TokenStorage();
 
-        $argumentResolver = new ArgumentResolver(null, [new SecurityTokenValueResolver($tokenStorage), new DefaultValueResolver()]);
+        $argumentResolver = new ArgumentResolver(argumentValueResolvers: [new SecurityTokenValueResolver($tokenStorage), new DefaultValueResolver()]);
         $this->assertSame([null], $argumentResolver->getArguments(Request::create('/'), static function (?TokenInterface $token) {
         }));
     }
@@ -99,7 +99,7 @@ class SecurityTokenValueResolverTest extends TestCase
     {
         $tokenStorage = new TokenStorage();
 
-        $argumentResolver = new ArgumentResolver(null, [new SecurityTokenValueResolver($tokenStorage), new DefaultValueResolver()]);
+        $argumentResolver = new ArgumentResolver(argumentValueResolvers: [new SecurityTokenValueResolver($tokenStorage), new DefaultValueResolver()]);
 
         $this->expectException(HttpException::class);
         $this->expectExceptionMessage('A security token is required but the token storage is empty.');

@@ -58,6 +58,7 @@ class SwitchUserToken extends UsernamePasswordToken
         if (3 > \count($data)) {
             // Support for tokens serialized with version 5.1 or lower of symfony/security-core.
             [$this->originalToken, $parentData] = $data;
+            $this->originatedFromUri = null;
         } else {
             [$this->originalToken, $this->originatedFromUri, $parentData] = $data;
         }

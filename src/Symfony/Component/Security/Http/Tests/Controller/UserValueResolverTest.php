@@ -128,7 +128,7 @@ class UserValueResolverTest extends TestCase
 
     public function testResolveThrowsAccessDeniedWithWrongUserClass()
     {
-        $user = new CustomUser('John', ['ROLE_USER'], 'password', 'hash');
+        $user = new CustomUser('John', ['ROLE_USER'], 'password', true);
         $token = new UsernamePasswordToken($user, 'provider');
         $tokenStorage = new TokenStorage();
         $tokenStorage->setToken($token);
@@ -170,7 +170,7 @@ class UserValueResolverTest extends TestCase
         $tokenStorage = new TokenStorage();
         $tokenStorage->setToken($token);
 
-        $argumentResolver = new ArgumentResolver(null, [new UserValueResolver($tokenStorage)]);
+        $argumentResolver = new ArgumentResolver(argumentValueResolvers: [new UserValueResolver($tokenStorage)]);
         $this->assertSame([$user], $argumentResolver->getArguments(Request::create('/'), static function (UserInterface $user) {
         }));
     }
@@ -179,7 +179,7 @@ class UserValueResolverTest extends TestCase
     {
         $tokenStorage = new TokenStorage();
 
-        $argumentResolver = new ArgumentResolver(null, [new UserValueResolver($tokenStorage), new DefaultValueResolver()]);
+        $argumentResolver = new ArgumentResolver(argumentValueResolvers: [new UserValueResolver($tokenStorage), new DefaultValueResolver()]);
         $this->assertSame([null], $argumentResolver->getArguments(Request::create('/'), static function (?UserInterface $user = null) {
         }));
     }
