@@ -252,6 +252,10 @@ abstract class AbstractTagAwareAdapter implements TagAwareAdapterInterface, TagA
             return true;
         }
 
+        foreach ($keys as $key) {
+            CacheItem::validateKey($key);
+        }
+
         $ok = true;
         $ids = [];
         $tagData = [];

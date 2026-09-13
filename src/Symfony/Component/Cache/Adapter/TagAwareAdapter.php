@@ -236,6 +236,10 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
     public function deleteItems(array $keys): bool
     {
         foreach ($keys as $key) {
+            CacheItem::validateKey($key);
+        }
+
+        foreach ($keys as $key) {
             if ('' !== $key && \is_string($key)) {
                 $keys[] = "\0tags\0".$key; // BC with pools populated before v6.1
             }
