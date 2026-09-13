@@ -33,7 +33,7 @@ class ContextualizedDumperTest extends TestCase
         $wrappedDumper->setColors(true);
 
         $var = 'example';
-        $href = \sprintf('file://%s#L%s', __FILE__, 40);
+        $href = \sprintf('file://%s#L%s', __FILE__, 42);
         $dumper = new ContextualizedDumper($wrappedDumper, [new SourceContextProvider()]);
         $cloner = new VarCloner();
         $data = $cloner->cloneVar($var);

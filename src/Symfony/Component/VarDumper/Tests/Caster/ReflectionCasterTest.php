@@ -490,7 +490,7 @@ class ReflectionCasterTest extends TestCase
               function: "Symfony\Component\VarDumper\Tests\Fixtures\GeneratorDemo::baz"
               this: Symfony\Component\VarDumper\Tests\Fixtures\GeneratorDemo { …}
               %s: {
-                %sGeneratorDemo.php:12 {
+                %sGeneratorDemo.php:14 {
                   Symfony\Component\VarDumper\Tests\Fixtures\GeneratorDemo->baz()
                   › 
                   › public function baz()
@@ -519,8 +519,8 @@ class ReflectionCasterTest extends TestCase
                     ›     yield 1;
                     › }
             %A    }
-                  %s%eTests%eFixtures%eGeneratorDemo.php:20 { …}
-                  %s%eTests%eFixtures%eGeneratorDemo.php:14 { …}
+                  %s%eTests%eFixtures%eGeneratorDemo.php:%d { …}
+                  %s%eTests%eFixtures%eGeneratorDemo.php:%d { …}
             %A  }
                 closed: false
               }

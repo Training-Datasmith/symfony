@@ -68,20 +68,20 @@ class VarClonerTest extends TestCase
         $out = preg_replace('/[ \t]+$/m', '', $out);
         $this->assertStringMatchesFormat(
             <<<EOTXT
-                array:3 [
-                  0 => class@anonymous {#%d
-                    +p1: 123
-                  }
-                  1 => class@anonymous {#%d
-                    +p2: 456
-                  }
-                  2 => DateTime @1262615180 {#%d
-                    date: 2010-01-04 15:26:20.0 +01:00
-                    +foo: "bar"
-                  }
-                ]
-                EOTXT,
-            $out
+    array:3 [
+      0 => class@anonymous {#%d
+        +p1: 123
+      }
+      1 => class@anonymous {#%d
+        +p2: 456
+      }
+      2 => DateTime @1262615180 {#%d
+        date: 2010-01-04 15:26:20.0 +01:00
+        +foo: "bar"
+      }
+    ]
+    EOTXT,
+$out
         );
     }
 
@@ -92,39 +92,39 @@ class VarClonerTest extends TestCase
         $cloner = new VarCloner();
         $clone = $cloner->cloneVar($data);
 
-        $expected = <<<EOTXT
-            Symfony\Component\VarDumper\Cloner\Data Object
-            (
-                [data:Symfony\Component\VarDumper\Cloner\Data:private] => Array
-                    (
-                        [0] => Array
-                            (
-                                [0] => Array
-                                    (
-                                        [1] => 1
-                                    )
+        $expected = <<<'EOTXT'
+Symfony\Component\VarDumper\Cloner\Data Object
+(
+    [position:Symfony\Component\VarDumper\Cloner\Data:private] => 0
+    [key:Symfony\Component\VarDumper\Cloner\Data:private] => 0
+    [maxDepth:Symfony\Component\VarDumper\Cloner\Data:private] => 20
+    [maxItemsPerDepth:Symfony\Component\VarDumper\Cloner\Data:private] => -1
+    [useRefHandles:Symfony\Component\VarDumper\Cloner\Data:private] => -1
+    [context:Symfony\Component\VarDumper\Cloner\Data:private] => Array
+        (
+        )
 
-                            )
+    [data:Symfony\Component\VarDumper\Cloner\Data:private] => Array
+        (
+            [0] => Array
+                (
+                    [0] => Array
+                        (
+                            [1] => 1
+                        )
 
-                        [1] => Array
-                            (
-                                [%s] => 123
-                            )
+                )
 
-                    )
+            [1] => Array
+                (
+                    [%s] => 123
+                )
 
-                [position:Symfony\Component\VarDumper\Cloner\Data:private] => 0
-                [key:Symfony\Component\VarDumper\Cloner\Data:private] => 0
-                [maxDepth:Symfony\Component\VarDumper\Cloner\Data:private] => 20
-                [maxItemsPerDepth:Symfony\Component\VarDumper\Cloner\Data:private] => -1
-                [useRefHandles:Symfony\Component\VarDumper\Cloner\Data:private] => -1
-                [context:Symfony\Component\VarDumper\Cloner\Data:private] => Array
-                    (
-                    )
+        )
 
-            )
+)
 
-            EOTXT;
+EOTXT;
         $this->assertSame(\sprintf($expected, \PHP_INT_MAX), print_r($clone, true));
     }
 
@@ -136,87 +136,87 @@ class VarClonerTest extends TestCase
         $clone = $cloner->cloneVar($json);
 
         $expected = <<<EOTXT
-            Symfony\Component\VarDumper\Cloner\Data Object
-            (
-                [data:Symfony\Component\VarDumper\Cloner\Data:private] => Array
-                    (
-                        [0] => Array
-                            (
-                                [0] => Symfony\Component\VarDumper\Cloner\Stub Object
-                                    (
-                                        [type] => 4
-                                        [class] => stdClass
-                                        [value] => 
-                                        [cut] => 0
-                                        [handle] => %i
-                                        [refCount] => 0
-                                        [position] => 1
-                                        [attr] => Array
-                                            (
-                                            )
+Symfony\Component\VarDumper\Cloner\Data Object
+(
+    [position:Symfony\Component\VarDumper\Cloner\Data:private] => 0
+    [key:Symfony\Component\VarDumper\Cloner\Data:private] => 0
+    [maxDepth:Symfony\Component\VarDumper\Cloner\Data:private] => 20
+    [maxItemsPerDepth:Symfony\Component\VarDumper\Cloner\Data:private] => -1
+    [useRefHandles:Symfony\Component\VarDumper\Cloner\Data:private] => -1
+    [context:Symfony\Component\VarDumper\Cloner\Data:private] => Array
+        (
+        )
 
-                                    )
+    [data:Symfony\Component\VarDumper\Cloner\Data:private] => Array
+        (
+            [0] => Array
+                (
+                    [0] => Symfony\Component\VarDumper\Cloner\Stub Object
+                        (
+                            [type] => 4
+                            [class] => stdClass
+                            [value] => 
+                            [cut] => 0
+                            [handle] => %i
+                            [refCount] => 0
+                            [position] => 1
+                            [attr] => Array
+                                (
+                                )
 
-                            )
+                        )
 
-                        [1] => Array
-                            (
-                                [\000+\0001] => Symfony\Component\VarDumper\Cloner\Stub Object
-                                    (
-                                        [type] => 4
-                                        [class] => stdClass
-                                        [value] => 
-                                        [cut] => 0
-                                        [handle] => %i
-                                        [refCount] => 0
-                                        [position] => 2
-                                        [attr] => Array
-                                            (
-                                            )
+                )
 
-                                    )
+            [1] => Array
+                (
+                    [\000+\0001] => Symfony\Component\VarDumper\Cloner\Stub Object
+                        (
+                            [type] => 4
+                            [class] => stdClass
+                            [value] => 
+                            [cut] => 0
+                            [handle] => %i
+                            [refCount] => 0
+                            [position] => 2
+                            [attr] => Array
+                                (
+                                )
 
-                                [\000+\0002] => Symfony\Component\VarDumper\Cloner\Stub Object
-                                    (
-                                        [type] => 4
-                                        [class] => stdClass
-                                        [value] => 
-                                        [cut] => 0
-                                        [handle] => %i
-                                        [refCount] => 0
-                                        [position] => 3
-                                        [attr] => Array
-                                            (
-                                            )
+                        )
 
-                                    )
+                    [\000+\0002] => Symfony\Component\VarDumper\Cloner\Stub Object
+                        (
+                            [type] => 4
+                            [class] => stdClass
+                            [value] => 
+                            [cut] => 0
+                            [handle] => %i
+                            [refCount] => 0
+                            [position] => 3
+                            [attr] => Array
+                                (
+                                )
 
-                            )
+                        )
 
-                        [2] => Array
-                            (
-                                [\000+\000var] => val
-                            )
+                )
 
-                        [3] => Array
-                            (
-                                [\000+\000var] => val
-                            )
+            [2] => Array
+                (
+                    [\000+\000var] => val
+                )
 
-                    )
+            [3] => Array
+                (
+                    [\000+\000var] => val
+                )
 
-                [position:Symfony\Component\VarDumper\Cloner\Data:private] => 0
-                [key:Symfony\Component\VarDumper\Cloner\Data:private] => 0
-                [maxDepth:Symfony\Component\VarDumper\Cloner\Data:private] => 20
-                [maxItemsPerDepth:Symfony\Component\VarDumper\Cloner\Data:private] => -1
-                [useRefHandles:Symfony\Component\VarDumper\Cloner\Data:private] => -1
-                [context:Symfony\Component\VarDumper\Cloner\Data:private] => Array
-                    (
-                    )
+        )
 
-            )
+)
 
-            EOTXT;
+EOTXT;
         $this->assertStringMatchesFormat($expected, print_r($clone, true));
     }
 
@@ -267,128 +267,128 @@ class VarClonerTest extends TestCase
         $clone = $cloner->cloneVar($data);
 
         $expected = <<<EOTXT
-            Symfony\Component\VarDumper\Cloner\Data Object
-            (
-                [data:Symfony\Component\VarDumper\Cloner\Data:private] => Array
-                    (
-                        [0] => Array
-                            (
-                                [0] => Array
-                                    (
-                                        [2] => 1
-                                    )
+Symfony\Component\VarDumper\Cloner\Data Object
+(
+    [position:Symfony\Component\VarDumper\Cloner\Data:private] => 0
+    [key:Symfony\Component\VarDumper\Cloner\Data:private] => 0
+    [maxDepth:Symfony\Component\VarDumper\Cloner\Data:private] => 20
+    [maxItemsPerDepth:Symfony\Component\VarDumper\Cloner\Data:private] => -1
+    [useRefHandles:Symfony\Component\VarDumper\Cloner\Data:private] => -1
+    [context:Symfony\Component\VarDumper\Cloner\Data:private] => Array
+        (
+        )
 
-                            )
+    [data:Symfony\Component\VarDumper\Cloner\Data:private] => Array
+        (
+            [0] => Array
+                (
+                    [0] => Array
+                        (
+                            [2] => 1
+                        )
 
-                        [1] => Array
-                            (
-                                [0] => Array
-                                    (
-                                        [2] => 2
-                                    )
+                )
 
-                                [1] => Array
-                                    (
-                                        [2] => 3
-                                    )
+            [1] => Array
+                (
+                    [0] => Array
+                        (
+                            [2] => 2
+                        )
 
-                                [2] => Array
-                                    (
-                                        [2] => 4
-                                    )
+                    [1] => Array
+                        (
+                            [2] => 3
+                        )
 
-                                [3] => Level 1 Item 0
-                                [4] => Array
-                                    (
-                                        [2] => 5
-                                    )
+                    [2] => Array
+                        (
+                            [2] => 4
+                        )
 
-                            )
+                    [3] => Level 1 Item 0
+                    [4] => Array
+                        (
+                            [2] => 5
+                        )
 
-                        [2] => Array
-                            (
-                                [0] => Array
-                                    (
-                                        [2] => 6
-                                    )
+                )
 
-                                [1] => Array
-                                    (
-                                        [0] => 2
-                                        [1] => 7
-                                    )
+            [2] => Array
+                (
+                    [0] => Array
+                        (
+                            [2] => 6
+                        )
 
-                                [2] => Array
-                                    (
-                                        [0] => 1
-                                        [2] => 0
-                                    )
+                    [1] => Array
+                        (
+                            [0] => 2
+                            [1] => 7
+                        )
 
-                            )
+                    [2] => Array
+                        (
+                            [0] => 1
+                            [2] => 0
+                        )
 
-                        [3] => Array
-                            (
-                                [0] => Array
-                                    (
-                                        [0] => 1
-                                        [2] => 0
-                                    )
+                )
 
-                                [1] => Level 2 Item 0
-                            )
+            [3] => Array
+                (
+                    [0] => Array
+                        (
+                            [0] => 1
+                            [2] => 0
+                        )
 
-                        [4] => Array
-                            (
-                                [0] => Level 2 Item 1
-                            )
+                    [1] => Level 2 Item 0
+                )
 
-                        [5] => Array
-                            (
-                                [0] => Symfony\Component\VarDumper\Cloner\Stub Object
-                                    (
-                                        [type] => 2
-                                        [class] => 2
-                                        [value] => ABCDEFGHIJKLMNOPQRST
-                                        [cut] => 6
-                                        [handle] => 0
-                                        [refCount] => 0
-                                        [position] => 0
-                                        [attr] => Array
-                                            (
-                                            )
+            [4] => Array
+                (
+                    [0] => Level 2 Item 1
+                )
 
-                                    )
+            [5] => Array
+                (
+                    [0] => Symfony\Component\VarDumper\Cloner\Stub Object
+                        (
+                            [type] => 2
+                            [class] => 2
+                            [value] => ABCDEFGHIJKLMNOPQRST
+                            [cut] => 6
+                            [handle] => 0
+                            [refCount] => 0
+                            [position] => 0
+                            [attr] => Array
+                                (
+                                )
 
-                                [1] => SHORT
-                            )
+                        )
 
-                        [6] => Array
-                            (
-                                [0] => Level 3 Item 0
-                                [1] => Level 3 Item 1
-                                [2] => Level 3 Item 2
-                                [3] => Level 3 Item 3
-                            )
+                    [1] => SHORT
+                )
 
-                        [7] => Array
-                            (
-                                [999] => Level 3 Item 4
-                            )
+            [6] => Array
+                (
+                    [0] => Level 3 Item 0
+                    [1] => Level 3 Item 1
+                    [2] => Level 3 Item 2
+                    [3] => Level 3 Item 3
+                )
 
-                    )
+            [7] => Array
+                (
+                    [999] => Level 3 Item 4
+                )
 
-                [position:Symfony\Component\VarDumper\Cloner\Data:private] => 0
-                [key:Symfony\Component\VarDumper\Cloner\Data:private] => 0
-                [maxDepth:Symfony\Component\VarDumper\Cloner\Data:private] => 20
-                [maxItemsPerDepth:Symfony\Component\VarDumper\Cloner\Data:private] => -1
-                [useRefHandles:Symfony\Component\VarDumper\Cloner\Data:private] => -1
-                [context:Symfony\Component\VarDumper\Cloner\Data:private] => Array
-                    (
-                    )
+        )
 
-            )
+)
 
-            EOTXT;
+EOTXT;
         $this->assertStringMatchesFormat($expected, print_r($clone, true));
     }
 
@@ -405,6 +405,19 @@ class VarClonerTest extends TestCase
 
         $expected = <<<'EOTXT'
             object(Symfony\Component\VarDumper\Cloner\Data)#%d (7) {
+              ["position":"Symfony\Component\VarDumper\Cloner\Data":private]=>
+              int(0)
+              ["key":"Symfony\Component\VarDumper\Cloner\Data":private]=>
+              int(0)
+              ["maxDepth":"Symfony\Component\VarDumper\Cloner\Data":private]=>
+              int(20)
+              ["maxItemsPerDepth":"Symfony\Component\VarDumper\Cloner\Data":private]=>
+              int(-1)
+              ["useRefHandles":"Symfony\Component\VarDumper\Cloner\Data":private]=>
+              int(-1)
+              ["context":"Symfony\Component\VarDumper\Cloner\Data":private]=>
+              array(0) {
+              }
               ["data":"Symfony\Component\VarDumper\Cloner\Data":private]=>
               array(2) {
                 [0]=>
@@ -439,19 +452,6 @@ class VarClonerTest extends TestCase
                   }
                 }
               }
-              ["position":"Symfony\Component\VarDumper\Cloner\Data":private]=>
-              int(0)
-              ["key":"Symfony\Component\VarDumper\Cloner\Data":private]=>
-              int(0)
-              ["maxDepth":"Symfony\Component\VarDumper\Cloner\Data":private]=>
-              int(20)
-              ["maxItemsPerDepth":"Symfony\Component\VarDumper\Cloner\Data":private]=>
-              int(-1)
-              ["useRefHandles":"Symfony\Component\VarDumper\Cloner\Data":private]=>
-              int(-1)
-              ["context":"Symfony\Component\VarDumper\Cloner\Data":private]=>
-              array(0) {
-              }
             }
 
             EOTXT;
@@ -473,50 +473,50 @@ class VarClonerTest extends TestCase
         $clone = $cloner->cloneVar($this);
 
         $expected = <<<EOTXT
-            Symfony\Component\VarDumper\Cloner\Data Object
-            (
-                [data:Symfony\Component\VarDumper\Cloner\Data:private] => Array
-                    (
-                        [0] => Array
-                            (
-                                [0] => Symfony\Component\VarDumper\Cloner\Stub Object
-                                    (
-                                        [type] => 4
-                                        [class] => %s
-                                        [value] => 
-                                        [cut] => 0
-                                        [handle] => %i
-                                        [refCount] => 0
-                                        [position] => 1
-                                        [attr] => Array
-                                            (
-                                                [file] => %a%eVarClonerTest.php
-                                                [line] => 26
-                                            )
+Symfony\Component\VarDumper\Cloner\Data Object
+(
+    [position:Symfony\Component\VarDumper\Cloner\Data:private] => 0
+    [key:Symfony\Component\VarDumper\Cloner\Data:private] => 0
+    [maxDepth:Symfony\Component\VarDumper\Cloner\Data:private] => 20
+    [maxItemsPerDepth:Symfony\Component\VarDumper\Cloner\Data:private] => -1
+    [useRefHandles:Symfony\Component\VarDumper\Cloner\Data:private] => -1
+    [context:Symfony\Component\VarDumper\Cloner\Data:private] => Array
+        (
+        )
 
-                                    )
+    [data:Symfony\Component\VarDumper\Cloner\Data:private] => Array
+        (
+            [0] => Array
+                (
+                    [0] => Symfony\Component\VarDumper\Cloner\Stub Object
+                        (
+                            [type] => 4
+                            [class] => %s
+                            [value] => 
+                            [cut] => 0
+                            [handle] => %i
+                            [refCount] => 0
+                            [position] => 1
+                            [attr] => Array
+                                (
+                                    [file] => %a%eVarClonerTest.php
+                                    [line] => 28
+                                )
 
-                            )
+                        )
 
-                        [1] => Array
-                            (
-                                [foo] => 124
-                            )
+                )
 
-                    )
+            [1] => Array
+                (
+                    [foo] => 124
+                )
 
-                [position:Symfony\Component\VarDumper\Cloner\Data:private] => 0
-                [key:Symfony\Component\VarDumper\Cloner\Data:private] => 0
-                [maxDepth:Symfony\Component\VarDumper\Cloner\Data:private] => 20
-                [maxItemsPerDepth:Symfony\Component\VarDumper\Cloner\Data:private] => -1
-                [useRefHandles:Symfony\Component\VarDumper\Cloner\Data:private] => -1
-                [context:Symfony\Component\VarDumper\Cloner\Data:private] => Array
-                    (
-                    )
+        )
 
-            )
+)
 
-            EOTXT;
+EOTXT;
         $this->assertStringMatchesFormat($expected, print_r($clone, true));
     }
 
@@ -530,6 +530,15 @@ class VarClonerTest extends TestCase
         $expected = <<<'EOTXT'
             Symfony\Component\VarDumper\Cloner\Data Object
             (
+                [position:Symfony\Component\VarDumper\Cloner\Data:private] => 0
+                [key:Symfony\Component\VarDumper\Cloner\Data:private] => 0
+                [maxDepth:Symfony\Component\VarDumper\Cloner\Data:private] => 20
+                [maxItemsPerDepth:Symfony\Component\VarDumper\Cloner\Data:private] => -1
+                [useRefHandles:Symfony\Component\VarDumper\Cloner\Data:private] => -1
+                [context:Symfony\Component\VarDumper\Cloner\Data:private] => Array
+                    (
+                    )
+
                 [data:Symfony\Component\VarDumper\Cloner\Data:private] => Array
                     (
                         [0] => Array
@@ -546,7 +555,7 @@ class VarClonerTest extends TestCase
                                         [attr] => Array
                                             (
                                                 [file] => %s
-                                                [line] => 5
+                                                [line] => 7
                                             )
 
                                     )
@@ -618,15 +627,6 @@ class VarClonerTest extends TestCase
 
                     )
 
-                [position:Symfony\Component\VarDumper\Cloner\Data:private] => 0
-                [key:Symfony\Component\VarDumper\Cloner\Data:private] => 0
-                [maxDepth:Symfony\Component\VarDumper\Cloner\Data:private] => 20
-                [maxItemsPerDepth:Symfony\Component\VarDumper\Cloner\Data:private] => -1
-                [useRefHandles:Symfony\Component\VarDumper\Cloner\Data:private] => -1
-                [context:Symfony\Component\VarDumper\Cloner\Data:private] => Array
-                    (
-                    )
-
             )
 
             EOTXT;
@@ -643,6 +643,15 @@ class VarClonerTest extends TestCase
         $expected = <<<'EOTXT'
             Symfony\Component\VarDumper\Cloner\Data Object
             (
+                [position:Symfony\Component\VarDumper\Cloner\Data:private] => 0
+                [key:Symfony\Component\VarDumper\Cloner\Data:private] => 0
+                [maxDepth:Symfony\Component\VarDumper\Cloner\Data:private] => 20
+                [maxItemsPerDepth:Symfony\Component\VarDumper\Cloner\Data:private] => -1
+                [useRefHandles:Symfony\Component\VarDumper\Cloner\Data:private] => -1
+                [context:Symfony\Component\VarDumper\Cloner\Data:private] => Array
+                    (
+                    )
+
                 [data:Symfony\Component\VarDumper\Cloner\Data:private] => Array
                     (
                         [0] => Array
@@ -659,7 +668,7 @@ class VarClonerTest extends TestCase
                                         [attr] => Array
                                             (
                                                 [file] => %s
-                                                [line] => 5
+                                                [line] => 7
                                             )
 
                                     )
@@ -680,7 +689,7 @@ class VarClonerTest extends TestCase
                                         [attr] => Array
                                             (
                                                 [file] => %s
-                                                [line] => 5
+                                                [line] => 7
                                             )
 
                                     )
@@ -697,7 +706,7 @@ class VarClonerTest extends TestCase
                                         [attr] => Array
                                             (
                                                 [file] => %s
-                                                [line] => 5
+                                                [line] => 7
                                             )
 
                                     )
@@ -715,15 +724,6 @@ class VarClonerTest extends TestCase
                                 [value] => D
                             )
 
-                    )
-
-                [position:Symfony\Component\VarDumper\Cloner\Data:private] => 0
-                [key:Symfony\Component\VarDumper\Cloner\Data:private] => 0
-                [maxDepth:Symfony\Component\VarDumper\Cloner\Data:private] => 20
-                [maxItemsPerDepth:Symfony\Component\VarDumper\Cloner\Data:private] => -1
-                [useRefHandles:Symfony\Component\VarDumper\Cloner\Data:private] => -1
-                [context:Symfony\Component\VarDumper\Cloner\Data:private] => Array
-                    (
                     )
 
             )

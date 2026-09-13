@@ -178,7 +178,7 @@ class CliDumper extends AbstractDumper
                 break;
 
             default:
-                $attr += ['value' => $this->utf8Encode($value)];
+                $attr += ['value' => $this->utf8Encode(\is_string($value) || null === $value ? $value : (string) $value)];
                 $value = $this->utf8Encode($type);
                 break;
         }

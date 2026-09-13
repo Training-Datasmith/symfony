@@ -32,7 +32,7 @@ if (!function_exists('dump')) {
             $k = 0;
         } else {
             foreach ($vars as $k => $v) {
-                VarDumper::dump($v, is_int($k) ? 1 + $k : $k);
+                VarDumper::dump($v, is_int($k) ? (string) (1 + $k) : $k);
             }
         }
 
@@ -61,7 +61,7 @@ if (!function_exists('dd')) {
             VarDumper::dump($vars[0]);
         } else {
             foreach ($vars as $k => $v) {
-                VarDumper::dump($v, is_int($k) ? 1 + $k : $k);
+                VarDumper::dump($v, is_int($k) ? (string) (1 + $k) : $k);
             }
         }
 

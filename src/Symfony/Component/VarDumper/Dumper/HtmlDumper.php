@@ -875,7 +875,7 @@ class HtmlDumper extends CliDumper
             $v = \sprintf('<span class="%s">%s</span>', $ellipsisClass, substr($v, 0, -\strlen($label)));
 
             if (!empty($attr['ellipsis-tail'])) {
-                $tail = \strlen(esc(substr($value, -$attr['ellipsis'], $attr['ellipsis-tail'])));
+                $tail = \strlen(esc(substr($value, -$attr['ellipsis'], (int) $attr['ellipsis-tail'])));
                 $v .= \sprintf('<span class="%s">%s</span><span class="sf-dump-ellipsis-tail">%s</span>', $ellipsisClass, substr($label, 0, $tail), substr($label, $tail));
             } else {
                 $v .= \sprintf('<span class="sf-dump-ellipsis-tail">%s</span>', $label);

@@ -112,7 +112,21 @@ class ExceptionCaster
         unset($a[$sPrefix.'file'], $a[$sPrefix.'line'], $a[$sPrefix.'trace']);
         $a[Caster::PREFIX_VIRTUAL.'trace'] = new TraceStub($trace, self::$traceArgs);
 
-        return $a;
+        $countKey = Caster::PREFIX_DYNAMIC.'count';
+        if (!isset($a[$countKey]) && isset($a['count'])) {
+            $countKey = 'count';
+        }
+        $ordered = [];
+        if (isset($a[$countKey])) {
+            $ordered[$countKey] = $a[$countKey];
+            unset($a[$countKey]);
+        }
+        if (isset($a[$s])) {
+            $ordered[$s] = $a[$s];
+            unset($a[$s]);
+        }
+
+        return $ordered + $a;
     }
 
     public static function castTraceStub(TraceStub $trace, array $a, Stub $stub, bool $isNested): array

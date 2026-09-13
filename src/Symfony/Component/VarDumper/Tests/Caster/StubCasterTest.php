@@ -187,7 +187,7 @@ class StubCasterTest extends TestCase
 
         $expectedDump = <<<'EODUMP'
             <foo></foo><bar><span class=sf-dump-note>array:1</span> [<samp data-depth=1 class=sf-dump-expanded>
-              <span class=sf-dump-index>0</span> => "<a href="%sFooInterface.php:10" rel="noopener noreferrer"><span class=sf-dump-str title="40 characters">hello(?stdClass $a, ?stdClass $b = null)</span></a>"
+              <span class=sf-dump-index>0</span> => "<a href="%sFooInterface.php:12" rel="noopener noreferrer"><span class=sf-dump-str title="40 characters">hello(?stdClass $a, ?stdClass $b = null)</span></a>"
             </samp>]
             </bar>
             EODUMP;
@@ -228,7 +228,7 @@ class StubCasterTest extends TestCase
 
         $expectedDump = <<<'EODUMP'
             <foo></foo><bar><span class=sf-dump-note>array:1</span> [<samp data-depth=1 class=sf-dump-expanded>
-              <span class=sf-dump-index>0</span> => "<a href="%sFooInterface.php:5" rel="noopener noreferrer"><span class=sf-dump-str title="5 characters">hello</span></a>"
+              <span class=sf-dump-index>0</span> => "<a href="%sFooInterface.php:7" rel="noopener noreferrer"><span class=sf-dump-str title="5 characters">hello</span></a>"
             </samp>]
             </bar>
             EODUMP;
@@ -249,7 +249,7 @@ class StubCasterTest extends TestCase
 
         $expectedDump = <<<'EODUMP'
             <foo></foo><bar><span class=sf-dump-note>array:1</span> [<samp data-depth=1 class=sf-dump-expanded>
-              <span class=sf-dump-index>0</span> => "<a href="%sStubCasterTest.php:239" rel="noopener noreferrer"><span class=sf-dump-str title="19 characters">Exception@anonymous</span></a>"
+              <span class=sf-dump-index>0</span> => "<a href="%sStubCasterTest.php:241" rel="noopener noreferrer"><span class=sf-dump-str title="19 characters">Exception@anonymous</span></a>"
             </samp>]
             </bar>
             EODUMP;

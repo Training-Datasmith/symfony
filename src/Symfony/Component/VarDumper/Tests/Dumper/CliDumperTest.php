@@ -355,11 +355,11 @@ class CliDumperTest extends TestCase
                   ⚠: Symfony\Component\VarDumper\Exception\ThrowingCasterException {#%d
                     #message: "Unexpected Exception thrown from a caster: Foobar"
                     trace: {
-                      %sTwig.php:2 {
+                      %sTwig.php:%d {
                         __TwigTemplate_VarDumperFixture_u75a09->doDisplay(array \$context, array \$blocks = []): array
-                        › foo bar
-                        ›   twig source
-                        › 
+                        ›     // line 2
+                        ›     throw new \Exception('Foobar');
+                        › }
                       }
                       %A%eTemplate.php:%d { …}
                       %s%eTests%eDumper%eCliDumperTest.php:%d { …}
