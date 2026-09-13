@@ -31,7 +31,8 @@ final class MailtrapTransportFactory extends AbstractTransportFactory
         if ('mailtrap+api' === $scheme || 'mailtrap+sandbox' === $scheme) {
             $host = 'default' === $dsn->getHost() ? null : $dsn->getHost();
             $port = $dsn->getPort();
-            $inboxId = 'mailtrap+sandbox' === $scheme ? $dsn->getOption('inboxId') : null;
+            $inboxIdOption = $dsn->getOption('inboxId');
+            $inboxId = 'mailtrap+sandbox' === $scheme && null !== $inboxIdOption ? (int) $inboxIdOption : null;
 
             return (new MailtrapApiTransport($user, $this->client, $this->dispatcher, $this->logger, $inboxId))->setHost($host)->setPort($port);
         }

@@ -261,7 +261,7 @@ class Email extends Message
     {
         [$priority] = sscanf($this->getHeaders()->getHeaderBody('X-Priority') ?? '', '%[1-5]');
 
-        return $priority ?? 3;
+        return isset($priority) ? (int) $priority : 3;
     }
 
     /**

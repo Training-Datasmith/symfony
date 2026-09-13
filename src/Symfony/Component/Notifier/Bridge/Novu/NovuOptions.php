@@ -34,7 +34,7 @@ class NovuOptions implements MessageOptionsInterface
      * @see https://docs.novu.co/channels/email/#sending-email-overrides
      */
     public function __construct(
-        private readonly ?string $subscriberId = null,
+        private readonly string|int|null $subscriberId = null,
         private readonly ?string $firstName = null,
         private readonly ?string $lastName = null,
         private readonly ?string $email = null,
@@ -61,6 +61,6 @@ class NovuOptions implements MessageOptionsInterface
 
     public function getRecipientId(): ?string
     {
-        return $this->subscriberId ?? null;
+        return null !== $this->subscriberId ? (string) $this->subscriberId : null;
     }
 }

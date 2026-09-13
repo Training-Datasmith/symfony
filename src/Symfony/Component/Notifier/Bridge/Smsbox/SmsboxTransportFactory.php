@@ -35,7 +35,7 @@ final class SmsboxTransportFactory extends AbstractTransportFactory
 
         $apiKey = $this->getUser($dsn);
         $mode = Mode::from($dsn->getRequiredOption('mode'));
-        $strategy = Strategy::from($dsn->getRequiredOption('strategy'));
+        $strategy = Strategy::from((int) $dsn->getRequiredOption('strategy'));
         $sender = $dsn->getOption('sender');
 
         if (Mode::Expert === $mode) {

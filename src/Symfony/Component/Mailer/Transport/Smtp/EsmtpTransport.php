@@ -39,7 +39,7 @@ class EsmtpTransport extends SmtpTransport
 
     public function __construct(string $host = 'localhost', int $port = 0, ?bool $tls = null, ?EventDispatcherInterface $dispatcher = null, ?LoggerInterface $logger = null, ?AbstractStream $stream = null, ?array $authenticators = null)
     {
-        parent::__construct($stream, $dispatcher, $logger);
+        parent::__construct($stream ?? new SocketStream(), $dispatcher, $logger);
 
         if (null === $authenticators) {
             // fallback to default authenticators

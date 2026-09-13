@@ -46,7 +46,7 @@ final class SendgridPayloadConverter implements PayloadConverterInterface
             $event = new MailerEngagementEvent($name, $payload['sg_message_id'] ?? $payload['sg_event_id'], $payload);
         }
 
-        if (!$date = \DateTimeImmutable::createFromFormat('U', $payload['timestamp'])) {
+        if (!$date = \DateTimeImmutable::createFromFormat('U', (string) $payload['timestamp'])) {
             throw new ParseException(\sprintf('Invalid date "%s".', $payload['timestamp']));
         }
 

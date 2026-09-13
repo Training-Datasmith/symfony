@@ -44,7 +44,7 @@ final class MailtrapPayloadConverter implements PayloadConverterInterface
             $event = new MailerEngagementEvent($type, $payload['message_id'], $payload);
         }
 
-        if (!$date = \DateTimeImmutable::createFromFormat('U', $payload['timestamp'])) {
+        if (!$date = \DateTimeImmutable::createFromFormat('U', (string) $payload['timestamp'])) {
             throw new ParseException(\sprintf('Invalid date "%s".', $payload['timestamp']));
         }
 

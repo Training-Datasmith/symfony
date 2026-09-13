@@ -50,7 +50,7 @@ final class BrevoPayloadConverter implements PayloadConverterInterface
             $event = new MailerEngagementEvent($name, $payload['message-id'], $payload);
         }
 
-        if (!$date = \DateTimeImmutable::createFromFormat('U', $payload['ts_event'])) {
+        if (!$date = \DateTimeImmutable::createFromFormat('U', (string) $payload['ts_event'])) {
             throw new ParseException(\sprintf('Invalid date "%s".', $payload['ts_event']));
         }
 

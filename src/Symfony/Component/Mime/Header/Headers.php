@@ -121,9 +121,9 @@ final class Headers
     /**
      * @return $this
      */
-    public function addTextHeader(string $name, string $value): static
+    public function addTextHeader(string $name, string|int|float|bool $value): static
     {
-        return $this->add(new UnstructuredHeader($name, $value));
+        return $this->add(new UnstructuredHeader($name, (string) $value));
     }
 
     /**

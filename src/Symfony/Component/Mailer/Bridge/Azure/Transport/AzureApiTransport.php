@@ -259,9 +259,9 @@ final class AzureApiTransport extends AbstractApiTransport
         return $headers;
     }
 
-    private function getPriorityLevel(string $priority): string
+    private function getPriorityLevel(int $priority): string
     {
-        return match ((int) $priority) {
+        return match ($priority) {
             Email::PRIORITY_HIGHEST => 'highest',
             Email::PRIORITY_HIGH => 'high',
             Email::PRIORITY_NORMAL => 'normal',

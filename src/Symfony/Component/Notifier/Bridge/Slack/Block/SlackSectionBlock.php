@@ -26,11 +26,11 @@ final class SlackSectionBlock extends AbstractSlackBlock
     /**
      * @return $this
      */
-    public function text(string $text, bool $markdown = true, bool $emoji = true, bool $verbatim = false): static
+    public function text(string|int|float $text, bool $markdown = true, bool $emoji = true, bool $verbatim = false): static
     {
         $this->options['text'] = [
             'type' => $markdown ? 'mrkdwn' : 'plain_text',
-            'text' => $text,
+            'text' => (string) $text,
         ];
 
         // verbatim is only available for markdown
@@ -46,7 +46,7 @@ final class SlackSectionBlock extends AbstractSlackBlock
     /**
      * @return $this
      */
-    public function field(string $text, bool $markdown = true, bool $emoji = true, bool $verbatim = false): static
+    public function field(string|int|float $text, bool $markdown = true, bool $emoji = true, bool $verbatim = false): static
     {
         if (10 === \count($this->options['fields'] ?? [])) {
             throw new \LogicException('Maximum number of fields should not exceed 10.');
@@ -54,7 +54,7 @@ final class SlackSectionBlock extends AbstractSlackBlock
 
         $field = [
             'type' => $markdown ? 'mrkdwn' : 'plain_text',
-            'text' => $text,
+            'text' => (string) $text,
         ];
 
         // verbatim is only available for markdown

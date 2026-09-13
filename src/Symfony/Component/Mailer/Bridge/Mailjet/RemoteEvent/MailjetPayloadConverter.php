@@ -30,7 +30,7 @@ final class MailjetPayloadConverter implements PayloadConverterInterface
                 'blocked' => MailerDeliveryEvent::DROPPED,
             };
 
-            $event = new MailerDeliveryEvent($name, $payload['MessageID'], $payload);
+            $event = new MailerDeliveryEvent($name, (string) $payload['MessageID'], $payload);
             $event->setReason($this->getReason($payload));
         } else {
             $name = match ($payload['event']) {
@@ -40,10 +40,10 @@ final class MailjetPayloadConverter implements PayloadConverterInterface
                 'unsub' => MailerEngagementEvent::UNSUBSCRIBE,
                 default => throw new ParseException(\sprintf('Unsupported event "%s".', $payload['event'])),
             };
-            $event = new MailerEngagementEvent($name, $payload['MessageID'], $payload);
+            $event = new MailerEngagementEvent($name, (string) $payload['MessageID'], $payload);
         }
 
-        if (!$date = \DateTimeImmutable::createFromFormat('U', $payload['time'])) {
+        if (!$date = \DateTimeImmutable::createFromFormat('U', (string) $payload['time'])) {
             throw new ParseException(\sprintf('Invalid date "%s".', $payload['time']));
         }
 

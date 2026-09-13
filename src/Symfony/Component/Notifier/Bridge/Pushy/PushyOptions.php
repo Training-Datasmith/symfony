@@ -116,11 +116,11 @@ final class PushyOptions implements MessageOptionsInterface
      */
     public function schedule(int $seconds): static
     {
-        if (false === \DateTime::createFromFormat('U', $seconds)) {
+        if (false === \DateTime::createFromFormat('U', (string) $seconds)) {
             throw new InvalidArgumentException('Pushy notification schedule time must be correct Unix timestamp.');
         }
 
-        if (\DateTime::createFromFormat('U', $seconds) >= new \DateTime('+1 year')) {
+        if (\DateTime::createFromFormat('U', (string) $seconds) >= new \DateTime('+1 year')) {
             throw new InvalidArgumentException('Pushy notification schedule time cannot exceed 1 year.');
         }
 

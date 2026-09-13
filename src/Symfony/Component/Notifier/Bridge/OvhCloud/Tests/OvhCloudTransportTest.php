@@ -129,7 +129,7 @@ final class OvhCloudTransportTest extends TransportTestCase
             ],
         ]);
         $responses = [
-            new MockResponse(time()),
+            new MockResponse((string) time()),
             new MockResponse($data),
         ];
 

@@ -25,7 +25,7 @@ final class SlackContextBlock extends AbstractSlackBlock
     /**
      * @return $this
      */
-    public function text(string $text, bool $markdown = true, bool $emoji = true, bool $verbatim = false): static
+    public function text(string|int|float $text, bool $markdown = true, bool $emoji = true, bool $verbatim = false): static
     {
         if (self::ELEMENT_LIMIT === \count($this->options['elements'] ?? [])) {
             throw new \LogicException(\sprintf('Maximum number of elements should not exceed %d.', self::ELEMENT_LIMIT));
@@ -33,7 +33,7 @@ final class SlackContextBlock extends AbstractSlackBlock
 
         $element = [
             'type' => $markdown ? 'mrkdwn' : 'plain_text',
-            'text' => $text,
+            'text' => (string) $text,
         ];
         if ($markdown) {
             $element['verbatim'] = $verbatim;
@@ -48,7 +48,7 @@ final class SlackContextBlock extends AbstractSlackBlock
     /**
      * @return $this
      */
-    public function image(string $url, string $text): static
+    public function image(string|int|float $url, string|int|float $text): static
     {
         if (self::ELEMENT_LIMIT === \count($this->options['elements'] ?? [])) {
             throw new \LogicException(\sprintf('Maximum number of elements should not exceed %d.', self::ELEMENT_LIMIT));
@@ -56,8 +56,8 @@ final class SlackContextBlock extends AbstractSlackBlock
 
         $this->options['elements'][] = [
             'type' => 'image',
-            'image_url' => $url,
-            'alt_text' => $text,
+            'image_url' => (string) $url,
+            'alt_text' => (string) $text,
         ];
 
         return $this;

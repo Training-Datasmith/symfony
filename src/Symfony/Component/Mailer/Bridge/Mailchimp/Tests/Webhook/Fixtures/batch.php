@@ -19,7 +19,7 @@ $wh1 = new MailerEngagementEvent(
 $wh1->setRecipientEmail('foo@example.com');
 $wh1->setTags(['my_tag_1', 'my_tag_2']);
 $wh1->setMetadata(['mandrill-var-1' => 'foo', 'mandrill-var-2' => 'bar']);
-$wh1->setDate(\DateTimeImmutable::createFromFormat('U', 1365109999));
+$wh1->setDate(\DateTimeImmutable::createFromFormat('U', '1365109999'));
 
 $wh2 = new MailerDeliveryEvent(
     MailerDeliveryEvent::DEFERRED,
@@ -35,7 +35,7 @@ $wh2 = new MailerDeliveryEvent(
 $wh2->setRecipientEmail('foo@example.com');
 $wh2->setTags(['my_tag_1', 'my_tag_2']);
 $wh2->setMetadata(['mandrill-var-1' => 'foo', 'mandrill-var-2' => 'bar']);
-$wh2->setDate(\DateTimeImmutable::createFromFormat('U', 1365109999));
+$wh2->setDate(\DateTimeImmutable::createFromFormat('U', '1365109999'));
 $wh2->setReason('');
 
 return [$wh1, $wh2];

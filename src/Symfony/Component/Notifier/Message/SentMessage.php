@@ -40,9 +40,9 @@ class SentMessage
         return $this->transport;
     }
 
-    public function setMessageId(string $id): void
+    public function setMessageId(string|int|float $id): void
     {
-        $this->messageId = $id;
+        $this->messageId = (string) $id;
     }
 
     public function getMessageId(): ?string

@@ -36,7 +36,7 @@ final class ClickSendTransport extends AbstractTransport
         #[\SensitiveParameter] private readonly string $apiKey,
         private readonly ?string $from = null,
         private readonly ?string $source = null,
-        private readonly ?string $listId = null,
+        private readonly string|int|null $listId = null,
         private readonly ?string $fromEmail = null,
         ?HttpClientInterface $client = null,
         ?EventDispatcherInterface $dispatcher = null,

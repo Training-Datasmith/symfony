@@ -46,7 +46,7 @@ final class MailchimpPayloadConverter implements PayloadConverterInterface
             $event = new MailerEngagementEvent($name, $payload['msg']['_id'], $payload);
         }
 
-        if (!$date = \DateTimeImmutable::createFromFormat('U', $payload['msg']['ts'])) {
+        if (!$date = \DateTimeImmutable::createFromFormat('U', (string) $payload['msg']['ts'])) {
             throw new ParseException(\sprintf('Invalid date "%s".', $payload['msg']['ts']));
         }
         $event->setDate($date);
