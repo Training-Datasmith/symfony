@@ -110,7 +110,7 @@ class ArrayAdapter implements AdapterInterface, CacheInterface, NamespacedPoolIn
 
             return true;
         }
-        \assert('' !== CacheItem::validateKey($key));
+        CacheItem::validateKey($key);
 
         return isset($this->expiries[$key]) && !$this->deleteItem($key);
     }
@@ -133,14 +133,14 @@ class ArrayAdapter implements AdapterInterface, CacheInterface, NamespacedPoolIn
 
     public function getItems(array $keys = []): iterable
     {
-        \assert(self::validateKeys($keys));
+        self::validateKeys($keys);
 
         return $this->generateItems($keys, $this->getCurrentTime(), self::$createCacheItem);
     }
 
     public function deleteItem(mixed $key): bool
     {
-        \assert('' !== CacheItem::validateKey($key));
+        CacheItem::validateKey($key);
         unset($this->values[$key], $this->tags[$key], $this->expiries[$key]);
 
         return true;

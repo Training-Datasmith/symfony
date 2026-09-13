@@ -45,7 +45,7 @@ class ProxyAdapter implements AdapterInterface, NamespacedPoolInterface, CacheIn
                 $pool = $pool->withSubNamespace($namespace);
                 $this->namespace = $namespace = '';
             } else {
-                \assert('' !== CacheItem::validateKey($namespace));
+                CacheItem::validateKey($namespace);
                 $this->namespace = $namespace;
             }
         }
@@ -223,7 +223,7 @@ class ProxyAdapter implements AdapterInterface, NamespacedPoolInterface, CacheIn
 
     private function getId(mixed $key): string
     {
-        \assert('' !== CacheItem::validateKey($key));
+        CacheItem::validateKey($key);
 
         return $this->namespace.$key;
     }

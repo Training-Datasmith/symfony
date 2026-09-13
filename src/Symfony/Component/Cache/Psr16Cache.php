@@ -48,7 +48,7 @@ class Psr16Cache implements CacheInterface, PruneableInterface, ResettableInterf
                 if ($allowInt && \is_int($key)) {
                     $item->key = (string) $key;
                 } else {
-                    \assert('' !== CacheItem::validateKey($key));
+                    CacheItem::validateKey($key);
                     $item->key = $key;
                 }
                 $item->value = $value;

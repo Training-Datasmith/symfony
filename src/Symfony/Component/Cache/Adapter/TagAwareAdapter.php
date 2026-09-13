@@ -121,7 +121,7 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
     {
         $ids = [];
         foreach ($tags as $tag) {
-            \assert('' !== CacheItem::validateKey($tag));
+            CacheItem::validateKey($tag);
             unset($this->knownTagVersions[$tag]);
             $ids[] = $tag.static::TAGS_PREFIX;
         }
