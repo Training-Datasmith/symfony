@@ -24,6 +24,10 @@ declare(strict_types=1);
  *   php .github/grind-phpunit-components.php --offset 0 --limit 61 --no-merge
  *   php .github/grind-phpunit-components.php --offset 61 --limit 61 --no-merge
  *   php .github/grind-phpunit-components.php --offset 122 --no-merge
+ *
+ * Cloud agents: finishing the grind means **0 failures and 0 errors** in the output JUnit for
+ * this run (skips OK). Fix and re-run the same --filter until then; do not stop after only
+ * writing a merged XML with failing testcases.
  */
 
 $repoRoot = dirname(__DIR__);
