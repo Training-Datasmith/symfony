@@ -26,6 +26,6 @@ class SlugConstructArgService
 
     public function hello(): string
     {
-        return $this->slugger->slug('Стойността трябва да бъде лъжа');
+        return (string) $this->slugger->slug('Стойността трябва да бъде лъжа');
     }
 }

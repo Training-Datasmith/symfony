@@ -26,6 +26,7 @@ class_exists(ParsedExpression::class);
  */
 class ExpressionLanguage
 {
+    private readonly CacheItemPoolInterface $cache;
     private Lexer $lexer;
     private Parser $parser;
     private Compiler $compiler;
@@ -35,8 +36,9 @@ class ExpressionLanguage
     /**
      * @param iterable<ExpressionFunctionProviderInterface> $providers
      */
-    public function __construct(private readonly ?CacheItemPoolInterface $cache = new ArrayAdapter(), iterable $providers = [])
+    public function __construct(?CacheItemPoolInterface $cache = null, iterable $providers = [])
     {
+        $this->cache = $cache ?? new ArrayAdapter();
         $this->registerFunctions();
         foreach ($providers as $provider) {
             $this->registerProvider($provider);

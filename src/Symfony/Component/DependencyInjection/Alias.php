@@ -109,11 +109,11 @@ class Alias implements \Stringable
     {
         $data = [];
         foreach ((array) $this as $k => $v) {
-            if (!$v) {
-                continue;
-            }
             if (false !== $i = strrpos((string) $k, "\0")) {
                 $k = substr((string) $k, 1 + $i);
+            }
+            if (!$v && 'public' !== $k) {
+                continue;
             }
             $data[$k] = $v;
         }

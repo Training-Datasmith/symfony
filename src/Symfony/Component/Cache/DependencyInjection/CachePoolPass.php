@@ -177,7 +177,7 @@ class CachePoolPass implements CompilerPassInterface
 
                     if ('default_lifetime' === $attr && !is_numeric($argument)) {
                         $argument = (new Definition('int', [$argument]))
-                            ->setFactory(ParameterNormalizer::normalizeDuration(...));
+                            ->setFactory([ParameterNormalizer::class, 'normalizeDuration']);
                     }
 
                     $pool->replaceArgument($i++, $argument);

@@ -190,7 +190,7 @@ trait BrowserKitAssertionsTrait
             if (($serverExceptionMessage = self::getResponse()->headers->get('X-Debug-Exception'))
                 && ($serverExceptionFile = self::getResponse()->headers->get('X-Debug-Exception-File'))) {
                 $serverExceptionFile = explode(':', $serverExceptionFile);
-                $exception->__construct($exception->getMessage(), $exception->getComparisonFailure(), new \ErrorException(rawurldecode($serverExceptionMessage), 0, 1, rawurldecode($serverExceptionFile[0]), $serverExceptionFile[1]), $exception->getPrevious());
+                $exception->__construct($exception->getMessage(), $exception->getComparisonFailure(), new \ErrorException(rawurldecode($serverExceptionMessage), 0, 1, rawurldecode($serverExceptionFile[0]), (int) $serverExceptionFile[1]), $exception->getPrevious());
             }
 
             throw $exception;
