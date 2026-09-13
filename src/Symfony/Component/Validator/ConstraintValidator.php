@@ -123,7 +123,7 @@ abstract class ConstraintValidator implements ConstraintValidatorInterface
             return 'true';
         }
 
-        if (is_nan($value)) {
+        if (\is_float($value) && is_nan($value)) {
             return 'NAN';
         }
 

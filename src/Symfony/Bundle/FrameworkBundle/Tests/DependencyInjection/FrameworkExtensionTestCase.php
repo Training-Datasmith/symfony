@@ -2839,7 +2839,7 @@ abstract class FrameworkExtensionTestCase extends TestCase
 
         $this->assertTrue($container->hasDefinition('lock.qux.factory'));
         $storeDef = $container->getDefinition($container->getDefinition('lock.qux.factory')->getArgument(0));
-        $this->assertStringContainsString('REDIS_DSN', $storeDef->getArgument(0));
+        $this->assertStringContainsString('REDIS_DSN', (string) $storeDef->getArgument(0));
 
         $this->assertTrue($container->hasDefinition('lock.corge.factory'));
         $storeDef = $container->getDefinition($container->getDefinition('lock.corge.factory')->getArgument(0));
@@ -2899,7 +2899,7 @@ abstract class FrameworkExtensionTestCase extends TestCase
 
         $this->assertTrue($container->hasDefinition('semaphore.qux.factory'));
         $storeDef = $container->getDefinition($container->getDefinition('semaphore.qux.factory')->getArgument(0));
-        $this->assertStringContainsString('REDIS_DSN', $storeDef->getArgument(0));
+        $this->assertStringContainsString('REDIS_DSN', (string) $storeDef->getArgument(0));
     }
 
     public function testSemaphoreWithService()

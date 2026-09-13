@@ -299,7 +299,7 @@ class XmlDumper extends Dumper
     {
         $withKeys = !array_is_list($parameters);
         foreach ($parameters as $key => $value) {
-            $xmlAttr = $withKeys ? \sprintf(' %s="%s"', $keyAttribute, $this->encode($key)) : '';
+            $xmlAttr = $withKeys ? \sprintf(' %s="%s"', $keyAttribute, $this->encode((string) $key)) : '';
 
             if (($value instanceof TaggedIteratorArgument && $tag = $value)
                 || ($value instanceof ServiceLocatorArgument && $tag = $value->getTaggedIteratorArgument())

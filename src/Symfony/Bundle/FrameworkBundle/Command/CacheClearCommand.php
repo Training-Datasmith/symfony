@@ -150,9 +150,9 @@ class CacheClearCommand extends Command
                 $search = [$warmupDir, str_replace('/', '\\/', $warmupDir), str_replace('\\', '\\\\', $warmupDir)];
                 $replace = str_replace('\\', '/', $realBuildDir);
                 foreach (Finder::create()->files()->in($warmupDir) as $file) {
-                    $content = str_replace($search, $replace, $this->filesystem->readFile($file), $count);
+                    $content = str_replace($search, $replace, $this->filesystem->readFile($file->getPathname()), $count);
                     if ($count) {
-                        file_put_contents($file, $content);
+                        file_put_contents($file->getPathname(), $content);
                     }
                 }
             }

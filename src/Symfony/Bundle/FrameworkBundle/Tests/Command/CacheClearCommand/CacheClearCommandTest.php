@@ -62,7 +62,7 @@ class CacheClearCommandTest extends TestCase
 
         foreach ($metaFiles as $file) {
             $configCacheFactory->cache(
-                substr($file, 0, -5),
+                substr($file->getPathname(), 0, -5),
                 function () use ($file) {
                     $this->fail(\sprintf('Meta file "%s" is not fresh', (string) $file));
                 }

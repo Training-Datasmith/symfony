@@ -436,7 +436,7 @@ class SecurityExtension extends Extension implements PrependExtensionInterface
         } else {
             $sessionStrategyId = 'security.authentication.session_strategy_noop';
         }
-        $container->setAlias(new Alias('security.authentication.session_strategy.'.$id, false), $sessionStrategyId);
+        $container->setAlias('security.authentication.session_strategy.'.$id, new Alias($sessionStrategyId, false));
 
         $config->replaceArgument(6, $contextKey);
 

@@ -66,6 +66,7 @@ final class Router extends BaseRouter implements WarmableInterface, ServiceSubsc
         }
 
         $this->defaultLocale = $defaultLocale;
+        $this->context = $context ?? new RequestContext();
     }
 
     public function getRouteCollection(): RouteCollection

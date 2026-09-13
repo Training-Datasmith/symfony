@@ -27,7 +27,7 @@ class UnusedTagsPassUtils
         // get all tags used in XML configs
         $files = Finder::create()->files()->name('*.xml')->path('Resources')->notPath('Tests')->in(\dirname(__DIR__, 5));
         foreach ($files as $file) {
-            $contents = file_get_contents($file);
+            $contents = file_get_contents($file->getPathname());
             if (preg_match_all('{<tag name="([^"]+)"}', $contents, $matches)) {
                 foreach ($matches[1] as $match) {
                     $tags[$match] = true;
@@ -43,7 +43,7 @@ class UnusedTagsPassUtils
         // get all tags used in PHP configs
         $files = Finder::create()->files()->name('*.php')->path('Resources')->notPath('Tests')->in(\dirname(__DIR__, 5));
         foreach ($files as $file) {
-            $contents = file_get_contents($file);
+            $contents = file_get_contents($file->getPathname());
             if (preg_match_all("{->tag\('([^']+)'}", $contents, $matches)) {
                 foreach ($matches[1] as $match) {
                     $tags[$match] = true;
@@ -59,7 +59,7 @@ class UnusedTagsPassUtils
         // get all tags used in findTaggedServiceIds calls()
         $files = Finder::create()->files()->name('*.php')->path('DependencyInjection')->notPath('Tests')->in(\dirname(__DIR__, 5));
         foreach ($files as $file) {
-            $contents = file_get_contents($file);
+            $contents = file_get_contents($file->getPathname());
             if (preg_match_all('{findTaggedServiceIds\(\'([^\']+)\'}', $contents, $matches)) {
                 foreach ($matches[1] as $match) {
                     if ('my.tag' === $match) {

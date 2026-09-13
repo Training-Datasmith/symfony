@@ -125,7 +125,11 @@ class MergeExtensionConfigurationParameterBag extends EnvPlaceholderParameterBag
         $this->processedEnvPlaceholders = [];
 
         // serialize config and container to catch env vars nested in object graphs
-        $config = serialize($config).serialize($container->getDefinitions()).serialize($container->getAliases()).serialize($container->getParameterBag()->all());
+        try {
+            $config = serialize($config).serialize($container->getDefinitions()).serialize($container->getAliases()).serialize($container->getParameterBag()->all());
+        } catch (\Throwable) {
+            $config = serialize($config).serialize($container->getAliases()).serialize($container->getParameterBag()->all()).$this->serializeDefinitionsForEnvSearch($container->getDefinitions());
+        }
 
         if (false === stripos($config, 'env_')) {
             return;
@@ -151,6 +155,55 @@ class MergeExtensionConfigurationParameterBag extends EnvPlaceholderParameterBag
     public function getUnusedEnvPlaceholders(): array
     {
         return !isset($this->processedEnvPlaceholders) ? [] : array_diff_key(parent::getEnvPlaceholders(), $this->processedEnvPlaceholders);
+    }
+
+    /**
+     * @param array<string, \Symfony\Component\DependencyInjection\Definition> $definitions
+     */
+    private function serializeDefinitionsForEnvSearch(array $definitions): string
+    {
+        $serialized = '';
+        foreach ($definitions as $definition) {
+            try {
+                $serialized .= serialize($definition);
+            } catch (\Throwable) {
+                foreach ([$definition->getArguments(), $definition->getProperties(), $definition->getMethodCalls()] as $values) {
+                    try {
+                        $serialized .= serialize($values);
+                    } catch (\Throwable) {
+                        $serialized .= $this->exportScalarsForEnvSearch($values);
+                    }
+                }
+                $factory = $definition->getFactory();
+                if (\is_array($factory)) {
+                    try {
+                        $serialized .= serialize($factory);
+                    } catch (\Throwable) {
+                        $serialized .= $this->exportScalarsForEnvSearch($factory);
+                    }
+                }
+            }
+        }
+
+        return $serialized;
+    }
+
+    private function exportScalarsForEnvSearch(mixed $value): string
+    {
+        if (\is_string($value)) {
+            return $value;
+        }
+
+        if (\is_array($value)) {
+            $exported = '';
+            foreach ($value as $item) {
+                $exported .= $this->exportScalarsForEnvSearch($item);
+            }
+
+            return $exported;
+        }
+
+        return '';
     }
 }
 

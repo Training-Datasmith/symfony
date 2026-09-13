@@ -444,15 +444,17 @@ class CliDumper extends AbstractDumper
             && !isset($_SERVER['IDEA_INITIAL_DIRECTORY']);
 
         if (isset($attr['ellipsis'], $attr['ellipsis-type'])) {
-            $prefix = substr($value, 0, -$attr['ellipsis']);
+            $ellipsis = (int) $attr['ellipsis'];
+            $ellipsisTail = isset($attr['ellipsis-tail']) ? (int) $attr['ellipsis-tail'] : 0;
+            $prefix = substr($value, 0, -$ellipsis);
             if ('cli' === \PHP_SAPI && 'path' === $attr['ellipsis-type'] && isset($_SERVER[$pwd = '\\' === \DIRECTORY_SEPARATOR ? 'CD' : 'PWD']) && str_starts_with($prefix, (string) $_SERVER[$pwd])) {
                 $prefix = '.'.substr($prefix, \strlen((string) $_SERVER[$pwd]));
             }
             if (!empty($attr['ellipsis-tail'])) {
-                $prefix .= substr($value, -$attr['ellipsis'], $attr['ellipsis-tail']);
-                $value = substr($value, -$attr['ellipsis'] + $attr['ellipsis-tail']);
+                $prefix .= substr($value, -$ellipsis, $ellipsisTail);
+                $value = substr($value, -$ellipsis + $ellipsisTail);
             } else {
-                $value = substr($value, -$attr['ellipsis']);
+                $value = substr($value, -$ellipsis);
             }
 
             $value = $this->style('default', $prefix).$this->style($style, $value);

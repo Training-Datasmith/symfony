@@ -43,6 +43,7 @@ class Session implements FlashBagAwareSessionInterface, \IteratorAggregate, \Cou
     public function __construct(protected ?SessionStorageInterface $storage = new NativeSessionStorage(), ?AttributeBagInterface $attributes = null, ?FlashBagInterface $flashes = null, ?callable $usageReporter = null)
     {
         $this->usageReporter = null === $usageReporter ? null : $usageReporter(...);
+        $this->storage ??= new NativeSessionStorage();
 
         $attributes ??= new AttributeBag();
         $this->attributeName = $attributes->getName();

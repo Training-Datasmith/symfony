@@ -126,7 +126,7 @@ class HtmlErrorRenderer implements ErrorRendererInterface
     {
         $debug = \is_bool($this->debug) ? $this->debug : ($this->debug)($exception);
         $statusText = $this->escape($exception->getStatusText());
-        $statusCode = $this->escape($exception->getStatusCode());
+        $statusCode = $this->escape((string) $exception->getStatusCode());
 
         if (!$debug) {
             return $this->include(self::$template, [

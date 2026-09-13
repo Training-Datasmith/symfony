@@ -266,7 +266,7 @@ class XmlReferenceDumper
         }
 
         if (\is_string($value) || is_numeric($value)) {
-            return $value;
+            return (string) $value;
         }
 
         if (false === $value) {

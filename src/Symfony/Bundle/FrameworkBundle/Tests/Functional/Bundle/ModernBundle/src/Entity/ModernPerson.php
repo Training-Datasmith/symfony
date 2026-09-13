@@ -18,9 +18,9 @@ class ModernPerson
     public string $name;
     public string $age;
 
-    public function __construct(string $name, string $age)
+    public function __construct(string $name, string|int $age)
     {
         $this->name = $name;
-        $this->age = $age;
+        $this->age = (string) $age;
     }
 }

@@ -129,7 +129,7 @@ class Finder implements \IteratorAggregate, \Countable
     public function depth(string|int|array $levels): static
     {
         foreach ((array) $levels as $level) {
-            $this->depths[] = new NumberComparator($level);
+            $this->depths[] = new NumberComparator(\is_int($level) ? (string) $level : $level);
         }
 
         return $this;
@@ -773,21 +773,22 @@ class Finder implements \IteratorAggregate, \Countable
         $maxDepth = \PHP_INT_MAX;
 
         foreach ($this->depths as $comparator) {
+            $target = (int) $comparator->getTarget();
             switch ($comparator->getOperator()) {
                 case '>':
-                    $minDepth = $comparator->getTarget() + 1;
+                    $minDepth = $target + 1;
                     break;
                 case '>=':
-                    $minDepth = $comparator->getTarget();
+                    $minDepth = $target;
                     break;
                 case '<':
-                    $maxDepth = $comparator->getTarget() - 1;
+                    $maxDepth = $target - 1;
                     break;
                 case '<=':
-                    $maxDepth = $comparator->getTarget();
+                    $maxDepth = $target;
                     break;
                 default:
-                    $minDepth = $maxDepth = $comparator->getTarget();
+                    $minDepth = $maxDepth = $target;
             }
         }
 

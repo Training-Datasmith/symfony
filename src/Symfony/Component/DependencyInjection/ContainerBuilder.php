@@ -902,6 +902,8 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     {
         if ($alias instanceof Reference) {
             $alias = (string) $alias;
+        } elseif ($alias instanceof Alias) {
+            $alias = (string) $alias;
         }
 
         if ('' === $alias || '\\' === $alias[-1] || \strlen($alias) !== strcspn($alias, "\0\r\n'")) {

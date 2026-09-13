@@ -126,7 +126,7 @@ class PeriodicalTrigger implements StatefulTriggerInterface
     {
         $a = (array) $interval;
         if ($a['from_string']) {
-            return preg_match('#^\s*\d+\s*(sec|second|min|minute|hour)s?\s*$#', (string) $a['date_string']);
+            return (bool) preg_match('#^\s*\d+\s*(sec|second|min|minute|hour)s?\s*$#', (string) $a['date_string']);
         }
 
         return !$interval->y && !$interval->m && !$interval->d;

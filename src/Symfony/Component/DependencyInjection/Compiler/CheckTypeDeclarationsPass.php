@@ -230,7 +230,7 @@ final class CheckTypeDeclarationsPass extends AbstractRecursivePass
                 return;
             }
         } elseif ($value instanceof Parameter) {
-            $value = $this->container->getParameter($value);
+            $value = $this->container->getParameter((string) $value);
         } elseif ($value instanceof Expression) {
             try {
                 $value = $this->getExpressionLanguage()->evaluate($value, ['container' => $this->container]);

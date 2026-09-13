@@ -49,14 +49,18 @@ final class LazyCommand extends Command
 
     public function setApplication(?Application $application): void
     {
-        $this->command->setApplication($application);
+        if ($this->command instanceof Command) {
+            $this->command->setApplication($application);
+        }
 
         parent::setApplication($application);
     }
 
     public function setHelperSet(HelperSet $helperSet): void
     {
-        $this->command->setHelperSet($helperSet);
+        if ($this->command instanceof Command) {
+            $this->command->setHelperSet($helperSet);
+        }
 
         parent::setHelperSet($helperSet);
     }

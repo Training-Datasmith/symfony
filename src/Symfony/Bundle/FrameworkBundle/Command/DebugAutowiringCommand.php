@@ -142,7 +142,7 @@ class DebugAutowiringCommand extends ContainerDebugCommand
                     }
                 }
 
-                if ($container->hasDefinition($serviceAlias) && $decorated = $container->getDefinition($serviceAlias)->getTag('container.decorator')) {
+                if ($container->hasDefinition((string) $serviceAlias) && $decorated = $container->getDefinition((string) $serviceAlias)->getTag('container.decorator')) {
                     $alias = $decorated[0]['id'];
                 }
 

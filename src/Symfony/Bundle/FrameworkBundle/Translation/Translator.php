@@ -166,7 +166,7 @@ final class Translator extends BaseTranslator implements WarmableInterface
         foreach ($filesByLocale as $files) {
             foreach ($files as $file) {
                 // filename is domain.locale.format
-                $fileNameParts = explode('.', basename($file));
+                $fileNameParts = explode('.', basename((string) $file));
                 $format = array_pop($fileNameParts);
                 $locale = array_pop($fileNameParts);
                 $domain = implode('.', $fileNameParts);

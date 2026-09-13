@@ -261,7 +261,7 @@ class CachePoolPass implements CompilerPassInterface
 
             if (!$container->hasDefinition($name = '.cache_connection.'.ContainerBuilder::hash($dsn))) {
                 $definition = new Definition(AbstractAdapter::class);
-                $definition->setFactory(AbstractAdapter::createConnection(...));
+                $definition->setFactory([AbstractAdapter::class, 'createConnection']);
                 $definition->setArguments([$dsn, ['lazy' => true]]);
                 $container->setDefinition($name, $definition);
             }

@@ -120,14 +120,14 @@ class XmlDescriptor extends Descriptor
         $remainingCount = 0;
         foreach ($logs as $log) {
             $deprecationsXML->appendChild($deprecationXML = $dom->createElement('deprecation'));
-            $deprecationXML->setAttribute('count', $log['count']);
+            $deprecationXML->setAttribute('count', (string) $log['count']);
             $deprecationXML->appendChild($dom->createElement('message', $log['message']));
             $deprecationXML->appendChild($dom->createElement('file', $log['file']));
-            $deprecationXML->appendChild($dom->createElement('line', $log['line']));
+            $deprecationXML->appendChild($dom->createElement('line', (string) $log['line']));
             $remainingCount += $log['count'];
         }
 
-        $deprecationsXML->setAttribute('remainingCount', $remainingCount);
+        $deprecationsXML->setAttribute('remainingCount', (string) $remainingCount);
 
         $this->writeDocument($dom);
     }
@@ -416,7 +416,7 @@ class XmlDescriptor extends Descriptor
                     $stackXML->appendChild($itemXML = $dom->createElement('service'));
                     $itemXML->setAttribute('id', $item['id']);
                     $itemXML->setAttribute('class', $item['class']);
-                    $itemXML->setAttribute('priority', $item['priority']);
+                    $itemXML->setAttribute('priority', (string) $item['priority']);
                 }
             }
         }
@@ -537,7 +537,7 @@ class XmlDescriptor extends Descriptor
     {
         foreach ($eventListeners as $listener) {
             $callableXML = $this->getCallableDocument($listener);
-            $callableXML->childNodes->item(0)->setAttribute('priority', $eventDispatcher->getListenerPriority($event, $listener));
+            $callableXML->childNodes->item(0)->setAttribute('priority', (string) $eventDispatcher->getListenerPriority($event, $listener));
 
             $element->appendChild($element->ownerDocument->importNode($callableXML->childNodes->item(0), true));
         }

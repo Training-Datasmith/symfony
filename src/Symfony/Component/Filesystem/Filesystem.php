@@ -581,12 +581,12 @@ class Filesystem
             $target = $targetDir.substr((string) $file->getPathname(), $originDirLen);
             $filesCreatedWhileMirroring[$target] = true;
 
-            if (!$followSymlinks && is_link($file)) {
+            if (!$followSymlinks && is_link($file->getPathname())) {
                 $this->symlink($file->getLinkTarget(), $target);
-            } elseif (is_dir($file)) {
+            } elseif (is_dir($file->getPathname())) {
                 $this->mkdir($target);
-            } elseif (is_file($file)) {
-                $this->copy($file, $target, $options['override'] ?? false);
+            } elseif (is_file($file->getPathname())) {
+                $this->copy($file->getPathname(), $target, $options['override'] ?? false);
             } else {
                 throw new IOException(\sprintf('Unable to guess "%s" file type.', $file), 0, null, $file);
             }

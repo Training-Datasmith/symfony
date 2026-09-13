@@ -928,7 +928,7 @@ class FrameworkExtension extends Extension
             $container->getDefinition('http_cache')
                   ->addArgument(
                       (new Definition('void'))
-                      ->setFactory(Request::enableHttpMethodParameterOverride(...))
+                      ->setFactory([Request::class, 'enableHttpMethodParameterOverride'])
                   );
         }
 
@@ -936,7 +936,7 @@ class FrameworkExtension extends Extension
             $container->getDefinition('http_cache')
                     ->addArgument(
                         (new Definition('void'))
-                        ->setFactory(Request::setAllowedHttpMethodOverride(...))
+                        ->setFactory([Request::class, 'setAllowedHttpMethodOverride'])
                         ->addArgument($allowedHttpMethodOverride)
                     );
         }
@@ -1698,7 +1698,7 @@ class FrameworkExtension extends Extension
                     ->sortByName()
                 ;
                 foreach ($finder as $file) {
-                    $fileNameParts = explode('.', basename($file));
+                    $fileNameParts = explode('.', basename((string) $file));
                     $locale = $fileNameParts[\count($fileNameParts) - 2];
                     if (!isset($files[$locale])) {
                         $files[$locale] = [];
@@ -2290,7 +2290,7 @@ class FrameworkExtension extends Extension
                 }
                 $storeDefinition = new Definition(PersistingStoreInterface::class);
                 $storeDefinition
-                    ->setFactory(StoreFactory::createStore(...))
+                    ->setFactory([StoreFactory::class, 'createStore'])
                     ->setArguments([$resourceStore])
                     ->addTag('lock.store');
 
@@ -2342,7 +2342,7 @@ class FrameworkExtension extends Extension
             }
 
             $storeDefinition = new Definition(SemaphoreStoreInterface::class);
-            $storeDefinition->setFactory(SemaphoreStoreFactory::createStore(...));
+            $storeDefinition->setFactory([SemaphoreStoreFactory::class, 'createStore']);
             $storeDefinition->setArguments([match (true) {
                 $usedEnvs => $resourceStore,
                 str_starts_with((string) $storeDsn, 'lock://') => new Reference('lock.'.(substr((string) $storeDsn, 7) ?: 'default').'.factory'),
@@ -2770,7 +2770,7 @@ class FrameworkExtension extends Extension
             $propertyAccessDefinition = $container->register('cache.property_access', AdapterInterface::class);
 
             if (!$container->getParameter('kernel.debug')) {
-                $propertyAccessDefinition->setFactory(PropertyAccessor::createCache(...));
+                $propertyAccessDefinition->setFactory([PropertyAccessor::class, 'createCache']);
                 $propertyAccessDefinition->setArguments(['', 0, $version, new Reference('logger', ContainerInterface::IGNORE_ON_INVALID_REFERENCE)]);
                 $propertyAccessDefinition->addTag('cache.pool', ['clearer' => 'cache.system_clearer']);
                 $propertyAccessDefinition->addTag('monolog.logger', ['channel' => 'cache']);
