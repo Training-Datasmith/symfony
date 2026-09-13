@@ -36,7 +36,7 @@ class FormErrorNormalizerTest extends TestCase
             ->willReturn(
                 new FormErrorIterator($this->form, [
                 new FormError('a', 'b', ['c', 'd'], 5, 'f'),
-                new FormError(1, 2, [3, 4], 5, 6),
+                new FormError('1', '2', [3, 4], 5, 6),
             ])
             );
     }

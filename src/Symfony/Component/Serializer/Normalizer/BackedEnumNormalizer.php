@@ -68,6 +68,11 @@ final class BackedEnumNormalizer implements NormalizerInterface, DenormalizerInt
             throw NotNormalizableValueException::createForUnexpectedDataType('The data is neither an integer nor a string, you should pass an integer or a string that can be parsed as an enumeration case of type '.$type.'.', $data, ['int', 'string'], $context['deserialization_path'] ?? null, true);
         }
 
+        $backingType = (new \ReflectionEnum($type))->getBackingType();
+        if ('int' === $backingType->getName() && \is_string($data)) {
+            $data = (int) $data;
+        }
+
         try {
             return $type::from($data);
         } catch (\ValueError|\TypeError $e) {
@@ -75,10 +80,10 @@ final class BackedEnumNormalizer implements NormalizerInterface, DenormalizerInt
                 return null;
             }
 
-            $backingType = (new \ReflectionEnum($type))->getBackingType()->getName();
+            $backingTypeName = $backingType->getName();
 
-            if ($e instanceof \TypeError || get_debug_type($data) !== $backingType) {
-                throw NotNormalizableValueException::createForUnexpectedDataType('The data must be of type '.$backingType, $data, [$backingType], $context['deserialization_path'] ?? null, true, 0, $e);
+            if ($e instanceof \TypeError || get_debug_type($data) !== $backingTypeName) {
+                throw NotNormalizableValueException::createForUnexpectedDataType('The data must be of type '.$backingTypeName, $data, [$backingTypeName], $context['deserialization_path'] ?? null, true, 0, $e);
             }
 
             throw NotNormalizableValueException::createForUnexpectedDataType('The data must belong to a backed enumeration of type '.$type, $data, ['int', 'string'], $context['deserialization_path'] ?? null, true, 0, $e);

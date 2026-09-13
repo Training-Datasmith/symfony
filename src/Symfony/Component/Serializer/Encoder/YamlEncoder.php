@@ -47,13 +47,14 @@ class YamlEncoder implements EncoderInterface, DecoderInterface
     public const YAML_FLAGS = 'yaml_flags';
 
     private readonly Dumper $dumper;
+    private readonly Parser $parser;
     private array $defaultContext = [
         self::YAML_INLINE => 0,
         self::YAML_INDENT => 0,
         self::YAML_FLAGS => 0,
     ];
 
-    public function __construct(?Dumper $dumper = null, private readonly ?Parser $parser = new Parser(), array $defaultContext = [])
+    public function __construct(?Dumper $dumper = null, ?Parser $parser = null, array $defaultContext = [])
     {
         if (!class_exists(Dumper::class)) {
             throw new RuntimeException('The YamlEncoder class requires the "Yaml" component. Try running "composer require symfony/yaml".');
@@ -63,6 +64,7 @@ class YamlEncoder implements EncoderInterface, DecoderInterface
             $dumper = \array_key_exists(self::YAML_INDENTATION, $defaultContext) ? new Dumper($defaultContext[self::YAML_INDENTATION]) : new Dumper();
         }
         $this->dumper = $dumper;
+        $this->parser = $parser ?? new Parser();
         unset($defaultContext[self::YAML_INDENTATION]);
         $this->defaultContext = array_merge($this->defaultContext, $defaultContext);
     }

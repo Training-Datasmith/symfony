@@ -362,7 +362,9 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
                         $data = $this->serializer->normalize($data, $format, $context);
                     }
                     if (\is_bool($data)) {
-                        $data = (int) $data;
+                        $data = (string) (int) $data;
+                    } elseif (\is_int($data) || \is_float($data)) {
+                        $data = (string) $data;
                     }
 
                     if ($context[self::IGNORE_EMPTY_ATTRIBUTES] ?? $this->defaultContext[self::IGNORE_EMPTY_ATTRIBUTES]) {
@@ -374,7 +376,7 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
                         }
                     }
 
-                    $parentNode->setAttribute($attributeName, $data);
+                    $parentNode->setAttribute($attributeName, (string) $data);
                 } elseif ('#' === $key) {
                     $append = $this->selectNodeType($parentNode, $data, $format, $context);
                 } elseif ('#comment' === $key) {
@@ -396,7 +398,7 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
                         $append = $this->appendNode($parentNode, $data, $format, $context, $key);
                     }
                 } elseif (is_numeric($key) || !$this->isElementNameValid($key)) {
-                    $append = $this->appendNode($parentNode, $data, $format, $context, 'item', $key);
+                    $append = $this->appendNode($parentNode, $data, $format, $context, 'item', (string) $key);
                 } elseif (null !== $data || !$removeEmptyTags) {
                     $append = $this->appendNode($parentNode, $data, $format, $context, $key);
                 }
@@ -437,7 +439,7 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
         $dom = $parentNode instanceof \DOMDocument ? $parentNode : $parentNode->ownerDocument;
         $node = $dom->createElement($nodeName);
         if (null !== $key) {
-            $node->setAttribute('key', $key);
+            $node->setAttribute('key', (string) $key);
         }
         $appendNode = $this->selectNodeType($node, $data, $format, $context);
         // we may have decided not to append this node, either in error or if its $nodeName is not valid
@@ -493,7 +495,7 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
         } elseif (\is_string($val)) {
             return $this->appendText($node, $val);
         } elseif (\is_bool($val)) {
-            return $this->appendText($node, (int) $val);
+            return $this->appendText($node, (string) (int) $val);
         }
 
         return true;

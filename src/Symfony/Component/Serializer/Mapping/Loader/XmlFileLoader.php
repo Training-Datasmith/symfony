@@ -107,10 +107,12 @@ class XmlFileLoader extends FileLoader
                     $mapping[(string) $elementAttributes->type] = (string) $elementAttributes->class;
                 }
 
+                $defaultType = $xml->{'discriminator-map'}->attributes()->{'default-type'} ?? null;
+
                 $classMetadata->setClassDiscriminatorMapping(new ClassDiscriminatorMapping(
                     (string) $xml->{'discriminator-map'}->attributes()->{'type-property'},
                     $mapping,
-                    $xml->{'discriminator-map'}->attributes()->{'default-type'} ?? null
+                    null !== $defaultType ? (string) $defaultType : null
                 ));
             }
 

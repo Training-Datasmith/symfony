@@ -67,7 +67,7 @@ class ProblemNormalizer implements NormalizerInterface, SerializerAwareInterface
             $exception = $exception->getPrevious();
 
             if ($exception instanceof PartialDenormalizationException) {
-                $trans = $this->translator ? $this->translator->trans(...) : strtr(...);
+                $trans = $this->translator ? $this->translator->trans(...) : static fn (string $m, array $p): string => strtr($m, $p);
                 $template = 'This value should be of type {{ type }}.';
                 $error = [
                     self::TYPE => 'https://symfony.com/errors/validation',

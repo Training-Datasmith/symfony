@@ -43,7 +43,7 @@ final class MetadataAwareNameConverterTest extends TestCase
 
         $nameConverter = new MetadataAwareNameConverter($classMetadataFactory);
 
-        $this->assertEquals($expected, $nameConverter->normalize($propertyName, SerializedNameDummy::class));
+        $this->assertEquals($expected, $nameConverter->normalize((string) $propertyName, SerializedNameDummy::class));
     }
 
     #[DataProvider('fallbackAttributeProvider')]
@@ -59,7 +59,7 @@ final class MetadataAwareNameConverterTest extends TestCase
 
         $nameConverter = new MetadataAwareNameConverter($classMetadataFactory, $fallback);
 
-        $this->assertEquals($expected, $nameConverter->normalize($propertyName, SerializedNameDummy::class));
+        $this->assertEquals($expected, $nameConverter->normalize((string) $propertyName, SerializedNameDummy::class));
     }
 
     #[DataProvider('attributeProvider')]
@@ -69,7 +69,7 @@ final class MetadataAwareNameConverterTest extends TestCase
 
         $nameConverter = new MetadataAwareNameConverter($classMetadataFactory);
 
-        $this->assertEquals($expected, $nameConverter->denormalize($propertyName, SerializedNameDummy::class));
+        $this->assertEquals($expected, $nameConverter->denormalize((string) $propertyName, SerializedNameDummy::class));
     }
 
     #[DataProvider('fallbackAttributeProvider')]
@@ -85,7 +85,7 @@ final class MetadataAwareNameConverterTest extends TestCase
 
         $nameConverter = new MetadataAwareNameConverter($classMetadataFactory, $fallback);
 
-        $this->assertEquals($expected, $nameConverter->denormalize($propertyName, SerializedNameDummy::class));
+        $this->assertEquals($expected, $nameConverter->denormalize((string) $propertyName, SerializedNameDummy::class));
     }
 
     public static function attributeProvider(): array

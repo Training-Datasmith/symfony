@@ -188,6 +188,7 @@ abstract class AbstractObjectNormalizer extends AbstractNormalizer
         }
 
         foreach ($attributes as $attribute) {
+            $attribute = (string) $attribute;
             $maxDepthReached = false;
             if (null !== $attributesMetadata && ($maxDepthReached = $this->isMaxDepthReached($attributesMetadata, $class, $attribute, $context)) && !$maxDepthHandler) {
                 continue;
@@ -214,6 +215,7 @@ abstract class AbstractObjectNormalizer extends AbstractNormalizer
         }
 
         foreach ($stack as $attribute => $attributeValue) {
+            $attribute = (string) $attribute;
             $attributeContext = $this->getAttributeNormalizationContext($data, $attribute, $context);
 
             if (!$this->serializer instanceof NormalizerInterface) {
@@ -344,6 +346,7 @@ abstract class AbstractObjectNormalizer extends AbstractNormalizer
         $resolvedClass = ($this->objectClassResolver)($object);
 
         foreach ($normalizedData as $attribute => $value) {
+            $attribute = (string) $attribute;
             if ($this->nameConverter) {
                 $notConverted = $attribute;
                 $attribute = $this->nameConverter->denormalize($attribute, $resolvedClass, $format, $context);
@@ -963,7 +966,7 @@ abstract class AbstractObjectNormalizer extends AbstractNormalizer
             throw NotNormalizableValueException::createForUnexpectedDataType(\sprintf('The type property "%s" for the abstract object "%s" must be a string or a stringable object.', $mapping->getTypeProperty(), $class), $type, ['string'], isset($context['deserialization_path']) ? $context['deserialization_path'].'.'.$mapping->getTypeProperty() : $mapping->getTypeProperty(), false);
         }
 
-        if (null === $mappedClass = $mapping->getClassForType($type)) {
+        if (null === $mappedClass = $mapping->getClassForType((string) $type)) {
             throw NotNormalizableValueException::createForUnexpectedDataType(\sprintf('The type "%s" is not a valid value.', $type), $type, ['string'], isset($context['deserialization_path']) ? $context['deserialization_path'].'.'.$mapping->getTypeProperty() : $mapping->getTypeProperty(), true);
         }
 
