@@ -72,7 +72,7 @@ final class Definition
 
     public function getMetadataStore(): MetadataStoreInterface
     {
-        return $this->metadataStore;
+        return $this->metadataStore ?? new InMemoryMetadataStore();
     }
 
     private function setInitialPlaces(string|array|null $places): void

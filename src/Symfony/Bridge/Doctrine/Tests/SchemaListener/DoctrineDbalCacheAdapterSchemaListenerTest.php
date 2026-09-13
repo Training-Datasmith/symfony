@@ -64,6 +64,8 @@ class DoctrineDbalCacheAdapterSchemaListenerTest extends TestCase
             ->willReturnCallback(static function (Schema $schema) {
                 $table = $schema->createTable('cache_items');
                 $table->addColumn('item_id', 'string');
+
+                return $schema;
             });
 
         $listener = new DoctrineDbalCacheAdapterSchemaListener([$dbalAdapter]);

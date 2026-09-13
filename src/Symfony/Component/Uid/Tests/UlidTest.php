@@ -34,11 +34,11 @@ class UlidTest extends TestCase
         usleep(-10000);
         $c = new Ulid();
 
-        $this->assertSame(0, strncmp($a, $b, 20));
-        $this->assertSame(0, strncmp($a, $c, 20));
-        $a = base_convert(strtr(substr($a, -6), 'ABCDEFGHJKMNPQRSTVWXYZ', 'abcdefghijklmnopqrstuv'), 32, 10);
-        $b = base_convert(strtr(substr($b, -6), 'ABCDEFGHJKMNPQRSTVWXYZ', 'abcdefghijklmnopqrstuv'), 32, 10);
-        $c = base_convert(strtr(substr($c, -6), 'ABCDEFGHJKMNPQRSTVWXYZ', 'abcdefghijklmnopqrstuv'), 32, 10);
+        $this->assertSame(0, strncmp((string) $a, (string) $b, 20));
+        $this->assertSame(0, strncmp((string) $a, (string) $c, 20));
+        $a = base_convert(strtr(substr((string) $a, -6), 'ABCDEFGHJKMNPQRSTVWXYZ', 'abcdefghijklmnopqrstuv'), 32, 10);
+        $b = base_convert(strtr(substr((string) $b, -6), 'ABCDEFGHJKMNPQRSTVWXYZ', 'abcdefghijklmnopqrstuv'), 32, 10);
+        $c = base_convert(strtr(substr((string) $c, -6), 'ABCDEFGHJKMNPQRSTVWXYZ', 'abcdefghijklmnopqrstuv'), 32, 10);
         $this->assertSame(1, $b - $a);
         $this->assertSame(1, $c - $b);
     }
@@ -72,12 +72,12 @@ class UlidTest extends TestCase
     {
         $uuid = new UuidV4();
 
-        $ulid = Ulid::fromString($uuid);
+        $ulid = Ulid::fromString((string) $uuid);
 
         $this->assertSame($uuid->toBase32(), (string) $ulid);
         $this->assertSame($ulid->toBase32(), (string) $ulid);
         $this->assertSame((string) $uuid, $ulid->toRfc4122());
-        $this->assertTrue($ulid->equals(Ulid::fromString($uuid)));
+        $this->assertTrue($ulid->equals(Ulid::fromString((string) $uuid)));
     }
 
     public function testBase58()

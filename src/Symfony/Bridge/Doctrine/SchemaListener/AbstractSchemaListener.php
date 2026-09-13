@@ -76,6 +76,19 @@ abstract class AbstractSchemaListener
                     }
 
                     $newSchema = $editor->create();
+
+                    foreach ($tablesToFilter as $table) {
+                        $name = $getName($table);
+                        if ($schema->hasTable($name)) {
+                            $schema->dropTable($name);
+                        }
+                    }
+                    foreach ($sequencesToFilter as $sequence) {
+                        $name = $getName($sequence);
+                        if ($schema->hasSequence($name)) {
+                            $schema->dropSequence($name);
+                        }
+                    }
                 } else {
                     foreach ($tablesToFilter as $table) {
                         $newSchema->dropTable($getName($table));

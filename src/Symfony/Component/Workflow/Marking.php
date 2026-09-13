@@ -40,8 +40,9 @@ class Marking
     /**
      * @psalm-param int<1, max> $nbToken
      */
-    public function mark(string $place, int $nbToken = 1): void
+    public function mark(string|int $place, int $nbToken = 1): void
     {
+        $place = (string) $place;
         if ($nbToken < 1) {
             throw new \InvalidArgumentException(\sprintf('The number of tokens must be greater than 0, "%s" given.', $nbToken));
         }

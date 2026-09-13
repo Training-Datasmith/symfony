@@ -56,7 +56,7 @@ class UuidV6 extends Uuid implements TimeBasedUidInterface
         }
 
         $ms = \strlen($time) > 4 ? substr($time, 0, -4) : '0';
-        $time = dechex(10000 * hexdec(substr($uuid, 20, 3)) + substr($time, -4));
+        $time = dechex(10000 * hexdec(substr($uuid, 20, 3)) + (int) substr($time, -4));
 
         if (\strlen($time) > 6) {
             $uuid[29] = dechex(hexdec($uuid[29]) ^ hexdec($time[0]));
@@ -65,7 +65,7 @@ class UuidV6 extends Uuid implements TimeBasedUidInterface
 
         return new UuidV7(substr_replace(\sprintf(
             '%012s-7%s-%s%s-%s%06s',
-            \PHP_INT_SIZE >= 8 ? dechex($ms) : bin2hex(BinaryUtil::fromBase($ms, BinaryUtil::BASE10)),
+            \PHP_INT_SIZE >= 8 ? dechex((int) $ms) : bin2hex(BinaryUtil::fromBase($ms, BinaryUtil::BASE10)),
             substr($uuid, -6, 3),
             $uuid[19],
             substr($uuid, -3),

@@ -19,7 +19,7 @@ final class SubjectWithProperties
     public array $marking;
 
     // for type=state_machine
-    public string $place;
+    public string|int|object $place;
 
     private function getMarking(): array
     {

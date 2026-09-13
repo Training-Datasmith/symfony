@@ -83,6 +83,9 @@ final class MethodMarkingStore implements MarkingStoreInterface
 
         if ($this->singleState) {
             $marking = key($marking);
+            if (!\is_string($marking) && !($marking instanceof \BackedEnum)) {
+                $marking = (string) $marking;
+            }
         }
 
         ($this->setters[$subject::class] ??= $this->getSetter($subject))($subject, $marking, $context);

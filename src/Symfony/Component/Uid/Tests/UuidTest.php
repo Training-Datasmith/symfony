@@ -56,7 +56,7 @@ class UuidTest extends TestCase
     public function testInvalidVariant(string $uuid)
     {
         $uuid = new Uuid($uuid);
-        $this->assertFalse(Uuid::isValid($uuid));
+        $this->assertFalse(Uuid::isValid((string) $uuid));
 
         $uuid = (string) $uuid;
         $class = Uuid::class.'V'.$uuid[14];
@@ -147,7 +147,7 @@ class UuidTest extends TestCase
         $uuidV1 = Uuid::v1();
         $uuidV6 = Uuid::v6();
 
-        $this->assertNotSame(substr($uuidV1, 24), substr($uuidV6, 24));
+        $this->assertNotSame(substr((string) $uuidV1, 24), substr((string) $uuidV6, 24));
     }
 
     public function testV7()
@@ -166,8 +166,8 @@ class UuidTest extends TestCase
             $prev = $uuid;
         }
 
-        $this->assertTrue(Uuid::isValid($uuid));
-        $uuid = Uuid::fromString($uuid);
+        $this->assertTrue(Uuid::isValid((string) $uuid));
+        $uuid = Uuid::fromString((string) $uuid);
         $this->assertInstanceOf(UuidV7::class, $uuid);
         $this->assertSame($now, $uuid->getDateTime()->format('Y-m-d H:i'));
     }
@@ -191,11 +191,11 @@ class UuidTest extends TestCase
     public function testFromUlid()
     {
         $ulid = new Ulid();
-        $uuid = Uuid::fromString($ulid);
+        $uuid = Uuid::fromString((string) $ulid);
 
         $this->assertSame((string) $ulid, $uuid->toBase32());
         $this->assertSame((string) $uuid, $uuid->toRfc4122());
-        $this->assertTrue($uuid->equals(Uuid::fromString($ulid)));
+        $this->assertTrue($uuid->equals(Uuid::fromString((string) $ulid)));
     }
 
     public function testBase58()
@@ -514,7 +514,7 @@ class UuidTest extends TestCase
         $this->assertSame($uuidV1->getDateTime()->format('Uv'), $uuidV7->getDateTime()->format('Uv'));
         $this->assertEquals($uuidV7, $uuidV1->toV7());
         $this->assertNotEquals($uuidV7, $sameUuidV7100NanosecondsLater);
-        $this->assertSame(hexdec('0'.substr($uuidV7, -2)) + 1, hexdec('0'.substr($sameUuidV7100NanosecondsLater, -2)));
+        $this->assertSame(hexdec('0'.substr((string) $uuidV7, -2)) + 1, hexdec('0'.substr((string) $sameUuidV7100NanosecondsLater, -2)));
     }
 
     public function testV1ToV7WhenExtraTimeEntropyOverflows()
@@ -527,7 +527,7 @@ class UuidTest extends TestCase
         $this->assertSame($uuidV1->getDateTime()->format('Uv'), $uuidV7->getDateTime()->format('Uv'));
         $this->assertEquals($uuidV7, $uuidV1->toV7());
         $this->assertNotEquals($uuidV7, $sameUuidV7100NanosecondsLater);
-        $this->assertSame(hexdec('0'.substr($uuidV7, -2)) + 1, hexdec('0'.substr($sameUuidV7100NanosecondsLater, -2)));
+        $this->assertSame(hexdec('0'.substr((string) $uuidV7, -2)) + 1, hexdec('0'.substr((string) $sameUuidV7100NanosecondsLater, -2)));
     }
 
     public function testToString()

@@ -65,6 +65,8 @@ class PdoSessionHandlerSchemaListenerTest extends TestCase
             ->willReturnCallback(static function (Schema $schema) {
                 $table = $schema->createTable('sessions');
                 $table->addColumn('sess_id', 'string');
+
+                return $schema;
             });
 
         $listener = new PdoSessionHandlerSchemaListener($pdoSessionHandler);

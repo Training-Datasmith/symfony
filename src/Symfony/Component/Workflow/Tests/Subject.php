@@ -15,7 +15,7 @@ namespace Symfony\Component\Workflow\Tests;
 
 final class Subject
 {
-    private string|array|null $marking;
+    private string|array|int|object|null $marking;
     private array $context = [];
 
     public function __construct($marking = null)
@@ -23,7 +23,7 @@ final class Subject
         $this->marking = $marking;
     }
 
-    public function getMarking(): string|array|null
+    public function getMarking(): string|array|int|object|null
     {
         return $this->marking;
     }

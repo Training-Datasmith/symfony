@@ -94,10 +94,10 @@ class TemplatedEmailTest extends TestCase
                                     "name": ""
                                 }
                             ],
-                            "name": "To",
                             "lineLength": 76,
                             "lang": null,
-                            "charset": "utf-8"
+                            "charset": "utf-8",
+                            "name": "To"
                         }
                     ]
                 },

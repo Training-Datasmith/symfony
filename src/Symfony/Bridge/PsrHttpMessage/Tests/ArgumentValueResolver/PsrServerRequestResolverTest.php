@@ -21,6 +21,7 @@ use Symfony\Bridge\PsrHttpMessage\ArgumentValueResolver\PsrServerRequestResolver
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
+use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactory;
 
 /**
  * @author Alexander M. Turek <me@derrabus.de>
@@ -68,6 +69,6 @@ final class PsrServerRequestResolverTest extends TestCase
             ->with(self::identicalTo($symfonyRequest))
             ->willReturn($psrRequest);
 
-        return new ArgumentResolver(null, [new PsrServerRequestResolver($messageFactory)]);
+        return new ArgumentResolver(new ArgumentMetadataFactory(), [new PsrServerRequestResolver($messageFactory)]);
     }
 }

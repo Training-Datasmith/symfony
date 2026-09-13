@@ -63,6 +63,8 @@ class LockStoreSchemaListenerTest extends TestCase
             ->willReturnCallback(static function (Schema $schema) {
                 $table = $schema->createTable('lock_keys');
                 $table->addColumn('key_id', 'string');
+
+                return $schema;
             });
 
         $listener = new LockStoreSchemaListener([$lockStore]);

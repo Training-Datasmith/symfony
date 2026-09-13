@@ -241,7 +241,7 @@ final class CodeExtension extends AbstractExtension
 
     public function formatFileFromText(string $text): string
     {
-        return preg_replace_callback('/in ("|&quot;)?(.+?)\1(?: +(?:on|at))? +line (\d+)/s', fn ($match): string => 'in '.$this->formatFile($match[2], $match[3]), $text);
+        return preg_replace_callback('/in ("|&quot;)?(.+?)\1(?: +(?:on|at))? +line (\d+)/s', fn ($match): string => 'in '.$this->formatFile($match[2], (int) $match[3]), $text);
     }
 
     /**

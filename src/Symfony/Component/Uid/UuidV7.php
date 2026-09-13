@@ -52,7 +52,7 @@ class UuidV7 extends Uuid implements TimeBasedUidInterface
         if (4 > \strlen($time)) {
             $time = '000'.$time;
         }
-        $time .= substr(1000 + (hexdec(substr($this->uid, 14, 4)) >> 2 & 0x3FF), -3);
+        $time .= substr((string) (1000 + (hexdec(substr($this->uid, 14, 4)) >> 2 & 0x3FF)), -3);
 
         return \DateTimeImmutable::createFromFormat('U.u', substr_replace($time, '.', -6, 0));
     }

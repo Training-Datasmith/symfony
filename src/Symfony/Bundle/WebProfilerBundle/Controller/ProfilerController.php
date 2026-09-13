@@ -239,6 +239,7 @@ class ProfilerController
         $start = $request->query->get('start');
         $end = $request->query->get('end');
         $limit = $request->query->get('limit');
+        $limit = null !== $limit && '' !== $limit ? (int) $limit : null;
         $profileType = $request->query->get('type', 'request');
 
         return $this->renderWithCspNonces($request, '@WebProfiler/Profiler/results.html.twig', [
@@ -274,6 +275,7 @@ class ProfilerController
         $start = $request->query->get('start');
         $end = $request->query->get('end');
         $limit = $request->query->get('limit');
+        $limit = null !== $limit && '' !== $limit ? (int) $limit : null;
         $token = $request->query->get('token');
         $profileType = $request->query->get('type', 'request');
 

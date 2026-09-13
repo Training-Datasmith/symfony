@@ -153,9 +153,11 @@ class CodeExtensionTest extends TestCase
             'expected' => <<<'HTML'
                 <ol start="1"><li><a class="anchor" id="line1"></a><code><span style="color: #0000BB"><?php</span></code></li>
                 <li><a class="anchor" id="line2"></a><code><span style="color: #0000BB"></span></code></li>
-                <li><a class="anchor" id="line3"></a><code><span style="color: #0000BB"></span><span style="color: #007700">echo </span><span style="color: #DD0000">'Hello'</span><span style="color: #007700">;</span></code></li>
-                <li><a class="anchor" id="line4"></a><code><span style="color: #007700">echo </span><span style="color: #DD0000">'World!'</span><span style="color: #007700">;</span></code></li>
-                <li><a class="anchor" id="line5"></a><code><span style="color: #007700"></span></code></li></ol>
+                <li><a class="anchor" id="line3"></a><code><span style="color: #0000BB"></span><span style="color: #007700">declare(</span><span style="color: #0000BB">strict_types</span><span style="color: #007700">=</span><span style="color: #0000BB">1</span><span style="color: #007700">);</span></code></li>
+                <li><a class="anchor" id="line4"></a><code><span style="color: #007700"></span></code></li>
+                <li><a class="anchor" id="line5"></a><code><span style="color: #007700">echo </span><span style="color: #DD0000">'Hello'</span><span style="color: #007700">;</span></code></li>
+                <li><a class="anchor" id="line6"></a><code><span style="color: #007700">echo </span><span style="color: #DD0000">'World!'</span><span style="color: #007700">;</span></code></li>
+                <li><a class="anchor" id="line7"></a><code><span style="color: #007700"></span></code></li></ol>
                 HTML,
             'data' => [
                 'file_path' => $fixturesPath.\DIRECTORY_SEPARATOR.'hello_world.php',
@@ -168,9 +170,11 @@ class CodeExtensionTest extends TestCase
             'expected' => <<<'HTML'
                 <ol start="1"><li class="selected"><a class="anchor" id="line1"></a><code><span style="color: #0000BB"><?php</span></code></li>
                 <li><a class="anchor" id="line2"></a><code><span style="color: #0000BB"></span></code></li>
-                <li><a class="anchor" id="line3"></a><code><span style="color: #0000BB"></span><span style="color: #007700">echo </span><span style="color: #DD0000">'Hello'</span><span style="color: #007700">;</span></code></li>
-                <li><a class="anchor" id="line4"></a><code><span style="color: #007700">echo </span><span style="color: #DD0000">'World!'</span><span style="color: #007700">;</span></code></li>
-                <li><a class="anchor" id="line5"></a><code><span style="color: #007700"></span></code></li></ol>
+                <li><a class="anchor" id="line3"></a><code><span style="color: #0000BB"></span><span style="color: #007700">declare(</span><span style="color: #0000BB">strict_types</span><span style="color: #007700">=</span><span style="color: #0000BB">1</span><span style="color: #007700">);</span></code></li>
+                <li><a class="anchor" id="line4"></a><code><span style="color: #007700"></span></code></li>
+                <li><a class="anchor" id="line5"></a><code><span style="color: #007700">echo </span><span style="color: #DD0000">'Hello'</span><span style="color: #007700">;</span></code></li>
+                <li><a class="anchor" id="line6"></a><code><span style="color: #007700">echo </span><span style="color: #DD0000">'World!'</span><span style="color: #007700">;</span></code></li>
+                <li><a class="anchor" id="line7"></a><code><span style="color: #007700"></span></code></li></ol>
                 HTML,
             'data' => [
                 'file_path' => $fixturesPath.\DIRECTORY_SEPARATOR.'hello_world.php',
@@ -181,9 +185,9 @@ class CodeExtensionTest extends TestCase
 
         yield 'php file excerpt with selected line and custom source context' => [
             'expected' => <<<'HTML'
-                <ol start="2"><li class="selected"><a class="anchor" id="line3"></a><code><span style="color: #0000BB"></span><span style="color: #007700">echo </span><span style="color: #DD0000">'Hello'</span><span style="color: #007700">;</span></code></li>
-                <li><a class="anchor" id="line4"></a><code><span style="color: #007700">echo </span><span style="color: #DD0000">'World!'</span><span style="color: #007700">;</span></code></li>
-                <li><a class="anchor" id="line5"></a><code><span style="color: #007700"></span></code></li></ol>
+                <ol start="2"><li class="selected"><a class="anchor" id="line3"></a><code><span style="color: #0000BB"></span><span style="color: #007700">declare(</span><span style="color: #0000BB">strict_types</span><span style="color: #007700">=</span><span style="color: #0000BB">1</span><span style="color: #007700">);</span></code></li>
+                <li><a class="anchor" id="line4"></a><code><span style="color: #007700"></span></code></li>
+                <li><a class="anchor" id="line5"></a><code><span style="color: #007700">echo </span><span style="color: #DD0000">'Hello'</span><span style="color: #007700">;</span></code></li></ol>
                 HTML,
             'data' => [
                 'file_path' => $fixturesPath.\DIRECTORY_SEPARATOR.'hello_world.php',

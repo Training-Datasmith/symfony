@@ -32,7 +32,7 @@ class StoreFactory
     {
         switch (true) {
             case $connection instanceof DynamoDbClient:
-            case str_starts_with($connection, 'dynamodb://'):
+            case \is_string($connection) && str_starts_with($connection, 'dynamodb://'):
                 self::requireBridgeClass(DynamoDbStore::class, 'symfony/amazon-dynamo-db-lock');
 
                 return new DynamoDbStore($connection);
@@ -48,28 +48,28 @@ class StoreFactory
                 return new MemcachedStore($connection);
 
             case $connection instanceof \MongoDB\Collection:
-            case str_starts_with($connection, 'mongodb'):
+            case \is_string($connection) && str_starts_with($connection, 'mongodb'):
                 return new MongoDbStore($connection);
 
             case $connection instanceof \PDO:
-            case str_starts_with($connection, 'mysql:'):
-            case str_starts_with($connection, 'oci:'):
-            case str_starts_with($connection, 'pgsql:'):
-            case str_starts_with($connection, 'sqlsrv:'):
-            case str_starts_with($connection, 'sqlite:'):
+            case \is_string($connection) && str_starts_with($connection, 'mysql:') && !str_starts_with($connection, 'mysql://'):
+            case \is_string($connection) && str_starts_with($connection, 'oci:'):
+            case \is_string($connection) && str_starts_with($connection, 'pgsql:') && !str_starts_with($connection, 'pgsql://'):
+            case \is_string($connection) && str_starts_with($connection, 'sqlsrv:'):
+            case \is_string($connection) && str_starts_with($connection, 'sqlite:') && !str_starts_with($connection, 'sqlite://'):
                 return new PdoStore($connection);
 
             case $connection instanceof Connection:
-            case str_starts_with($connection, 'mssql://'):
-            case str_starts_with($connection, 'mysql://'):
-            case str_starts_with($connection, 'mysql2://'):
-            case str_starts_with($connection, 'oci8://'):
-            case str_starts_with($connection, 'pdo_oci://'):
-            case str_starts_with($connection, 'pgsql://'):
-            case str_starts_with($connection, 'postgres://'):
-            case str_starts_with($connection, 'postgresql://'):
-            case str_starts_with($connection, 'sqlite://'):
-            case str_starts_with($connection, 'sqlite3://'):
+            case \is_string($connection) && str_starts_with($connection, 'mssql://'):
+            case \is_string($connection) && str_starts_with($connection, 'mysql://'):
+            case \is_string($connection) && str_starts_with($connection, 'mysql2://'):
+            case \is_string($connection) && str_starts_with($connection, 'oci8://'):
+            case \is_string($connection) && str_starts_with($connection, 'pdo_oci://'):
+            case \is_string($connection) && str_starts_with($connection, 'pgsql://'):
+            case \is_string($connection) && str_starts_with($connection, 'postgres://'):
+            case \is_string($connection) && str_starts_with($connection, 'postgresql://'):
+            case \is_string($connection) && str_starts_with($connection, 'sqlite://'):
+            case \is_string($connection) && str_starts_with($connection, 'sqlite3://'):
                 return new DoctrineDbalStore($connection);
 
             case $connection instanceof \Zookeeper:
@@ -80,20 +80,20 @@ class StoreFactory
             case 'flock' === $connection:
                 return new FlockStore();
 
-            case str_starts_with($connection, 'flock://'):
+            case \is_string($connection) && str_starts_with($connection, 'flock://'):
                 return new FlockStore(substr($connection, 8));
 
             case 'semaphore' === $connection:
                 return new SemaphoreStore();
 
-            case str_starts_with($connection, 'semaphore://'):
+            case \is_string($connection) && str_starts_with($connection, 'semaphore://'):
                 return new SemaphoreStore(substr($connection, 12));
 
-            case str_starts_with($connection, 'redis:'):
-            case str_starts_with($connection, 'rediss:'):
-            case str_starts_with($connection, 'valkey:'):
-            case str_starts_with($connection, 'valkeys:'):
-            case str_starts_with($connection, 'memcached:'):
+            case \is_string($connection) && str_starts_with($connection, 'redis:'):
+            case \is_string($connection) && str_starts_with($connection, 'rediss:'):
+            case \is_string($connection) && str_starts_with($connection, 'valkey:'):
+            case \is_string($connection) && str_starts_with($connection, 'valkeys:'):
+            case \is_string($connection) && str_starts_with($connection, 'memcached:'):
                 if (!class_exists(AbstractAdapter::class)) {
                     throw new InvalidArgumentException('Unsupported Redis or Memcached DSN. Try running "composer require symfony/cache".');
                 }
@@ -102,15 +102,15 @@ class StoreFactory
 
                 return new $storeClass($connection);
 
-            case str_starts_with($connection, 'pgsql+advisory://'):
-            case str_starts_with($connection, 'postgres+advisory://'):
-            case str_starts_with($connection, 'postgresql+advisory://'):
+            case \is_string($connection) && str_starts_with($connection, 'pgsql+advisory://'):
+            case \is_string($connection) && str_starts_with($connection, 'postgres+advisory://'):
+            case \is_string($connection) && str_starts_with($connection, 'postgresql+advisory://'):
                 return new DoctrineDbalPostgreSqlStore($connection);
 
-            case str_starts_with($connection, 'pgsql+advisory:'):
+            case \is_string($connection) && str_starts_with($connection, 'pgsql+advisory:'):
                 return new PostgreSqlStore(preg_replace('/^([^:+]+)\+advisory/', '$1', $connection));
 
-            case str_starts_with($connection, 'zookeeper://'):
+            case \is_string($connection) && str_starts_with($connection, 'zookeeper://'):
                 return new ZookeeperStore(ZookeeperStore::createConnection($connection));
 
             case 'in-memory' === $connection:

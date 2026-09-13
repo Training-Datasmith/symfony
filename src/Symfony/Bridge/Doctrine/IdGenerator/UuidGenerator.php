@@ -36,10 +36,10 @@ final class UuidGenerator extends AbstractIdGenerator
     {
         if (null !== $this->entityGetter) {
             if (\is_callable([$entity, $this->entityGetter])) {
-                return $this->factory->create($entity->{$this->entityGetter}());
+                return $this->factory->create((string) $entity->{$this->entityGetter}());
             }
 
-            return $this->factory->create($entity->{$this->entityGetter});
+            return $this->factory->create((string) $entity->{$this->entityGetter});
         }
 
         return $this->factory->create();

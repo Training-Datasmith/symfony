@@ -29,7 +29,7 @@ class UlidGeneratorTest extends TestCase
         $ulid = $generator->generateId($em, new Entity());
 
         $this->assertInstanceOf(Ulid::class, $ulid);
-        $this->assertTrue(Ulid::isValid($ulid));
+        $this->assertTrue(Ulid::isValid((string) $ulid));
     }
 
     public function testUlidFactory()

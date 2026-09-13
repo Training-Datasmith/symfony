@@ -105,7 +105,7 @@ class TwigValidatorTest extends ConstraintValidatorTestCase
             // Invalid syntax example (missing end tag)
             ['{% if condition %}Oops', 'Unexpected end of template at line 1.', 1],
             // Another syntax error example (unclosed variable)
-            ['Hello {{ name', 'Unexpected token "end of template" ("end of print statement" expected) at line 1.', 1],
+            ['Hello {{ name', 'Unexpected token "end of template" ("end of print statement" expected) at line 1 column 14.', 1],
             // Unknown filter error
             ['Hello {{ name|unknown_filter }}', 'Unknown "unknown_filter" filter at line 1.', 1],
             // Invalid variable syntax

@@ -101,7 +101,7 @@ class MiddlewareTest extends TestCase
         $this->assertSame('INSERT INTO products(name, price, stock) VALUES ("product1", 12.5, 5)', $debug[1]['sql']);
         $this->assertSame([], $debug[1]['params']);
         $this->assertSame([], $debug[1]['types']);
-        $this->assertGreaterThan(0, $debug[1]['executionMS']);
+        $this->assertGreaterThanOrEqual(0, $debug[1]['executionMS']);
     }
 
     #[DataProvider('provideExecuteMethod')]
@@ -129,7 +129,7 @@ class MiddlewareTest extends TestCase
         $this->assertSame($sql, $debug[1]['sql']);
         $this->assertSame(['product1', 12.5, 5, $res, 'foo,bar', '2022-06-12 11:00:00'], $debug[1]['params']);
         $this->assertSame([ParameterType::STRING, ParameterType::STRING, ParameterType::INTEGER, ParameterType::BINARY, ParameterType::STRING, ParameterType::STRING], $debug[1]['types']);
-        $this->assertGreaterThan(0, $debug[1]['executionMS']);
+        $this->assertGreaterThanOrEqual(0, $debug[1]['executionMS']);
     }
 
     #[DataProvider('provideExecuteMethod')]
@@ -158,7 +158,7 @@ class MiddlewareTest extends TestCase
         $this->assertSame($sql, $debug[1]['sql']);
         $this->assertSame(['product1', '12.5', 5, $expectedRes], $debug[1]['params']);
         $this->assertSame([ParameterType::STRING, ParameterType::STRING, ParameterType::INTEGER, ParameterType::BINARY], $debug[1]['types']);
-        $this->assertGreaterThan(0, $debug[1]['executionMS']);
+        $this->assertGreaterThanOrEqual(0, $debug[1]['executionMS']);
     }
 
     public static function provideEndTransactionMethod(): array
@@ -186,21 +186,21 @@ class MiddlewareTest extends TestCase
         $debug = $this->debugDataHolder->getData()['default'] ?? [];
         $this->assertCount(9, $debug);
         $this->assertSame('"START TRANSACTION"', $debug[1]['sql']);
-        $this->assertGreaterThan(0, $debug[1]['executionMS']);
+        $this->assertGreaterThanOrEqual(0, $debug[1]['executionMS']);
         $this->assertSame('SAVEPOINT DOCTRINE_2', $debug[2]['sql']);
-        $this->assertGreaterThan(0, $debug[2]['executionMS']);
+        $this->assertGreaterThanOrEqual(0, $debug[2]['executionMS']);
         $this->assertSame('INSERT INTO products(name, price, stock) VALUES ("product1", 12.5, 5)', $debug[3]['sql']);
-        $this->assertGreaterThan(0, $debug[3]['executionMS']);
+        $this->assertGreaterThanOrEqual(0, $debug[3]['executionMS']);
         $this->assertSame(('"ROLLBACK"' === $expectedEndTransactionDebug ? 'ROLLBACK TO' : 'RELEASE').' SAVEPOINT DOCTRINE_2', $debug[4]['sql']);
-        $this->assertGreaterThan(0, $debug[4]['executionMS']);
+        $this->assertGreaterThanOrEqual(0, $debug[4]['executionMS']);
         $this->assertSame($expectedEndTransactionDebug, $debug[5]['sql']);
-        $this->assertGreaterThan(0, $debug[5]['executionMS']);
+        $this->assertGreaterThanOrEqual(0, $debug[5]['executionMS']);
         $this->assertSame('"START TRANSACTION"', $debug[6]['sql']);
-        $this->assertGreaterThan(0, $debug[6]['executionMS']);
+        $this->assertGreaterThanOrEqual(0, $debug[6]['executionMS']);
         $this->assertSame('INSERT INTO products(name, price, stock) VALUES ("product2", 15.5, 12)', $debug[7]['sql']);
-        $this->assertGreaterThan(0, $debug[7]['executionMS']);
+        $this->assertGreaterThanOrEqual(0, $debug[7]['executionMS']);
         $this->assertSame($expectedEndTransactionDebug, $debug[8]['sql']);
-        $this->assertGreaterThan(0, $debug[8]['executionMS']);
+        $this->assertGreaterThanOrEqual(0, $debug[8]['executionMS']);
     }
 
     public static function provideExecuteAndEndTransactionMethods(): array

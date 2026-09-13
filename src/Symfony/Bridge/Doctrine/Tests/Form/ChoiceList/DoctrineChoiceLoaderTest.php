@@ -75,8 +75,7 @@ class DoctrineChoiceLoaderTest extends TestCase
         );
 
         $choices = [$this->obj1, $this->obj2, $this->obj3];
-        $value = static function () {
-        };
+        $value = null;
         $choiceList = new ArrayChoiceList($choices, $value);
 
         $this->repository->expects($this->once())
