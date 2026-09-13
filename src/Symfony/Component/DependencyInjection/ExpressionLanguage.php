@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection;
 
 use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage as BaseExpressionLanguage;
 
 if (!class_exists(BaseExpressionLanguage::class)) {
@@ -38,6 +39,6 @@ class ExpressionLanguage extends BaseExpressionLanguage
         // prepend the default provider to let users override it easily
         array_unshift($providers, new ExpressionLanguageProvider($serviceCompiler, $getEnv));
 
-        parent::__construct($cache, $providers);
+        parent::__construct($cache ?? new ArrayAdapter(), $providers);
     }
 }
