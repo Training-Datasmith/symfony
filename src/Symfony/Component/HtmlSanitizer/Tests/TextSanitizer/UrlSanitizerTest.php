@@ -323,8 +323,6 @@ class UrlSanitizerTest extends TestCase
     public static function provideParse(): iterable
     {
         $urls = [
-            '' => null,
-
             // Simple tests
             'https://trusted.com/link.php' => ['scheme' => 'https', 'host' => 'trusted.com'],
             'https://trusted.com/link.php?query=1#foo' => ['scheme' => 'https', 'host' => 'trusted.com'],
@@ -810,6 +808,8 @@ class UrlSanitizerTest extends TestCase
             'test-a-colon.html' => ['scheme' => null, 'host' => null],
             'test-a-colon-b.html' => ['scheme' => null, 'host' => null],
         ];
+
+        yield 'empty string' => ['', null];
 
         foreach ($urls as $url => $expected) {
             yield $url => [$url, $expected];

@@ -98,7 +98,7 @@ class TypeContextFactoryTest extends TestCase
             'DateTime' => '\\'.\DateTimeImmutable::class,
         ];
 
-        $this->assertSame($uses, $this->typeContextFactory->createFromClassName(DummyWithUses::class)->uses);
+        $this->assertEqualsCanonicalizing($uses, $this->typeContextFactory->createFromClassName(DummyWithUses::class)->uses);
 
         $this->assertEquals($uses, $this->typeContextFactory->createFromReflection(new \ReflectionClass(DummyWithUses::class))->uses);
         $this->assertEquals($uses, $this->typeContextFactory->createFromReflection(new \ReflectionProperty(DummyWithUses::class, 'createdAt'))->uses);
@@ -116,7 +116,7 @@ class TypeContextFactoryTest extends TestCase
             'DateTime' => '\\'.\DateTimeImmutable::class,
         ];
 
-        $this->assertSame($uses, $this->typeContextFactory->createFromClassName(DummyWithUsesWindowsLineEndings::class)->uses);
+        $this->assertEqualsCanonicalizing($uses, $this->typeContextFactory->createFromClassName(DummyWithUsesWindowsLineEndings::class)->uses);
 
         $this->assertEquals($uses, $this->typeContextFactory->createFromReflection(new \ReflectionClass(DummyWithUsesWindowsLineEndings::class))->uses);
         $this->assertEquals($uses, $this->typeContextFactory->createFromReflection(new \ReflectionProperty(DummyWithUsesWindowsLineEndings::class, 'createdAt'))->uses);

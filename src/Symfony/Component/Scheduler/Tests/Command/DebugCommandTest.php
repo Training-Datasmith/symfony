@@ -39,6 +39,7 @@ class DebugCommandTest extends TestCase
         $command = new DebugCommand($schedules);
         $tester = new CommandTester($command);
 
+        putenv('COLUMNS=120');
         $tester->execute([], ['decorated' => false]);
 
         $filler = str_repeat(' ', 92);

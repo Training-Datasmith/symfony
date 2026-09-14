@@ -24,9 +24,10 @@ class SyntaxError extends \LogicException
         $message .= '.';
 
         if (null !== $subject && null !== $proposals) {
+            $subject = (string) $subject;
             $minScore = \INF;
             foreach ($proposals as $proposal) {
-                $distance = levenshtein($subject, $proposal);
+                $distance = levenshtein($subject, (string) $proposal);
                 if ($distance < $minScore) {
                     $guess = $proposal;
                     $minScore = $distance;

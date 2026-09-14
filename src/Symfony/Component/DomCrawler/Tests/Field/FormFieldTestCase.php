@@ -23,7 +23,7 @@ class FormFieldTestCase extends TestCase
         $node = $document->createElement($tag, $value);
 
         foreach ($attributes as $name => $value) {
-            $node->setAttribute($name, $value);
+            $node->setAttribute($name, (string) $value);
         }
 
         return $node;

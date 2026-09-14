@@ -109,6 +109,9 @@ class FormFieldRegistry
     {
         $target = &$this->get($name);
         if ((!\is_array($value) && $target instanceof FormField) || $target instanceof Field\ChoiceFormField) {
+            if (\is_int($value) || \is_float($value)) {
+                $value = (string) $value;
+            }
             $target->setValue($value);
         } elseif (\is_array($value)) {
             $registry = new static();

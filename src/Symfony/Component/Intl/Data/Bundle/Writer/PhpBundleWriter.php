@@ -29,6 +29,8 @@ class PhpBundleWriter implements BundleWriterInterface
         $template = <<<'TEMPLATE'
             <?php
 
+            declare(strict_types=1);
+
             return %s;
 
             TEMPLATE;

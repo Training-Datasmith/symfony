@@ -1279,7 +1279,7 @@ class ProcessTest extends TestCase
         $stream = static function () use ($stream, &$i) {
             if ($i < 3) {
                 rewind($stream);
-                fwrite($stream, ++$i);
+                fwrite($stream, (string) ++$i);
                 rewind($stream);
 
                 return $stream;

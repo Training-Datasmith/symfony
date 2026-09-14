@@ -60,7 +60,7 @@ final class FormDataPart extends AbstractMultipartPart
                 $item = $item[$key];
             }
 
-            $fieldName = null !== $root ? \sprintf('%s[%s]', $root, $key) : $key;
+            $fieldName = null !== $root ? \sprintf('%s[%s]', $root, $key) : (string) $key;
 
             if (\is_array($item)) {
                 array_walk($item, $prepare, $fieldName);

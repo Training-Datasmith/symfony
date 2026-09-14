@@ -205,10 +205,10 @@ class MessageTest extends TestCase
                                     "name": ""
                                 }
                             ],
-                            "name": "To",
                             "lineLength": 76,
                             "lang": null,
-                            "charset": "utf-8"
+                            "charset": "utf-8",
+                            "name": "To"
                         }
                     ]
                 },
@@ -220,21 +220,21 @@ class MessageTest extends TestCase
                             "parts": [
                                 {
                                     "body": "Text content",
-                                    "charset": "utf-8",
-                                    "subtype": "plain",
                                     "disposition": null,
                                     "name": null,
                                     "encoding": "quoted-printable",%A
+                                    "charset": "utf-8",
+                                    "subtype": "plain",
                                     "headers": [],
                                     "class": "Symfony\\\\Component\\\\Mime\\\\Part\\\TextPart"
                                 },
                                 {
                                     "body": "HTML content",
-                                    "charset": "utf-8",
-                                    "subtype": "html",
                                     "disposition": null,
                                     "name": null,
                                     "encoding": "quoted-printable",%A
+                                    "charset": "utf-8",
+                                    "subtype": "html",
                                     "headers": [],
                                     "class": "Symfony\\\\Component\\\\Mime\\\\Part\\\\TextPart"
                                 }
@@ -246,11 +246,11 @@ class MessageTest extends TestCase
                             "filename": "text.txt",
                             "mediaType": "application",%A
                             "body": "text data",
-                            "charset": null,
-                            "subtype": "octet-stream",
                             "disposition": "attachment",
                             "name": "text.txt",
                             "encoding": "base64",%A
+                            "charset": null,
+                            "subtype": "octet-stream",
                             "headers": [],
                             "class": "Symfony\\\\Component\\\\Mime\\\\Part\\\\DataPart"
                         }
@@ -259,10 +259,10 @@ class MessageTest extends TestCase
                         "foo": [
                             {
                                 "value": "bar",
-                                "name": "foo",
                                 "lineLength": 76,
                                 "lang": null,
-                                "charset": "utf-8"
+                                "charset": "utf-8",
+                                "name": "foo"
                             }
                         ]
                     },

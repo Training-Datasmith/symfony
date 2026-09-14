@@ -63,7 +63,7 @@ class StringSanitizerTest extends TestCase
         ];
 
         foreach ($cases as $input => $expected) {
-            yield $input => [$input, $expected];
+            yield ('' === $input ? 'empty string' : $input) => [$input, $expected];
         }
     }
 

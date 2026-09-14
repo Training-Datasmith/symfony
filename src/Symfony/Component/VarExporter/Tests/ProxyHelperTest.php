@@ -97,7 +97,7 @@ class ProxyHelperTest extends TestCase
                     $this->lazyObjectState->realInstance->foo4($b, $d, ...\array_slice(\func_get_args(), 2));
                 }
 
-                public function foo5($b = new \stdClass([0 => 123]) . \Symfony\Component\VarExporter\Tests\Bar . \Symfony\Component\VarExporter\Tests\Bar::BAR . "a\0b")
+                public function foo5($b = new \stdClass([0 => 123]) . \Symfony\Component\VarExporter\Tests\Bar . \Symfony\Component\VarExporter\Tests\Bar::BAR . "a\000b")
                 {
                     ${0} = $this->lazyObjectState->realInstance;
                     ${1} = ${0}->foo5(...\func_get_args());
@@ -304,7 +304,7 @@ abstract class TestForProxyHelper
     {
     }
 
-    public function foo5($b = new \stdClass([0 => 123]).Bar.Bar::BAR."a\0b")
+    public function foo5($b = new \stdClass([0 => 123]).Bar.Bar::BAR."a\000b")
     {
     }
 

@@ -112,21 +112,17 @@ class UserPasswordHasherTest extends TestCase
 
     public function testNeedsRehash()
     {
-        $user = new InMemoryUser('username', null);
         $hasher = new NativePasswordHasher(4, 20000, 4);
+        $user = new InMemoryUser('username', $hasher->hash('foo', 'salt'));
 
         $passwordHasherFactory = $this->createMock(PasswordHasherFactoryInterface::class);
         $passwordHasherFactory
-            ->expects($this->exactly(4))
+            ->expects($this->exactly(3))
             ->method('getPasswordHasher')
             ->with($user)
-            ->willReturn($hasher, $hasher, new NativePasswordHasher(5, 20000, 5), $hasher);
+            ->willReturn($hasher, new NativePasswordHasher(5, 20000, 5), $hasher);
 
         $passwordHasher = new UserPasswordHasher($passwordHasherFactory);
-
-        \Closure::bind(function () use ($passwordHasher) {
-            $this->password = $passwordHasher->hashPassword($this, 'foo', 'salt');
-        }, $user, InMemoryUser::class)();
         $this->assertFalse($passwordHasher->needsRehash($user));
         $this->assertTrue($passwordHasher->needsRehash($user));
         $this->assertFalse($passwordHasher->needsRehash($user));

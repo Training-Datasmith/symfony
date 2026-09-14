@@ -124,7 +124,7 @@ class VarExporterTest extends TestCase
             $this->assertDumpEquals($dumpedValue, $value);
         }
 
-        $dump = "<?php\n\nreturn ".$marshalledValue.";\n";
+        $dump = "<?php\n\ndeclare(strict_types=1);\n\nreturn ".$marshalledValue.";\n";
         $dump = str_replace(var_export(__FILE__, true), "\\dirname(__DIR__).\\DIRECTORY_SEPARATOR.'VarExporterTest.php'", $dump);
 
         $fixtureFile = __DIR__.'/Fixtures/'.$testName.'.php';
@@ -154,8 +154,8 @@ class VarExporterTest extends TestCase
         yield ['simple-array', [123, ['abc']], true];
         yield ['partially-indexed-array', [5 => true, 1 => true, 2 => true, 6 => true], true];
         yield ['datetime', [
-            \DateTime::createFromFormat('U', 0),
-            \DateTimeImmutable::createFromFormat('U', 0),
+            \DateTime::createFromFormat('U', '0'),
+            \DateTimeImmutable::createFromFormat('U', '0'),
             $tz = new \DateTimeZone('Europe/Paris'),
             $interval = ($start = new \DateTimeImmutable('2009-10-11', $tz))->diff(new \DateTimeImmutable('2009-10-18', $tz)),
             new \DatePeriod($start, $interval, 4),

@@ -29,8 +29,14 @@ class PhpSubprocessTest extends TestCase
     }
 
     #[DataProvider('subprocessProvider')]
-    public function testSubprocess(string $processClass, string $memoryLimit, string $expectedMemoryLimit)
+    public function testSubprocess(string $processClass, string $memoryLimit, ?string $expectedMemoryLimit)
     {
+        if (null === $expectedMemoryLimit) {
+            $reference = new Process([self::$phpBin, __DIR__.'/Fixtures/memory.php']);
+            $reference->mustRun();
+            $expectedMemoryLimit = trim($reference->getOutput());
+        }
+
         $process = new Process([self::$phpBin,
             '-d',
             'memory_limit='.$memoryLimit,
@@ -48,7 +54,7 @@ class PhpSubprocessTest extends TestCase
         yield 'Process does ignore dynamic memory_limit' => [
             'Process',
             self::getRandomMemoryLimit(),
-            self::getDefaultMemoryLimit(),
+            null,
         ];
 
         yield 'PhpSubprocess does not ignore dynamic memory_limit' => [

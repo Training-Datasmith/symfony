@@ -100,13 +100,13 @@ class ArrayInput extends Input
                 $glue = ('-' === $param[1]) ? '=' : ' ';
                 if (\is_array($val)) {
                     foreach ($val as $v) {
-                        $params[] = $param.('' != $v ? $glue.$this->escapeToken($v) : '');
+                        $params[] = $param.('' != $v ? $glue.$this->escapeToken($this->stringifyToken($v)) : '');
                     }
                 } else {
-                    $params[] = $param.('' != $val ? $glue.$this->escapeToken($val) : '');
+                    $params[] = $param.('' != $val ? $glue.$this->escapeToken($this->stringifyToken($val)) : '');
                 }
             } else {
-                $params[] = \is_array($val) ? implode(' ', array_map($this->escapeToken(...), $val)) : $this->escapeToken($val);
+                $params[] = \is_array($val) ? implode(' ', array_map(fn ($v) => $this->escapeToken($this->stringifyToken($v)), $val)) : $this->escapeToken($this->stringifyToken($val));
             }
         }
 
@@ -189,5 +189,14 @@ class ArrayInput extends Input
         }
 
         $this->arguments[$name] = $value;
+    }
+
+    private function stringifyToken(mixed $token): string
+    {
+        if (\is_bool($token)) {
+            return $token ? '1' : '';
+        }
+
+        return (string) $token;
     }
 }

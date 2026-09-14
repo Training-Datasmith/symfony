@@ -184,7 +184,11 @@ final class TypeContextFactory
                 $use = explode(' as ', substr($line, 4, -1), 2);
 
                 $alias = 1 === \count($use) ? substr($use[0], false !== ($p = strrpos($use[0], '\\')) ? 1 + $p : 0) : $use[1];
-                $uses[$alias] = $use[0];
+                $fqcn = $use[0];
+                if (!str_contains($fqcn, '\\')) {
+                    $fqcn = '\\'.$fqcn;
+                }
+                $uses[$alias] = $fqcn;
             } elseif ($inUseSection) {
                 break;
             }

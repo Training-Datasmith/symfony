@@ -541,11 +541,11 @@ class EmailTest extends TestCase
                         "filename": "test.txt",
                         "mediaType": "application",
                         "body": "Some Text file",
-                        "charset": null,
-                        "subtype": "octet-stream",
                         "disposition": "attachment",
                         "name": "test.txt",
                         "encoding": "base64",
+                        "charset": null,
+                        "subtype": "octet-stream",
                         "headers": [],
                         "class": "Symfony\\\Component\\\Mime\\\Part\\\DataPart"
                     }
@@ -559,10 +559,10 @@ class EmailTest extends TestCase
                                     "name": ""
                                 }
                             ],
-                            "name": "To",
                             "lineLength": 76,
                             "lang": null,
-                            "charset": "utf-8"
+                            "charset": "utf-8",
+                            "name": "To"
                         }
                     ]
                 },

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Symfony\Component\Asset;
 
 use Symfony\Component\Asset\Context\ContextInterface;
+use Symfony\Component\Asset\Context\NullContext;
 use Symfony\Component\Asset\VersionStrategy\VersionStrategyInterface;
 
 /**
@@ -35,7 +36,7 @@ class PathPackage extends Package
      */
     public function __construct(string $basePath, VersionStrategyInterface $versionStrategy, ?ContextInterface $context = null)
     {
-        parent::__construct($versionStrategy, $context);
+        parent::__construct($versionStrategy, $context ?? new NullContext());
 
         if (!$basePath) {
             $this->basePath = '/';

@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Symfony\Component\EventDispatcher\Tests\DependencyInjection;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\DependencyInjection\Kernel\ServicesBundle;
 use Symfony\Bundle\FrameworkBundle\DependencyInjection\FrameworkExtension;
 use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
 use Symfony\Component\DependencyInjection\Compiler\AttributeAutoconfigurationPass;
@@ -536,7 +535,6 @@ class RegisterListenersPassTest extends TestCase
         $container->setParameter('kernel.debug', true);
         $container->setParameter('kernel.project_dir', __DIR__);
         $container->setParameter('kernel.container_class', 'testContainer');
-        (new ServicesBundle())->getContainerExtension()->load([], $container);
         (new FrameworkExtension())->load([], $container);
 
         return $container;
